@@ -158,8 +158,8 @@ public class Utils
     {
         var obj = Image(name, parent, x, y, width, height, new Color(0f, 0f, 0f, .5f));
 
-        var text = Text("", obj.transform, 8f, -1f, width, height, size, Color.white, TextAnchor.MiddleLeft);
-        var placeholder = Text(name, obj.transform, 8f, -1f, width, height, size, new Color(.8f, .8f, .8f, .8f), TextAnchor.MiddleLeft);
+        var text = Text("", obj.transform, 8f, 1f, width, height, size, Color.white, TextAnchor.MiddleLeft);
+        var placeholder = Text(name, obj.transform, 8f, 1f, width, height, size, new Color(.8f, .8f, .8f, .8f), TextAnchor.MiddleLeft);
 
         Component<InputField>(obj, field =>
         {

@@ -23,7 +23,7 @@ public class Chat
         canvas = Utils.Canvas("Chat", Plugin.Instance.transform);
         canvas.SetActive(false);
 
-        panel = Utils.Image("Chat Panel", canvas.transform, -644f, -276f, width, 400f, new Color(0f, 0f, 0f, .5f)).GetComponent<RectTransform>();
+        panel = Utils.Image("Chat Panel", canvas.transform, 0f, 0f, width, 0f, new Color(0f, 0f, 0f, .5f)).GetComponent<RectTransform>();
 
         field = Utils.Field("Type a chat message and send it by pressing enter", canvas.transform, 0f, -508f, 1888f, 32f, 24, message =>
         {
@@ -55,9 +55,16 @@ public class Chat
             panel.GetChild(i).GetComponent<RectTransform>().anchoredPosition += new Vector2(0f, height);
 
         // add new message
-        Utils.Text(message, panel, 0f, -184f + height / 2f, textWidth, height, 16, Color.white, TextAnchor.LowerLeft);
+        var text = Utils.Text(message, panel, 0f, 25f + height / 2f, textWidth, height, 16, Color.white, TextAnchor.LowerLeft).GetComponent<RectTransform>();
+        text.anchorMin = new Vector2(.5f, 0f);
+        text.anchorMax = new Vector2(.5f, 0f);
 
         // delete very old messages
         if (panel.childCount > messagesShown) GameObject.Destroy(panel.GetChild(0).gameObject);
+
+        // scale chat panel
+        var firstChild = panel.GetChild(0).gameObject.GetComponent<RectTransform>();
+        panel.sizeDelta = new Vector2(width, firstChild.anchoredPosition.y + firstChild.sizeDelta.y / 2f + 16f);
+        panel.anchoredPosition = new Vector2(-644f, -476f + panel.sizeDelta.y / 2f);
     }
 }
