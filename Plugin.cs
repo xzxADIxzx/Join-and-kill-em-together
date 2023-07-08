@@ -30,6 +30,7 @@ public class Plugin : UKMod
 
     public void Init()
     {
+        Utils.WasCheatsEnabled = false;
         if (Initialized || SceneHelper.CurrentScene != "Main Menu") return;
 
         // net

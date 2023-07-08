@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class Utils
 {
+    public static bool WasCheatsEnabled;
+
     #region general
 
     public static void ToggleCursor(bool enable)
@@ -15,6 +17,22 @@ public class Utils
 
         // lock camera
         CameraController.Instance.enabled = !enable;
+    }
+
+    public static void ToggleMovement(bool enable)
+    {
+        NewMovement.Instance.enabled = enable;
+        NewMovement.Instance.GetComponentInChildren<GunControl>().enabled = enable;
+        NewMovement.Instance.GetComponentInChildren<FistControl>().enabled = enable;
+
+        // temporary disable cheats
+        if (enable)
+            CheatsController.Instance.cheatsEnabled = WasCheatsEnabled;
+        else
+        {
+            WasCheatsEnabled = CheatsController.Instance.cheatsEnabled;
+            CheatsController.Instance.cheatsEnabled = false;
+        }
     }
 
     public static void Component<T>(GameObject obj, UnityAction<T> action) where T : Component

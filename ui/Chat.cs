@@ -39,6 +39,7 @@ public class Chat
         if (field.text != "") return;
 
         canvas.SetActive(Shown = !Shown);
+        Utils.ToggleMovement(!Shown);
 
         // focus on input field
         field.GetComponent<UnityEngine.UI.InputField>().ActivateInputField();
