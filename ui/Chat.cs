@@ -7,6 +7,7 @@ using Jaket.Net;
 
 public class Chat
 {
+    const int maxMessageLength = 128;
     const int messagesShown = 12;
     const int symbolsPerRow = 63;
     const float width = 600f;
@@ -32,6 +33,7 @@ public class Chat
             field.text = "";
             canvas.SetActive(false);
         });
+        field.characterLimit = maxMessageLength;
     }
 
     public static void Toggle()
@@ -45,9 +47,11 @@ public class Chat
         field.GetComponent<UnityEngine.UI.InputField>().ActivateInputField();
     }
 
+    public static string FormatMessage(string author, string message) => "<b>" + author + "<color=#ff7f50>:</color></b> " + message;
+
     public static void Received(string author, string message)
     {
-        message = author + ": " + message;
+        message = FormatMessage(author, message);
         float height = textHeight * Mathf.Ceil((float)message.Length / symbolsPerRow);
 
         // move old messages down
