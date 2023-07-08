@@ -27,6 +27,9 @@ public class Plugin : UKMod
     {
         if (Initialized || SceneHelper.CurrentScene != "Main Menu") return;
 
+        // net
+        LobbyController.Load();
+
         // ui
         PlayerList.Build();
 
