@@ -1,0 +1,10 @@
+.settings/*
+.vscode/*
+
+bin/*
+lib/*
+build/*
+
+*.bat
+*.xml
+*.directory
