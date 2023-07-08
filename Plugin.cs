@@ -3,6 +3,7 @@
 using UMM;
 using UnityEngine.SceneManagement;
 
+using Jaket.Net;
 using Jaket.UI;
 
 [UKPlugin(GUID, NAME, VERSION, DESC, false, false)]
