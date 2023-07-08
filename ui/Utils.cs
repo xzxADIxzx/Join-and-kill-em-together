@@ -99,4 +99,38 @@ public class Utils
     }
 
     #endregion
+    #region button
+
+    public static GameObject Button(string name, Transform parent, float x, float y, float width, float height, int size, Color color, TextAnchor align, UnityAction clicked)
+    {
+        var obj = Image(name, parent, x, y, width, height, Color.white);
+        Component<Button>(obj, button =>
+        {
+            button.targetGraphic = obj.GetComponent<Image>();
+            button.colors = OptionsMenuToManager.Instance.pauseMenu.transform.Find("Continue").gameObject.GetComponent<Button>().colors;
+            button.onClick.AddListener(clicked);
+        });
+
+        // add text to the button
+        Text(name, obj.transform, 0f, 0f, width, height, size, color, align);
+
+        return obj;
+    }
+
+    public static GameObject Button(string name, Transform parent, float x, float y, UnityAction clicked)
+    {
+        return Button(name, parent, x, y, 320f, 64f, 36, Color.white, TextAnchor.MiddleCenter, clicked);
+    }
+
+    public static void SetText(GameObject obj, string text)
+    {
+        obj.GetComponentInChildren<Text>().text = text;
+    }
+
+    public static void SetInteractable(GameObject obj, bool interactable)
+    {
+        obj.GetComponent<Button>().interactable = interactable;
+    }
+
+    #endregion
     #endregion
