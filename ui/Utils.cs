@@ -76,4 +76,27 @@ public class Utils
     }
 
     #endregion
+    #region text
+
+    public static GameObject Text(string name, Transform parent, float x, float y, float width, float height, int size, Color color, TextAnchor align)
+    {
+        var obj = Rect(name, parent, x, y, width, height);
+        Component<Text>(obj, text =>
+        {
+            text.text = name;
+            text.font = OptionsMenuToManager.Instance.optionsMenu.transform.Find("Text").gameObject.GetComponent<Text>().font;
+            text.fontSize = size;
+            text.color = color;
+            text.alignment = align;
+        });
+
+        return obj;
+    }
+
+    public static GameObject Text(string name, Transform parent, float x, float y)
+    {
+        return Text(name, parent, x, y, 320f, 64f, 36, Color.white, TextAnchor.MiddleCenter);
+    }
+
+    #endregion
     #endregion
