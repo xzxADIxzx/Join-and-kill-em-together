@@ -3,6 +3,8 @@
 using UMM;
 using UnityEngine.SceneManagement;
 
+using Jaket.UI;
+
 [UKPlugin(GUID, NAME, VERSION, DESC, false, false)]
 public class Plugin : UKMod
 {
@@ -24,6 +26,9 @@ public class Plugin : UKMod
     public void Init()
     {
         if (Initialized || SceneHelper.CurrentScene != "Main Menu") return;
+
+        // ui
+        PlayerList.Build();
 
         Initialized = true;
         Debug.Log("Jaket initialized.");
