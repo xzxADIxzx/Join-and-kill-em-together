@@ -49,10 +49,12 @@ public class Chat
 
     public static string FormatMessage(string author, string message) => "<b>" + author + "<color=#ff7f50>:</color></b> " + message;
 
+    public static int RawMessageLenght(string author, string message) => author.Length + ": ".Length + message.Length;  
+
     public static void Received(string author, string message)
     {
+        float height = textHeight * Mathf.Ceil((float)RawMessageLenght(author, message) / symbolsPerRow);
         message = FormatMessage(author, message);
-        float height = textHeight * Mathf.Ceil((float)message.Length / symbolsPerRow);
 
         // move old messages down
         for (int i = 0; i < panel.childCount; i++)
