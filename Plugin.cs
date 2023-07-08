@@ -33,6 +33,7 @@ public class Plugin : UKMod
 
         // ui
         PlayerList.Build();
+        Chat.Build();
 
         Initialized = true;
         Debug.Log("Jaket initialized.");
