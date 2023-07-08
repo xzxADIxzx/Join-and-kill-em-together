@@ -1,6 +1,7 @@
 ﻿namespace Jaket;
 
 using UMM;
+using UnityEngine.SceneManagement;
 
 [UKPlugin(GUID, NAME, VERSION, DESC, false, false)]
 public class Plugin : UKMod
@@ -9,4 +10,22 @@ public class Plugin : UKMod
     const string NAME = "Jaket";
     const string DESC = "Multikill is still in development, so I created my own multiplayer mod for ultrakill.\nAuthor: xzxADIxzx#7729 & Sowler#5518";
     const string VERSION = "0.0.1";
+
+    public static Plugin Instance;
+    public static bool Initialized;
+
+    public override void OnModLoaded()
+    {
+        Instance = this;
+
+        SceneManager.sceneLoaded += (scene, mode) => Init();
+    }
+
+    public void Init()
+    {
+        if (Initialized || SceneHelper.CurrentScene != "Main Menu") return;
+
+        Initialized = true;
+        Debug.Log("Jaket initialized.");
+    }
 }
