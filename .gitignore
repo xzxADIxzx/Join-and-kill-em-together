@@ -1,6 +1,7 @@
 .settings/*
 .vscode/*
 
+obj/*
 bin/*
 lib/*
 build/*
