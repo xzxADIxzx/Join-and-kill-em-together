@@ -1,6 +1,7 @@
 ﻿namespace Jaket;
 
 using UMM;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 using Jaket.Net;
@@ -20,6 +21,9 @@ public class Plugin : UKMod
     public override void OnModLoaded()
     {
         Instance = this;
+
+        UKAPI.GetKeyBind("PLAYER LIST", KeyCode.Tab).onPress.AddListener(PlayerList.Toggle);
+        UKAPI.GetKeyBind("CHAT", KeyCode.Return).onPress.AddListener(Chat.Toggle);
 
         SceneManager.sceneLoaded += (scene, mode) => Init();
     }
