@@ -1,6 +1,7 @@
 namespace Jaket.UI;
 
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class Utils
@@ -133,4 +134,26 @@ public class Utils
     }
 
     #endregion
+    #region field
+
+    public static InputField Field(string name, Transform parent, float x, float y, float width, float height, int size, UnityAction<string> enter)
+    {
+        var obj = Image(name, parent, x, y, width, height, new Color(0f, 0f, 0f, .5f));
+
+        var text = Text("", obj.transform, 0f, 0f, width, height, size, Color.white, TextAnchor.MiddleLeft);
+        var placeholder = Text(name, obj.transform, 0f, 0f, width, height, size, new Color(.8f, .8f, .8f, .8f), TextAnchor.MiddleLeft);
+
+        Component<InputField>(obj, field =>
+        {
+            field.targetGraphic = obj.GetComponent<Image>();
+            field.textComponent = text.GetComponent<Text>();
+            field.placeholder = placeholder.GetComponent<Text>();
+
+            field.onEndEdit.AddListener(enter);
+        });
+
+        return obj.GetComponent<InputField>();
+    }
+
     #endregion
+}
