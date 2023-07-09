@@ -26,6 +26,8 @@ public class RemotePlayer : Entity
     public void Awake()
     {
         Type = Entities.Type.player;
+        Owner = LobbyController.Lobby.Value.Owner.Id;
+
         x = new FloatLerp();
         y = new FloatLerp();
         z = new FloatLerp();
@@ -40,8 +42,6 @@ public class RemotePlayer : Entity
 
     public override void Write(BinaryWriter w)
     {
-        w.Write((int)Type);
-
         w.Write(transform.position.x);
         w.Write(transform.position.y);
         w.Write(transform.position.z);

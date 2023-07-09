@@ -1,5 +1,6 @@
 namespace Jaket.Net;
 
+using Steamworks;
 using System.IO;
 using UnityEngine;
 
@@ -8,6 +9,9 @@ public abstract class Entity : MonoBehaviour
 {
     /// <summary> Entity id in the global list. </summary>
     public int Id;
+
+    /// <summary> Entity owner id, usually host, but RemotePlayers are owned by players. </summary>
+    public SteamId Owner;
 
     /// <summary> Type of entity, like a player or some kind of enemy. </summary>
     public Entities.Type Type;

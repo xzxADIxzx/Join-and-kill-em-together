@@ -1,5 +1,6 @@
 namespace Jaket.Net;
 
+using Steamworks;
 using System.IO;
 
 /// <summary>
@@ -14,13 +15,13 @@ public class LocalPlayer : Entity
     public void Awake()
     {
         Type = Entities.Type.player;
+        Owner = SteamClient.SteamId.Value;
     }
 
     public override void Write(BinaryWriter w)
     {
-        w.Write((int)Type);
-
         var player = NewMovement.Instance.transform;
+
         w.Write(player.position.x);
         w.Write(player.position.y);
         w.Write(player.position.z);
