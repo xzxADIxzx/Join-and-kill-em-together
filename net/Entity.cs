@@ -6,11 +6,19 @@ using UnityEngine;
 /// <summary> Any entity that has updatable state synchronized across the network. </summary>
 public abstract class Entity : MonoBehaviour
 {
+    /// <summary> Entity id in the global list. </summary>
+    public int Id;
+
     /// <summary> Type of entity, like a player or some kind of enemy. </summary>
-    public Entities.Type type;
+    public Entities.Type Type;
 
     /// <summary> Last update time via snapshots. </summary>
     public float LastUpdate;
+
+    public Entity()
+    {
+        Id = Networking.entities.Count;
+    }
 
     /// <summary> Writes the entity data to the writer. </summary>
     public abstract void Write(BinaryWriter w);
