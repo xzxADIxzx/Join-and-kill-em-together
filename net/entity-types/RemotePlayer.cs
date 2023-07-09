@@ -23,6 +23,14 @@ public class RemotePlayer : Entity
         return obj.AddComponent<RemotePlayer>();
     }
 
+    public void Awake()
+    {
+        x = new FloatLerp();
+        y = new FloatLerp();
+        z = new FloatLerp();
+        rotation = new FloatLerp();
+    }
+
     public void Update()
     {
         transform.position = new Vector3(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
