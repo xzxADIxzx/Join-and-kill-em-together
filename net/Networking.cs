@@ -1,11 +1,16 @@
 namespace Jaket.Net;
 
+using System.Collections.Generic;
 using Steamworks;
+using UnityEngine;
 
 using Jaket.UI;
 
 public class Networking : MonoBehaviour
 {
+    public static List<Entity> entities = new List<Entity>();
+    public static Dictionary<SteamId, RemotePlayer> players = new Dictionary<SteamId, RemotePlayer>();
+
     public static void Load()
     {
         SteamMatchmaking.OnChatMessage += (lobby, friend, message) => Chat.Received(friend.Name, message);
@@ -27,5 +32,11 @@ public class Networking : MonoBehaviour
 
             // confirm the connection with the player
             SteamNetworking.AcceptP2PSessionWithUser(lobby.Owner.Id);
+
+            // create a new remote player doll
+            var player = RemotePlayer.CreatePlayer();
+
+            entities.Add(player);
+            players.Add(friend.Id, player);
         };
     }
