@@ -35,6 +35,7 @@ public class Plugin : UKMod
 
         // net
         Networking.Load();
+        Entities.Load();
 
         // ui
         PlayerList.Build();
