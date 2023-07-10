@@ -22,12 +22,17 @@ public class LocalPlayer : Entity
     {
         var player = NewMovement.Instance.transform;
 
+        // position
         w.Write(player.position.x);
         w.Write(player.position.y);
         w.Write(player.position.z);
         w.Write(player.eulerAngles.y);
+
+        // animation
+        w.Write(NewMovement.Instance.walking);
+        w.Write(NewMovement.Instance.sliding);
     }
 
     // there is no point in reading anything, because it is a local player
-    public override void Read(BinaryReader r) => r.ReadBytes(16); // skip all data
+    public override void Read(BinaryReader r) => r.ReadBytes(18); // skip all data
 }
