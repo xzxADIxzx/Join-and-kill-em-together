@@ -19,7 +19,13 @@ public class Networking : MonoBehaviour
 
     public static void Load()
     {
-        SteamMatchmaking.OnChatMessage += (lobby, friend, message) => Chat.Received(friend.Name, message);
+        SteamMatchmaking.OnChatMessage += (lobby, friend, message) =>
+        {
+            if (message.StartsWith("<system>") && friend.Id == lobby.Owner.Id)
+                Chat.Received("Lobby", message.Substring("<system>".Length));
+            else
+                Chat.Received(friend.Name, message);
+        };
         SteamFriends.OnGameLobbyJoinRequested += LobbyController.JoinLobby;
 
         SteamMatchmaking.OnLobbyEntered += lobby =>
@@ -40,6 +46,9 @@ public class Networking : MonoBehaviour
             // if you are not the owner of the lobby, then you do not need to do anything
             if (!LobbyController.IsOwner) return;
 
+            // send notification
+            lobby.SendChatString("<system><color=#00FF00>Player " + friend.Name + " joined!</color>");
+
             // confirm the connection with the player
             SteamNetworking.AcceptP2PSessionWithUser(lobby.Owner.Id);
 
@@ -50,6 +59,8 @@ public class Networking : MonoBehaviour
             entities.Add(player);
             players.Add(friend.Id, player);
         };
+
+        SteamMatchmaking.OnLobbyMemberLeave += (lobby, friend) => lobby.SendChatString("<system><color=red>Player " + friend.Name + " left!</color>");
 
         // create a local player to sync the player data
         LocalPlayer = LocalPlayer.CreatePlayer();
