@@ -1,5 +1,6 @@
 namespace Jaket.UI;
 
+using Steamworks;
 using UnityEngine;
 
 using Jaket.Net;
@@ -7,12 +8,22 @@ using Jaket.Net;
 public class PlayerList
 {
     public static bool Shown;
-    private static GameObject canvas, create, invite;
+    private static GameObject canvas, create, invite, list;
 
     public static void Update()
     {
-        Utils.SetText(create, LobbyController.CreatingLobby ? "CREATING..." : (LobbyController.Lobby == null ? "CREATE LOBBY" : "CLOSE LOBBY"));
+        var text = LobbyController.CreatingLobby ? "CREATING..." : LobbyController.Lobby == null ? "CREATE LOBBY" : LobbyController.IsOwner ? "CLOSE LOBBY" : "LEAVE LOBBY";
+        Utils.SetText(create, text);
         Utils.SetInteractable(invite, LobbyController.Lobby != null);
+
+        foreach (Transform child in list.transform) GameObject.Destroy(child.gameObject);
+        if (LobbyController.Lobby == null) return;
+
+        Utils.Text("--PLAYERS--", list.transform, -784f, 172f);
+
+        float y = 172f;
+        foreach (var member in LobbyController.Lobby.Value.Members)
+            Utils.Button(member.Name, list.transform, -784f, y -= 80f, () => SteamFriends.OpenUserOverlay(member.Id, "steamid"));
     }
 
     public static void Build()
@@ -38,6 +49,8 @@ public class PlayerList
             LobbyController.InviteFriend();
         });
 
+        list = Utils.Rect("List", canvas.transform, 0f, 0f, 1920f, 1080f);
+
         Update();
     }
 
@@ -45,5 +58,8 @@ public class PlayerList
     {
         canvas.SetActive(Shown = !Shown);
         Utils.ToggleCursor(Shown);
+
+        // update player list
+        if (Shown) Update();
     }
 }
