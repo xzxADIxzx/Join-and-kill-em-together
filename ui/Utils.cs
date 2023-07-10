@@ -174,4 +174,24 @@ public class Utils
     }
 
     #endregion
+    #region shadow
+
+    public static GameObject Shadow(string name, Transform parent, float x, float y, float width, float height)
+    {
+        var obj = Rect(name, parent, x, y, width, height);
+        Component<Image>(obj, image =>
+        {
+            image.sprite = Sandbox.SandboxAlterMenu.Instance.transform.GetChild(0).GetComponent<Image>().sprite;
+            image.color = Color.black;
+        });
+
+        return obj;
+    }
+
+    public static GameObject Shadow(string name, Transform parent, float x, float y)
+    {
+        return Shadow(name, parent, x, y, 320f, 1080f);
+    }
+
+    #endregion
 }

@@ -20,6 +20,7 @@ public class PlayerList
         canvas = Utils.Canvas("Player List", Plugin.Instance.transform);
         canvas.SetActive(false);
 
+        Utils.Shadow("Shadow", canvas.transform, -800f, 0f);
         Utils.Text("--LOBBY--", canvas.transform, -784f, 492f);
 
         create = Utils.Button("CREATE LOBBY", canvas.transform, -784f, 412f, () =>
