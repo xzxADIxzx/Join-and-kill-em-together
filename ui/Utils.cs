@@ -106,6 +106,15 @@ public class Utils
         return obj;
     }
 
+    public static GameObject Canvas(string name, Transform parent, float width, float height, Vector3 position)
+    {
+        var obj = Rect(name, parent, 0f, 0f, width, height);
+        Component<Canvas>(obj, canvas => canvas.renderMode = RenderMode.WorldSpace);
+        obj.transform.position = position;
+
+        return obj;
+    }
+
     #endregion
     #region text
 

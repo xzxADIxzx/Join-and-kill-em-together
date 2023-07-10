@@ -1,7 +1,10 @@
 namespace Jaket.Net;
 
+using Steamworks;
 using System.IO;
 using UnityEngine;
+
+using Jaket.UI;
 
 public class RemotePlayer : Entity
 {
@@ -17,6 +20,10 @@ public class RemotePlayer : Entity
     /// <summary> Animator states. </summary>
     private bool walking, sliding;
 
+
+    /// <summary> Canvas containing nickname. </summary>
+    private GameObject canvas;
+
     /// <summary> Creates a new remote player doll. </summary>
     public static RemotePlayer CreatePlayer()
     {
@@ -29,7 +36,6 @@ public class RemotePlayer : Entity
     public void Awake()
     {
         Type = Entities.Type.player;
-        Owner = LobbyController.Lobby.Value.Owner.Id;
 
         anim = GetComponentInChildren<Animator>();
         x = new FloatLerp();
@@ -39,6 +45,13 @@ public class RemotePlayer : Entity
 
         GameObject.Destroy(gameObject.GetComponent<V2>()); // remove ai
         GameObject.Destroy(gameObject.GetComponentInChildren<V2AnimationController>());
+
+        // nickname
+        string name = new Friend(Owner).Name;
+        float width = name.Length * 16f;
+
+        canvas = Utils.Canvas("Nickname", transform, width, 40f, new Vector3(0f, 5f, 0f));
+        Utils.Button(name, canvas.transform, 0f, 0f, width, 40f, 24, Color.white, TextAnchor.MiddleCenter, () => {}).transform.localScale = new Vector3(.02f, .02f, .02f);
     }
 
     public void Update()
@@ -50,6 +63,10 @@ public class RemotePlayer : Entity
         // animation
         anim.SetBool("RunningBack", sliding);
         anim.SetBool("Sliding", sliding);
+
+        // nickname
+        canvas.transform.LookAt(Camera.current.transform);
+        canvas.transform.Rotate(new Vector3(0f, 180f, 0f), Space.Self);
     }
 
     public override void Write(BinaryWriter w)
