@@ -8,6 +8,18 @@ public class Utils
 {
     public static bool WasCheatsEnabled;
 
+    private static Sprite buttonImage, shadowImage;
+    private static ColorBlock colorBlock;
+    private static Font font;
+
+    public static void Load()
+    {
+        buttonImage = OptionsMenuToManager.Instance.pauseMenu.transform.Find("Continue").gameObject.GetComponent<Image>().sprite;
+        shadowImage = Sandbox.SandboxAlterMenu.Instance.transform.GetChild(0).GetComponent<Image>().sprite;
+        colorBlock = OptionsMenuToManager.Instance.pauseMenu.transform.Find("Continue").gameObject.GetComponent<Button>().colors;
+        font = OptionsMenuToManager.Instance.optionsMenu.transform.Find("Text").gameObject.GetComponent<Text>().font;
+    }
+
     #region general
 
     public static void ToggleCursor(bool enable)
@@ -68,7 +80,7 @@ public class Utils
         var obj = Rect(name, parent, x, y, width, height);
         Component<Image>(obj, image =>
         {
-            image.sprite = OptionsMenuToManager.Instance.pauseMenu.transform.Find("Continue").gameObject.GetComponent<Image>().sprite;
+            image.sprite = buttonImage;
             image.type = UnityEngine.UI.Image.Type.Sliced;
             image.color = color;
         });
@@ -103,7 +115,7 @@ public class Utils
         Component<Text>(obj, text =>
         {
             text.text = name;
-            text.font = OptionsMenuToManager.Instance.optionsMenu.transform.Find("Text").gameObject.GetComponent<Text>().font;
+            text.font = font;
             text.fontSize = size;
             text.color = color;
             text.alignment = align;
@@ -126,7 +138,7 @@ public class Utils
         Component<Button>(obj, button =>
         {
             button.targetGraphic = obj.GetComponent<Image>();
-            button.colors = OptionsMenuToManager.Instance.pauseMenu.transform.Find("Continue").gameObject.GetComponent<Button>().colors;
+            button.colors = colorBlock;
             button.onClick.AddListener(clicked);
         });
 
@@ -181,7 +193,7 @@ public class Utils
         var obj = Rect(name, parent, x, y, width, height);
         Component<Image>(obj, image =>
         {
-            image.sprite = Sandbox.SandboxAlterMenu.Instance.transform.GetChild(0).GetComponent<Image>().sprite;
+            image.sprite = shadowImage;
             image.color = Color.black;
         });
 

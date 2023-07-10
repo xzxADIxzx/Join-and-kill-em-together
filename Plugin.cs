@@ -39,6 +39,7 @@ public class Plugin : UKMod
         Weapons.Load();
 
         // ui
+        Utils.Load();
         PlayerList.Build();
         Chat.Build();
 
