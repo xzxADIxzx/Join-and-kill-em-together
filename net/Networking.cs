@@ -15,7 +15,10 @@ public class Networking : MonoBehaviour
     public static List<Entity> entities = new();
     public static Dictionary<SteamId, RemotePlayer> players = new();
 
+    /// <summary> Local player representation. </summary>
     public static LocalPlayer LocalPlayer;
+    /// <summary> Owner of the entity currently being processed. </summary>
+    public static SteamId CurrentOwner;
 
     public static void Load()
     {
@@ -53,8 +56,8 @@ public class Networking : MonoBehaviour
             SteamNetworking.AcceptP2PSessionWithUser(lobby.Owner.Id);
 
             // create a new remote player doll
+            CurrentOwner = friend.Id; // this is necessary so that the player does not see his own model
             var player = RemotePlayer.CreatePlayer();
-            player.Owner = friend.Id.Value; // this is necessary so that the player does not see his own model
 
             entities.Add(player);
             players.Add(friend.Id, player);
@@ -63,6 +66,7 @@ public class Networking : MonoBehaviour
         SteamMatchmaking.OnLobbyMemberLeave += (lobby, friend) => lobby.SendChatString("<system><color=red>Player " + friend.Name + " left!</color>");
 
         // create a local player to sync the player data
+        CurrentOwner = SteamClient.SteamId;
         LocalPlayer = LocalPlayer.CreatePlayer();
 
         // create an object to update the network logic
@@ -149,11 +153,11 @@ public class Networking : MonoBehaviour
                 {
                     // read entity
                     int id = r.ReadInt32();
-                    ulong owner = r.ReadUInt64();
+                    CurrentOwner = r.ReadUInt64();
                     int type = r.ReadInt32();
 
                     // if the entity is not in the list, add a new one with the given type
-                    if (entities.Count <= id) entities.Add(owner == SteamClient.SteamId ? LocalPlayer : Entities.Get((Entities.Type)type));
+                    if (entities.Count <= id) entities.Add(CurrentOwner == SteamClient.SteamId ? LocalPlayer : Entities.Get((Entities.Type)type));
 
                     entities[id].Read(r);
                 }

@@ -22,6 +22,7 @@ public abstract class Entity : MonoBehaviour
     public Entity()
     {
         Id = Networking.entities.Count;
+        Owner = Networking.CurrentOwner;
     }
 
     /// <summary> Writes the entity data to the writer. </summary>

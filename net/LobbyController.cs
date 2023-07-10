@@ -1,8 +1,8 @@
 namespace Jaket.Net;
 
-using System;
 using Steamworks;
 using Steamworks.Data;
+using System;
 using UnityEngine;
 
 public class LobbyController
