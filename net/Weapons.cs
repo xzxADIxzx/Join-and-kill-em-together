@@ -43,4 +43,28 @@ public class Weapons
         string name = GunControl.Instance.currentWeapon.name;
         return WeaponIndex(name.Substring(0, name.Length - "(Clone)".Length));
     }
+
+    public static void TryDisable<T>(GameObject obj) where T : Behaviour
+    {
+        var component = obj.GetComponent<T>();
+        if (component != null) component.enabled = false;
+    }
+
+    public static GameObject Instantinate(int index, Transform parent)
+    {
+        var instance = GameObject.Instantiate(All[index], parent);
+        instance.SetActive(true); // idk why, but weapon prefabs are disabled by default
+
+        // destroy revolver's hand
+        GameObject.Destroy(instance.transform.GetChild(0).Find("RightArm")?.gameObject);
+
+        // disable weapon components
+        TryDisable<Revolver>(instance);
+        TryDisable<Shotgun>(instance);
+        TryDisable<Nailgun>(instance);
+        TryDisable<Railcannon>(instance);
+        TryDisable<RocketLauncher>(instance);
+
+        return instance;
+    }
 }

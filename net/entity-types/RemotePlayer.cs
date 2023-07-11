@@ -14,6 +14,9 @@ public class RemotePlayer : Entity
     /// <summary> Player doll animations. </summary>
     private Animator anim;
 
+    /// <summary> Transform to which weapons will be attached. </summary>
+    private Transform weapons;
+
     /// <summary> Player position and rotation. </summary>
     private FloatLerp x, y, z, rotation;
 
@@ -40,6 +43,8 @@ public class RemotePlayer : Entity
         Type = Entities.Type.player;
 
         anim = GetComponentInChildren<Animator>();
+        weapons = gameObject.GetComponent<V2>().weapons[0].transform.parent;
+
         x = new FloatLerp();
         y = new FloatLerp();
         z = new FloatLerp();
@@ -65,6 +70,14 @@ public class RemotePlayer : Entity
         // animation
         anim.SetBool("RunningBack", sliding);
         anim.SetBool("Sliding", sliding);
+
+        if (lastWeapon != weapon)
+        {
+            lastWeapon = weapon;
+
+            foreach (Transform child in weapons) Destroy(child.gameObject);
+            if (weapon != -1) Weapons.Instantinate(weapon, weapons);
+        }
 
         // nickname
         canvas.transform.LookAt(Camera.current.transform);
