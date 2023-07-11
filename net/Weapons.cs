@@ -83,9 +83,7 @@ public class Weapons
         return WeaponIndex(name.Substring(0, name.Length - "(Clone)".Length));
     }
 
-    public static int BulletIndex(string name) => BulletPrefabs.FindIndex(bullet => bullet.name == name);
-
-    public static int CopiedBulletIndex(string name) => BulletIndex(name.Substring(0, name.Length - "(Clone)".Length));
+    public static int BulletIndex(string name) => BulletPrefabs.FindIndex(b => b.name.Length <= name.Length && b.name == name.Substring(0, b.name.Length));
 
     #endregion
     #region weapons
@@ -119,7 +117,7 @@ public class Weapons
 
     public static void WriteBullet(BinaryWriter w, GameObject bullet, bool hasRigidbody = false)
     {
-        int index = Weapons.CopiedBulletIndex(bullet.name);
+        int index = Weapons.BulletIndex(bullet.name == "ReflectedBeamPoint(Clone)" ? "Revolver Beam" : bullet.name);
         if (index == -1) throw new System.Exception("Bullet index is -1!");
 
         w.Write(index);
