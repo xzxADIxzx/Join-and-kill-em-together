@@ -14,8 +14,14 @@ public class RemotePlayer : Entity
     /// <summary> Player doll animations. </summary>
     private Animator anim;
 
+    /// <summary> Player doll machine. </summary>
+    private Machine machine;
+
     /// <summary> Transform to which weapons will be attached. </summary>
     private Transform weapons;
+
+    /// <summary> Player health. </summary>
+    private FloatLerp health;
 
     /// <summary> Player position and rotation. </summary>
     private FloatLerp x, y, z, rotation;
@@ -28,6 +34,9 @@ public class RemotePlayer : Entity
 
     /// <summary> Canvas containing nickname. </summary>
     private GameObject canvas;
+
+    /// <summary> Image showing health. </summary>
+    private RectTransform healthImage;
 
     /// <summary> Creates a new remote player doll. </summary>
     public static RemotePlayer CreatePlayer()
@@ -43,6 +52,8 @@ public class RemotePlayer : Entity
         Type = Entities.Type.player;
 
         anim = GetComponentInChildren<Animator>();
+        machine = GetComponent<Machine>();
+
         weapons = gameObject.GetComponent<V2>().weapons[0].transform.parent;
         foreach (Transform child in weapons) Destroy(child.gameObject);
 
@@ -50,6 +61,7 @@ public class RemotePlayer : Entity
         weapons.localPosition = new Vector3(-.2f, -.2f, 0f);
         weapons.localScale = new Vector3(.15f, .15f, .15f);
 
+        health = new FloatLerp();
         x = new FloatLerp();
         y = new FloatLerp();
         z = new FloatLerp();
@@ -62,13 +74,22 @@ public class RemotePlayer : Entity
         string name = new Friend(Owner).Name;
         float width = name.Length * 16f;
 
-        canvas = Utils.Canvas("Nickname", transform, width, 40f, new Vector3(0f, 5f, 0f));
-        Utils.Button(name, canvas.transform, 0f, 0f, width, 40f, 24, Color.white, TextAnchor.MiddleCenter, () => {}).transform.localScale = new Vector3(.02f, .02f, .02f);
+        canvas = Utils.Canvas("Nickname", transform, width, 64f, new Vector3(0f, 5f, 0f));
+        Utils.Button(name, canvas.transform, 0f, 0f, width, 40f, 24, Color.white, TextAnchor.MiddleCenter, () => {});
+
+        Utils.Image("Health Background", canvas.transform, 0f, -30f, width - 16f, 4f, new Color(0f, 0f, 0f, .5f));
+        healthImage = Utils.Image("Health", canvas.transform, 0f, -30f, width - 16f, 4f, Color.red).GetComponent<RectTransform>();
+
+        // for some unknown reason, the canvas needs to be scaled after adding elements
+        canvas.transform.localScale = new Vector3(.02f, .02f, .02f);
     }
 
     public void Update()
     {
-        // position
+        // health & position
+        machine.health = health.Get(LastUpdate);
+        healthImage.localScale = new Vector3(machine.health / 100f, 1f, 1f);
+
         transform.position = new Vector3(x.Get(LastUpdate), y.Get(LastUpdate) - (sliding ? 0f : 1.6f), z.Get(LastUpdate));
         transform.eulerAngles = new Vector3(0f, rotation.GetAngel(LastUpdate), 0f);
 
@@ -91,7 +112,8 @@ public class RemotePlayer : Entity
 
     public override void Write(BinaryWriter w)
     {
-        // position
+        // health & position
+        w.Write(machine.health);
         w.Write(transform.position.x);
         w.Write(transform.position.y);
         w.Write(transform.position.z);
@@ -107,7 +129,8 @@ public class RemotePlayer : Entity
     {
         LastUpdate = Time.time;
 
-        // position
+        // health & position 
+        health.Read(r);
         x.Read(r);
         y.Read(r);
         z.Read(r);

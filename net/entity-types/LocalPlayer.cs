@@ -22,7 +22,8 @@ public class LocalPlayer : Entity
     {
         var player = NewMovement.Instance.transform;
 
-        // position
+        // health & position
+        w.Write((float)NewMovement.Instance.hp);
         w.Write(player.position.x);
         w.Write(player.position.y);
         w.Write(player.position.z);
