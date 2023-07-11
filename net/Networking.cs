@@ -2,6 +2,7 @@ namespace Jaket.Net;
 
 using System.Collections.Generic;
 using System.IO;
+using System;
 using Steamworks;
 using UnityEngine;
 
@@ -91,8 +92,7 @@ public class Networking : MonoBehaviour
     public void ServerUpdate()
     {
         // write snapshot
-        MemoryStream stream = new MemoryStream();
-        using (var w = new BinaryWriter(stream))
+        byte[] data = Write(w =>
         {
             foreach (var entity in entities)
             {
@@ -103,8 +103,7 @@ public class Networking : MonoBehaviour
 
                 entity.Write(w);
             }
-        }
-        byte[] data = stream.ToArray();
+        });
 
         // send snapshot
         foreach (var member in LobbyController.Lobby?.Members)
@@ -113,55 +112,89 @@ public class Networking : MonoBehaviour
             if (member.Id == SteamClient.SteamId) continue;
 
             // send snapshot to the player
-            SteamNetworking.SendP2PPacket(member.Id, data, sendType: P2PSend.Unreliable);
+            SendSnapshot(member.Id, data);
         }
 
         // read incoming packets
-        while (SteamNetworking.IsP2PPacketAvailable())
+        ReadPackets((id, r) =>
         {
-            var packet = SteamNetworking.ReadP2PPacket();
-            if (!packet.HasValue) continue; // how?
-
-            if (players.ContainsKey(packet.Value.SteamId))
+            if (players.ContainsKey(id))
             {
-                players.TryGetValue(packet.Value.SteamId, out var player);
-                using (var r = new BinaryReader(new MemoryStream(packet.Value.Data))) player.Read(r); // read player data
+                players.TryGetValue(id, out var player);
+                player.Read(r); // read player data
             }
-            else Debug.LogError("Couldn't find RemotePlayer for SteamId " + packet.Value.SteamId);
-        }
+            else Debug.LogError("Couldn't find RemotePlayer for SteamId " + id); // TODO create remote player
+        }, (id, r) => {});
     }
 
     public void ClientUpdate()
     {
         // send player data
-        MemoryStream stream = new MemoryStream();
-        using (var w = new BinaryWriter(stream)) LocalPlayer.Write(w);
-
-        SteamNetworking.SendP2PPacket(LobbyController.Lobby.Value.Owner.Id, stream.ToArray(), sendType: P2PSend.Unreliable);
+        byte[] data = Write(LocalPlayer.Write);
+        SendSnapshot(LobbyController.Lobby.Value.Owner.Id, data);
 
         // read incoming packets
-        while (SteamNetworking.IsP2PPacketAvailable())
+        ReadPackets((lobbyOwner, r) =>
         {
-            var packet = SteamNetworking.ReadP2PPacket();
-            if (!packet.HasValue) continue; // how?
-
-            // read snaphot
-            stream = new MemoryStream(packet.Value.Data);
-            using (var r = new BinaryReader(stream))
+            while (r.BaseStream.Position < r.BaseStream.Length)
             {
-                while (stream.Position < stream.Length)
-                {
-                    // read entity
-                    int id = r.ReadInt32();
-                    CurrentOwner = r.ReadUInt64();
-                    int type = r.ReadInt32();
+                // read entity
+                int id = r.ReadInt32();
+                CurrentOwner = r.ReadUInt64();
+                int type = r.ReadInt32();
 
-                    // if the entity is not in the list, add a new one with the given type
-                    if (entities.Count <= id) entities.Add(CurrentOwner == SteamClient.SteamId ? LocalPlayer : Entities.Get((Entities.Type)type));
+                // if the entity is not in the list, add a new one with the given type or local if available
+                if (entities.Count <= id) entities.Add(CurrentOwner == SteamClient.SteamId ? LocalPlayer : Entities.Get((Entities.Type)type));
 
-                    entities[id].Read(r);
-                }
+                entities[id].Read(r);
             }
+        }, (lobbyOwner, r) => {});
+    }
+
+    #region io
+
+    /// <summary> Writes data to return byte array via BinaryWriter. </summary>
+    public static byte[] Write(Action<BinaryWriter> writer)
+    {
+        MemoryStream stream = new MemoryStream();
+        using (var w = new BinaryWriter(stream)) writer.Invoke(w);
+
+        return stream.ToArray();
+    }
+
+    /// <summary> Reads data from the given byte array via BinaryReader. </summary>
+    public static void Read(byte[] data, Action<BinaryReader> reader)
+    {
+        MemoryStream stream = new MemoryStream(data);
+        using (var r = new BinaryReader(stream)) reader.Invoke(r);
+    }
+
+    #endregion
+    #region communication
+
+    /// <summary> Sends data to the snapshot channel. </summary>
+    public static void SendSnapshot(SteamId id, byte[] data) => SteamNetworking.SendP2PPacket(id, data, nChannel: 0, sendType: P2PSend.Unreliable);
+
+    /// <summary> Sends data to the event channel. </summary>
+    public static void SendEvent(SteamId id, byte[] data) => SteamNetworking.SendP2PPacket(id, data, nChannel: 1);
+
+    /// <summary> Reads data from the snapshot and event channel. </summary>
+    public static void ReadPackets(Action<SteamId, BinaryReader> snapshotReader, Action<SteamId, BinaryReader> eventReader)
+    {
+        // read snapshots
+        while (SteamNetworking.IsP2PPacketAvailable(0))
+        {
+            var packet = SteamNetworking.ReadP2PPacket(0);
+            if (packet.HasValue) Read(packet.Value.Data, r => snapshotReader.Invoke(packet.Value.SteamId, r));
+        }
+
+        // read events
+        while (SteamNetworking.IsP2PPacketAvailable(1))
+        {
+            var packet = SteamNetworking.ReadP2PPacket(1);
+            if (packet.HasValue) Read(packet.Value.Data, r => eventReader.Invoke(packet.Value.SteamId, r));
         }
     }
+
+    #endregion
 }
