@@ -44,6 +44,11 @@ public class RemotePlayer : Entity
 
         anim = GetComponentInChildren<Animator>();
         weapons = gameObject.GetComponent<V2>().weapons[0].transform.parent;
+        foreach (Transform child in weapons) Destroy(child.gameObject);
+
+        weapons = Utils.Object("Transform", weapons).transform;
+        weapons.localPosition = new Vector3(-.2f, -.2f, 0f);
+        weapons.localScale = new Vector3(.15f, .15f, .15f);
 
         x = new FloatLerp();
         y = new FloatLerp();
@@ -76,7 +81,7 @@ public class RemotePlayer : Entity
             lastWeapon = weapon;
 
             foreach (Transform child in weapons) Destroy(child.gameObject);
-            if (weapon != -1) Weapons.Instantinate(weapon, weapons);
+            if (weapon != -1) Weapons.Instantinate(weapon, weapons).transform.eulerAngles = new Vector3(0f, 90f, 0f);
         }
 
         // nickname
