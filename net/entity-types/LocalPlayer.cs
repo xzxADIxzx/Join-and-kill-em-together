@@ -31,8 +31,9 @@ public class LocalPlayer : Entity
         // animation
         w.Write(NewMovement.Instance.walking);
         w.Write(NewMovement.Instance.sliding);
+        w.Write(Weapons.CurrentWeaponIndex());
     }
 
     // there is no point in reading anything, because it is a local player
-    public override void Read(BinaryReader r) => r.ReadBytes(18); // skip all data
+    public override void Read(BinaryReader r) => r.ReadBytes(22); // skip all data
 }

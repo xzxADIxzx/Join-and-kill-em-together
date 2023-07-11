@@ -20,6 +20,8 @@ public class RemotePlayer : Entity
     /// <summary> Animator states. </summary>
     private bool walking, sliding;
 
+    /// <summary> Last and current weapon id. </summary>
+    private int lastWeapon, weapon = -1;
 
     /// <summary> Canvas containing nickname. </summary>
     private GameObject canvas;
@@ -80,6 +82,7 @@ public class RemotePlayer : Entity
         // animation
         w.Write(walking);
         w.Write(sliding);
+        w.Write(weapon);
     }
 
     public override void Read(BinaryReader r)
@@ -95,5 +98,8 @@ public class RemotePlayer : Entity
         // animation
         walking = r.ReadBoolean();
         sliding = r.ReadBoolean();
+
+        lastWeapon = weapon;
+        weapon = r.ReadInt32();
     }
 }

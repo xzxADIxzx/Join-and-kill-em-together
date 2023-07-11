@@ -1,4 +1,4 @@
-namespace Jaket;
+namespace Jaket.Net;
 
 using System.Collections.Generic;
 using UnityEngine;
@@ -28,5 +28,19 @@ public class Weapons
         All.AddRange(GunSetter.Instance.rocketBlue);
         All.AddRange(GunSetter.Instance.rocketGreen);
         All.AddRange(GunSetter.Instance.rocketRed);
+    }
+
+    public static int WeaponIndex(string name)
+    {
+        for (int i = 0; i < All.Count; i++)
+            if (All[i].name == name) return i;
+
+        return -1;
+    }
+
+    public static int CurrentWeaponIndex()
+    {
+        string name = GunControl.Instance.currentWeapon.name;
+        return WeaponIndex(name.Substring(0, name.Length - "(Clone)".Length));
     }
 }
