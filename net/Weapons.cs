@@ -159,7 +159,7 @@ public class Weapons
         if (index == -1) return; // how?
 
         var obj = GameObject.Instantiate(BulletPrefabs[index]);
-        obj.tag = "Net"; // needed to prevent object looping between client and server
+        obj.name = "Net"; // needed to prevent object looping between client and server
 
         obj.transform.position = new Vector3(r.ReadSingle(), r.ReadSingle(), r.ReadSingle());
         obj.transform.eulerAngles = new Vector3(r.ReadSingle(), r.ReadSingle(), r.ReadSingle());

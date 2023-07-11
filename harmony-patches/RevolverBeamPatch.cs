@@ -10,8 +10,8 @@ public class RevolverBeamPatch
 {
     static void Prefix(RevolverBeam __instance)
     {
-        // if the lobby is null or the tag is Net, then either the player isn't connected or this bullet was created remotely
-        if (LobbyController.Lobby == null || __instance.gameObject.tag == "Net") return;
+        // if the lobby is null or the name is Net, then either the player isn't connected or this bullet was created remotely
+        if (LobbyController.Lobby == null || __instance.gameObject.name == "Net") return;
 
         byte[] data = Weapons.WriteBullet(__instance.gameObject);
 
