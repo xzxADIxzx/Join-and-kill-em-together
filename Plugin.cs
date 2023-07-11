@@ -1,9 +1,11 @@
 ﻿namespace Jaket;
 
+using HarmonyLib;
 using UMM;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+using Jaket.HarmonyPatches;
 using Jaket.Net;
 using Jaket.UI;
 
@@ -42,6 +44,9 @@ public class Plugin : UKMod
         Utils.Load();
         PlayerList.Build();
         Chat.Build();
+
+        // harmony
+        new Harmony("Should I write something here?").PatchAll();
 
         Initialized = true;
         Debug.Log("Jaket initialized.");
