@@ -124,7 +124,14 @@ public class Networking : MonoBehaviour
                 player.Read(r); // read player data
             }
             else Debug.LogError("Couldn't find RemotePlayer for SteamId " + id); // TODO create remote player
-        }, (id, r) => {});
+        }, (id, r) =>
+        {
+            byte[] data = r.ReadBytes(37); // read bullet data
+            Weapons.InstantinateBullet(data); // spawn a bullet
+
+            foreach (var member in LobbyController.Lobby?.Members) // send bullet data to everyone else
+                if (member.Id != SteamClient.SteamId && member.Id != id) SendEvent(member.Id, data);
+        });
     }
 
     public void ClientUpdate()
@@ -148,7 +155,7 @@ public class Networking : MonoBehaviour
 
                 entities[id].Read(r);
             }
-        }, (lobbyOwner, r) => {});
+        }, (lobbyOwner, r) => Weapons.InstantinateBullet(r));
     }
 
     #region io
@@ -177,6 +184,9 @@ public class Networking : MonoBehaviour
 
     /// <summary> Sends data to the event channel. </summary>
     public static void SendEvent(SteamId id, byte[] data) => SteamNetworking.SendP2PPacket(id, data, nChannel: 1);
+
+    /// <summary> Sends data to the host via the event channel. </summary>
+    public static void SendEvent2Host(byte[] data) => SendEvent(LobbyController.Lobby.Value.Owner.Id, data);
 
     /// <summary> Reads data from the snapshot and event channel. </summary>
     public static void ReadPackets(Action<SteamId, BinaryReader> snapshotReader, Action<SteamId, BinaryReader> eventReader)
