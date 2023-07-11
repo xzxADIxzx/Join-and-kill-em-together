@@ -36,10 +36,14 @@ public class Weapons
         All.ForEach(weapon =>
         {
             weapon.TryGetComponent<Revolver>(out var revolver);
-            if (revolver != null) BulletPrefabs.Add(revolver.revolverBeam);
+            if (revolver != null)
+            {
+                BulletPrefabs.Add(revolver.revolverBeam);
+                BulletPrefabs.Add(revolver.revolverBeamSuper);
+            }
 
             weapon.TryGetComponent<Shotgun>(out var shotgun);
-            if (revolver != null)
+            if (shotgun != null)
             {
                 BulletPrefabs.Add(shotgun.bullet);
                 BulletPrefabs.Add(shotgun.grenade);
@@ -60,9 +64,12 @@ public class Weapons
             if (launcher != null)
             {
                 BulletPrefabs.Add(launcher.rocket);
-                BulletPrefabs.Add(launcher.cannonBall.gameObject);
+                BulletPrefabs.Add(launcher.cannonBall?.gameObject);
             }
         });
+
+        // some variants are missing some projectiles
+        BulletPrefabs.RemoveAll(bullet => bullet == null);
     }
 
     public static int WeaponIndex(string name)
