@@ -1,6 +1,7 @@
 namespace Jaket.Net;
 
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 /// <summary> List of all weapons in the game and some useful methods. </summary>
@@ -72,13 +73,9 @@ public class Weapons
         BulletPrefabs.RemoveAll(bullet => bullet == null);
     }
 
-    public static int WeaponIndex(string name)
-    {
-        for (int i = 0; i < All.Count; i++)
-            if (All[i].name == name) return i;
+    #region index
 
-        return -1;
-    }
+    public static int WeaponIndex(string name) => All.FindIndex(weapon => weapon.name == name);
 
     public static int CurrentWeaponIndex()
     {
@@ -86,13 +83,20 @@ public class Weapons
         return WeaponIndex(name.Substring(0, name.Length - "(Clone)".Length));
     }
 
+    public static int BulletIndex(string name) => BulletPrefabs.FindIndex(bullet => bullet.name == name);
+
+    public static int CopiedBulletIndex(string name) => BulletIndex(name.Substring(0, name.Length - "(Clone)".Length));
+
+    #endregion
+    #region weapons
+
     public static void TryDisable<T>(GameObject obj) where T : Behaviour
     {
         var component = obj.GetComponent<T>();
         if (component != null) component.enabled = false;
     }
 
-    public static GameObject Instantinate(int index, Transform parent)
+    public static GameObject InstantinateWeapon(int index, Transform parent)
     {
         var instance = GameObject.Instantiate(All[index], parent);
         instance.SetActive(true); // idk why, but weapon prefabs are disabled by default
@@ -109,4 +113,61 @@ public class Weapons
 
         return instance;
     }
+
+    #endregion
+    #region bullets
+
+    public static void WriteBullet(BinaryWriter w, GameObject bullet, bool hasRigidbody = false)
+    {
+        int index = Weapons.CopiedBulletIndex(bullet.name);
+        if (index == -1) throw new System.Exception("Bullet index is -1!");
+
+        w.Write(index);
+
+        // position
+        w.Write(bullet.transform.position.x);
+        w.Write(bullet.transform.position.y);
+        w.Write(bullet.transform.position.z);
+
+        // rotation
+        w.Write(bullet.transform.eulerAngles.x);
+        w.Write(bullet.transform.eulerAngles.y);
+        w.Write(bullet.transform.eulerAngles.z);
+
+        w.Write(hasRigidbody);
+        if (hasRigidbody)
+        {
+            var body = bullet.GetComponent<Rigidbody>();
+            w.Write(body.velocity.x);
+            w.Write(body.velocity.y);
+            w.Write(body.velocity.z);
+        }
+        else
+        {
+            // the data size must be constant so that Networking can read it correctly
+            w.Write(0f);
+            w.Write(0f);
+            w.Write(0f);
+        }
+    }
+
+    public static byte[] WriteBullet(GameObject bullet, bool hasRigidbody = false) => Networking.Write(w => WriteBullet(w, bullet, hasRigidbody));
+
+    public static void InstantinateBullet(BinaryReader r)
+    {
+        int index = r.ReadInt32();
+        if (index == -1) return; // how?
+
+        var obj = GameObject.Instantiate(BulletPrefabs[index]);
+        obj.tag = "Net"; // needed to prevent object looping between client and server
+
+        obj.transform.position = new Vector3(r.ReadSingle(), r.ReadSingle(), r.ReadSingle());
+        obj.transform.eulerAngles = new Vector3(r.ReadSingle(), r.ReadSingle(), r.ReadSingle());
+
+        if (r.ReadBoolean()) obj.GetComponent<Rigidbody>().velocity = new Vector3(r.ReadSingle(), r.ReadSingle(), r.ReadSingle());
+    }
+
+    public static void InstantinateBullet(byte[] data) => Networking.Read(data, InstantinateBullet);
+
+    #endregion
 }
