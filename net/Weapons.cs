@@ -3,9 +3,13 @@ namespace Jaket.Net;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary> List of all weapons in the game and some useful methods. </summary>
 public class Weapons
 {
+    /// <summary> List of all weapons in the game. </summary>
     public static List<GameObject> All = new();
+    /// <summary> Weapon bullet prefabs list. </summary>
+    public static List<GameObject> BulletPrefabs = new();
 
     public static void Load()
     {
@@ -28,6 +32,37 @@ public class Weapons
         All.AddRange(GunSetter.Instance.rocketBlue);
         All.AddRange(GunSetter.Instance.rocketGreen);
         All.AddRange(GunSetter.Instance.rocketRed);
+
+        All.ForEach(weapon =>
+        {
+            weapon.TryGetComponent<Revolver>(out var revolver);
+            if (revolver != null) BulletPrefabs.Add(revolver.revolverBeam);
+
+            weapon.TryGetComponent<Shotgun>(out var shotgun);
+            if (revolver != null)
+            {
+                BulletPrefabs.Add(shotgun.bullet);
+                BulletPrefabs.Add(shotgun.grenade);
+            }
+
+            weapon.TryGetComponent<Nailgun>(out var nailgun);
+            if (nailgun != null)
+            {
+                BulletPrefabs.Add(nailgun.nail);
+                BulletPrefabs.Add(nailgun.heatedNail);
+                BulletPrefabs.Add(nailgun.magnetNail);
+            }
+
+            weapon.TryGetComponent<Railcannon>(out var railcannon);
+            if (railcannon != null) BulletPrefabs.Add(railcannon.beam);
+
+            weapon.TryGetComponent<RocketLauncher>(out var launcher);
+            if (launcher != null)
+            {
+                BulletPrefabs.Add(launcher.rocket);
+                BulletPrefabs.Add(launcher.cannonBall.gameObject);
+            }
+        });
     }
 
     public static int WeaponIndex(string name)
