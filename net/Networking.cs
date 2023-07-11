@@ -126,7 +126,7 @@ public class Networking : MonoBehaviour
             else Debug.LogError("Couldn't find RemotePlayer for SteamId " + id); // TODO create remote player
         }, (id, r) =>
         {
-            byte[] data = r.ReadBytes(37); // read bullet data
+            byte[] data = r.ReadBytes(41); // read bullet data
             Weapons.InstantinateBullet(data); // spawn a bullet
 
             foreach (var member in LobbyController.Lobby?.Members) // send bullet data to everyone else
