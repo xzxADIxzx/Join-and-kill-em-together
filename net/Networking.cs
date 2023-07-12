@@ -139,7 +139,7 @@ public class Networking : MonoBehaviour
                     CurrentOwner = r.ReadUInt64();
 
                     if (CurrentOwner == SteamClient.SteamId)
-                        NewMovement.Instance.hp -= (int)r.ReadSingle();
+                        NewMovement.Instance.GetHurt((int)r.ReadSingle(), false, 0f);
                     else
                         SendEvent(CurrentOwner, r.ReadBytes(4), 1);
                     break;
@@ -171,7 +171,7 @@ public class Networking : MonoBehaviour
         }, (lobbyOwner, r, eventType) =>
         {
             if (eventType == 0) Weapons.InstantinateBullet(r);
-            if (eventType == 1) NewMovement.Instance.hp -= (int)r.ReadSingle();
+            if (eventType == 1) NewMovement.Instance.GetHurt((int)r.ReadSingle(), false, 0f);
         });
     }
 
