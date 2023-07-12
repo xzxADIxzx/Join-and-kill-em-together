@@ -17,8 +17,8 @@ public class NailPatch
         if (LobbyController.IsOwner)
         {
             foreach (var member in LobbyController.Lobby?.Members)
-                if (member.Id != Steamworks.SteamClient.SteamId) Networking.SendEvent(member.Id, data);
+                if (member.Id != Steamworks.SteamClient.SteamId) Networking.SendEvent(member.Id, data, 0);
         }
-        else Networking.SendEvent2Host(data);
+        else Networking.SendEvent2Host(data, 0);
     }
 }

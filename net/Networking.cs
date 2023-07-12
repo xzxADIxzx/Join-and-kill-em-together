@@ -124,7 +124,7 @@ public class Networking : MonoBehaviour
                 player.Read(r); // read player data
             }
             else Debug.LogError("Couldn't find RemotePlayer for SteamId " + id); // TODO create remote player
-        }, (id, r) =>
+        }, (id, r, eventType) =>
         {
             byte[] data = r.ReadBytes(41); // read bullet data
             Weapons.InstantinateBullet(data); // spawn a bullet
@@ -183,13 +183,13 @@ public class Networking : MonoBehaviour
     public static void SendSnapshot(SteamId id, byte[] data) => SteamNetworking.SendP2PPacket(id, data, nChannel: 0, sendType: P2PSend.Unreliable);
 
     /// <summary> Sends data to the event channel. </summary>
-    public static void SendEvent(SteamId id, byte[] data) => SteamNetworking.SendP2PPacket(id, data, nChannel: 1);
+    public static void SendEvent(SteamId id, byte[] data, int eventType) => SteamNetworking.SendP2PPacket(id, data, nChannel: 1 + eventType);
 
     /// <summary> Sends data to the host via the event channel. </summary>
-    public static void SendEvent2Host(byte[] data) => SendEvent(LobbyController.Lobby.Value.Owner.Id, data);
+    public static void SendEvent2Host(byte[] data, int eventType) => SendEvent(LobbyController.Lobby.Value.Owner.Id, data, eventType);
 
     /// <summary> Reads data from the snapshot and event channel. </summary>
-    public static void ReadPackets(Action<SteamId, BinaryReader> snapshotReader, Action<SteamId, BinaryReader> eventReader)
+    public static void ReadPackets(Action<SteamId, BinaryReader> snapshotReader, Action<SteamId, BinaryReader, int> eventReader)
     {
         // read snapshots
         while (SteamNetworking.IsP2PPacketAvailable(0))
@@ -199,11 +199,12 @@ public class Networking : MonoBehaviour
         }
 
         // read events
-        while (SteamNetworking.IsP2PPacketAvailable(1))
-        {
-            var packet = SteamNetworking.ReadP2PPacket(1);
-            if (packet.HasValue) Read(packet.Value.Data, r => eventReader.Invoke(packet.Value.SteamId, r));
-        }
+        for (int eventType = 0; eventType <= 1; eventType++)
+            while (SteamNetworking.IsP2PPacketAvailable(1 + eventType))
+            {
+                var packet = SteamNetworking.ReadP2PPacket(1 + eventType);
+                if (packet.HasValue) Read(packet.Value.Data, r => eventReader.Invoke(packet.Value.SteamId, r, eventType));
+            }
     }
 
     #endregion
