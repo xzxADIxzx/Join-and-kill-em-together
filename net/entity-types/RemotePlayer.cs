@@ -47,6 +47,12 @@ public class RemotePlayer : Entity
         return obj.AddComponent<RemotePlayer>();
     }
 
+    public void Damage(float damage) => Networking.SendEvent2Host(Networking.Write(w =>
+    {
+        w.Write(Owner); // target
+        w.Write(damage); // damage
+    }), 1);
+
     public void Awake()
     {
         Type = Entities.Type.player;

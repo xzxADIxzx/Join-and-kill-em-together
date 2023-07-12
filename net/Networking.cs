@@ -126,11 +126,24 @@ public class Networking : MonoBehaviour
             else Debug.LogError("Couldn't find RemotePlayer for SteamId " + id); // TODO create remote player
         }, (id, r, eventType) =>
         {
-            byte[] data = r.ReadBytes(41); // read bullet data
-            Weapons.InstantinateBullet(data); // spawn a bullet
+            switch (eventType) // TODO look super bad
+            {
+                case 0:
+                    byte[] data = r.ReadBytes(41); // read bullet data
+                    Weapons.InstantinateBullet(data); // spawn a bullet
 
-            foreach (var member in LobbyController.Lobby?.Members) // send bullet data to everyone else
-                if (member.Id != SteamClient.SteamId && member.Id != id) SendEvent(member.Id, data);
+                    foreach (var member in LobbyController.Lobby?.Members) // send bullet data to everyone else
+                        if (member.Id != SteamClient.SteamId && member.Id != id) SendEvent(member.Id, data, 1);
+                    break;
+                case 1:
+                    CurrentOwner = r.ReadUInt64();
+
+                    if (CurrentOwner == SteamClient.SteamId)
+                        NewMovement.Instance.hp -= (int)r.ReadSingle();
+                    else
+                        SendEvent(CurrentOwner, r.ReadBytes(4), 1);
+                    break;
+            }
         });
     }
 
@@ -155,7 +168,11 @@ public class Networking : MonoBehaviour
 
                 entities[id].Read(r);
             }
-        }, (lobbyOwner, r) => Weapons.InstantinateBullet(r));
+        }, (lobbyOwner, r, eventType) =>
+        {
+            if (eventType == 0) Weapons.InstantinateBullet(r);
+            if (eventType == 1) NewMovement.Instance.hp -= (int)r.ReadSingle();
+        });
     }
 
     #region io
