@@ -20,6 +20,8 @@ public class Networking : MonoBehaviour
     public static LocalPlayer LocalPlayer;
     /// <summary> Owner of the entity currently being processed. </summary>
     public static SteamId CurrentOwner;
+    /// <summary> Whether a scene is loading right now. </summary>
+    public static bool Loading;
 
     public static void Load()
     {
@@ -41,8 +43,13 @@ public class Networking : MonoBehaviour
                 // the lobby has just been created, so just add the local player to the list of entities
                 entities.Add(LocalPlayer);
             else
+            {
                 // establishing a connection with the owner of the lobby
                 SteamNetworking.AcceptP2PSessionWithUser(lobby.Owner.Id);
+
+                // prevent objects from loading before the scene is loaded
+                Loading = true;
+            }
         };
 
         SteamMatchmaking.OnLobbyMemberJoined += (lobby, friend) =>
@@ -62,6 +69,9 @@ public class Networking : MonoBehaviour
 
             entities.Add(player);
             players.Add(friend.Id, player);
+
+            // send current scene name to the player
+            SendEvent(friend.Id, Write(w => w.Write(SceneHelper.CurrentScene)), 2);
         };
 
         SteamMatchmaking.OnLobbyMemberLeave += (lobby, friend) => lobby.SendChatString("<system><color=red>Player " + friend.Name + " left!</color>");
@@ -82,6 +92,15 @@ public class Networking : MonoBehaviour
     public void NetworkUpdate()
     {
         if (LobbyController.Lobby == null) return;
+
+        if (Loading)
+        {
+            ReadPackets((id, r) => { }, (id, r, eventType) =>
+            {
+                if (eventType == 2) SceneHelper.LoadScene(r.ReadString());
+            });
+            return;
+        }
 
         if (LobbyController.IsOwner)
             ServerUpdate();
@@ -216,7 +235,7 @@ public class Networking : MonoBehaviour
         }
 
         // read events
-        for (int eventType = 0; eventType <= 1; eventType++)
+        for (int eventType = 0; eventType <= 2; eventType++)
             while (SteamNetworking.IsP2PPacketAvailable(1 + eventType))
             {
                 var packet = SteamNetworking.ReadP2PPacket(1 + eventType);

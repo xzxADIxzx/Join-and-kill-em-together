@@ -27,7 +27,7 @@ public class RevolverBeamPatch
 [HarmonyPatch(typeof(RevolverBeam), "ExecuteHits")]
 public class RevolverBeamPatchPvP
 {
-    static void Prefix(RevolverBeam __instance, UnityEngine.RaycastHit currentHit)
+    static void Prefix(RevolverBeam __instance, RaycastHit currentHit)
     {
         // there is no point in checking enemy bullets, everyone is responsible for himself
         if (LobbyController.Lobby == null || __instance.gameObject.name == "Net") return;
