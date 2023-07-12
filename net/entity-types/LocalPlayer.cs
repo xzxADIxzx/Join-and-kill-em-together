@@ -36,5 +36,5 @@ public class LocalPlayer : Entity
     }
 
     // there is no point in reading anything, because it is a local player
-    public override void Read(BinaryReader r) => r.ReadBytes(22); // skip all data
+    public override void Read(BinaryReader r) => r.ReadBytes(26); // skip all data
 }
