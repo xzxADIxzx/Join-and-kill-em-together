@@ -36,6 +36,6 @@ public class RevolverBeamPatchPvP
         if (enemy == null || __instance.hitEids.Contains(enemy)) return;
 
         // send a damage event to the host
-        if (enemy.gameObject.TryGetComponent<RemotePlayer>(out var player)) player.Damage(__instance.damage * 7f);
+        if (enemy.gameObject.TryGetComponent<RemotePlayer>(out var player)) player.Damage(__instance.damage * 6f);
     }
 }
