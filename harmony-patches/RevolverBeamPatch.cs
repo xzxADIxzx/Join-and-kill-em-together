@@ -1,6 +1,7 @@
 namespace Jaket.HarmonyPatches;
 
 using HarmonyLib;
+using UnityEngine;
 
 using Jaket.Net;
 
@@ -23,27 +24,18 @@ public class RevolverBeamPatch
     }
 }
 
-[HarmonyPatch(typeof(RevolverBeam), "PiercingShotCheck")]
+[HarmonyPatch(typeof(RevolverBeam), "ExecuteHits")]
 public class RevolverBeamPatchPvP
 {
-    static void Prefix(RevolverBeam __instance, int ___enemiesPierced)
+    static void Prefix(RevolverBeam __instance, UnityEngine.RaycastHit currentHit)
     {
         // there is no point in checking enemy bullets, everyone is responsible for himself
-        if (LobbyController.Lobby == null || __instance.gameObject.name == "Net" || ___enemiesPierced >= __instance.hitList.Count) return;
+        if (LobbyController.Lobby == null || __instance.gameObject.name == "Net") return;
 
-        // hit currently being processed
-        var hit = __instance.hitList[___enemiesPierced];
-
-        var enemy = hit.transform.gameObject.GetComponentInParent<EnemyIdentifier>();
+        var enemy = currentHit.transform.gameObject.GetComponentInParent<EnemyIdentifier>();
         if (enemy == null || __instance.hitEids.Contains(enemy)) return;
 
-        if (enemy.gameObject.TryGetComponent<RemotePlayer>(out var player))
-        {
-            // prevent further processing of the same player
-            __instance.hitEids.Add(enemy);
-
-            // send a damage event to the host
-            player.Damage(__instance.damage);
-        }
+        // send a damage event to the host
+        if (enemy.gameObject.TryGetComponent<RemotePlayer>(out var player)) player.Damage(__instance.damage * 7f);
     }
 }

@@ -120,7 +120,7 @@ public class Weapons
     public static void WriteBullet(BinaryWriter w, GameObject bullet, bool hasRigidbody = false)
     {
         int index = bullet.name == "ReflectedBeamPoint(Clone)" ? BulletIndex("Revolver Beam") : CopiedBulletIndex(bullet.name);
-        if (index == -1) throw new System.Exception("Bullet index is -1!");
+        if (index == -1) throw new System.Exception("Bullet index is -1 for name " + bullet.name);
 
         w.Write(index);
 
