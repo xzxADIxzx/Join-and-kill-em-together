@@ -11,6 +11,12 @@ public class RemotePlayer : Entity
     // please don't ask me how I found this (4368)
     const string V2AssetKey = "cb3828ada2cbefe479fed3b51739edf6";
 
+    /// <summary> Player name. Taken from Steam. </summary>
+    public string nickname;
+
+    /// <summary> Whether the player is typing a message. </summary>
+    public bool typing;
+
     /// <summary> Player doll animations. </summary>
     private Animator anim;
 
@@ -77,11 +83,11 @@ public class RemotePlayer : Entity
         GameObject.Destroy(gameObject.GetComponentInChildren<V2AnimationController>());
 
         // nickname
-        string name = new Friend(Owner).Name;
-        float width = name.Length * 16f;
+        nickname = new Friend(Owner).Name;
+        float width = nickname.Length * 16f;
 
         canvas = Utils.Canvas("Nickname", transform, width, 64f, new Vector3(0f, 5f, 0f));
-        Utils.Button(name, canvas.transform, 0f, 0f, width, 40f, 24, Color.white, TextAnchor.MiddleCenter, () => {});
+        Utils.Button(nickname, canvas.transform, 0f, 0f, width, 40f, 24, Color.white, TextAnchor.MiddleCenter, () => {});
 
         Utils.Image("Health Background", canvas.transform, 0f, -30f, width - 16f, 4f, new Color(0f, 0f, 0f, .5f));
         healthImage = Utils.Image("Health", canvas.transform, 0f, -30f, width - 16f, 4f, Color.red).GetComponent<RectTransform>();
@@ -126,6 +132,7 @@ public class RemotePlayer : Entity
         w.Write(transform.eulerAngles.y);
 
         // animation
+        w.Write(typing);
         w.Write(walking);
         w.Write(sliding);
         w.Write(weapon);
@@ -143,6 +150,7 @@ public class RemotePlayer : Entity
         rotation.Read(r);
 
         // animation
+        typing = r.ReadBoolean();
         walking = r.ReadBoolean();
         sliding = r.ReadBoolean();
 

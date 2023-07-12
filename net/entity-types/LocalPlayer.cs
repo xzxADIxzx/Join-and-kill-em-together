@@ -3,6 +3,8 @@ namespace Jaket.Net;
 using Steamworks;
 using System.IO;
 
+using Jaket.UI;
+
 /// <summary>
 /// Local player that exists only on the local machine.
 /// When serialized will be recorded in the same way as a remote player
@@ -30,11 +32,12 @@ public class LocalPlayer : Entity
         w.Write(player.eulerAngles.y);
 
         // animation
+        w.Write(Chat.Shown);
         w.Write(NewMovement.Instance.walking);
         w.Write(NewMovement.Instance.sliding);
         w.Write(Weapons.CurrentWeaponIndex());
     }
 
     // there is no point in reading anything, because it is a local player
-    public override void Read(BinaryReader r) => r.ReadBytes(26); // skip all data
+    public override void Read(BinaryReader r) => r.ReadBytes(27); // skip all data
 }
