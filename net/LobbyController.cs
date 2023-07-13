@@ -40,6 +40,12 @@ public class LobbyController
     {
         Lobby?.Leave();
         Lobby = null;
+
+        Networking.players.Clear();
+        Networking.entities.ForEach(entity =>
+        {
+            if (entity != Networking.LocalPlayer) GameObject.Destroy(entity.gameObject);
+        });
     }
 
     public static void InviteFriend()

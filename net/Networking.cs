@@ -71,7 +71,20 @@ public class Networking : MonoBehaviour
             SendEvent(friend.Id, Write(w => w.Write(SceneHelper.CurrentScene)), 2);
         };
 
-        SteamMatchmaking.OnLobbyMemberLeave += (lobby, friend) => lobby.SendChatString("<system><color=red>Player " + friend.Name + " left!</color>");
+        SteamMatchmaking.OnLobbyMemberLeave += (lobby, friend) =>
+        {
+            // send notification
+            lobby.SendChatString("<system><color=red>Player " + friend.Name + " left!</color>");
+
+            // destroy remote player doll
+            if (players.TryGetValue(friend.Id, out var player))
+            {
+                entities.Remove(player);
+                players.Remove(friend.Id);
+
+                GameObject.Destroy(player.gameObject);
+            }
+        };
 
         // create a local player to sync the player data
         CurrentOwner = SteamClient.SteamId;
