@@ -3,6 +3,7 @@ namespace Jaket.Net;
 using Steamworks;
 using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 
 using Jaket.UI;
 
@@ -23,6 +24,9 @@ public class RemotePlayer : Entity
     /// <summary> Player doll machine. </summary>
     private Machine machine;
 
+    /// <summary> Player doll enemy identifier. </summary>
+    private EnemyIdentifier enemyId;
+
     /// <summary> Transform to which weapons will be attached. </summary>
     private Transform weapons;
 
@@ -40,6 +44,9 @@ public class RemotePlayer : Entity
 
     /// <summary> Canvas containing nickname. </summary>
     private GameObject canvas;
+
+    /// <summary> Text containing nickname. </summary>
+    private Text nicknameText;
 
     /// <summary> Image showing health. </summary>
     private RectTransform healthImage;
@@ -66,6 +73,7 @@ public class RemotePlayer : Entity
 
         anim = GetComponentInChildren<Animator>();
         machine = GetComponent<Machine>();
+        enemyId = GetComponent<EnemyIdentifier>();
 
         weapons = gameObject.GetComponent<V2>().weapons[0].transform.parent;
         foreach (Transform child in weapons) Destroy(child.gameObject);
@@ -85,10 +93,10 @@ public class RemotePlayer : Entity
 
         // nickname
         nickname = new Friend(Owner).Name;
-        float width = nickname.Length * 16f;
+        float width = nickname.Length * 14f + 16f;
 
         canvas = Utils.Canvas("Nickname", transform, width, 64f, new Vector3(0f, 5f, 0f));
-        Utils.Button(nickname, canvas.transform, 0f, 0f, width, 40f, 24, Color.white, TextAnchor.MiddleCenter, () => {});
+        nicknameText = Utils.Button(nickname, canvas.transform, 0f, 0f, width, 40f, 24, Color.white, TextAnchor.MiddleCenter, () => {}).GetComponentInChildren<Text>();
 
         Utils.Image("Health Background", canvas.transform, 0f, -30f, width - 16f, 4f, new Color(0f, 0f, 0f, .5f));
         healthImage = Utils.Image("Health", canvas.transform, 0f, -30f, width - 16f, 4f, Color.red).GetComponent<RectTransform>();
@@ -101,6 +109,7 @@ public class RemotePlayer : Entity
     {
         // health & position
         machine.health = health.Get(LastUpdate);
+        enemyId.dead = machine.health <= 0f;
         healthImage.localScale = new Vector3(machine.health / 100f, 1f, 1f);
 
         transform.position = new Vector3(x.Get(LastUpdate), y.Get(LastUpdate) - (sliding ? 0f : 1.6f), z.Get(LastUpdate));
@@ -119,6 +128,7 @@ public class RemotePlayer : Entity
         }
 
         // nickname
+        nicknameText.color = machine.health > 0 ? Color.white : Color.red;
         canvas.transform.LookAt(Camera.current.transform);
         canvas.transform.Rotate(new Vector3(0f, 180f, 0f), Space.Self);
     }
