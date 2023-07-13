@@ -65,10 +65,7 @@ public class Networking : MonoBehaviour
 
             // create a new remote player doll
             CurrentOwner = friend.Id; // this is necessary so that the player does not see his own model
-            var player = RemotePlayer.CreatePlayer();
-
-            entities.Add(player);
-            players.Add(friend.Id, player);
+            entities.Add(RemotePlayer.CreatePlayer());
 
             // send current scene name to the player
             SendEvent(friend.Id, Write(w => w.Write(SceneHelper.CurrentScene)), 2);

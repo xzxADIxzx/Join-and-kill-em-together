@@ -3,7 +3,10 @@ namespace Jaket.Net;
 using Steamworks;
 using Steamworks.Data;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
+
+using Jaket.UI;
 
 public class LobbyController
 {
@@ -55,5 +58,16 @@ public class LobbyController
             IsOwner = false;
         }
         else Debug.LogError("Couldn't join the lobby.");
+    }
+
+    public static List<string> TypingPlayers()
+    {
+        List<string> list = new();
+
+        if (Chat.Shown) list.Add("You");
+        foreach (var player in Networking.players.Values)
+            if (player.typing) list.Add(player.nickname);
+
+        return list;
     }
 }

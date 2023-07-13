@@ -62,6 +62,7 @@ public class RemotePlayer : Entity
     public void Awake()
     {
         Type = Entities.Type.player;
+        Networking.players.Add(Owner, this);
 
         anim = GetComponentInChildren<Animator>();
         machine = GetComponent<Machine>();
