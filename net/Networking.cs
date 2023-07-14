@@ -79,7 +79,7 @@ public class Networking : MonoBehaviour
             // destroy remote player doll
             if (players.TryGetValue(friend.Id, out var player))
             {
-                entities.Remove(player);
+                entities.Remove(player); // TODO remove because it breaks id logic
                 players.Remove(friend.Id);
 
                 GameObject.Destroy(player.gameObject);

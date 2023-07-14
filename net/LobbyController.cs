@@ -33,6 +33,9 @@ public class LobbyController
 
             CreatingLobby = false;
             done.Invoke();
+
+            // update the discord activity so everyone can know I've been working hard
+            DiscordController.Instance.FetchSceneActivity(SceneHelper.CurrentScene);
         });
     }
 
@@ -46,6 +49,9 @@ public class LobbyController
         {
             if (entity != Networking.LocalPlayer) GameObject.Destroy(entity.gameObject);
         });
+
+        // remove mini-ads if the player is playing alone
+        DiscordController.Instance.FetchSceneActivity(SceneHelper.CurrentScene);
     }
 
     public static void InviteFriend()
@@ -64,6 +70,9 @@ public class LobbyController
             IsOwner = false;
         }
         else Debug.LogError("Couldn't join the lobby.");
+
+        // update the discord activity so everyone can know I've been working hard
+        DiscordController.Instance.FetchSceneActivity(SceneHelper.CurrentScene);
     }
 
     public static List<string> TypingPlayers()
