@@ -5,7 +5,7 @@ using UMM;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-using Jaket.HarmonyPatches;
+using Jaket.Content;
 using Jaket.Net;
 using Jaket.UI;
 
@@ -37,10 +37,12 @@ public class Plugin : UKMod
 
         if (Initialized || SceneHelper.CurrentScene != "Main Menu") return;
 
+        // content
+        Enemies.Load();
+        Weapons.Load();
+
         // net
         Networking.Load();
-        Entities.Load();
-        Weapons.Load();
 
         // ui
         Utils.Load();

@@ -13,6 +13,11 @@ public class Entities
     /// <summary> Loads providers into the dictionary. </summary>
     public static void Load()
     {
+        for (int i = 0; i <= 30; i++)
+        {
+            var type = (EntityType)i;
+            providers.Add(type, () => Enemies.Instantiate(type));
+        }
         providers.Add(EntityType.Player, RemotePlayer.CreatePlayer);
     }
 

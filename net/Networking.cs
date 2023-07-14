@@ -6,6 +6,7 @@ using System;
 using Steamworks;
 using UnityEngine;
 
+using Jaket.Content;
 using Jaket.UI;
 
 public class Networking : MonoBehaviour
@@ -193,7 +194,7 @@ public class Networking : MonoBehaviour
                 int type = r.ReadInt32();
 
                 // if the entity is not in the list, add a new one with the given type or local if available
-                if (entities.Count <= id) entities.Add(CurrentOwner == SteamClient.SteamId ? LocalPlayer : Entities.Get((Entities.Type)type));
+                if (entities.Count <= id) entities.Add(CurrentOwner == SteamClient.SteamId ? LocalPlayer : Entities.Get((EntityType)type));
 
                 entities[id].Read(r);
             }
