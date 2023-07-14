@@ -123,4 +123,22 @@ public class Bullets
     public static void Read(byte[] data) => Networking.Read(data, Read);
 
     #endregion
+    #region harmony
+
+    /// <summary> Sends the bullet to all other players if it is local, otherwise ignore. </summary>
+    public static void Send(GameObject bullet, bool hasRigidbody = false)
+    {
+        // if the lobby is null or the name is Net, then either the player isn't connected or this bullet was created remotely
+        if (LobbyController.Lobby == null || bullet.name == "Net") return;
+
+        // write bullet data to send to server or clients
+        byte[] data = Bullets.Write(bullet, hasRigidbody);
+
+        if (LobbyController.IsOwner)
+            LobbyController.EachMemberExceptOwner(member => Networking.SendEvent(member.Id, data, 0));
+        else
+            Networking.SendEvent2Host(data, 0);
+    }
+
+    #endregion
 }
