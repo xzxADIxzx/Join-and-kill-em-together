@@ -67,4 +67,60 @@ public class Bullets
     public static int CopiedIndex(string name) => Index(name.Substring(0, name.IndexOf("(Clone)")));
 
     #endregion
+    #region serialization
+
+    /// <summary> Writes bullet to the writer. </summary>
+    public static void Write(BinaryWriter w, GameObject bullet, bool hasRigidbody = false)
+    {
+        int index = bullet.name == "ReflectedBeamPoint(Clone)" ? Index("Revolver Beam") : CopiedIndex(bullet.name);
+        if (index == -1) throw new System.Exception("Bullet index is -1 for name " + bullet.name);
+
+        w.Write(index);
+
+        // position
+        w.Write(bullet.transform.position.x);
+        w.Write(bullet.transform.position.y);
+        w.Write(bullet.transform.position.z);
+
+        // rotation
+        w.Write(bullet.transform.eulerAngles.x);
+        w.Write(bullet.transform.eulerAngles.y);
+        w.Write(bullet.transform.eulerAngles.z);
+
+        w.Write(hasRigidbody);
+        if (hasRigidbody)
+        {
+            var body = bullet.GetComponent<Rigidbody>();
+            w.Write(body.velocity.x);
+            w.Write(body.velocity.y);
+            w.Write(body.velocity.z);
+        }
+        else
+        {
+            // the data size must be constant so that Networking can read it correctly
+            w.Write(0f);
+            w.Write(0f);
+            w.Write(0f);
+        }
+    }
+
+    /// <summary> Writes bullet to the byte array. </summary>
+    public static byte[] Write(GameObject bullet, bool hasRigidbody = false) => Networking.Write(w => Write(w, bullet, hasRigidbody));
+
+    /// <summary> Reads bullet from the reader. </summary>
+    public static void Read(BinaryReader r)
+    {
+        var obj = Object.Instantiate(Prefabs[r.ReadInt32()]);
+        obj.name = "Net"; // needed to prevent object looping between client and server
+
+        obj.transform.position = new Vector3(r.ReadSingle(), r.ReadSingle(), r.ReadSingle());
+        obj.transform.eulerAngles = new Vector3(r.ReadSingle(), r.ReadSingle(), r.ReadSingle());
+
+        if (r.ReadBoolean()) obj.GetComponent<Rigidbody>().velocity = new Vector3(r.ReadSingle(), r.ReadSingle(), r.ReadSingle());
+    }
+
+    /// <summary> Reads bullet from the byte array. </summary>
+    public static void Read(byte[] data) => Networking.Read(data, Read);
+
+    #endregion
 }

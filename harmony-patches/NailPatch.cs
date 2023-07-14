@@ -1,8 +1,8 @@
 namespace Jaket.HarmonyPatches;
 
 using HarmonyLib;
-using UnityEngine;
 
+using Jaket.Content;
 using Jaket.Net;
 
 [HarmonyPatch(typeof(Nail), "Start")]
@@ -13,7 +13,7 @@ public class NailPatch
         // if the lobby is null or the name is Net, then either the player isn't connected or this bullet was created remotely
         if (LobbyController.Lobby == null || __instance.gameObject.name == "Net") return;
 
-        byte[] data = Weapons.WriteBullet(__instance.gameObject, true);
+        byte[] data = Bullets.Write(__instance.gameObject, true);
 
         if (LobbyController.IsOwner)
         {
