@@ -1,7 +1,8 @@
 namespace Jaket.Net;
 
-using System.IO;
 using UnityEngine;
+
+using Jaket.IO;
 
 public class RemoteEnemy : Entity
 {
@@ -23,15 +24,13 @@ public class RemoteEnemy : Entity
         transform.eulerAngles = new Vector3(0f, rotation.GetAngel(LastUpdate), 0f);
     }
 
-    public override void Write(BinaryWriter w) // TODO replace by local entity
+    public override void Write(Writer w) // TODO replace by local entity
     {
-        w.Write(transform.position.x);
-        w.Write(transform.position.y);
-        w.Write(transform.position.z);
-        w.Write(transform.eulerAngles.y);
+        w.Vector(transform.position);
+        w.Float(transform.eulerAngles.y);
     }
 
-    public override void Read(BinaryReader r)
+    public override void Read(Reader r)
     {
         LastUpdate = Time.time;
 

@@ -1,10 +1,10 @@
 namespace Jaket.Net;
 
 using Steamworks;
-using System.IO;
 using UnityEngine;
 
 using Jaket.Content;
+using Jaket.IO;
 
 /// <summary> Any entity that has updatable state synchronized across the network. </summary>
 public abstract class Entity : MonoBehaviour
@@ -28,10 +28,10 @@ public abstract class Entity : MonoBehaviour
     }
 
     /// <summary> Writes the entity data to the writer. </summary>
-    public abstract void Write(BinaryWriter w);
+    public abstract void Write(Writer w);
 
     /// <summary> Reads the entity data from the reader. </summary>
-    public abstract void Read(BinaryReader r);
+    public abstract void Read(Reader r);
 
     /// <summary> Class for interpolating floating point values. </summary>
     public class FloatLerp
@@ -47,7 +47,7 @@ public abstract class Entity : MonoBehaviour
         }
 
         /// <summary> Reads values to be interpolated from the reader. </summary>
-        public void Read(BinaryReader r) => Set(r.ReadSingle());
+        public void Read(Reader r) => Set(r.Float());
 
         /// <summary> Returns an intermediate value. </summary>
         public float Get(float lastUpdate) => Mathf.Lerp(last, target, (Time.time - lastUpdate) / Networking.SNAPSHOTS_SPACING);

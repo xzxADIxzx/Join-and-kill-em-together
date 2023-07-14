@@ -7,6 +7,7 @@ using Steamworks;
 using UnityEngine;
 
 using Jaket.Content;
+using Jaket.IO;
 using Jaket.UI;
 
 public class Networking : MonoBehaviour
@@ -69,7 +70,7 @@ public class Networking : MonoBehaviour
             entities.Add(RemotePlayer.CreatePlayer());
 
             // send current scene name to the player
-            SendEvent(friend.Id, Write(w => w.Write(SceneHelper.CurrentScene)), 2);
+            SendEvent(friend.Id, Writer.Write(w => w.String(SceneHelper.CurrentScene)), 2);
         };
 
         SteamMatchmaking.OnLobbyMemberLeave += (lobby, friend) =>
@@ -108,7 +109,7 @@ public class Networking : MonoBehaviour
         {
             ReadPackets((id, r) => { }, (id, r, eventType) =>
             {
-                if (eventType == 2) SceneHelper.LoadScene(r.ReadString());
+                if (eventType == 2) SceneHelper.LoadScene(r.String());
             });
             return;
         }
@@ -122,14 +123,14 @@ public class Networking : MonoBehaviour
     public void ServerUpdate()
     {
         // write snapshot
-        byte[] data = Write(w =>
+        byte[] data = Writer.Write(w =>
         {
             foreach (var entity in entities)
             {
                 // write entity
-                w.Write(entity.Id);
-                w.Write(entity.Owner);
-                w.Write((int)entity.Type);
+                w.Int(entity.Id);
+                w.Id(entity.Owner);
+                w.Int((int)entity.Type);
 
                 entity.Write(w);
             }
@@ -152,19 +153,19 @@ public class Networking : MonoBehaviour
             switch (eventType) // TODO look super bad
             {
                 case 0:
-                    byte[] data = r.ReadBytes(41); // read bullet data
+                    byte[] data = r.Bytes(41); // read bullet data
                     Bullets.Read(data); // spawn a bullet
 
                     // send bullet data to everyone else
                     LobbyController.EachMemberExceptOwnerAnd(id, member => SendEvent(member.Id, data, 1));
                     break;
                 case 1:
-                    CurrentOwner = r.ReadUInt64();
+                    CurrentOwner = r.Id();
 
                     if (CurrentOwner == SteamClient.SteamId)
-                        NewMovement.Instance.GetHurt((int)r.ReadSingle(), false, 0f);
+                        NewMovement.Instance.GetHurt((int)r.Float(), false, 0f);
                     else
-                        SendEvent(CurrentOwner, r.ReadBytes(4), 1);
+                        SendEvent(CurrentOwner, r.Bytes(4), 1);
                     break;
             }
         });
@@ -173,18 +174,18 @@ public class Networking : MonoBehaviour
     public void ClientUpdate()
     {
         // send player data
-        byte[] data = Write(LocalPlayer.Write);
+        byte[] data = Writer.Write(LocalPlayer.Write);
         SendSnapshot(LobbyController.Lobby.Value.Owner.Id, data);
 
         // read incoming packets
         ReadPackets((lobbyOwner, r) =>
         {
-            while (r.BaseStream.Position < r.BaseStream.Length)
+            while (r.Position < r.Length)
             {
                 // read entity
-                int id = r.ReadInt32();
-                CurrentOwner = r.ReadUInt64();
-                int type = r.ReadInt32();
+                int id = r.Int();
+                CurrentOwner = r.Id();
+                int type = r.Int();
 
                 // if the entity is not in the list, add a new one with the given type or local if available
                 if (entities.Count <= id) entities.Add(CurrentOwner == SteamClient.SteamId ? LocalPlayer : Entities.Get((EntityType)type));
@@ -194,29 +195,10 @@ public class Networking : MonoBehaviour
         }, (lobbyOwner, r, eventType) =>
         {
             if (eventType == 0) Bullets.Read(r);
-            if (eventType == 1) NewMovement.Instance.GetHurt((int)r.ReadSingle(), false, 0f);
+            if (eventType == 1) NewMovement.Instance.GetHurt((int)r.Float(), false, 0f);
         });
     }
 
-    #region io
-
-    /// <summary> Writes data to return byte array via BinaryWriter. </summary>
-    public static byte[] Write(Action<BinaryWriter> writer)
-    {
-        MemoryStream stream = new MemoryStream();
-        using (var w = new BinaryWriter(stream)) writer.Invoke(w);
-
-        return stream.ToArray();
-    }
-
-    /// <summary> Reads data from the given byte array via BinaryReader. </summary>
-    public static void Read(byte[] data, Action<BinaryReader> reader)
-    {
-        MemoryStream stream = new MemoryStream(data);
-        using (var r = new BinaryReader(stream)) reader.Invoke(r);
-    }
-
-    #endregion
     #region communication
 
     /// <summary> Sends data to the snapshot channel. </summary>
@@ -229,13 +211,13 @@ public class Networking : MonoBehaviour
     public static void SendEvent2Host(byte[] data, int eventType) => SendEvent(LobbyController.Lobby.Value.Owner.Id, data, eventType);
 
     /// <summary> Reads data from the snapshot and event channel. </summary>
-    public static void ReadPackets(Action<SteamId, BinaryReader> snapshotReader, Action<SteamId, BinaryReader, int> eventReader)
+    public static void ReadPackets(Action<SteamId, Reader> snapshotReader, Action<SteamId, Reader, int> eventReader)
     {
         // read snapshots
         while (SteamNetworking.IsP2PPacketAvailable(0))
         {
             var packet = SteamNetworking.ReadP2PPacket(0);
-            if (packet.HasValue) Read(packet.Value.Data, r => snapshotReader.Invoke(packet.Value.SteamId, r));
+            if (packet.HasValue) Reader.Read(packet.Value.Data, r => snapshotReader(packet.Value.SteamId, r));
         }
 
         // read events
@@ -243,7 +225,7 @@ public class Networking : MonoBehaviour
             while (SteamNetworking.IsP2PPacketAvailable(1 + eventType))
             {
                 var packet = SteamNetworking.ReadP2PPacket(1 + eventType);
-                if (packet.HasValue) Read(packet.Value.Data, r => eventReader.Invoke(packet.Value.SteamId, r, eventType));
+                if (packet.HasValue) Reader.Read(packet.Value.Data, r => eventReader(packet.Value.SteamId, r, eventType));
             }
     }
 

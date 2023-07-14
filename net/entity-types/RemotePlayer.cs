@@ -1,11 +1,11 @@
 namespace Jaket.Net;
 
 using Steamworks;
-using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
 using Jaket.Content;
+using Jaket.IO;
 using Jaket.UI;
 
 public class RemotePlayer : Entity
@@ -62,10 +62,10 @@ public class RemotePlayer : Entity
         return obj.AddComponent<RemotePlayer>();
     }
 
-    public void Damage(float damage) => Networking.SendEvent2Host(Networking.Write(w =>
+    public void Damage(float damage) => Networking.SendEvent2Host(Writer.Write(w =>
     {
-        w.Write(Owner); // target
-        w.Write(damage); // damage
+        w.Id(Owner); // target
+        w.Float(damage); // damage
     }), 1);
 
     public void Awake()
@@ -135,23 +135,21 @@ public class RemotePlayer : Entity
         canvas.transform.Rotate(new Vector3(0f, 180f, 0f), Space.Self);
     }
 
-    public override void Write(BinaryWriter w)
+    public override void Write(Writer w)
     {
         // health & position
-        w.Write(machine.health);
-        w.Write(transform.position.x);
-        w.Write(transform.position.y);
-        w.Write(transform.position.z);
-        w.Write(transform.eulerAngles.y);
+        w.Float(machine.health);
+        w.Vector(transform.position);
+        w.Float(transform.eulerAngles.y);
 
         // animation
-        w.Write(typing);
-        w.Write(walking);
-        w.Write(sliding);
-        w.Write(weapon);
+        w.Bool(typing);
+        w.Bool(walking);
+        w.Bool(sliding);
+        w.Int(weapon);
     }
 
-    public override void Read(BinaryReader r)
+    public override void Read(Reader r)
     {
         LastUpdate = Time.time;
 
@@ -163,11 +161,11 @@ public class RemotePlayer : Entity
         rotation.Read(r);
 
         // animation
-        typing = r.ReadBoolean();
-        walking = r.ReadBoolean();
-        sliding = r.ReadBoolean();
+        typing = r.Bool();
+        walking = r.Bool();
+        sliding = r.Bool();
 
         lastWeapon = weapon;
-        weapon = r.ReadInt32();
+        weapon = r.Int();
     }
 }

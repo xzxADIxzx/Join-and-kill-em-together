@@ -1,9 +1,9 @@
 namespace Jaket.Content;
 
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 
+using Jaket.IO;
 using Jaket.Net;
 
 /// <summary> List of all bullets in the game and some useful methods. </summary>
@@ -70,57 +70,46 @@ public class Bullets
     #region serialization
 
     /// <summary> Writes bullet to the writer. </summary>
-    public static void Write(BinaryWriter w, GameObject bullet, bool hasRigidbody = false)
+    public static void Write(Writer w, GameObject bullet, bool hasRigidbody = false)
     {
         int index = bullet.name == "ReflectedBeamPoint(Clone)" ? Index("Revolver Beam") : CopiedIndex(bullet.name);
         if (index == -1) throw new System.Exception("Bullet index is -1 for name " + bullet.name);
 
-        w.Write(index);
+        w.Int(index);
 
-        // position
-        w.Write(bullet.transform.position.x);
-        w.Write(bullet.transform.position.y);
-        w.Write(bullet.transform.position.z);
+        w.Vector(bullet.transform.position);
+        w.Vector(bullet.transform.eulerAngles);
 
-        // rotation
-        w.Write(bullet.transform.eulerAngles.x);
-        w.Write(bullet.transform.eulerAngles.y);
-        w.Write(bullet.transform.eulerAngles.z);
-
-        w.Write(hasRigidbody);
+        w.Bool(hasRigidbody);
         if (hasRigidbody)
         {
             var body = bullet.GetComponent<Rigidbody>();
-            w.Write(body.velocity.x);
-            w.Write(body.velocity.y);
-            w.Write(body.velocity.z);
+            w.Vector(body.velocity);
         }
         else
         {
             // the data size must be constant so that Networking can read it correctly
-            w.Write(0f);
-            w.Write(0f);
-            w.Write(0f);
+            w.Vector(new Vector3(0f, 0f, 0f));
         }
     }
 
     /// <summary> Writes bullet to the byte array. </summary>
-    public static byte[] Write(GameObject bullet, bool hasRigidbody = false) => Networking.Write(w => Write(w, bullet, hasRigidbody));
+    public static byte[] Write(GameObject bullet, bool hasRigidbody = false) => Writer.Write(w => Write(w, bullet, hasRigidbody));
 
     /// <summary> Reads bullet from the reader. </summary>
-    public static void Read(BinaryReader r)
+    public static void Read(Reader r)
     {
-        var obj = Object.Instantiate(Prefabs[r.ReadInt32()]);
+        var obj = Object.Instantiate(Prefabs[r.Int()]);
         obj.name = "Net"; // needed to prevent object looping between client and server
 
-        obj.transform.position = new Vector3(r.ReadSingle(), r.ReadSingle(), r.ReadSingle());
-        obj.transform.eulerAngles = new Vector3(r.ReadSingle(), r.ReadSingle(), r.ReadSingle());
+        obj.transform.position = r.Vector();
+        obj.transform.eulerAngles = r.Vector();
 
-        if (r.ReadBoolean()) obj.GetComponent<Rigidbody>().velocity = new Vector3(r.ReadSingle(), r.ReadSingle(), r.ReadSingle());
+        if (r.Bool()) obj.GetComponent<Rigidbody>().velocity = r.Vector();
     }
 
     /// <summary> Reads bullet from the byte array. </summary>
-    public static void Read(byte[] data) => Networking.Read(data, Read);
+    public static void Read(byte[] data) => Reader.Read(data, Read);
 
     #endregion
     #region harmony
