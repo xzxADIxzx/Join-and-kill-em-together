@@ -44,6 +44,7 @@ public class Plugin : UKMod
 
         // net
         Networking.Load();
+        Entities.Load();
 
         // ui
         Utils.Load();
