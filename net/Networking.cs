@@ -136,14 +136,7 @@ public class Networking : MonoBehaviour
         });
 
         // send snapshot
-        foreach (var member in LobbyController.Lobby?.Members)
-        {
-            // no need to send packets to yourself
-            if (member.Id == SteamClient.SteamId) continue;
-
-            // send snapshot to the player
-            SendSnapshot(member.Id, data);
-        }
+        LobbyController.EachMemberExceptOwner(member => SendSnapshot(member.Id, data));
 
         // read incoming packets
         ReadPackets((id, r) =>
@@ -160,10 +153,10 @@ public class Networking : MonoBehaviour
             {
                 case 0:
                     byte[] data = r.ReadBytes(41); // read bullet data
-                    // Weapons.InstantinateBullet(data); // spawn a bullet
+                    Bullets.Read(data); // spawn a bullet
 
-                    foreach (var member in LobbyController.Lobby?.Members) // send bullet data to everyone else
-                        if (member.Id != SteamClient.SteamId && member.Id != id) SendEvent(member.Id, data, 1);
+                    // send bullet data to everyone else
+                    LobbyController.EachMemberExceptOwnerAnd(id, member => SendEvent(member.Id, data, 1));
                     break;
                 case 1:
                     CurrentOwner = r.ReadUInt64();
@@ -200,7 +193,7 @@ public class Networking : MonoBehaviour
             }
         }, (lobbyOwner, r, eventType) =>
         {
-            // if (eventType == 0) Weapons.InstantinateBullet(r);
+            if (eventType == 0) Bullets.Read(r);
             if (eventType == 1) NewMovement.Instance.GetHurt((int)r.ReadSingle(), false, 0f);
         });
     }

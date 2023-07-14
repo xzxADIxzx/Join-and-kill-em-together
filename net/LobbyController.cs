@@ -99,5 +99,31 @@ public class LobbyController
         return list;
     }
 
+    /// <summary> Iterates each lobby member. </summary>
+    public static void EachMember(Action<Friend> cons)
+    {
+        foreach (var member in Lobby.Value.Members) cons(member);
+    }
+
+    /// <summary> Iterates each lobby member except its owner. </summary>
+    public static void EachMemberExceptOwner(Action<Friend> cons)
+    {
+        foreach (var member in Lobby.Value.Members)
+        {
+            // usually this method is used by the server to send packets, because it doesn't make sense to send packets to itself
+            if (member.Id != Lobby.Value.Owner.Id) cons(member);
+        }
+    }
+
+    /// <summary> Iterates each lobby member, except for its owner and one more SteamID. </summary>
+    public static void EachMemberExceptOwnerAnd(SteamId id, Action<Friend> cons)
+    {
+        foreach (var member in Lobby.Value.Members)
+        {
+            // usually this method is used by the server to forward packets from one of the clients
+            if (member.Id != Lobby.Value.Owner.Id && member.Id != id) cons(member);
+        }
+    }
+
     #endregion
 }

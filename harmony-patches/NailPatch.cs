@@ -16,11 +16,9 @@ public class NailPatch
         byte[] data = Bullets.Write(__instance.gameObject, true);
 
         if (LobbyController.IsOwner)
-        {
-            foreach (var member in LobbyController.Lobby?.Members)
-                if (member.Id != Steamworks.SteamClient.SteamId) Networking.SendEvent(member.Id, data, 0);
-        }
-        else Networking.SendEvent2Host(data, 0);
+            LobbyController.EachMemberExceptOwner(member => Networking.SendEvent(member.Id, data, 0));
+        else
+            Networking.SendEvent2Host(data, 0);
     }
 }
 
