@@ -3,6 +3,7 @@ namespace Jaket.Net;
 using Steamworks;
 using System.IO;
 
+using Jaket.Content;
 using Jaket.UI;
 
 /// <summary>
@@ -16,7 +17,7 @@ public class LocalPlayer : Entity
 
     public void Awake()
     {
-        Type = Entities.Type.player;
+        Type = EntityType.Player;
         Owner = SteamClient.SteamId.Value;
     }
 

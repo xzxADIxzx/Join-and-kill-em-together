@@ -5,6 +5,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
+using Jaket.Content;
 using Jaket.UI;
 
 public class RemotePlayer : Entity
@@ -68,7 +69,7 @@ public class RemotePlayer : Entity
 
     public void Awake()
     {
-        Type = Entities.Type.player;
+        Type = EntityType.Player;
         Networking.players.Add(Owner, this);
 
         anim = GetComponentInChildren<Animator>();

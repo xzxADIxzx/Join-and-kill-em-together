@@ -4,6 +4,8 @@ using Steamworks;
 using System.IO;
 using UnityEngine;
 
+using Jaket.Content;
+
 /// <summary> Any entity that has updatable state synchronized across the network. </summary>
 public abstract class Entity : MonoBehaviour
 {
@@ -14,7 +16,7 @@ public abstract class Entity : MonoBehaviour
     public SteamId Owner;
 
     /// <summary> Type of entity, like a player or some kind of enemy. </summary>
-    public Entities.Type Type;
+    public EntityType Type;
 
     /// <summary> Last update time via snapshots. </summary>
     public float LastUpdate;
