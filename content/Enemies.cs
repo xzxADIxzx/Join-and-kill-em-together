@@ -16,8 +16,6 @@ public class Enemies
     {
         var all = Resources.FindObjectsOfTypeAll<EnemyIdentifier>();
         foreach (var enemy in all) Prefabs.Add(enemy.gameObject);
-
-        Prefabs.ForEach(prefab => Debug.LogWarning(prefab.name));
     }
 
     #region index
