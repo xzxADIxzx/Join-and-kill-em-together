@@ -37,17 +37,14 @@ public class PlayerList
         create = Utils.Button("CREATE LOBBY", canvas.transform, -784f, 412f, () =>
         {
             if (LobbyController.Lobby != null)
-                LobbyController.CloseLobby();
+                LobbyController.LeaveLobby();
             else
                 LobbyController.CreateLobby(Update);
 
             Update();
         });
 
-        invite = Utils.Button("INVITE FRIEND", canvas.transform, -784f, 332f, () =>
-        {
-            LobbyController.InviteFriend();
-        });
+        invite = Utils.Button("INVITE FRIEND", canvas.transform, -784f, 332f, LobbyController.InviteFriend);
 
         list = Utils.Rect("List", canvas.transform, 0f, 0f, 1920f, 1080f);
 
