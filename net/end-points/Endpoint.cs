@@ -14,10 +14,10 @@ public abstract class Endpoint
     protected Dictionary<PacketType, PacketListener> listeners = new();
 
     /// <summary> Reference to Networking.Entities. </summary>
-    protected List<Entity> entities { get => Networking.entities; }
+    protected List<Entity> entities { get => Networking.Entities; }
 
     /// <summary> Reference to Networking.Players </summary>
-    protected Dictionary<SteamId, RemotePlayer> players => Networking.players;
+    protected Dictionary<SteamId, RemotePlayer> players => Networking.Players;
 
     /// <summary> Loads endpoint listeners and other stuff. </summary>
     public abstract void Load();

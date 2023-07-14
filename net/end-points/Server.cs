@@ -12,7 +12,7 @@ public class Server : Endpoint
     {
         Listen(PacketType.Snapshot, (sender, r) =>
         {
-            Networking.CurrentOwner = sender;
+            Networking.CurrentOwner = sender; // this is necessary so that the player does not see his model
 
             // if the player does not have a doll, then create it
             if (!players.ContainsKey(sender)) players.Add(sender, RemotePlayer.CreatePlayer());
@@ -27,7 +27,7 @@ public class Server : Endpoint
             Bullets.Read(data); // spawn a bullet
 
             // send bullet data to everyone else
-            LobbyController.EachMemberExceptOwnerAnd(sender, member => Networking.SendEvent(member.Id, data, (int)PacketType.SpawnBullet));
+            LobbyController.EachMemberExceptOwnerAnd(sender, member => Networking.Send(member.Id, data, PacketType.SpawnBullet));
         });
 
         Listen(PacketType.DamagePlayer, (sender, r) =>
@@ -39,7 +39,7 @@ public class Server : Endpoint
                 NewMovement.Instance.GetHurt((int)r.Float(), false, 0f);
             else
                 // damage was deal to a player, so redirect the packet to him
-                Networking.SendEvent(Networking.CurrentOwner, r.Bytes(4), (int)PacketType.DamagePlayer);
+                Networking.Send(Networking.CurrentOwner, r.Bytes(4), PacketType.DamagePlayer);
         });
     }
 
@@ -48,6 +48,9 @@ public class Server : Endpoint
         // write snapshot
         byte[] data = Writer.Write(w => entities.ForEach(entity =>
         {
+            // when an entity is destroyed via Object.Destroy, the element in the list is replaced with null
+            if (entity == null) return;
+
             w.Int(entity.Id);
             w.Id(entity.Owner);
             w.Int((int)entity.Type);
@@ -56,7 +59,7 @@ public class Server : Endpoint
         }));
 
         // send snapshot
-        LobbyController.EachMemberExceptOwner(member => Networking.SendEvent(member.Id, data, (int)PacketType.Snapshot));
+        LobbyController.EachMemberExceptOwner(member => Networking.SendSnapshot(member.Id, data));
 
         // read incoming packets
         UpdateListeners();

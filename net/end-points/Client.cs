@@ -37,7 +37,7 @@ public class Client : Endpoint
         byte[] data = Writer.Write(Networking.LocalPlayer.Write);
 
         // send player data
-        Networking.SendEvent(LobbyController.Lobby.Value.Owner.Id, data, (int)PacketType.Snapshot);
+        Networking.SendSnapshot(LobbyController.Lobby.Value.Owner.Id, data);
 
         // read incoming packets
         UpdateListeners();

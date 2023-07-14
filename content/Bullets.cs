@@ -121,12 +121,12 @@ public class Bullets
         if (LobbyController.Lobby == null || bullet.name == "Net") return;
 
         // write bullet data to send to server or clients
-        byte[] data = Bullets.Write(bullet, hasRigidbody);
+        byte[] data = Write(bullet, hasRigidbody);
 
         if (LobbyController.IsOwner)
-            LobbyController.EachMemberExceptOwner(member => Networking.SendEvent(member.Id, data, 0));
+            LobbyController.EachMemberExceptOwner(member => Networking.Send(member.Id, data, PacketType.SpawnBullet));
         else
-            Networking.SendEvent2Host(data, 0);
+            Networking.Send(LobbyController.Lobby.Value.Owner.Id, data, PacketType.SpawnBullet);
     }
 
     #endregion

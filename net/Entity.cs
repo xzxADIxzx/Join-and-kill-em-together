@@ -23,7 +23,7 @@ public abstract class Entity : MonoBehaviour
 
     public Entity()
     {
-        Id = Networking.entities.Count;
+        Id = Networking.Entities.Count;
         Owner = Networking.CurrentOwner;
     }
 

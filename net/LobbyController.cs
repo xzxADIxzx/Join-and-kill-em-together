@@ -54,11 +54,8 @@ public class LobbyController
         Lobby?.Leave();
         Lobby = null;
 
-        Networking.players.Clear(); // TODO move to Networking
-        Networking.entities.ForEach(entity =>
-        {
-            if (entity != Networking.LocalPlayer) GameObject.Destroy(entity.gameObject);
-        });
+        // destroy all network objects
+        Networking.Clear();
 
         // remove mini-ads if the player is playing alone
         DiscordController.Instance.FetchSceneActivity(SceneHelper.CurrentScene);
@@ -93,7 +90,7 @@ public class LobbyController
         List<string> list = new();
 
         if (Chat.Shown) list.Add("You");
-        foreach (var player in Networking.players.Values)
+        foreach (var player in Networking.Players.Values)
             if (player.typing) list.Add(player.nickname);
 
         return list;
