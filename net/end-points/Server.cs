@@ -15,10 +15,10 @@ public class Server : Endpoint
             Networking.CurrentOwner = sender;
 
             // if the player does not have a doll, then create it
-            if (!Networking.players.ContainsKey(sender)) Networking.players.Add(sender, RemotePlayer.CreatePlayer());
+            if (!players.ContainsKey(sender)) players.Add(sender, RemotePlayer.CreatePlayer());
 
             // read player data
-            Networking.players[sender].Read(r);
+            players[sender].Read(r);
         });
 
         Listen(PacketType.SpawnBullet, (sender, r) =>
@@ -46,7 +46,7 @@ public class Server : Endpoint
     public override void Update()
     {
         // write snapshot
-        byte[] data = Writer.Write(w => Networking.entities.ForEach(entity =>
+        byte[] data = Writer.Write(w => entities.ForEach(entity =>
         {
             w.Int(entity.Id);
             w.Id(entity.Owner);

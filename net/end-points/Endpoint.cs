@@ -5,12 +5,19 @@ using System.Collections.Generic;
 
 using Jaket.Content;
 using Jaket.IO;
+using Jaket.Net.EntityTypes;
 
 /// <summary> Network connection endpoint that contains listeners for different packet types. </summary>
 public abstract class Endpoint
 {
     /// <summary> Dictionary of packet types to their listeners. </summary>
-    public Dictionary<PacketType, PacketListener> listeners = new();
+    protected Dictionary<PacketType, PacketListener> listeners = new();
+
+    /// <summary> Reference to Networking.Entities. </summary>
+    protected List<Entity> entities { get => Networking.entities; }
+
+    /// <summary> Reference to Networking.Players </summary>
+    protected Dictionary<SteamId, RemotePlayer> players => Networking.players;
 
     /// <summary> Loads endpoint listeners and other stuff. </summary>
     public abstract void Load();
