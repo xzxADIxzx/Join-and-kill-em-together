@@ -23,7 +23,7 @@ public class Writer
     /// <summary> Writes data to return byte array via writer. </summary>
     public static byte[] Write(Action<Writer> cons)
     {
-        MemoryStream stream = new MemoryStream();
+        MemoryStream stream = new();
         using (var w = new BinaryWriter(stream)) cons(new Writer(w));
 
         return stream.ToArray();

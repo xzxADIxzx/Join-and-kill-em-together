@@ -9,7 +9,7 @@ using Jaket.Net.EntityTypes;
 public class Entities
 {
     /// <summary> Dictionary of entity types to their providers. </summary>
-    public static Dictionary<EntityType, Prov> providers = new Dictionary<EntityType, Prov>();
+    public static Dictionary<EntityType, Prov> providers = new();
 
     /// <summary> Loads providers into the dictionary. </summary>
     public static void Load()

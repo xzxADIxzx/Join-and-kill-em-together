@@ -23,7 +23,7 @@ public class Reader
     /// <summary> Reads data from the given byte array via reader. </summary>
     public static void Read(byte[] data, Action<Reader> cons)
     {
-        MemoryStream stream = new MemoryStream(data);
+        MemoryStream stream = new(data);
         using (var r = new BinaryReader(stream)) cons(new Reader(r));
     }
 
@@ -49,7 +49,7 @@ public class Reader
     public string String() => r.ReadString();
 
     /// <summary> Reads a vector. </summary>
-    public Vector3 Vector() => new Vector3(r.ReadSingle(), r.ReadSingle(), r.ReadSingle());
+    public Vector3 Vector() => new(r.ReadSingle(), r.ReadSingle(), r.ReadSingle());
 
     /// <summary> Reads a SteamID. </summary>
     public SteamId Id() => r.ReadUInt64();
