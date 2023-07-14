@@ -126,7 +126,7 @@ public class RemotePlayer : Entity
             lastWeapon = weapon;
 
             foreach (Transform child in weapons) Destroy(child.gameObject);
-            if (weapon != -1) Weapons.InstantiateWeapon(weapon, weapons).transform.eulerAngles = new Vector3(0f, 90f, 0f);
+            if (weapon != -1) Weapons.Instantiate(weapon, weapons);;
         }
 
         // nickname

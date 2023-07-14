@@ -160,7 +160,7 @@ public class Networking : MonoBehaviour
             {
                 case 0:
                     byte[] data = r.ReadBytes(41); // read bullet data
-                    Weapons.InstantinateBullet(data); // spawn a bullet
+                    // Weapons.InstantinateBullet(data); // spawn a bullet
 
                     foreach (var member in LobbyController.Lobby?.Members) // send bullet data to everyone else
                         if (member.Id != SteamClient.SteamId && member.Id != id) SendEvent(member.Id, data, 1);
@@ -200,7 +200,7 @@ public class Networking : MonoBehaviour
             }
         }, (lobbyOwner, r, eventType) =>
         {
-            if (eventType == 0) Weapons.InstantinateBullet(r);
+            // if (eventType == 0) Weapons.InstantinateBullet(r);
             if (eventType == 1) NewMovement.Instance.GetHurt((int)r.ReadSingle(), false, 0f);
         });
     }

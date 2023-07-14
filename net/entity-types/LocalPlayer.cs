@@ -36,7 +36,7 @@ public class LocalPlayer : Entity
         w.Write(Chat.Shown);
         w.Write(NewMovement.Instance.walking);
         w.Write(NewMovement.Instance.sliding);
-        w.Write(Weapons.CurrentWeaponIndex());
+        w.Write(Weapons.CurrentIndex());
     }
 
     // there is no point in reading anything, because it is a local player
