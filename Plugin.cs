@@ -40,6 +40,7 @@ public class Plugin : UKMod
         // content
         Enemies.Load();
         Weapons.Load();
+        Bullets.Load(); // load it after weapons
 
         // net
         Networking.Load();

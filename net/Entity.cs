@@ -30,7 +30,7 @@ public abstract class Entity : MonoBehaviour
     /// <summary> Writes the entity data to the writer. </summary>
     public abstract void Write(BinaryWriter w);
 
-    /// <summary> Reads the entity data from the writer. </summary>
+    /// <summary> Reads the entity data from the reader. </summary>
     public abstract void Read(BinaryReader r);
 
     /// <summary> Class for interpolating floating point values. </summary>
