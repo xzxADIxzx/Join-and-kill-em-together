@@ -56,7 +56,7 @@ public class RemotePlayer : Entity
     public static RemotePlayer CreatePlayer()
     {
         var prefab = AssetHelper.LoadPrefab(V2AssetKey);
-        var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity);
+        var obj = Instantiate(prefab, Vector3.zero, Quaternion.identity);
         obj.name = "Net";
 
         return obj.AddComponent<RemotePlayer>();
