@@ -12,13 +12,10 @@ using Jaket.UI;
 /// </summary>
 public class LocalPlayer : Entity
 {
-    /// <summary> Creates a new local player. </summary>
-    public static LocalPlayer CreatePlayer() => Plugin.Instance.gameObject.AddComponent<LocalPlayer>();
-
     public void Awake()
     {
-        Type = EntityType.Player;
         Owner = SteamClient.SteamId.Value;
+        Type = EntityType.Player;
     }
 
     public override void Write(Writer w)

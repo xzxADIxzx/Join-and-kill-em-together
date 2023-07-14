@@ -89,8 +89,7 @@ public class Networking : MonoBehaviour
         };
 
         // create a local player to sync the player data
-        CurrentOwner = SteamClient.SteamId;
-        LocalPlayer = LocalPlayer.CreatePlayer();
+        LocalPlayer = Utils.Object("Local Player", Plugin.Instance.transform).AddComponent<LocalPlayer>();
 
         // create an object to update the network logic
         Utils.Object("Networking", Plugin.Instance.transform).AddComponent<Networking>();

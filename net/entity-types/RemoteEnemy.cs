@@ -6,6 +6,7 @@ using Jaket.IO;
 
 public class RemoteEnemy : Entity
 {
+    /// <summary> Enemy position and rotation. </summary>
     private FloatLerp x, y, z, rotation;
 
     public void Awake()
@@ -18,17 +19,11 @@ public class RemoteEnemy : Entity
 
     public void Update()
     {
-        if (LobbyController.IsOwner) return;
-
         transform.position = new Vector3(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
         transform.eulerAngles = new Vector3(0f, rotation.GetAngel(LastUpdate), 0f);
     }
 
-    public override void Write(Writer w) // TODO replace by local entity
-    {
-        w.Vector(transform.position);
-        w.Float(transform.eulerAngles.y);
-    }
+    public override void Write(Writer w) {}
 
     public override void Read(Reader r)
     {
