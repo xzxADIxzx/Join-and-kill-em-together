@@ -1,4 +1,4 @@
-namespace Jaket.Net;
+namespace Jaket.Net.EntityTypes;
 
 using UnityEngine;
 

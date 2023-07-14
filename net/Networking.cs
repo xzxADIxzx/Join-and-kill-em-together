@@ -1,13 +1,13 @@
 namespace Jaket.Net;
 
 using System.Collections.Generic;
-using System.IO;
 using System;
 using Steamworks;
 using UnityEngine;
 
 using Jaket.Content;
 using Jaket.IO;
+using Jaket.Net.EntityTypes;
 using Jaket.UI;
 
 public class Networking : MonoBehaviour

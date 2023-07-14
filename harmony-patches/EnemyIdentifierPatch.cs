@@ -4,6 +4,7 @@ using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Net;
+using Jaket.Net.EntityTypes;
 
 [HarmonyPatch(typeof(EnemyIdentifier), "Start")]
 public class EnemyIdentifierPatch

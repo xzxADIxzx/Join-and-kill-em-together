@@ -5,6 +5,7 @@ using UnityEngine;
 
 using Jaket.Content;
 using Jaket.Net;
+using Jaket.Net.EntityTypes;
 
 [HarmonyPatch(typeof(RevolverBeam), "Start")]
 public class RevolverBeamPatch

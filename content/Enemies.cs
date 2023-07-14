@@ -3,7 +3,7 @@ namespace Jaket.Content;
 using System.Collections.Generic;
 using UnityEngine;
 
-using Jaket.Net;
+using Jaket.Net.EntityTypes;
 
 /// <summary> List of all enemies in the game and some useful methods. </summary>
 public class Enemies

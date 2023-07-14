@@ -4,6 +4,7 @@ using HarmonyLib;
 
 using Jaket.Content;
 using Jaket.Net;
+using Jaket.Net.EntityTypes;
 
 [HarmonyPatch(typeof(Nail), "Start")]
 public class NailPatch

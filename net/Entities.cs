@@ -3,6 +3,7 @@ namespace Jaket.Net;
 using System.Collections.Generic;
 
 using Jaket.Content;
+using Jaket.Net.EntityTypes;
 
 /// <summary> Class that provides entities by their type. </summary>
 public class Entities
