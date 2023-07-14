@@ -96,7 +96,7 @@ public class Weapons
         if (component != null) component.enabled = false;
     }
 
-    public static GameObject InstantinateWeapon(int index, Transform parent)
+    public static GameObject InstantiateWeapon(int index, Transform parent)
     {
         var instance = GameObject.Instantiate(All[index], parent);
         instance.SetActive(true); // idk why, but weapon prefabs are disabled by default

@@ -8,7 +8,7 @@ using Jaket.UI;
 
 /// <summary>
 /// Local player that exists only on the local machine.
-/// When serialized will be recorded in the same way as a remote player
+/// When serialized will be recorded in the same way as a remote player.
 /// </summary>
 public class LocalPlayer : Entity
 {
