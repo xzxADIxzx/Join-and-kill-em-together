@@ -119,7 +119,7 @@ public class Networking : MonoBehaviour
         Entities.ForEach(entity =>
         {
             // in no case can you destroy a local player
-            if (entity != LocalPlayer) Destroy(entity.gameObject);
+            if (entity != LocalPlayer && entity != null) Destroy(entity.gameObject);
         });
 
         Entities.Clear();
