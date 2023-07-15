@@ -1,9 +1,9 @@
-namespace Jaket.Net;
+namespace Jaket.Net.EntityTypes;
 
 using Steamworks;
-using System.IO;
 
 using Jaket.Content;
+using Jaket.IO;
 using Jaket.UI;
 
 /// <summary>
@@ -12,33 +12,26 @@ using Jaket.UI;
 /// </summary>
 public class LocalPlayer : Entity
 {
-    /// <summary> Creates a new local player. </summary>
-    public static LocalPlayer CreatePlayer() => Plugin.Instance.gameObject.AddComponent<LocalPlayer>();
-
     public void Awake()
     {
-        Type = EntityType.Player;
         Owner = SteamClient.SteamId.Value;
+        Type = EntityType.Player;
     }
 
-    public override void Write(BinaryWriter w)
+    public override void Write(Writer w)
     {
-        var player = NewMovement.Instance.transform;
-
         // health & position
-        w.Write((float)NewMovement.Instance.hp);
-        w.Write(player.position.x);
-        w.Write(player.position.y);
-        w.Write(player.position.z);
-        w.Write(player.eulerAngles.y);
+        w.Float(NewMovement.Instance.hp);
+        w.Vector(NewMovement.Instance.transform.position);
+        w.Float(NewMovement.Instance.transform.eulerAngles.y);
 
         // animation
-        w.Write(Chat.Shown);
-        w.Write(NewMovement.Instance.walking);
-        w.Write(NewMovement.Instance.sliding);
-        w.Write(Weapons.CurrentWeaponIndex());
+        w.Bool(Chat.Shown);
+        w.Bool(NewMovement.Instance.walking);
+        w.Bool(NewMovement.Instance.sliding);
+        w.Int(Weapons.CurrentIndex());
     }
 
     // there is no point in reading anything, because it is a local player
-    public override void Read(BinaryReader r) => r.ReadBytes(27); // skip all data
+    public override void Read(Reader r) => r.Bytes(27); // skip all data
 }

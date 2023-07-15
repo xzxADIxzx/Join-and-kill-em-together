@@ -22,8 +22,7 @@ public class PlayerList
         Utils.Text("--PLAYERS--", list.transform, -784f, 172f);
 
         float y = 172f;
-        foreach (var member in LobbyController.Lobby.Value.Members)
-            Utils.Button(member.Name, list.transform, -784f, y -= 80f, () => SteamFriends.OpenUserOverlay(member.Id, "steamid"));
+        LobbyController.EachMember(member => Utils.Button(member.Name, list.transform, -784f, y -= 80f, () => SteamFriends.OpenUserOverlay(member.Id, "steamid")));
     }
 
     public static void Build()
@@ -37,17 +36,14 @@ public class PlayerList
         create = Utils.Button("CREATE LOBBY", canvas.transform, -784f, 412f, () =>
         {
             if (LobbyController.Lobby != null)
-                LobbyController.CloseLobby();
+                LobbyController.LeaveLobby();
             else
                 LobbyController.CreateLobby(Update);
 
             Update();
         });
 
-        invite = Utils.Button("INVITE FRIEND", canvas.transform, -784f, 332f, () =>
-        {
-            LobbyController.InviteFriend();
-        });
+        invite = Utils.Button("INVITE FRIEND", canvas.transform, -784f, 332f, LobbyController.InviteFriend);
 
         list = Utils.Rect("List", canvas.transform, 0f, 0f, 1920f, 1080f);
 

@@ -1,11 +1,11 @@
-namespace Jaket.Net;
+namespace Jaket.Net.EntityTypes;
 
 using Steamworks;
-using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
 using Jaket.Content;
+using Jaket.IO;
 using Jaket.UI;
 
 public class RemotePlayer : Entity
@@ -56,22 +56,22 @@ public class RemotePlayer : Entity
     public static RemotePlayer CreatePlayer()
     {
         var prefab = AssetHelper.LoadPrefab(V2AssetKey);
-        var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity);
+        var obj = Instantiate(prefab, Vector3.zero, Quaternion.identity);
         obj.name = "Net";
 
         return obj.AddComponent<RemotePlayer>();
     }
 
-    public void Damage(float damage) => Networking.SendEvent2Host(Networking.Write(w =>
+    public void Damage(float damage) => Networking.Send(LobbyController.Owner, Writer.Write(w =>
     {
-        w.Write(Owner); // target
-        w.Write(damage); // damage
-    }), 1);
+        w.Id(Owner); // target
+        w.Float(damage); // damage
+    }), PacketType.DamagePlayer);
 
     public void Awake()
     {
         Type = EntityType.Player;
-        Networking.players.Add(Owner, this);
+        Networking.Players.Add(Owner, this);
 
         anim = GetComponentInChildren<Animator>();
         machine = GetComponent<Machine>();
@@ -90,8 +90,8 @@ public class RemotePlayer : Entity
         z = new FloatLerp();
         rotation = new FloatLerp();
 
-        GameObject.Destroy(gameObject.GetComponent<V2>()); // remove ai
-        GameObject.Destroy(gameObject.GetComponentInChildren<V2AnimationController>());
+        Destroy(gameObject.GetComponent<V2>()); // remove ai
+        Destroy(gameObject.GetComponentInChildren<V2AnimationController>());
 
         // nickname
         nickname = new Friend(Owner).Name;
@@ -121,12 +121,12 @@ public class RemotePlayer : Entity
         anim.SetBool("RunningBack", sliding);
         anim.SetBool("Sliding", sliding);
 
-        if (lastWeapon != weapon)
+        if (lastWeapon != weapon && weapon != -1)
         {
             lastWeapon = weapon;
 
             foreach (Transform child in weapons) Destroy(child.gameObject);
-            if (weapon != -1) Weapons.InstantiateWeapon(weapon, weapons).transform.eulerAngles = new Vector3(0f, 90f, 0f);
+            if (weapon != -1) Weapons.Instantiate(weapon, weapons);
         }
 
         // nickname
@@ -135,23 +135,21 @@ public class RemotePlayer : Entity
         canvas.transform.Rotate(new Vector3(0f, 180f, 0f), Space.Self);
     }
 
-    public override void Write(BinaryWriter w)
+    public override void Write(Writer w)
     {
         // health & position
-        w.Write(machine.health);
-        w.Write(transform.position.x);
-        w.Write(transform.position.y);
-        w.Write(transform.position.z);
-        w.Write(transform.eulerAngles.y);
+        w.Float(machine.health);
+        w.Vector(transform.position);
+        w.Float(transform.eulerAngles.y);
 
         // animation
-        w.Write(typing);
-        w.Write(walking);
-        w.Write(sliding);
-        w.Write(weapon);
+        w.Bool(typing);
+        w.Bool(walking);
+        w.Bool(sliding);
+        w.Int(weapon);
     }
 
-    public override void Read(BinaryReader r)
+    public override void Read(Reader r)
     {
         LastUpdate = Time.time;
 
@@ -163,11 +161,11 @@ public class RemotePlayer : Entity
         rotation.Read(r);
 
         // animation
-        typing = r.ReadBoolean();
-        walking = r.ReadBoolean();
-        sliding = r.ReadBoolean();
+        typing = r.Bool();
+        walking = r.Bool();
+        sliding = r.Bool();
 
         lastWeapon = weapon;
-        weapon = r.ReadInt32();
+        weapon = r.Int();
     }
 }

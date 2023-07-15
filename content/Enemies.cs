@@ -3,7 +3,7 @@ namespace Jaket.Content;
 using System.Collections.Generic;
 using UnityEngine;
 
-using Jaket.Net;
+using Jaket.Net.EntityTypes;
 
 /// <summary> List of all enemies in the game and some useful methods. </summary>
 public class Enemies
@@ -17,7 +17,8 @@ public class Enemies
         var all = Resources.FindObjectsOfTypeAll<EnemyIdentifier>();
         foreach (var enemy in all) Prefabs.Add(enemy.gameObject);
 
-        Prefabs.ForEach(prefab => Debug.LogWarning(prefab.name));
+        // sort enemies by name to make sure their order is the same for different clients
+        Prefabs.Sort((p1, p2) => p1.name.CompareTo(p2.name));
     }
 
     #region index
@@ -26,7 +27,7 @@ public class Enemies
     public static int Index(string name) => Prefabs.FindIndex(prefab => prefab.name == name);
 
     /// <summary> Finds enemy index by the name of its clone. </summary>
-    public static int CopiedIndex(string name) => Index(name.Substring(0, name.IndexOf("(Clone)")));
+    public static int CopiedIndex(string name) => Index(name.Contains("(") ? name.Substring(0, name.IndexOf("(")).Trim() : name);
 
     #endregion
     #region instantiation

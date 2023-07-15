@@ -15,7 +15,7 @@ public class Plugin : UKMod
     const string GUID = "xzxADIxzx.Jaket";
     const string NAME = "Jaket";
     const string DESC = "Multikill is still in development, so I created my own multiplayer mod for ultrakill.\nAuthor: xzxADIxzx#7729 & Sowler#5518";
-    const string VERSION = "0.1.0";
+    const string VERSION = "0.2.0";
 
     public static Plugin Instance;
     public static bool Initialized;
@@ -33,16 +33,16 @@ public class Plugin : UKMod
     public void Init()
     {
         Utils.WasCheatsEnabled = false;
-        Networking.Loading = false;
-
         if (Initialized || SceneHelper.CurrentScene != "Main Menu") return;
 
         // content
         Enemies.Load();
         Weapons.Load();
+        Bullets.Load(); // load it after weapons
 
         // net
         Networking.Load();
+        Entities.Load();
 
         // ui
         Utils.Load();

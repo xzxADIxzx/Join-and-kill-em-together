@@ -1,10 +1,12 @@
-namespace Jaket.Net;
+namespace Jaket.Net.EntityTypes;
 
-using System.IO;
 using UnityEngine;
+
+using Jaket.IO;
 
 public class RemoteEnemy : Entity
 {
+    /// <summary> Enemy position and rotation. </summary>
     private FloatLerp x, y, z, rotation;
 
     public void Awake()
@@ -17,21 +19,13 @@ public class RemoteEnemy : Entity
 
     public void Update()
     {
-        if (LobbyController.IsOwner) return;
-
         transform.position = new Vector3(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
         transform.eulerAngles = new Vector3(0f, rotation.GetAngel(LastUpdate), 0f);
     }
 
-    public override void Write(BinaryWriter w) // TODO replace by local entity
-    {
-        w.Write(transform.position.x);
-        w.Write(transform.position.y);
-        w.Write(transform.position.z);
-        w.Write(transform.eulerAngles.y);
-    }
+    public override void Write(Writer w) {}
 
-    public override void Read(BinaryReader r)
+    public override void Read(Reader r)
     {
         LastUpdate = Time.time;
 

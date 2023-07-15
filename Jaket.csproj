@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Jaket</AssemblyName>
     <Description>Multikill is still in development, so I created my own multiplayer mod for ultrakill</Description>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <RestoreAdditionalProjectSources>
@@ -13,6 +13,7 @@
       https://nuget.samboy.dev/v3/index.json
     </RestoreAdditionalProjectSources>
     <RootNamespace>Jaket</RootNamespace>
+    <NoWarn>IDE1006</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
