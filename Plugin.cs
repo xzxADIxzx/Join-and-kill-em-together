@@ -33,8 +33,6 @@ public class Plugin : UKMod
     public void Init()
     {
         Utils.WasCheatsEnabled = false;
-        Networking.Loading = false;
-
         if (Initialized || SceneHelper.CurrentScene != "Main Menu") return;
 
         // content

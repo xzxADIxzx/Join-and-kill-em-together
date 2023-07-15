@@ -17,6 +17,6 @@ public class EnemyIdentifierPatch
         if (LobbyController.IsOwner)
             Networking.Entities.Add(__instance.gameObject.AddComponent<LocalEnemy>());
         else
-            Object.Destroy(__instance); // TODO ask host to spawn enemy if playing sandbox
+            Object.Destroy(__instance.gameObject); // TODO ask host to spawn enemy if playing sandbox
     }
 }

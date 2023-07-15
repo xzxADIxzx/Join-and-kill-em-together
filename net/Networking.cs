@@ -9,6 +9,7 @@ using Jaket.IO;
 using Jaket.Net.EndPoints;
 using Jaket.Net.EntityTypes;
 using Jaket.UI;
+using UnityEngine.SceneManagement;
 
 public class Networking : MonoBehaviour
 {
@@ -39,6 +40,12 @@ public class Networking : MonoBehaviour
     {
         Server.Load();
         Client.Load();
+
+        SceneManager.sceneLoaded += (scene, mode) =>
+        {
+            Clear(); // for safety
+            Loading = false;
+        };
 
         // fires when accepting an invitation via the Steam overlay
         SteamFriends.OnGameLobbyJoinRequested += LobbyController.JoinLobby;
