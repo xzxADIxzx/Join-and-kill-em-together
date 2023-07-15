@@ -62,7 +62,7 @@ public class RemotePlayer : Entity
         return obj.AddComponent<RemotePlayer>();
     }
 
-    public void Damage(float damage) => Networking.Send(LobbyController.Lobby.Value.Owner.Id, Writer.Write(w =>
+    public void Damage(float damage) => Networking.Send(LobbyController.Owner, Writer.Write(w =>
     {
         w.Id(Owner); // target
         w.Float(damage); // damage

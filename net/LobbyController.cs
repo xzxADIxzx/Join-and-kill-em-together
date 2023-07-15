@@ -13,6 +13,9 @@ public class LobbyController
 {
     /// <summary> The current lobby the player is connected to. Null if the player is not connected to a lobby. </summary>
     public static Lobby? Lobby;
+    /// <summary> Lobby owner or the player's SteamID if the lobby is null. </summary>
+    public static SteamId Owner => Lobby == null ? SteamClient.SteamId : Lobby.Value.Owner.Id;
+
     /// <summary> Whether a lobby is creating right now. </summary>
     public static bool CreatingLobby;
     /// <summary> Whether the player owns the lobby. </summary>

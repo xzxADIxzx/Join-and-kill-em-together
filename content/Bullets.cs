@@ -126,7 +126,7 @@ public class Bullets
         if (LobbyController.IsOwner)
             LobbyController.EachMemberExceptOwner(member => Networking.Send(member.Id, data, PacketType.SpawnBullet));
         else
-            Networking.Send(LobbyController.Lobby.Value.Owner.Id, data, PacketType.SpawnBullet);
+            Networking.Send(LobbyController.Owner, data, PacketType.SpawnBullet);
     }
 
     #endregion
