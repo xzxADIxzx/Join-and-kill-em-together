@@ -36,7 +36,7 @@ public class Client : Endpoint
             entities.ForEach(entity =>
             {
                 // destroy all enemies, because the host died and was thrown back to the checkpoint
-                if (entity is RemoteEnemy) Object.Destroy(entity.gameObject);
+                if (entity is RemoteEnemy && entity != null) Object.Destroy(entity.gameObject);
             });
         });
 
