@@ -42,7 +42,7 @@ public class Weapons
     public static int CopiedIndex(string name) => Index(name.Substring(0, name.IndexOf("(Clone)")));
 
     /// <summary> Finds current weapon index. </summary>
-    public static int CurrentIndex() => CopiedIndex(GunControl.Instance.currentWeapon.name);
+    public static int CurrentIndex() => GunControl.Instance.currentWeapon == null ? -1 : CopiedIndex(GunControl.Instance.currentWeapon.name);
 
     #endregion
     #region instantiation

@@ -44,6 +44,8 @@ public class Networking : MonoBehaviour
         SceneManager.sceneLoaded += (scene, mode) =>
         {
             Clear(); // for safety
+            if (LobbyController.IsOwner) Entities.Add(LocalPlayer);
+
             Loading = false;
         };
 

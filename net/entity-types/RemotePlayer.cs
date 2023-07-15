@@ -90,8 +90,8 @@ public class RemotePlayer : Entity
         z = new FloatLerp();
         rotation = new FloatLerp();
 
-        GameObject.Destroy(gameObject.GetComponent<V2>()); // remove ai
-        GameObject.Destroy(gameObject.GetComponentInChildren<V2AnimationController>());
+        Destroy(gameObject.GetComponent<V2>()); // remove ai
+        Destroy(gameObject.GetComponentInChildren<V2AnimationController>());
 
         // nickname
         nickname = new Friend(Owner).Name;
@@ -121,12 +121,12 @@ public class RemotePlayer : Entity
         anim.SetBool("RunningBack", sliding);
         anim.SetBool("Sliding", sliding);
 
-        if (lastWeapon != weapon)
+        if (lastWeapon != weapon && weapon != -1)
         {
             lastWeapon = weapon;
 
             foreach (Transform child in weapons) Destroy(child.gameObject);
-            if (weapon != -1) Weapons.Instantiate(weapon, weapons);;
+            if (weapon != -1) Weapons.Instantiate(weapon, weapons);
         }
 
         // nickname
