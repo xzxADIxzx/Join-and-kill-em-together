@@ -16,6 +16,9 @@ public class Enemies
     {
         var all = Resources.FindObjectsOfTypeAll<EnemyIdentifier>();
         foreach (var enemy in all) Prefabs.Add(enemy.gameObject);
+
+        // sort enemies by name to make sure their order is the same for different clients
+        Prefabs.Sort((p1, p2) => p1.name.CompareTo(p2.name));
     }
 
     #region index
