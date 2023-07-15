@@ -1,9 +1,11 @@
 namespace Jaket.Net.EndPoints;
 
 using Steamworks;
+using UnityEngine;
 
 using Jaket.Content;
 using Jaket.IO;
+using Jaket.Net.EntityTypes;
 
 public class Client : Endpoint
 {
@@ -24,6 +26,18 @@ public class Client : Endpoint
                 // read entity data
                 entities[id].Read(r);
             }
+        });
+
+        Listen(PacketType.HostDied, (sender, r) =>
+        {
+            // in the sandbox after death, enemies are not destroyed
+            if (SceneHelper.CurrentScene == "uk_construct") return;
+
+            entities.ForEach(entity =>
+            {
+                // destroy all enemies, because the host died and was thrown back to the checkpoint
+                if (entity is RemoteEnemy) Object.Destroy(entity.gameObject);
+            });
         });
 
         Listen(PacketType.SpawnBullet, (sender, r) => Bullets.Read(r));
