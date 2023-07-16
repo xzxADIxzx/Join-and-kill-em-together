@@ -41,7 +41,7 @@ public class RemotePlayer : Entity
     private bool walking, sliding;
 
     /// <summary> Last and current weapon id. </summary>
-    private int lastWeapon, weapon = -1;
+    private int lastWeapon, weapon;
 
     /// <summary> Canvas containing nickname. </summary>
     private GameObject canvas;
@@ -79,10 +79,7 @@ public class RemotePlayer : Entity
 
         weapons = gameObject.GetComponent<V2>().weapons[0].transform.parent;
         foreach (Transform child in weapons) Destroy(child.gameObject);
-
         weapons = Utils.Object("Transform", weapons).transform;
-        weapons.localPosition = new Vector3(-.2f, -.2f, 0f);
-        weapons.localScale = new Vector3(.15f, .15f, .15f);
 
         health = new FloatLerp();
         x = new FloatLerp();
@@ -126,7 +123,11 @@ public class RemotePlayer : Entity
             lastWeapon = weapon;
 
             foreach (Transform child in weapons) Destroy(child.gameObject);
-            if (weapon != -1) Weapons.Instantiate(weapon, weapons);
+            if (weapon != -1)
+            {
+                Weapons.Instantiate(weapon, weapons);
+                WeaponsOffsets.Apply(weapon, weapons);
+            }
         }
 
         // nickname

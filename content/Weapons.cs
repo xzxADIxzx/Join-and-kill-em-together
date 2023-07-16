@@ -64,7 +64,7 @@ public class Weapons
         obj.transform.eulerAngles = new Vector3(0f, 90f, 0f);
 
         // by default, weapons are on the AlwaysOnTop layer
-        FixLayer(obj.transform.GetChild(0)); // some weapons have a display and other details, so we recursively go through them all
+        FixLayer(obj.transform); // some weapons have a display and other details, so we recursively go through them all
 
         // destroy revolver's hand
         Object.Destroy(obj.transform.GetChild(0).Find("RightArm")?.gameObject);
