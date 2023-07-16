@@ -47,6 +47,13 @@ public class Weapons
     #endregion
     #region instantiation
 
+    /// <summary> Recursively iterates through all children of the transform and changes their layer to Outdoors. </summary>
+    public static void FixLayer(Transform transform)
+    {
+        transform.gameObject.layer = 25;
+        foreach (Transform child in transform) FixLayer(child);
+    }
+
     /// <summary> Creates a weapon with the given index and assigns its parent transform. </summary>
     public static GameObject Instantiate(int index, Transform parent)
     {
@@ -55,6 +62,9 @@ public class Weapons
 
         // by default, weapons are very strangely rotated
         obj.transform.eulerAngles = new Vector3(0f, 90f, 0f);
+
+        // by default, weapons are on the AlwaysOnTop layer
+        FixLayer(obj.transform.GetChild(0)); // some weapons have a display and other details, so we recursively go through them all
 
         // destroy revolver's hand
         Object.Destroy(obj.transform.GetChild(0).Find("RightArm")?.gameObject);
