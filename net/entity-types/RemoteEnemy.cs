@@ -7,7 +7,7 @@ using Jaket.IO;
 public class RemoteEnemy : Entity
 {
     /// <summary> Enemy identifier. </summary>
-    private EnemyIdentifier enemyId;
+    public EnemyIdentifier enemyId;
 
     /// <summary> Enemy health. </summary>
     private FloatLerp health;

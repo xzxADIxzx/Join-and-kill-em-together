@@ -40,6 +40,15 @@ public class Client : Endpoint
             });
         });
 
+        Listen(PacketType.EnemyDied, (sender, r) =>
+        {
+            // find the killed enemy in the list of entities
+            var entity = entities[r.Int()];
+
+            // kill the enemy so that there is no desynchronization
+            if (entity is RemoteEnemy enemy) enemy.enemyId.InstaKill();
+        });
+
         Listen(PacketType.BossDefeated, (sender, r) =>
         {
             // maybe sending the name is not the best idea, but I don't have any others
