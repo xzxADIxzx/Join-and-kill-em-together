@@ -22,6 +22,7 @@ public class Bullets
             {
                 Prefabs.Add(revolver.revolverBeam);
                 Prefabs.Add(revolver.revolverBeamSuper);
+                Prefabs.Add(revolver.coin); // a coin is also a bullet, honestly-honestly
                 continue;
             }
 
