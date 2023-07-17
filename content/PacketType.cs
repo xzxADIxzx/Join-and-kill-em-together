@@ -7,8 +7,11 @@ public enum PacketType
     Snapshot,
     /// <summary> Host asks to load a level, the packet contains its name. </summary>
     LevelLoading,
+
     /// <summary> Owner of the lobby has died, which means you need to destroy all enemies. </summary>
     HostDied,
+    /// <summary> Boss is dead, which means you need to kill his original enemy identifier. </summary>
+    BossDefeated,
 
     /// <summary> Client ask the creation of a bullet. </summary>
     SpawnBullet,

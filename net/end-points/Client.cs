@@ -40,6 +40,18 @@ public class Client : Endpoint
             });
         });
 
+        Listen(PacketType.BossDefeated, (sender, r) =>
+        {
+            // maybe sending the name is not the best idea, but I don't have any others
+            string bossName = r.String();
+
+            // find the original of the killed boss
+            var boss = Networking.Bosses.Find(enemyId => enemyId != null && enemyId.gameObject.name == bossName);
+
+            // kill the boss to trigger the internal logic of the game
+            if (boss != null) Object.Destroy(boss.gameObject);
+        });
+
         Listen(PacketType.SpawnBullet, (sender, r) => Bullets.Read(r));
 
         Listen(PacketType.DamagePlayer, (sender, r) => NewMovement.Instance.GetHurt((int)r.Float(), false, 0f));

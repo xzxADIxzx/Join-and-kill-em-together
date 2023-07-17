@@ -30,6 +30,7 @@ public class Enemies
     public static int CopiedIndex(string name)
     {
         // tell me why
+        if (name == "SwordsMachine") return (int)EntityType.Swordsmachine;
         if (name == "V2 Green Arm") return (int)EntityType.V2_GreenArm;
         if (name == "Gabriel 2nd") return (int)EntityType.Gabriel_Angry;
 
