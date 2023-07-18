@@ -12,6 +12,9 @@ using Jaket.UI;
 /// </summary>
 public class LocalPlayer : Entity
 {
+    /// <summary> Player team. Changes through the player list. </summary>
+    public Team team;
+
     public void Awake()
     {
         Owner = SteamClient.SteamId.Value;
@@ -29,6 +32,7 @@ public class LocalPlayer : Entity
         w.Bool(Chat.Shown);
         w.Bool(NewMovement.Instance.walking);
         w.Bool(NewMovement.Instance.sliding);
+        w.Int((int)team);
         w.Int(Weapons.CurrentIndex());
     }
 

@@ -28,6 +28,12 @@ public class RemotePlayer : Entity
     /// <summary> Player doll enemy identifier. </summary>
     private EnemyIdentifier enemyId;
 
+    /// <summary> Material of the wings. </summary>
+    private Material wingMaterial;
+
+    /// <summary> Wing textures used to differentiate teams. </summary>
+    private Texture[] wingTextures;
+
     /// <summary> Transform to which weapons will be attached. </summary>
     private Transform weapons;
 
@@ -39,6 +45,9 @@ public class RemotePlayer : Entity
 
     /// <summary> Animator states. </summary>
     private bool walking, sliding;
+
+    /// <summary> Last and current player team. </summary>
+    private Team lastTeam, team;
 
     /// <summary> Last and current weapon id. </summary>
     private int lastWeapon, weapon;
@@ -76,8 +85,10 @@ public class RemotePlayer : Entity
         anim = GetComponentInChildren<Animator>();
         machine = GetComponent<Machine>();
         enemyId = GetComponent<EnemyIdentifier>();
+        wingMaterial = transform.GetChild(4).GetChild(4).GetComponent<SkinnedMeshRenderer>().materials[1];
 
-        weapons = gameObject.GetComponent<V2>().weapons[0].transform.parent;
+        wingTextures = GetComponent<V2>().wingTextures;
+        weapons = GetComponent<V2>().weapons[0].transform.parent;
         foreach (Transform child in weapons) Destroy(child.gameObject);
         weapons = Utils.Object("Transform", weapons).transform;
 
@@ -118,6 +129,14 @@ public class RemotePlayer : Entity
         anim.SetBool("RunningBack", sliding);
         anim.SetBool("Sliding", sliding);
 
+        if (lastTeam != team)
+        {
+            lastTeam = team;
+
+            wingMaterial.color = team.Data().WingColor();
+            wingMaterial.mainTexture = wingTextures[team.Data().TextureId];
+        }
+
         if (lastWeapon != weapon && weapon != -1)
         {
             lastWeapon = weapon;
@@ -147,6 +166,7 @@ public class RemotePlayer : Entity
         w.Bool(typing);
         w.Bool(walking);
         w.Bool(sliding);
+        w.Int((int)team);
         w.Int(weapon);
     }
 
@@ -165,6 +185,9 @@ public class RemotePlayer : Entity
         typing = r.Bool();
         walking = r.Bool();
         sliding = r.Bool();
+
+        lastTeam = team;
+        team = (Team)r.Int();
 
         lastWeapon = weapon;
         weapon = r.Int();

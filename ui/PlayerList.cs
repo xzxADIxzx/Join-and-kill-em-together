@@ -50,7 +50,7 @@ public class PlayerList
         float x = -986f;
         foreach (Team team in Enum.GetValues(typeof(Team))) Utils.TeamButton("Change Team", canvas.transform, x += 67f, 252f, team.Data().Color(), () =>
         {
-            // TODO change team
+            Networking.LocalPlayer.team = team;
             Update();
         });
 
