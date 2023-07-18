@@ -37,6 +37,12 @@ public class Utils
         NewMovement.Instance.GetComponentInChildren<GunControl>().enabled = enable;
         NewMovement.Instance.GetComponentInChildren<FistControl>().enabled = enable;
 
+        // fix ultrasoap
+        if (enable)
+            NewMovement.Instance.UnlockMovementAxes();
+        else
+            NewMovement.Instance.LockMovementAxes();
+
         // temporary disable cheats
         if (enable)
             CheatsController.Instance.cheatsEnabled = WasCheatsEnabled;
