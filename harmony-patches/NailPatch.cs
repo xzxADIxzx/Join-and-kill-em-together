@@ -21,6 +21,6 @@ public class NailPatchPvP
         if (LobbyController.Lobby == null || __instance.gameObject.name.StartsWith("Net")) return;
 
         // send a damage event to the host
-        if (eid.gameObject.TryGetComponent<RemotePlayer>(out var player)) player.Damage(__instance.damage * 6f);
+        if (eid.gameObject.TryGetComponent<RemotePlayer>(out var player) && player.team != Networking.LocalPlayer.team) player.Damage(__instance.damage * 6f);
     }
 }

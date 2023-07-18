@@ -8,6 +8,7 @@ using Jaket.Content;
 using Jaket.IO;
 using Jaket.UI;
 
+// TODO remake
 public class RemotePlayer : Entity
 {
     // please don't ask me how I found this (4368)
@@ -47,7 +48,7 @@ public class RemotePlayer : Entity
     private bool walking, sliding;
 
     /// <summary> Last and current player team. </summary>
-    private Team lastTeam, team;
+    public Team lastTeam, team;
 
     /// <summary> Last and current weapon id. </summary>
     private int lastWeapon, weapon;
@@ -126,7 +127,7 @@ public class RemotePlayer : Entity
         transform.eulerAngles = new Vector3(0f, rotation.GetAngel(LastUpdate), 0f);
 
         // animation
-        anim.SetBool("RunningBack", sliding);
+        anim.SetBool("RunningBack", walking);
         anim.SetBool("Sliding", sliding);
 
         if (lastTeam != team)
@@ -136,6 +137,8 @@ public class RemotePlayer : Entity
             wingMaterial.color = team.Data().WingColor();
             wingMaterial.mainTexture = wingTextures[team.Data().TextureId];
         }
+
+        gameObject.tag = team == Networking.LocalPlayer.team ? "Untagged" : "Enemy"; // toggle friendly fire
 
         if (lastWeapon != weapon && weapon != -1)
         {

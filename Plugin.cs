@@ -24,7 +24,7 @@ public class Plugin : UKMod
     {
         Instance = this;
 
-        UKAPI.GetKeyBind("PLAYER LIST", KeyCode.Tab).onPress.AddListener(PlayerList.Toggle);
+        UKAPI.GetKeyBind("PLAYER LIST", KeyCode.F1).onPress.AddListener(PlayerList.Toggle);
         UKAPI.GetKeyBind("CHAT", KeyCode.Return).onPress.AddListener(Chat.Toggle);
 
         SceneManager.sceneLoaded += (scene, mode) => Init();
