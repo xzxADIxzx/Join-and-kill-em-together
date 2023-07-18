@@ -24,7 +24,7 @@ public class Client : Endpoint
                 if (entities.Count <= id) entities.Add(Networking.CurrentOwner == SteamClient.SteamId ? Networking.LocalPlayer : Entities.Get((EntityType)type));
 
                 // read entity data
-                entities[id].Read(r);
+                entities[id]?.Read(r);
             }
         });
 
@@ -64,6 +64,26 @@ public class Client : Endpoint
         Listen(PacketType.SpawnBullet, (sender, r) => Bullets.Read(r));
 
         Listen(PacketType.DamagePlayer, (sender, r) => NewMovement.Instance.GetHurt((int)r.Float(), false, 0f));
+
+        Listen(PacketType.UnlockDoors, (sender, r) =>
+        {
+            // find all the doors by tag, because it's faster than FindObjectsOfType
+            foreach (var door in GameObject.FindGameObjectsWithTag("Door"))
+            {
+                // unlock them to prevent getting stuck in a room
+                door.transform.parent.GetComponent<Door>()?.Unlock();
+            }
+        });
+
+        Listen(PacketType.UnlockFinalDoor, (sender, r) =>
+        {
+            // find all the doors by tag, because it's faster than FindObjectsOfType
+            foreach (var door in GameObject.FindGameObjectsWithTag("Door"))
+            {
+                // unlock the final door to prevent getting stuck in a room
+                door.transform.parent.GetComponent<FinalDoor>()?.Open();
+            }
+        });
     }
 
     public override void Update()

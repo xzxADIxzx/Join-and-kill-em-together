@@ -18,5 +18,10 @@ public enum PacketType
     /// <summary> Client ask the creation of a bullet. </summary>
     SpawnBullet,
     /// <summary> Client dealt damage to a player. </summary>
-    DamagePlayer
+    DamagePlayer,
+
+    /// <summary> Need to unlock all the doors on the level. Called by the host so that clients don't get stuck in a room. </summary>
+    UnlockDoors,
+    /// <summary> Need to unlock the final door. Called by the host so that clients don't get stuck in a room. </summary>
+    UnlockFinalDoor
 }
