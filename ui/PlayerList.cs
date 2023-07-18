@@ -24,7 +24,15 @@ public class PlayerList
         Utils.Text("--PLAYERS--", list.transform, -784f, 92f);
 
         float y = 92f;
-        LobbyController.EachMember(member => Utils.Button(member.Name, list.transform, -784f, y -= 80f, () => SteamFriends.OpenUserOverlay(member.Id, "steamid")));
+        LobbyController.EachMember(member =>
+        {
+            // paint the nickname in the team color
+            var team = member.IsMe ? Networking.LocalPlayer.team : (Networking.Players.TryGetValue(member.Id, out var player) ? player.team : Team.Yellow);
+            var name = "<color=#" + ColorUtility.ToHtmlStringRGBA(team.Data().Color()) + ">" + member.Name + "</color>";
+
+            // add a button with a nickname forwarding to the player's profile
+            Utils.Button(name, list.transform, -784f, y -= 80f, () => SteamFriends.OpenUserOverlay(member.Id, "steamid"));
+        });
     }
 
     public static void Build()
