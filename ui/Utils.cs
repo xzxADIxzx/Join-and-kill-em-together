@@ -173,6 +173,26 @@ public class Utils
     }
 
     #endregion
+    #region team button
+
+    public static GameObject TeamButton(string name, Transform parent, float x, float y, float width, float height, Color color, UnityAction clicked)
+    {
+        var obj = Image(name, parent, x, y, width, height, color);
+        Component<Button>(obj, button =>
+        {
+            button.targetGraphic = obj.GetComponent<Image>();
+            button.onClick.AddListener(clicked);
+        });
+
+        return obj;
+    }
+
+    public static GameObject TeamButton(string name, Transform parent, float x, float y, Color color, UnityAction clicked)
+    {
+        return TeamButton(name, parent, x, y, 51f, 51f, color, clicked);
+    }
+
+    #endregion
     #region field
 
     public static InputField Field(string name, Transform parent, float x, float y, float width, float height, int size, UnityAction<string> enter)

@@ -1,8 +1,10 @@
 namespace Jaket.UI;
 
 using Steamworks;
+using System;
 using UnityEngine;
 
+using Jaket.Content;
 using Jaket.Net;
 
 public class PlayerList
@@ -19,9 +21,9 @@ public class PlayerList
         foreach (Transform child in list.transform) GameObject.Destroy(child.gameObject);
         if (LobbyController.Lobby == null) return;
 
-        Utils.Text("--PLAYERS--", list.transform, -784f, 172f);
+        Utils.Text("--PLAYERS--", list.transform, -784f, 92f);
 
-        float y = 172f;
+        float y = 92f;
         LobbyController.EachMember(member => Utils.Button(member.Name, list.transform, -784f, y -= 80f, () => SteamFriends.OpenUserOverlay(member.Id, "steamid")));
     }
 
@@ -44,6 +46,13 @@ public class PlayerList
         });
 
         invite = Utils.Button("INVITE FRIEND", canvas.transform, -784f, 332f, LobbyController.InviteFriend);
+
+        float x = -986f;
+        foreach (Team team in Enum.GetValues(typeof(Team))) Utils.TeamButton("Change Team", canvas.transform, x += 67f, 252f, team.Data().Color(), () =>
+        {
+            // TODO change team
+            Update();
+        });
 
         list = Utils.Rect("List", canvas.transform, 0f, 0f, 1920f, 1080f);
 
