@@ -66,8 +66,9 @@ public class Weapons
         // by default, weapons are on the AlwaysOnTop layer
         FixLayer(obj.transform); // some weapons have a display and other details, so we recursively go through them all
 
-        // destroy revolver's hand
+        // destroy revolver's and shotgun's hand
         Object.Destroy(obj.transform.GetChild(0).Find("RightArm")?.gameObject);
+        if (obj.transform.childCount == 3) Object.Destroy(obj.transform.GetChild(2).Find("RightArm")?.gameObject);
 
         // destroy weapon's components
         Object.Destroy(obj.GetComponent<Revolver>());
