@@ -23,10 +23,6 @@ public class Plugin : UKMod
     public override void OnModLoaded()
     {
         Instance = this;
-
-        UKAPI.GetKeyBind("PLAYER LIST", KeyCode.F1).onPerformInScene.AddListener(PlayerList.Toggle);
-        UKAPI.GetKeyBind("CHAT", KeyCode.Return).onPerformInScene.AddListener(Chat.Toggle);
-
         SceneManager.sceneLoaded += (scene, mode) => Init();
     }
 
@@ -47,10 +43,16 @@ public class Plugin : UKMod
         // ui
         Utils.Load();
         PlayerList.Build();
+        PlayerIndicators.Build();
         Chat.Build();
 
         // harmony
         new Harmony("Should I write something here?").PatchAll();
+
+        // keybinds
+        UKAPI.GetKeyBind("PLAYER LIST", KeyCode.F1).onPerformInScene.AddListener(PlayerList.Toggle);
+        UKAPI.GetKeyBind("PLAYER INDICATOR", KeyCode.Z).onPerformInScene.AddListener(PlayerIndicators.Instance.Toggle);
+        UKAPI.GetKeyBind("CHAT", KeyCode.Return).onPerformInScene.AddListener(Chat.Toggle);
 
         Initialized = true;
         Debug.Log("Jaket initialized.");
