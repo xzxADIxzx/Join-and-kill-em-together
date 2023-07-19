@@ -23,6 +23,9 @@ public class Client : Endpoint
                 // if the entity is not in the list, add a new one with the given type or local if available
                 if (entities.Count <= id) entities.Add(Networking.CurrentOwner == SteamClient.SteamId ? Networking.LocalPlayer : Entities.Get((EntityType)type));
 
+                // sometimes players just get destroyed by the game, idk why
+                if (entities[id] == null && type == (int)EntityType.Player) entities[id] = Entities.Get(EntityType.Player);
+
                 // read entity data
                 entities[id]?.Read(r);
             }
