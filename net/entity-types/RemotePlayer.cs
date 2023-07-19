@@ -51,7 +51,7 @@ public class RemotePlayer : Entity
     public Team lastTeam, team;
 
     /// <summary> Last and current weapon id. </summary>
-    private int lastWeapon, weapon;
+    private int lastWeapon = -1, weapon;
 
     /// <summary> Canvas containing nickname. </summary>
     private GameObject canvas;
@@ -188,11 +188,7 @@ public class RemotePlayer : Entity
         typing = r.Bool();
         walking = r.Bool();
         sliding = r.Bool();
-
-        lastTeam = team;
         team = (Team)r.Int();
-
-        lastWeapon = weapon;
         weapon = r.Int();
     }
 }
