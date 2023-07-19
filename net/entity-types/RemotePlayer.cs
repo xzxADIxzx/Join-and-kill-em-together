@@ -134,8 +134,8 @@ public class RemotePlayer : Entity
         {
             lastTeam = team;
 
-            wingMaterial.color = team.Data().WingColor();
             wingMaterial.mainTexture = wingTextures[team.Data().TextureId];
+            wingMaterial.color = team.Data().WingColor(); // do this after changing the wings texture
         }
 
         gameObject.tag = team == Networking.LocalPlayer.team ? "Untagged" : "Enemy"; // toggle friendly fire

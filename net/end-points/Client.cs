@@ -28,6 +28,12 @@ public class Client : Endpoint
             }
         });
 
+        Listen(PacketType.HostLeft, (sender, r) =>
+        {
+            LobbyController.LeaveLobby();
+            SceneHelper.LoadScene("Main Menu");
+        });
+
         Listen(PacketType.HostDied, (sender, r) =>
         {
             // in the sandbox after death, enemies are not destroyed

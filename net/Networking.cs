@@ -45,6 +45,13 @@ public class Networking : MonoBehaviour
 
         SceneManager.sceneLoaded += (scene, mode) =>
         {
+            // if the player exits to the main menu, then this is equivalent to leaving the lobby
+            if (SceneHelper.CurrentScene == "Main Menu")
+            {
+                LobbyController.LeaveLobby();
+                return;
+            }
+
             Clear(); // for safety
             if (LobbyController.IsOwner) Entities.Add(LocalPlayer);
 
