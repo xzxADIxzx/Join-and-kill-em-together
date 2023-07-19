@@ -27,6 +27,7 @@ public class LocalPlayer : Entity
         w.Float(NewMovement.Instance.hp);
         w.Vector(NewMovement.Instance.transform.position);
         w.Float(NewMovement.Instance.transform.eulerAngles.y);
+        w.Float(-CameraController.Instance.rotationX);
 
         // animation
         w.Bool(Chat.Shown);
@@ -37,5 +38,5 @@ public class LocalPlayer : Entity
     }
 
     // there is no point in reading anything, because it is a local player
-    public override void Read(Reader r) => r.Bytes(27); // skip all data
+    public override void Read(Reader r) => r.Bytes(31); // skip all data
 }

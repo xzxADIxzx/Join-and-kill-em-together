@@ -35,6 +35,9 @@ public class RemotePlayer : Entity
     /// <summary> Wing textures used to differentiate teams. </summary>
     private Texture[] wingTextures;
 
+    /// <summary> Doll head transform. </summary>
+    private Transform head;
+
     /// <summary> Transform to which weapons will be attached. </summary>
     private Transform weapons;
 
@@ -42,7 +45,7 @@ public class RemotePlayer : Entity
     private FloatLerp health;
 
     /// <summary> Player position and rotation. </summary>
-    private FloatLerp x, y, z, rotation;
+    private FloatLerp x, y, z, rotation, headRotation;
 
     /// <summary> Animator states. </summary>
     private bool walking, sliding;
@@ -88,8 +91,12 @@ public class RemotePlayer : Entity
         enemyId = GetComponent<EnemyIdentifier>();
         wingMaterial = transform.GetChild(4).GetChild(4).GetComponent<SkinnedMeshRenderer>().materials[1];
 
-        wingTextures = GetComponent<V2>().wingTextures;
-        weapons = GetComponent<V2>().weapons[0].transform.parent;
+        var v2 = GetComponent<V2>();
+
+        wingTextures = v2.wingTextures;
+        head = v2.aimAtTarget[0].parent;
+
+        weapons = v2.weapons[0].transform.parent;
         foreach (Transform child in weapons) Destroy(child.gameObject);
         weapons = Utils.Object("Transform", weapons).transform;
 
@@ -98,6 +105,7 @@ public class RemotePlayer : Entity
         y = new FloatLerp();
         z = new FloatLerp();
         rotation = new FloatLerp();
+        headRotation = new FloatLerp();
 
         Destroy(gameObject.GetComponent<V2>()); // remove ai
         Destroy(gameObject.GetComponentInChildren<V2AnimationController>());
@@ -125,6 +133,7 @@ public class RemotePlayer : Entity
 
         transform.position = new Vector3(x.Get(LastUpdate), y.Get(LastUpdate) - (sliding ? 0f : 1.6f), z.Get(LastUpdate));
         transform.eulerAngles = new Vector3(0f, rotation.GetAngel(LastUpdate), 0f);
+        head.localEulerAngles = new Vector3(headRotation.Get(LastUpdate), 0f, 0f);
 
         // animation
         anim.SetBool("RunningBack", walking);
@@ -164,6 +173,7 @@ public class RemotePlayer : Entity
         w.Float(machine.health);
         w.Vector(transform.position);
         w.Float(transform.eulerAngles.y);
+        w.Float(head.localEulerAngles.x);
 
         // animation
         w.Bool(typing);
@@ -183,6 +193,7 @@ public class RemotePlayer : Entity
         y.Read(r);
         z.Read(r);
         rotation.Read(r);
+        headRotation.Read(r);
 
         // animation
         typing = r.Bool();
