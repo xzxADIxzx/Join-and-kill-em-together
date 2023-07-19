@@ -3,6 +3,7 @@ namespace Jaket.UI;
 using Steamworks;
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 using Jaket.Content;
 using Jaket.Net;
@@ -37,6 +38,9 @@ public class PlayerList
 
     public static void Build()
     {
+        // hide player list once loading a scene
+        SceneManager.sceneLoaded += (scene, mode) => canvas.SetActive(Shown = false);
+
         canvas = Utils.Canvas("Player List", Plugin.Instance.transform);
         canvas.SetActive(false);
 

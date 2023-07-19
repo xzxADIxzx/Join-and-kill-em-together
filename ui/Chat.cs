@@ -1,6 +1,7 @@
 namespace Jaket.UI;
 
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 using Jaket.Net;
@@ -50,6 +51,9 @@ public class Chat : MonoBehaviour
 
     public static void Build()
     {
+        // hide chat once loading a scene
+        SceneManager.sceneLoaded += (scene, mode) => field.gameObject.SetActive(Shown = false);
+
         canvas = Utils.Canvas("Chat", Plugin.Instance.transform);
         canvas.AddComponent<Chat>();
 
@@ -72,13 +76,13 @@ public class Chat : MonoBehaviour
 
     public static void Toggle()
     {
-        if (field.text != "") return;
+        if (field.text != "" && field.isFocused) return;
 
         field.gameObject.SetActive(Shown = !Shown);
         Utils.ToggleMovement(!Shown);
 
         // focus on input field
-        field.GetComponent<UnityEngine.UI.InputField>().ActivateInputField();
+        field.GetComponent<InputField>().ActivateInputField();
     }
 
     public static string FormatMessage(string author, string message) => "<b>" + author + "<color=#ff7f50>:</color></b> " + message;
