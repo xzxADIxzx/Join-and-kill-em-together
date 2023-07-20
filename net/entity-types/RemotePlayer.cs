@@ -145,6 +145,9 @@ public class RemotePlayer : Entity
 
             wingMaterial.mainTexture = wingTextures[team.Data().TextureId];
             wingMaterial.color = team.Data().WingColor(); // do this after changing the wings texture
+
+            // update player indicators to only show teammates
+            PlayerIndicators.Instance.Rebuild();
         }
 
         gameObject.tag = team == Networking.LocalPlayer.team ? "Untagged" : "Enemy"; // toggle friendly fire

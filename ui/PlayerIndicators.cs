@@ -40,11 +40,19 @@ public class PlayerIndicators : MonoSingleton<PlayerIndicators>
     /// <summary> Toggles visibility of indicators. </summary>
     public void Toggle()
     {
+        // if the player is typing, then nothing needs to be done
+        if (Chat.Shown) return;
+
+        // no comments
         gameObject.SetActive(Shown = !Shown);
 
         // no need to update indicators if we hide them
-        if (!Shown) return;
+        if (Shown) Rebuild();
+    }
 
+    /// <summary> Rebuilds player indicators to match a new state. </summary>
+    public void Rebuild()
+    {
         // destroy all indicators and clear the lists
         indicators.ForEach(ind => Destroy(ind.gameObject));
         indicators.Clear();

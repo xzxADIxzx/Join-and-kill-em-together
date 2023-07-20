@@ -64,6 +64,9 @@ public class PlayerList
         {
             Networking.LocalPlayer.team = team;
             Update();
+
+            // update player indicators to only show teammates
+            PlayerIndicators.Instance.Rebuild();
         });
 
         list = Utils.Rect("List", canvas.transform, 0f, 0f, 1920f, 1080f);
