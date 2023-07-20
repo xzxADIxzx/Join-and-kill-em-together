@@ -2,15 +2,8 @@ namespace Jaket.HarmonyPatches;
 
 using HarmonyLib;
 
-using Jaket.Content;
 using Jaket.Net;
 using Jaket.Net.EntityTypes;
-
-[HarmonyPatch(typeof(Nail), "Start")]
-public class NailPatch
-{
-    static void Prefix(Nail __instance) => Bullets.Send(__instance.gameObject, true);
-}
 
 [HarmonyPatch(typeof(Nail), "DamageEnemy")]
 public class NailPatchPvP

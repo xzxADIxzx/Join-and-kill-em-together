@@ -3,15 +3,8 @@ namespace Jaket.HarmonyPatches;
 using HarmonyLib;
 using UnityEngine;
 
-using Jaket.Content;
 using Jaket.Net;
 using Jaket.Net.EntityTypes;
-
-[HarmonyPatch(typeof(RevolverBeam), "Start")]
-public class RevolverBeamPatch
-{
-    static void Prefix(RevolverBeam __instance) => Bullets.Send(__instance.gameObject);
-}
 
 [HarmonyPatch(typeof(RevolverBeam), "ExecuteHits")]
 public class RevolverBeamPatchPvP
