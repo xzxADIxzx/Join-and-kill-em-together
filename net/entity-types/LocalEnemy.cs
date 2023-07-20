@@ -1,6 +1,7 @@
 namespace Jaket.Net.EntityTypes;
 
 using Steamworks;
+using System;
 
 using Jaket.Content;
 using Jaket.IO;
@@ -24,6 +25,8 @@ public class LocalEnemy : Entity
 
         enemyId = GetComponent<EnemyIdentifier>();
         healthBar = GetComponent<BossHealthBar>();
+
+        if ((int)Type == -1) throw new Exception("Enemy index is -1 for name " + gameObject.name);
     }
 
     public override void Write(Writer w)
