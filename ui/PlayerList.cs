@@ -1,8 +1,11 @@
 namespace Jaket.UI;
 
 using Steamworks;
+using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
+using Jaket.Content;
 using Jaket.Net;
 
 public class PlayerList
@@ -19,14 +22,25 @@ public class PlayerList
         foreach (Transform child in list.transform) GameObject.Destroy(child.gameObject);
         if (LobbyController.Lobby == null) return;
 
-        Utils.Text("--PLAYERS--", list.transform, -784f, 172f);
+        Utils.Text("--PLAYERS--", list.transform, -784f, 92f);
 
-        float y = 172f;
-        LobbyController.EachMember(member => Utils.Button(member.Name, list.transform, -784f, y -= 80f, () => SteamFriends.OpenUserOverlay(member.Id, "steamid")));
+        float y = 92f;
+        LobbyController.EachMember(member =>
+        {
+            // paint the nickname in the team color
+            var team = member.IsMe ? Networking.LocalPlayer.team : (Networking.Players.TryGetValue(member.Id, out var player) ? player.team : Team.Yellow);
+            var name = "<color=#" + ColorUtility.ToHtmlStringRGBA(team.Data().Color()) + ">" + member.Name + "</color>";
+
+            // add a button with a nickname forwarding to the player's profile
+            Utils.Button(name, list.transform, -784f, y -= 80f, () => SteamFriends.OpenUserOverlay(member.Id, "steamid"));
+        });
     }
 
     public static void Build()
     {
+        // hide player list once loading a scene
+        SceneManager.sceneLoaded += (scene, mode) => canvas.SetActive(Shown = false);
+
         canvas = Utils.Canvas("Player List", Plugin.Instance.transform);
         canvas.SetActive(false);
 
@@ -44,6 +58,13 @@ public class PlayerList
         });
 
         invite = Utils.Button("INVITE FRIEND", canvas.transform, -784f, 332f, LobbyController.InviteFriend);
+
+        float x = -986f;
+        foreach (Team team in Enum.GetValues(typeof(Team))) Utils.TeamButton("Change Team", canvas.transform, x += 67f, 252f, team.Data().Color(), () =>
+        {
+            Networking.LocalPlayer.team = team;
+            Update();
+        });
 
         list = Utils.Rect("List", canvas.transform, 0f, 0f, 1920f, 1080f);
 

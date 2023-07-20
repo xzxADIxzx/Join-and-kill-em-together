@@ -11,18 +11,32 @@ using Jaket.IO;
 /// </summary>
 public class LocalEnemy : Entity
 {
+    /// <summary> Enemy identifier. </summary>
+    private EnemyIdentifier enemyId;
+
+    /// <summary> Null if the enemy is not the boss. </summary>
+    private BossHealthBar healthBar;
+
     public void Awake()
     {
         Owner = SteamClient.SteamId.Value;
         Type = (EntityType)Enemies.CopiedIndex(gameObject.name);
+
+        enemyId = GetComponent<EnemyIdentifier>();
+        healthBar = GetComponent<BossHealthBar>();
     }
 
     public override void Write(Writer w)
     {
+        // health & position
+        w.Float(enemyId.health);
         w.Vector(transform.position);
         w.Float(transform.eulerAngles.y);
+
+        // boss
+        w.Bool(healthBar != null);
     }
 
     // there is no point in reading anything, because it is a local enemy
-    public override void Read(Reader r) => r.Bytes(16); // skip all data
+    public override void Read(Reader r) => r.Bytes(21); // skip all data
 }

@@ -27,6 +27,8 @@ public class Networking : MonoBehaviour
     public static List<Entity> Entities = new();
     /// <summary> Dictionary of players' SteamIDs to their dolls. </summary>
     public static Dictionary<SteamId, RemotePlayer> Players = new();
+    /// <summary> List of all bosses on the map. Needed for the internal logic of the game. </summary>
+    public static List<EnemyIdentifier> Bosses = new();
 
     /// <summary> Local player representation. </summary>
     public static LocalPlayer LocalPlayer;
@@ -43,6 +45,13 @@ public class Networking : MonoBehaviour
 
         SceneManager.sceneLoaded += (scene, mode) =>
         {
+            // if the player exits to the main menu, then this is equivalent to leaving the lobby
+            if (SceneHelper.CurrentScene == "Main Menu")
+            {
+                LobbyController.LeaveLobby();
+                return;
+            }
+
             Clear(); // for safety
             if (LobbyController.IsOwner) Entities.Add(LocalPlayer);
 
@@ -124,6 +133,7 @@ public class Networking : MonoBehaviour
 
         Entities.Clear();
         Players.Clear();
+        Bosses.Clear();
     }
 
     // TODO create a separate thread to increase fps?

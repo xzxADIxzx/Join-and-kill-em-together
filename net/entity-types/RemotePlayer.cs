@@ -8,6 +8,7 @@ using Jaket.Content;
 using Jaket.IO;
 using Jaket.UI;
 
+// TODO remake
 public class RemotePlayer : Entity
 {
     // please don't ask me how I found this (4368)
@@ -28,6 +29,15 @@ public class RemotePlayer : Entity
     /// <summary> Player doll enemy identifier. </summary>
     private EnemyIdentifier enemyId;
 
+    /// <summary> Material of the wings. </summary>
+    private Material wingMaterial;
+
+    /// <summary> Wing textures used to differentiate teams. </summary>
+    private Texture[] wingTextures;
+
+    /// <summary> Doll head transform. </summary>
+    private Transform head;
+
     /// <summary> Transform to which weapons will be attached. </summary>
     private Transform weapons;
 
@@ -35,13 +45,16 @@ public class RemotePlayer : Entity
     private FloatLerp health;
 
     /// <summary> Player position and rotation. </summary>
-    private FloatLerp x, y, z, rotation;
+    private FloatLerp x, y, z, rotation, headRotation;
 
     /// <summary> Animator states. </summary>
     private bool walking, sliding;
 
+    /// <summary> Last and current player team. </summary>
+    public Team lastTeam, team;
+
     /// <summary> Last and current weapon id. </summary>
-    private int lastWeapon, weapon = -1;
+    private int lastWeapon = -1, weapon;
 
     /// <summary> Canvas containing nickname. </summary>
     private GameObject canvas;
@@ -71,24 +84,28 @@ public class RemotePlayer : Entity
     public void Awake()
     {
         Type = EntityType.Player;
-        Networking.Players.Add(Owner, this);
+        Networking.Players[Owner] = this;
 
         anim = GetComponentInChildren<Animator>();
         machine = GetComponent<Machine>();
         enemyId = GetComponent<EnemyIdentifier>();
+        wingMaterial = transform.GetChild(4).GetChild(4).GetComponent<SkinnedMeshRenderer>().materials[1];
 
-        weapons = gameObject.GetComponent<V2>().weapons[0].transform.parent;
+        var v2 = GetComponent<V2>();
+
+        wingTextures = v2.wingTextures;
+        head = v2.aimAtTarget[0].parent;
+
+        weapons = v2.weapons[0].transform.parent;
         foreach (Transform child in weapons) Destroy(child.gameObject);
-
         weapons = Utils.Object("Transform", weapons).transform;
-        weapons.localPosition = new Vector3(-.2f, -.2f, 0f);
-        weapons.localScale = new Vector3(.15f, .15f, .15f);
 
         health = new FloatLerp();
         x = new FloatLerp();
         y = new FloatLerp();
         z = new FloatLerp();
         rotation = new FloatLerp();
+        headRotation = new FloatLerp();
 
         Destroy(gameObject.GetComponent<V2>()); // remove ai
         Destroy(gameObject.GetComponentInChildren<V2AnimationController>());
@@ -116,17 +133,32 @@ public class RemotePlayer : Entity
 
         transform.position = new Vector3(x.Get(LastUpdate), y.Get(LastUpdate) - (sliding ? 0f : 1.6f), z.Get(LastUpdate));
         transform.eulerAngles = new Vector3(0f, rotation.GetAngel(LastUpdate), 0f);
+        head.localEulerAngles = new Vector3(headRotation.Get(LastUpdate), 0f, 0f);
 
         // animation
-        anim.SetBool("RunningBack", sliding);
+        anim.SetBool("RunningBack", walking);
         anim.SetBool("Sliding", sliding);
+
+        if (lastTeam != team)
+        {
+            lastTeam = team;
+
+            wingMaterial.mainTexture = wingTextures[team.Data().TextureId];
+            wingMaterial.color = team.Data().WingColor(); // do this after changing the wings texture
+        }
+
+        gameObject.tag = team == Networking.LocalPlayer.team ? "Untagged" : "Enemy"; // toggle friendly fire
 
         if (lastWeapon != weapon && weapon != -1)
         {
             lastWeapon = weapon;
 
             foreach (Transform child in weapons) Destroy(child.gameObject);
-            if (weapon != -1) Weapons.Instantiate(weapon, weapons);
+            if (weapon != -1)
+            {
+                Weapons.Instantiate(weapon, weapons);
+                WeaponsOffsets.Apply(weapon, weapons);
+            }
         }
 
         // nickname
@@ -141,11 +173,13 @@ public class RemotePlayer : Entity
         w.Float(machine.health);
         w.Vector(transform.position);
         w.Float(transform.eulerAngles.y);
+        w.Float(head.localEulerAngles.x);
 
         // animation
         w.Bool(typing);
         w.Bool(walking);
         w.Bool(sliding);
+        w.Int((int)team);
         w.Int(weapon);
     }
 
@@ -159,13 +193,13 @@ public class RemotePlayer : Entity
         y.Read(r);
         z.Read(r);
         rotation.Read(r);
+        headRotation.Read(r);
 
         // animation
         typing = r.Bool();
         walking = r.Bool();
         sliding = r.Bool();
-
-        lastWeapon = weapon;
+        team = (Team)r.Int();
         weapon = r.Int();
     }
 }

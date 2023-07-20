@@ -8,16 +8,18 @@ public class Utils
 {
     public static bool WasCheatsEnabled;
 
-    private static Sprite buttonImage, shadowImage;
+    private static Sprite buttonImage, shadowImage, circleImage;
     private static ColorBlock colorBlock;
     private static Font font;
 
     public static void Load()
     {
-        buttonImage = OptionsMenuToManager.Instance.pauseMenu.transform.Find("Continue").gameObject.GetComponent<Image>().sprite;
-        shadowImage = Sandbox.SandboxAlterMenu.Instance.transform.GetChild(0).GetComponent<Image>().sprite;
-        colorBlock = OptionsMenuToManager.Instance.pauseMenu.transform.Find("Continue").gameObject.GetComponent<Button>().colors;
-        font = OptionsMenuToManager.Instance.optionsMenu.transform.Find("Text").gameObject.GetComponent<Text>().font;
+        // TODO cringe
+        buttonImage = OptionsMenuToManager.Instance.pauseMenu.transform.Find("Continue").GetComponent<Image>().sprite;
+        shadowImage = Sandbox.SandboxAlterMenu.Instance.transform.Find("Shadow").GetComponent<Image>().sprite;
+        circleImage = OptionsMenuToManager.Instance.transform.Find("Crosshair Filler").GetChild(0).GetChild(6).GetChild(0).GetComponent<Image>().sprite;
+        colorBlock = OptionsMenuToManager.Instance.pauseMenu.transform.Find("Continue").GetComponent<Button>().colors;
+        font = OptionsMenuToManager.Instance.optionsMenu.transform.Find("Text").GetComponent<Text>().font;
     }
 
     #region general
@@ -36,6 +38,12 @@ public class Utils
         NewMovement.Instance.enabled = enable;
         NewMovement.Instance.GetComponentInChildren<GunControl>().enabled = enable;
         NewMovement.Instance.GetComponentInChildren<FistControl>().enabled = enable;
+
+        // fix ultrasoap
+        if (enable)
+            NewMovement.Instance.UnlockMovementAxes();
+        else
+            NewMovement.Instance.LockMovementAxes();
 
         // temporary disable cheats
         if (enable)
@@ -75,12 +83,12 @@ public class Utils
         return obj;
     }
 
-    public static GameObject Image(string name, Transform parent, float x, float y, float width, float height, Color color)
+    public static GameObject Image(string name, Transform parent, float x, float y, float width, float height, Color color, bool circle = false)
     {
         var obj = Rect(name, parent, x, y, width, height);
         Component<Image>(obj, image =>
         {
-            image.sprite = buttonImage;
+            image.sprite = circle ? circleImage : buttonImage;
             image.type = UnityEngine.UI.Image.Type.Sliced;
             image.color = color;
         });
@@ -170,6 +178,26 @@ public class Utils
     public static void SetInteractable(GameObject obj, bool interactable)
     {
         obj.GetComponent<Button>().interactable = interactable;
+    }
+
+    #endregion
+    #region team button
+
+    public static GameObject TeamButton(string name, Transform parent, float x, float y, float width, float height, Color color, UnityAction clicked)
+    {
+        var obj = Image(name, parent, x, y, width, height, color);
+        Component<Button>(obj, button =>
+        {
+            button.targetGraphic = obj.GetComponent<Image>();
+            button.onClick.AddListener(clicked);
+        });
+
+        return obj;
+    }
+
+    public static GameObject TeamButton(string name, Transform parent, float x, float y, Color color, UnityAction clicked)
+    {
+        return TeamButton(name, parent, x, y, 51f, 51f, color, clicked);
     }
 
     #endregion

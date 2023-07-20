@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+using Jaket.Content;
 using Jaket.UI;
 
 /// <summary> Lobby controller with several useful methods. </summary>
@@ -50,10 +51,12 @@ public class LobbyController
         });
     }
 
-    // TODO disconnect all other players from the lobby if the player is the owner
     /// <summary> Leaves the lobby, if the player is the owner, then all other players will be thrown into the main menu. </summary>
     public static void LeaveLobby()
     {
+        // notify each client that the host has left so that they leave the lobby too
+        if (Lobby != null && IsOwner) EachMemberExceptOwner(member => Networking.Send(member.Id, new byte[1], PacketType.HostLeft));
+
         Lobby?.Leave();
         Lobby = null;
 

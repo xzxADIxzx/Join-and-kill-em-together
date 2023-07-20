@@ -27,7 +27,15 @@ public class Enemies
     public static int Index(string name) => Prefabs.FindIndex(prefab => prefab.name == name);
 
     /// <summary> Finds enemy index by the name of its clone. </summary>
-    public static int CopiedIndex(string name) => Index(name.Contains("(") ? name.Substring(0, name.IndexOf("(")).Trim() : name);
+    public static int CopiedIndex(string name)
+    {
+        // tell me why
+        if (name == "SwordsMachine") return (int)EntityType.Swordsmachine;
+        if (name == "V2 Green Arm") return (int)EntityType.V2_GreenArm;
+        if (name == "Gabriel 2nd") return (int)EntityType.Gabriel_Angry;
+
+        return Index(name.Contains("(") ? name.Substring(0, name.IndexOf("(")).Trim() : name);
+    }
 
     #endregion
     #region instantiation

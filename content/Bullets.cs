@@ -22,6 +22,7 @@ public class Bullets
             {
                 Prefabs.Add(revolver.revolverBeam);
                 Prefabs.Add(revolver.revolverBeamSuper);
+                Prefabs.Add(revolver.coin); // a coin is also a bullet, honestly-honestly
                 continue;
             }
 
@@ -118,7 +119,7 @@ public class Bullets
     public static void Send(GameObject bullet, bool hasRigidbody = false)
     {
         // if the lobby is null or the name is Net, then either the player isn't connected or this bullet was created remotely
-        if (LobbyController.Lobby == null || bullet.name.StartsWith("Net")) return;
+        if (LobbyController.Lobby == null || bullet.name.StartsWith("Net") || bullet.name.StartsWith("New")) return;
 
         // write bullet data to send to server or clients
         byte[] data = Write(bullet, hasRigidbody);
