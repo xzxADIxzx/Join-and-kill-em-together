@@ -14,7 +14,7 @@ public class DoorPatch
         if (LobbyController.Lobby == null || !LobbyController.IsOwner) return;
 
         // notify each client that the door has opened so they don't get stuck in a room
-        LobbyController.EachMemberExceptOwner(member => Networking.Send(member.Id, new byte[1], PacketType.UnlockDoors));
+        LobbyController.EachMemberExceptOwner(member => Networking.SendEmpty(member.Id, PacketType.UnlockDoors));
     }
 }
 
@@ -27,6 +27,6 @@ public class FinalDoorPatch
         if (LobbyController.Lobby == null || !LobbyController.IsOwner) return;
 
         // notify each client that the door has opened so they don't get stuck in a room
-        LobbyController.EachMemberExceptOwner(member => Networking.Send(member.Id, new byte[1], PacketType.UnlockFinalDoor));
+        LobbyController.EachMemberExceptOwner(member => Networking.SendEmpty(member.Id, PacketType.UnlockFinalDoor));
     }
 }

@@ -6,6 +6,7 @@ using Jaket.Content;
 using Jaket.Net.EntityTypes;
 using Jaket.IO;
 
+/// <summary> Endpoint of the host/lobby-owner to which clients connect. </summary>
 public class Server : Endpoint
 {
     public override void Load()

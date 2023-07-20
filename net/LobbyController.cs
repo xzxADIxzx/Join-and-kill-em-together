@@ -55,7 +55,7 @@ public class LobbyController
     public static void LeaveLobby()
     {
         // notify each client that the host has left so that they leave the lobby too
-        if (Lobby != null && IsOwner) EachMemberExceptOwner(member => Networking.Send(member.Id, new byte[1], PacketType.HostLeft));
+        if (Lobby != null && IsOwner) EachMemberExceptOwner(member => Networking.SendEmpty(member.Id, PacketType.HostLeft));
 
         Lobby?.Leave();
         Lobby = null;

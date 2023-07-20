@@ -7,6 +7,7 @@ using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net.EntityTypes;
 
+/// <summary> Endpoint of the client connected to the host. </summary>
 public class Client : Endpoint
 {
     public override void Load()

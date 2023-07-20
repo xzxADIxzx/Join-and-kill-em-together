@@ -172,5 +172,9 @@ public class Networking : MonoBehaviour
     public static void SendSnapshot(SteamId receiver, byte[] data)
             => Send(receiver, data, PacketType.Snapshot, P2PSend.Unreliable);
 
+    /// <summary> Sends an empty packet to the receiver over a reliable channel. </summary>
+    public static void SendEmpty(SteamId receiver, PacketType packetType)
+            => Send(receiver, new byte[1], packetType);
+
     #endregion
 }
