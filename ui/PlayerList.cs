@@ -24,7 +24,7 @@ public class PlayerList : MonoSingleton<PlayerList>
     public static void Build()
     {
         // initialize the singleton and create a canvas
-        Utils.Canvas("Player List", Plugin.Instance.transform).AddComponent<PlayerList>();
+        Utils.Canvas("Player List", Plugin.Instance.transform).AddComponent<PlayerList>().gameObject.SetActive(false);
 
         // hide player list once loading a scene
         SceneManager.sceneLoaded += (scene, mode) => Instance.gameObject.SetActive(Instance.Shown = false);
