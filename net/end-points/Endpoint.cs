@@ -1,6 +1,7 @@
 namespace Jaket.Net.EndPoints;
 
 using Steamworks;
+using System;
 using System.Collections.Generic;
 
 using Jaket.Content;
@@ -27,6 +28,9 @@ public abstract class Endpoint
 
     /// <summary> Adds a new listener to the endpoint. </summary>
     public void Listen(PacketType type, PacketListener listener) => listeners.Add(type, listener);
+
+    /// <summary> Adds a new listener to the endpoint, but without sender. </summary>
+    public void Listen(PacketType type, Action<Reader> listener) => listeners.Add(type, (sender, r) => listener(r));
 
     /// <summary> Reads available packets and pass them to listeners. </summary>
     public void UpdateListeners()
