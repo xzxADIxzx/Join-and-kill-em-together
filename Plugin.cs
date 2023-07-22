@@ -28,6 +28,9 @@ public class Plugin : UKMod
         // save an instance for later use
         Instance = this;
 
+        // rename the game object for a more presentable look
+        gameObject.name = "Jaket";
+
         // adds an event listener for plugin initialization
         SceneManager.sceneLoaded += (scene, mode) => Init();
     }

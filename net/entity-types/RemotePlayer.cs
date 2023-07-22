@@ -117,7 +117,7 @@ public class RemotePlayer : Entity
         canvas = Utils.Canvas("Nickname", transform, width, 64f, new Vector3(0f, 5f, 0f));
         nicknameText = Utils.Button(nickname, canvas.transform, 0f, 0f, width, 40f, 24, Color.white, TextAnchor.MiddleCenter, () => {}).GetComponentInChildren<Text>();
 
-        Utils.Image("Health Background", canvas.transform, 0f, -30f, width - 16f, 4f, new Color(0f, 0f, 0f, .5f));
+        Utils.Image("Health Background", canvas.transform, 0f, -30f, width - 16f, 4f);
         healthImage = Utils.Image("Health", canvas.transform, 0f, -30f, width - 16f, 4f, Color.red).GetComponent<RectTransform>();
 
         // for some unknown reason, the canvas needs to be scaled after adding elements
