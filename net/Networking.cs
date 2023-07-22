@@ -64,9 +64,9 @@ public class Networking : MonoBehaviour
         SteamMatchmaking.OnChatMessage += (lobby, member, message) =>
         {
             if (message.StartsWith("<system>") && member.Id == lobby.Owner.Id)
-                Chat.Received("Lobby", message.Substring("<system>".Length));
+                Chat.Instance.ReceiveChatMessage("Lobby", message.Substring("<system>".Length));
             else
-                Chat.Received(member.Name, message);
+                Chat.Instance.ReceiveChatMessage(member.Name, message);
         };
 
         SteamMatchmaking.OnLobbyEntered += lobby =>

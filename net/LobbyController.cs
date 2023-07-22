@@ -95,7 +95,7 @@ public class LobbyController
     {
         List<string> list = new();
 
-        if (Chat.Shown) list.Add("You");
+        if (Chat.Instance.Shown) list.Add("You");
         foreach (var player in Networking.Players.Values)
             if (player.typing) list.Add(player.nickname);
 

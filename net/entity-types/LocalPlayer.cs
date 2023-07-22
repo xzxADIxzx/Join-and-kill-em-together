@@ -30,7 +30,7 @@ public class LocalPlayer : Entity
         w.Float(-CameraController.Instance.rotationX);
 
         // animation
-        w.Bool(Chat.Shown);
+        w.Bool(Chat.Instance.Shown);
         w.Bool(NewMovement.Instance.walking);
         w.Bool(NewMovement.Instance.sliding);
         w.Int((int)team);
