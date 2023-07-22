@@ -25,13 +25,27 @@ public class NailPatch
 [HarmonyPatch(typeof(Harpoon), "Start")]
 public class HarpoonPatch
 {
-    static void Prefix(Harpoon __instance) => Bullets.Send(__instance.gameObject, true);
+    static void Postfix(Harpoon __instance, Rigidbody ___rb)
+    {
+        // the same as with a coin, so I have to do this
+        if (___rb.velocity == Vector3.zero)
+            __instance.Invoke("Start", .01f);
+        else
+            Bullets.Send(__instance.gameObject, true);
+    }
 }
 
 [HarmonyPatch(typeof(Grenade), "Start")]
 public class GrenadePatch
 {
-    static void Prefix(Grenade __instance) => Bullets.Send(__instance.gameObject);
+    static void Postfix(Grenade __instance, Rigidbody ___rb)
+    {
+        // the same as with a coin, so I have to do this
+        if (___rb.velocity == Vector3.zero)
+            __instance.Invoke("Start", .01f);
+        else
+            Bullets.Send(__instance.gameObject, true);
+    }
 }
 
 [HarmonyPatch(typeof(Cannonball), "Start")]
