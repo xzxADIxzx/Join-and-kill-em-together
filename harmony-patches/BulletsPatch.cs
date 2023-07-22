@@ -33,3 +33,9 @@ public class GrenadePatch
 {
     static void Prefix(Grenade __instance) => Bullets.Send(__instance.gameObject);
 }
+
+[HarmonyPatch(typeof(Cannonball), "Start")]
+public class CannonballPatch
+{
+    static void Prefix(Cannonball __instance) => Bullets.Send(__instance.gameObject, true);
+}
