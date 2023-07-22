@@ -71,14 +71,14 @@ public class Bullets
     #region serialization
 
     /// <summary> Writes bullet to the writer. </summary>
-    public static void Write(Writer w, GameObject bullet, bool hasRigidbody = false)
+    public static void Write(Writer w, GameObject bullet, bool hasRigidbody = false, bool applyOffset = true)
     {
         int index = bullet.name == "ReflectedBeamPoint(Clone)" ? Index("Revolver Beam") : CopiedIndex(bullet.name);
         if (index == -1) throw new System.Exception("Bullet index is -1 for name " + bullet.name);
 
         w.Int(index);
 
-        w.Vector(bullet.transform.position);
+        w.Vector(bullet.transform.position + (applyOffset ? bullet.transform.forward * 2f : Vector3.zero));
         w.Vector(bullet.transform.eulerAngles);
 
         w.Bool(hasRigidbody);
@@ -95,7 +95,7 @@ public class Bullets
     }
 
     /// <summary> Writes bullet to the byte array. </summary>
-    public static byte[] Write(GameObject bullet, bool hasRigidbody = false) => Writer.Write(w => Write(w, bullet, hasRigidbody));
+    public static byte[] Write(GameObject bullet, bool hasRigidbody = false, bool applyOffset = true) => Writer.Write(w => Write(w, bullet, hasRigidbody, applyOffset));
 
     /// <summary> Reads bullet from the reader. </summary>
     public static void Read(Reader r)
@@ -116,13 +116,13 @@ public class Bullets
     #region harmony
 
     /// <summary> Sends the bullet to all other players if it is local, otherwise ignore. </summary>
-    public static void Send(GameObject bullet, bool hasRigidbody = false)
+    public static void Send(GameObject bullet, bool hasRigidbody = false, bool applyOffset = true)
     {
         // if the lobby is null or the name is Net, then either the player isn't connected or this bullet was created remotely
         if (LobbyController.Lobby == null || bullet.name.StartsWith("Net") || bullet.name.StartsWith("New")) return;
 
         // write bullet data to send to server or clients
-        byte[] data = Write(bullet, hasRigidbody);
+        byte[] data = Write(bullet, hasRigidbody, applyOffset);
 
         if (LobbyController.IsOwner)
             LobbyController.EachMemberExceptOwner(member => Networking.Send(member.Id, data, PacketType.SpawnBullet));

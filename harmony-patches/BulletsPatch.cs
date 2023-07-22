@@ -1,13 +1,14 @@
 namespace Jaket.HarmonyPatches;
 
 using HarmonyLib;
+using UnityEngine;
 
 using Jaket.Content;
 
 [HarmonyPatch(typeof(Coin), "StartCheckingSpeed")] // for some reason, the coin has zero velocity in Start
 public class CoinPatch
 {
-    static void Postfix(Coin __instance) => Bullets.Send(__instance.gameObject, true);
+    static void Postfix(Coin __instance) => Bullets.Send(__instance.gameObject, true, false);
 }
 
 [HarmonyPatch(typeof(RevolverBeam), "Start")]
@@ -19,7 +20,7 @@ public class RevolverBeamPatch
 [HarmonyPatch(typeof(Nail), "Start")]
 public class NailPatch
 {
-    static void Prefix(Nail __instance) => Bullets.Send(__instance.gameObject, true);
+    static void Prefix(Nail __instance) => Bullets.Send(__instance.gameObject, true, false);
 }
 
 [HarmonyPatch(typeof(Harpoon), "Start")]
