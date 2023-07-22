@@ -126,7 +126,7 @@ public class Utils
     #endregion
     #region text
 
-    public static GameObject Text(string name, Transform parent, float x, float y, float width, float height, int size, Color color, TextAnchor align)
+    public static GameObject Text(string name, Transform parent, float x, float y, float width, float height, int size, Color? color = null, TextAnchor align = TextAnchor.MiddleCenter)
     {
         var obj = Rect(name, parent, x, y, width, height);
         Component<Text>(obj, text =>
@@ -134,7 +134,7 @@ public class Utils
             text.text = name;
             text.font = font;
             text.fontSize = size;
-            text.color = color;
+            text.color = color.HasValue ? color.Value : Color.white;
             text.alignment = align;
         });
 
@@ -143,7 +143,7 @@ public class Utils
 
     public static GameObject Text(string name, Transform parent, float x, float y)
     {
-        return Text(name, parent, x, y, 320f, 64f, 36, Color.white, TextAnchor.MiddleCenter);
+        return Text(name, parent, x, y, 320f, 64f, 36);
     }
 
     #endregion
@@ -207,7 +207,7 @@ public class Utils
     {
         var obj = Image(name, parent, x, y, width, height);
 
-        var text = Text("", obj.transform, 8f, 1f, width, height, size, Color.white, TextAnchor.MiddleLeft);
+        var text = Text("", obj.transform, 8f, 1f, width, height, size, align: TextAnchor.MiddleLeft);
         var placeholder = Text(name, obj.transform, 8f, 1f, width, height, size, new Color(.8f, .8f, .8f, .8f), TextAnchor.MiddleLeft);
 
         Component<InputField>(obj, field =>
