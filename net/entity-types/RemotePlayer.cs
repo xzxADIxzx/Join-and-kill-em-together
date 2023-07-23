@@ -75,12 +75,6 @@ public class RemotePlayer : Entity
         return obj.AddComponent<RemotePlayer>();
     }
 
-    public void Damage(float damage) => Networking.Send(LobbyController.Owner, Writer.Write(w =>
-    {
-        w.Id(Owner); // target
-        w.Float(damage); // damage
-    }), PacketType.DamagePlayer);
-
     public void Awake()
     {
         Type = EntityType.Player;
@@ -205,4 +199,6 @@ public class RemotePlayer : Entity
         team = (Team)r.Int();
         weapon = r.Int();
     }
+
+    public override void Damage(Reader r) => enemyId.DeliverDamage(gameObject, r.Vector(), Vector3.zero, r.Float(), r.Bool(), r.Float(), Bullets.networkDamage);
 }
