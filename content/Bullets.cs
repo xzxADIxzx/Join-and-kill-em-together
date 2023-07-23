@@ -5,12 +5,16 @@ using UnityEngine;
 
 using Jaket.IO;
 using Jaket.Net;
+using Jaket.UI;
 
 /// <summary> List of all bullets in the game and some useful methods. </summary>
 public class Bullets
 {
     /// <summary> List of all bullets in the game. </summary>
     public static List<GameObject> Prefabs = new();
+
+    /// <summary> These objects are used as damage conventions. </summary>
+    public static GameObject synchronizedBullet, networkDamage;
 
     /// <summary> Loads all bullets for future use. </summary>
     public static void Load()
@@ -57,6 +61,10 @@ public class Bullets
 
         // some variants are missing some projectiles
         Prefabs.RemoveAll(bullet => bullet == null);
+
+        // create damage conventions
+        synchronizedBullet = Utils.Object("Synchronized Bullet", Plugin.Instance.transform);
+        networkDamage = Utils.Object("Network Damage", Plugin.Instance.transform);
     }
 
     #region index
