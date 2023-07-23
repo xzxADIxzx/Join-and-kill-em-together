@@ -1,7 +1,5 @@
 namespace Jaket.Net.EndPoints;
 
-using Steamworks;
-
 using Jaket.Content;
 using Jaket.Net.EntityTypes;
 using Jaket.IO;
@@ -16,7 +14,7 @@ public class Server : Endpoint
             Networking.CurrentOwner = sender; // this is necessary so that the player does not see his model
 
             // if the player does not have a doll, then create it
-            if (!players.ContainsKey(sender)) players.Add(sender, RemotePlayer.CreatePlayer());
+            if (!players.ContainsKey(sender)) entities.Add(RemotePlayer.CreatePlayer());
 
             // read player data
             players[sender].Read(r);
@@ -31,16 +29,15 @@ public class Server : Endpoint
             LobbyController.EachMemberExceptOwnerAnd(sender, member => Networking.Send(member.Id, data, PacketType.SpawnBullet));
         });
 
-        Listen(PacketType.DamagePlayer, (sender, r) =>
+        Listen(PacketType.DamageEntity, (sender, r) =>
         {
-            Networking.CurrentOwner = r.Id();
+            entities[r.Int()]?.Damage(r); // damage entity
 
-            if (Networking.CurrentOwner == SteamClient.SteamId)
-                // damage dealt to the host
-                NewMovement.Instance.GetHurt((int)r.Float(), false, 0f);
-            else
-                // damage was deal to a player, so redirect the packet to him
-                Networking.Send(Networking.CurrentOwner, r.Bytes(4), PacketType.DamagePlayer);
+            r.Position = 0L; // reset position to read all data
+            byte[] data = r.Bytes(29); // read damage data
+
+            // send damage data to everyone else
+            LobbyController.EachMemberExceptOwnerAnd(sender, member => Networking.Send(member.Id, data, PacketType.DamageEntity));
         });
     }
 

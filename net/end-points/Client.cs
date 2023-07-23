@@ -73,7 +73,7 @@ public class Client : Endpoint
 
         Listen(PacketType.SpawnBullet, r => Bullets.Read(r));
 
-        Listen(PacketType.DamagePlayer, r => NewMovement.Instance.GetHurt((int)r.Float(), false, 0f));
+        Listen(PacketType.DamageEntity, r => entities[r.Int()]?.Damage(r));
 
         Listen(PacketType.UnlockDoors, r =>
         {

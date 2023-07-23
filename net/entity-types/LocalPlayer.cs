@@ -48,6 +48,6 @@ public class LocalPlayer : Entity
         r.Vector(); // skip force, huh
 
         // otherwise, you need to damage the player
-        NewMovement.Instance.GetHurt((int)r.Float(), false, 0f, r.Bool());
+        NewMovement.Instance.GetHurt((int)r.Float() * 5, false, 0f, r.Bool());
     }
 }

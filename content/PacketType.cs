@@ -12,6 +12,7 @@ public enum PacketType
     HostLeft,
     /// <summary> Owner of the lobby has died, which means you need to destroy all enemies. </summary>
     HostDied,
+
     /// <summary> Enemy has died, which means you need to kill him locally. </summary>
     EnemyDied,
     /// <summary> Boss has died, which means you need to kill his original enemy identifier. </summary>
@@ -19,8 +20,8 @@ public enum PacketType
 
     /// <summary> Client ask the creation of a bullet. </summary>
     SpawnBullet,
-    /// <summary> Client dealt damage to a player. </summary>
-    DamagePlayer,
+    /// <summary> Client dealt damage to an entity. </summary>
+    DamageEntity,
 
     /// <summary> Need to unlock all the doors on the level. Called by the host so that clients don't get stuck in a room. </summary>
     UnlockDoors,

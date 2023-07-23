@@ -61,5 +61,5 @@ public class RemoteEnemy : Entity
         boss = r.Bool();
     }
 
-    public override void Damage(Reader r) => enemyId.DeliverDamage(gameObject, r.Vector(), Vector3.zero, r.Float(), r.Bool(), r.Float(), Bullets.networkDamage);
+    public override void Damage(Reader r) => Bullets.DealDamage(enemyId, r);
 }
