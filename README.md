@@ -31,4 +31,4 @@ To compile you need .NET SDK 6.0 and Git.
 
 ## Afterword
 The mod is still in development, so numerous bugs may occur.   
-Anyway feel free to ping me on the discord **xzxADIxzx#7729**.
+Anyway feel free to ping me on the discord **xzxADIxzx#7729** or join our [server](https://discord.gg/USpt3hCBgn).
