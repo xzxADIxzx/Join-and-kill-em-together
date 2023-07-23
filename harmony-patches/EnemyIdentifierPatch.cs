@@ -44,8 +44,11 @@ public class EnemyIdentifierPatchBoss
         // only the host should report death
         if (!LobbyController.IsOwner || __instance.dead) return;
 
+        // if the enemy doesn't have an entity component, then it was created before the lobby
+        if (!__instance.TryGetComponent<LocalEnemy>(out var enemy)) return;
+
         // notify each client that the enemy has died
-        byte[] enemyData = Writer.Write(w => w.Int(__instance.gameObject.GetComponent<LocalEnemy>().Id));
+        byte[] enemyData = Writer.Write(w => w.Int(enemy.Id));
         LobbyController.EachMemberExceptOwner(member => Networking.Send(member.Id, enemyData, PacketType.EnemyDied));
 
         // notify every client that the boss has died

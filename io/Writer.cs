@@ -15,7 +15,7 @@ public class Writer
     private Writer(BinaryWriter w) => this.w = w;
 
     /// <summary> Current cursor position in the stream. </summary>
-    public long Position { get => w.BaseStream.Position; }
+    public long Position { get => w.BaseStream.Position; set => w.BaseStream.Position = value; }
 
     /// <summary> Stream length. </summary>
     public long Length { get => w.BaseStream.Length; }

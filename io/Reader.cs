@@ -15,7 +15,7 @@ public class Reader
     private Reader(BinaryReader r) => this.r = r;
 
     /// <summary> Current cursor position in the stream. </summary>
-    public long Position { get => r.BaseStream.Position; }
+    public long Position { get => r.BaseStream.Position; set => r.BaseStream.Position = value; }
 
     /// <summary> Stream length. </summary>
     public long Length { get => r.BaseStream.Length; }
