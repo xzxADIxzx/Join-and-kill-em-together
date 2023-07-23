@@ -10,14 +10,9 @@ using Jaket.Net;
 using Jaket.UI;
 
 /// <summary> Plugin main class. Essentially only initializes all other components. </summary>
-[UKPlugin(GUID, NAME, VERSION, DESC, false, false)]
+[UKPlugin("xzxADIxzx.Jaket", false, false)]
 public class Plugin : UKMod
 {
-    const string GUID = "xzxADIxzx.Jaket";
-    const string NAME = "Jaket";
-    const string DESC = "Multikill is still in development, so I created my own multiplayer mod for ultrakill.\nAuthor: xzxADIxzx#7729 & Sowler#5518";
-    const string VERSION = "0.2.0";
-
     /// <summary> Plugin instance available everywhere. </summary>
     public static Plugin Instance;
     /// <summary> Whether the plugin has been initialized. </summary>
