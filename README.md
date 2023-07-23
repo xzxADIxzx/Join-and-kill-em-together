@@ -14,7 +14,7 @@ Before installation, it's important to know that the mod needs **BepInEx** and *
 Without them nothing will make a *beep boop* sound.
 
 ### Mod manager
-Mod manager will do everything itself, that's what the mod manager is for
+Mod manager will do everything itself, that's what the mod manager is for.
 
 ### Manual
 1. Download the mod zip archive from Thunderstore.
