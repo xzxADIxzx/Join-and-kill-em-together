@@ -9,7 +9,7 @@ using Jaket.Net;
 using Jaket.Net.EntityTypes;
 
 [HarmonyPatch(typeof(EnemyIdentifier), "Start")]
-public class EnemyIdentifierPatch
+public class EnemyPatch
 {
     static void Prefix(EnemyIdentifier __instance)
     {
@@ -33,8 +33,46 @@ public class EnemyIdentifierPatch
     }
 }
 
-[HarmonyPatch(typeof(EnemyIdentifier), "Death")]
-public class EnemyIdentifierPatchBoss
+[HarmonyPatch(typeof(EnemyIdentifier), nameof(EnemyIdentifier.DeliverDamage))]
+public class EnemyDamagePatch
+{
+    static bool Prefix(EnemyIdentifier __instance, Vector3 force, float multiplier, bool tryForExplode, float critMultiplier, GameObject sourceWeapon)
+    {
+        // if source weapon is null, then the damage was caused by the environment
+        if (LobbyController.Lobby == null || sourceWeapon == null) return true;
+
+        // network bullets are needed just for the visual, damage is done through packets
+        if (sourceWeapon == Bullets.synchronizedBullet) return false;
+
+        // if the original weapon is network damage, then the damage was received over the network
+        if (sourceWeapon == Bullets.networkDamage) return true;
+
+        // if the enemy doesn't have an entity component, then it was created before the lobby
+        if (!__instance.TryGetComponent<Entity>(out var entity)) return true;
+
+        // if the damage was caused by the player himself, then all others must be notified about this
+        byte[] data = Writer.Write(w =>
+        {
+            w.Int(entity.Id);
+            w.Int((int)Networking.LocalPlayer.team);
+
+            w.Vector(force);
+            w.Float(multiplier);
+            w.Bool(tryForExplode);
+            w.Float(critMultiplier);
+        });
+
+        if (LobbyController.IsOwner)
+            LobbyController.EachMemberExceptOwner(member => Networking.Send(member.Id, data, PacketType.DamageEntity));
+        else
+            Networking.Send(LobbyController.Owner, data, PacketType.DamageEntity);
+
+        return true;
+    }
+}
+
+[HarmonyPatch(typeof(EnemyIdentifier), nameof(EnemyIdentifier.Death))]
+public class EnemyDeathPatch
 {
     static void Prefix(EnemyIdentifier __instance)
     {
@@ -44,8 +82,11 @@ public class EnemyIdentifierPatchBoss
         // only the host should report death
         if (!LobbyController.IsOwner || __instance.dead) return;
 
+        // if the enemy doesn't have an entity component, then it was created before the lobby
+        if (!__instance.TryGetComponent<LocalEnemy>(out var enemy)) return;
+
         // notify each client that the enemy has died
-        byte[] enemyData = Writer.Write(w => w.Int(__instance.gameObject.GetComponent<LocalEnemy>().Id));
+        byte[] enemyData = Writer.Write(w => w.Int(enemy.Id));
         LobbyController.EachMemberExceptOwner(member => Networking.Send(member.Id, enemyData, PacketType.EnemyDied));
 
         // notify every client that the boss has died

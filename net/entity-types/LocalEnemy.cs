@@ -1,6 +1,8 @@
 namespace Jaket.Net.EntityTypes;
 
 using Steamworks;
+using System;
+using UnityEngine;
 
 using Jaket.Content;
 using Jaket.IO;
@@ -24,6 +26,8 @@ public class LocalEnemy : Entity
 
         enemyId = GetComponent<EnemyIdentifier>();
         healthBar = GetComponent<BossHealthBar>();
+
+        if ((int)Type == -1) throw new Exception("Enemy index is -1 for name " + gameObject.name);
     }
 
     public override void Write(Writer w)
@@ -39,4 +43,6 @@ public class LocalEnemy : Entity
 
     // there is no point in reading anything, because it is a local enemy
     public override void Read(Reader r) => r.Bytes(21); // skip all data
+
+    public override void Damage(Reader r) => Bullets.DealDamage(enemyId, r);
 }

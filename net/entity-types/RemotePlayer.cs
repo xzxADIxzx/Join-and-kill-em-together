@@ -75,12 +75,6 @@ public class RemotePlayer : Entity
         return obj.AddComponent<RemotePlayer>();
     }
 
-    public void Damage(float damage) => Networking.Send(LobbyController.Owner, Writer.Write(w =>
-    {
-        w.Id(Owner); // target
-        w.Float(damage); // damage
-    }), PacketType.DamagePlayer);
-
     public void Awake()
     {
         Type = EntityType.Player;
@@ -117,7 +111,7 @@ public class RemotePlayer : Entity
         canvas = Utils.Canvas("Nickname", transform, width, 64f, new Vector3(0f, 5f, 0f));
         nicknameText = Utils.Button(nickname, canvas.transform, 0f, 0f, width, 40f, 24, Color.white, TextAnchor.MiddleCenter, () => {}).GetComponentInChildren<Text>();
 
-        Utils.Image("Health Background", canvas.transform, 0f, -30f, width - 16f, 4f, new Color(0f, 0f, 0f, .5f));
+        Utils.Image("Health Background", canvas.transform, 0f, -30f, width - 16f, 4f);
         healthImage = Utils.Image("Health", canvas.transform, 0f, -30f, width - 16f, 4f, Color.red).GetComponent<RectTransform>();
 
         // for some unknown reason, the canvas needs to be scaled after adding elements
@@ -145,6 +139,9 @@ public class RemotePlayer : Entity
 
             wingMaterial.mainTexture = wingTextures[team.Data().TextureId];
             wingMaterial.color = team.Data().WingColor(); // do this after changing the wings texture
+
+            // update player indicators to only show teammates
+            PlayerIndicators.Instance.Rebuild();
         }
 
         gameObject.tag = team == Networking.LocalPlayer.team ? "Untagged" : "Enemy"; // toggle friendly fire
@@ -202,4 +199,6 @@ public class RemotePlayer : Entity
         team = (Team)r.Int();
         weapon = r.Int();
     }
+
+    public override void Damage(Reader r) => Bullets.DealDamage(enemyId, r);
 }

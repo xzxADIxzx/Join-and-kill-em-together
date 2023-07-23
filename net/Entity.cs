@@ -33,6 +33,9 @@ public abstract class Entity : MonoBehaviour
     /// <summary> Reads the entity data from the reader. </summary>
     public abstract void Read(Reader r);
 
+    /// <summary> Deals damage to the entity. </summary>
+    public abstract void Damage(Reader r);
+
     /// <summary> Class for interpolating floating point values. </summary>
     public class FloatLerp
     {

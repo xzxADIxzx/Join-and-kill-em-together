@@ -5,12 +5,16 @@ using UnityEngine;
 
 using Jaket.IO;
 using Jaket.Net;
+using Jaket.UI;
 
 /// <summary> List of all bullets in the game and some useful methods. </summary>
 public class Bullets
 {
     /// <summary> List of all bullets in the game. </summary>
     public static List<GameObject> Prefabs = new();
+
+    /// <summary> These objects are used as damage conventions. </summary>
+    public static GameObject synchronizedBullet, networkDamage;
 
     /// <summary> Loads all bullets for future use. </summary>
     public static void Load()
@@ -57,6 +61,10 @@ public class Bullets
 
         // some variants are missing some projectiles
         Prefabs.RemoveAll(bullet => bullet == null);
+
+        // create damage conventions
+        synchronizedBullet = Utils.Object("Synchronized Bullet", Plugin.Instance.transform);
+        networkDamage = Utils.Object("Network Damage", Plugin.Instance.transform);
     }
 
     #region index
@@ -71,14 +79,14 @@ public class Bullets
     #region serialization
 
     /// <summary> Writes bullet to the writer. </summary>
-    public static void Write(Writer w, GameObject bullet, bool hasRigidbody = false)
+    public static void Write(Writer w, GameObject bullet, bool hasRigidbody = false, bool applyOffset = true)
     {
         int index = bullet.name == "ReflectedBeamPoint(Clone)" ? Index("Revolver Beam") : CopiedIndex(bullet.name);
         if (index == -1) throw new System.Exception("Bullet index is -1 for name " + bullet.name);
 
         w.Int(index);
 
-        w.Vector(bullet.transform.position);
+        w.Vector(bullet.transform.position + (applyOffset ? bullet.transform.forward * 2f : Vector3.zero));
         w.Vector(bullet.transform.eulerAngles);
 
         w.Bool(hasRigidbody);
@@ -95,7 +103,7 @@ public class Bullets
     }
 
     /// <summary> Writes bullet to the byte array. </summary>
-    public static byte[] Write(GameObject bullet, bool hasRigidbody = false) => Writer.Write(w => Write(w, bullet, hasRigidbody));
+    public static byte[] Write(GameObject bullet, bool hasRigidbody = false, bool applyOffset = true) => Writer.Write(w => Write(w, bullet, hasRigidbody, applyOffset));
 
     /// <summary> Reads bullet from the reader. </summary>
     public static void Read(Reader r)
@@ -116,18 +124,25 @@ public class Bullets
     #region harmony
 
     /// <summary> Sends the bullet to all other players if it is local, otherwise ignore. </summary>
-    public static void Send(GameObject bullet, bool hasRigidbody = false)
+    public static void Send(GameObject bullet, bool hasRigidbody = false, bool applyOffset = true)
     {
         // if the lobby is null or the name is Net, then either the player isn't connected or this bullet was created remotely
         if (LobbyController.Lobby == null || bullet.name.StartsWith("Net") || bullet.name.StartsWith("New")) return;
 
         // write bullet data to send to server or clients
-        byte[] data = Write(bullet, hasRigidbody);
+        byte[] data = Write(bullet, hasRigidbody, applyOffset);
 
         if (LobbyController.IsOwner)
             LobbyController.EachMemberExceptOwner(member => Networking.Send(member.Id, data, PacketType.SpawnBullet));
         else
             Networking.Send(LobbyController.Owner, data, PacketType.SpawnBullet);
+    }
+
+    /// <summary> Deals bullet damage to an enemy. </summary>
+    public static void DealDamage(EnemyIdentifier enemyId, Reader r)
+    {
+        r.Int(); // skip team because enemies don't have a team
+        enemyId.DeliverDamage(enemyId.gameObject, r.Vector(), Vector3.zero, r.Float(), r.Bool(), r.Float(), networkDamage);
     }
 
     #endregion

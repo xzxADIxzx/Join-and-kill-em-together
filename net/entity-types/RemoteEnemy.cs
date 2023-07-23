@@ -2,6 +2,7 @@ namespace Jaket.Net.EntityTypes;
 
 using UnityEngine;
 
+using Jaket.Content;
 using Jaket.IO;
 
 public class RemoteEnemy : Entity
@@ -59,4 +60,6 @@ public class RemoteEnemy : Entity
         // boss
         boss = r.Bool();
     }
+
+    public override void Damage(Reader r) => Bullets.DealDamage(enemyId, r);
 }

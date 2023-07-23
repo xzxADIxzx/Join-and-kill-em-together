@@ -64,9 +64,9 @@ public class Networking : MonoBehaviour
         SteamMatchmaking.OnChatMessage += (lobby, member, message) =>
         {
             if (message.StartsWith("<system>") && member.Id == lobby.Owner.Id)
-                Chat.Received("Lobby", message.Substring("<system>".Length));
+                Chat.Instance.ReceiveChatMessage("Lobby", message.Substring("<system>".Length));
             else
-                Chat.Received(member.Name, message);
+                Chat.Instance.ReceiveChatMessage(member.Name, message);
         };
 
         SteamMatchmaking.OnLobbyEntered += lobby =>
@@ -171,6 +171,10 @@ public class Networking : MonoBehaviour
     /// <summary> Sends packet data to the receiver over an unreliable channel. </summary>
     public static void SendSnapshot(SteamId receiver, byte[] data)
             => Send(receiver, data, PacketType.Snapshot, P2PSend.Unreliable);
+
+    /// <summary> Sends an empty packet to the receiver over a reliable channel. </summary>
+    public static void SendEmpty(SteamId receiver, PacketType packetType)
+            => Send(receiver, new byte[1], packetType);
 
     #endregion
 }

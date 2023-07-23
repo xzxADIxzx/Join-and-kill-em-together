@@ -83,14 +83,14 @@ public class Utils
         return obj;
     }
 
-    public static GameObject Image(string name, Transform parent, float x, float y, float width, float height, Color color, bool circle = false)
+    public static GameObject Image(string name, Transform parent, float x, float y, float width, float height, Color? color = null, bool circle = false)
     {
         var obj = Rect(name, parent, x, y, width, height);
         Component<Image>(obj, image =>
         {
             image.sprite = circle ? circleImage : buttonImage;
             image.type = UnityEngine.UI.Image.Type.Sliced;
-            image.color = color;
+            image.color = color.HasValue ? color.Value : new Color(0f, 0f, 0f, .5f);
         });
 
         return obj;
@@ -126,7 +126,7 @@ public class Utils
     #endregion
     #region text
 
-    public static GameObject Text(string name, Transform parent, float x, float y, float width, float height, int size, Color color, TextAnchor align)
+    public static GameObject Text(string name, Transform parent, float x, float y, float width, float height, int size, Color? color = null, TextAnchor align = TextAnchor.MiddleCenter)
     {
         var obj = Rect(name, parent, x, y, width, height);
         Component<Text>(obj, text =>
@@ -134,7 +134,7 @@ public class Utils
             text.text = name;
             text.font = font;
             text.fontSize = size;
-            text.color = color;
+            text.color = color.HasValue ? color.Value : Color.white;
             text.alignment = align;
         });
 
@@ -143,7 +143,7 @@ public class Utils
 
     public static GameObject Text(string name, Transform parent, float x, float y)
     {
-        return Text(name, parent, x, y, 320f, 64f, 36, Color.white, TextAnchor.MiddleCenter);
+        return Text(name, parent, x, y, 320f, 64f, 36);
     }
 
     #endregion
@@ -205,9 +205,9 @@ public class Utils
 
     public static InputField Field(string name, Transform parent, float x, float y, float width, float height, int size, UnityAction<string> enter)
     {
-        var obj = Image(name, parent, x, y, width, height, new Color(0f, 0f, 0f, .5f));
+        var obj = Image(name, parent, x, y, width, height);
 
-        var text = Text("", obj.transform, 8f, 1f, width, height, size, Color.white, TextAnchor.MiddleLeft);
+        var text = Text("", obj.transform, 8f, 1f, width, height, size, align: TextAnchor.MiddleLeft);
         var placeholder = Text(name, obj.transform, 8f, 1f, width, height, size, new Color(.8f, .8f, .8f, .8f), TextAnchor.MiddleLeft);
 
         Component<InputField>(obj, field =>

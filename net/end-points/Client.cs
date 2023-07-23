@@ -7,11 +7,12 @@ using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net.EntityTypes;
 
+/// <summary> Endpoint of the client connected to the host. </summary>
 public class Client : Endpoint
 {
     public override void Load()
     {
-        Listen(PacketType.Snapshot, (sender, r) =>
+        Listen(PacketType.Snapshot, r =>
         {
             // each snapshot contains all the entities, so you need to read them all
             while (r.Position < r.Length)
@@ -31,13 +32,13 @@ public class Client : Endpoint
             }
         });
 
-        Listen(PacketType.HostLeft, (sender, r) =>
+        Listen(PacketType.HostLeft, r =>
         {
             LobbyController.LeaveLobby();
             SceneHelper.LoadScene("Main Menu");
         });
 
-        Listen(PacketType.HostDied, (sender, r) =>
+        Listen(PacketType.HostDied, r =>
         {
             // in the sandbox after death, enemies are not destroyed
             if (SceneHelper.CurrentScene == "uk_construct") return;
@@ -49,7 +50,7 @@ public class Client : Endpoint
             });
         });
 
-        Listen(PacketType.EnemyDied, (sender, r) =>
+        Listen(PacketType.EnemyDied, r =>
         {
             // find the killed enemy in the list of entities
             var entity = entities[r.Int()];
@@ -58,7 +59,7 @@ public class Client : Endpoint
             if (entity is RemoteEnemy enemy) enemy.enemyId.InstaKill();
         });
 
-        Listen(PacketType.BossDefeated, (sender, r) =>
+        Listen(PacketType.BossDefeated, r =>
         {
             // maybe sending the name is not the best idea, but I don't have any others
             string bossName = r.String();
@@ -70,11 +71,11 @@ public class Client : Endpoint
             if (boss != null) Object.Destroy(boss.gameObject);
         });
 
-        Listen(PacketType.SpawnBullet, (sender, r) => Bullets.Read(r));
+        Listen(PacketType.SpawnBullet, r => Bullets.Read(r));
 
-        Listen(PacketType.DamagePlayer, (sender, r) => NewMovement.Instance.GetHurt((int)r.Float(), false, 0f));
+        Listen(PacketType.DamageEntity, r => entities[r.Int()]?.Damage(r));
 
-        Listen(PacketType.UnlockDoors, (sender, r) =>
+        Listen(PacketType.UnlockDoors, r =>
         {
             // find all the doors by tag, because it's faster than FindObjectsOfType
             foreach (var door in GameObject.FindGameObjectsWithTag("Door"))
@@ -84,7 +85,7 @@ public class Client : Endpoint
             }
         });
 
-        Listen(PacketType.UnlockFinalDoor, (sender, r) =>
+        Listen(PacketType.UnlockFinalDoor, r =>
         {
             // find all the doors by tag, because it's faster than FindObjectsOfType
             foreach (var door in GameObject.FindGameObjectsWithTag("Door"))

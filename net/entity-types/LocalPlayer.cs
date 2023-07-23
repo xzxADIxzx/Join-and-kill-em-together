@@ -30,7 +30,7 @@ public class LocalPlayer : Entity
         w.Float(-CameraController.Instance.rotationX);
 
         // animation
-        w.Bool(Chat.Shown);
+        w.Bool(Chat.Instance.Shown);
         w.Bool(NewMovement.Instance.walking);
         w.Bool(NewMovement.Instance.sliding);
         w.Int((int)team);
@@ -38,5 +38,16 @@ public class LocalPlayer : Entity
     }
 
     // there is no point in reading anything, because it is a local player
-    public override void Read(Reader r) => r.Bytes(31); // skip all data
+    public override void Read(Reader r) => r.Bytes(35); // skip all data
+
+    public override void Damage(Reader r)
+    {
+        // no need to deal damage if an ally hits you
+        if ((Team)r.Int() == team) return;
+
+        r.Vector(); // skip force, huh
+
+        // otherwise, you need to damage the player
+        NewMovement.Instance.GetHurt((int)r.Float() * 5, false, 0f, r.Bool());
+    }
 }

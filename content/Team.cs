@@ -6,19 +6,19 @@ using UnityEngine;
 /// <summary> All teams. Teams needed for PvP mechanics. </summary>
 public enum Team
 {
-    [TeamData(0, 1f, .827451f, .49803922f)]
+    [TeamData(0, 1f, .8f, .3f)]
     Yellow,
 
-    [TeamData(2, 1f, 0f, 0f)]
+    [TeamData(2, 1f, .2f, .1f)]
     Red,
 
-    [TeamData(3, 0f, 1f, 0f)]
+    [TeamData(3, 0f, .9f, .4f)]
     Green,
 
-    [TeamData(1, 0f, 0f, 1f)]
+    [TeamData(1, 0f, .5f, 1f)]
     Blue,
 
-    [TeamData(1, 1f, .4117647f, .7058824f, true)]
+    [TeamData(1, 1f, .3f, .7f, true)]
     Pink
 }
 

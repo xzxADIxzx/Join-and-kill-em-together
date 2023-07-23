@@ -14,6 +14,6 @@ public class NewMovementPatch
         if (LobbyController.Lobby == null || !LobbyController.IsOwner || SceneHelper.CurrentScene == "uk_construct") return;
 
         // notify each client that the host has died so that they destroy all enemies
-        LobbyController.EachMemberExceptOwner(member => Networking.Send(member.Id, new byte[1], PacketType.HostDied));
+        LobbyController.EachMemberExceptOwner(member => Networking.SendEmpty(member.Id, PacketType.HostDied));
     }
 }

@@ -55,7 +55,7 @@ public class LobbyController
     public static void LeaveLobby()
     {
         // notify each client that the host has left so that they leave the lobby too
-        if (Lobby != null && IsOwner) EachMemberExceptOwner(member => Networking.Send(member.Id, new byte[1], PacketType.HostLeft));
+        if (Lobby != null && IsOwner) EachMemberExceptOwner(member => Networking.SendEmpty(member.Id, PacketType.HostLeft));
 
         Lobby?.Leave();
         Lobby = null;
@@ -95,7 +95,7 @@ public class LobbyController
     {
         List<string> list = new();
 
-        if (Chat.Shown) list.Add("You");
+        if (Chat.Instance.Shown) list.Add("You");
         foreach (var player in Networking.Players.Values)
             if (player.typing) list.Add(player.nickname);
 
