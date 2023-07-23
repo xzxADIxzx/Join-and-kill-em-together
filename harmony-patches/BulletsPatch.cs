@@ -17,6 +17,12 @@ public class RevolverBeamPatch
     static void Prefix(RevolverBeam __instance) => Bullets.Send(__instance.gameObject);
 }
 
+[HarmonyPatch(typeof(Projectile), "Start")]
+public class ProjectilePatch
+{
+    static void Prefix(Projectile __instance) => Bullets.Send(__instance.gameObject);
+}
+
 [HarmonyPatch(typeof(Nail), "Start")]
 public class NailPatch
 {
