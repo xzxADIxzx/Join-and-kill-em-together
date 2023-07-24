@@ -23,8 +23,6 @@ public enum PacketType
     /// <summary> Client dealt damage to an entity. </summary>
     DamageEntity,
 
-    /// <summary> Need to unlock all the doors on the level. Called by the host so that clients don't get stuck in a room. </summary>
-    UnlockDoors,
-    /// <summary> Need to unlock the final door. Called by the host so that clients don't get stuck in a room. </summary>
-    UnlockFinalDoor
+    /// <summary> Need to open a certain door. Called by the host so that clients don't get stuck in a room. </summary>
+    OpenDoor
 }

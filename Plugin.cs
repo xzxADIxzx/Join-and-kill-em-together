@@ -47,6 +47,7 @@ public class Plugin : UKMod
         // initialize networking components
         Networking.Load();
         Entities.Load();
+        World.Load();
 
         // initialize ui components
         Utils.Load(); // gets some resources like images and fonts
