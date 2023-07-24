@@ -33,7 +33,6 @@ public class World : MonoSingleton<World>
     /// <summary> Updates the list of objects in the level. </summary>
     public void Recache()
     {
-        Debug.LogWarning("RECACHE");
         // find all the doors on the level, because the old ones have already been destroyed
         doors.Clear();
 

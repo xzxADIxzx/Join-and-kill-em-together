@@ -165,9 +165,9 @@ public class Utils
         return obj;
     }
 
-    public static GameObject Button(string name, Transform parent, float x, float y, UnityAction clicked)
+    public static GameObject Button(string name, Transform parent, float x, float y, UnityAction clicked, int size = 36)
     {
-        return Button(name, parent, x, y, 320f, 64f, 36, Color.white, TextAnchor.MiddleCenter, clicked);
+        return Button(name, parent, x, y, 320f, 64f, size, Color.white, TextAnchor.MiddleCenter, clicked);
     }
 
     public static void SetText(GameObject obj, string text)
