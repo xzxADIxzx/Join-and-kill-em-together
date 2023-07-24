@@ -132,15 +132,16 @@ public class Chat : MonoSingleton<Chat>
 
         // add new message
         var text = Utils.Text(FormatMessage(author, message), list, 0f, 16f + height / 2f, WIDTH - 32f, height, 16, align: TextAnchor.MiddleLeft).transform as RectTransform;
-        text.anchorMin = text.anchorMax = new Vector2(.5f, 0f);
+        text.anchorMin = text.anchorMax = new(.5f, 0f);
+        text.localScale = new(1f, 1f, 1f); // unity scales text crookedly for small resolutions, which is why it is incorrectly located
 
         // delete very old messages
         if (list.childCount > MESSAGES_SHOWN) DestroyImmediate(list.GetChild(0).gameObject);
 
         // scale chat panel
         var firstChild = list.GetChild(0) as RectTransform;
-        list.sizeDelta = new Vector2(WIDTH, firstChild.anchoredPosition.y + firstChild.sizeDelta.y / 2f + 16f);
-        list.anchoredPosition = new Vector2(-644f, -428f + list.sizeDelta.y / 2f);
+        list.sizeDelta = new(WIDTH, firstChild.anchoredPosition.y + firstChild.sizeDelta.y / 2f + 16f);
+        list.anchoredPosition = new(-644f, -428f + list.sizeDelta.y / 2f);
 
         // save the time the message was received to give the player time to read it
         lastMessageTime = Time.time;
