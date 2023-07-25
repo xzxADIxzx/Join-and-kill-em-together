@@ -39,6 +39,9 @@ public class Utils
         NewMovement.Instance.GetComponentInChildren<GunControl>().enabled = enable;
         NewMovement.Instance.GetComponentInChildren<FistControl>().enabled = enable;
 
+        HookArm.Instance.enabled = enable;
+        if (!enable) HookArm.Instance.Cancel();
+
         // fix ultrasoap
         if (enable)
             NewMovement.Instance.UnlockMovementAxes();
