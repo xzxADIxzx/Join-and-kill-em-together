@@ -76,8 +76,8 @@ public class Client : Endpoint
         Listen(PacketType.DamageEntity, r => entities[r.Int()]?.Damage(r));
 
         Listen(PacketType.OpenDoor, r => World.Instance.OpenDoor(r.Int()));
-
         Listen(PacketType.BreakeWall, r => World.Instance.BreakWall());
+        Listen(PacketType.StartV2Outro, r => World.Instance.StartV2Outro());
     }
 
     public override void Update()

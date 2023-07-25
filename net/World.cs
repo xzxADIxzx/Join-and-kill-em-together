@@ -51,8 +51,12 @@ public class World : MonoSingleton<World>
         if (SceneHelper.CurrentScene == "Level 4-4")
         {
             if (LobbyController.IsOwner)
+            {
                 // add a listener to notify clients to break the wall
-                BrokenWall().events.onActivate.AddListener(() => LobbyController.EachMemberExceptOwner(member => Networking.SendEmpty(member.Id, PacketType.BreakeWall)));
+                Redirect(BrokenWall(), PacketType.BreakeWall);
+                // and a listener to notify clients to start outro
+                Redirect(V2Outro(), PacketType.StartV2Outro);
+            }
             else
                 // or break the wall if you have already received a notification
                 if (IsWallBrokenOn4_4) BreakWall();
@@ -113,6 +117,10 @@ public class World : MonoSingleton<World>
     #endregion
     #region 4-4
 
+    /// <summary> Adds a listener to the activator and sends packets to all clients when the listener fires. </summary>
+    public void Redirect(ObjectActivator activator, PacketType packetType) =>
+        activator?.events.onActivate.AddListener(() => LobbyController.EachMemberExceptOwner(member => Networking.SendEmpty(member.Id, packetType)));
+
     /// <summary> Finds broken wall activator on level 4-4. </summary>
     public ObjectActivator BrokenWall()
     {
@@ -129,6 +137,16 @@ public class World : MonoSingleton<World>
         wall.transform.parent.gameObject.SetActive(true);
         wall.transform.parent.parent.Find("Wall").gameObject.SetActive(false);
     }
+
+    /// <summary> Finds V2 outro activator on level 4-4. </summary>
+    public ObjectActivator V2Outro()
+    {
+        var all = Resources.FindObjectsOfTypeAll<ObjectActivator>();
+        return Array.Find(all, a => a.name == "BossOutro" && a.transform.parent.gameObject.activeInHierarchy);
+    }
+
+    /// <summary> Starts V2 outro and loading to the next part of the level. </summary>
+    public void StartV2Outro() => V2Outro().gameObject.SetActive(true);
 
     #endregion
     #region harmony
