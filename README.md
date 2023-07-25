@@ -26,7 +26,7 @@ Example: UMM Mods/Jaket/Jaket.dll and etc.
 To compile you need .NET SDK 6.0 and Git.
 
 1. Clone the repository with `git clone https://github.com/xzxADIxzx/Join-and-kill-em-together.git`
-2. Run `dotnet restore`.
+2. Run `dotnet restore`
 3. Create a folder `lib` and put the `Assembly-CSharp.dll`, `Facepunch.Steamworks.Win64.dll`, `UMM.dll` and `UnityEngine.UI.dll` from `ULTRAKILL\ULTRAKILL_Data\Managed` folder.
 4. Compile the mod with `dotnet build`.
 5. At the output you will get the **Jaket.dll** file, which must be placed in the mods folder.

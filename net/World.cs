@@ -1,5 +1,6 @@
 namespace Jaket.Net;
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -16,6 +17,8 @@ public class World : MonoSingleton<World>
     private List<GameObject> doors = new();
     /// <summary> List of open doors, cleared only when the player enters a new level. </summary>
     private List<int> opened = new();
+    /// <summary> Whether the wall is broken in the arena at level 4-4. </summary>
+    private bool IsWallBrokenOn4_4;
 
     /// <summary> Name of the last loaded scene. </summary>
     private string LastScene;
@@ -44,11 +47,24 @@ public class World : MonoSingleton<World>
         // sort doors by position to make sure their order is the same for different clients
         doors.Sort((d1, d2) => d1.transform.position.sqrMagnitude.CompareTo(d2.transform.position.sqrMagnitude));
 
+        // there is a door in the arena through which V2 escapes
+        if (SceneHelper.CurrentScene == "Level 4-4")
+        {
+            if (LobbyController.IsOwner)
+                // add a listener to notify clients to break the wall
+                BrokenWall().events.onActivate.AddListener(() => LobbyController.EachMemberExceptOwner(member => Networking.SendEmpty(member.Id, PacketType.BreakeWall)));
+            else
+                // or break the wall if you have already received a notification
+                if (IsWallBrokenOn4_4) BreakWall();
+        }
+
         // clear the list of open doors if the player has entered a new level
         if (SceneHelper.CurrentScene != LastScene)
         {
-            opened.Clear();
             LastScene = SceneHelper.CurrentScene;
+
+            opened.Clear();
+            IsWallBrokenOn4_4 = false;
         }
         // but if the player just restarted the same level, then you need to open all the doors
         else opened.ForEach(index => OpenDoor(index, false));
@@ -92,6 +108,26 @@ public class World : MonoSingleton<World>
             big.transform.parent.GetChild(3).gameObject.SetActive(true);
             return;
         }
+    }
+
+    #endregion
+    #region 4-4
+
+    /// <summary> Finds broken wall activator on level 4-4. </summary>
+    public ObjectActivator BrokenWall()
+    {
+        var all = Resources.FindObjectsOfTypeAll<ObjectActivator>();
+        return Array.Find(all, a => a.name == "Checkpoint Activator" && a.transform.parent.parent.gameObject.activeInHierarchy);
+    }
+
+    /// <summary> Activate the broken wall and deactivate the old one. </summary>
+    public void BreakWall()
+    {
+        IsWallBrokenOn4_4 = true; // save the state of the wall
+        var wall = BrokenWall();
+
+        wall.transform.parent.gameObject.SetActive(true);
+        wall.transform.parent.parent.Find("Wall").gameObject.SetActive(false);
     }
 
     #endregion

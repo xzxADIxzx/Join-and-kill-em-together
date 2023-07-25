@@ -24,5 +24,7 @@ public enum PacketType
     DamageEntity,
 
     /// <summary> Need to open a certain door. Called by the host so that clients don't get stuck in a room. </summary>
-    OpenDoor
+    OpenDoor,
+    /// <summary> Need to break a certain wall. Called by the host so that clients don't get stuck in a room. </summary>
+    BreakeWall
 }
