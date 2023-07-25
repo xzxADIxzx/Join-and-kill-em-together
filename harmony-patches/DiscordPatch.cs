@@ -40,8 +40,8 @@ public class ShopPatch
         stroke.fillCenter = false;
 
         // the button is a little stormy
-        button.transform.localPosition = new(0f, -128f, -10f);
-        button.transform.localScale = new(1f, 1f, 1f);
+        button.transform.localPosition = new(0f, -128f, -20f);
+        button.transform.localScale = new(SceneHelper.CurrentScene == "uk_construct" ? -1f : 1f, 1f, 1f);
 
         // add ControllerPointer so that the button can be clicked
         button.AddComponent<ShopButton>(); // hacky
