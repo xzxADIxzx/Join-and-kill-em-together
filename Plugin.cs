@@ -1,5 +1,6 @@
 ﻿namespace Jaket;
 
+using BepInEx;
 using HarmonyLib;
 using UMM;
 using UnityEngine;
@@ -10,15 +11,15 @@ using Jaket.Net;
 using Jaket.UI;
 
 /// <summary> Plugin main class. Essentially only initializes all other components. </summary>
-[UKPlugin("xzxADIxzx.Jaket", false, false)]
-public class Plugin : UKMod
+[BepInPlugin("xzxADIxzx.Jaket", "Jaket", "0.4.1")]
+public class Plugin : BaseUnityPlugin
 {
     /// <summary> Plugin instance available everywhere. </summary>
     public static Plugin Instance;
     /// <summary> Whether the plugin has been initialized. </summary>
     public static bool Initialized;
 
-    public override void OnModLoaded()
+    public void Awake()
     {
         // save an instance for later use
         Instance = this;
