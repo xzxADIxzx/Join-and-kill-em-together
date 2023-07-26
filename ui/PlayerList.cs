@@ -62,6 +62,9 @@ public class PlayerList : MonoSingleton<PlayerList>
         // create a rect transform in which there will be a players list
         Instance.list = Utils.Rect("List", Instance.transform, 0f, 0f, 1920f, 1080f);
         Instance.Rebuild();
+
+        // moving elements to display correctly on wide screens
+        WidescreenFix.MoveDown(Instance.transform);
     }
 
     /// <summary> Toggles visibility of player list. </summary>

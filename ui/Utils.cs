@@ -242,7 +242,7 @@ public class Utils
 
     public static GameObject Shadow(string name, Transform parent, float x, float y)
     {
-        return Shadow(name, parent, x, y, 320f, 1080f);
+        return Shadow(name, parent, x, y, 320f, 2000f);
     }
 
     #endregion

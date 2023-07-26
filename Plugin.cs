@@ -50,6 +50,7 @@ public class Plugin : UKMod
         World.Load();
 
         // initialize ui components
+        WidescreenFix.Load();
         Utils.Load(); // gets some resources like images and fonts
         PlayerList.Build();
         PlayerIndicators.Build();
