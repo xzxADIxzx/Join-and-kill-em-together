@@ -25,8 +25,10 @@ public enum PacketType
 
     /// <summary> Need to open a certain door. Called by the host so that clients don't get stuck in a room. </summary>
     OpenDoor,
-    /// <summary> Need to break a certain wall. Called by the host so that clients don't get stuck in a room. </summary>
+    /// <summary> Need to break a certain wall in level 4-4. </summary>
     BreakeWall,
     /// <summary> Need to start V2 outro in level 4-4. </summary>
-    StartV2Outro
+    StartV2Outro,
+    /// <summary> Need to raise exit in level 4-4. </summary>
+    RaiseExitBuilding
 }

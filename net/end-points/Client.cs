@@ -78,6 +78,7 @@ public class Client : Endpoint
         Listen(PacketType.OpenDoor, r => World.Instance.OpenDoor(r.Int()));
         Listen(PacketType.BreakeWall, r => World.Instance.BreakWall());
         Listen(PacketType.StartV2Outro, r => World.Instance.StartV2Outro());
+        Listen(PacketType.RaiseExitBuilding, r => World.Instance.RaiseExitBuilding());
     }
 
     public override void Update()

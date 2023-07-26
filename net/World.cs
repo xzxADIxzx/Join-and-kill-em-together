@@ -56,6 +56,8 @@ public class World : MonoSingleton<World>
                 Redirect(BrokenWall(), PacketType.BreakeWall);
                 // and a listener to notify clients to start outro
                 Redirect(V2Outro(), PacketType.StartV2Outro);
+                // and a listener to notify clients to raise exit
+                Redirect(ExitBuilding(), PacketType.RaiseExitBuilding);
             }
             else
                 // or break the wall if you have already received a notification
@@ -147,6 +149,24 @@ public class World : MonoSingleton<World>
 
     /// <summary> Starts V2 outro and loading to the next part of the level. </summary>
     public void StartV2Outro() => V2Outro().gameObject.SetActive(true);
+
+    /// <summary> Finds exit building activator on level 4-4. </summary>
+    public ObjectActivator ExitBuilding()
+    {
+        var all = Resources.FindObjectsOfTypeAll<ObjectActivator>();
+        return Array.Find(all, a => a.name == "ExitBuilding Raise" && a.transform.parent.gameObject.activeInHierarchy);
+    }
+
+    /// <summary> Raises the exit from the level from under the sand. </summary>
+    public void RaiseExitBuilding()
+    {
+        var exit = ExitBuilding();
+        exit.gameObject.SetActive(true);
+
+        var bulding = exit.transform.parent.Find("ExitBuilding");
+        bulding.GetComponent<Door>().Close();
+        bulding.GetChild(14).gameObject.SetActive(true);
+    }
 
     #endregion
     #region harmony
