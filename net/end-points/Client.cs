@@ -32,6 +32,8 @@ public class Client : Endpoint
             }
         });
 
+        Listen(PacketType.LevelLoading, r => SceneHelper.LoadScene(r.String()));
+
         Listen(PacketType.HostLeft, r =>
         {
             LobbyController.LeaveLobby();

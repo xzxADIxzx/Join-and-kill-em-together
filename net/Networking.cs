@@ -53,7 +53,16 @@ public class Networking : MonoBehaviour
             }
 
             Clear(); // for safety
-            if (LobbyController.IsOwner) Entities.Add(LocalPlayer);
+
+            if (LobbyController.IsOwner)
+            {
+                // re-add a local player, because the list was cleared 
+                Entities.Add(LocalPlayer);
+
+                // inform all players about the transition to a new level
+                byte[] data = Writer.Write(w => w.String(SceneHelper.CurrentScene));
+                LobbyController.EachMemberExceptOwner(member => Send(member.Id, data, PacketType.LevelLoading));
+            }
 
             Loading = false;
         };
@@ -154,6 +163,7 @@ public class Networking : MonoBehaviour
         // the player isn't connected to the lobby, and no logic needs to be updated
         if (LobbyController.Lobby == null) return;
 
+        // first level loading when connected to a lobby
         if (Loading)
         {
             if (SteamNetworking.IsP2PPacketAvailable((int)PacketType.LevelLoading))
