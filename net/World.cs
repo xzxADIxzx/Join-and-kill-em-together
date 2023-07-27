@@ -13,6 +13,9 @@ using Jaket.UI;
 [ConfigureSingleton(SingletonFlags.NoAutoInstance)]
 public class World : MonoSingleton<World>
 {
+    /// <summary> Names of acid levels at level 3-1. </summary>
+    public static List<string> AcidLevelsNames = new();
+
     /// <summary> List of all doors in the level, updated when a level is loaded. </summary>
     private List<GameObject> doors = new();
     /// <summary> List of open doors, cleared only when the player enters a new level. </summary>
@@ -31,6 +34,9 @@ public class World : MonoSingleton<World>
 
         // updates the list of objects in the level when the scene is loaded
         SceneManager.sceneLoaded += (scene, mode) => Instance.Recache();
+
+        // perfect naming
+        AcidLevelsNames = new(new[] { "Door Opener Big", "Door Opener Big 2", "Door Opener (1)" });
     }
 
     /// <summary> Updates the list of objects in the level. </summary>
@@ -46,6 +52,11 @@ public class World : MonoSingleton<World>
 
         // sort doors by position to make sure their order is the same for different clients
         doors.Sort((d1, d2) => d1.transform.position.sqrMagnitude.CompareTo(d2.transform.position.sqrMagnitude));
+
+        // level 3-1 has acid that comes down in layers
+        if (SceneHelper.CurrentScene == "Level 3-1")
+            foreach (var door in Resources.FindObjectsOfTypeAll<DoorOpener>())
+                if (AcidLevelsNames.Contains(door.name)) doors.Add(door.gameObject);
 
         // there is a door in the arena through which V2 escapes
         if (SceneHelper.CurrentScene == "Level 4-4")
@@ -112,6 +123,13 @@ public class World : MonoSingleton<World>
         {
             big.gameObject.SetActive(true); // this door is so~ unique
             big.transform.parent.GetChild(3).gameObject.SetActive(true);
+            return;
+        }
+
+        // level 3-1 has acid that comes down in layers
+        if (obj.TryGetComponent<DoorOpener>(out var acid))
+        {
+            acid.gameObject.SetActive(true);
             return;
         }
     }

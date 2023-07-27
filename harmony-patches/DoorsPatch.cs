@@ -44,6 +44,16 @@ public class BigDoorPatch
     }
 }
 
+[HarmonyPatch(typeof(DoorOpener), "OnEnable")]
+public class AcidLevelPatch
+{
+    static void Postfix(DoorOpener __instance)
+    {
+        // level 3-1 has acid that comes down in layers
+        if (LobbyController.Lobby != null && LobbyController.IsOwner && World.AcidLevelsNames.Contains(__instance.name)) World.Instance.SendDoorOpen(__instance.gameObject);
+    }
+}
+
 [HarmonyPatch(typeof(CheckPoint), nameof(CheckPoint.ActivateCheckPoint))]
 public class CheckPointPatch
 {
