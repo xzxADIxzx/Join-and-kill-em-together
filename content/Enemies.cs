@@ -49,6 +49,9 @@ public class Enemies
         var enemy = obj.AddComponent<RemoteEnemy>();
         enemy.Type = type;
 
+        // for some reasons, the size of the Cerberus is smaller than necessary
+        if (type == EntityType.Cerberus) obj.transform.localScale = new(4f, 4f, 4f);
+
         return enemy;
     }
 

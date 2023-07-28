@@ -39,6 +39,9 @@ public class Utils
         NewMovement.Instance.GetComponentInChildren<GunControl>().enabled = enable;
         NewMovement.Instance.GetComponentInChildren<FistControl>().enabled = enable;
 
+        HookArm.Instance.enabled = enable;
+        if (!enable) HookArm.Instance.Cancel();
+
         // fix ultrasoap
         if (enable)
             NewMovement.Instance.UnlockMovementAxes();
@@ -165,9 +168,9 @@ public class Utils
         return obj;
     }
 
-    public static GameObject Button(string name, Transform parent, float x, float y, UnityAction clicked)
+    public static GameObject Button(string name, Transform parent, float x, float y, UnityAction clicked, int size = 36)
     {
-        return Button(name, parent, x, y, 320f, 64f, 36, Color.white, TextAnchor.MiddleCenter, clicked);
+        return Button(name, parent, x, y, 320f, 64f, size, Color.white, TextAnchor.MiddleCenter, clicked);
     }
 
     public static void SetText(GameObject obj, string text)
@@ -239,7 +242,7 @@ public class Utils
 
     public static GameObject Shadow(string name, Transform parent, float x, float y)
     {
-        return Shadow(name, parent, x, y, 320f, 1080f);
+        return Shadow(name, parent, x, y, 320f, 2000f);
     }
 
     #endregion

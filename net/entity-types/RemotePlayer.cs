@@ -118,6 +118,17 @@ public class RemotePlayer : Entity
         canvas.transform.localScale = new Vector3(.02f, .02f, .02f);
     }
 
+    public void Start()
+    {
+        // idols can target players, which is undesirable
+        int index = EnemyTracker.Instance.enemies.IndexOf(enemyId);
+        if (index != -1)
+        {
+            EnemyTracker.Instance.enemies.RemoveAt(index);
+            EnemyTracker.Instance.enemyRanks.RemoveAt(index);
+        }
+    }
+
     public void Update()
     {
         // health & position

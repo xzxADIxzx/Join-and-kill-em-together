@@ -32,6 +32,8 @@ public class Client : Endpoint
             }
         });
 
+        Listen(PacketType.LevelLoading, r => SceneHelper.LoadScene(r.String()));
+
         Listen(PacketType.HostLeft, r =>
         {
             LobbyController.LeaveLobby();
@@ -75,25 +77,10 @@ public class Client : Endpoint
 
         Listen(PacketType.DamageEntity, r => entities[r.Int()]?.Damage(r));
 
-        Listen(PacketType.UnlockDoors, r =>
-        {
-            // find all the doors by tag, because it's faster than FindObjectsOfType
-            foreach (var door in GameObject.FindGameObjectsWithTag("Door"))
-            {
-                // unlock them to prevent getting stuck in a room
-                door.transform.parent.GetComponent<Door>()?.Unlock();
-            }
-        });
-
-        Listen(PacketType.UnlockFinalDoor, r =>
-        {
-            // find all the doors by tag, because it's faster than FindObjectsOfType
-            foreach (var door in GameObject.FindGameObjectsWithTag("Door"))
-            {
-                // unlock the final door to prevent getting stuck in a room
-                door.transform.parent.GetComponent<FinalDoor>()?.Open();
-            }
-        });
+        Listen(PacketType.OpenDoor, r => World.Instance.OpenDoor(r.Int()));
+        Listen(PacketType.BreakeWall, r => World.Instance.BreakWall());
+        Listen(PacketType.StartV2Outro, r => World.Instance.StartV2Outro());
+        Listen(PacketType.RaiseExitBuilding, r => World.Instance.RaiseExitBuilding());
     }
 
     public override void Update()

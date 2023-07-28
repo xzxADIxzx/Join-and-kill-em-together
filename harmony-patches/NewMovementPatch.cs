@@ -10,6 +10,9 @@ public class NewMovementPatch
 {
     static void Prefix()
     {
+        // checkpoint destroys some objects on the level
+        World.Instance.Recache();
+
         // in the sandbox after death, enemies are not destroyed
         if (LobbyController.Lobby == null || !LobbyController.IsOwner || SceneHelper.CurrentScene == "uk_construct") return;
 
