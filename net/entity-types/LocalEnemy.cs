@@ -2,7 +2,6 @@ namespace Jaket.Net.EntityTypes;
 
 using Steamworks;
 using System;
-using UnityEngine;
 
 using Jaket.Content;
 using Jaket.IO;

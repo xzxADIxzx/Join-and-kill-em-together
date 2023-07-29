@@ -19,7 +19,7 @@ public class Entities
             var type = (EntityType)i;
             providers.Add(type, () => Enemies.Instantiate(type));
         }
-        providers.Add(EntityType.Player, RemotePlayer.CreatePlayer);
+        providers.Add(EntityType.Player, RemotePlayer.Create);
     }
 
     /// <summary> Returns an entity of the given type. </summary>

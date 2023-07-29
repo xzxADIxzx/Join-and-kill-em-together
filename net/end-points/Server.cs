@@ -14,7 +14,7 @@ public class Server : Endpoint
             Networking.CurrentOwner = sender; // this is necessary so that the player does not see his model
 
             // if the player does not have a doll, then create it
-            if (!players.ContainsKey(sender)) entities.Add(RemotePlayer.CreatePlayer());
+            if (!players.ContainsKey(sender)) entities.Add(RemotePlayer.Create());
 
             // read player data
             players[sender].Read(r);

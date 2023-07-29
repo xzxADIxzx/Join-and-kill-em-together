@@ -24,22 +24,22 @@ public class LocalPlayer : Entity
 
     public override void Write(Writer w)
     {
-        // health & position
         w.Float(NewMovement.Instance.hp);
         w.Vector(NewMovement.Instance.transform.position);
         w.Float(NewMovement.Instance.transform.eulerAngles.y);
-        w.Float(-CameraController.Instance.rotationX);
+        w.Float(-CameraController.Instance.rotationX - 240f);
 
-        // animation
-        w.Bool(Chat.Instance.Shown);
+        w.Byte((byte)team);
+        w.Byte((byte)Weapons.CurrentIndex());
+
         w.Bool(NewMovement.Instance.walking);
         w.Bool(NewMovement.Instance.sliding);
-        w.Int((int)team);
-        w.Int(Weapons.CurrentIndex());
+        w.Bool(!NewMovement.Instance.gc.onGround); 
+        w.Bool(Chat.Instance.Shown);
     }
 
     // there is no point in reading anything, because it is a local player
-    public override void Read(Reader r) => r.Bytes(35); // skip all data
+    public override void Read(Reader r) => r.Bytes(30); // skip all data
 
     public override void Damage(Reader r)
     {
