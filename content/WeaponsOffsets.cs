@@ -24,8 +24,8 @@ public class WeaponsOffsets
         new(.0021f, .002f,  .0028f, .0027f),
         new(.0021f, .002f,  .0028f, .0027f),
         new(.0021f, .002f,  .0028f, .0027f),
-        new(.0015f, .0023f, .0014f, .003f),
-        new(.0015f, .0023f, .0014f, .003f)
+        new(.0015f, .0023f, .0014f, .0036f),
+        new(.0015f, .0023f, .0014f, .0036f)
     };
 
     /// <summary> Applies an offset to the given transform. </summary>
