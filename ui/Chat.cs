@@ -1,13 +1,11 @@
 namespace Jaket.UI;
 
+using UMM;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 using Jaket.Net;
-using UnityEngine.EventSystems;
-using System.Data;
-using UMM;
 
 public class Chat : MonoSingleton<Chat>
 {
@@ -62,11 +60,9 @@ public class Chat : MonoSingleton<Chat>
         Instance.typing = Utils.Text("", Instance.typingBg, 0f, 0f, 1000f, 32f, 24).GetComponent<Text>();
 
         // add input field
-        Instance.field = Utils.Field("Type a chat message and send it by pressing enter", Instance.transform, 0f, -508f, 1888f, 32f, 24, Instance.SendChatMessage);
+        Instance.field = Utils.Field("Type a chat message and send it by pressing enter", Instance.transform, 0f, -508f, 1888f, 32f, 24, Instance.OnFocusLost);
         Instance.field.characterLimit = MAX_MESSAGE_LENGTH;
-
         Instance.field.gameObject.SetActive(false);
-
 
         // moving elements to display correctly on wide screens
         WidescreenFix.MoveUp(Instance.transform);
@@ -115,6 +111,20 @@ public class Chat : MonoSingleton<Chat>
         if (Shown) field.ActivateInputField();
     }
 
+    /// <summary> Fires when the input field loses its focus. </summary>
+    public void OnFocusLost(string message)
+    {
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+            // focus lost because the player entered a message
+            SendChatMessage(message);
+        else
+        {
+            // focus lost for some other reason
+            field.gameObject.SetActive(Shown = false);
+            Utils.ToggleMovement(true);
+        }
+    }
+
     /// <summary> Sends a message to all other players. </summary>
     public void SendChatMessage(string message)
     {
@@ -127,15 +137,8 @@ public class Chat : MonoSingleton<Chat>
         // clear the input field
         field.text = "";
 
-        KeyCode chatKeyBind = UKAPI.GetKeyBind("CHAT").keyBind;
-
-        // disable the chatbox
-        // if the keybind for toggling chat happens to also unfocus the input field (e.g. the keybind is return)
-        // the don't toggle the chatbox
-        if(!Input.GetKeyDown(chatKeyBind))
-        {
-            Toggle();
-        }
+        // if the message was sent not by the button that toggles the chat, then need to do it yourself
+        if (!Input.GetKeyDown(UKAPI.GetKeyBind("CHAT").keyBind)) Toggle();
     }
 
     /// <summary> Writes a message directly to the chat. </summary>
