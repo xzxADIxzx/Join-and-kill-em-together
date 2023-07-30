@@ -5,6 +5,9 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 using Jaket.Net;
+using UnityEngine.EventSystems;
+using System.Data;
+using UMM;
 
 public class Chat : MonoSingleton<Chat>
 {
@@ -61,7 +64,9 @@ public class Chat : MonoSingleton<Chat>
         // add input field
         Instance.field = Utils.Field("Type a chat message and send it by pressing enter", Instance.transform, 0f, -508f, 1888f, 32f, 24, Instance.SendChatMessage);
         Instance.field.characterLimit = MAX_MESSAGE_LENGTH;
+
         Instance.field.gameObject.SetActive(false);
+
 
         // moving elements to display correctly on wide screens
         WidescreenFix.MoveUp(Instance.transform);
@@ -121,7 +126,16 @@ public class Chat : MonoSingleton<Chat>
 
         // clear the input field
         field.text = "";
-        field.gameObject.SetActive(false);
+
+        KeyCode chatKeyBind = UKAPI.GetKeyBind("CHAT").keyBind;
+
+        // disable the chatbox
+        // if the keybind for toggling chat happens to also unfocus the input field (e.g. the keybind is return)
+        // the don't toggle the chatbox
+        if(!Input.GetKeyDown(chatKeyBind))
+        {
+            Toggle();
+        }
     }
 
     /// <summary> Writes a message directly to the chat. </summary>
