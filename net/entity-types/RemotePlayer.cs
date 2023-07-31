@@ -89,6 +89,7 @@ public class RemotePlayer : Entity
         animator = GetComponentInChildren<Animator>();
         enemyId = GetComponent<EnemyIdentifier>();
         machine = GetComponent<Machine>();
+        enemyId.weakPoint = head.gameObject;
 
         // nickname
         nickname = new Friend(Owner).Name;
@@ -238,7 +239,7 @@ public class RemotePlayer : Entity
         var obj = Object.Instantiate(Prefab(), Vector3.zero, Quaternion.identity);
 
         // it is necessary that the client doesn't consider the enemyId as a local object
-        obj.name = "Net"; // move to RemotePlayer
+        obj.name = "Net";
 
         // change the color of the material and its shader to match the style of the game
         foreach (var mat in obj.GetComponentInChildren<SkinnedMeshRenderer>().materials)
@@ -247,9 +248,35 @@ public class RemotePlayer : Entity
             mat.shader = Shader;
         }
 
+        // add components
+        var enemyId = obj.AddComponent<EnemyIdentifier>();
+        var machine = obj.AddComponent<Machine>();
+
+        enemyId.enemyClass = EnemyClass.Machine;
+        enemyId.enemyType = EnemyType.V2;
+        enemyId.weaknesses = new string[0];
+        enemyId.burners = new();
+        machine.hurtSounds = new AudioClip[0];
+
+        // add enemy identifier to all doll parts so that bullets can hit it
+        foreach (var rigidbody in obj.transform.GetChild(0).GetChild(0).GetComponentsInChildren<Rigidbody>())
+        {
+            rigidbody.gameObject.AddComponent<EnemyIdentifierIdentifier>();
+            rigidbody.gameObject.tag = MapTag(rigidbody.gameObject.tag);
+        }
+
         // add a script to further control the doll
         return obj.AddComponent<RemotePlayer>();
     }
+
+    /// <summary> Tags after loading from a bundle changes due to a mismatch in the tags list, this method returns everything to its place. </summary>
+    public static string MapTag(string tag) => tag switch
+    {
+        "RoomManager" => "Body",
+        "Body" => "Limb",
+        "Forward" => "Head",
+        _ => tag
+    };
 
     #endregion
 }
