@@ -20,8 +20,13 @@ public class World : MonoSingleton<World>
     private List<GameObject> doors = new();
     /// <summary> List of open doors, cleared only when the player enters a new level. </summary>
     private List<int> opened = new();
+
     /// <summary> Whether the wall is broken in the arena at level 4-4. </summary>
     private bool IsWallBrokenOn4_4;
+    /// <summary> Whether V2 is dead? Yes, it's fucking dead. </summary>
+    private bool IsV2Dead = true;
+    /// <summary> Whether the exit building is raised at level 4-4. </summary>
+    private bool IsExitBuildingRaised;
 
     /// <summary> Name of the last loaded scene. </summary>
     private string LastScene;
@@ -63,16 +68,18 @@ public class World : MonoSingleton<World>
         {
             if (LobbyController.IsOwner)
             {
-                // add a listener to notify clients to break the wall
+                // add a listener to notify clients to break the wall/start the outro/raise the exit
                 Redirect(BrokenWall(), PacketType.BreakeWall);
-                // and a listener to notify clients to start outro
                 Redirect(V2Outro(), PacketType.StartV2Outro);
-                // and a listener to notify clients to raise exit
                 Redirect(ExitBuilding(), PacketType.RaiseExitBuilding);
             }
             else
-                // or break the wall if you have already received a notification
+            {
+                // break the wall/start the outro/raise the exit if you have already received a notification
                 if (IsWallBrokenOn4_4) BreakWall();
+                if (IsV2Dead) StartV2Outro();
+                if (IsExitBuildingRaised) RaiseExitBuilding();
+            }
         }
 
         // clear the list of open doors if the player has entered a new level
@@ -81,7 +88,7 @@ public class World : MonoSingleton<World>
             LastScene = SceneHelper.CurrentScene;
 
             opened.Clear();
-            IsWallBrokenOn4_4 = false;
+            IsWallBrokenOn4_4 = IsV2Dead = IsExitBuildingRaised = false;
         }
         // but if the player just restarted the same level, then you need to open all the doors
         else opened.ForEach(index => OpenDoor(index, false));
@@ -154,8 +161,8 @@ public class World : MonoSingleton<World>
         IsWallBrokenOn4_4 = true; // save the state of the wall
         var wall = BrokenWall();
 
-        wall.transform.parent.gameObject.SetActive(true);
-        wall.transform.parent.parent.Find("Wall").gameObject.SetActive(false);
+        wall?.transform.parent.gameObject.SetActive(true);
+        wall?.transform.parent.parent.Find("Wall").gameObject.SetActive(false);
     }
 
     /// <summary> Finds V2 outro activator on level 4-4. </summary>
@@ -166,7 +173,7 @@ public class World : MonoSingleton<World>
     }
 
     /// <summary> Starts V2 outro and loading to the next part of the level. </summary>
-    public void StartV2Outro() => V2Outro().gameObject.SetActive(true);
+    public void StartV2Outro() => V2Outro()?.gameObject.SetActive(IsV2Dead = true);
 
     /// <summary> Finds exit building activator on level 4-4. </summary>
     public ObjectActivator ExitBuilding()
@@ -178,7 +185,10 @@ public class World : MonoSingleton<World>
     /// <summary> Raises the exit from the level from under the sand. </summary>
     public void RaiseExitBuilding()
     {
+        IsExitBuildingRaised = true;
         var exit = ExitBuilding();
+
+        if (exit == null) return;
         exit.gameObject.SetActive(true);
 
         var bulding = exit.transform.parent.Find("ExitBuilding");
