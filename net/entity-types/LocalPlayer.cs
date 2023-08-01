@@ -27,14 +27,14 @@ public class LocalPlayer : Entity
         w.Float(NewMovement.Instance.hp);
         w.Vector(NewMovement.Instance.transform.position);
         w.Float(NewMovement.Instance.transform.eulerAngles.y);
-        w.Float(-CameraController.Instance.rotationX - 240f);
+        w.Float(135f - Mathf.Clamp(CameraController.Instance.rotationX, -40f, 80f));
 
         w.Byte((byte)team);
         w.Byte((byte)Weapons.CurrentIndex());
 
         w.Bool(NewMovement.Instance.walking);
         w.Bool(NewMovement.Instance.sliding);
-        w.Bool(!NewMovement.Instance.gc.onGround); 
+        w.Bool(!NewMovement.Instance.gc.onGround);
         w.Bool(Chat.Instance.Shown);
     }
 
