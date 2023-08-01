@@ -40,7 +40,7 @@ public abstract class Entity : MonoBehaviour
     public class FloatLerp
     {
         /// <summary> Interpolation values. </summary>
-        private float last, target;
+        public float last, target;
 
         /// <summary> Updates interpolation values. </summary>
         public void Set(float value)

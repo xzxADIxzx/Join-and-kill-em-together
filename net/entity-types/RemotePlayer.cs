@@ -118,6 +118,13 @@ public class RemotePlayer : Entity
 
     private void Update()
     {
+        // if animator is null, then the player is dead, but if health is greater than zero, then he has revived
+        if (health.target > 0f && animator == null)
+        {
+            Destroy(gameObject); // destroy the doll so that the client restore it
+            return;
+        }
+
         transform.position = new(x.Get(LastUpdate), y.Get(LastUpdate) - 1.5f, z.Get(LastUpdate));
         transform.eulerAngles = new(0f, bodyRotation.Get(LastUpdate), 0f);
         head.localEulerAngles = new(headRotation.Get(LastUpdate), 0f, 0f);
@@ -170,7 +177,7 @@ public class RemotePlayer : Entity
 
     public override void Write(Writer w)
     {
-        w.Float(machine.health);
+        w.Float(health.target);
         w.Vector(transform.position);
         w.Float(transform.eulerAngles.y);
         w.Float(head.localEulerAngles.x);
@@ -256,6 +263,7 @@ public class RemotePlayer : Entity
         enemyId.enemyType = EnemyType.V2;
         enemyId.weaknesses = new string[0];
         enemyId.burners = new();
+        machine.destroyOnDeath = new GameObject[0];
         machine.hurtSounds = new AudioClip[0];
 
         // add enemy identifier to all doll parts so that bullets can hit it
