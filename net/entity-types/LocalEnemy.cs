@@ -20,7 +20,7 @@ public class LocalEnemy : Entity
 
     public void Awake()
     {
-        Owner = SteamClient.SteamId.Value;
+        Id = Entities.NextId();
         Type = (EntityType)Enemies.CopiedIndex(gameObject.name);
 
         enemyId = GetComponent<EnemyIdentifier>();

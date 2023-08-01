@@ -18,7 +18,7 @@ public class LocalPlayer : Entity
 
     public void Awake()
     {
-        Owner = SteamClient.SteamId.Value;
+        Id = SteamClient.SteamId;
         Type = EntityType.Player;
     }
 

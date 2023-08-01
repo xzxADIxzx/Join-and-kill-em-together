@@ -25,7 +25,15 @@ public class Entities
     }
 
     /// <summary> Returns an entity of the given type. </summary>
-    public static Entity Get(EntityType type) => providers[type]();
+    public static Entity Get(ulong id, EntityType type)
+    {
+        var entity = providers[type]();
+
+        entity.Id = id;
+        entity.Type = type;
+
+        return entity;
+    }
 
     /// <summary> Entity provider. </summary>
     public delegate Entity Prov();

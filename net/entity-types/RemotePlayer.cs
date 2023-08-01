@@ -72,9 +72,6 @@ public class RemotePlayer : Entity
 
     private void Awake()
     {
-        Type = EntityType.Player;
-        Networking.Players[Owner] = this;
-
         // interpolations
         health = new();
         x = new();
@@ -96,7 +93,7 @@ public class RemotePlayer : Entity
         enemyId.weakPoint = head.gameObject;
 
         // nickname
-        nickname = new Friend(Owner).Name;
+        nickname = new Friend(Id).Name;
         float width = nickname.Length * 14f + 16f;
 
         canvas = Utils.Canvas("Nickname", transform, width, 64f, new Vector3(0f, 5f, 0f));
