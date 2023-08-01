@@ -1,6 +1,5 @@
 namespace Jaket.Net;
 
-using Steamworks;
 using UnityEngine;
 
 using Jaket.Content;
@@ -9,23 +8,14 @@ using Jaket.IO;
 /// <summary> Any entity that has updatable state synchronized across the network. </summary>
 public abstract class Entity : MonoBehaviour
 {
-    /// <summary> Entity id in the global list. </summary>
-    public int Id;
-
-    /// <summary> Entity owner id, usually host, but RemotePlayers are owned by players. </summary>
-    public SteamId Owner;
+    /// <summary> Entity id in the global list. This is usually a small number, but for players, their account ids are used. </summary>
+    public ulong Id;
 
     /// <summary> Type of entity, like a player or some kind of enemy. </summary>
     public EntityType Type;
 
     /// <summary> Last update time via snapshots. </summary>
     public float LastUpdate;
-
-    public Entity()
-    {
-        Id = Networking.Entities.Count;
-        Owner = Networking.CurrentOwner;
-    }
 
     /// <summary> Writes the entity data to the writer. </summary>
     public abstract void Write(Writer w);
