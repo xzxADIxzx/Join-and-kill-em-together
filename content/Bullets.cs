@@ -14,7 +14,7 @@ public class Bullets
     public static List<GameObject> Prefabs = new();
 
     /// <summary> These objects are used as damage conventions. </summary>
-    public static GameObject synchronizedBullet, networkDamage;
+    public static GameObject SynchronizedBullet, NetworkDamage;
 
     /// <summary> Loads all bullets for future use. </summary>
     public static void Load()
@@ -63,8 +63,8 @@ public class Bullets
         Prefabs.RemoveAll(bullet => bullet == null);
 
         // create damage conventions
-        synchronizedBullet = Utils.Object("Synchronized Bullet", Plugin.Instance.transform);
-        networkDamage = Utils.Object("Network Damage", Plugin.Instance.transform);
+        SynchronizedBullet = Utils.Object("Synchronized Bullet", Plugin.Instance.transform);
+        NetworkDamage = Utils.Object("Network Damage", Plugin.Instance.transform);
     }
 
     #region index
@@ -138,11 +138,18 @@ public class Bullets
             Networking.Send(LobbyController.Owner, data, PacketType.SpawnBullet);
     }
 
+    /// <summary> Sends the bullet to all other players and also replaces source weapon if it is null. </summary>
+    public static void Send(GameObject bullet, ref GameObject sourceWeapon, bool hasRigidbody = false, bool applyOffset = true)
+    {
+        if (sourceWeapon == null) sourceWeapon = SynchronizedBullet;
+        Send(bullet, hasRigidbody, applyOffset);
+    }
+
     /// <summary> Deals bullet damage to an enemy. </summary>
     public static void DealDamage(EnemyIdentifier enemyId, Reader r)
     {
         r.Int(); // skip team because enemies don't have a team
-        enemyId.DeliverDamage(enemyId.gameObject, r.Vector(), Vector3.zero, r.Float(), r.Bool(), r.Float(), networkDamage);
+        enemyId.DeliverDamage(enemyId.gameObject, r.Vector(), Vector3.zero, r.Float(), r.Bool(), r.Float(), NetworkDamage);
     }
 
     #endregion

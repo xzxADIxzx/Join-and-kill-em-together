@@ -42,10 +42,10 @@ public class EnemyDamagePatch
         if (LobbyController.Lobby == null || sourceWeapon == null) return true;
 
         // network bullets are needed just for the visual, damage is done through packets
-        if (sourceWeapon == Bullets.synchronizedBullet) return false;
+        if (sourceWeapon == Bullets.SynchronizedBullet) return false;
 
         // if the original weapon is network damage, then the damage was received over the network
-        if (sourceWeapon == Bullets.networkDamage) return true;
+        if (sourceWeapon == Bullets.NetworkDamage) return true;
 
         // if the enemy doesn't have an entity component, then it was created before the lobby
         if (!__instance.TryGetComponent<Entity>(out var entity)) return true;
