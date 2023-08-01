@@ -91,7 +91,10 @@ public class RemotePlayer : Entity
         enemyId = GetComponent<EnemyIdentifier>();
         machine = GetComponent<Machine>();
         enemyId.weakPoint = head.gameObject;
+    }
 
+    private void Start()
+    {
         // nickname
         nickname = new Friend(Id).Name;
         float width = nickname.Length * 14f + 16f;
@@ -104,10 +107,7 @@ public class RemotePlayer : Entity
 
         // for some unknown reason, the canvas needs to be scaled after adding elements
         canvas.transform.localScale = new Vector3(.02f, .02f, .02f);
-    }
 
-    private void Start()
-    {
         // idols can target players, which is undesirable
         int index = EnemyTracker.Instance.enemies.IndexOf(enemyId);
         if (index != -1)
