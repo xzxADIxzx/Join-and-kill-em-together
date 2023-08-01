@@ -15,10 +15,7 @@ public abstract class Endpoint
     protected Dictionary<PacketType, PacketListener> listeners = new();
 
     /// <summary> Reference to Networking.Entities. </summary>
-    protected List<Entity> entities { get => Networking.Entities; }
-
-    /// <summary> Reference to Networking.Players </summary>
-    protected Dictionary<SteamId, RemotePlayer> players => Networking.Players;
+    protected Dictionary<ulong, Entity> entities { get => Networking.Entities; }
 
     /// <summary> Loads endpoint listeners and other stuff. </summary>
     public abstract void Load();

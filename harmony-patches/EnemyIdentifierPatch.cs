@@ -20,7 +20,10 @@ public class EnemyPatch
         if (boss) Networking.Bosses.Add(__instance);
 
         if (LobbyController.IsOwner)
-            Networking.Entities.Add(__instance.gameObject.AddComponent<LocalEnemy>());
+        {
+            var enemy = __instance.gameObject.AddComponent<LocalEnemy>();
+            Networking.Entities[enemy.Id] = enemy;
+        }
         else
         {
             if (boss)
@@ -53,7 +56,7 @@ public class EnemyDamagePatch
         // if the damage was caused by the player himself, then all others must be notified about this
         byte[] data = Writer.Write(w =>
         {
-            w.Int(entity.Id);
+            w.Id(entity.Id);
             w.Int((int)Networking.LocalPlayer.team);
 
             w.Vector(force);
@@ -86,7 +89,7 @@ public class EnemyDeathPatch
         if (!__instance.TryGetComponent<LocalEnemy>(out var enemy)) return;
 
         // notify each client that the enemy has died
-        byte[] enemyData = Writer.Write(w => w.Int(enemy.Id));
+        byte[] enemyData = Writer.Write(w => w.Id(enemy.Id));
         LobbyController.EachMemberExceptOwner(member => Networking.Send(member.Id, enemyData, PacketType.EnemyDied));
 
         // notify every client that the boss has died

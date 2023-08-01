@@ -11,16 +11,14 @@ public class Server : Endpoint
     {
         Listen(PacketType.Snapshot, (sender, r) =>
         {
-            Networking.CurrentOwner = sender; // this is necessary so that the player does not see his model
-
             // if the player does not have a doll, then create it
-            if (!players.ContainsKey(sender)) entities.Add(RemotePlayer.Create());
+            if (!entities.ContainsKey(sender)) entities[sender] = Entities.Get(sender, EntityType.Player);
 
             // sometimes players disappear for some unknown reason, and sometimes I destroy them myself
-            if (players[sender] == null) entities[entities.IndexOf(players[sender])] = Entities.Get(EntityType.Player);
+            if (entities[sender] == null) entities[sender] = Entities.Get(sender, EntityType.Player);
 
             // read player data
-            players[sender]?.Read(r);
+            entities[sender]?.Read(r);
         });
 
         Listen(PacketType.SpawnBullet, (sender, r) =>
@@ -34,7 +32,7 @@ public class Server : Endpoint
 
         Listen(PacketType.DamageEntity, (sender, r) =>
         {
-            entities[r.Int()]?.Damage(r); // damage entity
+            entities[r.Id()]?.Damage(r); // damage entity
 
             r.Position = 0L; // reset position to read all data
             byte[] data = r.Bytes(29); // read damage data
@@ -47,13 +45,12 @@ public class Server : Endpoint
     public override void Update()
     {
         // write snapshot
-        byte[] data = Writer.Write(w => entities.ForEach(entity =>
+        byte[] data = Writer.Write(w => Networking.EachEntity(entity =>
         {
             // when an entity is destroyed via Object.Destroy, the element in the list is replaced with null
             if (entity == null) return;
 
-            w.Int(entity.Id);
-            w.Id(entity.Owner);
+            w.Id(entity.Id);
             w.Int((int)entity.Type);
 
             entity.Write(w);

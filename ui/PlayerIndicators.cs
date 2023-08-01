@@ -59,7 +59,7 @@ public class PlayerIndicators : MonoSingleton<PlayerIndicators>
         targets.Clear();
 
         // create new indicators for each player
-        foreach (var player in Networking.Players.Values) AddIndicator(player);
+        Networking.EachPlayer(AddIndicator);
     }
 
     /// <summary> Adds a new indicator pointing to the player. </summary>
