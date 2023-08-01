@@ -16,8 +16,11 @@ public class Server : Endpoint
             // if the player does not have a doll, then create it
             if (!players.ContainsKey(sender)) entities.Add(RemotePlayer.Create());
 
+            // sometimes players disappear for some unknown reason, and sometimes I destroy them myself
+            if (players[sender] == null) entities[entities.IndexOf(players[sender])] = Entities.Get(EntityType.Player);
+
             // read player data
-            players[sender].Read(r);
+            players[sender]?.Read(r);
         });
 
         Listen(PacketType.SpawnBullet, (sender, r) =>
