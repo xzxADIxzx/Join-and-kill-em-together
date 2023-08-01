@@ -40,6 +40,9 @@ public class RemotePlayer : Entity
     /// <summary> Material of the wings. </summary>
     private Material wingMaterial;
 
+    /// <summary> Trail of the wings. </summary>
+    private TrailRenderer wingTrail;
+
     /// <summary> Doll animator. Created by me in Unity and uploaded in mod via bundle. </summary>
     private Animator animator;
 
@@ -86,6 +89,7 @@ public class RemotePlayer : Entity
 
         // other stuff
         wingMaterial = GetComponentInChildren<SkinnedMeshRenderer>().materials[1];
+        wingTrail = GetComponentInChildren<TrailRenderer>();
         animator = GetComponentInChildren<Animator>();
         enemyId = GetComponent<EnemyIdentifier>();
         machine = GetComponent<Machine>();
@@ -135,6 +139,9 @@ public class RemotePlayer : Entity
 
             wingMaterial.mainTexture = WingTextures[team.Data().TextureId];
             wingMaterial.color = team.Data().WingColor(); // do this after changing the wings texture
+
+            var color = team.Data().Color();
+            wingTrail.startColor = new Color(color.r, color.g, color.b, .5f);
 
             // update player indicators to only show teammates
             PlayerIndicators.Instance.Rebuild();
