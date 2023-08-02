@@ -43,6 +43,12 @@ public class RemotePlayer : Entity
     /// <summary> Trail of the wings. </summary>
     private TrailRenderer wingTrail;
 
+    /// <summary> Whether the player use custom weapon colors. </summary>
+    private bool customColors;
+
+    /// <summary> Custom weapon colors. </summary>
+    private Color32 color1, color2, color3;
+
     /// <summary> Doll animator. Created by me in Unity and uploaded in mod via bundle. </summary>
     private Animator animator;
 
@@ -155,6 +161,24 @@ public class RemotePlayer : Entity
             {
                 Weapons.Instantiate(weapon, hand);
                 WeaponsOffsets.Apply(weapon, hand);
+
+                // sync weapon colors
+                foreach (var getter in hand.GetComponentsInChildren<GunColorGetter>())
+                {
+                    var renderer = getter.GetComponent<SkinnedMeshRenderer>();
+
+                    if (customColors)
+                    {
+                        renderer.materials = getter.coloredMaterials;
+                        foreach (var mat in renderer.materials)
+                        {
+                            mat.SetColor("_CustomColor1", color1);
+                            mat.SetColor("_CustomColor2", color2);
+                            mat.SetColor("_CustomColor3", color3);
+                        }
+                    }
+                    else renderer.materials = getter.defaultMaterials;
+                }
             }
         }
 
@@ -193,6 +217,9 @@ public class RemotePlayer : Entity
         w.Bool(sliding);
         w.Bool(inAir);
         w.Bool(typing);
+
+        w.Bool(customColors);
+        w.Color(color1); w.Color(color2); w.Color(color3);
     }
 
     public override void Read(Reader r)
@@ -211,6 +238,9 @@ public class RemotePlayer : Entity
         sliding = r.Bool();
         inAir = r.Bool();
         typing = r.Bool();
+
+        customColors = r.Bool();
+        color1 = r.Color(); color2 = r.Color(); color3 = r.Color();
     }
 
     public override void Damage(Reader r) => Bullets.DealDamage(enemyId, r);

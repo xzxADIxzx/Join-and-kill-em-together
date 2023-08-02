@@ -2,6 +2,7 @@ namespace Jaket.Net.EntityTypes;
 
 using Steamworks;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 using Jaket.Content;
 using Jaket.IO;
@@ -16,10 +17,24 @@ public class LocalPlayer : Entity
     /// <summary> Player team. Changes through the player list. </summary>
     public Team team;
 
-    public void Awake()
+    /// <summary> Index of the current weapon in the global list. </summary>
+    private byte weapon;
+
+    /// <summary> Weapon rendering component, needed to get weapon colors. </summary>
+    private SkinnedMeshRenderer renderer;
+
+    private void Awake()
     {
         Id = SteamClient.SteamId;
         Type = EntityType.Player;
+
+        SceneManager.sceneLoaded += (scene, mode) => UpdateWeapon();
+    }
+
+    public void UpdateWeapon()
+    {
+        weapon = (byte)Weapons.CurrentIndex();
+        renderer = GunControl.Instance.currentWeapon.GetComponentInChildren<GunColorGetter>()?.GetComponent<SkinnedMeshRenderer>();
     }
 
     public override void Write(Writer w)
@@ -30,16 +45,31 @@ public class LocalPlayer : Entity
         w.Float(135f - Mathf.Clamp(CameraController.Instance.rotationX, -40f, 80f));
 
         w.Byte((byte)team);
-        w.Byte((byte)Weapons.CurrentIndex());
+        w.Byte(weapon);
 
         w.Bool(NewMovement.Instance.walking);
         w.Bool(NewMovement.Instance.sliding);
         w.Bool(!NewMovement.Instance.gc.onGround);
         w.Bool(Chat.Instance.Shown);
+
+        if (renderer != null)
+        {
+            bool custom = renderer.material.name.Contains("CustomColor");
+            w.Bool(custom);
+
+            if (custom)
+            {
+                w.Color(renderer.material.GetColor("_CustomColor1"));
+                w.Color(renderer.material.GetColor("_CustomColor2"));
+                w.Color(renderer.material.GetColor("_CustomColor3"));
+            }
+            else w.Bytes(new byte[12]);
+        }
+        else w.Bytes(new byte[13]);
     }
 
     // there is no point in reading anything, because it is a local player
-    public override void Read(Reader r) => r.Bytes(30); // skip all data
+    public override void Read(Reader r) => r.Bytes(43); // skip all data
 
     public override void Damage(Reader r)
     {
