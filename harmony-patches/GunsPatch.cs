@@ -20,3 +20,10 @@ public class GunColorPatch
     // remote players update the colors of their weapons themselves
     static bool Prefix(GunColorGetter __instance) => __instance.GetComponentInParent<RemotePlayer>() == null;
 }
+
+[HarmonyPatch(typeof(WeaponIcon), nameof(WeaponIcon.UpdateIcon))]
+public class GunIconPatch
+{
+    // remote player's weapons shouldn't update an icon in the local player's HUD
+    static bool Prefix(WeaponIcon __instance) => __instance.GetComponentInParent<RemotePlayer>() == null;
+}
