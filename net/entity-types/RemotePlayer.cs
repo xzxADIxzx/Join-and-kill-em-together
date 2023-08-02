@@ -165,7 +165,7 @@ public class RemotePlayer : Entity
                 // sync weapon colors
                 foreach (var getter in hand.GetComponentsInChildren<GunColorGetter>())
                 {
-                    var renderer = getter.GetComponent<SkinnedMeshRenderer>();
+                    var renderer = getter.GetComponent<Renderer>();
 
                     if (customColors)
                     {

@@ -21,20 +21,20 @@ public class LocalPlayer : Entity
     private byte weapon;
 
     /// <summary> Weapon rendering component, needed to get weapon colors. </summary>
-    private SkinnedMeshRenderer renderer;
+    private Renderer renderer;
 
     private void Awake()
     {
         Id = SteamClient.SteamId;
         Type = EntityType.Player;
 
-        SceneManager.sceneLoaded += (scene, mode) => UpdateWeapon();
+        SceneManager.sceneLoaded += (scene, mode) => Invoke("UpdateWeapon", .01f);
     }
 
     public void UpdateWeapon()
     {
         weapon = (byte)Weapons.CurrentIndex();
-        renderer = GunControl.Instance.currentWeapon.GetComponentInChildren<GunColorGetter>()?.GetComponent<SkinnedMeshRenderer>();
+        renderer = GunControl.Instance.currentWeapon.GetComponentInChildren<GunColorGetter>()?.GetComponent<Renderer>();
     }
 
     public override void Write(Writer w)
