@@ -51,6 +51,9 @@ public class Reader
     /// <summary> Reads a vector. </summary>
     public Vector3 Vector() => new(r.ReadSingle(), r.ReadSingle(), r.ReadSingle());
 
+    /// <summary> Reads a color. </summary>
+    public Color32 Color() => new(r.ReadByte(), r.ReadByte(), r.ReadByte(), r.ReadByte());
+
     /// <summary> Reads a SteamID. </summary>
     public SteamId Id() => r.ReadUInt64();
 }
