@@ -11,10 +11,22 @@ using Jaket.Net.EntityTypes;
 [HarmonyPatch(typeof(EnemyIdentifier), "Start")]
 public class EnemyPatch
 {
-    static void Prefix(EnemyIdentifier __instance)
+    static bool Prefix(EnemyIdentifier __instance)
     {
-        // if the lobby is null or the name is Net, then either the player isn't connected or this enemy was created remotely
-        if (LobbyController.Lobby == null || __instance.gameObject.name == "Net") return;
+        // the player is not connected, nothing needs to be done
+        if (LobbyController.Lobby == null) return true;
+
+        // the enemy was created remotely
+        if (__instance.gameObject.name == "Net")
+        {
+            // add spawn effect for better look
+            __instance.spawnIn = true;
+
+            // teleport the enemy so that the spawn effect does not appear at the origin
+            if (__instance.TryGetComponent<RemoteEnemy>(out var enemy)) __instance.transform.position = new(enemy.x.target, enemy.y.target, enemy.z.target);
+
+            return true;
+        }
 
         bool boss = __instance.gameObject.GetComponent<BossHealthBar>() != null;
         if (boss) Networking.Bosses.Add(__instance);
@@ -23,6 +35,8 @@ public class EnemyPatch
         {
             var enemy = __instance.gameObject.AddComponent<LocalEnemy>();
             Networking.Entities[enemy.Id] = enemy;
+
+            return true;
         }
         else
         {
@@ -32,6 +46,8 @@ public class EnemyPatch
             else
                 // the enemy is no longer needed, so destroy it
                 Object.Destroy(__instance.gameObject); // TODO ask host to spawn enemy if playing sandbox
+
+            return false;
         }
     }
 }

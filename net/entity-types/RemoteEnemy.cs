@@ -14,7 +14,7 @@ public class RemoteEnemy : Entity
     private FloatLerp health;
 
     /// <summary> Enemy position and rotation. </summary>
-    private FloatLerp x, y, z, rotation;
+    public FloatLerp x, y, z, rotation;
 
     /// <summary> Whether the enemy is a boss and should he have a health bar. </summary>
     private bool boss;
