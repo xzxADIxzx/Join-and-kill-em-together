@@ -98,6 +98,9 @@ public class EnemyDeathPatch
         // if the lobby is null or the name is Net, then either the player isn't connected or this enemy was created remotely
         if (LobbyController.Lobby == null || __instance.gameObject.name == "Net") return;
 
+        // destroy the component so that it is no longer synchronized over the network
+        Object.Destroy(__instance.GetComponent<LocalEnemy>());
+
         // only the host should report death
         if (!LobbyController.IsOwner || __instance.dead) return;
 
