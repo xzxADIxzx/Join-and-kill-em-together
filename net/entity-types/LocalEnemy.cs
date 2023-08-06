@@ -1,7 +1,6 @@
 namespace Jaket.Net.EntityTypes;
 
-using Steamworks;
-using System;
+using UnityEngine;
 
 using Jaket.Content;
 using Jaket.IO;
@@ -20,13 +19,20 @@ public class LocalEnemy : Entity
 
     public void Awake()
     {
+        int index = Enemies.CopiedIndex(gameObject.name);
+        if (index == -1)
+        {
+            Destroy(this);
+            Debug.LogWarning("Enemy index is -1 for name " + gameObject.name);
+
+            return;
+        }
+
         Id = Entities.NextId();
-        Type = (EntityType)Enemies.CopiedIndex(gameObject.name);
+        Type = (EntityType)index;
 
         enemyId = GetComponent<EnemyIdentifier>();
         healthBar = GetComponent<BossHealthBar>();
-
-        if ((int)Type == -1) throw new Exception("Enemy index is -1 for name " + gameObject.name);
     }
 
     public override void Write(Writer w)
