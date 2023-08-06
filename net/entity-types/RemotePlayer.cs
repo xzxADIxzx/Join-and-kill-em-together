@@ -132,7 +132,10 @@ public class RemotePlayer : Entity
             return;
         }
 
-        transform.position = new(x.Get(LastUpdate), y.Get(LastUpdate) - 1.5f, z.Get(LastUpdate));
+        // prevent null pointer
+        if (animator == null) return;
+
+        transform.position = new(x.Get(LastUpdate), y.Get(LastUpdate) - (sliding ? .3f : 1.5f), z.Get(LastUpdate));
         transform.eulerAngles = new(0f, bodyRotation.Get(LastUpdate), 0f);
         head.localEulerAngles = new(headRotation.Get(LastUpdate), 0f, 0f);
 
