@@ -151,7 +151,7 @@ public class Bullets
     /// <summary> Deals bullet damage to an enemy. </summary>
     public static void DealDamage(EnemyIdentifier enemyId, Reader r)
     {
-        r.Int(); // skip team because enemies don't have a team
+        r.Byte(); // skip team because enemies don't have a team
         enemyId.DeliverDamage(enemyId.gameObject, r.Vector(), Vector3.zero, r.Float(), r.Bool(), r.Float(), NetworkDamage);
     }
 

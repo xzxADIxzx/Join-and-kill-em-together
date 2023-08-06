@@ -73,7 +73,7 @@ public class EnemyDamagePatch
         byte[] data = Writer.Write(w =>
         {
             w.Id(entity.Id);
-            w.Int((int)Networking.LocalPlayer.team);
+            w.Byte((byte)Networking.LocalPlayer.team);
 
             w.Vector(force);
             w.Float(multiplier);

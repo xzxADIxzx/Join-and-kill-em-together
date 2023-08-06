@@ -51,7 +51,7 @@ public class Server : Endpoint
             if (entity == null) return;
 
             w.Id(entity.Id);
-            w.Int((int)entity.Type);
+            w.Byte((byte)entity.Type);
 
             entity.Write(w);
         }));

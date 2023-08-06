@@ -18,13 +18,13 @@ public class Client : Endpoint
             while (r.Position < r.Length)
             {
                 ulong id = r.Id();
-                int type = r.Int();
+                EntityType type = (EntityType)r.Byte();
 
                 // if the entity is not in the list, add a new one with the given type or local if available
-                if (!entities.ContainsKey(id)) entities[id] = id == SteamClient.SteamId ? Networking.LocalPlayer : Entities.Get(id, (EntityType)type);
+                if (!entities.ContainsKey(id)) entities[id] = id == SteamClient.SteamId ? Networking.LocalPlayer : Entities.Get(id, type);
 
                 // sometimes players disappear for some unknown reason, and sometimes I destroy them myself
-                if (entities[id] == null && type == (int)EntityType.Player) entities[id] = Entities.Get(id, EntityType.Player);
+                if (entities[id] == null && type == EntityType.Player) entities[id] = Entities.Get(id, EntityType.Player);
 
                 // read entity data
                 entities[id]?.Read(r);
@@ -72,7 +72,7 @@ public class Client : Endpoint
             if (boss != null) Object.Destroy(boss.gameObject);
         });
 
-        Listen(PacketType.SpawnBullet, r => Bullets.Read(r));
+        Listen(PacketType.SpawnBullet, Bullets.Read);
 
         Listen(PacketType.DamageEntity, r => entities[r.Id()]?.Damage(r));
 

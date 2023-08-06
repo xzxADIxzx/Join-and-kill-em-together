@@ -74,7 +74,7 @@ public class LocalPlayer : Entity
     public override void Damage(Reader r)
     {
         // no need to deal damage if an ally hits you
-        if ((Team)r.Int() == team) return;
+        if ((Team)r.Byte() == team) return;
 
         r.Vector(); // skip force, huh
 
