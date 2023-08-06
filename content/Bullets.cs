@@ -82,7 +82,7 @@ public class Bullets
     public static void Write(Writer w, GameObject bullet, bool hasRigidbody = false, bool applyOffset = true)
     {
         int index = bullet.name == "ReflectedBeamPoint(Clone)" ? Index("Revolver Beam") : CopiedIndex(bullet.name);
-        if (index == -1) throw new System.Exception("Bullet index is -1 for name " + bullet.name);
+        if (index == -1) return; // there is no sense to synchronize enemy bullets
 
         w.Int(index);
 
@@ -131,6 +131,9 @@ public class Bullets
 
         // write bullet data to send to server or clients
         byte[] data = Write(bullet, hasRigidbody, applyOffset);
+
+        // if no data was written, then the bullet belongs to an enemy
+        if (data.Length == 0) return;
 
         if (LobbyController.IsOwner)
             LobbyController.EachMemberExceptOwner(member => Networking.Send(member.Id, data, PacketType.SpawnBullet));
