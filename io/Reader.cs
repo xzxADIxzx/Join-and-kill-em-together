@@ -36,6 +36,13 @@ public class Reader
     /// <summary> Reads bytes. </summary>
     public byte[] Bytes(int count) => r.ReadBytes(count);
 
+    /// <summary> Reads all bytes from the stream. </summary>
+    public byte[] AllBytes()
+    {
+        Position = 0L;
+        return Bytes((int)Length);
+    }
+
     /// <summary> Reads a short. </summary>
     public short Short() => r.ReadInt16();
 

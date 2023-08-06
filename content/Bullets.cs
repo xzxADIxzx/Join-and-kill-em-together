@@ -95,11 +95,6 @@ public class Bullets
             var body = bullet.GetComponent<Rigidbody>();
             w.Vector(body.velocity);
         }
-        else
-        {
-            // the data size must be constant so that Networking can read it correctly
-            w.Vector(new Vector3(0f, 0f, 0f));
-        }
     }
 
     /// <summary> Writes bullet to the byte array. </summary>

@@ -23,21 +23,19 @@ public class Server : Endpoint
 
         Listen(PacketType.SpawnBullet, (sender, r) =>
         {
-            byte[] data = r.Bytes(41); // read bullet data
-            Bullets.Read(data); // spawn a bullet
+            Bullets.Read(r);
 
             // send bullet data to everyone else
+            byte[] data = r.AllBytes();
             LobbyController.EachMemberExceptOwnerAnd(sender, member => Networking.Send(member.Id, data, PacketType.SpawnBullet));
         });
 
         Listen(PacketType.DamageEntity, (sender, r) =>
         {
-            entities[r.Id()]?.Damage(r); // damage entity
-
-            r.Position = 0L; // reset position to read all data
-            byte[] data = r.Bytes(29); // read damage data
+            entities[r.Id()]?.Damage(r);
 
             // send damage data to everyone else
+            byte[] data = r.AllBytes();
             LobbyController.EachMemberExceptOwnerAnd(sender, member => Networking.Send(member.Id, data, PacketType.DamageEntity));
         });
     }
