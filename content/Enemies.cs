@@ -2,6 +2,7 @@ namespace Jaket.Content;
 
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 using Jaket.Net.EntityTypes;
 
@@ -14,11 +15,20 @@ public class Enemies
     /// <summary> Loads all enemies for future use. </summary>
     public static void Load()
     {
-        var all = Resources.FindObjectsOfTypeAll<EnemyIdentifier>();
-        foreach (var enemy in all) Prefabs.Add(enemy.gameObject);
+        SceneManager.sceneLoaded += (scene, mode) =>
+        {
+            // for some INCREDIBLE reasons, SOME players are missing some enemies on first load, so you need to wait for loading to some level
+            if (SceneHelper.CurrentScene == "Main Menu" || Prefabs.Count == 33) return;
 
-        // sort enemies by name to make sure their order is the same for different clients
-        Prefabs.Sort((p1, p2) => p1.name.CompareTo(p2.name));
+            // find all enemy prefabs
+            var all = Resources.FindObjectsOfTypeAll<EnemyIdentifier>();
+
+            // null check is needed to make sure that the object is on the right scene
+            foreach (var enemy in all) if (enemy.gameObject.scene.name == null) Prefabs.Add(enemy.gameObject);
+
+            // sort enemies by name to make sure their order is the same for different clients
+            Prefabs.Sort((p1, p2) => p1.name.CompareTo(p2.name));
+        };
     }
 
     #region index
