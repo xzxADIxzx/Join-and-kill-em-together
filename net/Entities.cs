@@ -16,7 +16,7 @@ public class Entities
     /// <summary> Loads providers into the dictionary. </summary>
     public static void Load()
     {
-        for (int i = 0; i <= 30; i++)
+        for (int i = 0; i <= 32; i++)
         {
             var type = (EntityType)i;
             providers.Add(type, () => Enemies.Instantiate(type));
