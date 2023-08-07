@@ -1,3 +1,7 @@
+[![Discord](https://img.shields.io/badge/discord-server-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/USpt3hCBgn)
+[![License](https://img.shields.io/github/license/xzxADIxzx/Join-and-kill-em-together?style=for-the-badge)](https://github.com/xzxADIxzx/Join-and-kill-em-together/blob/main/LICENSE)
+![Stars](https://img.shields.io/github/stars/xzxADIxzx/Join-and-kill-em-together?style=for-the-badge&logo=githubsponsors&color=EA4AAA)
+
 # Join and kill 'em together
 Multikill is still in development, so I created my own multiplayer mod for ultrakill.   
 It's also in development, but with gnashing of teeth it's already playable.
