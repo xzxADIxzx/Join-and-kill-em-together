@@ -136,7 +136,7 @@ public class RemotePlayer : Entity
         if (animator == null) return;
 
         transform.position = new(x.Get(LastUpdate), y.Get(LastUpdate) - (sliding ? .3f : 1.5f), z.Get(LastUpdate));
-        transform.eulerAngles = new(0f, bodyRotation.Get(LastUpdate), 0f);
+        transform.eulerAngles = new(0f, bodyRotation.GetAngel(LastUpdate), 0f);
         head.localEulerAngles = new(headRotation.Get(LastUpdate), 0f, 0f);
 
         if (lastTeam != team)
@@ -209,9 +209,9 @@ public class RemotePlayer : Entity
     public override void Write(Writer w)
     {
         w.Float(health.target);
-        w.Vector(transform.position);
-        w.Float(transform.eulerAngles.y);
-        w.Float(head.localEulerAngles.x);
+        w.Float(x.target); w.Float(y.target); w.Float(z.target);
+        w.Float(bodyRotation.target);
+        w.Float(headRotation.target);
 
         w.Byte((byte)team);
         w.Byte(weapon);
