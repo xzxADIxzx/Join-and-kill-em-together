@@ -1,7 +1,7 @@
 {
     "name": "Jaket",
     "description": "Multikill is still in development, so I created my own multiplayer mod for ultrakill.\nAuthors: xzxADIxzx#7729 & Sowler#5518",
-    "version_number": "0.4.1",
+    "version_number": "0.5.0",
     "website_url": "https://github.com/xzxADIxzx/Join-and-kill-em-together",
     "dependencies": [
         "Temperz87-UltraModManager-5.6.0"
