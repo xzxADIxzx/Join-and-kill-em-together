@@ -20,7 +20,9 @@ Due to the fact that the V3 model was not originally created for military purpos
 therefore, unlike other machines, they constantly walk in pairs and sometimes in whole flocks.";
 
     static string strategy =
-@"- They use the same plating as the first model, so they can also heal with blood. It is recommended to keep a distance from them to prevent their healing.
+@"- They are extremely chaotic and it is better to stay away from them, but if you get involved in a battle, then try to act as unpredictably as they are.
+
+- They use the same plating as the first model, so they can also heal with blood. It is recommended to keep a distance from them to prevent their healing.
 
 - Sometimes they will come close to each other to share blood and repair at a safe distance from enemies. At this moment, they become easy targets.
 
