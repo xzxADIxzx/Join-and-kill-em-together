@@ -58,6 +58,9 @@ public class Writer
         w.Write(value.z);
     }
 
+    /// <summary> Writes a color. </summary>
+    public void Color(Color32 color) => w.Write(color.rgba);
+
     /// <summary> Writes a SteamID. </summary>
     public void Id(SteamId value) => w.Write(value);
 }

@@ -14,7 +14,7 @@ public class Bullets
     public static List<GameObject> Prefabs = new();
 
     /// <summary> These objects are used as damage conventions. </summary>
-    public static GameObject synchronizedBullet, networkDamage;
+    public static GameObject SynchronizedBullet, NetworkDamage;
 
     /// <summary> Loads all bullets for future use. </summary>
     public static void Load()
@@ -63,8 +63,8 @@ public class Bullets
         Prefabs.RemoveAll(bullet => bullet == null);
 
         // create damage conventions
-        synchronizedBullet = Utils.Object("Synchronized Bullet", Plugin.Instance.transform);
-        networkDamage = Utils.Object("Network Damage", Plugin.Instance.transform);
+        SynchronizedBullet = Utils.Object("Synchronized Bullet", Plugin.Instance.transform);
+        NetworkDamage = Utils.Object("Network Damage", Plugin.Instance.transform);
     }
 
     #region index
@@ -82,7 +82,7 @@ public class Bullets
     public static void Write(Writer w, GameObject bullet, bool hasRigidbody = false, bool applyOffset = true)
     {
         int index = bullet.name == "ReflectedBeamPoint(Clone)" ? Index("Revolver Beam") : CopiedIndex(bullet.name);
-        if (index == -1) throw new System.Exception("Bullet index is -1 for name " + bullet.name);
+        if (index == -1) return; // there is no sense to synchronize enemy bullets
 
         w.Int(index);
 
@@ -94,11 +94,6 @@ public class Bullets
         {
             var body = bullet.GetComponent<Rigidbody>();
             w.Vector(body.velocity);
-        }
-        else
-        {
-            // the data size must be constant so that Networking can read it correctly
-            w.Vector(new Vector3(0f, 0f, 0f));
         }
     }
 
@@ -132,17 +127,27 @@ public class Bullets
         // write bullet data to send to server or clients
         byte[] data = Write(bullet, hasRigidbody, applyOffset);
 
+        // if no data was written, then the bullet belongs to an enemy
+        if (data.Length == 0) return;
+
         if (LobbyController.IsOwner)
             LobbyController.EachMemberExceptOwner(member => Networking.Send(member.Id, data, PacketType.SpawnBullet));
         else
             Networking.Send(LobbyController.Owner, data, PacketType.SpawnBullet);
     }
 
+    /// <summary> Sends the bullet to all other players and also replaces source weapon if it is null. </summary>
+    public static void Send(GameObject bullet, ref GameObject sourceWeapon, bool hasRigidbody = false, bool applyOffset = true)
+    {
+        if (sourceWeapon == null) sourceWeapon = SynchronizedBullet;
+        Send(bullet, hasRigidbody, applyOffset);
+    }
+
     /// <summary> Deals bullet damage to an enemy. </summary>
     public static void DealDamage(EnemyIdentifier enemyId, Reader r)
     {
-        r.Int(); // skip team because enemies don't have a team
-        enemyId.DeliverDamage(enemyId.gameObject, r.Vector(), Vector3.zero, r.Float(), r.Bool(), r.Float(), networkDamage);
+        r.Byte(); // skip team because enemies don't have a team
+        enemyId.DeliverDamage(enemyId.gameObject, r.Vector(), Vector3.zero, r.Float(), r.Bool(), r.Float(), NetworkDamage);
     }
 
     #endregion

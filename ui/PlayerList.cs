@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 
 using Jaket.Content;
 using Jaket.Net;
+using Jaket.Net.EntityTypes;
 
 /// <summary> List of all players and lobby controller. </summary>
 [ConfigureSingleton(SingletonFlags.NoAutoInstance)]
@@ -104,7 +105,8 @@ public class PlayerList : MonoSingleton<PlayerList>
         LobbyController.EachMember(member =>
         {
             // paint the nickname in the team color
-            var team = member.IsMe ? Networking.LocalPlayer.team : (Networking.Players.TryGetValue(member.Id, out var player) ? player.team : Team.Yellow);
+            var team = member.IsMe ? Networking.LocalPlayer.team :
+                                    (Networking.Entities.TryGetValue(member.Id, out var entity) && entity is RemotePlayer player ? player.team : Team.Yellow);
             var name = $"<color=#{ColorUtility.ToHtmlStringRGBA(team.Data().Color())}>{member.Name}</color>";
 
             // add a button with a nickname forwarding to the player's profile

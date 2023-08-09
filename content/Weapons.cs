@@ -60,9 +60,6 @@ public class Weapons
         var obj = Object.Instantiate(Prefabs[index], parent);
         obj.SetActive(true); // idk why, but weapon prefabs are disabled by default
 
-        // by default, weapons are very strangely rotated
-        obj.transform.eulerAngles = new Vector3(0f, 90f, 0f);
-
         // by default, weapons are on the AlwaysOnTop layer
         FixLayer(obj.transform); // some weapons have a display and other details, so we recursively go through them all
 

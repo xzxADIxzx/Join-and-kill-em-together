@@ -2,6 +2,7 @@ namespace Jaket.Net.EntityTypes;
 
 using Steamworks;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 using Jaket.Content;
 using Jaket.IO;
@@ -16,35 +17,64 @@ public class LocalPlayer : Entity
     /// <summary> Player team. Changes through the player list. </summary>
     public Team team;
 
-    public void Awake()
+    /// <summary> Index of the current weapon in the global list. </summary>
+    private byte weapon;
+
+    /// <summary> Weapon rendering component, needed to get weapon colors. </summary>
+    private Renderer renderer;
+
+    private void Awake()
     {
-        Owner = SteamClient.SteamId.Value;
+        Id = SteamClient.SteamId;
         Type = EntityType.Player;
+
+        SceneManager.sceneLoaded += (scene, mode) => Invoke("UpdateWeapon", .01f);
+    }
+
+    public void UpdateWeapon()
+    {
+        weapon = (byte)Weapons.CurrentIndex();
+        renderer = GunControl.Instance.currentWeapon.GetComponentInChildren<GunColorGetter>()?.GetComponent<Renderer>();
     }
 
     public override void Write(Writer w)
     {
-        // health & position
         w.Float(NewMovement.Instance.hp);
         w.Vector(NewMovement.Instance.transform.position);
         w.Float(NewMovement.Instance.transform.eulerAngles.y);
-        w.Float(-CameraController.Instance.rotationX);
+        w.Float(135f - Mathf.Clamp(CameraController.Instance.rotationX, -40f, 80f));
 
-        // animation
-        w.Bool(Chat.Instance.Shown);
+        w.Byte((byte)team);
+        w.Byte(weapon);
+
         w.Bool(NewMovement.Instance.walking);
         w.Bool(NewMovement.Instance.sliding);
-        w.Int((int)team);
-        w.Int(Weapons.CurrentIndex());
+        w.Bool(!NewMovement.Instance.gc.onGround);
+        w.Bool(Chat.Instance.Shown);
+
+        if (renderer != null)
+        {
+            bool custom = renderer.material.name.Contains("CustomColor");
+            w.Bool(custom);
+
+            if (custom)
+            {
+                w.Color(renderer.material.GetColor("_CustomColor1"));
+                w.Color(renderer.material.GetColor("_CustomColor2"));
+                w.Color(renderer.material.GetColor("_CustomColor3"));
+            }
+            else w.Bytes(new byte[12]);
+        }
+        else w.Bytes(new byte[13]);
     }
 
     // there is no point in reading anything, because it is a local player
-    public override void Read(Reader r) => r.Bytes(35); // skip all data
+    public override void Read(Reader r) => r.Bytes(43); // skip all data
 
     public override void Damage(Reader r)
     {
         // no need to deal damage if an ally hits you
-        if ((Team)r.Int() == team) return;
+        if ((Team)r.Byte() == team) return;
 
         r.Vector(); // skip force, huh
 

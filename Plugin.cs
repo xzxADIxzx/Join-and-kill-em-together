@@ -11,7 +11,7 @@ using Jaket.Net;
 using Jaket.UI;
 
 /// <summary> Plugin main class. Essentially only initializes all other components. </summary>
-[BepInPlugin("xzxADIxzx.Jaket", "Jaket", "0.4.1")]
+[BepInPlugin("xzxADIxzx.Jaket", "Jaket", "0.5.0")]
 public class Plugin : BaseUnityPlugin
 {
     /// <summary> Plugin instance available everywhere. </summary>

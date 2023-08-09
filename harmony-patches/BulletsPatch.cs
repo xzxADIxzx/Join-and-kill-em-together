@@ -14,31 +14,19 @@ public class CoinPatch
 [HarmonyPatch(typeof(RevolverBeam), "Start")]
 public class RevolverBeamPatch
 {
-    static void Prefix(RevolverBeam __instance)
-    {
-        if (__instance.sourceWeapon == null) __instance.sourceWeapon = Bullets.synchronizedBullet;
-        Bullets.Send(__instance.gameObject);
-    }
+    static void Prefix(RevolverBeam __instance) => Bullets.Send(__instance.gameObject, ref __instance.sourceWeapon);
 }
 
 [HarmonyPatch(typeof(Projectile), "Start")]
 public class ProjectilePatch
 {
-    static void Prefix(Projectile __instance)
-    {
-        if (__instance.sourceWeapon == null) __instance.sourceWeapon = Bullets.synchronizedBullet;
-        Bullets.Send(__instance.gameObject);
-    }
+    static void Prefix(Projectile __instance) => Bullets.Send(__instance.gameObject, ref __instance.sourceWeapon);
 }
 
 [HarmonyPatch(typeof(Nail), "Start")]
 public class NailPatch
 {
-    static void Prefix(Nail __instance)
-    {
-        if (__instance.sourceWeapon == null) __instance.sourceWeapon = Bullets.synchronizedBullet;
-        Bullets.Send(__instance.gameObject, true, false);
-    }
+    static void Prefix(Nail __instance) => Bullets.Send(__instance.gameObject, ref __instance.sourceWeapon, true, false);
 }
 
 [HarmonyPatch(typeof(Harpoon), "Start")]
@@ -59,7 +47,7 @@ public class GrenadePatch
 {
     static void Postfix(Grenade __instance, Rigidbody ___rb)
     {
-        if (__instance.sourceWeapon == null) __instance.sourceWeapon = Bullets.synchronizedBullet;
+        if (__instance.sourceWeapon == null) __instance.sourceWeapon = Bullets.SynchronizedBullet;
 
         // the same as with a coin, so I have to do this
         if (___rb.velocity == Vector3.zero)
@@ -72,9 +60,5 @@ public class GrenadePatch
 [HarmonyPatch(typeof(Cannonball), "Start")]
 public class CannonballPatch
 {
-    static void Prefix(Cannonball __instance)
-    {
-        if (__instance.sourceWeapon == null) __instance.sourceWeapon = Bullets.synchronizedBullet;
-        Bullets.Send(__instance.gameObject, true);
-    }
+    static void Prefix(Cannonball __instance) => Bullets.Send(__instance.gameObject, ref __instance.sourceWeapon, true);
 }

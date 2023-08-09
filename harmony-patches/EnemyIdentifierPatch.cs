@@ -11,16 +11,33 @@ using Jaket.Net.EntityTypes;
 [HarmonyPatch(typeof(EnemyIdentifier), "Start")]
 public class EnemyPatch
 {
-    static void Prefix(EnemyIdentifier __instance)
+    static bool Prefix(EnemyIdentifier __instance)
     {
-        // if the lobby is null or the name is Net, then either the player isn't connected or this enemy was created remotely
-        if (LobbyController.Lobby == null || __instance.gameObject.name == "Net") return;
+        // the player is not connected, nothing needs to be done
+        if (LobbyController.Lobby == null) return true;
+
+        // the enemy was created remotely
+        if (__instance.gameObject.name == "Net")
+        {
+            // add spawn effect for better look
+            __instance.spawnIn = true;
+
+            // teleport the enemy so that the spawn effect does not appear at the origin
+            if (__instance.TryGetComponent<RemoteEnemy>(out var enemy)) __instance.transform.position = new(enemy.x.target, enemy.y.target, enemy.z.target);
+
+            return true;
+        }
 
         bool boss = __instance.gameObject.GetComponent<BossHealthBar>() != null;
         if (boss) Networking.Bosses.Add(__instance);
 
         if (LobbyController.IsOwner)
-            Networking.Entities.Add(__instance.gameObject.AddComponent<LocalEnemy>());
+        {
+            var enemy = __instance.gameObject.AddComponent<LocalEnemy>();
+            Networking.Entities[enemy.Id] = enemy;
+
+            return true;
+        }
         else
         {
             if (boss)
@@ -29,6 +46,8 @@ public class EnemyPatch
             else
                 // the enemy is no longer needed, so destroy it
                 Object.Destroy(__instance.gameObject); // TODO ask host to spawn enemy if playing sandbox
+
+            return false;
         }
     }
 }
@@ -42,10 +61,10 @@ public class EnemyDamagePatch
         if (LobbyController.Lobby == null || sourceWeapon == null) return true;
 
         // network bullets are needed just for the visual, damage is done through packets
-        if (sourceWeapon == Bullets.synchronizedBullet) return false;
+        if (sourceWeapon == Bullets.SynchronizedBullet) return false;
 
         // if the original weapon is network damage, then the damage was received over the network
-        if (sourceWeapon == Bullets.networkDamage) return true;
+        if (sourceWeapon == Bullets.NetworkDamage) return true;
 
         // if the enemy doesn't have an entity component, then it was created before the lobby
         if (!__instance.TryGetComponent<Entity>(out var entity)) return true;
@@ -53,8 +72,8 @@ public class EnemyDamagePatch
         // if the damage was caused by the player himself, then all others must be notified about this
         byte[] data = Writer.Write(w =>
         {
-            w.Int(entity.Id);
-            w.Int((int)Networking.LocalPlayer.team);
+            w.Id(entity.Id);
+            w.Byte((byte)Networking.LocalPlayer.team);
 
             w.Vector(force);
             w.Float(multiplier);
@@ -79,6 +98,9 @@ public class EnemyDeathPatch
         // if the lobby is null or the name is Net, then either the player isn't connected or this enemy was created remotely
         if (LobbyController.Lobby == null || __instance.gameObject.name == "Net") return;
 
+        // destroy the component so that it is no longer synchronized over the network
+        Object.Destroy(__instance.GetComponent<LocalEnemy>());
+
         // only the host should report death
         if (!LobbyController.IsOwner || __instance.dead) return;
 
@@ -86,7 +108,7 @@ public class EnemyDeathPatch
         if (!__instance.TryGetComponent<LocalEnemy>(out var enemy)) return;
 
         // notify each client that the enemy has died
-        byte[] enemyData = Writer.Write(w => w.Int(enemy.Id));
+        byte[] enemyData = Writer.Write(w => w.Id(enemy.Id));
         LobbyController.EachMemberExceptOwner(member => Networking.Send(member.Id, enemyData, PacketType.EnemyDied));
 
         // notify every client that the boss has died

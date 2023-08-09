@@ -17,15 +17,14 @@ public class Client : Endpoint
             // each snapshot contains all the entities, so you need to read them all
             while (r.Position < r.Length)
             {
-                int id = r.Int();
-                Networking.CurrentOwner = r.Id();
-                int type = r.Int();
+                ulong id = r.Id();
+                EntityType type = (EntityType)r.Byte();
 
                 // if the entity is not in the list, add a new one with the given type or local if available
-                if (entities.Count <= id) entities.Add(Networking.CurrentOwner == SteamClient.SteamId ? Networking.LocalPlayer : Entities.Get((EntityType)type));
+                if (!entities.ContainsKey(id)) entities[id] = id == SteamClient.SteamId ? Networking.LocalPlayer : Entities.Get(id, type);
 
-                // sometimes players just get destroyed by the game, idk why
-                if (entities[id] == null && type == (int)EntityType.Player) entities[id] = Entities.Get(EntityType.Player);
+                // sometimes players disappear for some unknown reason, and sometimes I destroy them myself
+                if (entities[id] == null && type == EntityType.Player) entities[id] = Entities.Get(id, EntityType.Player);
 
                 // read entity data
                 entities[id]?.Read(r);
@@ -45,7 +44,7 @@ public class Client : Endpoint
             // in the sandbox after death, enemies are not destroyed
             if (SceneHelper.CurrentScene == "uk_construct") return;
 
-            entities.ForEach(entity =>
+            Networking.EachEntity(entity =>
             {
                 // destroy all enemies, because the host died and was thrown back to the checkpoint
                 if (entity is RemoteEnemy && entity != null) Object.Destroy(entity.gameObject);
@@ -55,7 +54,7 @@ public class Client : Endpoint
         Listen(PacketType.EnemyDied, r =>
         {
             // find the killed enemy in the list of entities
-            var entity = entities[r.Int()];
+            var entity = entities[r.Id()];
 
             // kill the enemy so that there is no desynchronization
             if (entity is RemoteEnemy enemy) enemy.enemyId.InstaKill();
@@ -73,9 +72,9 @@ public class Client : Endpoint
             if (boss != null) Object.Destroy(boss.gameObject);
         });
 
-        Listen(PacketType.SpawnBullet, r => Bullets.Read(r));
+        Listen(PacketType.SpawnBullet, Bullets.Read);
 
-        Listen(PacketType.DamageEntity, r => entities[r.Int()]?.Damage(r));
+        Listen(PacketType.DamageEntity, r => entities[r.Id()]?.Damage(r));
 
         Listen(PacketType.OpenDoor, r => World.Instance.OpenDoor(r.Int()));
         Listen(PacketType.BreakeWall, r => World.Instance.BreakWall());

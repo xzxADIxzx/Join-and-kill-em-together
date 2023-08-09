@@ -6,19 +6,19 @@ using UnityEngine;
 /// <summary> All teams. Teams needed for PvP mechanics. </summary>
 public enum Team
 {
-    [TeamData(0, 1f, .8f, .3f)]
+    [TeamData(1f, .8f, .3f)]
     Yellow,
 
-    [TeamData(2, 1f, .2f, .1f)]
+    [TeamData(1f, .2f, .1f)]
     Red,
 
-    [TeamData(3, 0f, .9f, .4f)]
+    [TeamData(0f, .9f, .4f)]
     Green,
 
-    [TeamData(1, 0f, .5f, 1f)]
+    [TeamData(0f, .5f, 1f)]
     Blue,
 
-    [TeamData(1, 1f, .3f, .7f, true)]
+    [TeamData(1f, .3f, .7f, true)]
     Pink
 }
 
@@ -26,19 +26,14 @@ public enum Team
 [AttributeUsage(AttributeTargets.Field)]
 public class TeamData : Attribute
 {
-    /// <summary> Id of the wings texture. </summary>
-    public int TextureId;
     /// <summary> Team color. Only used in interface. </summary>
     private float r, g, b;
     /// <summary> Whether the wings should be pink. </summary>
     private bool pink;
 
-    public TeamData(int textureId, float r, float g, float b, bool pink = false)
+    public TeamData(float r, float g, float b, bool pink = false)
     {
-        this.TextureId = textureId;
-        this.r = r;
-        this.b = b;
-        this.g = g;
+        this.r = r; this.b = b; this.g = g;
         this.pink = pink;
     }
 

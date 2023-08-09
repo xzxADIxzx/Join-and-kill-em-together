@@ -1,5 +1,6 @@
 namespace Jaket.Net;
 
+using System;
 using System.Collections.Generic;
 using Steamworks;
 using UnityEngine;
@@ -24,16 +25,12 @@ public class Networking : MonoBehaviour
     public static Client Client = new();
 
     /// <summary> List of all entities synchronized between clients. May contain null if the entity was destroyed via Object.Destroy. </summary>
-    public static List<Entity> Entities = new();
-    /// <summary> Dictionary of players' SteamIDs to their dolls. </summary>
-    public static Dictionary<SteamId, RemotePlayer> Players = new();
+    public static Dictionary<ulong, Entity> Entities = new();
     /// <summary> List of all bosses on the map. Needed for the internal logic of the game. </summary>
     public static List<EnemyIdentifier> Bosses = new();
 
     /// <summary> Local player representation. </summary>
     public static LocalPlayer LocalPlayer;
-    /// <summary> Owner of the entity currently being processed. </summary>
-    public static SteamId CurrentOwner;
     /// <summary> Whether a scene is loading right now. </summary>
     public static bool Loading;
 
@@ -57,7 +54,7 @@ public class Networking : MonoBehaviour
             if (LobbyController.IsOwner)
             {
                 // re-add a local player, because the list was cleared 
-                Entities.Add(LocalPlayer);
+                Entities[LocalPlayer.Id] = LocalPlayer;
 
                 // inform all players about the transition to a new level
                 byte[] data = Writer.Write(w => w.String(SceneHelper.CurrentScene));
@@ -84,7 +81,7 @@ public class Networking : MonoBehaviour
 
             if (LobbyController.IsOwner)
                 // the lobby has just been created, so just add the local player to the list of entities
-                Entities.Add(LocalPlayer);
+                Entities[LocalPlayer.Id] = LocalPlayer;
             else
             {
                 // establishing a connection with the owner of the lobby
@@ -116,12 +113,7 @@ public class Networking : MonoBehaviour
             if (LobbyController.IsOwner) lobby.SendChatString("<system><color=red>Player " + member.Name + " left!</color>");
 
             // destroy the player doll
-            if (Players.TryGetValue(member.Id, out var player))
-            {
-                // the player is not removed from the entity list, because the order of the elements must be preserved
-                Players.Remove(member.Id);
-                Destroy(player.gameObject);
-            }
+            if (Entities.TryGetValue(member.Id, out var player)) Destroy(player.gameObject);
         };
 
         // create a local player to sync player data
@@ -134,14 +126,13 @@ public class Networking : MonoBehaviour
     /// <summary> Destroys all network objects and clears lists. </summary>
     public static void Clear()
     {
-        Entities.ForEach(entity =>
+        EachEntity(entity =>
         {
             // in no case can you destroy a local player
             if (entity != LocalPlayer && entity != null) Destroy(entity.gameObject);
         });
 
         Entities.Clear();
-        Players.Clear();
         Bosses.Clear();
     }
 
@@ -181,6 +172,22 @@ public class Networking : MonoBehaviour
             Client.Update();
     }
 
+    #region iteration
+
+    /// <summary> Iterates each entity. </summary>
+    public static void EachEntity(Action<Entity> cons)
+    {
+        foreach (var entity in Entities.Values) cons(entity);
+    }
+
+    /// <summary> Iterates each player. </summary>
+    public static void EachPlayer(Action<RemotePlayer> cons)
+    {
+        foreach (var entity in Entities.Values)
+            if (entity is RemotePlayer player) cons(player);
+    }
+
+    #endregion
     #region communication
 
     /// <summary> Sends packet data to the receiver over a reliable channel. </summary>
