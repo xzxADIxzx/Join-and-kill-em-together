@@ -253,15 +253,6 @@ public class RemotePlayer : Entity
     /// <summary> Loads player doll prefab from the bundle. </summary>
     public static GameObject Prefab()
     {
-        // cache the shader and the wing textures
-        if (Shader == null || WingTextures == null)
-        {
-            var V2 = AssetHelper.LoadPrefab("cb3828ada2cbefe479fed3b51739edf6").GetComponent<V2>();
-
-            Shader = V2.smr.material.shader;
-            WingTextures = V2.wingTextures;
-        }
-
         // if the bundle is already loaded, then there is no point in doing it again
         if (Bundle != null) return Bundle.LoadAsset<GameObject>("Player Doll.prefab");
 
@@ -273,7 +264,44 @@ public class RemotePlayer : Entity
         string bundle = Path.Combine(directory, "jaket-player-doll.bundle");
 
         Bundle = AssetBundle.LoadFromFile(bundle);
+
+        // cache the shader and the wing textures
+        if (Shader == null || WingTextures == null)
+        {
+            var V2 = AssetHelper.LoadPrefab("cb3828ada2cbefe479fed3b51739edf6").GetComponent<V2>();
+
+            Shader = V2.smr.material.shader;
+            WingTextures = new Texture[]
+            {
+                Bundle.LoadAsset<Texture>("V3-wings-yellow"),
+                Bundle.LoadAsset<Texture>("V3-wings-red"),
+                Bundle.LoadAsset<Texture>("V3-wings-green"),
+                Bundle.LoadAsset<Texture>("V3-wings-blue"),
+                V2.wingTextures[1]
+            };
+        }
+
         return Bundle.LoadAsset<GameObject>("Player Doll.prefab");
+    }
+
+    /// <summary> Creates a new player doll preview. </summary>
+    public static GameObject Preview()
+    {
+        // create a doll from the prefab obtained from the bundle
+        var obj = Object.Instantiate(Prefab(), Vector3.zero, Quaternion.identity);
+
+        // TODO code copy paste, bruh~
+        foreach (var mat in obj.GetComponentInChildren<SkinnedMeshRenderer>().materials)
+        {
+            mat.color = Color.white;
+            mat.shader = Shader;
+        }
+
+        // TODO do it in unity (1.15 instead of 2.5)
+        obj.transform.localScale = new(.5f, .5f, .5f);
+        Object.DontDestroyOnLoad(obj);
+
+        return obj;
     }
 
     /// <summary> Creates a new player doll from the prefab loaded from the bundle. </summary>

@@ -34,7 +34,7 @@ therefore, unlike other machines, they constantly walk in pairs and sometimes in
         if (System.Array.Exists(___objects.enemies, obj => obj.identifier == "jaket.v3")) return;
 
         // for some reason, if you create a prefab after a scriptable object, the second one will self-destruct
-        var preview = RemotePlayer.Prefab();
+        var preview = RemotePlayer.Preview();
         var v3 = ScriptableObject.CreateInstance<SpawnableObject>();
 
         // set up all sorts of things
