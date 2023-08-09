@@ -143,7 +143,7 @@ public class RemotePlayer : Entity
         {
             lastTeam = team;
 
-            wingMaterial.mainTexture = WingTextures[team.Data().TextureId];
+            wingMaterial.mainTexture = WingTextures[(int)team];
             wingMaterial.color = team.Data().WingColor(); // do this after changing the wings texture
 
             var color = team.Data().Color();
