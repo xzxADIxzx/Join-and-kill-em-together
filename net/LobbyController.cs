@@ -68,6 +68,9 @@ public class LobbyController
 
         // remove mini-ads if the player is playing alone
         DiscordController.Instance.FetchSceneActivity(SceneHelper.CurrentScene);
+
+        // return the color of the hands
+        Networking.LocalPlayer.UpdateWeapon();
     }
 
     /// <summary> Opens a steam overlay with a selection of a friend to invite to the lobby. </summary>
