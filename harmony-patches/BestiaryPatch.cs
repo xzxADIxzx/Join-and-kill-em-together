@@ -5,37 +5,17 @@ using System;
 using UnityEngine;
 
 using Jaket.Assets;
-using Jaket.Net.EntityTypes;
 
 [HarmonyPatch(typeof(EnemyInfoPage), "Start")]
-public class DatabasePatch
+public class BestiaryPatch
 {
-    static string description =
-@"After the final war, a third model was hastily created to rebuild the destroyed cities. To save
-resources, most of which were spent to the war, this model was based on V1 and produced in the same factories, so it uses the
-same exterior plating as V1 and can refuel through contact with blood.
-
-To speed up the rebuilding, they were equipped with a grappling hook and powerful artificial intelligence with a clear bias towards the cooperative, which
-communicates with the rest of the instances of this model via internal channels to increase productivity and coherence.
-
-Due to the fact that the V3 model was not originally created for military purposes, it may seem that this is not a very formidable enemy, but they also know about it,
-therefore, unlike other machines, they constantly walk in pairs and sometimes in whole flocks.";
-
-    static string strategy =
-@"- They are extremely chaotic and it is better to stay away from them, but if you get involved in a battle, then try to act as unpredictably as they are.
-
-- They use the same plating as the first model, so they can also heal with blood. It is recommended to keep a distance from them to prevent their healing.
-
-- Sometimes they will come close to each other to share blood and repair at a safe distance from enemies. At this moment, they become easy targets.
-
-- The best tactic is to take them out one by one, as this way you will reduce the damage taken from them as quickly as possible.";
-
     static void Prefix(ref SpawnableObjectsDatabase ___objects)
     {
         // there is no point in adding V3 twice
         if (Array.Exists(___objects.enemies, obj => obj.identifier == "jaket.v3")) return;
 
         var v3 = ScriptableObject.CreateInstance<SpawnableObject>();
+        var entry = BestiaryEntry.Load();
 
         // set up all sorts of things
         v3.identifier = "jaket.v3";
@@ -44,10 +24,10 @@ therefore, unlike other machines, they constantly walk in pairs and sometimes in
         v3.backgroundColor = ___objects.enemies[11].backgroundColor;
         v3.gridIcon = DollAssets.Icon;
 
-        v3.objectName = "V3";
-        v3.type = "SUPREME MACHINE";
-        v3.description = description;
-        v3.strategy = strategy;
+        v3.objectName = entry.name;
+        v3.type = entry.type;
+        v3.description = entry.description;
+        v3.strategy = entry.strategy;
         v3.preview = DollAssets.Preview;
 
         // insert V3 after the turret in the list
@@ -55,4 +35,12 @@ therefore, unlike other machines, they constantly walk in pairs and sometimes in
         Array.Copy(___objects.enemies, 15, ___objects.enemies, 16, ___objects.enemies.Length - 16);
         ___objects.enemies[15] = v3;
     }
+}
+
+[Serializable]
+public class BestiaryEntry
+{
+    public string name, type, description, strategy;
+
+    public static BestiaryEntry Load() => JsonUtility.FromJson<BestiaryEntry>(DollAssets.Bundle.LoadAsset<TextAsset>("V3-bestiary-entry").text);
 }
