@@ -54,7 +54,7 @@ public class LocalPlayer : Entity
 
         if (renderer != null)
         {
-            bool custom = renderer.material.name.Contains("CustomColor");
+            bool custom = renderer.material.name.Contains("Custom");
             w.Bool(custom);
 
             if (custom)
