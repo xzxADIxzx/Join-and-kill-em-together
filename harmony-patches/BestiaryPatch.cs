@@ -1,6 +1,7 @@
 namespace Jaket.HarmonyPatches;
 
 using HarmonyLib;
+using System;
 using UnityEngine;
 
 using Jaket.Net.EntityTypes;
@@ -31,7 +32,7 @@ therefore, unlike other machines, they constantly walk in pairs and sometimes in
     static void Prefix(ref SpawnableObjectsDatabase ___objects)
     {
         // there is no point in adding V3 twice
-        if (System.Array.Exists(___objects.enemies, obj => obj.identifier == "jaket.v3")) return;
+        if (Array.Exists(___objects.enemies, obj => obj.identifier == "jaket.v3")) return;
 
         // for some reason, if you create a prefab after a scriptable object, the second one will self-destruct
         var preview = RemotePlayer.Preview();
@@ -50,7 +51,9 @@ therefore, unlike other machines, they constantly walk in pairs and sometimes in
         v3.strategy = strategy;
         v3.preview = preview;
 
-        // add V3 to the end of the list
-        ___objects.enemies = ___objects.enemies.AddToArray(v3);
+        // insert V3 after the turret in the list
+        Array.Resize(ref ___objects.enemies, ___objects.enemies.Length + 1);
+        Array.Copy(___objects.enemies, 15, ___objects.enemies, 16, ___objects.enemies.Length - 16);
+        ___objects.enemies[15] = v3;
     }
 }
