@@ -54,6 +54,14 @@ public class DollAssets
             Doll = prefab;
         });
 
+        LoadAsync<GameObject>("Player Doll Preview.prefab", prefab =>
+        {
+            Object.DontDestroyOnLoad(prefab);
+            FixMaterials(prefab);
+
+            Preview = prefab;
+        });
+
         // I guess async will improve performance a little bit
         LoadAsync<Sprite>("V3-icon", sprite => Icon = sprite);
     }
