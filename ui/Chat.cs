@@ -54,6 +54,7 @@ public class Chat : MonoSingleton<Chat>
         // add a list of messages
         Instance.list = Utils.Image("List", Instance.transform, 0f, 0f, 0f, 0f).transform as RectTransform;
         Instance.listBg = Instance.list.gameObject.AddComponent<CanvasGroup>();
+        Instance.listBg.blocksRaycasts = false; // necessary so that the chat does not interfere with pressing the buttons
 
         // add a list of typing players
         Instance.typingBg = Utils.Image("", Instance.transform, 0f, 0f, 0f, 0f).transform as RectTransform;
