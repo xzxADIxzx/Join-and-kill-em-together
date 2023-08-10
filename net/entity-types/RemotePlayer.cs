@@ -194,6 +194,9 @@ public class RemotePlayer : Entity
         nicknameText.color = machine.health > 0f ? Color.white : Color.red;
         canvas.transform.LookAt(Camera.current.transform);
         canvas.transform.Rotate(new Vector3(0f, 180f, 0f), Space.Self);
+
+        // sometimes the player does not crumble after death
+        if (enemyId.health <= 0f && !machine.limp) machine.GoLimp();
     }
 
     public override void Write(Writer w)
