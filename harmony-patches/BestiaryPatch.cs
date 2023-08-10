@@ -36,6 +36,7 @@ therefore, unlike other machines, they constantly walk in pairs and sometimes in
 
         // for some reason, if you create a prefab after a scriptable object, the second one will self-destruct
         var preview = RemotePlayer.Preview();
+        var icon = RemotePlayer.Bundle.LoadAsset<Sprite>("V3-icon");
         var v3 = ScriptableObject.CreateInstance<SpawnableObject>();
 
         // set up all sorts of things
@@ -43,7 +44,7 @@ therefore, unlike other machines, they constantly walk in pairs and sometimes in
         v3.enemyType = EnemyType.Filth;
 
         v3.backgroundColor = ___objects.enemies[11].backgroundColor;
-        v3.gridIcon = ___objects.enemies[11].gridIcon;
+        v3.gridIcon = icon;
 
         v3.objectName = "V3";
         v3.type = "SUPREME MACHINE";
