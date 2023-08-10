@@ -2,6 +2,7 @@ namespace Jaket.Net;
 
 using System.Collections.Generic;
 
+using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net.EntityTypes;
 
@@ -21,7 +22,7 @@ public class Entities
             var type = (EntityType)i;
             providers.Add(type, () => Enemies.Instantiate(type));
         }
-        providers.Add(EntityType.Player, RemotePlayer.Create);
+        providers.Add(EntityType.Player, DollAssets.CreateDoll);
     }
 
     /// <summary> Returns an entity of the given type. </summary>

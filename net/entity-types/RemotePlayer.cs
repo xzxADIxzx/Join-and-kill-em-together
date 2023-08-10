@@ -1,11 +1,10 @@
 namespace Jaket.Net.EntityTypes;
 
 using Steamworks;
-using System.IO;
-using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
 
+using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.UI;
@@ -16,15 +15,6 @@ using Jaket.UI;
 /// </summary>
 public class RemotePlayer : Entity
 {
-    /// <summary> Bundle containing assets for player doll. </summary>
-    public static AssetBundle Bundle;
-
-    /// <summary> Shader used by the game for materials. </summary>
-    public static Shader Shader;
-
-    /// <summary> Wing textures used to differentiate teams. </summary>
-    public static Texture[] WingTextures;
-
     /// <summary> Player health, position and rotation. </summary>
     private FloatLerp health, x, y, z, bodyRotation, headRotation;
 
@@ -143,7 +133,7 @@ public class RemotePlayer : Entity
         {
             lastTeam = team;
 
-            wingMaterial.mainTexture = WingTextures[(int)team];
+            wingMaterial.mainTexture = DollAssets.WingTextures[(int)team];
             wingMaterial.color = team.Data().WingColor(); // do this after changing the wings texture
 
             var color = team.Data().Color();
@@ -247,109 +237,4 @@ public class RemotePlayer : Entity
     }
 
     public override void Damage(Reader r) => Bullets.DealDamage(enemyId, r);
-
-    #region instantiation
-
-    /// <summary> Loads player doll prefab from the bundle. </summary>
-    public static GameObject Prefab()
-    {
-        // if the bundle is already loaded, then there is no point in doing it again
-        if (Bundle != null) return Bundle.LoadAsset<GameObject>("Player Doll.prefab");
-
-        // location of Jaket.dll
-        string assembly = Assembly.GetExecutingAssembly().Location;
-        // mod folder
-        string directory = assembly.Substring(0, assembly.LastIndexOf(Path.DirectorySeparatorChar));
-        // location of bundle
-        string bundle = Path.Combine(directory, "jaket-player-doll.bundle");
-
-        Bundle = AssetBundle.LoadFromFile(bundle);
-
-        // cache the shader and the wing textures
-        if (Shader == null || WingTextures == null)
-        {
-            var V2 = AssetHelper.LoadPrefab("cb3828ada2cbefe479fed3b51739edf6").GetComponent<V2>();
-
-            Shader = V2.smr.material.shader;
-            WingTextures = new Texture[]
-            {
-                Bundle.LoadAsset<Texture>("V3-wings-yellow"),
-                Bundle.LoadAsset<Texture>("V3-wings-red"),
-                Bundle.LoadAsset<Texture>("V3-wings-green"),
-                Bundle.LoadAsset<Texture>("V3-wings-blue"),
-                V2.wingTextures[1]
-            };
-        }
-
-        return Bundle.LoadAsset<GameObject>("Player Doll.prefab");
-    }
-
-    /// <summary> Creates a new player doll preview. </summary>
-    public static GameObject Preview()
-    {
-        // create a doll from the prefab obtained from the bundle
-        var obj = Object.Instantiate(Prefab(), Vector3.zero, Quaternion.identity);
-
-        // TODO code copy paste, bruh~
-        foreach (var mat in obj.GetComponentInChildren<SkinnedMeshRenderer>().materials)
-        {
-            mat.color = Color.white;
-            mat.shader = Shader;
-        }
-
-        // TODO do it in unity (1.15 instead of 2.5)
-        obj.transform.localScale = new(.5f, .5f, .5f);
-        Object.DontDestroyOnLoad(obj);
-
-        return obj;
-    }
-
-    /// <summary> Creates a new player doll from the prefab loaded from the bundle. </summary>
-    public static RemotePlayer Create()
-    {
-        // create a doll from the prefab obtained from the bundle
-        var obj = Object.Instantiate(Prefab(), Vector3.zero, Quaternion.identity);
-
-        // it is necessary that the client doesn't consider the enemyId as a local object
-        obj.name = "Net";
-
-        // change the color of the material and its shader to match the style of the game
-        foreach (var mat in obj.GetComponentInChildren<SkinnedMeshRenderer>().materials)
-        {
-            mat.color = Color.white;
-            mat.shader = Shader;
-        }
-
-        // add components
-        var enemyId = obj.AddComponent<EnemyIdentifier>();
-        var machine = obj.AddComponent<Machine>();
-
-        enemyId.enemyClass = EnemyClass.Machine;
-        enemyId.enemyType = EnemyType.V2;
-        enemyId.weaknesses = new string[0];
-        enemyId.burners = new();
-        machine.destroyOnDeath = new GameObject[0];
-        machine.hurtSounds = new AudioClip[0];
-
-        // add enemy identifier to all doll parts so that bullets can hit it
-        foreach (var rigidbody in obj.transform.GetChild(0).GetChild(0).GetComponentsInChildren<Rigidbody>())
-        {
-            rigidbody.gameObject.AddComponent<EnemyIdentifierIdentifier>();
-            rigidbody.gameObject.tag = MapTag(rigidbody.gameObject.tag);
-        }
-
-        // add a script to further control the doll
-        return obj.AddComponent<RemotePlayer>();
-    }
-
-    /// <summary> Tags after loading from a bundle changes due to a mismatch in the tags list, this method returns everything to its place. </summary>
-    public static string MapTag(string tag) => tag switch
-    {
-        "RoomManager" => "Body",
-        "Body" => "Limb",
-        "Forward" => "Head",
-        _ => tag
-    };
-
-    #endregion
 }

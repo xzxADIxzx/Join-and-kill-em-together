@@ -6,6 +6,7 @@ using UMM;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net;
 using Jaket.UI;
@@ -41,6 +42,7 @@ public class Plugin : BaseUnityPlugin
         if (Initialized || SceneHelper.CurrentScene != "Main Menu") return;
 
         // initialize content components
+        DollAssets.Load();
         Enemies.Load();
         Weapons.Load();
         Bullets.Load(); // load it after weapons

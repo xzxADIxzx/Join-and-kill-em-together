@@ -4,6 +4,7 @@ using HarmonyLib;
 using System;
 using UnityEngine;
 
+using Jaket.Assets;
 using Jaket.Net.EntityTypes;
 
 [HarmonyPatch(typeof(EnemyInfoPage), "Start")]
@@ -34,9 +35,6 @@ therefore, unlike other machines, they constantly walk in pairs and sometimes in
         // there is no point in adding V3 twice
         if (Array.Exists(___objects.enemies, obj => obj.identifier == "jaket.v3")) return;
 
-        // for some reason, if you create a prefab after a scriptable object, the second one will self-destruct
-        var preview = RemotePlayer.Preview();
-        var icon = RemotePlayer.Bundle.LoadAsset<Sprite>("V3-icon");
         var v3 = ScriptableObject.CreateInstance<SpawnableObject>();
 
         // set up all sorts of things
@@ -44,13 +42,13 @@ therefore, unlike other machines, they constantly walk in pairs and sometimes in
         v3.enemyType = EnemyType.Filth;
 
         v3.backgroundColor = ___objects.enemies[11].backgroundColor;
-        v3.gridIcon = icon;
+        v3.gridIcon = DollAssets.Icon;
 
         v3.objectName = "V3";
         v3.type = "SUPREME MACHINE";
         v3.description = description;
         v3.strategy = strategy;
-        v3.preview = preview;
+        v3.preview = DollAssets.Preview;
 
         // insert V3 after the turret in the list
         Array.Resize(ref ___objects.enemies, ___objects.enemies.Length + 1);
