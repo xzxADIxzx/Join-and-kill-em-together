@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 using Jaket.Content;
+using Jaket.Net;
 using Jaket.Net.EntityTypes;
 
 /// <summary> Class that works with the assets bundle for the player doll. </summary>
@@ -26,6 +27,9 @@ public class DollAssets
     /// <summary> Wing textures used to differentiate teams. </summary>
     public static Texture[] WingTextures;
 
+    /// <summary> Hand textures used by local player. </summary>
+    public static Texture[] HandTextures;
+
     /// <summary> Loads assets bundle and other necessary stuff. </summary>
     public static void Load()
     {
@@ -36,6 +40,7 @@ public class DollAssets
 
         Shader = V2.smr.material.shader;
         WingTextures = new Texture[5];
+        HandTextures = new Texture[2];
 
         // loading wing textures from the bundle
         for (int i = 0; i < 4; i++)
@@ -44,6 +49,9 @@ public class DollAssets
             LoadAsync<Texture>("V3-wings-" + ((Team)i).ToString(), tex => WingTextures[index] = tex);
         }
         WingTextures[4] = V2.wingTextures[1];
+
+        LoadAsync<Texture>("V3-hand", tex => HandTextures[1] = tex);
+        HandTextures[0] = FistControl.Instance.blueArm.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture;
 
         // create prefabs of the player doll and its preview
         LoadAsync<GameObject>("Player Doll.prefab", prefab =>
@@ -102,7 +110,6 @@ public class DollAssets
         _ => tag
     };
 
-
     /// <summary> Creates a new player doll from the prefab. </summary>
     public static RemotePlayer CreateDoll()
     {
@@ -133,4 +140,7 @@ public class DollAssets
         // add a script to further control the doll
         return obj.AddComponent<RemotePlayer>();
     }
+
+    /// <summary> Returns the hand texture currently in use. Depends on whether the player is in the lobby or not. </summary>
+    public static Texture HandTexture() => HandTextures[LobbyController.Lobby == null ? 0 : 1];
 }

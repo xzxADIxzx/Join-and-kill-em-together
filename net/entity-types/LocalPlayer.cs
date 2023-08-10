@@ -4,6 +4,7 @@ using Steamworks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.UI;
@@ -35,6 +36,10 @@ public class LocalPlayer : Entity
     {
         weapon = (byte)Weapons.CurrentIndex();
         renderer = GunControl.Instance.currentWeapon.GetComponentInChildren<GunColorGetter>()?.GetComponent<Renderer>();
+
+        FistControl.Instance.blueArm.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture();
+        var rightArm = GunControl.Instance.currentWeapon.transform.GetChild(0).Find("RightArm");
+        if (rightArm != null) rightArm.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture();
     }
 
     public override void Write(Writer w)

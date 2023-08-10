@@ -48,6 +48,9 @@ public class LobbyController
 
             // update the discord activity so everyone can know I've been working hard
             DiscordController.Instance.FetchSceneActivity(SceneHelper.CurrentScene);
+
+            // update the color of the hand
+            Networking.LocalPlayer.UpdateWeapon();
         });
     }
 
