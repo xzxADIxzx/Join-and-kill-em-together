@@ -32,6 +32,7 @@ public class LocalPlayer : Entity
         SceneManager.sceneLoaded += (scene, mode) => Invoke("UpdateWeapon", .01f);
     }
 
+    /// <summary> Caches different things related to weapons and paints hands. </summary>
     public void UpdateWeapon()
     {
         weapon = (byte)Weapons.CurrentIndex();
@@ -40,6 +41,12 @@ public class LocalPlayer : Entity
         FistControl.Instance.blueArm.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture();
         var rightArm = GunControl.Instance.currentWeapon.transform.GetChild(0).Find("RightArm");
         if (rightArm != null) rightArm.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture();
+    }
+
+    /// <summary> Initiates self-destruction of the player. </summary>
+    public void SelfDestruct()
+    {
+        if (!Chat.Instance.Shown) NewMovement.Instance.GetHurt(1000, false, 0f);
     }
 
     public override void Write(Writer w)
