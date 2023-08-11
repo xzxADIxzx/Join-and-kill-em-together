@@ -44,6 +44,8 @@ public class ShopPatch
         button.transform.localRotation = Quaternion.identity;
         button.transform.localScale = new(1f, 1f, 1f);
 
+        foreach (Transform child in button.transform) child.localPosition = Vector3.zero;
+
         // add ControllerPointer so that the button can be clicked
         button.AddComponent<ShopButton>(); // hacky
         Object.Destroy(button.GetComponent<ShopButton>());
