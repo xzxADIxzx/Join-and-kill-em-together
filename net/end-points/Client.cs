@@ -82,6 +82,8 @@ public class Client : Endpoint
         Listen(PacketType.RaiseExitBuilding, r => World.Instance.RaiseExitBuilding());
         Listen(PacketType.StartMinosIntro, r => World.Instance.StartMinosIntro());
         Listen(PacketType.OpenMinosExit, r => World.Instance.OpenMinosExit());
+        Listen(PacketType.StartSisyphusIntro, r => World.Instance.StartSisyphusIntro());
+        Listen(PacketType.OpenSisyphusExit, r => World.Instance.OpenSisyphusExit());
     }
 
     public override void Update()

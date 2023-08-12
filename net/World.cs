@@ -30,6 +30,8 @@ public class World : MonoSingleton<World>
 
     /// <summary> Whether Minos is dead. </summary>
     private bool IsMinosDead;
+    /// <summary> Whether Sisyphus is dead. </summary>
+    private bool IsSisyphusDead;
 
     /// <summary> Name of the last loaded scene. </summary>
     private string LastScene;
@@ -85,7 +87,7 @@ public class World : MonoSingleton<World>
             }
         }
 
-        // Minos has a unique cutscene and a non-working exit from the level
+        // Minos & Sisyphus has a unique cutscene and a non-working exit from the level
         if (SceneHelper.CurrentScene == "Level P-1")
         {
             if (LobbyController.IsOwner)
@@ -94,6 +96,15 @@ public class World : MonoSingleton<World>
                 Redirect(MinosExit(), PacketType.OpenMinosExit);
             }
             else if (IsMinosDead) OpenMinosExit();
+        }
+        if (SceneHelper.CurrentScene == "Level P-2")
+        {
+            if (LobbyController.IsOwner)
+            {
+                Redirect(SisyphusIntro(), PacketType.StartSisyphusIntro);
+                Redirect(SisyphusExit(), PacketType.OpenSisyphusExit);
+            }
+            else if (IsSisyphusDead) OpenSisyphusExit();
         }
 
         // clear the list of open doors if the player has entered a new level
@@ -213,7 +224,7 @@ public class World : MonoSingleton<World>
     public ObjectActivator MinosIntro() => Activator("MinosPrimeIntro");
 
     /// <summary> Starts minos intro. </summary>
-    public void StartMinosIntro() => MinosIntro()?.gameObject.SetActive(IsV2Dead = true);
+    public void StartMinosIntro() => MinosIntro()?.gameObject.SetActive(true);
 
     /// <summary> Finds exit activator on level P-1. </summary>
     public ObjectActivator MinosExit() => Activator("End");
@@ -223,6 +234,25 @@ public class World : MonoSingleton<World>
     {
         IsMinosDead = true;
         var exit = MinosExit();
+
+        exit?.gameObject.SetActive(true);
+        exit?.transform.parent.GetChild(7).gameObject.SetActive(false);
+    }
+
+    /// <summary> Finds Sisyphus intro activator on level P-2. </summary>
+    public ObjectActivator SisyphusIntro() => Activator("PrimeIntro");
+
+    /// <summary> Starts Sisyphus intro. </summary>
+    public void StartSisyphusIntro() => SisyphusIntro()?.gameObject.SetActive(true);
+
+    /// <summary> Finds exit activator on level P-2. </summary>
+    public ObjectActivator SisyphusExit() => Activator("Outro");
+
+    /// <summary> Open the exit from the level P-2. </summary>
+    public void OpenSisyphusExit()
+    {
+        IsSisyphusDead = true;
+        var exit = SisyphusExit();
 
         exit?.gameObject.SetActive(true);
         exit?.transform.parent.GetChild(7).gameObject.SetActive(false);

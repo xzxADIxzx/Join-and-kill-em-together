@@ -34,5 +34,7 @@ public enum PacketType
     /// <summary> Need to start Minos intro in level P-1. </summary>
     StartMinosIntro,
     /// <summary> Need to open exit in level P-1. </summary>
-    OpenMinosExit
+    OpenMinosExit,
+    /// <summary> Uh, common, rly? </summary>
+    StartSisyphusIntro, OpenSisyphusExit
 }
