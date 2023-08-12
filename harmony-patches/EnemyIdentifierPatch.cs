@@ -16,6 +16,9 @@ public class EnemyPatch
         // the player is not connected, nothing needs to be done
         if (LobbyController.Lobby == null) return true;
 
+        // level 0-2 contains several castscenes that do not need to be removed
+        if (SceneHelper.CurrentScene == "Level 0-2" && __instance.enemyType == EnemyType.Swordsmachine && __instance.GetComponent<BossHealthBar>() == null) return true;
+
         // the enemy was created remotely
         if (__instance.gameObject.name == "Net")
         {
