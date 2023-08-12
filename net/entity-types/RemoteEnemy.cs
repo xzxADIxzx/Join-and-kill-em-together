@@ -40,6 +40,11 @@ public class RemoteEnemy : Entity
         transform.position = new Vector3(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
         transform.eulerAngles = new Vector3(0f, rotation.GetAngel(LastUpdate), 0f);
 
+        // this is necessary so that the health of the bosses is the same for all clients
+        if (enemyId.machine != null) enemyId.machine.health = enemyId.health;
+        else if (enemyId.spider != null) enemyId.spider.health = enemyId.health;
+        else if (enemyId.statue != null) enemyId.statue.health = enemyId.health;
+
         // boss
         if (boss && healthBar == null) healthBar = gameObject.AddComponent<BossHealthBar>();
     }
