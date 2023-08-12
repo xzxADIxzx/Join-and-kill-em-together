@@ -80,6 +80,8 @@ public class Client : Endpoint
         Listen(PacketType.BreakeWall, r => World.Instance.BreakWall());
         Listen(PacketType.StartV2Outro, r => World.Instance.StartV2Outro());
         Listen(PacketType.RaiseExitBuilding, r => World.Instance.RaiseExitBuilding());
+        Listen(PacketType.StartMinosIntro, r => World.Instance.StartMinosIntro());
+        Listen(PacketType.OpenMinosExit, r => World.Instance.OpenMinosExit());
     }
 
     public override void Update()

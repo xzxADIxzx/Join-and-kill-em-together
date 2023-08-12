@@ -28,6 +28,9 @@ public class World : MonoSingleton<World>
     /// <summary> Whether the exit building is raised at level 4-4. </summary>
     private bool IsExitBuildingRaised;
 
+    /// <summary> Whether Minos is dead. </summary>
+    private bool IsMinosDead;
+
     /// <summary> Name of the last loaded scene. </summary>
     private string LastScene;
 
@@ -82,13 +85,24 @@ public class World : MonoSingleton<World>
             }
         }
 
+        // Minos has a unique cutscene and a non-working exit from the level
+        if (SceneHelper.CurrentScene == "Level P-1")
+        {
+            if (LobbyController.IsOwner)
+            {
+                Redirect(MinosIntro(), PacketType.StartMinosIntro);
+                Redirect(MinosExit(), PacketType.OpenMinosExit);
+            }
+            else if (IsMinosDead) OpenMinosExit();
+        }
+
         // clear the list of open doors if the player has entered a new level
         if (SceneHelper.CurrentScene != LastScene)
         {
             LastScene = SceneHelper.CurrentScene;
 
             opened.Clear();
-            IsWallBrokenOn4_4 = IsV2Dead = IsExitBuildingRaised = false;
+            IsWallBrokenOn4_4 = IsV2Dead = IsExitBuildingRaised = IsMinosDead = false;
         }
         // but if the player just restarted the same level, then you need to open all the doors
         else opened.ForEach(index => OpenDoor(index, false));
@@ -144,6 +158,13 @@ public class World : MonoSingleton<World>
     #endregion
     #region 4-4
 
+    /// <summary> Finds an object activator with the given name and active parent. </summary>
+    public ObjectActivator Activator(string name)
+    {
+        var all = Resources.FindObjectsOfTypeAll<ObjectActivator>();
+        return Array.Find(all, a => a.name == name && a.transform.parent.gameObject.activeInHierarchy);
+    }
+
     /// <summary> Adds a listener to the activator and sends packets to all clients when the listener fires. </summary>
     public void Redirect(ObjectActivator activator, PacketType packetType) =>
         activator?.events.onActivate.AddListener(() => LobbyController.EachMemberExceptOwner(member => Networking.SendEmpty(member.Id, packetType)));
@@ -166,21 +187,13 @@ public class World : MonoSingleton<World>
     }
 
     /// <summary> Finds V2 outro activator on level 4-4. </summary>
-    public ObjectActivator V2Outro()
-    {
-        var all = Resources.FindObjectsOfTypeAll<ObjectActivator>();
-        return Array.Find(all, a => a.name == "BossOutro" && a.transform.parent.gameObject.activeInHierarchy);
-    }
+    public ObjectActivator V2Outro() => Activator("BossOutro");
 
     /// <summary> Starts V2 outro and loading to the next part of the level. </summary>
     public void StartV2Outro() => V2Outro()?.gameObject.SetActive(IsV2Dead = true);
 
     /// <summary> Finds exit building activator on level 4-4. </summary>
-    public ObjectActivator ExitBuilding()
-    {
-        var all = Resources.FindObjectsOfTypeAll<ObjectActivator>();
-        return Array.Find(all, a => a.name == "ExitBuilding Raise" && a.transform.parent.gameObject.activeInHierarchy);
-    }
+    public ObjectActivator ExitBuilding() => Activator("ExitBuilding Raise");
 
     /// <summary> Raises the exit from the level from under the sand. </summary>
     public void RaiseExitBuilding()
@@ -196,6 +209,25 @@ public class World : MonoSingleton<World>
         bulding.GetChild(14).gameObject.SetActive(true);
     }
 
+    /// <summary> Finds Minos intro activator on level P-1. </summary>
+    public ObjectActivator MinosIntro() => Activator("MinosPrimeIntro");
+
+    /// <summary> Starts minos intro. </summary>
+    public void StartMinosIntro() => MinosIntro()?.gameObject.SetActive(IsV2Dead = true);
+
+    /// <summary> Finds exit activator on level P-1. </summary>
+    public ObjectActivator MinosExit() => Activator("End");
+
+    /// <summary> Open the exit from the level P-1. </summary>
+    public void OpenMinosExit()
+    {
+        IsMinosDead = true;
+        var exit = MinosExit();
+
+        exit?.gameObject.SetActive(true);
+        exit?.transform.parent.GetChild(7).gameObject.SetActive(false);
+    }
+
     #endregion
     #region harmony
 
@@ -203,7 +235,7 @@ public class World : MonoSingleton<World>
     public void SendDoorOpen(GameObject obj)
     {
         int index = doors.IndexOf(obj);
-        if (index == -1) throw new System.Exception("Door index is -1 for " + obj.name);
+        if (index == -1) throw new Exception("Door index is -1 for " + obj.name);
 
         // write door index to send to clients
         byte[] data = Writer.Write(w => w.Int(index));
@@ -216,7 +248,7 @@ public class World : MonoSingleton<World>
     public void CheckDoorOpen(GameObject obj)
     {
         int index = doors.IndexOf(obj);
-        if (index == -1) throw new System.Exception("Door index is -1 for " + obj.name);
+        if (index == -1) throw new Exception("Door index is -1 for " + obj.name);
 
         // if the door is marked as open, then it must be reopened
         if (opened.Contains(index)) OpenDoor(obj);
