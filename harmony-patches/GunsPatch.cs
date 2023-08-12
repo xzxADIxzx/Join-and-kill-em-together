@@ -27,3 +27,13 @@ public class GunIconPatch
     // remote player's weapons shouldn't update an icon in the local player's HUD
     static bool Prefix(WeaponIcon __instance) => __instance.GetComponentInParent<RemotePlayer>() == null;
 }
+
+[HarmonyPatch(typeof(HookArm), "Update")]
+public class HookPatch
+{
+    static void Prefix(ref bool ___lightTarget)
+    {
+        // clients should be pulled to all enemies
+        if (LobbyController.Lobby != null && !LobbyController.IsOwner) ___lightTarget = false;
+    }
+}
