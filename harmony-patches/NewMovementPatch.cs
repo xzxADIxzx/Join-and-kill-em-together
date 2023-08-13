@@ -1,12 +1,20 @@
 namespace Jaket.HarmonyPatches;
 
 using HarmonyLib;
+using UnityEngine;
 
 using Jaket.Content;
 using Jaket.Net;
 
+[HarmonyPatch(typeof(NewMovement), "Start")]
+public class SpawnPatch
+{
+    // add some randomness to the spawn position so they don't stack on top of each other at the start of the level
+    static void Prefix(NewMovement __instance) => __instance.transform.position += new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f));
+}
+
 [HarmonyPatch(typeof(NewMovement), nameof(NewMovement.Respawn))]
-public class NewMovementPatch
+public class RespawnPatch
 {
     static void Prefix()
     {
