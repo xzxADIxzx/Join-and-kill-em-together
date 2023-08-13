@@ -87,9 +87,14 @@ public class PlayerIndicators : MonoSingleton<PlayerIndicators>
         var dst = Vector3.Distance(NewMovement.Instance.transform.position, target.position);
         indicator.fillAmount = Mathf.Clamp(100f - dst, 5f, 100f) * .006f;
 
+        // change indicator color based on distance
+        var clr = indicator.color;
+        clr.a = 1f - indicator.fillAmount * 1.5f;
+        indicator.color = clr;
+
         // find the direction from the player to the target
         var cam = CameraController.Instance.transform;
-        var dir = target.position + new Vector3(0f, 3f, 0f) - cam.position;
+        var dir = target.position + new Vector3(0f, 2.5f, 0f) - cam.position;
 
         // project this direction onto the camera plane, after which find the angle between the camera's up direction and the projected vector
         var projected = Vector3.ProjectOnPlane(dir, cam.forward);
