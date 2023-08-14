@@ -23,6 +23,13 @@ public class Client : Endpoint
                 // if the entity is not in the list, add a new one with the given type or local if available
                 if (!entities.ContainsKey(id)) entities[id] = id == SteamClient.SteamId ? Networking.LocalPlayer : Entities.Get(id, type);
 
+                // after respawn, Leviathan may be absent, so it must be returned if possible
+                if (entities[id] == null && type == EntityType.Leviathan)
+                {
+                    entities[id] = Entities.Get(id, EntityType.Leviathan);
+                    if (entities[id] == null) r.Bytes(40);
+                }
+
                 // sometimes players disappear for some unknown reason, and sometimes I destroy them myself
                 if (entities[id] == null && type == EntityType.Player) entities[id] = Entities.Get(id, EntityType.Player);
 

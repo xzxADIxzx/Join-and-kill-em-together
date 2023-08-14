@@ -22,6 +22,8 @@ public class Entities
             var type = (EntityType)i;
             providers.Add(type, () => Enemies.Instantiate(type));
         }
+
+        providers.Add(EntityType.Leviathan, () => World.Instance.Leviathan);
         providers.Add(EntityType.Player, DollAssets.CreateDoll);
     }
 
@@ -29,6 +31,7 @@ public class Entities
     public static Entity Get(ulong id, EntityType type)
     {
         var entity = providers[type]();
+        if (entity == null) return null;
 
         entity.Id = id;
         entity.Type = type;

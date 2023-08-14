@@ -37,5 +37,6 @@ public enum EntityType
     FleshPanopticon_Face = 5,
     MinosPrime = 16,
     SisyphusPrime = 20,
-    Player = 33
+    Leviathan = 33,
+    Player = 34
 }
