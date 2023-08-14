@@ -31,6 +31,7 @@ public enum PacketType
     StartV2Outro,
     /// <summary> Need to raise exit in level 4-4. </summary>
     RaiseExitBuilding,
+    OpenMetroDoor1, OpenMetroDoor2,
     /// <summary> Need to start Minos intro in level P-1. </summary>
     StartMinosIntro,
     /// <summary> Need to open exit in level P-1. </summary>

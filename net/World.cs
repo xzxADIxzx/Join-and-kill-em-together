@@ -30,6 +30,11 @@ public class World : MonoSingleton<World>
     /// <summary> Whether the exit building is raised at level 4-4. </summary>
     private bool IsExitBuildingRaised;
 
+    /// <summary> Whether the first metro door is open at level 5-1. </summary>
+    private bool IsFirstMetroDoorOpen;
+    /// <summary> Whether the second metro door is open at level 5-1. </summary>
+    private bool IsSecondMetroDoorOpen;
+
     /// <summary> Whether Minos is dead. </summary>
     private bool IsMinosDead;
     /// <summary> Whether Sisyphus is dead. </summary>
@@ -92,6 +97,21 @@ public class World : MonoSingleton<World>
                 if (IsWallBrokenOn4_4) BreakWall();
                 if (IsV2Dead) StartV2Outro();
                 if (IsExitBuildingRaised) RaiseExitBuilding();
+            }
+        }
+
+        // TODO clear copy-pasted code
+        if (SceneHelper.CurrentScene == "Level 5-1")
+        {
+            if (LobbyController.IsOwner)
+            {
+                Redirect(MetroDoorActivator(false), PacketType.OpenMetroDoor1);
+                Redirect(MetroDoorActivator(true), PacketType.OpenMetroDoor2);
+            }
+            else
+            {
+                if (IsFirstMetroDoorOpen) OpenFirstMetroDoor();
+                if (IsSecondMetroDoorOpen) OpenSecondMetroDoor();
             }
         }
 
@@ -184,6 +204,14 @@ public class World : MonoSingleton<World>
         return Array.Find(all, a => a.name == name && a.transform.parent.gameObject.activeInHierarchy);
     }
 
+    public ObjectActivator MetroDoorActivator(bool second)
+    {
+        string name = second ? "MetroBlockDoor (1)" : "MetroBlockDoor";
+
+        var all = Resources.FindObjectsOfTypeAll<ObjectActivator>();
+        return Array.Find(all, a => a.transform.parent?.gameObject.name == name && a.transform.parent.gameObject.activeInHierarchy);
+    }
+
     /// <summary> Adds a listener to the activator and sends packets to all clients when the listener fires. </summary>
     public void Redirect(ObjectActivator activator, PacketType packetType) =>
         activator?.events.onActivate.AddListener(() => LobbyController.EachMemberExceptOwner(member => Networking.SendEmpty(member.Id, packetType)));
@@ -227,6 +255,10 @@ public class World : MonoSingleton<World>
         bulding.GetComponent<Door>().Close();
         bulding.GetChild(14).gameObject.SetActive(true);
     }
+
+    public void OpenFirstMetroDoor() => MetroDoorActivator(false).gameObject.SetActive(IsFirstMetroDoorOpen = true);
+
+    public void OpenSecondMetroDoor() => MetroDoorActivator(true).gameObject.SetActive(IsSecondMetroDoorOpen = true);
 
     /// <summary> Finds Minos intro activator on level P-1. </summary>
     public ObjectActivator MinosIntro() => Activator("MinosPrimeIntro");
