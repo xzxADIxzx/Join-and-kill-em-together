@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 
 using Jaket.Content;
 using Jaket.IO;
+using Jaket.Net.EntityTypes;
 using Jaket.UI;
 
 /// <summary> Class that manages objects in the level, such as doors and etc. </summary>
@@ -34,6 +35,9 @@ public class World : MonoSingleton<World>
     private bool IsFirstMetroDoorOpen;
     /// <summary> Whether the second metro door is open at level 5-1. </summary>
     private bool IsSecondMetroDoorOpen;
+
+    /// <summary> Level 5-4 contains a unique boss that needs to be dealt with separately. </summary>
+    public Leviathan Leviathan;
 
     /// <summary> Whether Minos is dead. </summary>
     private bool IsMinosDead;
