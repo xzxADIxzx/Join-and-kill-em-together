@@ -9,7 +9,7 @@ using Jaket.Net;
 [HarmonyPatch(typeof(NewMovement), "Start")]
 public class SpawnPatch
 {
-    // add some randomness to the spawn position so they don't stack on top of each other at the start of the level
+    // add some randomness to the spawn position so players don't stack on top of each other at the start of the level
     static void Prefix(NewMovement __instance) => __instance.transform.position += new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f));
 }
 
@@ -19,7 +19,7 @@ public class RespawnPatch
     static void Prefix()
     {
         // checkpoint destroys some objects on the level
-        World.Instance.Recache();
+        World.Instance.Invoke("Recache", .1f);
 
         // in the sandbox after death, enemies are not destroyed
         if (LobbyController.Lobby == null || !LobbyController.IsOwner || SceneHelper.CurrentScene == "uk_construct") return;
