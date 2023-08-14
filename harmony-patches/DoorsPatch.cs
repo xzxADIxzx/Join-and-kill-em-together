@@ -45,12 +45,18 @@ public class BigDoorPatch
 }
 
 [HarmonyPatch(typeof(DoorOpener), "OnEnable")]
-public class AcidLevelPatch
+public class AcidLevelAndSkullCasePatch
 {
     static void Postfix(DoorOpener __instance)
     {
+        // no need to do anything if the player is playing alone
+        if (LobbyController.Lobby == null || !LobbyController.IsOwner) return;
+
         // level 3-1 has acid that comes down in layers
-        if (LobbyController.Lobby != null && LobbyController.IsOwner && World.AcidLevelsNames.Contains(__instance.name)) World.Instance.SendDoorOpen(__instance.gameObject);
+        if (World.AcidLevelsNames.Contains(__instance.name)) World.Instance.SendDoorOpen(__instance.gameObject);
+
+        // level 5-1 has cases with skulls inside them
+        if (World.SkullCasesNames.Contains(__instance.transform.parent.gameObject.name)) World.Instance.SendDoorOpen(__instance.gameObject);
     }
 }
 
@@ -58,5 +64,5 @@ public class AcidLevelPatch
 public class CheckPointPatch
 {
     // some objects in the level do not appear immediately
-    static void Postfix() => World.Instance.Recache();
+    static void Postfix() => World.Instance.Invoke("Recache", .1f);
 }
