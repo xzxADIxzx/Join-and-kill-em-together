@@ -45,18 +45,12 @@ public class BigDoorPatch
 }
 
 [HarmonyPatch(typeof(DoorOpener), "OnEnable")]
-public class AcidLevelAndSkullCasePatch
+public class DoorOpenerPatch
 {
     static void Postfix(DoorOpener __instance)
     {
-        // no need to do anything if the player is playing alone
-        if (LobbyController.Lobby == null || !LobbyController.IsOwner) return;
-
-        // level 3-1 has acid that comes down in layers
-        if (World.AcidLevelsNames.Contains(__instance.name)) World.Instance.SendDoorOpen(__instance.gameObject);
-
-        // level 5-1 has cases with skulls inside them
-        if (World.SkullCasesNames.Contains(__instance.transform.parent.gameObject.name)) World.Instance.SendDoorOpen(__instance.gameObject);
+        // the game has a bunch of different triggers that work only on the host
+        if (LobbyController.Lobby != null && LobbyController.IsOwner) World.Instance.SendDoorOpen(__instance.gameObject);
     }
 }
 
