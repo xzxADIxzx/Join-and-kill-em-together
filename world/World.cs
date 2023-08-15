@@ -19,6 +19,11 @@ public class World : MonoSingleton<World>
     /// <summary> List of open doors, cleared only when the player enters a new level. </summary>
     private List<int> opened = new();
 
+    /// <summary> List of all object activators needed for synchronization at all levels. </summary>
+    private List<Activator> activators = new();
+    /// <summary> List of activated objects, cleared only when the player enters a new level. </summary>
+    private List<int> activated = new();
+
     /// <summary> Name of the last loaded scene. </summary>
     private string LastScene;
     /// <summary> Level 5-4 contains a unique boss that needs to be dealt with separately. </summary>
@@ -32,6 +37,30 @@ public class World : MonoSingleton<World>
 
         // updates the list of objects in the level when the scene is loaded
         SceneManager.sceneLoaded += (scene, mode) => Instance.Recache();
+
+        // create activators to synchronize different things in the level
+        World.Instance.activators.AddRange(new[]
+        {
+            // there is a door in the arena through which V2 escapes and you also need to synchronize the outro and the exit building
+            Activators.FindByNameAndActiveParentOfParent("Level 4-4", "Checkpoint Activator", obj =>
+            {
+                obj?.transform.parent.gameObject.SetActive(true);
+                obj?.transform.parent.parent.Find("Wall").gameObject.SetActive(false);
+            }),
+            Activators.FindByNameAndActiveParent("Level 4-4", "BossOutro"),
+            Activators.FindByNameAndActiveParent("Level 4-4", "ExitBuilding Raise", obj =>
+            {
+                var bulding = obj.transform.parent.Find("ExitBuilding");
+                bulding.GetComponent<Door>().Close();
+                bulding.GetChild(14).gameObject.SetActive(true);
+            }),
+
+            // Minos & Sisyphus has a unique cutscene and a non-working exit from the level
+            Activators.FindByNameAndActiveParent("Level P-1", "MinosPrimeIntro", disposable: true),
+            Activators.FindByNameAndActiveParent("Level P-1", "End", obj => obj?.transform.parent.GetChild(7).gameObject.SetActive(false)),
+            Activators.FindByNameAndActiveParent("Level P-2", "PrimeIntro", disposable: true),
+            Activators.FindByNameAndActiveParent("Level P-2", "Outro", obj => obj?.transform.parent.GetChild(7).gameObject.SetActive(false))
+        });
     }
 
     /// <summary> Updates the list of objects in the level. </summary>
@@ -49,6 +78,12 @@ public class World : MonoSingleton<World>
         // sort doors by position to make sure their order is the same for different clients
         doors.Sort((d1, d2) => d1.transform.position.sqrMagnitude.CompareTo(d2.transform.position.sqrMagnitude));
 
+        // initialize the activators created for the current level
+        activators.ForEach(activator =>
+        {
+            if (activator.Level == SceneHelper.CurrentScene) activator.Init();
+        });
+
         // clear the list of open doors and activated objects if the player has entered a new level
         if (SceneHelper.CurrentScene != LastScene)
         {
@@ -61,6 +96,7 @@ public class World : MonoSingleton<World>
         else
         {
             opened.ForEach(index => OpenDoor(index, false));
+            activated.ForEach(index => ActivateObject(index, false));
         }
     }
 
@@ -102,6 +138,16 @@ public class World : MonoSingleton<World>
         }
     }
 
+    /// <summary> Activates the object by the given index. </summary>
+    public void ActivateObject(int index, bool save = true)
+    {
+        // save the index of the activated object so that even after loading to the checkpoint the object remains active
+        if (save) activated.Add(index);
+
+        // some objects, such as cutscenes before bosses, don't need to be reactivated after loading to the checkpoint
+        if (save || !activators[index].Disposable) activators[index].Activate();
+    }
+
     #endregion
     #region serialization
 
@@ -126,6 +172,19 @@ public class World : MonoSingleton<World>
 
         // if the door is marked as open, then it must be reopened
         if (opened.Contains(index)) OpenDoor(obj);
+    }
+
+    /// <summary> Informs all the client that the object is active. </summary>
+    public void SendObjectActivation(Activator activator)
+    {
+        int index = activators.IndexOf(activator);
+        if (index == -1) return;
+
+        // write activator index to send to clients
+        byte[] data = Writer.Write(w => w.Int(index));
+
+        // notify each client that the object has activated
+        LobbyController.EachMemberExceptOwner(member => Networking.Send(member.Id, data, PacketType.ActivateObject));
     }
 
     #endregion
