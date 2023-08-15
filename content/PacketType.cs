@@ -25,17 +25,6 @@ public enum PacketType
 
     /// <summary> Need to open a certain door. Called by the host so that clients don't get stuck in a room. </summary>
     OpenDoor,
-    /// <summary> Need to break a certain wall in level 4-4. </summary>
-    BreakeWall,
-    /// <summary> Need to start V2 outro in level 4-4. </summary>
-    StartV2Outro,
-    /// <summary> Need to raise exit in level 4-4. </summary>
-    RaiseExitBuilding,
-    OpenMetroDoor1, OpenMetroDoor2,
-    /// <summary> Need to start Minos intro in level P-1. </summary>
-    StartMinosIntro,
-    /// <summary> Need to open exit in level P-1. </summary>
-    OpenMinosExit,
-    /// <summary> Uh, common, rly? </summary>
-    StartSisyphusIntro, OpenSisyphusExit
+    /// <summary> Need to activate a certain object. It can be anything, because there are a lot of different stuff in the game. </summary>
+    ActivateObject
 }

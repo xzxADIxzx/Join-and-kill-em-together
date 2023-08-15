@@ -6,6 +6,7 @@ using UnityEngine;
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net.EntityTypes;
+using Jaket.World;
 
 /// <summary> Endpoint of the client connected to the host. </summary>
 public class Client : Endpoint
@@ -84,15 +85,8 @@ public class Client : Endpoint
         Listen(PacketType.DamageEntity, r => entities[r.Id()]?.Damage(r));
 
         Listen(PacketType.OpenDoor, r => World.Instance.OpenDoor(r.Int()));
-        Listen(PacketType.BreakeWall, r => World.Instance.BreakWall());
-        Listen(PacketType.StartV2Outro, r => World.Instance.StartV2Outro());
-        Listen(PacketType.RaiseExitBuilding, r => World.Instance.RaiseExitBuilding());
-        Listen(PacketType.OpenMetroDoor1, r => World.Instance.OpenFirstMetroDoor());
-        Listen(PacketType.OpenMetroDoor2, r => World.Instance.OpenSecondMetroDoor());
-        Listen(PacketType.StartMinosIntro, r => World.Instance.StartMinosIntro());
-        Listen(PacketType.OpenMinosExit, r => World.Instance.OpenMinosExit());
-        Listen(PacketType.StartSisyphusIntro, r => World.Instance.StartSisyphusIntro());
-        Listen(PacketType.OpenSisyphusExit, r => World.Instance.OpenSisyphusExit());
+
+        Listen(PacketType.ActivateObject,r=>World.Instance.ActivateObject(r.Int()));
     }
 
     public override void Update()
