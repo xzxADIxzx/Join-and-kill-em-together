@@ -4,6 +4,7 @@ using UnityEngine;
 
 using Jaket.Content;
 using Jaket.IO;
+using Jaket.World;
 
 /// <summary> Leviathan representation responsible for synchronizing animations and attacks. </summary>
 public class Leviathan : Entity

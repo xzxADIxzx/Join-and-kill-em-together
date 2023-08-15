@@ -3,6 +3,7 @@ namespace Jaket.HarmonyPatches;
 using HarmonyLib;
 
 using Jaket.Net;
+using Jaket.World;
 
 [HarmonyPatch(typeof(LeviathanHead), "Update")]
 public class HeadPatch

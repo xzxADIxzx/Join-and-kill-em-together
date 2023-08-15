@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 using Jaket.Assets;
 using Jaket.Content;
-using Jaket.Net.EntityTypes;
+using Jaket.World;
 
 /// <summary> Class that provides entities by their type. </summary>
 public class Entities

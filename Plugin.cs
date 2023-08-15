@@ -50,7 +50,7 @@ public class Plugin : BaseUnityPlugin
         // initialize networking components
         Networking.Load();
         Entities.Load();
-        World.Load();
+        World.World.Load(); // C# sucks
 
         // initialize ui components
         WidescreenFix.Load();

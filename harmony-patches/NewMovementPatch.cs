@@ -5,6 +5,7 @@ using UnityEngine;
 
 using Jaket.Content;
 using Jaket.Net;
+using Jaket.World;
 
 [HarmonyPatch(typeof(NewMovement), "Start")]
 public class SpawnPatch
