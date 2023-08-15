@@ -36,7 +36,7 @@ public class LocalPlayer : Entity
     public void UpdateWeapon()
     {
         weapon = (byte)Weapons.CurrentIndex();
-        renderer = GunControl.Instance.currentWeapon.GetComponentInChildren<GunColorGetter>()?.GetComponent<Renderer>();
+        renderer = GunControl.Instance.currentWeapon?.GetComponentInChildren<GunColorGetter>()?.GetComponent<Renderer>();
 
         FistControl.Instance.blueArm.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture();
         var rightArm = GunControl.Instance.currentWeapon.transform.GetChild(0).Find("RightArm");
