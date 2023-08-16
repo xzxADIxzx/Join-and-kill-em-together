@@ -24,13 +24,16 @@ public class RemoteEnemy : Entity
 
     public void Awake()
     {
-        enemyId = GetComponent<EnemyIdentifier>();
-
+        // interpolations
         health = new FloatLerp();
         x = new FloatLerp();
         y = new FloatLerp();
         z = new FloatLerp();
         rotation = new FloatLerp();
+
+        // other stuff
+        enemyId = GetComponent<EnemyIdentifier>();
+        health.target = enemyId.health;
     }
 
     public void Kill()
