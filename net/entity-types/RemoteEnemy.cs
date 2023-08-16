@@ -33,6 +33,18 @@ public class RemoteEnemy : Entity
         rotation = new FloatLerp();
     }
 
+    public void Kill()
+    {
+        // it looks funny
+        enemyId.InstaKill();
+
+        // reduce health to zero because the host destroyed LocalEnemy
+        health.target = 0f;
+
+        // destroy the boss bar, because it looks just awful
+        if (healthBar != null) healthBar.Invoke("DestroyBar", 1f);
+    }
+
     public void Update()
     {
         // health & position
