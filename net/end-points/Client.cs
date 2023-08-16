@@ -86,7 +86,7 @@ public class Client : Endpoint
 
         Listen(PacketType.OpenDoor, r => World.Instance.OpenDoor(r.Int()));
 
-        Listen(PacketType.ActivateObject,r=>World.Instance.ActivateObject(r.Int()));
+        Listen(PacketType.ActivateObject, r => World.Instance.ActivateObject(r.Int()));
     }
 
     public override void Update()

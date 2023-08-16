@@ -55,6 +55,9 @@ public class World : MonoSingleton<World>
                 bulding.GetChild(14).gameObject.SetActive(true);
             }),
 
+            // there is a checkpoint deactivator at level 5-1, the deactivation of which needs to be synchronized
+            Activators.FindByNameAndActiveParentOfParent("Level 5-1", "CheckPointsUndisabler"),
+
             // Minos & Sisyphus has a unique cutscene and a non-working exit from the level
             Activators.FindByNameAndActiveParent("Level P-1", "MinosPrimeIntro", disposable: true),
             Activators.FindByNameAndActiveParent("Level P-1", "End", obj => obj?.transform.parent.GetChild(7).gameObject.SetActive(false)),
