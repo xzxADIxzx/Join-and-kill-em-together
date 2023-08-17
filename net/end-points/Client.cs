@@ -57,7 +57,7 @@ public class Client : Endpoint
             var entity = entities[r.Id()];
 
             // kill the enemy so that there is no desynchronization
-            if (entity is RemoteEnemy enemy) enemy.Kill();
+            if (entity is RemoteEnemy enemy) enemy?.Kill();
         });
 
         Listen(PacketType.BossDefeated, r =>

@@ -10,8 +10,11 @@ using Jaket.World;
 [HarmonyPatch(typeof(NewMovement), "Start")]
 public class SpawnPatch
 {
-    // add some randomness to the spawn position so players don't stack on top of each other at the start of the level
-    static void Prefix(NewMovement __instance) => __instance.transform.position += new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f));
+    static void Prefix(NewMovement __instance)
+    {
+        // add some randomness to the spawn position so players don't stack on top of each other at the start of the level
+        if (LobbyController.Lobby != null) __instance.transform.position += new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f));
+    }
 }
 
 [HarmonyPatch(typeof(NewMovement), nameof(NewMovement.Respawn))]
