@@ -46,6 +46,9 @@ public class RemoteEnemy : Entity
 
         // destroy the boss bar, because it looks just awful
         if (healthBar != null) healthBar.Invoke("DestroyBar", 1f);
+
+        // destroy the component to allow enemies like Malicious Face and Drone to fall
+        Destroy(this);
     }
 
     public void Update()
