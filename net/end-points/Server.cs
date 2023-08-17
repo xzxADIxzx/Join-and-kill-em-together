@@ -43,19 +43,22 @@ public class Server : Endpoint
     public override void Update()
     {
         // write snapshot
-        byte[] data = Writer.Write(w => Networking.EachEntity(entity =>
+        Networking.EachEntity(entity =>
         {
             // when an entity is destroyed via Object.Destroy, the element in the list is replaced with null
             if (entity == null) return;
 
-            w.Id(entity.Id);
-            w.Byte((byte)entity.Type);
+            byte[] data = Writer.Write(w =>
+            {
+                w.Id(entity.Id);
+                w.Byte((byte)entity.Type);
 
-            entity.Write(w);
-        }));
+                entity.Write(w);
+            });
 
-        // send snapshot
-        LobbyController.EachMemberExceptOwner(member => Networking.SendSnapshot(member.Id, data));
+            // send snapshot
+            LobbyController.EachMemberExceptOwner(member => Networking.SendSnapshot(member.Id, data));
+        });
 
         // read incoming packets
         UpdateListeners();

@@ -15,28 +15,20 @@ public class Client : Endpoint
     {
         Listen(PacketType.Snapshot, r =>
         {
-            // each snapshot contains all the entities, so you need to read them all
-            while (r.Position < r.Length)
-            {
-                ulong id = r.Id();
-                EntityType type = (EntityType)r.Byte();
+            ulong id = r.Id();
+            EntityType type = (EntityType)r.Byte();
 
-                // if the entity is not in the list, add a new one with the given type or local if available
-                if (!entities.ContainsKey(id)) entities[id] = id == SteamClient.SteamId ? Networking.LocalPlayer : Entities.Get(id, type);
+            // if the entity is not in the list, add a new one with the given type or local if available
+            if (!entities.ContainsKey(id)) entities[id] = id == SteamClient.SteamId ? Networking.LocalPlayer : Entities.Get(id, type);
 
-                // after respawn, Leviathan may be absent, so it must be returned if possible
-                if (entities[id] == null && type == EntityType.Leviathan)
-                {
-                    entities[id] = Entities.Get(id, EntityType.Leviathan);
-                    if (entities[id] == null) r.Bytes(40);
-                }
+            // after respawn, Leviathan may be absent, so it must be returned if possible
+            if (entities[id] == null && type == EntityType.Leviathan) entities[id] = Entities.Get(id, EntityType.Leviathan);
 
-                // sometimes players disappear for some unknown reason, and sometimes I destroy them myself
-                if (entities[id] == null && type == EntityType.Player) entities[id] = Entities.Get(id, EntityType.Player);
+            // sometimes players disappear for some unknown reason, and sometimes I destroy them myself
+            if (entities[id] == null && type == EntityType.Player) entities[id] = Entities.Get(id, EntityType.Player);
 
-                // read entity data
-                entities[id]?.Read(r);
-            }
+            // read entity data
+            entities[id]?.Read(r);
         });
 
         Listen(PacketType.LevelLoading, r => SceneHelper.LoadScene(r.String()));

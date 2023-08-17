@@ -3,7 +3,7 @@ namespace Jaket.Content;
 /// <summary> All packet types. Will replenish over time. </summary>
 public enum PacketType
 {
-    /// <summary> Data of all entities, usually players and enemies. </summary>
+    /// <summary> Data of an entity, usually a player or an enemy. </summary>
     Snapshot,
     /// <summary> Host asks to load a level, the packet contains its name. </summary>
     LevelLoading,
