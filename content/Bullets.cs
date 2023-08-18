@@ -34,6 +34,7 @@ public class Bullets
             {
                 Prefabs.Add(shotgun.bullet);
                 Prefabs.Add(shotgun.grenade);
+                Prefabs.Add(shotgun.explosion);
                 continue;
             }
 

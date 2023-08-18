@@ -23,6 +23,18 @@ public class ProjectilePatch
     static void Prefix(Projectile __instance) => Bullets.Send(__instance.gameObject, ref __instance.sourceWeapon);
 }
 
+[HarmonyPatch(typeof(ExplosionController), "Start")]
+public class ExplosionPatch
+{
+    static void Prefix(ExplosionController __instance)
+    {
+        var explosion = __instance.GetComponentInChildren<Explosion>();
+
+        // only shotgun explosions need to be synchronized
+        if (explosion.sourceWeapon != null && explosion.sourceWeapon.name.Contains("Shotgun")) Bullets.Send(__instance.gameObject, false, false);
+    }
+}
+
 [HarmonyPatch(typeof(Nail), "Start")]
 public class NailPatch
 {
