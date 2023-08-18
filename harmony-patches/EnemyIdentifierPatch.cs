@@ -16,6 +16,9 @@ public class EnemyStartPatch
         // the player is not connected, nothing needs to be done
         if (LobbyController.Lobby == null) return true;
 
+        // I don't even want to know why
+        if (__instance.dead) return true;
+
         // level 0-2 contains several cutscenes that do not need to be removed
         if (SceneHelper.CurrentScene == "Level 0-2" && __instance.enemyType == EnemyType.Swordsmachine && __instance.GetComponent<BossHealthBar>() == null) return true;
 
@@ -110,9 +113,6 @@ public class EnemyDeathPatch
         // if the lobby is null or the name is Net, then either the player isn't connected or this enemy was created remotely
         if (LobbyController.Lobby == null || __instance.gameObject.name == "Net") return;
 
-        // destroy the component so that it is no longer synchronized over the network
-        Object.Destroy(__instance.GetComponent<LocalEnemy>());
-
         // only the host should report death
         if (!LobbyController.IsOwner || __instance.dead) return;
 
@@ -129,5 +129,8 @@ public class EnemyDeathPatch
             byte[] bossData = Writer.Write(w => w.String(__instance.gameObject.name));
             LobbyController.EachMemberExceptOwner(member => Networking.Send(member.Id, bossData, PacketType.BossDefeated));
         }
+
+        // destroy the component so that it is no longer synchronized over the network
+        Object.Destroy(enemy);
     }
 }
