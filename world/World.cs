@@ -41,6 +41,10 @@ public class World : MonoSingleton<World>
         // create activators to synchronize different things in the level
         World.Instance.activators.AddRange(new[]
         {
+            // there are some skull cases and a couple of doors at level 4-2
+            Activators.FindByParentOfParentNameAndActive("Level 4-2", "5 Exterior"),
+            Activators.FindByNameAndActiveParentOfParent("Level 4-2", "Activator 2", obj => obj?.transform.parent.gameObject.SetActive(true), true),
+
             // there is a door in the arena through which V2 escapes and you also need to synchronize the outro and the exit building
             Activators.FindByNameAndActiveParentOfParent("Level 4-4", "Checkpoint Activator", obj =>
             {
