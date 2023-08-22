@@ -34,7 +34,7 @@ To compile you need .NET SDK 6.0 and Git.
    2. Delete the **BundleBuilder.cs** file from the assets folder, because it requires **UnityEditor.dll** but is not needed to run the mod.
 2. Run `dotnet restore`
 3. Create lib folder in root directory.
-   1. Copy **Assembly-CSharp.dll**, **Facepunch.Steamworks.Win64.dll**, **UMM.dll** and **UnityEngine.UI.dll** from `ULTRAKILL\ULTRAKILL_Data\Managed`
+   1. Copy **Assembly-CSharp.dll**, **Facepunch.Steamworks.Win64.dll**, **UMM.dll**, **UnityEngine.UI.dll** and **UnityUIExtensions.dll** from `ULTRAKILL\ULTRAKILL_Data\Managed`
    2. As well as **BepInEx.dll** and **0Harmony.dll** from `ULTRAKILL\BepInEx\core`
 4. Compile the mod with `dotnet build`.
 5. At the output you will get the **Jaket.dll** file, which will be located in the `bin\Debug\netstandard2.0` folder.

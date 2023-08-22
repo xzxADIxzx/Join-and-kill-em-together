@@ -36,6 +36,9 @@
     <Reference Include="UnityEngine.UI">
       <HintPath>lib\UnityEngine.UI.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.UI.Extensions">
+      <HintPath>lib\UnityUIExtensions.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEditor">
       <HintPath>lib\UnityEditor.dll</HintPath>
     </Reference>
