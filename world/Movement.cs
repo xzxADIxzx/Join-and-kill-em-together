@@ -19,7 +19,7 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Emoji selection wheel keybind. </summary>
     public UKKeyBind EmojiBind;
     /// <summary> An array containing the length of all emotions in seconds. </summary>
-    public float[] EmojiLegnth = { 2.458f, 0f, 1.833f, 0f, 0f, 0f };
+    public float[] EmojiLegnth = { 2.458f, 0f, 1.833f, 3.292f, 0f, 9.083f };
     /// <summary> Id of the currently playing emoji. </summary>
     public byte Emoji = 0xFF;
 
