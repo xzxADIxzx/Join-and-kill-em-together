@@ -27,8 +27,11 @@ public class PlayerIndicators : MonoSingleton<PlayerIndicators>
         // initialize the singleton and create a canvas
         Utils.Canvas("Player Indicator", Plugin.Instance.transform).AddComponent<PlayerIndicators>();
 
-        // hide player indicators once loading a scene
-        SceneManager.sceneLoaded += (scene, mode) => Instance.gameObject.SetActive(Instance.Shown = false);
+        // hide player indicators once loading the main menu
+        SceneManager.sceneLoaded += (scene, mode) =>
+        {
+            if (SceneHelper.CurrentScene == "Main Menu") Instance.gameObject.SetActive(Instance.Shown = false);
+        };
     }
 
     public void Update()
