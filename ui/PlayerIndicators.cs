@@ -14,7 +14,7 @@ using Jaket.Net.EntityTypes;
 public class PlayerIndicators : MonoSingleton<PlayerIndicators>
 {
     /// <summary> Whether indicators are visible or hidden. </summary>
-    public bool Shown;
+    public bool Shown = true;
 
     /// <summary> List of all indicator targets. </summary>
     public List<Transform> targets = new();

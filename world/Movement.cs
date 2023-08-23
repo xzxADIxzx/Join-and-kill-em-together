@@ -44,6 +44,9 @@ public class Movement : MonoSingleton<Movement>
         // if the emoji wheel is visible, but the key is not pressed, then hide it
         if (EmojiWheel.Instance.Shown && !EmojiBind.IsPressedInScene) EmojiWheel.Instance.Hide();
 
+        // cancel animation if any key is pressed
+        if (Input.anyKey) Emoji = 0xFF;
+
 
         // all the following changes are related to the network part of the game and shouldn't affect the local
         if (LobbyController.Lobby == null) return;
@@ -94,7 +97,11 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Triggers an emoji with the given id. </summary>
     public void StartEmoji(byte id)
     {
+        // save id for synchronization over the network
         Emoji = id;
+
+        // if id is -1, then the emotion was not selected
+        if (id == 0xFF) return;
 
         StopCoroutine("ClearEmoji");
         StartCoroutine("ClearEmoji");
