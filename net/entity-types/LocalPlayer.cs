@@ -8,6 +8,7 @@ using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.UI;
+using Jaket.World;
 
 /// <summary>
 /// Local player that exists only on the local machine.
@@ -58,6 +59,7 @@ public class LocalPlayer : Entity
 
         w.Byte((byte)team);
         w.Byte(weapon);
+        w.Byte(Movement.Instance.Emoji);
 
         w.Bool(NewMovement.Instance.walking);
         w.Bool(NewMovement.Instance.sliding);

@@ -27,6 +27,9 @@ public class RemotePlayer : Entity
     /// <summary> Last and current weapon id, needed only for visual. </summary>
     private byte lastWeapon = 0xFF, weapon;
 
+    /// <summary> Last and current emoji id, needed only for fun. </summary>
+    private byte lastEmoji = 0xFF, emoji;
+
     /// <summary> Material of the wings. </summary>
     private Material wingMaterial;
 
@@ -176,6 +179,14 @@ public class RemotePlayer : Entity
             }
         }
 
+        if (lastEmoji != emoji)
+        {
+            lastEmoji = emoji;
+
+            animator.SetTrigger("Show Emoji");
+            animator.SetInteger("Emoji", emoji);
+        }
+
         if (wasInAir != inAir)
         {
             wasInAir = inAir;
@@ -209,6 +220,7 @@ public class RemotePlayer : Entity
 
         w.Byte((byte)team);
         w.Byte(weapon);
+        w.Byte(emoji);
 
         w.Bool(walking);
         w.Bool(sliding);
@@ -230,6 +242,7 @@ public class RemotePlayer : Entity
 
         team = (Team)r.Byte();
         weapon = r.Byte();
+        emoji = r.Byte();
 
         walking = r.Bool();
         sliding = r.Bool();
