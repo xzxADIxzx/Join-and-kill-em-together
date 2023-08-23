@@ -30,6 +30,9 @@ public class DollAssets
     /// <summary> Hand textures used by local player. </summary>
     public static Texture[] HandTextures;
 
+    /// <summary> Icons for the emoji selection wheel. </summary>
+    public static Sprite[] EmojiIcons, EmojiGlows;
+
     /// <summary> Loads assets bundle and other necessary stuff. </summary>
     public static void Load()
     {
@@ -52,6 +55,17 @@ public class DollAssets
 
         LoadAsync<Texture>("V3-hand", tex => HandTextures[1] = tex);
         HandTextures[0] = FistControl.Instance.blueArm.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture;
+
+        // load icons for emoji wheel
+        EmojiIcons = new Sprite[6];
+        EmojiGlows = new Sprite[6];
+
+        for (int i = 0; i < 6; i++)
+        {
+            var index = i;
+            LoadAsync<Sprite>("V3-emoji-" + i, tex => EmojiIcons[index] = tex);
+            LoadAsync<Sprite>("V3-emoji-" + i + "-glow", tex => EmojiGlows[index] = tex);
+        }
 
         // create prefabs of the player doll and its preview
         LoadAsync<GameObject>("Player Doll.prefab", prefab =>
