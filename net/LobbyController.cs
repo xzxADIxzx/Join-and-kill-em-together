@@ -79,6 +79,7 @@ public class LobbyController
     /// <summary> Asynchronously connects the player to the given lobby. </summary>
     public static async void JoinLobby(Lobby lobby, SteamId id)
     {
+        if (Lobby != null) LeaveLobby();
         Debug.Log("Joining to the lobby...");
 
         var enter = await lobby.Join();
