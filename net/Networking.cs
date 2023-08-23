@@ -139,15 +139,6 @@ public class Networking : MonoBehaviour
     // TODO create a separate thread to increase fps?
     public void Awake() => InvokeRepeating("NetworkUpdate", 0f, SNAPSHOTS_SPACING);
 
-    public void Update()
-    {
-        // on pause, time stops, but we don't need it
-        if (LobbyController.Lobby != null && OptionsManager.Instance.paused) Time.timeScale = 1f;
-
-        // sometimes it happens that in the chat the player flies into the air
-        if (LobbyController.Lobby != null && !NewMovement.Instance.enabled && NewMovement.Instance.rb.velocity.y > 0f) NewMovement.Instance.rb.velocity = new();
-    }
-
     /// <summary> Core network logic. Part of it is moved to the server and the client. </summary>
     public void NetworkUpdate()
     {

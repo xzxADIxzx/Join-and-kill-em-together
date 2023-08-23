@@ -10,6 +10,7 @@ using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net;
 using Jaket.UI;
+using Jaket.World;
 
 /// <summary> Plugin main class. Essentially only initializes all other components. </summary>
 [BepInPlugin("xzxADIxzx.Jaket", "Jaket", "0.6.6")]
@@ -35,9 +36,6 @@ public class Plugin : BaseUnityPlugin
     /// <summary> Initializes the plugin if it has not already been initialized. </summary>
     public void Init()
     {
-        // get acquainted, this is a crutch
-        Utils.WasCheatsEnabled = false;
-
         // ui components can only be initialized in the main menu, because they need some resources
         if (Initialized || SceneHelper.CurrentScene != "Main Menu") return;
 
@@ -50,7 +48,10 @@ public class Plugin : BaseUnityPlugin
         // initialize networking components
         Networking.Load();
         Entities.Load();
+
+        // initialize world components
         World.World.Load(); // C# sucks
+        Movement.Load();
 
         // initialize ui components
         WidescreenFix.Load();

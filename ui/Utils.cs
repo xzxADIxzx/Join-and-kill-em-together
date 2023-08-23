@@ -6,8 +6,6 @@ using UnityEngine.UI;
 
 public class Utils
 {
-    public static bool WasCheatsEnabled;
-
     private static Sprite buttonImage, shadowImage, circleImage;
     private static ColorBlock colorBlock;
     private static Font font;
@@ -22,49 +20,12 @@ public class Utils
         font = OptionsMenuToManager.Instance.optionsMenu.transform.Find("Text").GetComponent<Text>().font;
     }
 
-    #region general
-
-    public static void ToggleCursor(bool enable)
-    {
-        Cursor.visible = enable;
-        Cursor.lockState = enable ? CursorLockMode.None : CursorLockMode.Locked;
-
-        // lock camera
-        CameraController.Instance.enabled = !enable;
-    }
-
-    public static void ToggleMovement(bool enable)
-    {
-        NewMovement.Instance.enabled = enable;
-        NewMovement.Instance.GetComponentInChildren<GunControl>().enabled = enable;
-        NewMovement.Instance.GetComponentInChildren<FistControl>().enabled = enable;
-
-        HookArm.Instance.enabled = enable;
-        if (!enable) HookArm.Instance.Cancel();
-
-        // fix ultrasoap
-        if (enable)
-            NewMovement.Instance.UnlockMovementAxes();
-        else
-            NewMovement.Instance.LockMovementAxes();
-
-        // temporary disable cheats
-        if (enable)
-            CheatsController.Instance.cheatsEnabled = WasCheatsEnabled;
-        else
-        {
-            WasCheatsEnabled = CheatsController.Instance.cheatsEnabled;
-            CheatsController.Instance.cheatsEnabled = false;
-        }
-    }
+    #region base
 
     public static void Component<T>(GameObject obj, UnityAction<T> action) where T : Component
     {
         action.Invoke(obj.AddComponent<T>());
     }
-
-    #endregion
-    #region base
 
     public static GameObject Object(string name, Transform parent)
     {

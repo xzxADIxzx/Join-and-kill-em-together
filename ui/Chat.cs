@@ -6,7 +6,9 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 using Jaket.Net;
+using Jaket.World;
 
+/// <summary> Front end of the chat, back end implemented via Steamworks. </summary>
 public class Chat : MonoSingleton<Chat>
 {
     /// <summary> Maximum length of chat messages. </summary>
@@ -106,7 +108,7 @@ public class Chat : MonoSingleton<Chat>
 
         // no comments
         field.gameObject.SetActive(Shown = !Shown);
-        Utils.ToggleMovement(!Shown);
+        Movement.ToggleMovement(!Shown);
 
         // focus on input field
         if (Shown) field.ActivateInputField();
@@ -122,7 +124,7 @@ public class Chat : MonoSingleton<Chat>
         {
             // focus lost for some other reason
             field.gameObject.SetActive(Shown = false);
-            Utils.ToggleMovement(true);
+            Movement.ToggleMovement(true);
         }
     }
 

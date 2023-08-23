@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 using Jaket.Content;
 using Jaket.Net;
 using Jaket.Net.EntityTypes;
+using Jaket.World;
 
 /// <summary> List of all players and lobby controller. </summary>
 [ConfigureSingleton(SingletonFlags.NoAutoInstance)]
@@ -76,7 +77,7 @@ public class PlayerList : MonoSingleton<PlayerList>
 
         // no comments
         gameObject.SetActive(Shown = !Shown);
-        Utils.ToggleCursor(Shown);
+        Movement.ToggleCursor(Shown);
 
         // no need to update list if we hide it
         if (Shown) Rebuild();
