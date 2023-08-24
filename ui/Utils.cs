@@ -3,10 +3,11 @@ namespace Jaket.UI;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using UnityEngine.UI.Extensions;
 
 public class Utils
 {
-    private static Sprite buttonImage, shadowImage, circleImage;
+    private static Sprite buttonImage, shadowImage, circleShadowImage, circleImage;
     private static ColorBlock colorBlock;
     private static Font font;
 
@@ -15,6 +16,7 @@ public class Utils
         // TODO cringe
         buttonImage = OptionsMenuToManager.Instance.pauseMenu.transform.Find("Continue").GetComponent<Image>().sprite;
         shadowImage = Sandbox.SandboxAlterMenu.Instance.transform.Find("Shadow").GetComponent<Image>().sprite;
+        circleShadowImage = WeaponWheel.Instance.background.GetComponent<UICircle>().sprite;
         circleImage = OptionsMenuToManager.Instance.transform.Find("Crosshair Filler").GetChild(0).GetChild(6).GetChild(0).GetComponent<Image>().sprite;
         colorBlock = OptionsMenuToManager.Instance.pauseMenu.transform.Find("Continue").GetComponent<Button>().colors;
         font = OptionsMenuToManager.Instance.optionsMenu.transform.Find("Text").GetComponent<Text>().font;
@@ -55,6 +57,26 @@ public class Utils
             image.sprite = circle ? circleImage : buttonImage;
             image.type = UnityEngine.UI.Image.Type.Sliced;
             image.color = color.HasValue ? color.Value : new Color(0f, 0f, 0f, .5f);
+        });
+
+        return obj;
+    }
+
+    public static GameObject Circle(string name, Transform parent, float x, float y, float width, float height, float arc, int rotation, float thickness, bool outline)
+    {
+        var obj = Rect(name, parent, x, y, width, height);
+        Component<UICircle>(obj, circle =>
+        {
+            circle.Arc = arc;
+            circle.ArcRotation = rotation;
+            circle.Thickness = thickness;
+            circle.Fill = false;
+        });
+
+        if (outline) Component<Outline>(obj, outline =>
+        {
+            outline.effectDistance = new(3f, -3f);
+            outline.effectColor = Color.white;
         });
 
         return obj;
@@ -204,6 +226,21 @@ public class Utils
     public static GameObject Shadow(string name, Transform parent, float x, float y)
     {
         return Shadow(name, parent, x, y, 320f, 2000f);
+    }
+
+    public static GameObject CircleShadow(string name, Transform parent, float x, float y, float width, float height, float thickness)
+    {
+        var obj = Rect(name, parent, x, y, width, height);
+        Component<UICircle>(obj, circle =>
+        {
+            circle.sprite = circleShadowImage;
+            circle.color = Color.black;
+
+            circle.Fill = false;
+            circle.Thickness = thickness;
+        });
+
+        return obj;
     }
 
     #endregion
