@@ -35,17 +35,17 @@ public class EmojiWheel : MonoSingleton<EmojiWheel>
         SceneManager.sceneLoaded += (scene, mode) => Instance.gameObject.SetActive(Instance.Shown = false);
 
         // build emoji wheel
-        Utils.CircleShadow("Shadow", Instance.transform, 0f, 0f, 512f, 512f, 181f);
+        Utils.CircleShadow("Shadow", Instance.transform, 0f, 0f, 640f, 640f, 245f);
 
         for (int i = 0; i < 6; i++)
         {
             float deg = 150f - i * 60f, rad = deg * Mathf.Deg2Rad;
-            var pos = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad)) * 160f;
+            var pos = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad)) * 200f;
 
             var segment = new WheelSegment
             {
                 segment = Utils.Circle("Segment " + i, Instance.transform, 0f, 0f, 150f, 150f, 1f / 6f, i * 60, 8f, true).GetComponent<UICircle>(),
-                divider = Utils.Circle("Divider " + i, Instance.transform, 0f, 0f, 512f, 512f, .005f, i * 60, 181f, false).GetComponent<UICircle>(),
+                divider = Utils.Circle("Divider " + i, Instance.transform, 0f, 0f, 640f, 640f, .005f, i * 60, 245f, false).GetComponent<UICircle>(),
 
                 iconGlow = Utils.Image("Glow", Instance.transform, pos.x, pos.y, 285f, 150f, Color.white).GetComponent<Image>(),
                 icon = Utils.Image("Icon", Instance.transform, pos.x, pos.y, 285f, 150f, Color.white).GetComponent<Image>(),
