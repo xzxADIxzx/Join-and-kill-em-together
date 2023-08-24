@@ -23,6 +23,11 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Id of the currently playing emoji. </summary>
     public byte Emoji = 0xFF;
 
+    /// <summary> Starting position of third person camera. </summary>
+    private Vector3 start = new(0f, 6f, 0f);
+    /// <summary> Third person camera rotation. </summary>
+    private Vector2 rotation;
+
     /// <summary> Creates a singleton of movement. </summary>
     public static void Load()
     {
@@ -36,7 +41,7 @@ public class Movement : MonoSingleton<Movement>
     public void LateUpdate() // late update is needed in order to overwrite the time scale value
     {
         // find or create a keybind if it doesn't already exist
-        if (EmojiBind == null) EmojiBind = UKAPI.GetKeyBind("EMOJI WHEEL", KeyCode.G);
+        if (EmojiBind == null) EmojiBind = UKAPI.GetKeyBind("EMOJI WHEEL", KeyCode.B);
 
         // if the emoji wheel is invisible and the key has been pressed for 0.25 seconds, then show it
         if (!EmojiWheel.Instance.Shown && EmojiBind.HoldTime > .25f) EmojiWheel.Instance.Show();
@@ -44,8 +49,27 @@ public class Movement : MonoSingleton<Movement>
         // if the emoji wheel is visible, but the key is not pressed, then hide it
         if (EmojiWheel.Instance.Shown && !EmojiBind.IsPressedInScene) EmojiWheel.Instance.Hide();
 
-        // cancel animation if any key is pressed
-        if (Input.anyKey) Emoji = 0xFF;
+        // third person camera
+        if (Emoji != 0xFF)
+        {
+            // cancel animation if any key is pressed
+            if (Input.anyKey) StartEmoji(0xFF);
+
+            // rotate the camera according to mouse sensitivity
+            rotation += InputManager.Instance.InputSource.Look.ReadValue<Vector2>() * OptionsManager.Instance.mouseSensitivity / 10f;
+            rotation.y = Mathf.Clamp(rotation.y, 5f, 170f);
+
+            var cam = CameraController.Instance.cam.transform;
+            var player = NewMovement.Instance.transform.position + new Vector3(0f, 1f, 0f);
+
+            // return the camera to its original position
+            cam.position = player + start;
+
+            // rotate the camera around the player
+            cam.RotateAround(player, Vector3.left, rotation.y);
+            cam.RotateAround(player, Vector3.up, rotation.x);
+            cam.LookAt(player);
+        }
 
 
         // all the following changes are related to the network part of the game and shouldn't affect the local
@@ -91,6 +115,21 @@ public class Movement : MonoSingleton<Movement>
         CameraController.Instance.enabled = !enable;
     }
 
+    /// <summary> Toggles the ability to rotate the camera and hud. </summary>
+    public static void ToggleCamera(bool enable)
+    {
+        // hide hud, weapons and arms
+        StyleHUD.Instance.transform.parent.gameObject.SetActive(enable);
+        GunControl.Instance.gameObject.SetActive(enable);
+        FistControl.Instance.gameObject.SetActive(enable);
+
+        // preventing some ultra stupid bug
+        OptionsManager.Instance.frozen = !enable;
+
+        // block camera rotation
+        CameraController.Instance.enabled = enable;
+    }
+
     #endregion
     #region emoji
 
@@ -99,9 +138,13 @@ public class Movement : MonoSingleton<Movement>
     {
         // save id for synchronization over the network
         Emoji = id;
+        ToggleCamera(Emoji == 0xFF);
 
         // if id is -1, then the emotion was not selected
         if (id == 0xFF) return;
+
+        // rotate the third person camera in the same direction as the first person camera
+        rotation = new(CameraController.Instance.rotationY, CameraController.Instance.rotationX + 90f);
 
         StopCoroutine("ClearEmoji");
         StartCoroutine("ClearEmoji");
@@ -111,10 +154,11 @@ public class Movement : MonoSingleton<Movement>
     public IEnumerator ClearEmoji()
     {
         // wait for the end of an animation
-        yield return new WaitForSeconds(EmojiLegnth[Emoji]);
+        yield return new WaitForSeconds(EmojiLegnth[Emoji] + .5f);
 
         // return the emoji id to -1
         Emoji = 0xFF;
+        ToggleCamera(true);
     }
 
     #endregion
