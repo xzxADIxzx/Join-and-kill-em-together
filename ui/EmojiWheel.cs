@@ -18,12 +18,15 @@ public class EmojiWheel : MonoSingleton<EmojiWheel>
     /// <summary> Whether emoji wheel is visible or hidden. </summary>
     public bool Shown;
 
+    /// <summary> An array containing the rotation of all segments in degrees. </summary>
+    public static float[] SegmentRotations = { -30f, 0f, 30f, -30f, 0f, 30f };
     /// <summary> List of all wheel segments. Needed to change the color of elements and store icons. </summary>
-    public List<WheelSegment> segments = new();
+    public List<WheelSegment> Segments = new();
+
     /// <summary> Id of the selected segment, it will be highlighted in red. </summary>
-    public int lastSelected, selected;
+    private int lastSelected, selected;
     /// <summary> Cursor direction relative to wheel center. </summary>
-    public Vector2 direction;
+    private Vector2 direction;
 
     /// <summary> Creates a singleton of emoji wheel. </summary>
     public static void Build()
@@ -51,10 +54,10 @@ public class EmojiWheel : MonoSingleton<EmojiWheel>
                 icon = Utils.Image("Icon", Instance.transform, pos.x, pos.y, 285f, 150f, Color.white).GetComponent<Image>(),
             };
 
-            segment.icon.rectTransform.localEulerAngles = new(0f, 0f, deg);
-            segment.iconGlow.rectTransform.localEulerAngles = new(0f, 0f, deg);
+            segment.icon.rectTransform.localEulerAngles = new(0f, 0f, SegmentRotations[i]);
+            segment.iconGlow.rectTransform.localEulerAngles = new(0f, 0f, SegmentRotations[i]);
 
-            Instance.segments.Add(segment);
+            Instance.Segments.Add(segment);
             segment.SetActive(false);
         }
 
@@ -69,7 +72,7 @@ public class EmojiWheel : MonoSingleton<EmojiWheel>
         selected = direction.sqrMagnitude > 0f ? (int)(num / 60f) : selected;
 
         // update segments
-        for (int i = 0; i < segments.Count; i++) segments[i].SetActive(i == selected);
+        for (int i = 0; i < Segments.Count; i++) Segments[i].SetActive(i == selected);
 
         // play sound
         if (lastSelected != selected)
