@@ -55,8 +55,8 @@ public class Movement : MonoSingleton<Movement>
         // third person camera
         if (Emoji != 0xFF)
         {
-            // cancel animation if any key is pressed
-            if (Input.anyKey) StartEmoji(0xFF);
+            // cancel animation if any key is pressed except return
+            if (Input.anyKey && !Chat.Instance.Shown && !Input.GetKey(KeyCode.Return) && !Input.GetKey(KeyCode.KeypadEnter)) StartEmoji(0xFF);
 
             // rotate the camera according to mouse sensitivity
             rotation += InputManager.Instance.InputSource.Look.ReadValue<Vector2>() * OptionsManager.Instance.mouseSensitivity / 10f;
@@ -139,7 +139,7 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Creates a preview of the given emoji in player coordinates. </summary>
     public void PreviewEmoji(byte id)
     {
-        EmojiPreview = Instantiate(DollAssets.Preview, NewMovement.Instance.transform.position, NewMovement.Instance.transform.rotation);
+        EmojiPreview = Instantiate(DollAssets.Preview, NewMovement.Instance.transform.position - new Vector3(0f, 1.5f, 0f), NewMovement.Instance.transform.rotation);
         EmojiPreview.transform.localScale = new(2.18f, 2.18f, 2.18f); // preview created for terminal and too small
 
         var anim = EmojiPreview.transform.GetChild(0).GetComponent<Animator>();
