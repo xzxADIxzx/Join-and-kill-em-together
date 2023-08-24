@@ -5,6 +5,7 @@ using UMM;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+using Jaket.Assets;
 using Jaket.Net;
 using Jaket.UI;
 
@@ -18,6 +19,8 @@ public class Movement : MonoSingleton<Movement>
 
     /// <summary> Emoji selection wheel keybind. </summary>
     public UKKeyBind EmojiBind;
+    /// <summary> Current emotion preview, can be null. </summary>
+    public GameObject EmojiPreview;
     /// <summary> An array containing the length of all emotions in seconds. </summary>
     public float[] EmojiLegnth = { 2.458f, 0f, 1.833f, 3.292f, 0f, 9.083f };
     /// <summary> Id of the currently playing emoji. </summary>
@@ -133,6 +136,18 @@ public class Movement : MonoSingleton<Movement>
     #endregion
     #region emoji
 
+    /// <summary> Creates a preview of the given emoji in player coordinates. </summary>
+    public void PreviewEmoji(byte id)
+    {
+        EmojiPreview = Instantiate(DollAssets.Preview, NewMovement.Instance.transform.position, NewMovement.Instance.transform.rotation);
+        EmojiPreview.transform.localScale = new(2.18f, 2.18f, 2.18f); // preview created for terminal and too small
+
+        var anim = EmojiPreview.transform.GetChild(0).GetComponent<Animator>();
+
+        anim.SetTrigger("Show Emoji");
+        anim.SetInteger("Emoji", id);
+    }
+
     /// <summary> Triggers an emoji with the given id. </summary>
     public void StartEmoji(byte id)
     {
@@ -141,7 +156,12 @@ public class Movement : MonoSingleton<Movement>
         ToggleCamera(Emoji == 0xFF);
 
         // if id is -1, then the emotion was not selected
-        if (id == 0xFF) return;
+        if (id == 0xFF)
+        {
+            Destroy(EmojiPreview);
+            return;
+        }
+        else PreviewEmoji(id);
 
         // rotate the third person camera in the same direction as the first person camera
         rotation = new(CameraController.Instance.rotationY, CameraController.Instance.rotationX + 90f);
@@ -157,8 +177,7 @@ public class Movement : MonoSingleton<Movement>
         yield return new WaitForSeconds(EmojiLegnth[Emoji] + .5f);
 
         // return the emoji id to -1
-        Emoji = 0xFF;
-        ToggleCamera(true);
+        StartEmoji(0xFF);
     }
 
     #endregion
