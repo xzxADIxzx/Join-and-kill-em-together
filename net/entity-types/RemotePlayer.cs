@@ -185,6 +185,11 @@ public class RemotePlayer : Entity
 
             animator.SetTrigger("Show Emoji");
             animator.SetInteger("Emoji", emoji);
+
+            // recreate the weapon if the animation is over
+            if (emoji == 0xFF) lastWeapon = 0xFF;
+            // or destroy it if the animation has started
+            else foreach (Transform child in hand) Destroy(child.gameObject);
         }
 
         if (wasInAir != inAir)
