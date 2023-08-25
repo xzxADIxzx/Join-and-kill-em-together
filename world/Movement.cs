@@ -22,7 +22,7 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Current emotion preview, can be null. </summary>
     public GameObject EmojiPreview;
     /// <summary> An array containing the length of all emotions in seconds. </summary>
-    public float[] EmojiLegnth = { 2.458f, 0f, 1.833f, 3.292f, 0f, 9.083f };
+    public float[] EmojiLegnth = { 2.458f, 4.708f, 1.833f, 3.292f, 0f, 9.083f };
     /// <summary> Id of the currently playing emoji. </summary>
     public byte Emoji = 0xFF;
 

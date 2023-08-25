@@ -64,7 +64,11 @@ public class RemoteEnemy : Entity
         else if (enemyId.statue != null) enemyId.statue.health = enemyId.health;
 
         // boss
-        if (boss && healthBar == null) healthBar = gameObject.AddComponent<BossHealthBar>();
+        if (boss && healthBar == null)
+        {
+            healthBar = GetComponent<BossHealthBar>();
+            if (healthBar == null) healthBar = gameObject.AddComponent<BossHealthBar>();
+        }
     }
 
     public override void Write(Writer w) {}
