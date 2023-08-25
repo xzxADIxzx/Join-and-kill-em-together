@@ -99,6 +99,9 @@ public class EmojiWheel : MonoSingleton<EmojiWheel>
     /// <summary> Shows emoji selection wheel and resets the selected segment. </summary>
     public void Show()
     {
+        // the wheel should be inaccessible in the tunnel between levels
+        if (FinalRank.Instance.gameObject.activeInHierarchy) return;
+
         gameObject.SetActive(Shown = true);
         CameraController.Instance.enabled = false;
 
