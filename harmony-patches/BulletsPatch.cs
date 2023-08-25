@@ -4,6 +4,7 @@ using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Content;
+using Jaket.UI;
 
 [HarmonyPatch(typeof(Coin), "StartCheckingSpeed")] // for some reason, the coin has zero velocity in Start
 public class CoinPatch
@@ -67,6 +68,13 @@ public class GrenadePatch
         else
             Bullets.Send(__instance.gameObject, true);
     }
+}
+
+[HarmonyPatch(typeof(Grenade), "Update")]
+public class RidePatch
+{
+    // disable the ability to get off the rocket during chatting
+    static bool Prefix() => !Chat.Instance.Shown;
 }
 
 [HarmonyPatch(typeof(Cannonball), "Start")]
