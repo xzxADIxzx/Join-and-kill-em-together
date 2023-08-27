@@ -9,8 +9,6 @@ using Jaket.Assets;
 using Jaket.Net;
 using Jaket.UI;
 
-using static UnityEngine.KeyCode;
-
 /// <summary> Class responsible for additions to control and local display of emotions. </summary>
 public class Movement : MonoSingleton<Movement>
 {
@@ -57,8 +55,8 @@ public class Movement : MonoSingleton<Movement>
         // third person camera
         if (Emoji != 0xFF)
         {
-            // cancel animation if any key is pressed except return, print and F12
-            if (Input.anyKey && !(Chat.Instance.Shown || Input.GetKey(Return) || Input.GetKey(KeypadEnter) || Input.GetKey(F12))) StartEmoji(0xFF);
+            // cancel animation if space is pressed
+            if (Input.GetKey(KeyCode.Space) && !Chat.Instance.Shown) StartEmoji(0xFF);
 
             // rotate the camera according to mouse sensitivity
             rotation += InputManager.Instance.InputSource.Look.ReadValue<Vector2>() * OptionsManager.Instance.mouseSensitivity / 10f;
@@ -157,6 +155,7 @@ public class Movement : MonoSingleton<Movement>
         // save id for synchronization over the network
         Emoji = id;
         ToggleCamera(Emoji == 0xFF);
+        ToggleMovement(Emoji == 0xFF);
 
         // if id is -1, then the emotion was not selected
         if (id == 0xFF)
@@ -165,6 +164,9 @@ public class Movement : MonoSingleton<Movement>
             return;
         }
         else PreviewEmoji(id);
+
+        // telling how to interrupt an emotion
+        HudMessageReceiver.Instance.SendHudMessage("Press <color=orange>Space</color> to interrupt the emotion", silent: true);
 
         // rotate the third person camera in the same direction as the first person camera
         rotation = new(CameraController.Instance.rotationY, CameraController.Instance.rotationX + 90f);
