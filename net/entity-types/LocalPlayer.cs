@@ -40,7 +40,7 @@ public class LocalPlayer : Entity
         renderer = GunControl.Instance.currentWeapon?.GetComponentInChildren<GunColorGetter>()?.GetComponent<Renderer>();
 
         FistControl.Instance.blueArm.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture();
-        var rightArm = GunControl.Instance.currentWeapon.transform.GetChild(0).Find("RightArm");
+        var rightArm = GunControl.Instance.currentWeapon?.transform.GetChild(0).Find("RightArm");
         if (rightArm != null) rightArm.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture();
     }
 
