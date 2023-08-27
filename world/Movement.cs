@@ -159,12 +159,11 @@ public class Movement : MonoSingleton<Movement>
         ToggleCamera(Emoji == 0xFF);
         if (!Chat.Instance.Shown) ToggleMovement(Emoji == 0xFF);
 
+        // destroy the old preview so they don't stack
+        Destroy(EmojiPreview);
+
         // if id is -1, then the emotion was not selected
-        if (id == 0xFF)
-        {
-            Destroy(EmojiPreview);
-            return;
-        }
+        if (id == 0xFF) return;
         else PreviewEmoji(id);
 
         // telling how to interrupt an emotion
