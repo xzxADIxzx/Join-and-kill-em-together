@@ -89,8 +89,8 @@ public class EmojiWheel : MonoSingleton<EmojiWheel>
         {
             for (int i = 0; i < 6; i++)
             {
-                segments[i].icon.sprite = DollAssets.EmojiIcons[i];
-                segments[i].iconGlow.sprite = DollAssets.EmojiGlows[i];
+                Segments[i].icon.sprite = DollAssets.EmojiIcons[i];
+                Segments[i].iconGlow.sprite = DollAssets.EmojiGlows[i];
             }
         }
         else Instance.Invoke("UpdateIcons", 5f);
