@@ -108,7 +108,7 @@ public class Chat : MonoSingleton<Chat>
 
         // no comments
         field.gameObject.SetActive(Shown = !Shown);
-        Movement.ToggleMovement(!Shown);
+        if (Movement.Instance.Emoji == 0xFF) Movement.ToggleMovement(!Shown);
 
         // focus on input field
         if (Shown) field.ActivateInputField();
@@ -124,7 +124,7 @@ public class Chat : MonoSingleton<Chat>
         {
             // focus lost for some other reason
             field.gameObject.SetActive(Shown = false);
-            Movement.ToggleMovement(true);
+            if (Movement.Instance.Emoji == 0xFF) Movement.ToggleMovement(true);
         }
     }
 

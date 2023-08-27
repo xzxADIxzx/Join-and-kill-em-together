@@ -157,7 +157,7 @@ public class Movement : MonoSingleton<Movement>
         // save id for synchronization over the network
         Emoji = id;
         ToggleCamera(Emoji == 0xFF);
-        ToggleMovement(Emoji == 0xFF);
+        if (!Chat.Instance.Shown) ToggleMovement(Emoji == 0xFF);
 
         // if id is -1, then the emotion was not selected
         if (id == 0xFF)
