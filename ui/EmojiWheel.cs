@@ -66,6 +66,9 @@ public class EmojiWheel : MonoSingleton<EmojiWheel>
 
     public void Update()
     {
+        // the weapon wheel should be unavailable while the emoji wheel is open
+        WeaponWheel.Instance.gameObject.SetActive(false);
+
         // some code from the weapon wheel that I don't understand
         direction = Vector2.ClampMagnitude(direction + InputManager.Instance.InputSource.WheelLook.ReadValue<Vector2>(), 1f);
         float num = Mathf.Repeat(Mathf.Atan2(direction.x, direction.y) * 57.29578f + 90f, 360f);
@@ -100,7 +103,7 @@ public class EmojiWheel : MonoSingleton<EmojiWheel>
     public void Show()
     {
         // the wheel should be inaccessible in the tunnel between levels
-        if (FinalRank.Instance.gameObject.activeInHierarchy) return;
+        if (FinalRank.Instance.gameObject.activeInHierarchy || WeaponWheel.Instance.gameObject.activeSelf) return;
 
         gameObject.SetActive(Shown = true);
         CameraController.Instance.enabled = false;
