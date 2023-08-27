@@ -80,8 +80,8 @@ public class RemotePlayer : Entity
         headRotation = new();
 
         // transforms
-        head = transform.GetChild(0).GetChild(0).GetChild(2).GetChild(10).GetChild(0);
-        hand = transform.GetChild(0).GetChild(0).GetChild(2).GetChild(5).GetChild(0).GetChild(0);
+        head = transform.GetChild(0).GetChild(0).GetChild(3).GetChild(10).GetChild(0);
+        hand = transform.GetChild(0).GetChild(0).GetChild(3).GetChild(5).GetChild(0).GetChild(0);
         hand = Utils.Object("Weapons", hand).transform;
 
         // other stuff
