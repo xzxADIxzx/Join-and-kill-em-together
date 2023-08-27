@@ -39,10 +39,14 @@ public class World : MonoSingleton<World>
         SceneManager.sceneLoaded += (scene, mode) => Instance.Recache();
 
         // create activators to synchronize different things in the level
-        World.Instance.activators.AddRange(new[]
+        World.Instance.activators.AddRange(new Activator[]
         {
             // there are some skull cases and a couple of doors at level 4-2
+            Activators.FindInstantByName("Level 4-2", "6A Activator"),
+            Activators.FindInstantByName("Level 4-2", "6B Activator"),
             Activators.FindByParentOfParentNameAndActive("Level 4-2", "5 Exterior"),
+            Activators.FindByParentOfParentNameAndActive("Level 4-2", "6A Stuff"),
+            Activators.FindByParentOfParentNameAndActive("Level 4-2", "6B Stuff"),
             Activators.FindByNameAndActiveParentOfParent("Level 4-2", "Activator 2", obj => obj?.transform.parent.gameObject.SetActive(true), true),
 
             // there is a door in the arena through which V2 escapes and you also need to synchronize the outro and the exit building

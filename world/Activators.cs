@@ -43,10 +43,26 @@ public class SynchronizedActivator : Activator
     public override void Activate() => Action(Object()?.gameObject);
 }
 
+/// <summary> Activator that fires immediately when loading into a level. </summary>
+public class InstantActivator : Activator
+{
+    /// <summary> Object provider with which the activator will work. </summary>
+    public ObjectProv Object;
+
+    public InstantActivator(string level, ObjectProv obj) : base(level, false) => this.Object = obj;
+
+    public override void Init()
+    {
+        foreach (var obj in Object()?.events.toActivateObjects) obj.SetActive(true);
+    }
+
+    public override void Activate() {}
+}
+
 /// <summary> Object activator provider. </summary>
 public delegate ObjectActivator ObjectProv();
 
-/// <summary> Class containing methods for getting synchronized activators of different objects. </summary>
+/// <summary> Class containing methods for getting synchronized and instant activators of different objects. </summary>
 public class Activators
 {
     /// <summary> Returns an object provider that finds the right one via the predicate. </summary>
@@ -67,4 +83,7 @@ public class Activators
                 var pop = a.transform.parent?.parent?.gameObject;
                 return pop != null && pop.name.StartsWith(name) && pop.activeInHierarchy;
             }), Action(action));
+
+    public static InstantActivator FindInstantByName(string level, string name) =>
+            new InstantActivator(level, Prov(a => a.name == name));
 }

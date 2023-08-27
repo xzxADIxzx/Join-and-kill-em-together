@@ -12,6 +12,7 @@ It's also in development, but with gnashing of teeth it's already playable.
 * Synchronization of player positions, their weapons and projectiles.
 * Synchronization of the position and health of enemies.
 * Up to 5 teams, making available both the passage of the campaign and pvp.
+* Emotions wheel to tease your friends or bosses.
 
 ## Installation
 Before installation, it's important to know that the mod needs **BepInEx** and **Ultra Mod Manager** to work.   
