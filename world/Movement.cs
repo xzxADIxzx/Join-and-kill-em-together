@@ -1,5 +1,6 @@
 namespace Jaket.World;
 
+using GameConsole;
 using System.Collections;
 using UMM;
 using UnityEngine;
@@ -128,6 +129,7 @@ public class Movement : MonoSingleton<Movement>
 
         // preventing some ultra stupid bug
         OptionsManager.Instance.frozen = !enable;
+        Console.Instance.enabled = enable;
 
         // block camera rotation
         CameraController.Instance.enabled = enable;
