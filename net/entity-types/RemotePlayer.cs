@@ -16,10 +16,10 @@ using Jaket.UI;
 public class RemotePlayer : Entity
 {
     /// <summary> Player health, position and rotation. </summary>
-    private FloatLerp health, x, y, z, bodyRotation, headRotation;
+    private FloatLerp health, x, y, z, bodyRotation, headRotation, hookX, hookY, hookZ;
 
     /// <summary> Transforms of the head and the hand holding a weapon. </summary>
-    private Transform head, hand;
+    private Transform head, hand, hook;
 
     /// <summary> Last and current player team, needed for PvP mechanics. </summary>
     public Team lastTeam = (Team)0xFF, team;
@@ -46,7 +46,7 @@ public class RemotePlayer : Entity
     private Animator animator;
 
     /// <summary> Animator states that affect which animation will be played. </summary>
-    private bool walking, sliding, wasInAir, inAir;
+    private bool walking, sliding, wasInAir, inAir, wasUsingHook, usingHook;
 
     /// <summary> Enemy component of the player doll. </summary>
     private EnemyIdentifier enemyId;
@@ -78,6 +78,9 @@ public class RemotePlayer : Entity
         z = new();
         bodyRotation = new();
         headRotation = new();
+        hookX = new();
+        hookY = new();
+        hookZ = new();
 
         // transforms
         head = transform.GetChild(0).GetChild(0).GetChild(3).GetChild(10).GetChild(0);
@@ -132,6 +135,7 @@ public class RemotePlayer : Entity
         transform.position = new(x.Get(LastUpdate), y.Get(LastUpdate) - (sliding ? .3f : 1.5f), z.Get(LastUpdate));
         transform.eulerAngles = new(0f, bodyRotation.GetAngel(LastUpdate), 0f);
         head.localEulerAngles = new(headRotation.Get(LastUpdate), 0f, 0f);
+        if (hook != null) hook.position = new(hookX.Get(LastUpdate), hookY.Get(LastUpdate), hookZ.Get(LastUpdate));
 
         if (lastTeam != team)
         {
@@ -200,6 +204,17 @@ public class RemotePlayer : Entity
             if (inAir) animator.SetTrigger("Jump");
         }
 
+        if (wasUsingHook != usingHook)
+        {
+            wasUsingHook = usingHook;
+
+            // destroy the old hook model
+            Destroy(hook?.gameObject);
+
+            // create a new hook model if the hook is thrown
+            if (usingHook) hook = Instantiate(HookArm.Instance.hookModel).transform;
+        }
+
         animator.SetBool("Walking", walking);
         animator.SetBool("Sliding", sliding);
         animator.SetBool("InAir", inAir);
@@ -232,6 +247,9 @@ public class RemotePlayer : Entity
         w.Bool(inAir);
         w.Bool(typing);
 
+        w.Bool(usingHook);
+        w.Float(hookX.target); w.Float(hookY.target); w.Float(hookZ.target);
+
         w.Bool(customColors);
         w.Color(color1); w.Color(color2); w.Color(color3);
     }
@@ -253,6 +271,9 @@ public class RemotePlayer : Entity
         sliding = r.Bool();
         inAir = r.Bool();
         typing = r.Bool();
+
+        usingHook = r.Bool();
+        hookX.Read(r); hookY.Read(r); hookZ.Read(r);
 
         customColors = r.Bool();
         color1 = r.Color(); color2 = r.Color(); color3 = r.Color();

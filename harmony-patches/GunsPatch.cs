@@ -31,9 +31,15 @@ public class GunIconPatch
 [HarmonyPatch(typeof(HookArm), "Update")]
 public class HookPatch
 {
-    static void Prefix(ref bool ___lightTarget)
+    static void Prefix(ref bool ___lightTarget, bool ___forcingFistControl, Vector3 ___hookPoint)
     {
+        // nothing to comment here
+        if (LobbyController.Lobby == null) return;
+
         // clients should be pulled to all enemies
-        if (LobbyController.Lobby != null && !LobbyController.IsOwner) ___lightTarget = false;
+        if (!LobbyController.IsOwner) ___lightTarget = false;
+
+        // synchronize hook position
+        Networking.LocalPlayer.hook = ___forcingFistControl ? ___hookPoint : Vector3.zero;
     }
 }

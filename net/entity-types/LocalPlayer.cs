@@ -19,6 +19,9 @@ public class LocalPlayer : Entity
     /// <summary> Player team. Changes through the player list. </summary>
     public Team team;
 
+    /// <summary> Hook position. Will be zero if the hook is not currently in use. </summary>
+    public Vector3 hook;
+
     /// <summary> Index of the current weapon in the global list. </summary>
     private byte weapon;
 
@@ -66,6 +69,9 @@ public class LocalPlayer : Entity
         w.Bool(!NewMovement.Instance.gc.onGround);
         w.Bool(Chat.Instance.Shown);
 
+        w.Bool(hook != Vector3.zero);
+        w.Vector(hook);
+
         if (renderer != null)
         {
             bool custom = renderer.material.name.Contains("Custom");
@@ -83,7 +89,7 @@ public class LocalPlayer : Entity
     }
 
     // there is no point in reading anything, because it is a local player
-    public override void Read(Reader r) => r.Bytes(43); // skip all data
+    public override void Read(Reader r) {}
 
     public override void Damage(Reader r)
     {
