@@ -19,7 +19,7 @@ public class RemotePlayer : Entity
     private FloatLerp health, x, y, z, bodyRotation, headRotation, hookX, hookY, hookZ;
 
     /// <summary> Transforms of the head and the hand holding a weapon. </summary>
-    private Transform head, hand, hook;
+    private Transform head, hand, hook, hookRoot;
 
     /// <summary> Last and current player team, needed for PvP mechanics. </summary>
     public Team lastTeam = (Team)0xFF, team;
@@ -35,6 +35,9 @@ public class RemotePlayer : Entity
 
     /// <summary> Trail of the wings. </summary>
     private TrailRenderer wingTrail;
+
+    /// <summary> Winch of the hook. </summary>
+    private LineRenderer hookWinch;
 
     /// <summary> Whether the player use custom weapon colors. </summary>
     private bool customColors;
@@ -87,14 +90,18 @@ public class RemotePlayer : Entity
         hand = transform.GetChild(0).GetChild(0).GetChild(4).GetChild(5).GetChild(0).GetChild(0);
         hand = Utils.Object("Weapons", hand).transform;
         hook = transform.GetChild(0).GetChild(0).GetChild(1);
+        hookRoot = transform.GetChild(0).GetChild(0).GetChild(4).GetChild(0).GetChild(0).GetChild(0).GetChild(0);
 
         // other stuff
         wingMaterial = GetComponentInChildren<SkinnedMeshRenderer>().materials[1];
         wingTrail = GetComponentInChildren<TrailRenderer>();
+        hookWinch = GetComponentInChildren<LineRenderer>(true);
         animator = GetComponentInChildren<Animator>();
         enemyId = GetComponent<EnemyIdentifier>();
         machine = GetComponent<Machine>();
+
         enemyId.weakPoint = head.gameObject;
+        hookWinch.material = HookArm.Instance.GetComponent<LineRenderer>().material;
     }
 
     private void Start()
@@ -233,7 +240,10 @@ public class RemotePlayer : Entity
         // everything related to the hook is in LateUpdate, because it is a child of the player's doll and moves with it
         hook.position = new(hookX.Get(LastUpdate), hookY.Get(LastUpdate), hookZ.Get(LastUpdate));
         hook.LookAt(transform);
-        hook.transform.Rotate(new(0f, 180f, 0f), Space.Self);
+        hook.Rotate(new(0f, 180f, 0f), Space.Self);
+
+        hookWinch.SetPosition(0, hookRoot.position);
+        hookWinch.SetPosition(1, hook.position);
     }
 
     public override void Write(Writer w)
