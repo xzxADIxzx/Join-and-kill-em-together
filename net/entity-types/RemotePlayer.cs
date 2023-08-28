@@ -83,9 +83,10 @@ public class RemotePlayer : Entity
         hookZ = new();
 
         // transforms
-        head = transform.GetChild(0).GetChild(0).GetChild(3).GetChild(10).GetChild(0);
-        hand = transform.GetChild(0).GetChild(0).GetChild(3).GetChild(5).GetChild(0).GetChild(0);
+        head = transform.GetChild(0).GetChild(0).GetChild(4).GetChild(10).GetChild(0);
+        hand = transform.GetChild(0).GetChild(0).GetChild(4).GetChild(5).GetChild(0).GetChild(0);
         hand = Utils.Object("Weapons", hand).transform;
+        hook = transform.GetChild(0).GetChild(0).GetChild(1);
 
         // other stuff
         wingMaterial = GetComponentInChildren<SkinnedMeshRenderer>().materials[1];
@@ -135,7 +136,6 @@ public class RemotePlayer : Entity
         transform.position = new(x.Get(LastUpdate), y.Get(LastUpdate) - (sliding ? .3f : 1.5f), z.Get(LastUpdate));
         transform.eulerAngles = new(0f, bodyRotation.GetAngel(LastUpdate), 0f);
         head.localEulerAngles = new(headRotation.Get(LastUpdate), 0f, 0f);
-        if (hook != null) hook.position = new(hookX.Get(LastUpdate), hookY.Get(LastUpdate), hookZ.Get(LastUpdate));
 
         if (lastTeam != team)
         {
@@ -208,11 +208,8 @@ public class RemotePlayer : Entity
         {
             wasUsingHook = usingHook;
 
-            // destroy the old hook model
-            Destroy(hook?.gameObject);
-
-            // create a new hook model if the hook is thrown
-            if (usingHook) hook = Instantiate(HookArm.Instance.hookModel).transform;
+            // toggle the visibility of the hook
+            hook.gameObject.SetActive(usingHook);
         }
 
         animator.SetBool("Walking", walking);
@@ -225,10 +222,18 @@ public class RemotePlayer : Entity
 
         nicknameText.color = machine.health > 0f ? Color.white : Color.red;
         canvas.transform.LookAt(Camera.current.transform);
-        canvas.transform.Rotate(new Vector3(0f, 180f, 0f), Space.Self);
+        canvas.transform.Rotate(new(0f, 180f, 0f), Space.Self);
 
         // sometimes the player does not crumble after death
         if (enemyId.health <= 0f && !machine.limp) machine.GoLimp();
+    }
+
+    private void LateUpdate()
+    {
+        // everything related to the hook is in LateUpdate, because it is a child of the player's doll and moves with it
+        hook.position = new(hookX.Get(LastUpdate), hookY.Get(LastUpdate), hookZ.Get(LastUpdate));
+        hook.LookAt(transform);
+        hook.transform.Rotate(new(0f, 180f, 0f), Space.Self);
     }
 
     public override void Write(Writer w)
