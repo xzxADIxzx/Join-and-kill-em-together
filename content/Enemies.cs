@@ -41,6 +41,8 @@ public class Enemies
     {
         // tell me why
         if (name.StartsWith("SwordsMachine")) return (int)EntityType.Swordsmachine;
+        if (name.StartsWith("SwordMachine")) return (int)EntityType.Swordsmachine; // are you fucking kidding me?
+        if (name.StartsWith("Sisyphus")) return (int)EntityType.Insurrectionist;
         if (name == "V2 Green Arm") return (int)EntityType.V2_GreenArm;
         if (name == "Gabriel 2nd") return (int)EntityType.Gabriel_Angry;
 
