@@ -15,6 +15,7 @@ public class PlayerDollController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space)) animator.SetTrigger("Jump");
         if (Input.GetKeyDown(KeyCode.F)) animator.SetTrigger("Punch");
+        if (Input.GetKeyDown(KeyCode.Mouse4)) animator.SetTrigger("Throw Hook");
 
         if (Input.GetKeyUp(KeyCode.Alpha1)) StartEmoji(0);
         if (Input.GetKeyUp(KeyCode.Alpha2)) StartEmoji(1);
@@ -28,6 +29,7 @@ public class PlayerDollController : MonoBehaviour
         animator.SetBool("Walking", Input.GetKey(KeyCode.W));
         animator.SetBool("Sliding", Input.GetKey(KeyCode.LeftControl));
         animator.SetBool("InAir", Input.GetKey(KeyCode.Space));
+        animator.SetBool("UsingHook", Input.GetKey(KeyCode.Mouse4));
     }
 
     /// <summary> Triggers an emoji with the given id. </summary>

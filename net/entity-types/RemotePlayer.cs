@@ -215,6 +215,9 @@ public class RemotePlayer : Entity
         {
             wasUsingHook = usingHook;
 
+            // fire the trigger if the player threw a hook
+            if (usingHook) animator.SetTrigger("Throw Hook");
+
             // toggle the visibility of the hook
             hook.gameObject.SetActive(usingHook);
         }
@@ -222,6 +225,7 @@ public class RemotePlayer : Entity
         animator.SetBool("Walking", walking);
         animator.SetBool("Sliding", sliding);
         animator.SetBool("InAir", inAir);
+        animator.SetBool("UsingHook", usingHook);
 
         enemyId.health = machine.health = health.Get(LastUpdate);
         enemyId.dead = machine.health <= 0f;
