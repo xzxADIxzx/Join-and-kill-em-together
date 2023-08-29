@@ -14,6 +14,13 @@ public class GunSwitchPatch
     static void Postfix() => Networking.LocalPlayer.UpdateWeapon();
 }
 
+[HarmonyPatch(typeof(GunControl), nameof(GunControl.ForceWeapon))]
+public class GunForcePatch
+{
+    // picked weapons also need to be painted
+    static void Postfix() => Networking.LocalPlayer.UpdateWeapon();
+}
+
 [HarmonyPatch(typeof(GunColorGetter), nameof(GunColorGetter.UpdateColor))]
 public class GunColorPatch
 {
