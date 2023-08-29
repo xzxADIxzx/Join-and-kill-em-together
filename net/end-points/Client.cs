@@ -70,6 +70,12 @@ public class Client : Endpoint
 
         Listen(PacketType.DamageEntity, r => entities[r.Id()]?.Damage(r));
 
+        Listen(PacketType.Punch, r =>
+        {
+            var entity = entities[r.Id()];
+            if (entity is RemotePlayer player) player.Punch();
+        });
+
         Listen(PacketType.OpenDoor, r => World.Instance.OpenDoor(r.Int()));
 
         Listen(PacketType.ActivateObject, r => World.Instance.ActivateObject(r.Int()));

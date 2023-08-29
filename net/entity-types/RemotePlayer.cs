@@ -299,4 +299,6 @@ public class RemotePlayer : Entity
     }
 
     public override void Damage(Reader r) => Bullets.DealDamage(enemyId, r);
+
+    public void Punch() => animator.SetTrigger("Punch");
 }

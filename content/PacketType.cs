@@ -19,6 +19,8 @@ public enum PacketType
     SpawnBullet,
     /// <summary> Client dealt damage to an entity. </summary>
     DamageEntity,
+    /// <summary> Client punched and this needs to be displayed visually on his doll. </summary>
+    Punch,
 
     /// <summary> Need to open a certain door. Called by the host so that clients don't get stuck in a room. </summary>
     OpenDoor,

@@ -1,9 +1,12 @@
 namespace Jaket.HarmonyPatches;
 
 using HarmonyLib;
+using Steamworks;
 using System.Collections.Generic;
 using UnityEngine;
 
+using Jaket.Content;
+using Jaket.IO;
 using Jaket.Net;
 using Jaket.Net.EntityTypes;
 
@@ -33,6 +36,21 @@ public class GunIconPatch
 {
     // remote player's weapons shouldn't update an icon in the local player's HUD
     static bool Prefix(WeaponIcon __instance) => __instance.GetComponentInParent<RemotePlayer>() == null;
+}
+
+[HarmonyPatch(typeof(Punch), "PunchStart")]
+public class PunchPatch
+{
+    // synchronize the punch for better look and destruction of idols
+    static void Prefix()
+    {
+        byte[] data = Writer.Write(w => w.Id(SteamClient.SteamId));
+
+        if (LobbyController.IsOwner)
+            LobbyController.EachMemberExceptOwner(member => Networking.Send(member.Id, data, PacketType.Punch));
+        else
+            Networking.Send(LobbyController.Owner, data, PacketType.Punch);
+    }
 }
 
 [HarmonyPatch(typeof(HookArm), "Update")]

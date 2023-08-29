@@ -38,6 +38,16 @@ public class Server : Endpoint
             byte[] data = r.AllBytes();
             LobbyController.EachMemberExceptOwnerAnd(sender, member => Networking.Send(member.Id, data, PacketType.DamageEntity));
         });
+
+        Listen(PacketType.Punch, (sender, r) =>
+        {
+            var entity = entities[r.Id()];
+            if (entity is RemotePlayer player) player.Punch();
+
+            // send damage data to everyone else
+            byte[] data = r.AllBytes();
+            LobbyController.EachMemberExceptOwnerAnd(sender, member => Networking.Send(member.Id, data, PacketType.Punch));
+        });
     }
 
     public override void Update()
