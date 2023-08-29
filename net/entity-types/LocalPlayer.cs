@@ -69,7 +69,7 @@ public class LocalPlayer : Entity
         w.Bool(!NewMovement.Instance.gc.onGround);
         w.Bool(Chat.Instance.Shown);
 
-        w.Bool(hook != Vector3.zero);
+        w.Bool(hook != Vector3.zero && HookArm.Instance.enabled);
         w.Vector(hook);
 
         if (renderer != null)
