@@ -33,12 +33,6 @@ public class Client : Endpoint
 
         Listen(PacketType.LevelLoading, r => SceneHelper.LoadScene(r.String()));
 
-        Listen(PacketType.HostLeft, r =>
-        {
-            LobbyController.LeaveLobby();
-            SceneHelper.LoadScene("Main Menu");
-        });
-
         Listen(PacketType.HostDied, r =>
         {
             // in the sandbox after death, enemies are not destroyed

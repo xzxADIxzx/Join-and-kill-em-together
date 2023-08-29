@@ -48,6 +48,7 @@ public class Plugin : BaseUnityPlugin
         // initialize networking components
         Networking.Load();
         Entities.Load();
+        LobbyController.Load();
 
         // initialize world components
         World.World.Load(); // C# sucks

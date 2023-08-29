@@ -16,11 +16,30 @@ public class LobbyController
     public static Lobby? Lobby;
     /// <summary> Lobby owner or the player's SteamID if the lobby is null. </summary>
     public static SteamId Owner => Lobby == null ? SteamClient.SteamId : Lobby.Value.Owner.Id;
+    /// <summary> Id of the last lobby owner, needed to track the exit of the host. </summary>
+    public static SteamId LastOwner;
 
     /// <summary> Whether a lobby is creating right now. </summary>
     public static bool CreatingLobby;
     /// <summary> Whether the player owns the lobby. </summary>
     public static bool IsOwner;
+
+    /// <summary> Creates the necessary listeners for proper work with a lobby. </summary>
+    public static void Load()
+    {
+        // get the owner id when entering the lobby
+        SteamMatchmaking.OnLobbyEntered += lobby => LastOwner = lobby.Owner.Id;
+
+        // and leave the lobby if the owner has left it
+        SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) =>
+        {
+            if (member.Id == LastOwner)
+            {
+                LeaveLobby(); // leave the lobby to avoid bugs and load into the main menu
+                SceneHelper.LoadScene("Main Menu");
+            }
+        };
+    }
 
     #region control
 
@@ -57,9 +76,6 @@ public class LobbyController
     /// <summary> Leaves the lobby, if the player is the owner, then all other players will be thrown into the main menu. </summary>
     public static void LeaveLobby()
     {
-        // notify each client that the host has left so that they leave the lobby too
-        if (Lobby != null && IsOwner) EachMemberExceptOwner(member => Networking.SendEmpty(member.Id, PacketType.HostLeft));
-
         Lobby?.Leave();
         Lobby = null;
 
