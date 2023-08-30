@@ -55,7 +55,11 @@ public class Enemies
     /// <summary> Spawns a remote enemy with the given type. </summary>
     public static RemoteEnemy Instantiate(EntityType type)
     {
-        var obj = Object.Instantiate(Prefabs[(int)type]);
+        // Malicious face's enemyId is in a child object
+        // https://discord.com/channels/1132614140414935070/1132614140876292190/1146507403102257162
+        var obj = type != EntityType.MaliciousFace ?
+                Object.Instantiate(Prefabs[(int)type]) :
+                Object.Instantiate(Prefabs[(int)type].transform.parent.gameObject).transform.GetChild(0).gameObject;
         obj.name = "Net"; // needed to prevent object looping between client and server
 
         var enemy = obj.AddComponent<RemoteEnemy>();

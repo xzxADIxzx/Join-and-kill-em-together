@@ -92,7 +92,7 @@ public class Movement : MonoSingleton<Movement>
     public static void ToggleMovement(bool enable)
     {
         // double turning off movement can lead to bugs
-        if (!NewMovement.Instance.enabled && !enable) return;
+        if (!NewMovement.Instance.enabled && !HookArm.Instance.enabled && !enable) return;
 
         NewMovement.Instance.enabled = GunControl.Instance.enabled = FistControl.Instance.enabled = HookArm.Instance.enabled = enable;
 
