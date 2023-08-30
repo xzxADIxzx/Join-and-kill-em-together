@@ -300,5 +300,11 @@ public class RemotePlayer : Entity
 
     public override void Damage(Reader r) => Bullets.DealDamage(enemyId, r);
 
-    public void Punch() => animator.SetTrigger("Punch");
+    public void Punch(Reader r)
+    {
+        if (r.Bool())
+            Instantiate(FistControl.Instance.redArm.GetComponent<Punch>().blastWave, r.Vector(), Quaternion.Euler(r.Vector())).name = "Net";
+        else
+            animator.SetTrigger("Punch");
+    }
 }

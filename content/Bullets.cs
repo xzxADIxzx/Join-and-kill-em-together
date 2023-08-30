@@ -1,5 +1,6 @@
 namespace Jaket.Content;
 
+using Steamworks;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -145,6 +146,28 @@ public class Bullets
     {
         if (sourceWeapon == null) sourceWeapon = SynchronizedBullet;
         Send(bullet, hasRigidbody, applyOffset);
+    }
+
+    /// <summary> Sends the explosion of the knuckleblaster. </summary>
+    public static void SendBlast(GameObject blast)
+    {
+        // checking if this is really a knuckleblaster explosion
+        if (LobbyController.Lobby == null || blast?.name != "Explosion Wave(Clone)") return;
+
+        // write blast data to send to server or clients
+        byte[] data = Writer.Write(w =>
+        {
+            w.Id(SteamClient.SteamId);
+            w.Bool(true);
+
+            w.Vector(blast.transform.position);
+            w.Vector(blast.transform.localEulerAngles);
+        });
+
+        if (LobbyController.IsOwner)
+            LobbyController.EachMemberExceptOwner(member => Networking.Send(member.Id, data, PacketType.Punch));
+        else
+            Networking.Send(LobbyController.Owner, data, PacketType.Punch);
     }
 
     /// <summary> Deals bullet damage to an enemy. </summary>

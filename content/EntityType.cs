@@ -22,7 +22,6 @@ public enum EntityType
     Cerberus = 22,
     HideousMass = 13,
     Idol = 11,
-    // Leviathan
     Gabriel = 9,
     Virtue = 30,
     Gabriel_Angry = 10,

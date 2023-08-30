@@ -73,7 +73,7 @@ public class Client : Endpoint
         Listen(PacketType.Punch, r =>
         {
             var entity = entities[r.Id()];
-            if (entity is RemotePlayer player) player.Punch();
+            if (entity is RemotePlayer player) player.Punch(r);
         });
 
         Listen(PacketType.OpenDoor, r => World.Instance.OpenDoor(r.Int()));

@@ -42,7 +42,7 @@ public class Server : Endpoint
         Listen(PacketType.Punch, (sender, r) =>
         {
             var entity = entities[r.Id()];
-            if (entity is RemotePlayer player) player.Punch();
+            if (entity is RemotePlayer player) player.Punch(r);
 
             // send damage data to everyone else
             byte[] data = r.AllBytes();

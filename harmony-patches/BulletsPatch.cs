@@ -36,6 +36,12 @@ public class ExplosionPatch
     }
 }
 
+[HarmonyPatch(typeof(Explosion), "Start")]
+public class BlastPatch
+{
+    static void Prefix(Explosion __instance) => Bullets.SendBlast(__instance.transform.parent?.gameObject);
+}
+
 [HarmonyPatch(typeof(Nail), "Start")]
 public class NailPatch
 {
