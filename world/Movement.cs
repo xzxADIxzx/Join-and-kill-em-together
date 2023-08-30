@@ -80,7 +80,7 @@ public class Movement : MonoSingleton<Movement>
         if (LobbyController.Lobby == null) return;
 
         // pause stops time and weapon wheel slows it down, but in multiplayer everything should be real-time
-        if (OptionsManager.Instance.paused || WeaponWheel.Instance.gameObject.activeSelf) Time.timeScale = 1f;
+        Time.timeScale = 1f;
 
         // sometimes it happens that in the chat the player flies into the air
         if (!NewMovement.Instance.dead) rb.constraints = NewMovement.Instance.enabled ? RigidbodyConstraints.FreezeRotation : RigidbodyConstraints.FreezeAll;
