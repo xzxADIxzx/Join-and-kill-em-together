@@ -72,8 +72,11 @@ public class EnemyDamagePatch
 {
     static bool Prefix(EnemyIdentifier __instance, Vector3 force, float multiplier, bool tryForExplode, float critMultiplier, GameObject sourceWeapon)
     {
+        // whether the damage was dealt with a melee weapon
+        bool melee = Bullets.Melee.Contains(__instance.hitter);
+
         // if source weapon is null, then the damage was caused by the environment
-        if (LobbyController.Lobby == null || sourceWeapon == null) return true;
+        if (LobbyController.Lobby == null || (sourceWeapon == null && !melee)) return true;
 
         // network bullets are needed just for the visual, damage is done through packets
         if (sourceWeapon == Bullets.SynchronizedBullet) return false;
@@ -89,6 +92,7 @@ public class EnemyDamagePatch
         {
             w.Id(entity.Id);
             w.Byte((byte)Networking.LocalPlayer.team);
+            w.Bool(melee);
 
             w.Vector(force);
             w.Float(multiplier);

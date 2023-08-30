@@ -96,6 +96,7 @@ public class LocalPlayer : Entity
         // no need to deal damage if an ally hits you
         if ((Team)r.Byte() == team) return;
 
+        r.Bool(); // skip melee
         r.Vector(); // skip force, huh
 
         // otherwise, you need to damage the player
