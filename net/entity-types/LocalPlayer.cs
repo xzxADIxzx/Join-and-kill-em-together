@@ -66,6 +66,7 @@ public class LocalPlayer : Entity
 
         w.Bool(NewMovement.Instance.walking);
         w.Bool(NewMovement.Instance.sliding);
+        w.Bool(NewMovement.Instance.slamForce > 0f);
         w.Bool(!NewMovement.Instance.gc.onGround);
         w.Bool(Chat.Instance.Shown);
 

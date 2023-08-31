@@ -49,7 +49,10 @@ public class RemotePlayer : Entity
     private Animator animator;
 
     /// <summary> Animator states that affect which animation will be played. </summary>
-    private bool walking, sliding, wasInAir, inAir, wasUsingHook, usingHook;
+    private bool walking, sliding, falling, wasInAir, inAir, wasUsingHook, usingHook;
+
+    /// <summary> Slide and fall particle transforms. </summary>
+    private Transform slideParticle, fallParticle;
 
     /// <summary> Enemy component of the player doll. </summary>
     private EnemyIdentifier enemyId;
@@ -227,6 +230,26 @@ public class RemotePlayer : Entity
         animator.SetBool("InAir", inAir);
         animator.SetBool("UsingHook", usingHook);
 
+        if (sliding && slideParticle == null)
+        {
+            slideParticle = Instantiate(NewMovement.Instance.slideParticle, transform).transform;
+            slideParticle.localPosition = new(0f, 0f, 2f);
+            slideParticle.localEulerAngles = new(0f, 180f, 0f);
+            slideParticle.localScale = new(1f, 1f, .5f);
+        }
+        else if (!sliding && slideParticle != null)
+            Destroy(slideParticle.gameObject);
+
+        if (falling && fallParticle == null)
+        {
+            fallParticle = Instantiate(NewMovement.Instance.fallParticle, transform).transform;
+            fallParticle.localPosition = new(0f, 5f, 0f);
+            fallParticle.localEulerAngles = new(90f, 0f, 0f);
+            fallParticle.localScale = new(1f, .5f, 1f);
+        }
+        else if (!falling && fallParticle != null)
+            Destroy(fallParticle.gameObject);
+
         enemyId.health = machine.health = health.Get(LastUpdate);
         enemyId.dead = machine.health <= 0f;
         healthImage.localScale = new(machine.health / 100f, 1f, 1f);
@@ -263,6 +286,7 @@ public class RemotePlayer : Entity
 
         w.Bool(walking);
         w.Bool(sliding);
+        w.Bool(falling);
         w.Bool(inAir);
         w.Bool(typing);
 
@@ -288,6 +312,7 @@ public class RemotePlayer : Entity
 
         walking = r.Bool();
         sliding = r.Bool();
+        falling = r.Bool();
         inAir = r.Bool();
         typing = r.Bool();
 
