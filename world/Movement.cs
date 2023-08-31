@@ -26,12 +26,21 @@ public class Movement : MonoSingleton<Movement>
     public float[] EmojiLegnth = { 2.458f, 4.708f, 1.833f, 3.292f, 12.125f, 9.083f };
     /// <summary> Id of the currently playing emoji. </summary>
     public byte Emoji = 0xFF;
+    /// <summary> If the emoji is playing. </summary>
+    public bool EmojiPlaying = false;
 
     /// <summary> Starting position of third person camera. </summary>
-    private Vector3 start = new(0f, 6f, 0f);
+    private readonly Vector3 startCameraPos = new(0f, 0f, 0f);
+    /// <summary> Ending position of third person camera. </summary>
+    private readonly Vector3 endCameraPos = new(0f, 6f, 0f);
+    /// <summary> Current position of the third person camera. </summary>
+    private Vector3 currentCameraPos = new(0f, 0f, 0f);
     /// <summary> Third person camera rotation. </summary>
-    private Vector2 rotation;
-
+    private Vector2 cameraRotation;
+    /// <summary> Duration of the camera movement animation. </summary>
+    private float cameraDuration = 0.5f;
+    /// <summary> Elapsed time of the camera movement animation. </summary>
+    private float cameraElapsed = 0f;
     /// <summary> Creates a singleton of movement. </summary>
     public static void Load()
     {
@@ -60,18 +69,25 @@ public class Movement : MonoSingleton<Movement>
             if (Input.GetKey(KeyCode.Space) && !Chat.Instance.Shown) StartEmoji(0xFF);
 
             // rotate the camera according to mouse sensitivity
-            rotation += InputManager.Instance.InputSource.Look.ReadValue<Vector2>() * OptionsManager.Instance.mouseSensitivity / 10f;
-            rotation.y = Mathf.Clamp(rotation.y, 5f, 170f);
+            cameraRotation += InputManager.Instance.InputSource.Look.ReadValue<Vector2>() * OptionsManager.Instance.mouseSensitivity / 10f;
+            cameraRotation.y = Mathf.Clamp(cameraRotation.y, 5f, 170f);
 
             var cam = CameraController.Instance.cam.transform;
             var player = NewMovement.Instance.transform.position + new Vector3(0f, 1f, 0f);
 
-            // return the camera to its original position
-            cam.position = player + start;
+            // Interpolate camera position
+            if (EmojiPlaying) ProcessCameraMovement(
+                duration: cameraDuration, 
+                ease: EasingFunction.Ease.EaseInOutCubic, 
+                start: startCameraPos, 
+                end: endCameraPos
+            );
+
+            cam.position = player + currentCameraPos;
 
             // rotate the camera around the player
-            cam.RotateAround(player, Vector3.left, rotation.y);
-            cam.RotateAround(player, Vector3.up, rotation.x);
+            cam.RotateAround(player, Vector3.left, cameraRotation.y);
+            cam.RotateAround(player, Vector3.up, cameraRotation.x);
             cam.LookAt(player);
         }
 
@@ -84,6 +100,18 @@ public class Movement : MonoSingleton<Movement>
 
         // sometimes it happens that in the chat the player flies into the air
         if (!NewMovement.Instance.dead) rb.constraints = NewMovement.Instance.enabled ? RigidbodyConstraints.FreezeRotation : RigidbodyConstraints.FreezeAll;
+    }
+
+    public bool ProcessCameraMovement(float duration, EasingFunction.Ease ease, Vector3 start, Vector3 end) {
+        if (cameraElapsed < duration)
+        {
+            cameraElapsed += Time.deltaTime;
+            var progress = cameraElapsed / duration;
+            var easing = EasingFunction.GetEasingFunction(ease)(0, 1, progress);
+            currentCameraPos = Vector3.Lerp(start, end, easing);
+            return true;
+        }
+        else return false;
     }
 
     #region toggling
@@ -169,11 +197,17 @@ public class Movement : MonoSingleton<Movement>
         if (id == 0xFF) return;
         else PreviewEmoji(id);
 
+        EmojiPlaying = true;
+
         // telling how to interrupt an emotion
         HudMessageReceiver.Instance.SendHudMessage("Press <color=orange>Space</color> to interrupt the emotion", silent: true);
 
         // rotate the third person camera in the same direction as the first person camera
-        rotation = new(CameraController.Instance.rotationY, CameraController.Instance.rotationX + 90f);
+        cameraRotation = new(CameraController.Instance.rotationY, CameraController.Instance.rotationX + 90f);
+
+        // reset elapsed time and position and set the duration of the animation
+        cameraElapsed = 0;
+        currentCameraPos = startCameraPos;
 
         StopCoroutine("ClearEmoji");
         StartCoroutine("ClearEmoji");
@@ -183,7 +217,23 @@ public class Movement : MonoSingleton<Movement>
     public IEnumerator ClearEmoji()
     {
         // wait for the end of an animation
-        yield return new WaitForSeconds(EmojiLegnth[Emoji] + .5f);
+        yield return new WaitForSeconds(EmojiLegnth[Emoji]);
+
+        EmojiPlaying = false;
+
+        // iterpolate the camera position back to the original position
+        cameraElapsed = 0;
+
+        // interpolate the camera position
+        while ( 
+            ProcessCameraMovement(
+                duration: cameraDuration,
+                ease: EasingFunction.Ease.EaseInOutCubic,
+                start: endCameraPos, 
+                end: startCameraPos
+            )
+        ) 
+        { yield return false; }
 
         // return the emoji id to -1
         StartEmoji(0xFF);
