@@ -79,7 +79,7 @@ public class EnemyDamagePatch
         if (LobbyController.Lobby == null || (sourceWeapon == null && !melee)) return true;
 
         // network bullets are needed just for the visual, damage is done through packets
-        if (sourceWeapon == Bullets.SynchronizedBullet) return false;
+        if (sourceWeapon == Bullets.SynchronizedBullet && !melee) return false;
 
         // if the original weapon is network damage, then the damage was received over the network
         if (sourceWeapon == Bullets.NetworkDamage) return true;
