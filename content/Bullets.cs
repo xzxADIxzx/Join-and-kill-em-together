@@ -158,10 +158,31 @@ public class Bullets
         byte[] data = Writer.Write(w =>
         {
             w.Id(SteamClient.SteamId);
-            w.Bool(true);
+            w.Byte(1);
 
             w.Vector(blast.transform.position);
             w.Vector(blast.transform.localEulerAngles);
+        });
+
+        if (LobbyController.IsOwner)
+            LobbyController.EachMemberExceptOwner(member => Networking.Send(member.Id, data, PacketType.Punch));
+        else
+            Networking.Send(LobbyController.Owner, data, PacketType.Punch);
+    }
+
+    /// <summary> Sends the shockwave to the player. </summary>
+    public static void SendShock(GameObject shock, float force)
+    {
+        // checking if this is really a player's shockwave
+        if (LobbyController.Lobby == null || shock?.name != "PhysicalShockwavePlayer(Clone)") return;
+
+        // write shock data to send to server or clients
+        byte[] data = Writer.Write(w =>
+        {
+            w.Id(SteamClient.SteamId);
+            w.Byte(2);
+
+            w.Float(force);
         });
 
         if (LobbyController.IsOwner)

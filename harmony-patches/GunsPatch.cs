@@ -46,7 +46,7 @@ public class PunchPatch
     {
         if (LobbyController.Lobby == null) return;
 
-        byte[] data = Writer.Write(w => { w.Id(SteamClient.SteamId); w.Bool(false); });
+        byte[] data = Writer.Write(w => { w.Id(SteamClient.SteamId); w.Byte(0); });
 
         if (LobbyController.IsOwner)
             LobbyController.EachMemberExceptOwner(member => Networking.Send(member.Id, data, PacketType.Punch));

@@ -42,6 +42,12 @@ public class BlastPatch
     static void Prefix(Explosion __instance) => Bullets.SendBlast(__instance.transform.parent?.gameObject);
 }
 
+[HarmonyPatch(typeof(PhysicalShockwave), "Start")]
+public class ShockPatch
+{
+    static void Prefix(PhysicalShockwave __instance) => Bullets.SendShock(__instance.gameObject, __instance.force);
+}
+
 [HarmonyPatch(typeof(Nail), "Start")]
 public class NailPatch
 {

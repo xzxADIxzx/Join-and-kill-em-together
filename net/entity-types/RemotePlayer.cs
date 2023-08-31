@@ -327,9 +327,19 @@ public class RemotePlayer : Entity
 
     public void Punch(Reader r)
     {
-        if (r.Bool())
-            Instantiate(FistControl.Instance.redArm.GetComponent<Punch>().blastWave, r.Vector(), Quaternion.Euler(r.Vector())).name = "Net";
-        else
-            animator.SetTrigger("Punch");
+        switch (r.Byte())
+        {
+            case 0:
+                animator.SetTrigger("Punch");
+                break;
+            case 1:
+                Instantiate(FistControl.Instance.redArm.GetComponent<Punch>().blastWave, r.Vector(), Quaternion.Euler(r.Vector())).name = "Net";
+                break;
+            case 2:
+                var shock = Instantiate(NewMovement.Instance.gc.shockwave, transform.position, Quaternion.identity);
+                shock.name = "Net";
+                shock.GetComponent<PhysicalShockwave>().force = r.Float();
+                break;
+        }
     }
 }
