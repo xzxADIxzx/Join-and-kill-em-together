@@ -32,7 +32,7 @@ public class ExplosionPatch
         var explosion = __instance.GetComponentInChildren<Explosion>();
 
         // only shotgun explosions need to be synchronized
-        if (explosion.sourceWeapon != null && explosion.sourceWeapon.name.Contains("Shotgun")) Bullets.Send(__instance.gameObject, false, false);
+        if (explosion?.sourceWeapon != null && explosion.sourceWeapon.name.Contains("Shotgun")) Bullets.Send(__instance.gameObject, false, false);
     }
 }
 

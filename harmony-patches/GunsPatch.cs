@@ -44,6 +44,8 @@ public class PunchPatch
     // synchronize the punch for better look and destruction of idols
     static void Prefix()
     {
+        if (LobbyController.Lobby == null) return;
+
         byte[] data = Writer.Write(w => { w.Id(SteamClient.SteamId); w.Bool(false); });
 
         if (LobbyController.IsOwner)
