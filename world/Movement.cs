@@ -38,7 +38,7 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Third person camera rotation. </summary>
     private Vector2 cameraRotation;
     /// <summary> Duration of the camera movement animation. </summary>
-    private float cameraDuration = 0.5f;
+    private float cameraDuration = 0.3f;
     /// <summary> Elapsed time of the camera movement animation. </summary>
     private float cameraElapsed = 0f;
     /// <summary> Creates a singleton of movement. </summary>
@@ -77,8 +77,7 @@ public class Movement : MonoSingleton<Movement>
 
             // Interpolate camera position
             if (EmojiPlaying) ProcessCameraMovement(
-                duration: cameraDuration, 
-                ease: EasingFunction.Ease.EaseInOutCubic, 
+                duration: cameraDuration,
                 start: startCameraPos, 
                 end: endCameraPos
             );
@@ -86,9 +85,12 @@ public class Movement : MonoSingleton<Movement>
             cam.position = player + currentCameraPos;
 
             // rotate the camera around the player
-            cam.RotateAround(player, Vector3.left, cameraRotation.y);
-            cam.RotateAround(player, Vector3.up, cameraRotation.x);
-            cam.LookAt(player);
+            if (currentCameraPos != startCameraPos)
+            {
+                cam.RotateAround(player, Vector3.left, cameraRotation.y);
+                cam.RotateAround(player, Vector3.up, cameraRotation.x);
+                cam.LookAt(player);
+            }
         }
 
 
@@ -102,13 +104,19 @@ public class Movement : MonoSingleton<Movement>
         if (!NewMovement.Instance.dead) rb.constraints = NewMovement.Instance.enabled ? RigidbodyConstraints.FreezeRotation : RigidbodyConstraints.FreezeAll;
     }
 
-    public bool ProcessCameraMovement(float duration, EasingFunction.Ease ease, Vector3 start, Vector3 end) {
+    /// <summary>
+    /// Processes the camera movement, lerps between start and end positions.
+    /// </summary>
+    /// <param name="duration">Duration of the camera movement in seconds</param>
+    /// <param name="start">Starting position</param>
+    /// <param name="end">Ending position</param>
+    /// <returns>If the camera movement is complete</returns>
+    public bool ProcessCameraMovement(float duration, Vector3 start, Vector3 end) {
         if (cameraElapsed < duration)
         {
             cameraElapsed += Time.deltaTime;
             var progress = cameraElapsed / duration;
-            var easing = EasingFunction.GetEasingFunction(ease)(0, 1, progress);
-            currentCameraPos = Vector3.Lerp(start, end, easing);
+            currentCameraPos = Vector3.Lerp(start, end, progress);
             return true;
         }
         else return false;
@@ -225,15 +233,13 @@ public class Movement : MonoSingleton<Movement>
         cameraElapsed = 0;
 
         // interpolate the camera position
-        while ( 
+        while (
             ProcessCameraMovement(
                 duration: cameraDuration,
-                ease: EasingFunction.Ease.EaseInOutCubic,
                 start: endCameraPos, 
                 end: startCameraPos
             )
-        ) 
-        { yield return false; }
+        ) yield return null; 
 
         // return the emoji id to -1
         StartEmoji(0xFF);
