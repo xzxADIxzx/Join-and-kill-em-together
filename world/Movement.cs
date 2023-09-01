@@ -76,11 +76,7 @@ public class Movement : MonoSingleton<Movement>
             var player = NewMovement.Instance.transform.position + new Vector3(0f, 1f, 0f);
 
             // Interpolate camera position
-            if (EmojiPlaying) ProcessCameraMovement(
-                duration: cameraDuration,
-                start: startCameraPos, 
-                end: endCameraPos
-            );
+            if (EmojiPlaying) ProcessCameraMovement(cameraDuration, startCameraPos, endCameraPos);
 
             cam.position = player + currentCameraPos;
 
@@ -233,13 +229,7 @@ public class Movement : MonoSingleton<Movement>
         cameraElapsed = 0;
 
         // interpolate the camera position
-        while (
-            ProcessCameraMovement(
-                duration: cameraDuration,
-                start: endCameraPos, 
-                end: startCameraPos
-            )
-        ) yield return null; 
+        while (ProcessCameraMovement(cameraDuration, endCameraPos, startCameraPos)) yield return null; 
 
         // return the emoji id to -1
         StartEmoji(0xFF);
