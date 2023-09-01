@@ -49,7 +49,7 @@ public class RemotePlayer : Entity
     private Animator animator;
 
     /// <summary> Animator states that affect which animation will be played. </summary>
-    private bool walking, sliding, falling, wasInAir, inAir, wasUsingHook, usingHook;
+    public bool walking, sliding, falling, wasDashing, dashing, wasInAir, inAir, wasUsingHook, usingHook;
 
     /// <summary> Slide and fall particle transforms. </summary>
     private Transform slideParticle, fallParticle;
@@ -206,6 +206,14 @@ public class RemotePlayer : Entity
             else foreach (Transform child in hand) Destroy(child.gameObject);
         }
 
+        if (wasDashing != dashing)
+        {
+            wasDashing = dashing;
+
+            // fire the trigger if the player dashed
+            if (dashing) animator.SetTrigger("Dash");
+        }
+
         if (wasInAir != inAir)
         {
             wasInAir = inAir;
@@ -227,6 +235,7 @@ public class RemotePlayer : Entity
 
         animator.SetBool("Walking", walking);
         animator.SetBool("Sliding", sliding);
+        animator.SetBool("Dashing", dashing);
         animator.SetBool("InAir", inAir);
         animator.SetBool("UsingHook", usingHook);
 
@@ -287,6 +296,7 @@ public class RemotePlayer : Entity
         w.Bool(walking);
         w.Bool(sliding);
         w.Bool(falling);
+        w.Bool(dashing);
         w.Bool(inAir);
         w.Bool(typing);
 
@@ -313,6 +323,7 @@ public class RemotePlayer : Entity
         walking = r.Bool();
         sliding = r.Bool();
         falling = r.Bool();
+        dashing = r.Bool();
         inAir = r.Bool();
         typing = r.Bool();
 

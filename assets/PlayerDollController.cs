@@ -14,6 +14,7 @@ public class PlayerDollController : MonoBehaviour
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space)) animator.SetTrigger("Jump");
+        if (Input.GetKeyDown(KeyCode.LeftShift)) animator.SetTrigger("Dash");
         if (Input.GetKeyDown(KeyCode.F)) animator.SetTrigger("Punch");
         if (Input.GetKeyDown(KeyCode.Mouse4)) animator.SetTrigger("Throw Hook");
 
@@ -28,6 +29,7 @@ public class PlayerDollController : MonoBehaviour
 
         animator.SetBool("Walking", Input.GetKey(KeyCode.W));
         animator.SetBool("Sliding", Input.GetKey(KeyCode.LeftControl));
+        animator.SetBool("Dashing", Input.GetKey(KeyCode.LeftShift));
         animator.SetBool("InAir", Input.GetKey(KeyCode.Space));
         animator.SetBool("UsingHook", Input.GetKey(KeyCode.Mouse4));
     }

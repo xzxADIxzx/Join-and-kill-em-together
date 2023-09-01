@@ -87,6 +87,9 @@ public class EnemyDamagePatch
         // if the enemy doesn't have an entity component, then it was created before the lobby
         if (!__instance.TryGetComponent<Entity>(out var entity)) return true;
 
+        // if the player dodges, then no damage is needed
+        if (entity is RemotePlayer player && player.dashing) return false;
+
         // if the damage was caused by the player himself, then all others must be notified about this
         byte[] data = Writer.Write(w =>
         {
