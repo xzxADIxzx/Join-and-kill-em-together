@@ -71,7 +71,7 @@ public class Movement : MonoSingleton<Movement>
             var player = NewMovement.Instance.transform.position + new Vector3(0f, 1f, 0f);
 
             // move the camera position towards the start if the animation has just started, or towards the end if the animation ends
-            position = Vector3.MoveTowards(position, Time.time - EmojiStart > EmojiLegnth[Emoji] ? end : start, 12f * Time.deltaTime);
+            position = Vector3.MoveTowards(position, Emoji == 0xFF || Time.time - EmojiStart > EmojiLegnth[Emoji] ? end : start, 12f * Time.deltaTime);
 
             // return the camera to its original position
             cam.position = player + position;
@@ -80,6 +80,10 @@ public class Movement : MonoSingleton<Movement>
             cam.RotateAround(player, Vector3.left, rotation.y);
             cam.RotateAround(player, Vector3.up, rotation.x);
             cam.LookAt(player);
+
+            // do not let the camera fall through the ground
+            if (Physics.SphereCast(player, .25f, cam.position - player, out var hit, position.magnitude, LayerMaskDefaults.Get(LMD.Environment)))
+                cam.position = hit.point + .5f * hit.normal;
         }
 
 
