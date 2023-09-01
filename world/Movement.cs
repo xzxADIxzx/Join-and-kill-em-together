@@ -24,11 +24,15 @@ public class Movement : MonoSingleton<Movement>
     public GameObject EmojiPreview;
     /// <summary> An array containing the length of all emotions in seconds. </summary>
     public float[] EmojiLegnth = { 2.458f, 4.708f, 1.833f, 3.292f, 12.125f, 9.083f };
+    /// <summary> Start time of the current emotion. </summary>
+    public float EmojiStart;
     /// <summary> Id of the currently playing emoji. </summary>
     public byte Emoji = 0xFF;
 
-    /// <summary> Starting position of third person camera. </summary>
-    private Vector3 start = new(0f, 6f, 0f);
+    /// <summary> Starting and ending position of third person camera. </summary>
+    private readonly Vector3 start = new(0f, 6f, 0f), end = new(0f, .1f, 0f);
+    /// <summary> Third person camera position. </summary>
+    private Vector3 position;
     /// <summary> Third person camera rotation. </summary>
     private Vector2 rotation;
 
@@ -66,8 +70,11 @@ public class Movement : MonoSingleton<Movement>
             var cam = CameraController.Instance.cam.transform;
             var player = NewMovement.Instance.transform.position + new Vector3(0f, 1f, 0f);
 
+            // move the camera position towards the start if the animation has just started, or towards the end if the animation ends
+            position = Vector3.MoveTowards(position, Time.time - EmojiStart > EmojiLegnth[Emoji] ? end : start, 12f * Time.deltaTime);
+
             // return the camera to its original position
-            cam.position = player + start;
+            cam.position = player + position;
 
             // rotate the camera around the player
             cam.RotateAround(player, Vector3.left, rotation.y);
@@ -157,8 +164,9 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Triggers an emoji with the given id. </summary>
     public void StartEmoji(byte id)
     {
-        // save id for synchronization over the network
-        Emoji = id;
+        EmojiStart = Time.time;
+        Emoji = id; // save id for synchronization over the network
+
         ToggleCamera(Emoji == 0xFF);
         if (!Chat.Instance.Shown) ToggleMovement(Emoji == 0xFF);
 
@@ -174,6 +182,7 @@ public class Movement : MonoSingleton<Movement>
 
         // rotate the third person camera in the same direction as the first person camera
         rotation = new(CameraController.Instance.rotationY, CameraController.Instance.rotationX + 90f);
+        position = new();
 
         StopCoroutine("ClearEmoji");
         StartCoroutine("ClearEmoji");
