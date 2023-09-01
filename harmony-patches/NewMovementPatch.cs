@@ -1,10 +1,12 @@
 namespace Jaket.HarmonyPatches;
 
 using HarmonyLib;
+using Steamworks;
 using UnityEngine;
 
 using Jaket.Content;
 using Jaket.Net;
+using Jaket.UI;
 using Jaket.World;
 
 [HarmonyPatch(typeof(NewMovement), "Start")]
@@ -30,5 +32,24 @@ public class RespawnPatch
 
         // notify each client that the host has died so that they destroy all enemies
         LobbyController.EachMemberExceptOwner(member => Networking.SendEmpty(member.Id, PacketType.HostDied));
+    }
+}
+
+[HarmonyPatch(typeof(NewMovement), nameof(NewMovement.GetHurt))]
+public class DeathPatch
+{
+    static void Prefix(NewMovement __instance, int damage)
+    {
+        if (__instance.hp > 0 && __instance.hp - damage <= 0)
+        {
+            // player death message
+            LobbyController.Lobby?.SendChatString("<system><color=orange>Player " + SteamClient.Name + " died.</color>");
+
+            // close the chat to prevent some bugs
+            Chat.Instance.field.gameObject.SetActive(false);
+
+            // interrupt the emoji to avoid bugs
+            Movement.Instance.StartEmoji(0xFF);
+        }
     }
 }

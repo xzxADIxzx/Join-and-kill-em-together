@@ -34,7 +34,7 @@ public class Chat : MonoSingleton<Chat>
     private RectTransform typingBg;
 
     /// <summary> Input field in which the message will be entered directly. </summary>
-    private InputField field;
+    public InputField field;
     /// <summary> Arrival time of the last message, used to change the chat transparency. </summary>
     private float lastMessageTime;
 

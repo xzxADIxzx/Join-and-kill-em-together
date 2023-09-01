@@ -69,7 +69,7 @@ public class Networking : MonoBehaviour
 
         SteamMatchmaking.OnChatMessage += (lobby, member, message) =>
         {
-            if (message.StartsWith("<system>") && member.Id == lobby.Owner.Id)
+            if (message.StartsWith("<system>")) // I think it's okay
                 Chat.Instance.ReceiveChatMessage("Lobby", message.Substring("<system>".Length));
             else
                 Chat.Instance.ReceiveChatMessage(member.Name, message);
