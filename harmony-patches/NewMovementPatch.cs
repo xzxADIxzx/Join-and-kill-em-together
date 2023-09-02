@@ -38,8 +38,11 @@ public class RespawnPatch
 [HarmonyPatch(typeof(NewMovement), nameof(NewMovement.GetHurt))]
 public class DeathPatch
 {
-    static void Prefix(NewMovement __instance, int damage)
+    static void Prefix(NewMovement __instance, int damage, bool invincible)
     {
+        // sometimes fake death messages are sent to the chat
+        if (invincible && __instance.gameObject.layer == 15) return;
+
         if (__instance.hp > 0 && __instance.hp - damage <= 0)
         {
             // player death message
