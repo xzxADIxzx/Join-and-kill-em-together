@@ -49,7 +49,7 @@ public class RemotePlayer : Entity
     private Animator animator;
 
     /// <summary> Animator states that affect which animation will be played. </summary>
-    public bool walking, sliding, falling, wasDashing, dashing, wasInAir, inAir, wasUsingHook, usingHook;
+    public bool walking, sliding, falling, wasDashing, dashing, wasRiding, riding, wasInAir, inAir, wasUsingHook, usingHook;
 
     /// <summary> Slide and fall particle transforms. </summary>
     private Transform slideParticle, fallParticle;
@@ -89,14 +89,14 @@ public class RemotePlayer : Entity
         hookZ = new();
 
         // transforms
-        head = transform.GetChild(0).GetChild(0).GetChild(4).GetChild(10).GetChild(0);
-        hand = transform.GetChild(0).GetChild(0).GetChild(4).GetChild(5).GetChild(0).GetChild(0);
+        head = transform.GetChild(0).GetChild(0).GetChild(5).GetChild(10).GetChild(0);
+        hand = transform.GetChild(0).GetChild(0).GetChild(5).GetChild(5).GetChild(0).GetChild(0);
         hand = Utils.Object("Weapons", hand).transform;
         hook = transform.GetChild(0).GetChild(0).GetChild(1);
-        hookRoot = transform.GetChild(0).GetChild(0).GetChild(4).GetChild(0).GetChild(0).GetChild(0).GetChild(0);
+        hookRoot = transform.GetChild(0).GetChild(0).GetChild(5).GetChild(0).GetChild(0).GetChild(0).GetChild(0);
 
         // other stuff
-        wingMaterial = GetComponentInChildren<SkinnedMeshRenderer>().materials[1];
+        wingMaterial = transform.GetChild(0).GetChild(2).GetComponent<SkinnedMeshRenderer>().materials[1];
         wingTrail = GetComponentInChildren<TrailRenderer>();
         hookWinch = GetComponentInChildren<LineRenderer>(true);
         animator = GetComponentInChildren<Animator>();
@@ -214,6 +214,14 @@ public class RemotePlayer : Entity
             if (dashing) animator.SetTrigger("Dash");
         }
 
+        if (wasRiding != riding)
+        {
+            wasRiding = riding;
+
+            // fire the trigger if the started riding on a rocket
+            if (riding) animator.SetTrigger("Ride");
+        }
+
         if (wasInAir != inAir)
         {
             wasInAir = inAir;
@@ -236,6 +244,7 @@ public class RemotePlayer : Entity
         animator.SetBool("Walking", walking);
         animator.SetBool("Sliding", sliding);
         animator.SetBool("Dashing", dashing);
+        animator.SetBool("Riding", riding);
         animator.SetBool("InAir", inAir);
         animator.SetBool("UsingHook", usingHook);
 
@@ -297,6 +306,7 @@ public class RemotePlayer : Entity
         w.Bool(sliding);
         w.Bool(falling);
         w.Bool(dashing);
+        w.Bool(riding);
         w.Bool(inAir);
         w.Bool(typing);
 
@@ -324,6 +334,7 @@ public class RemotePlayer : Entity
         sliding = r.Bool();
         falling = r.Bool();
         dashing = r.Bool();
+        riding = r.Bool();
         inAir = r.Bool();
         typing = r.Bool();
 

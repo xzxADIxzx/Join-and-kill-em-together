@@ -108,12 +108,13 @@ public class DollAssets
     /// <summary> Changes the colors of materials and their shaders to match the style of the game.. </summary>
     public static void FixMaterials(GameObject obj)
     {
-        // body materials, most of the model
-        foreach (var mat in obj.GetComponentInChildren<SkinnedMeshRenderer>().materials)
-        {
-            mat.color = Color.white;
-            mat.shader = Shader;
-        }
+        // body & rocket materials, most of the model
+        foreach (var renderer in obj.GetComponentsInChildren<SkinnedMeshRenderer>())
+            foreach (var mat in renderer.materials)
+            {
+                mat.color = Color.white;
+                mat.shader = Shader;
+            }
 
         // hook materials, very little but detail
         foreach (var mat in obj.transform.GetChild(0).GetChild(0).GetChild(1).GetComponent<MeshRenderer>().materials)
