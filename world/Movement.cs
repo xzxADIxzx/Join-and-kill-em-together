@@ -95,6 +95,9 @@ public class Movement : MonoSingleton<Movement>
 
         // sometimes it happens that in the chat the player flies into the air
         if (!NewMovement.Instance.dead) rb.constraints = NewMovement.Instance.enabled ? RigidbodyConstraints.FreezeRotation : RigidbodyConstraints.FreezeAll;
+
+        // reset slam force if the player is riding on a rocket
+        if (NewMovement.Instance.ridingRocket != null) NewMovement.Instance.slamForce = 0f;
     }
 
     #region toggling
