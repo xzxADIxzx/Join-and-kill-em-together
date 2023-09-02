@@ -341,7 +341,7 @@ public class RemotePlayer : Entity
         switch (r.Byte())
         {
             case 0:
-                animator.SetTrigger("Punch");
+                animator.SetTrigger(r.Bool() ? "Parry" : "Punch");
                 break;
             case 1:
                 Instantiate(FistControl.Instance.redArm.GetComponent<Punch>().blastWave, r.Vector(), Quaternion.Euler(r.Vector())).name = "Net";

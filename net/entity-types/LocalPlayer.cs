@@ -19,6 +19,9 @@ public class LocalPlayer : Entity
     /// <summary> Player team. Changes through the player list. </summary>
     public Team team;
 
+    /// <summary> Whether the player parried a projectile or just punched. </summary>
+    public bool parried;
+
     /// <summary> Hook position. Will be zero if the hook is not currently in use. </summary>
     public Vector3 hook;
 
@@ -66,7 +69,7 @@ public class LocalPlayer : Entity
 
         w.Bool(NewMovement.Instance.walking);
         w.Bool(NewMovement.Instance.sliding);
-        w.Bool(NewMovement.Instance.slamForce > 0f);
+        w.Bool(NewMovement.Instance.slamForce > 0f && !NewMovement.Instance.gc.onGround);
         w.Bool(NewMovement.Instance.boost && !NewMovement.Instance.sliding);
         w.Bool(!NewMovement.Instance.gc.onGround);
         w.Bool(Chat.Instance.Shown);

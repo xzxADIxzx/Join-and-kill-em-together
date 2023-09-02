@@ -38,21 +38,30 @@ public class GunIconPatch
     static bool Prefix(WeaponIcon __instance) => __instance.GetComponentInParent<RemotePlayer>() == null;
 }
 
-[HarmonyPatch(typeof(Punch), "PunchStart")]
+[HarmonyPatch(typeof(Punch), "ActiveStart")]
 public class PunchPatch
 {
     // synchronize the punch for better look and destruction of idols
-    static void Prefix()
+    static void Postfix()
     {
         if (LobbyController.Lobby == null) return;
 
-        byte[] data = Writer.Write(w => { w.Id(SteamClient.SteamId); w.Byte(0); });
+        byte[] data = Writer.Write(w => { w.Id(SteamClient.SteamId); w.Byte(0); w.Bool(Networking.LocalPlayer.parried); });
 
         if (LobbyController.IsOwner)
             LobbyController.EachMemberExceptOwner(member => Networking.Send(member.Id, data, PacketType.Punch));
         else
             Networking.Send(LobbyController.Owner, data, PacketType.Punch);
+
+        Networking.LocalPlayer.parried = false;
     }
+}
+
+[HarmonyPatch(typeof(Punch), nameof(Punch.GetParryLookTarget))]
+public class ParryPatch
+{
+    // save parry for different animations
+    static void Prefix() => Networking.LocalPlayer.parried = true;
 }
 
 [HarmonyPatch(typeof(HookArm), "Update")]
