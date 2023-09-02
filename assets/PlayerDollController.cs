@@ -15,8 +15,10 @@ public class PlayerDollController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space)) animator.SetTrigger("Jump");
         if (Input.GetKeyDown(KeyCode.LeftShift)) animator.SetTrigger("Dash");
+        if (Input.GetKeyDown(KeyCode.C)) animator.SetTrigger("Ride");
         if (Input.GetKeyDown(KeyCode.F)) animator.SetTrigger("Punch");
-        if (Input.GetKeyDown(KeyCode.Mouse4)) animator.SetTrigger("Throw Hook");
+        if (Input.GetKeyDown(KeyCode.R)) animator.SetTrigger("Parry");
+        if (Input.GetKeyDown(KeyCode.Mouse3)) animator.SetTrigger("Throw Hook");
 
         if (Input.GetKeyUp(KeyCode.Alpha1)) StartEmoji(0);
         if (Input.GetKeyUp(KeyCode.Alpha2)) StartEmoji(1);
@@ -30,8 +32,9 @@ public class PlayerDollController : MonoBehaviour
         animator.SetBool("Walking", Input.GetKey(KeyCode.W));
         animator.SetBool("Sliding", Input.GetKey(KeyCode.LeftControl));
         animator.SetBool("Dashing", Input.GetKey(KeyCode.LeftShift));
+        animator.SetBool("Riding", Input.GetKey(KeyCode.C));
         animator.SetBool("InAir", Input.GetKey(KeyCode.Space));
-        animator.SetBool("UsingHook", Input.GetKey(KeyCode.Mouse4));
+        animator.SetBool("UsingHook", Input.GetKey(KeyCode.Mouse3));
     }
 
     /// <summary> Triggers an emoji with the given id. </summary>
