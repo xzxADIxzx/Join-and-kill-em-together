@@ -19,20 +19,18 @@ public class LocalEnemy : Entity
 
     public void Awake()
     {
-        int index = Enemies.CopiedIndex(gameObject.name);
+        enemyId = GetComponent<EnemyIdentifier>();
+        healthBar = GetComponent<BossHealthBar>();
+
+        int index = Enemies.CopiedIndex(enemyId);
         if (index == -1)
         {
             Destroy(this);
-            Debug.LogWarning("Enemy index is -1 for name " + gameObject.name);
-
             return;
         }
 
         Id = Entities.NextId();
         Type = (EntityType)index;
-
-        enemyId = GetComponent<EnemyIdentifier>();
-        healthBar = GetComponent<BossHealthBar>();
     }
 
     public override void Write(Writer w)
@@ -47,7 +45,7 @@ public class LocalEnemy : Entity
     }
 
     // there is no point in reading anything, because it is a local enemy
-    public override void Read(Reader r) => r.Bytes(21); // skip all data
+    public override void Read(Reader r) {}
 
     public override void Damage(Reader r) => Bullets.DealDamage(enemyId, r);
 }
