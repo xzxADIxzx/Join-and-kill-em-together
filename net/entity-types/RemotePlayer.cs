@@ -89,14 +89,14 @@ public class RemotePlayer : Entity
         hookZ = new();
 
         // transforms
-        head = transform.GetChild(0).GetChild(0).GetChild(5).GetChild(10).GetChild(0);
-        hand = transform.GetChild(0).GetChild(0).GetChild(5).GetChild(5).GetChild(0).GetChild(0);
+        head = transform.GetChild(0).GetChild(1).GetChild(5).GetChild(10).GetChild(0);
+        hand = transform.GetChild(0).GetChild(1).GetChild(5).GetChild(5).GetChild(0).GetChild(0);
         hand = Utils.Object("Weapons", hand).transform;
-        hook = transform.GetChild(0).GetChild(0).GetChild(1);
-        hookRoot = transform.GetChild(0).GetChild(0).GetChild(5).GetChild(0).GetChild(0).GetChild(0).GetChild(0);
+        hook = transform.GetChild(0).GetChild(1).GetChild(1);
+        hookRoot = transform.GetChild(0).GetChild(1).GetChild(5).GetChild(0).GetChild(0).GetChild(0).GetChild(0);
 
         // other stuff
-        wingMaterial = transform.GetChild(0).GetChild(2).GetComponent<SkinnedMeshRenderer>().materials[1];
+        wingMaterial = transform.GetChild(0).GetChild(3).GetComponent<SkinnedMeshRenderer>().materials[1];
         wingTrail = GetComponentInChildren<TrailRenderer>();
         hookWinch = GetComponentInChildren<LineRenderer>(true);
         animator = GetComponentInChildren<Animator>();
@@ -156,6 +156,9 @@ public class RemotePlayer : Entity
 
             var color = team.Data().Color();
             wingTrail.startColor = new Color(color.r, color.g, color.b, .5f);
+
+            // the pink team has cat ears
+            transform.GetChild(0).GetChild(0).gameObject.SetActive(team == Team.Pink);
 
             // update player indicators to only show teammates
             PlayerIndicators.Instance.Rebuild();

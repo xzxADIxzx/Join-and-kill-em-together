@@ -5,6 +5,8 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
 
+using Jaket.Content;
+
 public class Utils
 {
     private static Sprite buttonImage, shadowImage, circleShadowImage, circleImage;
@@ -169,21 +171,23 @@ public class Utils
     #endregion
     #region team button
 
-    public static GameObject TeamButton(string name, Transform parent, float x, float y, float width, float height, Color color, UnityAction clicked)
+    public static GameObject TeamButton(Team team, Transform parent, float x, float y, float width, float height, UnityAction clicked)
     {
-        var obj = Image(name, parent, x, y, width, height, color);
+        var obj = Image(team.ToString(), parent, x, y, width, height, team.Data().Color());
         Component<Button>(obj, button =>
         {
             button.targetGraphic = obj.GetComponent<Image>();
             button.onClick.AddListener(clicked);
         });
 
+        if (team == Team.Pink) Text("UwU", obj.transform, 0f, 0f, width, height, 24);
+
         return obj;
     }
 
-    public static GameObject TeamButton(string name, Transform parent, float x, float y, Color color, UnityAction clicked)
+    public static GameObject TeamButton(Team team, Transform parent, float x, float y, UnityAction clicked)
     {
-        return TeamButton(name, parent, x, y, 51f, 51f, color, clicked);
+        return TeamButton(team, parent, x, y, 51f, 51f, clicked);
     }
 
     #endregion

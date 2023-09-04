@@ -51,7 +51,7 @@ public class PlayerList : MonoSingleton<PlayerList>
         Instance.inviteButton = Utils.Button("INVITE FRIEND", Instance.transform, -784f, 332f, LobbyController.InviteFriend);
 
         float x = -986f;
-        foreach (Team team in Enum.GetValues(typeof(Team))) Utils.TeamButton("", Instance.transform, x += 67f, 252f, team.Data().Color(), () =>
+        foreach (Team team in Enum.GetValues(typeof(Team))) Utils.TeamButton(team, Instance.transform, x += 67f, 252f, () =>
         {
             // change player team
             Networking.LocalPlayer.team = team;

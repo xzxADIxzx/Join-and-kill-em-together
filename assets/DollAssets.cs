@@ -108,19 +108,17 @@ public class DollAssets
     /// <summary> Changes the colors of materials and their shaders to match the style of the game.. </summary>
     public static void FixMaterials(GameObject obj)
     {
-        // body & rocket materials, most of the model
-        foreach (var renderer in obj.GetComponentsInChildren<SkinnedMeshRenderer>())
+        foreach (var renderer in obj.GetComponentsInChildren<Renderer>(true))
+        {
+            // component responsible for drawing the trace
+            if (renderer is TrailRenderer) continue;
+
+            // body, rocket & hook materials
             foreach (var mat in renderer.materials)
             {
                 mat.color = Color.white;
                 mat.shader = Shader;
             }
-
-        // hook materials, very little but detail
-        foreach (var mat in obj.transform.GetChild(0).GetChild(0).GetChild(1).GetComponent<MeshRenderer>().materials)
-        {
-            mat.color = Color.white;
-            mat.shader = Shader;
         }
     }
 
@@ -154,7 +152,7 @@ public class DollAssets
         machine.hurtSounds = new AudioClip[0];
 
         // add enemy identifier to all doll parts so that bullets can hit it
-        foreach (var rigidbody in obj.transform.GetChild(0).GetChild(0).GetComponentsInChildren<Rigidbody>())
+        foreach (var rigidbody in obj.transform.GetChild(0).GetComponentsInChildren<Rigidbody>())
         {
             rigidbody.gameObject.AddComponent<EnemyIdentifierIdentifier>();
             rigidbody.gameObject.tag = MapTag(rigidbody.gameObject.tag);
