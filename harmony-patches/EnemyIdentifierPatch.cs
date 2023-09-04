@@ -91,7 +91,7 @@ public class EnemyDamagePatch
         if (entity is RemotePlayer player && player.dashing) return false;
 
         // if the damage was caused by the player himself, then all others must be notified about this
-        byte[] data = Writer.Write(w =>
+        Networking.Redirect(Writer.Write(w =>
         {
             w.Id(entity.Id);
             w.Byte((byte)Networking.LocalPlayer.team);
@@ -101,12 +101,7 @@ public class EnemyDamagePatch
             w.Float(multiplier);
             w.Bool(tryForExplode);
             w.Float(critMultiplier);
-        });
-
-        if (LobbyController.IsOwner)
-            LobbyController.EachMemberExceptOwner(member => Networking.Send(member.Id, data, PacketType.DamageEntity));
-        else
-            Networking.Send(LobbyController.Owner, data, PacketType.DamageEntity);
+        }), PacketType.DamageEntity);
 
         return true;
     }

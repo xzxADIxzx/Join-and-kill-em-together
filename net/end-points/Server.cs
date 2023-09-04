@@ -21,32 +21,14 @@ public class Server : Endpoint
             entities[sender]?.Read(r);
         });
 
-        Listen(PacketType.SpawnBullet, (sender, r) =>
-        {
-            Bullets.Read(r);
+        ListenAndRedirect(PacketType.SpawnBullet, Bullets.Read);
 
-            // send bullet data to everyone else
-            byte[] data = r.AllBytes();
-            LobbyController.EachMemberExceptOwnerAnd(sender, member => Networking.Send(member.Id, data, PacketType.SpawnBullet));
-        });
+        ListenAndRedirect(PacketType.DamageEntity, r => entities[r.Id()]?.Damage(r));
 
-        Listen(PacketType.DamageEntity, (sender, r) =>
-        {
-            entities[r.Id()]?.Damage(r);
-
-            // send damage data to everyone else
-            byte[] data = r.AllBytes();
-            LobbyController.EachMemberExceptOwnerAnd(sender, member => Networking.Send(member.Id, data, PacketType.DamageEntity));
-        });
-
-        Listen(PacketType.Punch, (sender, r) =>
+        ListenAndRedirect(PacketType.Punch, r =>
         {
             var entity = entities[r.Id()];
             if (entity is RemotePlayer player) player.Punch(r);
-
-            // send damage data to everyone else
-            byte[] data = r.AllBytes();
-            LobbyController.EachMemberExceptOwnerAnd(sender, member => Networking.Send(member.Id, data, PacketType.Punch));
         });
     }
 

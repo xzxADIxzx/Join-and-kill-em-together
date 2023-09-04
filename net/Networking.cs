@@ -57,8 +57,7 @@ public class Networking : MonoBehaviour
                 Entities[LocalPlayer.Id] = LocalPlayer;
 
                 // inform all players about the transition to a new level
-                byte[] data = Writer.Write(w => w.String(SceneHelper.CurrentScene));
-                LobbyController.EachMemberExceptOwner(member => Send(member.Id, data, PacketType.LevelLoading));
+                Redirect(Writer.Write(w => w.String(SceneHelper.CurrentScene)), PacketType.LevelLoading);
             }
 
             Loading = false;
@@ -192,6 +191,15 @@ public class Networking : MonoBehaviour
     /// <summary> Sends an empty packet to the receiver over a reliable channel. </summary>
     public static void SendEmpty(SteamId receiver, PacketType packetType)
             => Send(receiver, new byte[1], packetType);
+
+    /// <summary> Forwards packet data to all clients or to a host that will forward to all clients. </summary>
+    public static void Redirect(byte[] data, PacketType packetType)
+    {
+        if (LobbyController.IsOwner)
+            LobbyController.EachMemberExceptOwner(member => Send(member.Id, data, packetType));
+        else
+            Send(LobbyController.Owner, data, packetType);
+    }
 
     #endregion
 }

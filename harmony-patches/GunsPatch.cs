@@ -46,14 +46,14 @@ public class PunchPatch
     {
         if (LobbyController.Lobby == null) return;
 
-        byte[] data = Writer.Write(w => { w.Id(SteamClient.SteamId); w.Byte(0); w.Bool(Networking.LocalPlayer.parried); });
+        Networking.Redirect(Writer.Write(w =>
+        {
+            w.Id(SteamClient.SteamId);
+            w.Byte(0);
 
-        if (LobbyController.IsOwner)
-            LobbyController.EachMemberExceptOwner(member => Networking.Send(member.Id, data, PacketType.Punch));
-        else
-            Networking.Send(LobbyController.Owner, data, PacketType.Punch);
-
-        Networking.LocalPlayer.parried = false;
+            w.Bool(Networking.LocalPlayer.parried);
+            Networking.LocalPlayer.parried = false;
+        }), PacketType.Punch);
     }
 }
 

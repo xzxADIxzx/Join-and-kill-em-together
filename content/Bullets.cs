@@ -133,12 +133,7 @@ public class Bullets
         byte[] data = Write(bullet, hasRigidbody, applyOffset);
 
         // if no data was written, then the bullet belongs to an enemy
-        if (data.Length == 0) return;
-
-        if (LobbyController.IsOwner)
-            LobbyController.EachMemberExceptOwner(member => Networking.Send(member.Id, data, PacketType.SpawnBullet));
-        else
-            Networking.Send(LobbyController.Owner, data, PacketType.SpawnBullet);
+        if (data.Length != 0) Networking.Redirect(data, PacketType.SpawnBullet);
     }
 
     /// <summary> Sends the bullet to all other players and also replaces source weapon if it is null. </summary>
@@ -155,19 +150,14 @@ public class Bullets
         if (LobbyController.Lobby == null || blast?.name != "Explosion Wave(Clone)") return;
 
         // write blast data to send to server or clients
-        byte[] data = Writer.Write(w =>
+        Networking.Redirect(Writer.Write(w =>
         {
             w.Id(SteamClient.SteamId);
             w.Byte(1);
 
             w.Vector(blast.transform.position);
             w.Vector(blast.transform.localEulerAngles);
-        });
-
-        if (LobbyController.IsOwner)
-            LobbyController.EachMemberExceptOwner(member => Networking.Send(member.Id, data, PacketType.Punch));
-        else
-            Networking.Send(LobbyController.Owner, data, PacketType.Punch);
+        }), PacketType.Punch);
     }
 
     /// <summary> Sends the shockwave to the player. </summary>
@@ -177,18 +167,13 @@ public class Bullets
         if (LobbyController.Lobby == null || shock?.name != "PhysicalShockwavePlayer(Clone)") return;
 
         // write shock data to send to server or clients
-        byte[] data = Writer.Write(w =>
+        Networking.Redirect(Writer.Write(w =>
         {
             w.Id(SteamClient.SteamId);
             w.Byte(2);
 
             w.Float(force);
-        });
-
-        if (LobbyController.IsOwner)
-            LobbyController.EachMemberExceptOwner(member => Networking.Send(member.Id, data, PacketType.Punch));
-        else
-            Networking.Send(LobbyController.Owner, data, PacketType.Punch);
+        }), PacketType.Punch);
     }
 
     /// <summary> Deals bullet damage to an enemy. </summary>

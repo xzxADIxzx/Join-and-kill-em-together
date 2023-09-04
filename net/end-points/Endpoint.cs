@@ -29,6 +29,15 @@ public abstract class Endpoint
     /// <summary> Adds a new listener to the endpoint, but without sender. </summary>
     public void Listen(PacketType type, Action<Reader> listener) => listeners.Add(type, (sender, r) => listener(r));
 
+    /// <summary> Adds a new listener to the endpoint that will forward data to clients. </summary>
+    public void ListenAndRedirect(PacketType type, Action<Reader> listener) => listeners.Add(type, (sender, r) =>
+    {
+        listener(r);
+
+        byte[] data = r.AllBytes();
+        LobbyController.EachMemberExceptOwnerAnd(sender, member => Networking.Send(member.Id, data, type));
+    });
+
     /// <summary> Reads available packets and pass them to listeners. </summary>
     public void UpdateListeners()
     {
