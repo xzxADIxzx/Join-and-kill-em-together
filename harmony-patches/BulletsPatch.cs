@@ -4,6 +4,8 @@ using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Content;
+using Jaket.Net;
+using Jaket.Net.EntityTypes;
 using Jaket.UI;
 
 [HarmonyPatch(typeof(Coin), "StartCheckingSpeed")] // for some reason, the coin has zero velocity in Start
@@ -52,6 +54,17 @@ public class ShockPatch
 public class NailPatch
 {
     static void Prefix(Nail __instance) => Bullets.Send(__instance.gameObject, ref __instance.sourceWeapon, true, false);
+}
+
+[HarmonyPatch(typeof(Nail), "TouchEnemy")]
+public class SawbladePatch
+{
+    // if the saw collides with an ally, then it should not stop or break
+    static bool Prefix(Nail __instance, Transform other) =>
+        __instance.sawblade && other.TryGetComponent<EnemyIdentifierIdentifier>(out var eid) &&
+        eid.eid != null && eid.eid.TryGetComponent<RemotePlayer>(out var player)
+        ? player.team != Networking.LocalPlayer.team
+        : true;
 }
 
 [HarmonyPatch(typeof(Harpoon), "Start")]
