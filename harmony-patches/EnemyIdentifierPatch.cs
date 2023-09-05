@@ -136,3 +136,10 @@ public class EnemyDeathPatch
         Object.Destroy(enemy);
     }
 }
+
+[HarmonyPatch(typeof(Idol), "SlowUpdate")]
+public class IdolsLogicPatch
+{
+    // idols shouldn't have logic on clients
+    static bool Prefix() => LobbyController.Lobby == null || LobbyController.IsOwner;
+}
