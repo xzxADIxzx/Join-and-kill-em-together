@@ -18,7 +18,7 @@ public class Bullets
     public static GameObject SynchronizedBullet, NetworkDamage;
 
     /// <summary> List of melee weapons and projectile with enemy, as it can be reflected, which is considered melee. </summary>
-    public static List<string> Melee = new(new[] { "punch", "heavypunch", "ground slam", "projectile", "enemy" });
+    public static List<string> Melee = new(new[] { "punch", "heavypunch", "ground slam", "hook", "projectile", "enemy" });
 
     /// <summary> Loads all bullets for future use. </summary>
     public static void Load()
