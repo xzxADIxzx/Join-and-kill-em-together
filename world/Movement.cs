@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 using Jaket.Assets;
+using Jaket.Content;
 using Jaket.Net;
 using Jaket.UI;
 
@@ -166,6 +167,14 @@ public class Movement : MonoSingleton<Movement>
 
         anim.SetTrigger("Show Emoji");
         anim.SetInteger("Emoji", id);
+
+        // apply team to emotion preview
+        var team = Networking.LocalPlayer.team;
+        var mat = EmojiPreview.transform.GetChild(0).GetChild(3).GetComponent<Renderer>().materials[1];
+
+        mat.mainTexture = DollAssets.WingTextures[(int)team];
+        mat.color = team.Data().WingColor();
+        if (team == Team.Pink) EmojiPreview.transform.GetChild(0).GetChild(0).gameObject.SetActive(true);
     }
 
     /// <summary> Triggers an emoji with the given id. </summary>
