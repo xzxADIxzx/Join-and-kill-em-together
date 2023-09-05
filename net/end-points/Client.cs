@@ -41,7 +41,7 @@ public class Client : Endpoint
             Networking.EachEntity(entity =>
             {
                 // destroy all enemies, because the host died and was thrown back to the checkpoint
-                if (entity is RemoteEnemy && entity != null) Object.Destroy(entity.gameObject);
+                if (entity is Enemy && entity != null) Object.Destroy(entity.gameObject);
             });
         });
 
@@ -51,7 +51,7 @@ public class Client : Endpoint
             var entity = entities[r.Id()];
 
             // kill the enemy so that there is no desynchronization
-            if (entity is RemoteEnemy enemy) enemy?.Kill();
+            if (entity is Enemy enemy) enemy?.Kill();
         });
 
         Listen(PacketType.BossDefeated, r =>

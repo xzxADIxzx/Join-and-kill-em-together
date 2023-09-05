@@ -60,7 +60,7 @@ public class Enemies
     #region instantiation
 
     /// <summary> Spawns a remote enemy with the given type. </summary>
-    public static RemoteEnemy Instantiate(EntityType type)
+    public static Enemy Instantiate(EntityType type)
     {
         // Malicious face's enemyId is in a child object
         // https://discord.com/channels/1132614140414935070/1132614140876292190/1146507403102257162
@@ -69,8 +69,7 @@ public class Enemies
                 Object.Instantiate(Prefabs[(int)type].transform.parent.gameObject).transform.GetChild(0).gameObject;
         obj.name = "Net"; // needed to prevent object looping between client and server
 
-        var enemy = obj.AddComponent<RemoteEnemy>();
-        enemy.Type = type;
+        var enemy = obj.AddComponent<Enemy>();
 
         // for some reasons, the size of the Cerberus is smaller than necessary
         if (type == EntityType.Cerberus) obj.transform.localScale = new(4f, 4f, 4f);

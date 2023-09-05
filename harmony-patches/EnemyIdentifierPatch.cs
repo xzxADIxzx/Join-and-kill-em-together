@@ -38,7 +38,7 @@ public class EnemyStartPatch
             __instance.spawnIn = true;
 
             // teleport the enemy so that the spawn effect does not appear at the origin
-            if (__instance.TryGetComponent<RemoteEnemy>(out var enemy)) __instance.transform.position = new(enemy.x.target, enemy.y.target, enemy.z.target);
+            if (__instance.TryGetComponent<Enemy>(out var enemy)) __instance.transform.position = new(enemy.x.target, enemy.y.target, enemy.z.target);
 
             return true;
         }
@@ -48,7 +48,7 @@ public class EnemyStartPatch
 
         if (LobbyController.IsOwner)
         {
-            var enemy = __instance.gameObject.AddComponent<LocalEnemy>();
+            var enemy = __instance.gameObject.AddComponent<Enemy>();
             Networking.Entities[enemy.Id] = enemy;
 
             return true;
@@ -119,7 +119,7 @@ public class EnemyDeathPatch
         if (!LobbyController.IsOwner || __instance.dead) return;
 
         // if the enemy doesn't have an entity component, then it was created before the lobby
-        if (!__instance.TryGetComponent<LocalEnemy>(out var enemy)) return;
+        if (!__instance.TryGetComponent<Enemy>(out var enemy)) return;
 
         // notify each client that the enemy has died
         byte[] enemyData = Writer.Write(w => w.Id(enemy.Id));
