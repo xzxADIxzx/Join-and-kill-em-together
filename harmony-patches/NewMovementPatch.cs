@@ -56,3 +56,10 @@ public class DeathPatch
         }
     }
 }
+
+[HarmonyPatch(typeof(CheatsManager), nameof(CheatsManager.HandleCheatBind))]
+public class CheatsPatch
+{
+    // cheats shouldn't work in chat or during animation
+    static bool Prefix() => !Chat.Instance.Shown && Movement.Instance.Emoji == 0xFF;
+}

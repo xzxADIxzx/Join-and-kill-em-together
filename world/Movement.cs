@@ -16,8 +16,6 @@ public class Movement : MonoSingleton<Movement>
 {
     /// <summary> Reference to local player's rigidbody. </summary>
     private static Rigidbody rb { get => NewMovement.Instance.rb; }
-    /// <summary> Whether cheats were enabled at the time of blocking movement. </summary>
-    private static bool wasCheatsEnabled;
 
     /// <summary> Emoji selection wheel keybind. </summary>
     public UKKeyBind EmojiBind;
@@ -42,9 +40,6 @@ public class Movement : MonoSingleton<Movement>
     {
         // initialize the singleton
         Utils.Object("Movement", Plugin.Instance.transform).AddComponent<Movement>();
-
-        // don't need to save cheat state between levels
-        SceneManager.sceneLoaded += (scene, mode) => wasCheatsEnabled = false;
     }
 
     public void LateUpdate() // late update is needed in order to overwrite the time scale value
@@ -116,15 +111,6 @@ public class Movement : MonoSingleton<Movement>
 
         // fix ultrasoap
         rb.constraints = enable ? RigidbodyConstraints.FreezeRotation : RigidbodyConstraints.FreezeAll;
-
-        // temporary disable cheats
-        if (enable)
-            CheatsController.Instance.cheatsEnabled = wasCheatsEnabled;
-        else
-        {
-            wasCheatsEnabled = CheatsController.Instance.cheatsEnabled;
-            CheatsController.Instance.cheatsEnabled = false;
-        }
     }
 
     /// <summary> Toggles cursor visibility. </summary>
@@ -147,7 +133,7 @@ public class Movement : MonoSingleton<Movement>
 
         // preventing some ultra stupid bug
         OptionsManager.Instance.frozen = !enable;
-        Console.Instance.enabled = enable;
+        Console.Instance.enabled = CheatsController.Instance.enabled = enable;
 
         // block camera rotation
         CameraController.Instance.enabled = CameraController.Instance.activated = enable;
