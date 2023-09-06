@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-using Jaket.Content;
 using Jaket.UI;
 
 /// <summary> Lobby controller with several useful methods. </summary>

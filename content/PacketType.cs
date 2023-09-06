@@ -25,5 +25,7 @@ public enum PacketType
     /// <summary> Need to open a certain door. Called by the host so that clients don't get stuck in a room. </summary>
     OpenDoor,
     /// <summary> Need to activate a certain object. It can be anything, because there are a lot of different stuff in the game. </summary>
-    ActivateObject
+    ActivateObject,
+    /// <summary> Any action with the cinema, like starting a video, pausing or rewinding. </summary>
+    CinemaAction
 }
