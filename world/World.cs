@@ -49,6 +49,10 @@ public class World : MonoSingleton<World>
             Activators.FindByParentOfParentNameAndActive("Level 4-2", "6B Stuff"),
             Activators.FindByNameAndActiveParentOfParent("Level 4-2", "Activator 2", obj => obj?.transform.parent.gameObject.SetActive(true), true),
 
+            // this level has one non-opening door and a Mysterious Druid Knight (& Owl)
+            Activators.FindDoorEveryoneKnowsAbout("Level 4-3", "DoorGreed"),
+            Activators.FindByNameAndActiveParent("Level 4-3", "Secret Tablet"),
+
             // there is a door in the arena through which V2 escapes and you also need to synchronize the outro and the exit building
             Activators.FindByNameAndActiveParentOfParent("Level 4-4", "Checkpoint Activator", obj =>
             {
@@ -65,6 +69,9 @@ public class World : MonoSingleton<World>
 
             // there is a checkpoint deactivator at level 5-1, the deactivation of which needs to be synchronized
             Activators.FindByNameAndActiveParentOfParent("Level 5-1", "CheckPointsUndisabler"),
+
+            // during the battle with the Angry and Rude, the arena will be fenced with a cage
+            Activators.FindByNameAndActiveParentOfParentOfParent("Level 6-1", "Cage Disabler"),
 
             // Minos & Sisyphus has a unique cutscene and a non-working exit from the level
             Activators.FindByNameAndActiveParent("Level P-1", "MinosPrimeIntro", disposable: true),

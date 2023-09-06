@@ -77,12 +77,18 @@ public class Activators
     public static SynchronizedActivator FindByNameAndActiveParentOfParent(string level, string name, Action<GameObject> action = null, bool disposable = false) =>
             new SynchronizedActivator(level, disposable, Prov(a => a.name == name && a.transform.parent.parent.gameObject.activeInHierarchy), Action(action));
 
+    public static SynchronizedActivator FindByNameAndActiveParentOfParentOfParent(string level, string name, Action<GameObject> action = null, bool disposable = false) =>
+            new SynchronizedActivator(level, disposable, Prov(a => a.name == name && a.transform.parent.parent.parent.gameObject.activeInHierarchy), Action(action));
+
     public static SynchronizedActivator FindByParentOfParentNameAndActive(string level, string name, Action<GameObject> action = null, bool disposable = false) =>
             new SynchronizedActivator(level, disposable, Prov(a =>
             {
                 var pop = a.transform.parent?.parent?.gameObject;
                 return pop != null && pop.name.StartsWith(name) && pop.activeInHierarchy;
             }), Action(action));
+
+    public static SynchronizedActivator FindDoorEveryoneKnowsAbout(string level, string name, Action<GameObject> action = null, bool disposable = false) =>
+            new SynchronizedActivator(level, disposable, Prov(a => a.transform.parent?.gameObject.name == name && a.transform.parent.parent == null), Action(action));
 
     public static InstantActivator FindInstantByName(string level, string name) =>
             new InstantActivator(level, Prov(a => a.name == name));
