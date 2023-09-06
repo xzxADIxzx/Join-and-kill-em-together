@@ -63,3 +63,10 @@ public class CheatsPatch
     // cheats shouldn't work in chat or during animation
     static bool Prefix() => !Chat.Instance.Shown && Movement.Instance.Emoji == 0xFF;
 }
+
+[HarmonyPatch(typeof(CheatsController), nameof(CheatsController.Update))]
+public class CheatsMenuPatch
+{
+    // cheat menu shouldn't appear in chat or during animation
+    static bool Prefix() => !Chat.Instance.Shown && Movement.Instance.Emoji == 0xFF;
+}

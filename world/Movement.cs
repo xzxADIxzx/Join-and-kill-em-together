@@ -101,9 +101,6 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Toggles the ability to move, used in the chat and etc. </summary>
     public static void ToggleMovement(bool enable)
     {
-        // double turning off movement can lead to bugs
-        if (!NewMovement.Instance.enabled && !HookArm.Instance.enabled && !enable) return;
-
         NewMovement.Instance.enabled = GunControl.Instance.enabled = FistControl.Instance.enabled = HookArm.Instance.enabled = enable;
 
         // put the hook back in place
@@ -133,7 +130,7 @@ public class Movement : MonoSingleton<Movement>
 
         // preventing some ultra stupid bug
         OptionsManager.Instance.frozen = !enable;
-        Console.Instance.enabled = CheatsController.Instance.enabled = enable;
+        Console.Instance.enabled = enable;
 
         // block camera rotation
         CameraController.Instance.enabled = CameraController.Instance.activated = enable;
