@@ -59,6 +59,19 @@ public class InstantActivator : Activator
     public override void Activate() {}
 }
 
+/// <summary> Activator that simply triggers the action when loading into a level. </summary>
+public class ActionActivator : Activator
+{
+    /// <summary> Action to run on the level. </summary>
+    public Action Action;
+
+    public ActionActivator(string level, Action action) : base(level, false) => this.Action = action;
+
+    public override void Init() => Action();
+
+    public override void Activate() {}
+}
+
 /// <summary> Object activator provider. </summary>
 public delegate ObjectActivator ObjectProv();
 

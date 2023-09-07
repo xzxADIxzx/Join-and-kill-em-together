@@ -41,6 +41,16 @@ public class World : MonoSingleton<World>
         // create activators to synchronize different things in the level
         World.Instance.activators.AddRange(new Activator[]
         {
+            // there is a door behind the secret boss that doesn't open on its own
+            new ActionActivator("Level 1-3", () =>
+            {
+                if (LobbyController.IsOwner) return;
+                var door = GameObject.Find("LargeDoorSmaller");
+
+                door.transform.GetChild(0).gameObject.SetActive(true);
+                door.transform.GetChild(1).gameObject.SetActive(true);
+            }),
+
             // there are some skull cases and a couple of doors at level 4-2
             Activators.FindInstantByName("Level 4-2", "6A Activator"),
             Activators.FindInstantByName("Level 4-2", "6B Activator"),
