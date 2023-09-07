@@ -7,6 +7,7 @@ using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net;
 using Jaket.Net.EntityTypes;
+using Jaket.World;
 
 [HarmonyPatch(typeof(EnemyIdentifier), "Start")]
 public class EnemyStartPatch
@@ -55,6 +56,13 @@ public class EnemyStartPatch
         }
         else
         {
+            // for some incredible reason this boss can't just be turned off
+            if (__instance.gameObject.name == "Mandalore")
+            {
+                Object.Destroy(__instance.gameObject);
+                World.Instance.Recache();
+            }
+
             if (boss)
                 // will be used in the future to trigger the game's internal logic
                 __instance.gameObject.SetActive(false);

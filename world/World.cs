@@ -51,7 +51,8 @@ public class World : MonoSingleton<World>
 
             // this level has one non-opening door and a Mysterious Druid Knight (& Owl)
             Activators.FindDoorEveryoneKnowsAbout("Level 4-3", "DoorGreed"),
-            Activators.FindByNameAndActiveParent("Level 4-3", "Secret Tablet"),
+            Activators.FindByNameAndActiveParent("Level 4-3", "Secret Tablet", obj =>
+                    obj.transform.parent.parent.GetChild(2).GetChild(0).Find("Doorblocker").GetComponent<Door>().SimpleOpenOverride()),
 
             // there is a door in the arena through which V2 escapes and you also need to synchronize the outro and the exit building
             Activators.FindByNameAndActiveParentOfParent("Level 4-4", "Checkpoint Activator", obj =>
