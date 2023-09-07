@@ -1,5 +1,6 @@
 namespace Jaket.Net.EntityTypes;
 
+using System;
 using UnityEngine;
 
 using Jaket.Content;
@@ -17,6 +18,8 @@ public class Enemy : Entity
     private Idol idol;
     /// <summary> Idol target id in global entity list. Will be equal to the maximum value if there is no target. </summary>
     private ulong lastTargetId = ulong.MaxValue, targetId;
+    /// <summary> Enemy subtype. 0 - standard, 1 - Agony or Angry, 2 - Tundra or Rude. </summary>
+    private byte subtype;
 
     /// <summary> Enemy health, position and rotation. </summary>
     public FloatLerp health, x, y, z, rotation;
@@ -54,6 +57,32 @@ public class Enemy : Entity
 
         // run a loop that will update the target id of the idol every second
         if (TryGetComponent<Idol>(out idol) && LobbyController.IsOwner) InvokeRepeating("UpdateTarget", 0f, 1f);
+    }
+
+    private void Start()
+    {
+        // find the enemy subtype
+        subtype = healthBar?.bossName switch
+        {
+            "SWORDSMACHINE \"AGONY\"" or "INSURRECTIONIST \"ANGRY\"" => 1,
+            "SWORDSMACHINE \"TUNDRA\"" or "INSURRECTIONIST \"RUDE\"" => 2,
+            _ => subtype
+        };
+
+        // apply the enemy subtype if there is one
+        if (LobbyController.IsOwner || subtype == 0) return;
+
+        if (enemyId.enemyType == EnemyType.Swordsmachine)
+        {
+            var original = GameObject.Find("S - Secret Fight").transform.GetChild(0).GetChild(0).GetChild(subtype == 1 ? 2 : 1);
+
+            transform.GetChild(0).GetChild(1).GetComponent<Renderer>().material = original.transform.GetChild(0).GetChild(1).GetComponent<Renderer>().material;
+            transform.GetChild(0).GetChild(2).GetComponent<Renderer>().material = original.transform.GetChild(0).GetChild(2).GetComponent<Renderer>().material;
+        }
+
+        if (enemyId.enemyType == EnemyType.Sisyphus)
+            foreach (var renderer in transform.GetComponentsInChildren<SkinnedMeshRenderer>())
+                renderer.material.color = subtype == 1 ? new(1f, .25f, .25f) : new(.25f, .5f, 1f);
     }
 
     private void Update()
@@ -108,6 +137,7 @@ public class Enemy : Entity
 
         w.Bool(healthBar != null);
         if (idol) w.Id(targetId);
+        w.Byte(subtype);
     }
 
     public override void Read(Reader r)
@@ -120,6 +150,7 @@ public class Enemy : Entity
 
         boss = r.Bool();
         if (idol) targetId = r.Id();
+        subtype = r.Byte();
     }
 
     public override void Damage(Reader r) => Bullets.DealDamage(enemyId, r);
