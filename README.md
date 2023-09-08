@@ -9,6 +9,7 @@ It's also in development, but with gnashing of teeth it's already playable.
 ## Features
 * Steam integration for invitations.
 * Chat, list of players and indicators to help you find each other on the map.
+* Automatic check for an update, because stop playing on 0.3.0, please.
 * Synchronization of player positions, their weapons and projectiles.
 * Synchronization of the position and health of enemies.
 * Up to 5 teams, making available both the passage of the campaign and pvp.

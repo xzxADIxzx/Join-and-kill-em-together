@@ -13,7 +13,7 @@ using Jaket.UI;
 using Jaket.World;
 
 /// <summary> Plugin main class. Essentially only initializes all other components. </summary>
-[BepInPlugin("xzxADIxzx.Jaket", "Jaket", "0.7.20")]
+[BepInPlugin("xzxADIxzx.Jaket", "Jaket", Version.CURRENT)]
 public class Plugin : BaseUnityPlugin
 {
     /// <summary> Plugin instance available everywhere. </summary>
@@ -38,6 +38,9 @@ public class Plugin : BaseUnityPlugin
     {
         // ui components can only be initialized in the main menu, because they need some resources
         if (Initialized || SceneHelper.CurrentScene != "Main Menu") return;
+
+        // notify players about the availability of an update so that they no longer whine to me about something not working
+        Version.Check4Update();
 
         // initialize content components
         DollAssets.Load();
