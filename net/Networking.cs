@@ -113,6 +113,9 @@ public class Networking : MonoBehaviour
 
             // destroy the player doll
             if (Entities.TryGetValue(member.Id, out var player)) Destroy(player.gameObject);
+
+            // remove the exited player indicator
+            PlayerIndicators.Instance.Rebuild();
         };
 
         // create a local player to sync player data
