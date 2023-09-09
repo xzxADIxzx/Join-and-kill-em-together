@@ -112,7 +112,7 @@ public class Networking : MonoBehaviour
             if (LobbyController.IsOwner) lobby.SendChatString("<system><color=red>Player " + member.Name + " left!</color>");
 
             // destroy the player doll
-            if (Entities.TryGetValue(member.Id, out var player)) Destroy(player.gameObject);
+            if (Entities.TryGetValue(member.Id, out var player)) DestroyImmediate(player.gameObject);
 
             // remove the exited player indicator
             PlayerIndicators.Instance.Rebuild();

@@ -18,8 +18,8 @@ public class RemotePlayer : Entity
     /// <summary> Player health, position and rotation. </summary>
     private FloatLerp health, x, y, z, bodyRotation, headRotation, hookX, hookY, hookZ;
 
-    /// <summary> Transforms of the head and the hand holding a weapon. </summary>
-    private Transform head, hand, hook, hookRoot;
+    /// <summary> Transforms of the head, the hand holding a weapon and other stuff. </summary>
+    private Transform head, hand, hook, hookRoot, rocket;
 
     /// <summary> Last and current player team, needed for PvP mechanics. </summary>
     public Team lastTeam = (Team)0xFF, team;
@@ -94,6 +94,7 @@ public class RemotePlayer : Entity
         hand = Utils.Object("Weapons", hand).transform;
         hook = transform.GetChild(0).GetChild(1).GetChild(1);
         hookRoot = transform.GetChild(0).GetChild(1).GetChild(5).GetChild(0).GetChild(0).GetChild(0).GetChild(0);
+        rocket = transform.GetChild(0).GetChild(1).GetChild(4).GetChild(1);
 
         // other stuff
         wingMaterial = transform.GetChild(0).GetChild(3).GetComponent<SkinnedMeshRenderer>().materials[1];
@@ -105,6 +106,12 @@ public class RemotePlayer : Entity
 
         enemyId.weakPoint = head.gameObject;
         hookWinch.material = HookArm.Instance.GetComponent<LineRenderer>().material;
+
+        var prefab = GunSetter.Instance.rocketBlue[0].GetComponent<RocketLauncher>().rocket.transform.GetChild(1).GetChild(0).gameObject;
+        var flash = Instantiate(prefab, rocket).transform;
+
+        flash.localPosition = new();
+        flash.localScale = new(.02f, .02f, .02f);
     }
 
     private void Start()
@@ -223,6 +230,9 @@ public class RemotePlayer : Entity
 
             // fire the trigger if the started riding on a rocket
             if (riding) animator.SetTrigger("Ride");
+
+            // toggle the visibility of the rocket effects
+            rocket.gameObject.SetActive(riding);
         }
 
         if (wasInAir != inAir)
