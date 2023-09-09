@@ -1,9 +1,12 @@
 namespace Jaket.Net.EntityTypes;
 
+using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 using Jaket.Content;
 using Jaket.IO;
+using Jaket.UI;
 
 /// <summary> Representation of the most enemies in the game responsible for synchronizing position and target of the idols. </summary>
 public class Enemy : Entity
@@ -110,12 +113,33 @@ public class Enemy : Entity
         {
             fakeFerryman = gameObject.AddComponent<FerrymanFake>();
             Destroy(GetComponent<Ferryman>());
+
+            // replace the animation controller so that the ferryman sits and does not spin
+            GetComponent<Animator>().runtimeAnimatorController = Array.Find(Resources.FindObjectsOfTypeAll<RuntimeAnimatorController>(), c => c.name == "FerrymanIntro2");
+
+            // add components that will trigger an animation when the ferryman touches a coin
+            var trigger = Utils.Object("Coin Trigger", transform);
+            trigger.transform.localPosition = new();
+            trigger.transform.localScale = new(3f, 3f, 3f);
+
+            Utils.Component<CapsuleCollider>(trigger, collider =>
+            {
+                collider.height = 2f;
+                collider.isTrigger = true;
+            });
+
+            Utils.Component<CoinActivated>(trigger, coin =>
+            {
+                coin.disableCoin = true;
+                coin.events = new UltrakillEvent() { onActivate = new UnityEvent() };
+                coin.events.onActivate.AddListener(() => fakeFerryman?.CoinCatch());
+            });
         }
 
         if (lastTargetId != targetId)
         {
             lastTargetId = targetId;
-            idol.ChangeOverrideTarget( // update idol target to match host
+            idol?.ChangeOverrideTarget( // update idol target to match host
                     Networking.Entities.TryGetValue(targetId, out var entity) && entity != null &&
                     entity.TryGetComponent<EnemyIdentifier>(out var enemy) ? enemy : null);
         }

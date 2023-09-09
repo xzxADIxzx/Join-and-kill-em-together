@@ -152,8 +152,15 @@ public class IdolsLogicPatch
     static bool Prefix() => LobbyController.Lobby == null || LobbyController.IsOwner;
 }
 
+[HarmonyPatch(typeof(FerrymanFake), "Update")]
+public class FakeFerrymanUpdatePatch
+{
+    // rotation is synchronized by the enemy component
+    static bool Prefix() => LobbyController.Lobby == null || LobbyController.IsOwner;
+}
+
 [HarmonyPatch(typeof(FerrymanFake), nameof(FerrymanFake.OnLand))]
-public class FerrymanFakePatch
+public class FakeFerrymanDeathPatch
 {
     // destroying the client's fake ferryman
     static void Prefix(FerrymanFake __instance)
