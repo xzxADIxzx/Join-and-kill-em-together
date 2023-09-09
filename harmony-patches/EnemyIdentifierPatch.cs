@@ -151,3 +151,13 @@ public class IdolsLogicPatch
     // idols shouldn't have logic on clients
     static bool Prefix() => LobbyController.Lobby == null || LobbyController.IsOwner;
 }
+
+[HarmonyPatch(typeof(FerrymanFake), nameof(FerrymanFake.OnLand))]
+public class FerrymanFakePatch
+{
+    // destroying the client's fake ferryman
+    static void Prefix(FerrymanFake __instance)
+    {
+        if (LobbyController.IsOwner && __instance.TryGetComponent<Enemy>(out var enemy)) Networking.Redirect(Writer.Write(w => w.Id(enemy.Id)), PacketType.EnemyDied);
+    }
+}

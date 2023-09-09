@@ -1,6 +1,5 @@
 namespace Jaket.Net.EntityTypes;
 
-using System;
 using UnityEngine;
 
 using Jaket.Content;
@@ -11,8 +10,10 @@ public class Enemy : Entity
 {
     /// <summary> Enemy identifier component. </summary>
     private EnemyIdentifier enemyId;
-    /// <summary> Null if the enemy is not the boss. </summary>
+    /// <summary> Null if the enemy is not a boss. </summary>
     private BossHealthBar healthBar;
+    /// <summary> Null if the enemy is not a fake ferryman. </summary>
+    private FerrymanFake fakeFerryman;
 
     /// <summary> Whether the enemy is an idol or not. </summary>
     private Idol idol;
@@ -25,6 +26,8 @@ public class Enemy : Entity
     public FloatLerp health, x, y, z, rotation;
     /// <summary> Whether the enemy is a boss and should have a health bar. </summary>
     public bool boss;
+    /// <summary> Whether the enemy is a fake ferryman. </summary>
+    public bool fake;
 
     private void Awake()
     {
@@ -38,6 +41,7 @@ public class Enemy : Entity
         // other stuff
         enemyId = GetComponent<EnemyIdentifier>();
         healthBar = GetComponent<BossHealthBar>();
+        fakeFerryman = GetComponent<FerrymanFake>();
 
         // prevent bosses from going into the second phase instantly
         health.target = enemyId.health;
@@ -101,6 +105,13 @@ public class Enemy : Entity
         // add a health bar if the enemy is a boss
         if (boss && healthBar == null) healthBar = gameObject.AddComponent<BossHealthBar>();
 
+        // add the fake ferryman component and destroy the original one
+        if (fake && fakeFerryman == null)
+        {
+            fakeFerryman = gameObject.AddComponent<FerrymanFake>();
+            Destroy(GetComponent<Ferryman>());
+        }
+
         if (lastTargetId != targetId)
         {
             lastTargetId = targetId;
@@ -117,7 +128,7 @@ public class Enemy : Entity
     public void Kill()
     {
         // it looks funny
-        enemyId.InstaKill();
+        if (!fake) enemyId.InstaKill();
 
         // reduce health to zero because the host destroyed enemy
         health.target = 0f;
@@ -126,7 +137,7 @@ public class Enemy : Entity
         if (healthBar != null) healthBar.Invoke("DestroyBar", 2f);
 
         // destroy the component to allow enemies like Malicious Face and Drone to fall
-        Destroy(this);
+        Destroy(fake ? gameObject : this);
     }
 
     public override void Write(Writer w)
@@ -136,6 +147,7 @@ public class Enemy : Entity
         w.Float(transform.eulerAngles.y);
 
         w.Bool(healthBar != null);
+        w.Bool(fakeFerryman != null);
         if (idol) w.Id(targetId);
         w.Byte(subtype);
     }
@@ -149,6 +161,7 @@ public class Enemy : Entity
         rotation.Read(r);
 
         boss = r.Bool();
+        fake = r.Bool();
         if (idol) targetId = r.Id();
         subtype = r.Byte();
     }
