@@ -104,6 +104,7 @@ public class RemotePlayer : Entity
         enemyId = GetComponent<EnemyIdentifier>();
         machine = GetComponent<Machine>();
 
+        enemyId.health = machine.health = health.target = 100f;
         enemyId.weakPoint = head.gameObject;
         hookWinch.material = HookArm.Instance.GetComponent<LineRenderer>().material;
 

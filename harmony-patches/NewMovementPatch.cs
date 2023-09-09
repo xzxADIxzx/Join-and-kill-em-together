@@ -2,6 +2,7 @@ namespace Jaket.HarmonyPatches;
 
 using HarmonyLib;
 using Steamworks;
+using ULTRAKILL.Cheats;
 using UnityEngine;
 
 using Jaket.Content;
@@ -68,5 +69,12 @@ public class CheatsPatch
 public class CheatsMenuPatch
 {
     // cheat menu shouldn't appear in chat or during animation
+    static bool Prefix() => !Chat.Instance.Shown && Movement.Instance.Emoji == 0xFF;
+}
+
+[HarmonyPatch(typeof(Noclip), nameof(Noclip.Update))]
+public class NoclipPatch
+{
+    // this cheat shouldn't work in chat or during animation
     static bool Prefix() => !Chat.Instance.Shown && Movement.Instance.Emoji == 0xFF;
 }
