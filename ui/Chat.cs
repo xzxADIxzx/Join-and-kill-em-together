@@ -7,6 +7,8 @@ using UnityEngine.UI;
 
 using Jaket.Net;
 using Jaket.World;
+using System.Collections.Generic;
+using System.Collections;
 
 /// <summary> Front end of the chat, back end implemented via Steamworks. </summary>
 public class Chat : MonoSingleton<Chat>
@@ -37,6 +39,23 @@ public class Chat : MonoSingleton<Chat>
     public InputField field;
     /// <summary> Arrival time of the last message, used to change the chat transparency. </summary>
     private float lastMessageTime;
+    /// <summary> Last messages to cycle with. </summary>
+    private List<string> lastMessages = new();
+    /// <summary> Coroutine used to scroll the messages. </summary>
+    Coroutine messageScrolled;
+    private int _lastMessageIndex;
+    /// <summary Current last message index. </summary>
+    private int lastMessageIndex
+    {
+        get => _lastMessageIndex;
+        set
+        {
+            // Warp around the list
+            if (value >= lastMessages.Count) _lastMessageIndex = 0;
+            else if (value < 0) _lastMessageIndex = lastMessages.Count - 1;
+            else _lastMessageIndex = value;
+        }
+    }
 
     // <summary> Formats the message for a more presentable look. </summary>
     public static string FormatMessage(string author, string message) => $"<b>{author}<color=#ff7f50>:</color></b> {message}";
@@ -114,6 +133,51 @@ public class Chat : MonoSingleton<Chat>
         if (Shown) field.ActivateInputField();
     }
 
+    public void ScrollMessages(bool up)
+    {
+        // checking if the list is not empty and chat is not hidden
+        if (lastMessages.Count == 0 && !Shown) return;
+
+        // updating the last message index
+        lastMessageIndex += up ? -1 : 1;
+
+        // updating the text field
+        field.text = lastMessages[lastMessageIndex];
+
+        if (messageScrolled != null) // Check if the Coroutine variable is not null 
+        { 
+            StopCoroutine(messageScrolled); // Stop the current coroutine 
+        } 
+        messageScrolled = StartCoroutine(MessageScrolled());
+
+        // fixing the caret position
+        field.caretPosition = field.text.Length;
+    }
+
+    private IEnumerator MessageScrolled()
+    {
+        Text textComponent = field.textComponent;
+        Color startColor = Color.green;
+        Color endColor = Color.white;
+
+        const float duration = 0.3f;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            float normalizedTime = Mathf.InverseLerp(0f, duration, elapsed);
+            // normalizedTime is now in range [0, 1]
+
+            textComponent.color = Color.Lerp(startColor, endColor, normalizedTime);
+            yield return null;
+
+            // increment the elapsed time by Time.unscaledDeltaTime
+            elapsed += Time.unscaledDeltaTime;
+        }
+
+        textComponent.color = endColor; // ensure the color is set to the end color
+    }
+
     /// <summary> Fires when the input field loses its focus. </summary>
     public void OnFocusLost(string message)
     {
@@ -134,8 +198,12 @@ public class Chat : MonoSingleton<Chat>
         // remove extra spaces from message
         message = message.Trim();
 
-        // if the message is not empty, then send it to other players
-        if (message != "") LobbyController.Lobby?.SendChatString(message);
+        // if the message is not empty, then send it to other players and remember it
+        if (message != "")
+        {
+            LobbyController.Lobby?.SendChatString(message);
+            lastMessages.Insert(0, message);
+        }
 
         // clear the input field
         field.text = "";
