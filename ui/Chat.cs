@@ -107,7 +107,7 @@ public class Chat : MonoSingleton<Chat>
         if (field.text != "" && field.isFocused) return;
 
         // no comments
-        field.gameObject.SetActive(Shown = !Shown);
+        field.gameObject.SetActive(Shown = !Shown && LobbyController.Lobby != null);
         if (Movement.Instance.Emoji == 0xFF) Movement.ToggleMovement(!Shown);
 
         // focus on input field
