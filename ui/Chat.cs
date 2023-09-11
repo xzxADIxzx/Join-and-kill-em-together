@@ -39,23 +39,11 @@ public class Chat : MonoSingleton<Chat>
     public InputField field;
     /// <summary> Arrival time of the last message, used to change the chat transparency. </summary>
     private float lastMessageTime;
-    /// <summary> Last messages to cycle with. </summary>
-    private List<string> lastMessages = new();
-    /// <summary> Coroutine used to scroll the messages. </summary>
-    Coroutine messageScrolled;
-    private int _lastMessageIndex;
-    /// <summary Current last message index. </summary>
-    private int lastMessageIndex
-    {
-        get => _lastMessageIndex;
-        set
-        {
-            // Warp around the list
-            if (value >= lastMessages.Count) _lastMessageIndex = 0;
-            else if (value < 0) _lastMessageIndex = lastMessages.Count - 1;
-            else _lastMessageIndex = value;
-        }
-    }
+
+    /// <summary> Messages sent by the player. </summary>
+    private List<string> messages = new();
+    /// <summary> Index of the current message in the list. </summary>
+    private int messageIndex;
 
     // <summary> Formats the message for a more presentable look. </summary>
     public static string FormatMessage(string author, string message) => $"<b>{author}<color=#ff7f50>:</color></b> {message}";
@@ -133,49 +121,34 @@ public class Chat : MonoSingleton<Chat>
         if (Shown) field.ActivateInputField();
     }
 
+    /// <summary> Scrolls messages through the list of messages sent by the player. </summary>
     public void ScrollMessages(bool up)
     {
-        // checking if the list is not empty and chat is not hidden
-        if (lastMessages.Count == 0 && !Shown) return;
+        // to scroll through messages, the chat must be open and the list must have at least one element
+        if (messages.Count == 0 || !Shown) return;
 
-        // updating the last message index
-        lastMessageIndex += up ? -1 : 1;
+        // limiting the message index
+        if (up ? messageIndex == messages.Count - 1 : messageIndex == -1) return;
 
-        // updating the text field
-        field.text = lastMessages[lastMessageIndex];
-
-        if (messageScrolled != null) // Check if the Coroutine variable is not null 
-        { 
-            StopCoroutine(messageScrolled); // Stop the current coroutine 
-        } 
-        messageScrolled = StartCoroutine(MessageScrolled());
-
-        // fixing the caret position
+        // update message id and text in the input field
+        messageIndex += up ? 1 : -1;
+        field.text = messageIndex == -1 ? "" : messages[messageIndex];
         field.caretPosition = field.text.Length;
+
+        // run message highlight
+        StopCoroutine("MessageScrolled");
+        StartCoroutine("MessageScrolled");
     }
 
+    /// <summary> Interpolates the color of the input field from green to white. </summary>
     private IEnumerator MessageScrolled()
     {
-        Text textComponent = field.textComponent;
-        Color startColor = Color.green;
-        Color endColor = Color.white;
-
-        const float duration = 0.3f;
-        float elapsed = 0f;
-
-        while (elapsed < duration)
+        float start = Time.time;
+        while (Time.time - start < .4f)
         {
-            float normalizedTime = Mathf.InverseLerp(0f, duration, elapsed);
-            // normalizedTime is now in range [0, 1]
-
-            textComponent.color = Color.Lerp(startColor, endColor, normalizedTime);
+            field.textComponent.color = Color.Lerp(Color.green, Color.white, (Time.time - start) * 2.5f);
             yield return null;
-
-            // increment the elapsed time by Time.unscaledDeltaTime
-            elapsed += Time.unscaledDeltaTime;
         }
-
-        textComponent.color = endColor; // ensure the color is set to the end color
     }
 
     /// <summary> Fires when the input field loses its focus. </summary>
@@ -202,11 +175,12 @@ public class Chat : MonoSingleton<Chat>
         if (message != "")
         {
             LobbyController.Lobby?.SendChatString(message);
-            lastMessages.Insert(0, message);
+            messages.Insert(0, message);
         }
 
-        // clear the input field
+        // clear the input field & reset message index
         field.text = "";
+        messageIndex = -1;
 
         // if the message was sent not by the button that toggles the chat, then need to do it yourself
         if (!Input.GetKeyDown(UKAPI.GetKeyBind("CHAT").keyBind)) Toggle();
