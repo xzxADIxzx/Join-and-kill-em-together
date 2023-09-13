@@ -7,6 +7,7 @@ using UnityEngine.Video;
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net;
+using Jaket.UI;
 
 /// <summary> Class responsible for loading and playing the video on the cinema screen. </summary>
 public class Cinema
@@ -29,6 +30,9 @@ public class Cinema
         {
             Play(url); // play the video and send the link to it to all clients
             Networking.Redirect(Writer.Write(w => w.String(url)), PacketType.CinemaAction);
+
+            // turn on the video player
+            CinemaPlayer.Instance.Play();
         }
     });
 

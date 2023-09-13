@@ -64,6 +64,7 @@ public class Plugin : BaseUnityPlugin
         PlayerIndicators.Build();
         Chat.Build();
         EmojiWheel.Build();
+        CinemaPlayer.Build();
 
         // initialize harmony and patch all the necessary classes
         new Harmony("Should I write something here?").PatchAll();
