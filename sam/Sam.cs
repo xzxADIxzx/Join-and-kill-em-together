@@ -53,6 +53,31 @@ public class Sam
 
     #region processing
 
+    /// <summary>
+    /// The input array contains a string of phonemes and stress markers along the lines of:
+    ///
+    ///     JAEKEHT IHZ AH GUH5D MAAD. [0x9B]
+    ///
+    /// Some phonemes are 2 bytes long, such as "AE" and "EH".
+    /// Others are 1 byte long, such as "T" and "Z".
+    /// There are also stress markers, such as "5" and ".".
+    /// Byte 0x9B marks the end of the string.
+    ///
+    /// The characters of the phonemes are stored in the PhonemeNameTable.
+    /// The stress characters are arranged in low to high stress order in StressCharTable.
+    ///
+    /// For parsing, the following instructions are repeated until the end marker [0x9B] is reached:
+    ///
+    ///     1. Looking for a full match of phonemes without the '*' character.
+    ///     2. If a match is not found, the search is repeated, but only for the first character.
+    ///     3. In case of failure, search in the stress table.
+    ///     4. If this fails, then the input data is invalid, return false.
+    ///
+    /// Upon success:
+    ///
+    ///     1. PhonemeIndex will contain the index of the phonemes and at least one end mark.
+    ///     2. PhonemeStress will contain the stress value for each phoneme 
+    /// </summary>
     public bool ParsePhonemes()
     {
         // position in the output array
@@ -98,7 +123,7 @@ public class Sam
                 return false;
         }
 
-        // reached the end of the line without finding the end mark
+        // reached the end of the string without finding the end mark
         phonemeIndex[255] = 255;
         return true;
     }
