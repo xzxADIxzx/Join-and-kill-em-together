@@ -1,5 +1,7 @@
 namespace Jaket.Sam;
 
+using System.Collections.Generic;
+
 /// <summary> Contains all the constants used by the tts engine, many of which I couldn't understand. </summary>
 public class Constants
 {
@@ -512,7 +514,61 @@ public class Constants
     };
 
     #endregion
+    #region phonemes
+
+    /// <summary> Table of stress characters, using it to find their ids. </summary>
+    public static List<char> StressCharTable = new() { '1', '2', '3', '4', '5', '6', '7', '8' };
+
+    /// <summary> Table of phoneme names, using it to find their ids. </summary>
+    public static List<string> PhonemeNameTable = new()
+    {
+        " *", ".*", "?*", ",*", "-*", "IY", "IH", "EH", "AE", "AA", "AH", "AO", "UH", "AX", "IX", "ER",
+        "UX", "OH", "RX", "LX", "WX", "YX", "WH", "R*", "L*", "W*", "Y*", "M*", "N*", "NX", "DX", "Q*",
+        "S*", "SH", "F*", "TH", "/H", "/X", "Z*", "ZH", "V*", "DH", "CH", "**", "J*", "**", "**", "**",
+        "EY", "AY", "OY", "AW", "OW", "UW", "B*", "**", "**", "D*", "**", "**", "G*", "**", "**", "GX",
+        "**", "**", "P*", "**", "**", "T*", "**", "**", "K*", "**", "**", "KX", "**", "**", "UL", "UM", "UN"
+    };
+
+    /// <summary> Finds the phoneme id that completely matches the given one. </summary>
+    public static int FullMatch(char sign1, char sign2)
+    {
+        string sum = sign1 + "" + sign2; // C# sucks
+        return PhonemeNameTable.FindIndex(value => value == sum && value[1] != '*');
+    }
+
+    /// <summary> Finds the phoneme id that match the first character with the given one. </summary>
+    public static int WildMatch(char sign) => PhonemeNameTable.IndexOf(sign + "*");
+
+    #endregion
     #region other
+
+    /// <summary> Table of phoneme frequencies composed from three original ones. </summary>
+    public static readonly int[] PhonemeFrequencyTable = new[] {
+        0x000000, 0x5B4313, 0x5B4313, 0x5B4313, 0x5B4313, 0x6E540A, 0x5D490E, 0x5B4313,
+        0x583F18, 0x59281B, 0x572C17, 0x581F15, 0x522510, 0x592D14, 0x5D490E, 0x3E3112,
+        0x52240E, 0x581E12, 0x3E3312, 0x6E2515, 0x501D0D, 0x5D450F, 0x5A180B, 0x3C3212,
+        0x6E1E0E, 0x5A180B, 0x6E5309, 0x512E06, 0x793606, 0x655606, 0x793606, 0x5B4311,
+        0x634906, 0x6A4F06, 0x511A06, 0x794206, 0x5D490E, 0x522510, 0x5D3309, 0x67420A,
+        0x4C2808, 0x5D2F0A, 0x654F06, 0x654F06, 0x794206, 0x654F05, 0x796E06, 0x000000,
+        0x5A4813, 0x58271B, 0x581F15, 0x582B1B, 0x581E12, 0x52220D, 0x511A06, 0x511A06,
+        0x511A06, 0x794206, 0x795206, 0x794206, 0x706E06, 0x6E6E06, 0x6E6E06, 0x5E5406,
+        0x5E5406, 0x5E5406, 0x511A06, 0x511A06, 0x511A06, 0x794206, 0x794206, 0x794206,
+        0x656D06, 0x65560A, 0x706D0A, 0x5E5406, 0x5E5406, 0x5E5406, 0x087F2C, 0x017F13
+    };
+
+    /// <summary> Table of phoneme amplitudes composed from three original ones. </summary>
+    public static readonly int[] PhonemeAmplitudesTable = new[] {
+        0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x080A0D, 0x070B0D, 0x080D0E,
+        0x080E0F, 0x010D0F, 0x010C0F, 0x000C0F, 0x010B0F, 0x00090C, 0x070B0D, 0x050B0C,
+        0x010C0F, 0x000C0F, 0x060C0D, 0x01080D, 0x00080D, 0x070C0E, 0x00080D, 0x050A0C,
+        0x01080D, 0x00080D, 0x080A0D, 0x00030C, 0x000909, 0x030609, 0x000000, 0x000000,
+        0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x00030B, 0x01050B,
+        0x00030B, 0x00040B, 0x000000, 0x000000, 0x000001, 0x01050B, 0x0E0A00, 0x010202,
+        0x090E0E, 0x010D0F, 0x000C0F, 0x010D0F, 0x000C0F, 0x00080D, 0x000002, 0x000104,
+        0x000000, 0x000002, 0x000104, 0x000000, 0x000001, 0x000104, 0x000000, 0x000001,
+        0x000104, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000,
+        0x000000, 0x070A0C, 0x000000, 0x000000, 0x050A00, 0x000000, 0x13000F, 0x10000F
+    };
 
     /// <summary> Table of phoneme lengths combined from two original ones. </summary>
     public static readonly short[] PhonemeLengthTable = new short[] {
