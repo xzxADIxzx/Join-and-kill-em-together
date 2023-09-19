@@ -539,11 +539,30 @@ public class Constants
     /// <summary> Finds the phoneme id that match the first character with the given one. </summary>
     public static int WildMatch(char sign) => PhonemeNameTable.IndexOf(sign + "*");
 
+    /// <summary> Table of phoneme flags, used to distinguish between different types of sounds. </summary>
+    public static ushort[] PhonemeFlagsTable = new ushort[]
+    {
+        0x8000, 0xC100, 0xC100, 0xC100, 0xC100, 0x00A4, 0x00A4, 0x00A4,
+        0x00A4, 0x00A4, 0x00A4, 0x0084, 0x0084, 0x00A4, 0x00A4, 0x0084,
+        0x0084, 0x0084, 0x0084, 0x0084, 0x0084, 0x0084, 0x0044, 0x1044,
+        0x1044, 0x1044, 0x1044, 0x084C, 0x0C4C, 0x084C, 0x0448, 0x404C,
+        0x2440, 0x2040, 0x2040, 0x2440, 0x0040, 0x0040, 0x2444, 0x2044,
+        0x2044, 0x2444, 0x2048, 0x2040, 0x004C, 0x2044, 0x0000, 0x0000,
+        0x00B4, 0x00B4, 0x00B4, 0x0094, 0x0094, 0x0094, 0x004E, 0x004E,
+        0x004E, 0x044E, 0x044E, 0x044E, 0x004E, 0x004E, 0x004E, 0x004E,
+        0x004E, 0x004E, 0x004B, 0x004B, 0x004B, 0x044B, 0x044B, 0x044B,
+        0x004B, 0x004B, 0x004B, 0x004B, 0x004B, 0x004B, 0x0080, 0x00C1, 0x00C1
+    };
+
+    /// <summary> Whether the given phoneme contains the given flag. </summary>
+    public static bool HasFlag(int phoneme, ushort flag) => (PhonemeFlagsTable[phoneme] & flag) != 0;
+
     #endregion
     #region other
 
     /// <summary> Table of phoneme frequencies composed from three original ones. </summary>
-    public static readonly int[] PhonemeFrequencyTable = new[] {
+    public static readonly int[] PhonemeFrequencyTable = new[]
+    {
         0x000000, 0x5B4313, 0x5B4313, 0x5B4313, 0x5B4313, 0x6E540A, 0x5D490E, 0x5B4313,
         0x583F18, 0x59281B, 0x572C17, 0x581F15, 0x522510, 0x592D14, 0x5D490E, 0x3E3112,
         0x52240E, 0x581E12, 0x3E3312, 0x6E2515, 0x501D0D, 0x5D450F, 0x5A180B, 0x3C3212,
@@ -557,7 +576,8 @@ public class Constants
     };
 
     /// <summary> Table of phoneme amplitudes composed from three original ones. </summary>
-    public static readonly int[] PhonemeAmplitudesTable = new[] {
+    public static readonly int[] PhonemeAmplitudesTable = new[]
+    {
         0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x080A0D, 0x070B0D, 0x080D0E,
         0x080E0F, 0x010D0F, 0x010C0F, 0x000C0F, 0x010B0F, 0x00090C, 0x070B0D, 0x050B0C,
         0x010C0F, 0x000C0F, 0x060C0D, 0x01080D, 0x00080D, 0x070C0E, 0x00080D, 0x050A0C,
@@ -571,7 +591,8 @@ public class Constants
     };
 
     /// <summary> Table of phoneme lengths combined from two original ones. </summary>
-    public static readonly short[] PhonemeLengthTable = new short[] {
+    public static readonly short[] PhonemeLengthTable = new short[]
+    {
         0x0000, 0x1212, 0x1212, 0x1212, 0x0808, 0x0B08, 0x0908, 0x0B08, //  * .* ?* ,* -* IY IH EH
         0x0E08, 0x0F0B, 0x0B06, 0x100C, 0x0C0A, 0x0605, 0x0605, 0x0E0B, // AE AA AH AO UH AX IX ER
         0x0C0A, 0x0E0A, 0x0C0A, 0x0B09, 0x0808, 0x0807, 0x0B09, 0x0A07, // UX OH RX LX WX YX WH R*
@@ -584,8 +605,9 @@ public class Constants
         0x0706, 0x0201, 0x0404, 0x0706, 0x0101, 0x0404, 0x05C7, 0x05FF  // K* ** ** KX ** ** UL UM
     };
 
-    /// <summary> Pre-calculated sine values ​​from -127 to 127. </summary>
-    public static readonly short[] Sinus = new short[] {
+    /// <summary> Pre-calculated sine values from -127 to 127. </summary>
+    public static readonly short[] Sinus = new short[]
+    {
          0  ,  3  ,  6  ,  9  ,  12 ,  16 ,  19 ,  22 ,  25 ,  28 ,  31 ,  34 ,  37 ,  40 ,  43 ,  46 ,  49 ,  51 ,  54 ,  57 ,  60 ,  63 ,  65 ,  68 ,
          71 ,  73 ,  76 ,  78 ,  81 ,  83 ,  85 ,  88 ,  90 ,  92 ,  94 ,  96 ,  98 ,  100,  102,  104,  106,  107,  109,  111,  112,  113,  115,  116,
          117,  118,  120,  121,  122,  122,  123,  124,  125,  125,  126,  126,  126,  127,  127,  127,  127,  127,  127,  127,  126,  126,  126,  125,
