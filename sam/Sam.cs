@@ -1,5 +1,6 @@
 namespace Jaket.Sam;
 
+using System.Text;
 using UnityEngine;
 
 /// <summary> Main class of the SAM TTS Engine. Responsible for storing and converting text into phonemes. </summary>
@@ -15,7 +16,10 @@ public class Sam
     public int Speed, Pitch, Mouth, Throat;
 
     /// <summary> Buffer containing output data. </summary>
-    public Buffer22222 Buffer;
+    public Buffer Buffer;
+
+    /// <summary> Object for working with decompiled code that cannot be understood. </summary>
+    public Legacy Legacy = new Legacy();
 
     public Sam(int speed = 64, int pitch = 64, int mouth = 128, int throat = 128)
     {   // default settings with changed speed
@@ -23,6 +27,17 @@ public class Sam
         this.Pitch = pitch;
         this.Mouth = mouth;
         this.Throat = throat;
+    }
+
+    /// <summary> Converts the given text into phonemes and returns them as an array of integers. </summary>
+    public void Text2Phonemes(string text, out int[] output)
+    {
+        var bytes = Encoding.UTF8.GetBytes(text.ToUpper());
+
+        output = new int[256];
+        for (int i = 0; i < bytes.Length; i++) output[i] = bytes[i];
+
+        Legacy.TextToPhonemes(ref output);
     }
 
     /// <summary> Changes the text that Sam will speak to the given one. </summary>
@@ -55,7 +70,7 @@ public class Sam
     }
 
     /// <summary> Returns a buffer with rendered audio data. </summary>
-    public Buffer22222 GetBuffer()
+    public Buffer GetBuffer()
     {
         // clear all data arrays, except phoneme index, because it will be overwritten
         for (int i = 0; i < 256; i++) phonemeStress[i] = phonemeLength[i] = 0;
