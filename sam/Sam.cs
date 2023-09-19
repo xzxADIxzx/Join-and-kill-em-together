@@ -37,6 +37,23 @@ public class Sam
         this.input[255] = 255;
     }
 
+    /// <summary> Inserts a new phoneme into the data array. </summary>
+    public void Insert(int pos, int phoneme, int length = 0, int stress = -1)
+    {
+        // move the phonemes up, leaving only the end mark [255]
+        for (int i = 253; i >= pos; i--)
+        {
+            phonemeIndex[i + 1] = phonemeIndex[i];
+            phonemeLength[i + 1] = phonemeLength[i];
+            phonemeStress[i + 1] = phonemeStress[i];
+        }
+
+        // insert new data
+        phonemeIndex[pos] = phoneme;
+        phonemeLength[pos] = length;
+        phonemeStress[pos] = stress == -1 ? phonemeStress[pos - 1] : stress;
+    }
+
     /// <summary> Returns a buffer with rendered audio data. </summary>
     public Buffer22222 GetBuffer()
     {
@@ -46,6 +63,7 @@ public class Sam
         // parsing phonemes from the given text
         if (!ParsePhonemes()) return null;
 
+        RewritePhonemes();
         SetPhonemeLength();
 
         return Buffer;
@@ -128,19 +146,148 @@ public class Sam
         return true;
     }
 
+    /// <summary>
+    /// Rewrites the phonemes using the following rules:
+    ///
+    ///     CH -> CH CH'
+    ///     J -> J J'
+    ///     [ALVEOLAR] UW -> [ALVEOLAR] UX
+    ///     D R -> J R
+    ///     T R -> CH R
+    ///     [VOWEL] R -> [VOWEL] RX
+    ///     [DIPHTHONG     ENDING WITH WX] -> [DIPHTHONG] WX
+    ///     [DIPHTHONG NOT ENDING WITH WX] -> [DIPHTHONG] YX
+    ///     UL -> AX L
+    ///     UM -> AX M
+    ///     UN -> AX N
+    ///     [STRESSED VOWEL] [SILENCE] [STRESSED VOWEL] -> [STRESSED VOWEL] [SILENCE] Q [VOWEL]
+    ///     S P -> S B    S KX -> S GX
+    ///     S T -> S D    S UM -> S **
+    ///     S K -> S G    S UN -> S **
+    /// </summary>
+    public void RewritePhonemes()
+    {
+        // handles 3 rules from the list of phoneme transformations
+        void HandleUW_CH_J(int phoneme, int pos)
+        {
+            switch (phoneme)
+            {
+                // CH -> CH CH'
+                case 42: Insert(pos + 1, 43 /* CH + 1 */); break;
+
+                // J -> J J'
+                case 44: Insert(pos + 1, 45 /* J* + 1 */); break;
+
+                // [ALVEOLAR] UW -> [ALVEOLAR] UX
+                case 53:
+                    if (Constants.HasFlag(phonemeIndex[pos - 1], 0x0400)) phonemeIndex[pos] = 16;
+                    break;
+            }
+        };
+
+        // handles 3 rules from the list of phoneme transformations
+        void HandleTR_DR_R(int phoneme, int pos)
+        {
+            switch (phoneme)
+            {
+                // D R -> J R
+                case 57: phonemeIndex[pos - 1] = 44; break;
+
+                // T R -> CH R
+                case 69: phonemeIndex[pos - 1] = 42; break;
+
+                // [VOWEL] R -> [VOWEL] RX
+                default:
+                    if (Constants.HasFlag(phoneme, 0x0080)) phonemeIndex[pos] = 18;
+                    break;
+            }
+        };
+
+        // replaces phoneme with AX + suffix
+        void Change2AX(int pos, int suffix)
+        {
+            phonemeIndex[pos] = 13; // AX
+            Insert(pos + 1, suffix);
+        };
+
+        int phoneme, pos = 0; // go through all the phonemes until reach the end marker
+        while ((phoneme = phonemeIndex[++pos]) != 255)
+        {
+            // skip spaces because there's nothing to do with them
+            if (phoneme == 0) continue;
+
+            // [DIPHTHONG     ENDING WITH WX] -> [DIPHTHONG] WX
+            // [DIPHTHONG NOT ENDING WITH WX] -> [DIPHTHONG] YX
+            // UW, CH and J
+            if (Constants.HasFlag(phoneme, 0x10))
+            {
+                Insert(pos + 1, Constants.HasFlag(phoneme, 0x20) ? 21 : 20);
+                HandleUW_CH_J(phoneme, pos);
+                continue;
+            }
+
+            // UL -> AX L
+            if (phoneme == 78)
+            {
+                Change2AX(pos, 24);
+                continue;
+            }
+
+            // UM -> AX M
+            if (phoneme == 79)
+            {
+                Change2AX(pos, 27);
+                continue;
+            }
+
+            // UN -> AX N
+            if (phoneme == 80)
+            {
+                Change2AX(pos, 28);
+                continue;
+            }
+
+            // [STRESSED VOWEL] [SILENCE] [STRESSED VOWEL] -> [STRESSED VOWEL] [SILENCE] Q [VOWEL]
+            if (Constants.HasFlag(phoneme, 0x80) && phonemeStress[pos] != 0 && pos <= 253)
+            {
+                if (phonemeIndex[pos + 1] == 0) // [SILENCE]
+                {
+                    phoneme = phonemeIndex[pos + 2];
+                    if (phoneme != 0 && Constants.HasFlag(phoneme, 0x80) && phonemeStress[pos + 2] != 0) Insert(pos + 2, 31, stress: 0);
+                }
+                continue;
+            }
+
+            // TR, DR and R
+            if (phonemeIndex[pos - 1] == 23)
+            {
+                HandleTR_DR_R(phonemeIndex[pos - 1], pos);
+                continue;
+            }
+
+            // S P -> S B    S KX -> S GX
+            // S T -> S D    S UM -> S **
+            // S K -> S G    S UN -> S **
+            if (Constants.HasFlag(phoneme, 0x01))
+            {
+                if (phonemeIndex[pos - 1] == 32) // S
+                    phonemeIndex[pos] = phoneme - 12;
+            }
+            else HandleUW_CH_J(phoneme, pos);
+        }
+    }
+
     /// <summary> Sets the length of phonemes depending on stress. </summary>
     public void SetPhonemeLength()
     {
         int phoneme, pos = 0; // go through all the phonemes until reach the end marker
-        while ((phoneme = phonemeIndex[pos]) != 255)
+        while ((phoneme = phonemeIndex[++pos]) != 255)
         {
             int stress = phonemeStress[pos];
             if (stress == 0 || (stress & 128) != 0) // use low or high bits depending on stress
                 phonemeLength[pos] = Constants.PhonemeLengthTable[phoneme] & 0xFF;
             else
                 phonemeLength[pos] = Constants.PhonemeLengthTable[phoneme] >> 8;
-
-            pos++; // move on
         }
     }
 
