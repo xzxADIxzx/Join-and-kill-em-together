@@ -65,6 +65,7 @@ public class Sam
 
         RewritePhonemes();
         SetPhonemeLength();
+        InsertPauses();
 
         return Buffer;
     }
@@ -288,6 +289,24 @@ public class Sam
                 phonemeLength[pos] = Constants.PhonemeLengthTable[phoneme] & 0xFF;
             else
                 phonemeLength[pos] = Constants.PhonemeLengthTable[phoneme] >> 8;
+        }
+    }
+
+    /// <summary> It's hard to say for sure, but most likely this method inserts pauses for punctuation. </summary>
+    public void InsertPauses()
+    {
+        int phoneme, pos = 0; // go through all the phonemes until reach the end marker
+        while ((phoneme = phonemeIndex[++pos]) != 255)
+        {
+            // if the phoneme is already a pause, then we skip it to avoid OutOfBoundsException
+            if (phoneme == 254) continue;
+
+            // if the phoneme is a punctuation mark, insert a short pause
+            if (Constants.HasFlag(phoneme, 0x0100))
+            {
+                Insert(++pos, 254);
+                continue;
+            }
         }
     }
 
