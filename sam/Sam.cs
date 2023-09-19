@@ -48,7 +48,7 @@ public class Sam
         for (int i = 0; i < length; i++) this.input[i] = input[i];
 
         // add end marks to the end of the input data and, just in case, to the end of the array
-        this.input[length] = 255;
+        this.input[length - 1] = 255;
         this.input[255] = 255;
     }
 
@@ -81,6 +81,7 @@ public class Sam
         RewritePhonemes();
         SetPhonemeLength();
         InsertPauses();
+        PrepareOutput();
 
         return Buffer;
     }
@@ -323,6 +324,38 @@ public class Sam
                 continue;
             }
         }
+    }
+
+    /// <summary> Prepares data for rendering via legacy code. </summary>
+    public void PrepareOutput()
+    {
+        // create output buffer
+        Legacy.Buffer = Buffer = new();
+
+        int phoneme, pos = 0, outputPos = 0; // go through all the phonemes until reach the end marker
+        while ((phoneme = phonemeIndex[++pos]) != 255)
+        {
+            // skip spaces because there's nothing to do with them
+            if (phoneme == 0) continue;
+
+            // if the phoneme is a pause, then start rendering
+            if (phoneme == 254)
+            {
+                Legacy.IndexOutput[outputPos] = 255;
+                Legacy.Render();
+
+                outputPos = 0;
+                continue;
+            }
+
+            Legacy.IndexOutput[outputPos] = phoneme;
+            Legacy.LengthOutput[outputPos] = phonemeLength[pos];
+            Legacy.StressOutput[outputPos] = phonemeStress[pos];
+            outputPos++;
+        }
+
+        Legacy.IndexOutput[outputPos] = 255;
+        Legacy.Render();
     }
 
     #endregion
