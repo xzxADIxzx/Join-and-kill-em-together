@@ -621,5 +621,15 @@ public class Constants
         -49 , -46 , -43 , -40 , -37 , -34 , -31 , -28 , -25 , -22 , -19 , -16 , -12 , -9  , -6  , -3
     };
 
+    /// <summary> Time table for more accurate c64 simulation. </summary>
+    public static readonly int[,] TimeTable = new[,]
+    {
+        { 162, 167, 167, 127, 128 },
+        { 226, 60,  60,  0,   0   },
+        { 225, 60,  59,  0,   0   },
+        { 200, 0,   0,   54,  55  },
+        { 199, 0,   0,   54,  54  }
+    };
+
     #endregion
 }
