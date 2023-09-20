@@ -632,6 +632,39 @@ public class Constants
     };
 
     #endregion
+    #region blend
+
+    /// <summary> Used to determine the length of phoneme blending. The candidate with the lower score is selected. </summary>
+    public static readonly int[] BlendRank = new[]
+    {
+        0x00, 0x1F, 0x1F, 0x1F, 0x1F, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x05, 0x05,
+        0x02, 0x0A, 0x02, 0x08, 0x05, 0x05, 0x0B, 0x0A, 0x09, 0x08, 0x08, 0xA0, 0x08, 0x08, 0x17, 0x1F,
+        0x12, 0x12, 0x12, 0x12, 0x1E, 0x1E, 0x14, 0x14, 0x14, 0x14, 0x17, 0x17, 0x1A, 0x1A, 0x1D, 0x1D,
+        0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x1A, 0x1D, 0x1B, 0x1A, 0x1D, 0x1B, 0x1A, 0x1D, 0x1B, 0x1A,
+        0x1D, 0x1B, 0x17, 0x1D, 0x17, 0x17, 0x1D, 0x17, 0x17, 0x1D, 0x17, 0x17, 0x1D, 0x17, 0x17, 0x17
+    };
+
+    /// <summary> Number of frames at the beginning of a phoneme intended for interpolation. </summary>
+    public static readonly int[] InBlend = new[]
+    {
+        0, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+        4, 4, 3, 3, 4, 4, 3, 3, 3, 3, 3, 1, 2, 3, 2, 1,
+        3, 3, 3, 3, 1, 1, 3, 3, 3, 2, 2, 3, 2, 3, 0, 0,
+        5, 5, 5, 5, 4, 4, 2, 0, 2, 2, 0, 3, 2, 0, 4, 2,
+        0, 3, 2, 0, 2, 2, 0, 2, 3, 0, 3, 3, 0, 3, 176, 160
+    };
+
+    /// <summary> Number of frames at the end of a phoneme intended for interpolation. </summary>
+    public static readonly int[] OutBlend = new[]
+    {
+        0, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+        4, 4, 3, 2, 4, 4, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 0, 1, 0, 1, 0, 5,
+        5, 5, 5, 5, 4, 4, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2,
+        0, 1, 2, 0, 2, 2, 0, 1, 3, 0, 2, 3, 0, 2, 160, 160
+    };
+
+    #endregion
     #region unknown
 
     public static readonly int[] Tab1 = new[]
