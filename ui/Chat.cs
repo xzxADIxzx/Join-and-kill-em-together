@@ -1,14 +1,16 @@
 namespace Jaket.UI;
 
+using Steamworks;
+using System.Collections;
+using System.Collections.Generic;
 using UMM;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 using Jaket.Net;
+using Jaket.Sam;
 using Jaket.World;
-using System.Collections.Generic;
-using System.Collections;
 
 /// <summary> Front end of the chat, back end implemented via Steamworks. </summary>
 public class Chat : MonoSingleton<Chat>
@@ -210,5 +212,22 @@ public class Chat : MonoSingleton<Chat>
 
         // save the time the message was received to give the player time to read it
         lastMessageTime = Time.time;
+    }
+
+    /// <summary> Speaks the message before writing it. </summary>
+    public void ReceiveTTSMessage(Friend author, string message)
+    {
+        if (author.IsMe)
+            // play the message in the player's position if he is its author
+            SamAPI.TryPlay(message, Networking.LocalPlayer.voice);
+        else
+            // or find the author among other players and play the sound from them
+            Networking.EachPlayer(player =>
+            {
+                if (player.Id == author.Id) SamAPI.TryPlay(message, player.Voice);
+            });
+
+        // write a message to chat
+        ReceiveChatMessage(author.Name, message);
     }
 }

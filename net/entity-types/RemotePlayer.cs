@@ -60,6 +60,9 @@ public class RemotePlayer : Entity
     /// <summary> Machine component of the player doll. </summary>
     private Machine machine;
 
+    /// <summary> Component responsible for playing Sam's voice. </summary>
+    public AudioSource Voice;
+
     /// <summary> Player name. Taken from Steam. </summary>
     public string nickname;
 
@@ -103,6 +106,10 @@ public class RemotePlayer : Entity
         animator = GetComponentInChildren<Animator>();
         enemyId = GetComponent<EnemyIdentifier>();
         machine = GetComponent<Machine>();
+        Voice = gameObject.AddComponent<AudioSource>();
+
+        Voice.spatialBlend = 1f; // make the sound 3D
+        Voice.minDistance = 25f; // increase the distance from which it can be heard
 
         enemyId.health = machine.health = health.target = 100f;
         enemyId.weakPoint = head.gameObject;

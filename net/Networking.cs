@@ -70,6 +70,8 @@ public class Networking : MonoBehaviour
         {
             if (message.StartsWith("<system>")) // I think it's okay
                 Chat.Instance.ReceiveChatMessage("Lobby", message.Substring("<system>".Length));
+            else if (message.StartsWith("/tts "))
+                Chat.Instance.ReceiveTTSMessage(member, message.Substring("/tts ".Length));
             else
                 Chat.Instance.ReceiveChatMessage(member.Name, message);
         };

@@ -25,6 +25,9 @@ public class LocalPlayer : Entity
     /// <summary> Hook position. Will be zero if the hook is not currently in use. </summary>
     public Vector3 hook;
 
+    /// <summary> Component responsible for playing Sam's voice. </summary>
+    public AudioSource voice;
+
     /// <summary> Index of the current weapon in the global list. </summary>
     private byte weapon;
 
@@ -35,6 +38,9 @@ public class LocalPlayer : Entity
     {
         Id = SteamClient.SteamId;
         Type = EntityType.Player;
+
+        // add a 2D audio source that will be heard from everywhere
+        voice = gameObject.AddComponent<AudioSource>();
 
         SceneManager.sceneLoaded += (scene, mode) => Invoke("UpdateWeapon", .01f);
     }
