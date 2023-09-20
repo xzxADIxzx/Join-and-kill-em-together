@@ -1,5 +1,7 @@
 namespace Jaket.Sam;
 
+using UnityEngine;
+
 /// <summary>
 /// This class contain all the code that even with the help of God cannot be understood.
 /// Abandon hope all ye who enter here...
@@ -426,12 +428,341 @@ public class Legacy
     }
 
     #endregion
+    #region renderer
 
     public int[] StressOutput = new int[256];
     public int[] LengthOutput = new int[256];
     public int[] IndexOutput = new int[256];
 
-    public void Render() { }
+    private int[] pitches = new int[256];
+    private int[] sampledConsonantFlag = new int[256];
+    private int[] frequency1 = new int[256], frequency2 = new int[256], frequency3 = new int[256];
+    private int[] amplitude1 = new int[256], amplitude2 = new int[256], amplitude3 = new int[256];
 
-    public bool TextToPhonemes(ref int[] input) => true;
+    private int mem39, mem44, mem47, mem49, mem50, mem51, mem53, mem56;
+
+    /// <summary> Adds an inflection to intonation to indicate a question mark and etc. </summary>
+    private void AddInflection(int mem48, int phase1)
+    {
+        int Atemp = mem49 = A = X;
+
+        A -= 30;
+        if (Atemp <= 30) A = 0;
+        X = A;
+        while ((A = pitches[X]) == 127) Inc(ref X);
+
+        pos48398: pitches[X] = phase1 = (A + mem48) & 255;
+
+    pos48406:
+        Inc(ref X);
+        if (X == mem49) return;
+        if (pitches[X] == 255) goto pos48406;
+        A = phase1;
+        goto pos48398;
+    }
+
+    private void RenderSample(ref int mem66)
+    {
+        int tempA = 0;
+        mem49 = Y;
+        A = mem39 & 7;
+        mem53 = Constants.Tab5[mem47 = mem56 = X = A - 1];
+        A = mem39 & 248;
+        if (A == 0)
+        {
+            A = pitches[mem49] >> 4;
+            goto pos48315;
+        }
+        Y = A ^ 255;
+
+    pos48274:
+        mem56 = 8;
+        A = Constants.SampleTable[mem47 * 256 + Y];
+
+    pos48280:
+        tempA = A;
+        A = A << 1;
+        if ((tempA & 128) == 0)
+        {
+            X = mem53;
+            Sam.Buffer.Write(1, (X & 0x0f) * 16);
+            if (X != 0) goto pos48296;
+        }
+        Sam.Buffer.Write(2, 5 * 16);
+
+    pos48296:
+        X = 0;
+        Dec(ref mem56);
+        if (mem56 != 0) goto pos48280;
+        Inc(ref Y);
+        if (Y != 0) goto pos48274;
+        mem44 = 1;
+        Y = mem49;
+        return;
+
+    pos48315:
+        int phase1 = A ^ 255;
+        Y = mem66;
+        do
+        {
+            mem56 = 8;
+            A = Constants.SampleTable[mem47 * 256 + Y];
+            do
+            {
+                tempA = A;
+                A = A << 1;
+                if ((tempA & 128) != 0)
+                    Sam.Buffer.Write(3, 160);
+                else
+                    Sam.Buffer.Write(4, 96);
+                Dec(ref mem56);
+            } while (mem56 != 0);
+            Inc(ref Y);
+            Inc(ref phase1);
+        } while (phase1 != 0);
+        A = 1;
+        mem44 = 1;
+        mem66 = Y;
+        Y = mem49;
+        return;
+    }
+
+    public void Render()
+    {
+        int Read(int type, int index) => type switch
+        {
+            168 => pitches[index],
+            169 => frequency1[index],
+            170 => frequency2[index],
+            171 => frequency3[index],
+            172 => amplitude1[index],
+            173 => amplitude2[index],
+            174 => amplitude3[index],
+            _ => 0
+        };
+
+        void Write(int type, int index, int value)
+        {
+            switch (type)
+            {
+                case 168: pitches[Y] = value; break;
+                case 169: frequency1[Y] = value; break;
+                case 170: frequency2[Y] = value; break;
+                case 171: frequency3[Y] = value; break;
+                case 172: amplitude1[Y] = value; break;
+                case 173: amplitude2[Y] = value; break;
+                case 174: amplitude3[Y] = value; break;
+            }
+        }
+
+        int phase1 = 0, phase2, phase3, speedcounter;
+        int mem38, mem40, mem48, mem66 = 0;
+
+        if (IndexOutput[0] == 255) return;
+
+        A = X = mem44 = 0;
+        do
+        {
+            mem56 = A = IndexOutput[Y = mem44];
+            if (A == 255) break;
+
+            if (A == 1) AddInflection(mem48 = A = 1, phase1);
+            if (A == 2) AddInflection(mem48 = 255, phase1);
+
+            phase1 = Constants.Tab4[StressOutput[Y] + 1];
+            phase2 = LengthOutput[Y];
+            Y = mem56;
+
+            do
+            {
+                pitches[X] = Sam.Pitch + phase1;
+                sampledConsonantFlag[X] = Constants.SampledConsonantFlags[Y];
+                frequency1[X] = Constants.PhonemeFrequencyTable[Y] & 0xFF;
+                frequency2[X] = (Constants.PhonemeFrequencyTable[Y] >> 8) & 0xFF;
+                frequency3[X] = (Constants.PhonemeFrequencyTable[Y] >> 16) & 0xFF;
+                amplitude1[X] = Constants.PhonemeAmplitudesTable[Y] & 0xFF;
+                amplitude2[X] = (Constants.PhonemeAmplitudesTable[Y] >> 8) & 0xFF;
+                amplitude3[X] = (Constants.PhonemeAmplitudesTable[Y] >> 16) & 0xFF;
+                Inc(ref X);
+                Dec(ref phase2);
+            } while (phase2 != 0);
+            Inc(ref mem44);
+        } while (mem44 != 0);
+
+        X = mem44 = mem49 = 0;
+        while (true)
+        {
+            Y = IndexOutput[X];
+            A = IndexOutput[X + 1];
+
+            if (A == 255) break;
+
+            mem56 = Constants.BlendRank[X = A];
+            A = Constants.BlendRank[Y];
+
+            if (A == mem56)
+            {
+                phase1 = Constants.OutBlend[Y];
+                phase2 = Constants.OutBlend[X];
+            }
+            else if (A < mem56)
+            {
+                phase1 = Constants.InBlend[X];
+                phase2 = Constants.OutBlend[X];
+            }
+            else
+            {
+                phase1 = Constants.OutBlend[Y];
+                phase2 = Constants.InBlend[Y];
+            }
+
+            Y = mem44;
+            mem49 = A = mem49 + LengthOutput[mem44];
+            A += phase2;
+            speedcounter = A;
+            mem47 = 168;
+            phase3 = mem49 - phase1;
+            mem38 = A = phase1 + phase2;
+
+            X = A - 2;
+            if ((X & 128) == 0)
+                do
+                {
+                    mem40 = mem38;
+                    if (mem47 == 168)
+                    {
+                        int mem36 = LengthOutput[mem44] >> 1;
+                        int mem37 = LengthOutput[mem44 + 1] >> 1;
+                        mem40 = mem36 + mem37;
+                        mem37 += mem49;
+                        mem36 = mem49 - mem36;
+                        A = Read(mem47, mem37);
+                        Y = mem36;
+                        mem53 = A - Read(mem47, mem36);
+                    }
+                    else
+                    {
+                        A = Read(mem47, speedcounter);
+                        Y = phase3;
+                        mem53 = A - Read(mem47, phase3);
+                    }
+
+                    mem50 = mem53 & 128;
+                    int m53abs = Mathf.Abs(mem53);
+                    mem51 = m53abs % mem40;
+                    mem53 /= mem40;
+                    X = mem40;
+                    Y = phase3;
+                    mem56 = 0;
+
+                    while (true)
+                    {
+                        mem48 = A = Read(mem47, Y) + mem53; ;
+                        Inc(ref Y);
+                        Dec(ref X);
+                        if (X == 0) break;
+                        mem56 += mem51;
+                        if (mem56 >= mem40)
+                        {
+                            mem56 -= mem40;
+                            if ((mem50 & 128) == 0)
+                            {
+                                if (mem48 != 0) Inc(ref mem48);
+                            }
+                            else Dec(ref mem48);
+                        }
+                        Write(mem47, Y, mem48);
+                    }
+                    Inc(ref mem47);
+                } while (mem47 != 175);
+            Inc(ref mem44);
+            X = mem44;
+        }
+
+        mem48 = mem49 + LengthOutput[mem44];
+        for (int i = 0; i < 256; i++) pitches[i] -= (frequency1[i] >> 1); // signmode was here
+
+        phase1 = phase2 = phase3 = mem49 = 0;
+        speedcounter = 72; // sam standard speed
+
+        for (int i = 255; i >= 0; i--)
+        {
+            amplitude1[i] = Constants.AmplitudeRescale[amplitude1[i]];
+            amplitude2[i] = Constants.AmplitudeRescale[amplitude2[i]];
+            amplitude3[i] = Constants.AmplitudeRescale[amplitude3[i]];
+        }
+
+        Y = 0;
+        mem44 = A = X = pitches[0];
+        mem38 = A - (A >> 2);
+
+        bool unknownBool = false;
+        while (true)
+        {
+            mem39 = A = sampledConsonantFlag[Y];
+
+            A = A & 248;
+            if (A != 0)
+            {
+                RenderSample(ref mem66);
+                Y += 2;
+                mem48 -= 2;
+            }
+            else
+            {
+                int[] ary = new int[5];
+                int p1 = phase1 * 256;
+                int p2 = phase2 * 256;
+                int p3 = phase3 * 256;
+                for (int k = 0; k < 5; k++)
+                {
+                    int sp1 = Constants.Sinus[0xff & (p1 >> 8)];
+                    int sp2 = Constants.Sinus[0xff & (p2 >> 8)];
+                    int rp3 = ((p3 >> 8) & 0xff) <= 127 ? 0x90 : 0x70;
+                    int sin1 = sp1 * (amplitude1[Y] & 0x0f);
+                    int sin2 = sp2 * (amplitude2[Y] & 0x0f);
+                    int rect = rp3 * (amplitude3[Y] & 0x0f);
+                    ary[k] = ((sin1 + sin2 + rect) / 32 + 128) & 255;
+                    p1 += frequency1[Y] * 64;
+                    p2 += frequency2[Y] * 64;
+                    p3 += frequency3[Y] * 64;
+                }
+
+                Sam.Buffer.WriteArray(0, ary);
+                Dec(ref speedcounter);
+                if (speedcounter != 0) goto pos48155;
+                Inc(ref Y);
+                Dec(ref mem48);
+            }
+
+            if (mem48 == 0) return;
+            speedcounter = Sam.Speed;
+
+        pos48155:
+            Dec(ref mem44);
+
+        pos48159:
+            if (mem44 == 0 || unknownBool)
+            {
+                unknownBool = false;
+                mem44 = A = pitches[Y];
+                mem38 = A = A - (A >> 2);
+                phase1 = phase2 = phase3 = 0;
+                continue;
+            }
+            Dec(ref mem38);
+            if ((mem38 != 0) || (mem39 == 0))
+            {
+                phase1 = (phase1 + frequency1[Y]) & 255;
+                phase2 = (phase2 + frequency2[Y]) & 255;
+                phase3 = (phase3 + frequency3[Y]) & 255;
+                continue;
+            }
+            RenderSample(ref mem66);
+            unknownBool = true;
+            goto pos48159;
+        }
+    }
+
+    #endregion
 }
