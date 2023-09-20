@@ -12,8 +12,10 @@ It's also in development, but with gnashing of teeth it's already playable.
 * Automatic check for an update, because stop playing on 0.3.0, please.
 * Synchronization of player positions, their weapons and projectiles.
 * Synchronization of the position and health of enemies.
+* Synchronization of many triggers and doors.
 * Up to 5 teams, making available both the passage of the campaign and pvp.
 * Emotions wheel to tease your friends or bosses.
+* SAM TTS Engine support via /tts command.
 
 ## Installation
 Before installation, it's important to know that the mod needs **BepInEx** and **Ultra Mod Manager** to work.   
