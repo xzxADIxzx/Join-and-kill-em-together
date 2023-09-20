@@ -19,7 +19,7 @@ public class Sam
     public Buffer Buffer;
 
     /// <summary> Object for working with decompiled code that cannot be understood. </summary>
-    public Legacy Legacy = new Legacy();
+    public Legacy Legacy;
 
     public Sam(int speed = 64, int pitch = 64, int mouth = 128, int throat = 128)
     {   // default settings with changed speed
@@ -27,6 +27,7 @@ public class Sam
         this.Pitch = pitch;
         this.Mouth = mouth;
         this.Throat = throat;
+        this.Legacy = new(this);
     }
 
     /// <summary> Converts the given text into phonemes and returns them as an array of integers. </summary>
@@ -37,18 +38,18 @@ public class Sam
         output = new int[256];
         for (int i = 0; i < bytes.Length; i++) output[i] = bytes[i];
 
-        Legacy.TextToPhonemes(ref output);
+        Legacy.Text2Phonemes(ref output);
     }
 
     /// <summary> Changes the text that Sam will speak to the given one. </summary>
     public void SetInput(int[] input)
     {
-        // copy the number of input data limited to 256 elements
-        int length = Mathf.Min(input.Length, this.input.Length);
+        // copy the number of input data limited to 254 elements
+        int length = Mathf.Min(input.Length, 254);
         for (int i = 0; i < length; i++) this.input[i] = input[i];
 
         // add end marks to the end of the input data and, just in case, to the end of the array
-        this.input[length - 1] = 255;
+        this.input[length] = 255;
         this.input[255] = 255;
     }
 
@@ -329,8 +330,7 @@ public class Sam
     /// <summary> Prepares data for rendering via legacy code. </summary>
     public void PrepareOutput()
     {
-        // create output buffer
-        Legacy.Buffer = Buffer = new();
+        Buffer = new(); // create an output buffer for writing data through legacy code
 
         int phoneme, pos = 0, outputPos = 0; // go through all the phonemes until reach the end marker
         while ((phoneme = phonemeIndex[++pos]) != 255)
