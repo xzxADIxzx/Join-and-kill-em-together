@@ -23,6 +23,8 @@ public class Chat : MonoSingleton<Chat>
     const int SYMBOLS_PER_ROW = 63;
     /// <summary> Chat width in pixels. </summary>
     const float WIDTH = 600f;
+    /// <summary> Prefix that will be added to the TTS message. </summary>
+    const string TTS_PREFIX = "<color=#ff7f50><size=14>[TTS]</size></color>";
 
     /// <summary> Whether chat is visible or hidden. </summary>
     public bool Shown;
@@ -189,16 +191,18 @@ public class Chat : MonoSingleton<Chat>
     }
 
     /// <summary> Writes a message directly to the chat. </summary>
-    public void ReceiveChatMessage(string author, string message)
+    public void ReceiveChatMessage(string author, string message, bool tts = false)
     {
         // find message height by the number of characters
-        float height = 18f * Mathf.Ceil(RawMessageLength(author, message) / SYMBOLS_PER_ROW);
+        float height = 18f * Mathf.Ceil((RawMessageLength(author, message) + (tts ? 5 : 0)) / SYMBOLS_PER_ROW);
+
+        message = FormatMessage(tts ? TTS_PREFIX + author : author, message);
 
         // move old messages up
         foreach (RectTransform child in list) child.anchoredPosition += new Vector2(0f, height);
 
         // add new message
-        var text = Utils.Text(FormatMessage(author, message), list, 0f, 16f + height / 2f, WIDTH - 32f, height, 16, align: TextAnchor.MiddleLeft).transform as RectTransform;
+        var text = Utils.Text(message, list, 0f, 16f + height / 2f, WIDTH - 32f, height, 16, align: TextAnchor.MiddleLeft).transform as RectTransform;
         text.anchorMin = text.anchorMax = new(.5f, 0f);
         text.localScale = new(1f, 1f, 1f); // unity scales text crookedly for small resolutions, which is why it is incorrectly located
 
@@ -228,6 +232,6 @@ public class Chat : MonoSingleton<Chat>
             });
 
         // write a message to chat
-        ReceiveChatMessage(author.Name, message);
+        ReceiveChatMessage(author.Name, message, true);
     }
 }

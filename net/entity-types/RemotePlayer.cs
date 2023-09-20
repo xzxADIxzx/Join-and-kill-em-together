@@ -115,6 +115,9 @@ public class RemotePlayer : Entity
         enemyId.weakPoint = head.gameObject;
         hookWinch.material = HookArm.Instance.GetComponent<LineRenderer>().material;
 
+        // on some levels there are no weapons at all
+        if (GunSetter.Instance == null) return;
+
         var prefab = GunSetter.Instance.rocketBlue[0].GetComponent<RocketLauncher>().rocket.transform.GetChild(1).GetChild(0).gameObject;
         var flash = Instantiate(prefab, rocket).transform;
 
