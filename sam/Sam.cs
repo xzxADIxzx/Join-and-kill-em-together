@@ -30,10 +30,37 @@ public class Sam
         this.Legacy = new(this);
     }
 
+    /// <summary> Translates the given text from Cyrillic to Latin. </summary>
+    public string Cyrillic2Latin(string text)
+    {
+        StringBuilder builder = new();
+
+        char prev = ' ';
+        foreach (char current in text)
+        {
+            // example: Ездить -> Yezdit'
+            if (current == 'Е' && (prev == ' ' || prev == 'Ъ' || prev == 'Ь'))
+                builder.Append("YE");
+
+            // look for a symbol in the list of transformations
+            else if (Constants.ISO9.ContainsKey(current))
+                builder.Append(Constants.ISO9[current]);
+
+            // if it is not there, then the symbol is not Cyrillic
+            else
+                builder.Append(current);
+
+            // save the previous symbol for the correct pronunciation of the letter E
+            prev = current;
+        }
+
+        return builder.ToString();
+    }
+
     /// <summary> Converts the given text into phonemes and returns them as an array of integers. </summary>
     public void Text2Phonemes(string text, out int[] output)
     {
-        var bytes = Encoding.UTF8.GetBytes(text.ToUpper());
+        var bytes = Encoding.UTF8.GetBytes(Cyrillic2Latin(text.ToUpper()));
 
         output = new int[256];
         for (int i = 0; i < bytes.Length; i++) output[i] = bytes[i];

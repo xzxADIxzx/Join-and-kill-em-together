@@ -7,6 +7,14 @@ public class Constants
 {
     #region rules
 
+    /// <summary> Dictionary for translating Cyrillic into Latin. </summary>
+    public static readonly Dictionary<char, string> ISO9 = new()
+    {
+        { 'А', "A" }, { 'Б', "B" }, { 'В', "V" }, { 'Г', "G" }, { 'Д', "D" }, { 'Е', "E" }, { 'Ё', "Ë" }, { 'Ж', "ZH" }, { 'З', "Z" }, { 'И', "I" }, { 'Й', "Y" },
+        { 'К', "K" }, { 'Л', "L" }, { 'М', "M" }, { 'Н', "N" }, { 'О', "O" }, { 'П', "P" }, { 'Р', "R" }, { 'С', "S" }, { 'Т', "T" }, { 'У', "U" }, { 'Ф', "F" },
+        { 'Х', "H" }, { 'Ц', "TS" }, { 'Ч', "CH" }, { 'Ш', "SH" }, { 'Щ', "SHCH" }, { 'Ъ', "'" }, { 'Ы', "Y'" }, { 'Ь', "'" }, { 'Э', "EH" }, { 'Ю', "YU" }, { 'Я', "YA" }
+    };
+
     /// <summary> Set of rules that in some way known only to God changes the pronunciation of phonemes. </summary>
     public static readonly int[] RulesSet1 = new[]
     {
