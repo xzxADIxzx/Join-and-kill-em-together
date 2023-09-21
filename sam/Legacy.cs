@@ -436,8 +436,8 @@ public class Legacy
 
     private int[] pitches = new int[256];
     private int[] sampledConsonantFlag = new int[256];
-    private int[] frequency1 = new int[256], frequency2 = new int[256], frequency3 = new int[256];
-    private int[] amplitude1 = new int[256], amplitude2 = new int[256], amplitude3 = new int[256];
+    private int[,] frequency = new int[3, 256];
+    private int[,] amplitude = new int[3, 256];
 
     private int mem39, mem44, mem47, mem49, mem50, mem51, mem53, mem56;
 
@@ -532,12 +532,12 @@ public class Legacy
         int Read(int type, int index) => type switch
         {
             168 => pitches[index],
-            169 => frequency1[index],
-            170 => frequency2[index],
-            171 => frequency3[index],
-            172 => amplitude1[index],
-            173 => amplitude2[index],
-            174 => amplitude3[index],
+            169 => frequency[0, index],
+            170 => frequency[1, index],
+            171 => frequency[2, index],
+            172 => amplitude[0, index],
+            173 => amplitude[1, index],
+            174 => amplitude[2, index],
             _ => 0
         };
 
@@ -546,12 +546,12 @@ public class Legacy
             switch (type)
             {
                 case 168: pitches[Y] = value; break;
-                case 169: frequency1[Y] = value; break;
-                case 170: frequency2[Y] = value; break;
-                case 171: frequency3[Y] = value; break;
-                case 172: amplitude1[Y] = value; break;
-                case 173: amplitude2[Y] = value; break;
-                case 174: amplitude3[Y] = value; break;
+                case 169: frequency[0, Y] = value; break;
+                case 170: frequency[1, Y] = value; break;
+                case 171: frequency[2, Y] = value; break;
+                case 172: amplitude[0, Y] = value; break;
+                case 173: amplitude[1, Y] = value; break;
+                case 174: amplitude[2, Y] = value; break;
             }
         }
 
@@ -577,12 +577,12 @@ public class Legacy
             {
                 pitches[X] = Sam.Pitch + phase1;
                 sampledConsonantFlag[X] = Constants.SampledConsonantFlags[Y];
-                frequency1[X] = Constants.PhonemeFrequencyTable[Y] & 0xFF;
-                frequency2[X] = (Constants.PhonemeFrequencyTable[Y] >> 8) & 0xFF;
-                frequency3[X] = (Constants.PhonemeFrequencyTable[Y] >> 16) & 0xFF;
-                amplitude1[X] = Constants.PhonemeAmplitudesTable[Y] & 0xFF;
-                amplitude2[X] = (Constants.PhonemeAmplitudesTable[Y] >> 8) & 0xFF;
-                amplitude3[X] = (Constants.PhonemeAmplitudesTable[Y] >> 16) & 0xFF;
+                frequency[0, X] = Constants.PhonemeFrequencyTable[Y] & 0xFF;
+                frequency[1, X] = (Constants.PhonemeFrequencyTable[Y] >> 8) & 0xFF;
+                frequency[2, X] = (Constants.PhonemeFrequencyTable[Y] >> 16) & 0xFF;
+                amplitude[0, X] = Constants.PhonemeAmplitudesTable[Y] & 0xFF;
+                amplitude[1, X] = (Constants.PhonemeAmplitudesTable[Y] >> 8) & 0xFF;
+                amplitude[2, X] = (Constants.PhonemeAmplitudesTable[Y] >> 16) & 0xFF;
                 Inc(ref X);
                 Dec(ref phase2);
             } while (phase2 != 0);
@@ -680,16 +680,16 @@ public class Legacy
         }
 
         mem48 = mem49 + LengthOutput[mem44];
-        for (int i = 0; i < 256; i++) pitches[i] -= (frequency1[i] >> 1); // signmode was here
+        for (int i = 0; i < 256; i++) pitches[i] -= (frequency[0, i] >> 1); // signmode was here
 
         phase1 = phase2 = phase3 = mem49 = 0;
         speedcounter = 72; // sam standard speed
 
         for (int i = 255; i >= 0; i--)
         {
-            amplitude1[i] = Constants.AmplitudeRescale[amplitude1[i]];
-            amplitude2[i] = Constants.AmplitudeRescale[amplitude2[i]];
-            amplitude3[i] = Constants.AmplitudeRescale[amplitude3[i]];
+            amplitude[0, i] = Constants.AmplitudeRescale[amplitude[0, i]];
+            amplitude[1, i] = Constants.AmplitudeRescale[amplitude[1, i]];
+            amplitude[2, i] = Constants.AmplitudeRescale[amplitude[2, i]];
         }
 
         Y = 0;
@@ -719,13 +719,13 @@ public class Legacy
                     int sp1 = Constants.Sinus[0xff & (p1 >> 8)];
                     int sp2 = Constants.Sinus[0xff & (p2 >> 8)];
                     int rp3 = ((p3 >> 8) & 0xff) <= 127 ? 0x90 : 0x70;
-                    int sin1 = sp1 * (amplitude1[Y] & 0x0f);
-                    int sin2 = sp2 * (amplitude2[Y] & 0x0f);
-                    int rect = rp3 * (amplitude3[Y] & 0x0f);
+                    int sin1 = sp1 * (amplitude[0, Y] & 0x0f);
+                    int sin2 = sp2 * (amplitude[1, Y] & 0x0f);
+                    int rect = rp3 * (amplitude[2, Y] & 0x0f);
                     ary[k] = ((sin1 + sin2 + rect) / 32 + 128) & 255;
-                    p1 += frequency1[Y] * 64;
-                    p2 += frequency2[Y] * 64;
-                    p3 += frequency3[Y] * 64;
+                    p1 += frequency[0, Y] * 64;
+                    p2 += frequency[1, Y] * 64;
+                    p3 += frequency[2, Y] * 64;
                 }
 
                 Sam.Buffer.WriteArray(0, ary);
@@ -753,9 +753,9 @@ public class Legacy
             Dec(ref mem38);
             if ((mem38 != 0) || (mem39 == 0))
             {
-                phase1 = (phase1 + frequency1[Y]) & 255;
-                phase2 = (phase2 + frequency2[Y]) & 255;
-                phase3 = (phase3 + frequency3[Y]) & 255;
+                phase1 = (phase1 + frequency[0, Y]) & 255;
+                phase2 = (phase2 + frequency[1, Y]) & 255;
+                phase3 = (phase3 + frequency[2, Y]) & 255;
                 continue;
             }
             RenderSample(ref mem66);
