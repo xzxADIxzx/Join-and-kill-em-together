@@ -110,6 +110,7 @@ public class RemotePlayer : Entity
 
         Voice.spatialBlend = 1f; // make the sound 3D
         Voice.minDistance = 25f; // increase the distance from which it can be heard
+        Voice.rolloffMode = AudioRolloffMode.Linear;
 
         enemyId.health = machine.health = health.target = 100f;
         enemyId.weakPoint = head.gameObject;

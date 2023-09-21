@@ -214,10 +214,10 @@ public class Chat : MonoSingleton<Chat>
     }
 
     /// <summary> Writes a message directly to the chat. </summary>
-    public void ReceiveChatMessage(string author, string message, bool tts = false)
+    public void ReceiveChatMessage(string author, string message, bool tts = false, bool oneline = false)
     {
         // find message height by the number of characters
-        float height = 18f * Mathf.Ceil((RawMessageLength(author, message) + (tts ? 5 : 0)) / SYMBOLS_PER_ROW);
+        float height = oneline ? 18f : 18f * Mathf.Ceil((RawMessageLength(author, message) + (tts ? 5 : 0)) / SYMBOLS_PER_ROW);
 
         message = FormatMessage(tts ? TTS_PREFIX + author : author, message);
 
@@ -256,5 +256,21 @@ public class Chat : MonoSingleton<Chat>
 
         // write a message to chat
         ReceiveChatMessage(author.Name, message, true);
+    }
+
+    /// <summary> Sends some useful information to the chat. </summary>
+    public void Hello()
+    {
+        void SendTip(string tip) => ReceiveChatMessage("xzxADIxzx", $"<size=14>* {tip}</size>", oneline: true);
+
+        ReceiveChatMessage("xzxADIxzx", "Hello, it's me, the main developer of this mod.");
+        ReceiveChatMessage("xzxADIxzx", "I just wanted to give some tips about Jaket:");
+
+        SendTip("Go to the control settings, there are a few new elements there");
+        SendTip($"Hold {Movement.Instance.EmojiBind.keyBind} to open the Emotion Wheel, it's fun");
+        SendTip("Try typing to chat /tts <color=#cccccccc>[message]</color> or /tts <color=#cccccccc>[on/off]</color>");
+        SendTip("Take a look at the bestiary, there's a little surprise :3");
+
+        ReceiveChatMessage("xzxADIxzx", "Cheers~ ♡");
     }
 }

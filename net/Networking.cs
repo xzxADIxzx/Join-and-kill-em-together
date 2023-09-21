@@ -80,6 +80,9 @@ public class Networking : MonoBehaviour
         {
             Clear(); // for safety
 
+            // send some useful information to the chat so that players know about the mod's features
+            Chat.Instance.Hello();
+
             if (LobbyController.IsOwner)
                 // the lobby has just been created, so just add the local player to the list of entities
                 Entities[LocalPlayer.Id] = LocalPlayer;
