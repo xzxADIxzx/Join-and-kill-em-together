@@ -39,6 +39,11 @@ public class Chat : MonoSingleton<Chat>
     /// <summary> Background of the typing players list. </summary>
     private RectTransform typingBg;
 
+    /// <summary> Whether auto TTS is enabled. </summary>
+    private bool autoTTS;
+    /// <summary> Background of the auto TTS sign. </summary>
+    private RectTransform ttsBg;
+
     /// <summary> Input field in which the message will be entered directly. </summary>
     public InputField field;
     /// <summary> Arrival time of the last message, used to change the chat transparency. </summary>
@@ -73,6 +78,10 @@ public class Chat : MonoSingleton<Chat>
         Instance.typingBg = Utils.Image("", Instance.transform, 0f, 0f, 0f, 0f).transform as RectTransform;
         Instance.typing = Utils.Text("", Instance.typingBg, 0f, 0f, 1000f, 32f, 24).GetComponent<Text>();
 
+        // add a sign about the auto TTS being turned on
+        Instance.ttsBg = Utils.Image("", Instance.transform, 0f, 0f, 128f, 32f).transform as RectTransform;
+        Utils.Text("<color=#cccccccc>Auto TTS</color>", Instance.ttsBg, 0f, 0f, 128f, 32f, 24);
+
         // add input field
         Instance.field = Utils.Field("Type a chat message and send it by pressing enter", Instance.transform, 0f, -508f, 1888f, 32f, 24, Instance.OnFocusLost);
         Instance.field.characterLimit = MAX_MESSAGE_LENGTH;
@@ -84,7 +93,17 @@ public class Chat : MonoSingleton<Chat>
 
     public void Start() => InvokeRepeating("UpdateTyping", 0f, .25f);
 
-    public void Update() => listBg.alpha = Mathf.Lerp(listBg.alpha, Shown || Time.time - lastMessageTime < 5f ? 1f : 0f, Time.deltaTime * 5f);
+    public void Update()
+    {
+        // interpolate the transparency of the message list
+        listBg.alpha = Mathf.Lerp(listBg.alpha, Shown || Time.time - lastMessageTime < 5f ? 1f : 0f, Time.deltaTime * 5f);
+
+        // update auto TTS sign width and position
+        float width = typingBg.gameObject.activeSelf ? typingBg.anchoredPosition.x + typingBg.sizeDelta.x / 2f + 80f : -880f;
+
+        ttsBg.gameObject.SetActive(autoTTS && Shown);
+        ttsBg.anchoredPosition = new Vector2(width, typingBg.anchoredPosition.y);
+    }
 
     /// <summary> Updates the list of players currently typing. </summary>
     public void UpdateTyping()
@@ -178,7 +197,11 @@ public class Chat : MonoSingleton<Chat>
         // if the message is not empty, then send it to other players and remember it
         if (message != "")
         {
-            LobbyController.Lobby?.SendChatString(message);
+            // handle TTS command
+            if (message == "/tts on") autoTTS = true;
+            else if (message == "/tts off") autoTTS = false;
+            else LobbyController.Lobby?.SendChatString(autoTTS ? "/tts " + message : message);
+
             messages.Insert(0, message);
         }
 
