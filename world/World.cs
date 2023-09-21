@@ -117,9 +117,7 @@ public class World : MonoSingleton<World>
         if (SceneHelper.CurrentScene != LastScene)
         {
             LastScene = SceneHelper.CurrentScene;
-
-            opened.Clear();
-            activated.Clear();
+            Clear();
         }
         // but if the player restarted the same level, then you need to open all the doors and reactivate the objects
         else
@@ -128,6 +126,9 @@ public class World : MonoSingleton<World>
             activated.ForEach(index => ActivateObject(index, false));
         }
     }
+
+    /// <summary> Clears the list of open doors and activated objects. </summary>
+    public void Clear() { opened.Clear(); activated.Clear(); }
 
     #region doors & activators
 

@@ -49,7 +49,7 @@ public class Plugin : BaseUnityPlugin
         Bullets.Load(); // load it after weapons
 
         // initialize networking components
-        Networking.Load();
+        Networking.Load(); // load before lobby controller
         Entities.Load();
         LobbyController.Load();
 

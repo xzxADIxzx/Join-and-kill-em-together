@@ -31,7 +31,11 @@ public class Client : Endpoint
             entities[id]?.Read(r);
         });
 
-        Listen(PacketType.LevelLoading, r => SceneHelper.LoadScene(r.String()));
+        Listen(PacketType.LevelLoading, r =>
+        {
+            World.Instance.Clear(); // the host may have restarted the same level, so the triggers need to be reset
+            SceneHelper.LoadScene(r.String());
+        });
 
         Listen(PacketType.HostDied, r =>
         {

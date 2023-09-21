@@ -261,12 +261,15 @@ public class Chat : MonoSingleton<Chat>
     /// <summary> Sends some useful information to the chat. </summary>
     public void Hello()
     {
+        // if the last owner of the lobby is not equal to 0, then the lobby is not created for the first time and there is no need to print info
+        if (LobbyController.LastOwner != 0L) return;
+
         void SendTip(string tip) => ReceiveChatMessage("xzxADIxzx", $"<size=14>* {tip}</size>", oneline: true);
 
         ReceiveChatMessage("xzxADIxzx", "Hello, it's me, the main developer of this mod.");
         ReceiveChatMessage("xzxADIxzx", "I just wanted to give some tips about Jaket:");
 
-        SendTip("Go to the control settings, there are a few new elements there");
+        SendTip("Go to the control settings, there are a few new elements");
         SendTip($"Hold {Movement.Instance.EmojiBind.keyBind} to open the Emotion Wheel, it's fun");
         SendTip("Try typing to chat /tts <color=#cccccccc>[message]</color> or /tts <color=#cccccccc>[on/off]</color>");
         SendTip("Take a look at the bestiary, there's a little surprise :3");
