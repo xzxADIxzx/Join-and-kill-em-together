@@ -106,9 +106,7 @@ public class PlayerList : MonoSingleton<PlayerList>
         LobbyController.EachMember(member =>
         {
             // paint the nickname in the team color
-            var team = member.IsMe ? Networking.LocalPlayer.team :
-                                    (Networking.Entities.TryGetValue(member.Id, out var entity) && entity is RemotePlayer player ? player.team : Team.Yellow);
-            var name = $"<color=#{ColorUtility.ToHtmlStringRGBA(team.Data().Color())}>{member.Name}</color>";
+            var name = $"<color=#{Networking.GetTeamColor(member)}>{member.Name}</color>";
 
             // add a button with a nickname forwarding to the player's profile
             Utils.Button(name, list.transform, -784f, y -= 80f, () => SteamFriends.OpenUserOverlay(member.Id, "steamid"));

@@ -210,4 +210,15 @@ public class Networking : MonoBehaviour
     }
 
     #endregion
+    #region teams
+
+    /// <summary> Returns the team of the given friend. </summary>
+    public static Team GetTeam(Friend friend) => friend.IsMe
+        ? LocalPlayer.team
+        : (Entities.TryGetValue(friend.Id, out var entity) && entity is RemotePlayer player ? player.team : Team.Yellow);
+
+    /// <summary> Returns the hex color of the friend's team. </summary>
+    public static string GetTeamColor(Friend friend) => ColorUtility.ToHtmlStringRGBA(GetTeam(friend).Data().Color());
+
+    #endregion
 }
