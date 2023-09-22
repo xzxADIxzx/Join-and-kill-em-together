@@ -69,19 +69,20 @@ public class Networking : MonoBehaviour
         SteamMatchmaking.OnChatMessage += (lobby, member, message) =>
         {
             if (message.StartsWith("<system>")) // I think it's okay
-                Chat.Instance.ReceiveChatMessage("Lobby", message.Substring("<system>".Length));
+                Chat.Instance.ReceiveChatMessage(message.Substring("<system>".Length));
             else if (message.StartsWith("/tts "))
                 Chat.Instance.ReceiveTTSMessage(member, message.Substring("/tts ".Length));
             else
-                Chat.Instance.ReceiveChatMessage(member.Name, message);
+                Chat.Instance.ReceiveChatMessage(GetTeamColor(member), member.Name, message);
         };
 
         SteamMatchmaking.OnLobbyEntered += lobby =>
         {
-            Clear(); // for safety
-
             // send some useful information to the chat so that players know about the mod's features
             Chat.Instance.Hello();
+
+            // destroy all entities, since the player could join from another lobby
+            Clear();
 
             if (LobbyController.IsOwner)
                 // the lobby has just been created, so just add the local player to the list of entities
@@ -102,7 +103,7 @@ public class Networking : MonoBehaviour
             if (!LobbyController.IsOwner) return;
 
             // send notification to chat
-            lobby.SendChatString("<system><color=#00FF00>Player " + member.Name + " joined!</color>");
+            lobby.SendChatString($"<system><color=#00FF00>Player {member.Name} joined!</color>");
 
             // confirm the connection with the player
             SteamNetworking.AcceptP2PSessionWithUser(lobby.Owner.Id);
@@ -114,7 +115,7 @@ public class Networking : MonoBehaviour
         SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) =>
         {
             // send notification to chat
-            if (LobbyController.IsOwner) lobby.SendChatString("<system><color=red>Player " + member.Name + " left!</color>");
+            if (LobbyController.IsOwner) lobby.SendChatString($"<system><color=red>Player {member.Name} left!</color>");
 
             // destroy the player doll
             if (Entities.TryGetValue(member.Id, out var player)) DestroyImmediate(player.gameObject);

@@ -3,6 +3,7 @@ namespace Jaket.UI;
 using Steamworks;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UMM;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -55,10 +56,10 @@ public class Chat : MonoSingleton<Chat>
     private int messageIndex;
 
     // <summary> Formats the message for a more presentable look. </summary>
-    public static string FormatMessage(string author, string message) => $"<b>{author}<color=#ff7f50>:</color></b> {message}";
+    public static string FormatMessage(string color, string author, string message) => $"<b><color=#{color}>{author}</color><color=#ff7f50>:</color></b> {message}";
 
     // <summary> Returns the length of the message without formatting. </summary>
-    public static float RawMessageLength(string author, string message) => author.Length + ": ".Length + message.Length;
+    public static float RawMessageLength(string message) => Regex.Replace(message, "<.*?>", string.Empty).Length;
 
     /// <summary> Creates a singleton of chat. </summary>
     public static void Build()
@@ -213,13 +214,13 @@ public class Chat : MonoSingleton<Chat>
         if (!Input.GetKeyDown(UKAPI.GetKeyBind("CHAT").keyBind)) Toggle();
     }
 
+    #region receive
+
     /// <summary> Writes a message directly to the chat. </summary>
-    public void ReceiveChatMessage(string author, string message, bool tts = false, bool oneline = false)
+    public void ReceiveChatMessage(string message, bool oneline = false)
     {
         // find message height by the number of characters
-        float height = oneline ? 18f : 18f * Mathf.Ceil((RawMessageLength(author, message) + (tts ? 5 : 0)) / SYMBOLS_PER_ROW);
-
-        message = FormatMessage(tts ? TTS_PREFIX + author : author, message);
+        float height = oneline ? 18f : 18f * Mathf.Ceil(RawMessageLength(message) / SYMBOLS_PER_ROW);
 
         // move old messages up
         foreach (RectTransform child in list) child.anchoredPosition += new Vector2(0f, height);
@@ -241,6 +242,10 @@ public class Chat : MonoSingleton<Chat>
         lastMessageTime = Time.time;
     }
 
+    /// <summary> Writes a message to the chat, formatting it beforehand. </summary>
+    public void ReceiveChatMessage(string color, string author, string message, bool tts = false, bool oneline = false)
+        => ReceiveChatMessage(FormatMessage(color, tts ? TTS_PREFIX + author : author, message), oneline);
+
     /// <summary> Speaks the message before writing it. </summary>
     public void ReceiveTTSMessage(Friend author, string message)
     {
@@ -255,7 +260,7 @@ public class Chat : MonoSingleton<Chat>
             });
 
         // write a message to chat
-        ReceiveChatMessage(author.Name, message, true);
+        ReceiveChatMessage(Networking.GetTeamColor(author), author.Name, message, true);
     }
 
     /// <summary> Sends some useful information to the chat. </summary>
@@ -264,16 +269,19 @@ public class Chat : MonoSingleton<Chat>
         // if the last owner of the lobby is not equal to 0, then the lobby is not created for the first time and there is no need to print info
         if (LobbyController.LastOwner != 0L) return;
 
-        void SendTip(string tip) => ReceiveChatMessage("xzxADIxzx", $"<size=14>* {tip}</size>", oneline: true);
+        void SendMsg(string msg) => ReceiveChatMessage("0096FF", "xzxADIxzx", msg, oneline: true);
+        void SendTip(string tip) => SendMsg($"<size=14>* {tip}</size>");
 
-        ReceiveChatMessage("xzxADIxzx", "Hello, it's me, the main developer of this mod.");
-        ReceiveChatMessage("xzxADIxzx", "I just wanted to give some tips about Jaket:");
+        SendMsg("Hello, it's me, the main developer of this mod.");
+        SendMsg("I just wanted to give some tips about Jaket:");
 
         SendTip("Go to the control settings, there are a few new elements");
-        SendTip($"Hold {Movement.Instance.EmojiBind.keyBind} to open the Emotion Wheel, it's fun");
+        SendTip($"Hold {Movement.Instance.EmojiBind.keyBind} to open the Emotion Wheel");
         SendTip("Try typing to chat /tts <color=#cccccccc>[message]</color> or /tts <color=#cccccccc>[on/off]</color>");
         SendTip("Take a look at the bestiary, there's a little surprise :3");
 
-        ReceiveChatMessage("xzxADIxzx", "Cheers~ ♡");
+        SendMsg("Cheers~ ♡");
     }
+
+    #endregion
 }

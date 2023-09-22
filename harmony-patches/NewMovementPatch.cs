@@ -47,7 +47,7 @@ public class DeathPatch
         if (__instance.hp > 0 && __instance.hp - damage <= 0)
         {
             // player death message
-            LobbyController.Lobby?.SendChatString("<system><color=orange>Player " + SteamClient.Name + " died.</color>");
+            LobbyController.Lobby?.SendChatString($"<system><color=orange>Player {SteamClient.Name} died.</color>");
 
             // close the chat to prevent some bugs
             Chat.Instance.field.gameObject.SetActive(false);
