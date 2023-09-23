@@ -24,6 +24,9 @@ public class Chat : MonoSingleton<Chat>
     const int SYMBOLS_PER_ROW = 63;
     /// <summary> Chat width in pixels. </summary>
     const float WIDTH = 600f;
+
+    /// <summary> Prefix that will be added to bot messages. </summary>
+    const string BOT_PREFIX = "<color=#ff7f50><size=14>[BOT]</size></color>";
     /// <summary> Prefix that will be added to the TTS message. </summary>
     const string TTS_PREFIX = "<color=#ff7f50><size=14>[TTS]</size></color>";
 
@@ -269,7 +272,7 @@ public class Chat : MonoSingleton<Chat>
         // if the last owner of the lobby is not equal to 0, then the lobby is not created for the first time and there is no need to print info
         if (LobbyController.LastOwner != 0L) return;
 
-        void SendMsg(string msg) => ReceiveChatMessage("0096FF", "xzxADIxzx", msg, oneline: true);
+        void SendMsg(string msg) => ReceiveChatMessage("0096FF", BOT_PREFIX + "xzxADIxzx", msg, oneline: true);
         void SendTip(string tip) => SendMsg($"<size=14>* {tip}</size>");
 
         SendMsg("Hello, it's me, the main developer of this mod.");
