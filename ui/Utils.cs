@@ -5,13 +5,13 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
 
+using Jaket.Assets;
 using Jaket.Content;
 
 public class Utils
 {
     private static Sprite buttonImage, shadowImage, circleShadowImage, circleImage;
     private static ColorBlock colorBlock;
-    private static Font font;
 
     public static void Load()
     {
@@ -21,7 +21,6 @@ public class Utils
         circleShadowImage = WeaponWheel.Instance.background.GetComponent<UICircle>().sprite;
         circleImage = OptionsMenuToManager.Instance.transform.Find("Crosshair Filler").GetChild(0).GetChild(6).GetChild(0).GetComponent<Image>().sprite;
         colorBlock = OptionsMenuToManager.Instance.pauseMenu.transform.Find("Continue").GetComponent<Button>().colors;
-        font = OptionsMenuToManager.Instance.optionsMenu.transform.Find("Text").GetComponent<Text>().font;
     }
 
     #region base
@@ -120,7 +119,7 @@ public class Utils
         Component<Text>(obj, text =>
         {
             text.text = name;
-            text.font = font;
+            text.font = DollAssets.Font;
             text.fontSize = size;
             text.color = color.HasValue ? color.Value : Color.white;
             text.alignment = align;

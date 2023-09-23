@@ -21,6 +21,9 @@ public class DollAssets
     /// <summary> Player doll icon. </summary>
     public static Sprite Icon;
 
+    /// <summary> Font used by the mod. Differs from the original in support of Cyrillic alphabet. </summary>
+    public static Font Font;
+
     /// <summary> Shader used by the game for materials. </summary>
     public static Shader Shader;
 
@@ -86,6 +89,9 @@ public class DollAssets
 
         // I guess async will improve performance a little bit
         LoadAsync<Sprite>("V3-icon", sprite => Icon = sprite);
+
+        // but the font needs to be downloaded immediately, because it is needed when building the interface
+        Font = Bundle.LoadAsset<Font>("font.ttf");
     }
 
     /// <summary> Finds and loads an assets bundle. </summary>
