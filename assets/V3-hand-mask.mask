@@ -11,6 +11,8 @@ AvatarMask:
   m_Elements:
   - m_Path: 
     m_Weight: 1
+  - m_Path: Ears
+    m_Weight: 0
   - m_Path: Metarig
     m_Weight: 0
   - m_Path: Metarig/Coin
@@ -53,17 +55,73 @@ AvatarMask:
     m_Weight: 1
   - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm
     m_Weight: 1
-  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Phalanx
-      0
+  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Finger
+      0 Phalanx 0
     m_Weight: 1
-  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Phalanx
-      0/Left Phalanx 1
+  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Finger
+      0 Phalanx 0/Left Finger 0 Phalanx 1
     m_Weight: 1
-  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Phalanx
-      0/Left Phalanx 1/Left Phalanx 2
+  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Finger
+      0 Phalanx 0/Left Finger 0 Phalanx 1/Left Finger 0 Phalanx 2
     m_Weight: 1
-  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Phalanx
-      0/Left Phalanx 1/Left Phalanx 2/Left Phalanx 2_end
+  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Finger
+      0 Phalanx 0/Left Finger 0 Phalanx 1/Left Finger 0 Phalanx 2/Left Finger 0 Phalanx
+      3
+    m_Weight: 1
+  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Finger
+      0 Phalanx 0/Left Finger 0 Phalanx 1/Left Finger 0 Phalanx 2/Left Finger 0 Phalanx
+      3/Left Finger 0 Phalanx 3_end
+    m_Weight: 1
+  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Finger
+      1 Phalanx 0
+    m_Weight: 1
+  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Finger
+      1 Phalanx 0/Left Finger 1 Phalanx 1
+    m_Weight: 1
+  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Finger
+      1 Phalanx 0/Left Finger 1 Phalanx 1/Left Finger 1 Phalanx 2
+    m_Weight: 1
+  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Finger
+      1 Phalanx 0/Left Finger 1 Phalanx 1/Left Finger 1 Phalanx 2/Left Finger 1 Phalanx
+      3
+    m_Weight: 1
+  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Finger
+      1 Phalanx 0/Left Finger 1 Phalanx 1/Left Finger 1 Phalanx 2/Left Finger 1 Phalanx
+      3/Left Finger 1 Phalanx 3_end
+    m_Weight: 1
+  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Finger
+      2 Phalanx 0
+    m_Weight: 1
+  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Finger
+      2 Phalanx 0/Left Finger 2 Phalanx 1
+    m_Weight: 1
+  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Finger
+      2 Phalanx 0/Left Finger 2 Phalanx 1/Left Finger 2 Phalanx 2
+    m_Weight: 1
+  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Finger
+      2 Phalanx 0/Left Finger 2 Phalanx 1/Left Finger 2 Phalanx 2/Left Finger 2 Phalanx
+      3
+    m_Weight: 1
+  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Finger
+      2 Phalanx 0/Left Finger 2 Phalanx 1/Left Finger 2 Phalanx 2/Left Finger 2 Phalanx
+      3/Left Finger 2 Phalanx 3_end
+    m_Weight: 1
+  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Finger
+      3 Phalanx 0
+    m_Weight: 1
+  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Finger
+      3 Phalanx 0/Left Finger 3 Phalanx 1
+    m_Weight: 1
+  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Finger
+      3 Phalanx 0/Left Finger 3 Phalanx 1/Left Finger 3 Phalanx 2
+    m_Weight: 1
+  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Finger
+      3 Phalanx 0/Left Finger 3 Phalanx 1/Left Finger 3 Phalanx 2/Left Finger 3 Phalanx
+      3
+    m_Weight: 1
+  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Finger
+      3 Phalanx 0/Left Finger 3 Phalanx 1/Left Finger 3 Phalanx 2/Left Finger 3 Phalanx
+      3/Left Finger 3 Phalanx 3_end
     m_Weight: 1
   - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Thumb
       0
@@ -72,7 +130,10 @@ AvatarMask:
       0/Left Thumb 1
     m_Weight: 1
   - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Thumb
-      0/Left Thumb 1/Left Thumb 1_end
+      0/Left Thumb 1/Left Thumb 2
+    m_Weight: 1
+  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Thumb
+      0/Left Thumb 1/Left Thumb 2/Left Thumb 2_end
     m_Weight: 1
   - m_Path: Metarig/Spine 0/Left Wing 0
     m_Weight: 0
@@ -99,16 +160,72 @@ AvatarMask:
   - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm
     m_Weight: 0
   - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
-      Phalanx 0
+      Finger 0 Phalanx 0
     m_Weight: 0
   - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
-      Phalanx 0/Right Phalanx 1
+      Finger 0 Phalanx 0/Right Finger 0 Phalanx 1
     m_Weight: 0
   - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
-      Phalanx 0/Right Phalanx 1/Right Phalanx 2
+      Finger 0 Phalanx 0/Right Finger 0 Phalanx 1/Right Finger 0 Phalanx 2
     m_Weight: 0
   - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
-      Phalanx 0/Right Phalanx 1/Right Phalanx 2/Right Phalanx 2_end
+      Finger 0 Phalanx 0/Right Finger 0 Phalanx 1/Right Finger 0 Phalanx 2/Right
+      Finger 0 Phalanx 3
+    m_Weight: 0
+  - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
+      Finger 0 Phalanx 0/Right Finger 0 Phalanx 1/Right Finger 0 Phalanx 2/Right
+      Finger 0 Phalanx 3/Right Finger 0 Phalanx 3_end
+    m_Weight: 0
+  - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
+      Finger 1 Phalanx 0
+    m_Weight: 0
+  - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
+      Finger 1 Phalanx 0/Right Finger 1 Phalanx 1
+    m_Weight: 0
+  - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
+      Finger 1 Phalanx 0/Right Finger 1 Phalanx 1/Right Finger 1 Phalanx 2
+    m_Weight: 0
+  - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
+      Finger 1 Phalanx 0/Right Finger 1 Phalanx 1/Right Finger 1 Phalanx 2/Right
+      Finger 1 Phalanx 3
+    m_Weight: 0
+  - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
+      Finger 1 Phalanx 0/Right Finger 1 Phalanx 1/Right Finger 1 Phalanx 2/Right
+      Finger 1 Phalanx 3/Right Finger 1 Phalanx 3_end
+    m_Weight: 0
+  - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
+      Finger 2 Phalanx 0
+    m_Weight: 0
+  - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
+      Finger 2 Phalanx 0/Right Finger 2 Phalanx 1
+    m_Weight: 0
+  - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
+      Finger 2 Phalanx 0/Right Finger 2 Phalanx 1/Right Finger 2 Phalanx 2
+    m_Weight: 0
+  - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
+      Finger 2 Phalanx 0/Right Finger 2 Phalanx 1/Right Finger 2 Phalanx 2/Right
+      Finger 2 Phalanx 3
+    m_Weight: 0
+  - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
+      Finger 2 Phalanx 0/Right Finger 2 Phalanx 1/Right Finger 2 Phalanx 2/Right
+      Finger 2 Phalanx 3/Right Finger 2 Phalanx 3_end
+    m_Weight: 0
+  - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
+      Finger 3 Phalanx 0
+    m_Weight: 0
+  - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
+      Finger 3 Phalanx 0/Right Finger 3 Phalanx 1
+    m_Weight: 0
+  - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
+      Finger 3 Phalanx 0/Right Finger 3 Phalanx 1/Right Finger 3 Phalanx 2
+    m_Weight: 0
+  - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
+      Finger 3 Phalanx 0/Right Finger 3 Phalanx 1/Right Finger 3 Phalanx 2/Right
+      Finger 3 Phalanx 3
+    m_Weight: 0
+  - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
+      Finger 3 Phalanx 0/Right Finger 3 Phalanx 1/Right Finger 3 Phalanx 2/Right
+      Finger 3 Phalanx 3/Right Finger 3 Phalanx 3_end
     m_Weight: 0
   - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
       Thumb 0
@@ -117,7 +234,10 @@ AvatarMask:
       Thumb 0/Right Thumb 1
     m_Weight: 0
   - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
-      Thumb 0/Right Thumb 1/Right Thumb 1_end
+      Thumb 0/Right Thumb 1/Right Thumb 2
+    m_Weight: 0
+  - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
+      Thumb 0/Right Thumb 1/Right Thumb 2/Right Thumb 2_end
     m_Weight: 0
   - m_Path: Metarig/Spine 0/Right Wing 0
     m_Weight: 0
