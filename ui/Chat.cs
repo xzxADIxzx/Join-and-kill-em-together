@@ -202,8 +202,16 @@ public class Chat : MonoSingleton<Chat>
         if (message != "")
         {
             // handle TTS command
-            if (message == "/tts on") autoTTS = true;
-            else if (message == "/tts off") autoTTS = false;
+            if (message == "/tts on")
+            {
+                autoTTS = true;
+                ReceiveChatMessage("<color=#00FF00>Auto TTS enabled.</color>");
+            }
+            else if (message == "/tts off")
+            {
+                autoTTS = false;
+                ReceiveChatMessage("<color=red>Auto TTS disabled.</color>");
+            }
             else LobbyController.Lobby?.SendChatString(autoTTS ? "/tts " + message : message);
 
             messages.Insert(0, message);
