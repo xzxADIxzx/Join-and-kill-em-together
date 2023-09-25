@@ -60,10 +60,10 @@ public class DollAssets
         HandTextures[0] = FistControl.Instance.blueArm.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture;
 
         // load icons for emoji wheel
-        EmojiIcons = new Sprite[6];
-        EmojiGlows = new Sprite[6];
+        EmojiIcons = new Sprite[12];
+        EmojiGlows = new Sprite[12];
 
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < 12; i++)
         {
             var index = i;
             LoadAsync<Sprite>("V3-emoji-" + i, tex => EmojiIcons[index] = tex);

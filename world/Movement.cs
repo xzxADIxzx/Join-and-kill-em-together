@@ -21,11 +21,11 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Current emotion preview, can be null. </summary>
     public GameObject EmojiPreview;
     /// <summary> An array containing the length of all emotions in seconds. </summary>
-    public float[] EmojiLegnth = { 2.458f, 4.708f, 1.833f, 3.292f, 12.125f, 9.083f };
+    public float[] EmojiLegnth = { 2.458f, 4.708f, 1.833f, 3.292f, 0f, 9.083f, -1f, 12.125f };
     /// <summary> Start time of the current emotion. </summary>
     public float EmojiStart;
     /// <summary> Id of the currently playing emoji. </summary>
-    public byte Emoji = 0xFF;
+    public byte Emoji = 0xFF, Rps;
 
     /// <summary> Starting and ending position of third person camera. </summary>
     private readonly Vector3 start = new(0f, 6f, 0f), end = new(0f, .1f, 0f);
@@ -149,6 +149,7 @@ public class Movement : MonoSingleton<Movement>
 
         anim.SetTrigger("Show Emoji");
         anim.SetInteger("Emoji", id);
+        anim.SetInteger("Rps", Rps);
 
         // apply team to emotion preview
         var team = Networking.LocalPlayer.team;
@@ -183,7 +184,7 @@ public class Movement : MonoSingleton<Movement>
         position = new();
 
         StopCoroutine("ClearEmoji");
-        StartCoroutine("ClearEmoji");
+        if (EmojiLegnth[id] != -1f) StartCoroutine("ClearEmoji");
     }
 
     /// <summary> Returns the emoji id to -1 after the end of an animation. </summary>

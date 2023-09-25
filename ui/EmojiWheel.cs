@@ -17,6 +17,8 @@ public class EmojiWheel : MonoSingleton<EmojiWheel>
 {
     /// <summary> Whether emoji wheel is visible or hidden. </summary>
     public bool Shown;
+    /// <summary> Whether the second page of emoji wheel is open. </summary>
+    public bool Second;
 
     /// <summary> An array containing the rotation of all segments in degrees. </summary>
     public static float[] SegmentRotations = { -30f, 0f, 30f, -30f, 0f, 30f };
@@ -27,6 +29,8 @@ public class EmojiWheel : MonoSingleton<EmojiWheel>
     private int lastSelected, selected;
     /// <summary> Cursor direction relative to wheel center. </summary>
     private Vector2 direction;
+    /// <summary> How long is the current segment selected. </summary>
+    private float holdTime;
 
     /// <summary> Creates a singleton of emoji wheel. </summary>
     public static void Build()
@@ -60,8 +64,6 @@ public class EmojiWheel : MonoSingleton<EmojiWheel>
             Instance.Segments.Add(segment);
             segment.SetActive(false);
         }
-
-        Instance.Invoke("UpdateIcons", 5f);
     }
 
     public void Update()
@@ -82,6 +84,18 @@ public class EmojiWheel : MonoSingleton<EmojiWheel>
         {
             lastSelected = selected;
             Instantiate(WeaponWheel.Instance.clickSound);
+
+            holdTime = 0f;
+        }
+        else holdTime += Time.deltaTime;
+
+        // turn page
+        if (holdTime > .5f && selected == 4)
+        {
+            holdTime = 0f;
+
+            Second = !Second;
+            UpdateIcons();
         }
     }
 
@@ -92,8 +106,9 @@ public class EmojiWheel : MonoSingleton<EmojiWheel>
         {
             for (int i = 0; i < 6; i++)
             {
-                Segments[i].icon.sprite = DollAssets.EmojiIcons[i];
-                Segments[i].iconGlow.sprite = DollAssets.EmojiGlows[i];
+                int j = Second ? i + 6 : i; // if the wheel is on the second page, then need to take other icons
+                Segments[i].icon.sprite = DollAssets.EmojiIcons[j];
+                Segments[i].iconGlow.sprite = DollAssets.EmojiGlows[j];
             }
         }
         else Instance.Invoke("UpdateIcons", 5f);
@@ -108,6 +123,9 @@ public class EmojiWheel : MonoSingleton<EmojiWheel>
         gameObject.SetActive(Shown = true);
         CameraController.Instance.enabled = false;
 
+        Second = false;
+        UpdateIcons();
+
         lastSelected = selected = -1;
         direction = Vector2.zero;
     }
@@ -118,6 +136,10 @@ public class EmojiWheel : MonoSingleton<EmojiWheel>
         gameObject.SetActive(Shown = false);
         CameraController.Instance.enabled = true;
 
-        Movement.Instance.StartEmoji((byte)selected);
+        // randomize RPS index if RPS emote is selected
+        if (selected == 5 && Second) Movement.Instance.Rps = (byte)Random.Range(0, 2);
+
+        // play emote if the selected segment is not a page transition
+        if (selected != 4) Movement.Instance.StartEmoji((byte)(Second ? selected + 6 : selected));
     }
 }

@@ -72,6 +72,7 @@ public class LocalPlayer : Entity
         w.Byte((byte)team);
         w.Byte(weapon);
         w.Byte(Movement.Instance.Emoji);
+        w.Byte(Movement.Instance.Rps);
 
         w.Bool(NewMovement.Instance.walking);
         w.Bool(NewMovement.Instance.sliding);

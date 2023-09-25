@@ -28,7 +28,7 @@ public class RemotePlayer : Entity
     private byte lastWeapon = 0xFF, weapon;
 
     /// <summary> Last and current emoji id, needed only for fun. </summary>
-    private byte lastEmoji = 0xFF, emoji;
+    private byte lastEmoji = 0xFF, emoji, rps;
 
     /// <summary> Material of the wings. </summary>
     private Material wingMaterial;
@@ -221,6 +221,7 @@ public class RemotePlayer : Entity
 
             animator.SetTrigger("Show Emoji");
             animator.SetInteger("Emoji", emoji);
+            animator.SetInteger("Rps", rps);
 
             // recreate the weapon if the animation is over
             if (emoji == 0xFF) lastWeapon = 0xFF;
@@ -326,6 +327,7 @@ public class RemotePlayer : Entity
         w.Byte((byte)team);
         w.Byte(weapon);
         w.Byte(emoji);
+        w.Byte(rps);
 
         w.Bool(walking);
         w.Bool(sliding);
@@ -354,6 +356,7 @@ public class RemotePlayer : Entity
         team = (Team)r.Byte();
         weapon = r.Byte();
         emoji = r.Byte();
+        rps = r.Byte();
 
         walking = r.Bool();
         sliding = r.Bool();
