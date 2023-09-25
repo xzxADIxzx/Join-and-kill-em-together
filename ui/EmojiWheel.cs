@@ -29,6 +29,9 @@ public class EmojiWheel : MonoSingleton<EmojiWheel>
     private int lastSelected, selected;
     /// <summary> Cursor direction relative to wheel center. </summary>
     private Vector2 direction;
+
+    /// <summary> Circle filling the 5th segment. </summary>
+    private UICircle fill;
     /// <summary> How long is the current segment selected. </summary>
     private float holdTime;
 
@@ -44,6 +47,7 @@ public class EmojiWheel : MonoSingleton<EmojiWheel>
         // build emoji wheel
         Utils.CircleShadow("Shadow", Instance.transform, 0f, 0f, 640f, 640f, 245f);
 
+        Instance.fill = Utils.Circle("Fill", Instance.transform, 0f, 0f, 0f, 0f, 1f / 6f, 240, 0f, false).GetComponent<UICircle>();
         for (int i = 0; i < 6; i++)
         {
             float deg = 150f - i * 60f, rad = deg * Mathf.Deg2Rad;
@@ -79,6 +83,13 @@ public class EmojiWheel : MonoSingleton<EmojiWheel>
         // update segments
         for (int i = 0; i < Segments.Count; i++) Segments[i].SetActive(i == selected);
 
+        // update fill
+        float progress = holdTime >= 0f && selected == 4 ? holdTime * 2f : 0f, size = 150f + progress * 500f;
+
+        fill.Thickness = progress * 250f;
+        fill.color = new(1f, 0f, 0f, 1f - progress);
+        fill.rectTransform.sizeDelta = new(size, size);
+
         // play sound
         if (lastSelected != selected)
         {
@@ -92,7 +103,7 @@ public class EmojiWheel : MonoSingleton<EmojiWheel>
         // turn page
         if (holdTime > .5f && selected == 4)
         {
-            holdTime = 0f;
+            holdTime = -60f;
 
             Second = !Second;
             UpdateIcons();
