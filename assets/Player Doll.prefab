@@ -1048,6 +1048,11 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Limb
       objectReference: {fileID: 0}
+    - target: {fileID: -5837550431125040950, guid: 148c65ce2eca0684a98af95f3835c376,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: -4155585850640644068, guid: 148c65ce2eca0684a98af95f3835c376,
         type: 3}
       propertyPath: m_Layer
