@@ -261,6 +261,8 @@ AvatarMask:
     m_Weight: 0
   - m_Path: Metarig/Spine 0/Spine 1/Spine 2/Spine 2_end
     m_Weight: 0
+  - m_Path: Metarig/Throne
+    m_Weight: 0
   - m_Path: Rocket
     m_Weight: 1
   - m_Path: V3

@@ -19,7 +19,7 @@ public class RemotePlayer : Entity
     private FloatLerp health, x, y, z, bodyRotation, headRotation, hookX, hookY, hookZ;
 
     /// <summary> Transforms of the head, the hand holding a weapon and other stuff. </summary>
-    private Transform head, hand, hook, hookRoot, rocket;
+    private Transform head, hand, hook, hookRoot, rocket, throne;
 
     /// <summary> Last and current player team, needed for PvP mechanics. </summary>
     public Team lastTeam = (Team)0xFF, team;
@@ -98,6 +98,7 @@ public class RemotePlayer : Entity
         hook = transform.GetChild(0).GetChild(1).GetChild(1);
         hookRoot = transform.GetChild(0).GetChild(1).GetChild(5).GetChild(0).GetChild(0).GetChild(0).GetChild(0);
         rocket = transform.GetChild(0).GetChild(1).GetChild(4).GetChild(1);
+        throne = transform.GetChild(0).GetChild(1).GetChild(6);
 
         // other stuff
         wingMaterial = transform.GetChild(0).GetChild(3).GetComponent<SkinnedMeshRenderer>().materials[1];
@@ -222,6 +223,9 @@ public class RemotePlayer : Entity
             animator.SetTrigger("Show Emoji");
             animator.SetInteger("Emoji", emoji);
             animator.SetInteger("Rps", rps);
+
+            // toggle the visibility of the throne
+            throne.gameObject.SetActive(emoji == 6);
 
             // recreate the weapon if the animation is over
             if (emoji == 0xFF) lastWeapon = 0xFF;

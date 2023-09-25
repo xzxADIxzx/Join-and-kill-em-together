@@ -137,7 +137,7 @@ public class EmojiWheel : MonoSingleton<EmojiWheel>
         CameraController.Instance.enabled = true;
 
         // randomize RPS index if RPS emote is selected
-        if (selected == 5 && Second) Movement.Instance.Rps = (byte)Random.Range(0, 2);
+        if (selected == 5 && Second) Movement.Instance.Rps = (byte)Random.Range(0, 3);
 
         // play emote if the selected segment is not a page transition
         if (selected != 4) Movement.Instance.StartEmoji((byte)(Second ? selected + 6 : selected));
