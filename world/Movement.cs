@@ -21,7 +21,7 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Current emotion preview, can be null. </summary>
     public GameObject EmojiPreview;
     /// <summary> An array containing the length of all emotions in seconds. </summary>
-    public float[] EmojiLegnth = { 2.458f, 4.708f, 1.833f, 3.292f, 0f, 9.083f, -1f, 12.125f, 0f, 0f, 0f, 2.875f };
+    public float[] EmojiLegnth = { 2.458f, 4.708f, 1.833f, 3.292f, 0f, 9.083f, -1f, 12.125f, -1f, 0f, 0f, 2.875f };
     /// <summary> Start time of the current emotion. </summary>
     public float EmojiStart;
     /// <summary> Id of the currently playing emoji. </summary>
@@ -159,7 +159,9 @@ public class Movement : MonoSingleton<Movement>
         mat.mainTexture = DollAssets.WingTextures[(int)team];
         mat.color = team.Data().WingColor();
         if (team == Team.Pink) EmojiPreview.transform.GetChild(0).GetChild(0).gameObject.SetActive(true);
-        if (id == 6) EmojiPreview.transform.GetChild(0).GetChild(1).GetChild(6).gameObject.SetActive(true);
+
+        if (id == 6) EmojiPreview.transform.GetChild(0).GetChild(1).GetChild(6).gameObject.SetActive(true); // throne
+        if (id == 8) EmojiPreview.transform.GetChild(0).GetChild(1).GetChild(5).GetChild(10).GetChild(0).localEulerAngles = new(-20f, 0f, 0f); // neck
     }
 
     /// <summary> Triggers an emoji with the given id. </summary>

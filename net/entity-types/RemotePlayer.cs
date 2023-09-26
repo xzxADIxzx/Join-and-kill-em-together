@@ -165,7 +165,7 @@ public class RemotePlayer : Entity
 
         transform.position = new(x.Get(LastUpdate), y.Get(LastUpdate) - (sliding ? .3f : 1.5f), z.Get(LastUpdate));
         transform.eulerAngles = new(0f, bodyRotation.GetAngel(LastUpdate), 0f);
-        head.localEulerAngles = new(headRotation.Get(LastUpdate), 0f, 0f);
+        head.localEulerAngles = new(emoji == 8 ? -20f : headRotation.Get(LastUpdate), 0f, 0f);
 
         if (lastTeam != team)
         {
