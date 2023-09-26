@@ -49,7 +49,7 @@ public class RemotePlayer : Entity
     private Animator animator;
 
     /// <summary> Animator states that affect which animation will be played. </summary>
-    public bool walking, sliding, falling, wasDashing, dashing, wasRiding, riding, wasInAir, inAir, wasUsingHook, usingHook;
+    public bool walking, sliding, falling, wasDashing, dashing, wasRiding, riding, wasInAir, inAir, wasUsingHook, usingHook, wasShopping, shopping;
 
     /// <summary> Slide and fall particle transforms. </summary>
     private Transform slideParticle, fallParticle;
@@ -235,18 +235,14 @@ public class RemotePlayer : Entity
 
         if (wasDashing != dashing)
         {
-            wasDashing = dashing;
-
             // fire the trigger if the player dashed
-            if (dashing) animator.SetTrigger("Dash");
+            if (wasDashing = dashing) animator.SetTrigger("Dash");
         }
 
         if (wasRiding != riding)
         {
-            wasRiding = riding;
-
             // fire the trigger if the started riding on a rocket
-            if (riding) animator.SetTrigger("Ride");
+            if (wasRiding = riding) animator.SetTrigger("Ride");
 
             // toggle the visibility of the rocket effects
             rocket.gameObject.SetActive(riding);
@@ -254,21 +250,23 @@ public class RemotePlayer : Entity
 
         if (wasInAir != inAir)
         {
-            wasInAir = inAir;
-
             // fire the trigger if the player jumped
-            if (inAir) animator.SetTrigger("Jump");
+            if (wasInAir = inAir) animator.SetTrigger("Jump");
         }
 
         if (wasUsingHook != usingHook)
         {
-            wasUsingHook = usingHook;
-
             // fire the trigger if the player threw a hook
-            if (usingHook) animator.SetTrigger("Throw Hook");
+            if (wasUsingHook = usingHook) animator.SetTrigger("Throw Hook");
 
             // toggle the visibility of the hook
             hook.gameObject.SetActive(usingHook);
+        }
+
+        if (wasShopping != shopping)
+        {
+            // fire the trigger if the player opened a shop
+            if (wasShopping = shopping) animator.SetTrigger("Open Shop");
         }
 
         animator.SetBool("Walking", walking);
@@ -277,6 +275,7 @@ public class RemotePlayer : Entity
         animator.SetBool("Riding", riding);
         animator.SetBool("InAir", inAir);
         animator.SetBool("UsingHook", usingHook);
+        animator.SetBool("Shopping", shopping);
 
         if (sliding && slideParticle == null)
         {
@@ -340,6 +339,7 @@ public class RemotePlayer : Entity
         w.Bool(riding);
         w.Bool(inAir);
         w.Bool(typing);
+        w.Bool(shopping);
 
         w.Bool(usingHook);
         w.Float(hookX.target); w.Float(hookY.target); w.Float(hookZ.target);
@@ -369,6 +369,7 @@ public class RemotePlayer : Entity
         riding = r.Bool();
         inAir = r.Bool();
         typing = r.Bool();
+        shopping = r.Bool();
 
         usingHook = r.Bool();
         hookX.Read(r); hookY.Read(r); hookZ.Read(r);
