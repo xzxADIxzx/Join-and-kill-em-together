@@ -23,7 +23,14 @@ public class EnemyStartPatch
         // level 0-2 contains several cutscenes that do not need to be removed
         if (SceneHelper.CurrentScene == "Level 0-2" && __instance.enemyType == EnemyType.Swordsmachine && __instance.GetComponent<BossHealthBar>() == null) return true;
 
-        // level 5-4 contains a unique boss that needs to be dealt with separately. 
+        // levels 2-4 and 5-4 contain unique bosses that needs to be dealt with separately
+        if (SceneHelper.CurrentScene == "Level 2-4" && __instance.gameObject.name == "MinosArm")
+        {
+            var hand = __instance.gameObject.AddComponent<Hand>();
+            if (LobbyController.IsOwner) Networking.Entities[hand.Id] = hand;
+
+            return true;
+        }
         if (SceneHelper.CurrentScene == "Level 5-4" && __instance.enemyType == EnemyType.Leviathan)
         {
             var leviathan = __instance.gameObject.AddComponent<Leviathan>();

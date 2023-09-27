@@ -26,6 +26,8 @@ public class World : MonoSingleton<World>
 
     /// <summary> Name of the last loaded scene. </summary>
     private string LastScene;
+    /// <summary> There is no prefab for the mini-boss at levels 2-4. </summary>
+    public Hand Hand;
     /// <summary> Level 5-4 contains a unique boss that needs to be dealt with separately. </summary>
     public Leviathan Leviathan;
 

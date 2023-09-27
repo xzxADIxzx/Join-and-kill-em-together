@@ -23,6 +23,7 @@ public class Entities
             providers.Add(type, () => Enemies.Instantiate(type));
         }
 
+        providers.Add(EntityType.Hand, () => World.Instance.Hand);
         providers.Add(EntityType.Leviathan, () => World.Instance.Leviathan);
         providers.Add(EntityType.Player, DollAssets.CreateDoll);
     }
