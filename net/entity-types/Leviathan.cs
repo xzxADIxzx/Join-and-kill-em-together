@@ -21,7 +21,7 @@ public class Leviathan : Entity
     /// <summary> Head and tail positions used to synchronize attacks. </summary>
     public byte HeadPos, LastHeadPos, TailPos, LastTailPos;
 
-    public void Awake()
+    private void Awake()
     {
         if (LobbyController.IsOwner)
         {
@@ -53,7 +53,7 @@ public class Leviathan : Entity
         World.Instance.Leviathan = this;
     }
 
-    public void Update()
+    private void Update()
     {
         if (LobbyController.IsOwner) return;
 
