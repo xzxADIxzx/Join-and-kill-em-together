@@ -137,7 +137,7 @@ public class Networking : MonoBehaviour
         EachEntity(entity =>
         {
             // in no case can you destroy a local player
-            if (entity != LocalPlayer && entity != null) Destroy(entity.gameObject);
+            if (entity != LocalPlayer) Destroy(entity.gameObject);
         });
 
         Entities.Clear();
@@ -176,14 +176,15 @@ public class Networking : MonoBehaviour
     /// <summary> Iterates each entity. </summary>
     public static void EachEntity(Action<Entity> cons)
     {
-        foreach (var entity in Entities.Values) cons(entity);
+        foreach (var entity in Entities.Values)
+            if (entity != null) cons(entity);
     }
 
     /// <summary> Iterates each player. </summary>
     public static void EachPlayer(Action<RemotePlayer> cons)
     {
         foreach (var entity in Entities.Values)
-            if (entity is RemotePlayer player) cons(player);
+            if (entity != null && entity is RemotePlayer player) cons(player);
     }
 
     #endregion

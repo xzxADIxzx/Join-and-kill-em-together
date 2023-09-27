@@ -37,9 +37,6 @@ public class Server : Endpoint
         // write snapshot
         Networking.EachEntity(entity =>
         {
-            // when an entity is destroyed via Object.Destroy, the element in the list is replaced with null
-            if (entity == null) return;
-
             byte[] data = Writer.Write(w =>
             {
                 w.Id(entity.Id);

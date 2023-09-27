@@ -44,7 +44,7 @@ public class Client : Endpoint
             Networking.EachEntity(entity =>
             {
                 // destroy all enemies, because the host died and was thrown back to the checkpoint
-                if (entity is Enemy && entity != null) Object.Destroy(entity.gameObject);
+                if (entity is Enemy) Object.Destroy(entity.gameObject);
             });
         });
 
