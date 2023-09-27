@@ -7,7 +7,7 @@ using Jaket.Net;
 [HarmonyPatch(typeof(FinalRank), nameof(FinalRank.LevelChange))]
 public class FinalRankPatch
 {
-    static bool Prefix()
+    public static bool Prefix()
     {
         // if the player is the owner of the lobby, then everything is OK
         if (LobbyController.Lobby == null || LobbyController.IsOwner) return true;
@@ -18,4 +18,16 @@ public class FinalRankPatch
         // prevent the ability to load before the host, because this leads to a bunch of bugs and fierce lags
         return false;
     }
+}
+
+[HarmonyPatch(typeof(AbruptLevelChanger), nameof(AbruptLevelChanger.AbruptChangeLevel))]
+public class LevelChangerPatch
+{
+    static bool Prefix() => FinalRankPatch.Prefix();
+}
+
+[HarmonyPatch(typeof(AbruptLevelChanger), nameof(AbruptLevelChanger.GoToSavedLevel))]
+public class SavedLevelPatch
+{
+    static bool Prefix() => FinalRankPatch.Prefix();
 }
