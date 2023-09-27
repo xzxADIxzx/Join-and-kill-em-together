@@ -117,8 +117,12 @@ public class Networking : MonoBehaviour
             // send notification to chat
             if (LobbyController.IsOwner) lobby.SendChatString($"<system><color=red>Player {member.Name} left!</color>");
 
-            // destroy the player doll
-            if (Entities.TryGetValue(member.Id, out var player)) DestroyImmediate(player.gameObject);
+            // kill the player doll and hide the nickname above
+            if (Entities.TryGetValue(member.Id, out var entity) && entity != null && entity is RemotePlayer player)
+            {
+                if (LobbyController.IsOwner) player.health.target = 0f;
+                player.canvas.SetActive(false);
+            }
 
             // remove the exited player indicator
             PlayerIndicators.Instance.Rebuild();

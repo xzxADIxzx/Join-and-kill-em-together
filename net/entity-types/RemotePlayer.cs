@@ -16,10 +16,10 @@ using Jaket.UI;
 public class RemotePlayer : Entity
 {
     /// <summary> Player health, position and rotation. </summary>
-    private FloatLerp health, x, y, z, bodyRotation, headRotation, hookX, hookY, hookZ;
+    public FloatLerp health, x, y, z, bodyRotation, headRotation, hookX, hookY, hookZ;
 
     /// <summary> Transforms of the head, the hand holding a weapon and other stuff. </summary>
-    private Transform head, hand, hook, hookRoot, rocket, throne;
+    public Transform head, hand, hook, hookRoot, rocket, throne;
 
     /// <summary> Last and current player team, needed for PvP mechanics. </summary>
     public Team lastTeam = (Team)0xFF, team;
@@ -70,7 +70,7 @@ public class RemotePlayer : Entity
     public bool typing;
 
     /// <summary> Canvas containing nickname. </summary>
-    private GameObject canvas;
+    public GameObject canvas;
 
     /// <summary> Text containing nickname. </summary>
     private Text nicknameText;
