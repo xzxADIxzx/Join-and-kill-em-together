@@ -69,6 +69,9 @@ public class LobbyController
 
             // update the color of the hand
             Networking.LocalPlayer.UpdateWeapon();
+
+            // run the game in the background to stop freezing the server
+            Application.runInBackground = true;
         });
     }
 
@@ -86,6 +89,9 @@ public class LobbyController
 
         // return the color of the hands
         Networking.LocalPlayer.UpdateWeapon();
+
+        // return as it was, don't run the game in the background
+        Application.runInBackground = false;
     }
 
     /// <summary> Opens a steam overlay with a selection of a friend to invite to the lobby. </summary>
