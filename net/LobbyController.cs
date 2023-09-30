@@ -52,14 +52,11 @@ public class LobbyController
 
         task.GetAwaiter().OnCompleted(() =>
         {
-            if (task.Result.HasValue)
-            {
-                Lobby = task.Result.Value;
-                IsOwner = true;
+            Lobby = task.Result.Value;
+            IsOwner = true;
 
-                Lobby?.SetJoinable(true);
-                Lobby?.SetFriendsOnly();
-            }
+            Lobby?.SetJoinable(true);
+            Lobby?.SetFriendsOnly();
 
             CreatingLobby = false;
             done.Invoke();
@@ -108,6 +105,9 @@ public class LobbyController
         {
             Lobby = lobby;
             IsOwner = false;
+
+            // run the game in the background so that the client does not have lags upon returning from AFK
+            Application.runInBackground = true;
         }
         else Debug.LogError("Couldn't join the lobby.");
 
