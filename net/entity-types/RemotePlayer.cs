@@ -130,10 +130,13 @@ public class RemotePlayer : Entity
     private void Start()
     {
         // nickname
-        nickname = new Friend(Id).Name;
-        float width = nickname.Length * 14f + 16f;
+        var player = new Friend(Id);
+        var isOwner = LobbyController.Owner == Id;
 
-        canvas = Utils.Canvas("Nickname", transform, width, 64f, new Vector3(0f, 5f, 0f));
+        nickname = $"{(isOwner ? $"{Chat.HOST_PREFIX} " : "")}{player.Name}";
+        float width = Chat.RawMessageLength(nickname) * 14f + 16f;
+
+        canvas = Utils.Canvas("Nickname", transform, width, 64f, new Vector3(0f, 5f, 0f));  
         nicknameText = Utils.Button(nickname, canvas.transform, 0f, 0f, width, 40f, 24, Color.white, TextAnchor.MiddleCenter, () => {}).GetComponentInChildren<Text>();
 
         Utils.Image("Health Background", canvas.transform, 0f, -30f, width - 16f, 4f);
