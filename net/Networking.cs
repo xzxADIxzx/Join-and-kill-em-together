@@ -122,6 +122,9 @@ public class Networking : MonoBehaviour
             {
                 if (LobbyController.IsOwner) player.health.target = 0f;
                 player.canvas.SetActive(false);
+
+                // replace the entity with null so that the indicators no longer point to it
+                Entities[member.Id] = null;
             }
 
             // remove the exited player indicator

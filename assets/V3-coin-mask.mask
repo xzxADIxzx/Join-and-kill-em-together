@@ -45,6 +45,10 @@ AvatarMask:
     m_Weight: 0
   - m_Path: Metarig/Rocket 1/Rocket_end
     m_Weight: 0
+  - m_Path: Metarig/Skateboard 1
+    m_Weight: 0
+  - m_Path: Metarig/Skateboard 1/Skateboard_end
+    m_Weight: 0
   - m_Path: Metarig/Spine 0
     m_Weight: 1
   - m_Path: Metarig/Spine 0/Left Shoulder
@@ -264,6 +268,8 @@ AvatarMask:
   - m_Path: Metarig/Throne
     m_Weight: 0
   - m_Path: Rocket
+    m_Weight: 1
+  - m_Path: Skateboard
     m_Weight: 1
   - m_Path: V3
     m_Weight: 1
