@@ -41,7 +41,7 @@ public class TeamData : Attribute
     public Color Color() => new Color(r, g, b);
 
     /// <summary> Returns the color of the wings. </summary>
-    public Color WingColor() => pink ? new Color(2f, 1f, 12f) : UnityEngine.Color.white;
+    public Color WingColor() => pink ? new Color(5f, 1f, 12f) : UnityEngine.Color.white;
 }
 
 /// <summary> Extension class that allows you to get team data. </summary>

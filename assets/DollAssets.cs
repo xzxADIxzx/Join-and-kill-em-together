@@ -42,9 +42,7 @@ public class DollAssets
         Bundle = LoadBundle();
 
         // cache the shader and the wing textures for future use
-        var V2 = AssetHelper.LoadPrefab("cb3828ada2cbefe479fed3b51739edf6").GetComponent<V2>();
-
-        Shader = V2.smr.material.shader;
+        Shader = AssetHelper.LoadPrefab("cb3828ada2cbefe479fed3b51739edf6").GetComponent<V2>().smr.material.shader;
         WingTextures = new Texture[5];
         HandTextures = new Texture[2];
 
@@ -52,9 +50,12 @@ public class DollAssets
         for (int i = 0; i < 4; i++)
         {
             var index = i; // C# sucks
-            LoadAsync<Texture>("V3-wings-" + ((Team)i).ToString(), tex => WingTextures[index] = tex);
+            LoadAsync<Texture>("V3-wings-" + ((Team)i).ToString(), tex =>
+            {
+                WingTextures[index] = tex;
+                if (index == 3) WingTextures[4] = WingTextures[3];
+            });
         }
-        WingTextures[4] = V2.wingTextures[1];
 
         LoadAsync<Texture>("V3-hand", tex => HandTextures[1] = tex);
         HandTextures[0] = FistControl.Instance.blueArm.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture;
