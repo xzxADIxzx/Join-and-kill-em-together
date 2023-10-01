@@ -30,8 +30,8 @@ public class RemotePlayer : Entity
     /// <summary> Last and current emoji id, needed only for fun. </summary>
     private byte lastEmoji = 0xFF, emoji, rps;
 
-    /// <summary> Material of the wings. </summary>
-    private Material wingMaterial;
+    /// <summary> Materials of the wings and skateboard. </summary>
+    private Material wingMaterial, skateMaterial;
 
     /// <summary> Trail of the wings. </summary>
     private TrailRenderer wingTrail;
@@ -101,7 +101,8 @@ public class RemotePlayer : Entity
         throne = transform.GetChild(0).GetChild(1).GetChild(7);
 
         // other stuff
-        wingMaterial = transform.GetChild(0).GetChild(4).GetComponent<SkinnedMeshRenderer>().materials[1];
+        wingMaterial = transform.GetChild(0).GetChild(4).GetComponent<Renderer>().materials[1];
+        skateMaterial = transform.GetChild(0).GetChild(3).GetComponent<Renderer>().materials[0];
         wingTrail = GetComponentInChildren<TrailRenderer>();
         hookWinch = GetComponentInChildren<LineRenderer>(true);
         animator = GetComponentInChildren<Animator>();
@@ -171,8 +172,8 @@ public class RemotePlayer : Entity
         {
             lastTeam = team;
 
-            wingMaterial.mainTexture = DollAssets.WingTextures[(int)team];
-            wingMaterial.color = team.Data().WingColor(); // do this after changing the wings texture
+            wingMaterial.mainTexture = skateMaterial.mainTexture = DollAssets.WingTextures[(int)team];
+            wingMaterial.color = skateMaterial.color = team.Data().WingColor(); // do this after changing the wings texture
 
             var color = team.Data().Color();
             wingTrail.startColor = new Color(color.r, color.g, color.b, .5f);
