@@ -154,14 +154,14 @@ public class Movement : MonoSingleton<Movement>
 
         // apply team to emotion preview
         var team = Networking.LocalPlayer.team;
-        var mat = EmojiPreview.transform.GetChild(0).GetChild(3).GetComponent<Renderer>().materials[1];
+        var mat = EmojiPreview.transform.GetChild(0).GetChild(4).GetComponent<Renderer>().materials[1];
 
         mat.mainTexture = DollAssets.WingTextures[(int)team];
         mat.color = team.Data().WingColor();
         if (team == Team.Pink) EmojiPreview.transform.GetChild(0).GetChild(0).gameObject.SetActive(true);
 
-        if (id == 6) EmojiPreview.transform.GetChild(0).GetChild(1).GetChild(6).gameObject.SetActive(true); // throne
-        if (id == 8) EmojiPreview.transform.GetChild(0).GetChild(1).GetChild(5).GetChild(10).GetChild(0).localEulerAngles = new(-20f, 0f, 0f); // neck
+        if (id == 6) EmojiPreview.transform.GetChild(0).GetChild(1).GetChild(7).gameObject.SetActive(true); // throne
+        if (id == 8) EmojiPreview.transform.GetChild(0).GetChild(1).GetChild(6).GetChild(10).GetChild(0).localEulerAngles = new(-20f, 0f, 0f); // neck
     }
 
     /// <summary> Triggers an emoji with the given id. </summary>
