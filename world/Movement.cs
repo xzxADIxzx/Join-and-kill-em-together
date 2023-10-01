@@ -101,7 +101,7 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Toggles the ability to move, used in the chat and etc. </summary>
     public static void ToggleMovement(bool enable)
     {
-        NewMovement.Instance.enabled = GunControl.Instance.enabled = FistControl.Instance.enabled = HookArm.Instance.enabled = enable;
+        NewMovement.Instance.enabled = GunControl.Instance.enabled = FistControl.Instance.activated = HookArm.Instance.enabled = enable;
 
         // put the hook back in place
         if (!enable) HookArm.Instance.Cancel();
