@@ -170,10 +170,7 @@ public class RemotePlayer : Entity
 
         if (lastTeam != team)
         {
-            lastTeam = team;
-
-            wingMaterial.mainTexture = skateMaterial.mainTexture = DollAssets.WingTextures[(int)team];
-            wingMaterial.color = skateMaterial.color = team.Data().WingColor(); // do this after changing the wings texture
+            wingMaterial.mainTexture = skateMaterial.mainTexture = DollAssets.WingTextures[(int)(lastTeam = team)];
 
             var color = team.Data().Color();
             wingTrail.startColor = new Color(color.r, color.g, color.b, .5f);

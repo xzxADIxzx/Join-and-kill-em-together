@@ -47,14 +47,10 @@ public class DollAssets
         HandTextures = new Texture[2];
 
         // loading wing textures from the bundle
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 5; i++)
         {
             var index = i; // C# sucks
-            LoadAsync<Texture>("V3-wings-" + ((Team)i).ToString(), tex =>
-            {
-                WingTextures[index] = tex;
-                if (index == 3) WingTextures[4] = WingTextures[3];
-            });
+            LoadAsync<Texture>("V3-wings-" + ((Team)i).ToString(), tex => WingTextures[index] = tex);
         }
 
         LoadAsync<Texture>("V3-hand", tex => HandTextures[1] = tex);

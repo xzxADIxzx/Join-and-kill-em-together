@@ -28,7 +28,7 @@ public class TeamData : Attribute
 {
     /// <summary> Team color. Only used in interface. </summary>
     private float r, g, b;
-    /// <summary> Whether the wings should be pink. </summary>
+    /// <summary> Does the team has cat ears. </summary>
     private bool pink;
 
     public TeamData(float r, float g, float b, bool pink = false)
@@ -39,9 +39,6 @@ public class TeamData : Attribute
 
     /// <summary> Returns the team color. </summary>
     public Color Color() => new Color(r, g, b);
-
-    /// <summary> Returns the color of the wings. </summary>
-    public Color WingColor() => pink ? new Color(5f, 1f, 12f) : UnityEngine.Color.white;
 }
 
 /// <summary> Extension class that allows you to get team data. </summary>

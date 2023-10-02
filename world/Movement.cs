@@ -186,7 +186,6 @@ public class Movement : MonoSingleton<Movement>
         var mat2 = EmojiPreview.transform.GetChild(0).GetChild(3).GetComponent<Renderer>().materials[0];
 
         mat1.mainTexture = mat2.mainTexture = DollAssets.WingTextures[(int)team];
-        mat1.color = mat2.color = team.Data().WingColor();
         if (team == Team.Pink) EmojiPreview.transform.GetChild(0).GetChild(0).gameObject.SetActive(true);
 
         if (id == 6) EmojiPreview.transform.GetChild(0).GetChild(1).GetChild(7).gameObject.SetActive(true); // throne
