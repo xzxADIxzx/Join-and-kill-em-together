@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+using Jaket.Assets;
 using Jaket.Net;
 using Jaket.Sam;
 using Jaket.World;
@@ -202,7 +203,14 @@ public class Chat : MonoSingleton<Chat>
         if (message != "")
         {
             // handle TTS command
-            if (message == "/tts on")
+            if (message.StartsWith("/tts-volume "))
+            {
+                if (int.TryParse(message.Substring("/tts-volume ".Length), out int value))
+                    DollAssets.Mixer?.SetFloat("Volume", Mathf.Clamp(value, 0, 100) / 2f - 30f); // the value should be between -30 and 20 decibels
+                else
+                    ReceiveChatMessage("<color=red>Failed to parse value. It must be an integer in the range from 0 to 100.</color>");
+            }
+            else if (message == "/tts on")
             {
                 autoTTS = true;
                 ReceiveChatMessage("<color=#00FF00>Auto TTS enabled.</color>");
@@ -212,6 +220,7 @@ public class Chat : MonoSingleton<Chat>
                 autoTTS = false;
                 ReceiveChatMessage("<color=red>Auto TTS disabled.</color>");
             }
+            //  or send message to the chat
             else LobbyController.Lobby?.SendChatString(autoTTS ? "/tts " + message : message);
 
             messages.Insert(0, message);

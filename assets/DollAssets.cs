@@ -3,6 +3,7 @@ namespace Jaket.Assets;
 using System.IO;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.Events;
 
 using Jaket.Content;
@@ -20,6 +21,9 @@ public class DollAssets
 
     /// <summary> Player doll icon. </summary>
     public static Sprite Icon;
+
+    /// <summary> Mixer processing Sam's voice. Used to change volume. </summary>
+    public static AudioMixer Mixer;
 
     /// <summary> Font used by the mod. Differs from the original in support of Cyrillic alphabet. </summary>
     public static Font Font;
@@ -87,8 +91,9 @@ public class DollAssets
         // I guess async will improve performance a little bit
         LoadAsync<Sprite>("V3-icon", sprite => Icon = sprite);
 
-        // but the font needs to be downloaded immediately, because it is needed when building the interface
+        // but the font and mixer need to be downloaded immediately, because they are needed when building the interface and local player
         Font = Bundle.LoadAsset<Font>("font.ttf");
+        Mixer = Bundle.LoadAsset<AudioMixer>("sam-audio");
     }
 
     /// <summary> Finds and loads an assets bundle. </summary>
