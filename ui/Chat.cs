@@ -206,7 +206,12 @@ public class Chat : MonoSingleton<Chat>
             if (message.StartsWith("/tts-volume "))
             {
                 if (int.TryParse(message.Substring("/tts-volume ".Length), out int value))
-                    DollAssets.Mixer?.SetFloat("Volume", Mathf.Clamp(value, 0, 100) / 2f - 30f); // the value should be between -30 and 20 decibels
+                {
+                    int clamped = Mathf.Clamp(value, 0, 100);
+                    DollAssets.Mixer?.SetFloat("Volume", clamped / 2 - 30); // the value should be between -30 and 20 decibels
+
+                    ReceiveChatMessage($"<color=#00FF00>TTS volume is set to {clamped}.</color>");
+                }
                 else
                     ReceiveChatMessage("<color=red>Failed to parse value. It must be an integer in the range from 0 to 100.</color>");
             }
@@ -295,10 +300,11 @@ public class Chat : MonoSingleton<Chat>
         SendMsg("Hello, it's me, the main developer of this mod.");
         SendMsg("I just wanted to give some tips about Jaket:");
 
-        SendTip("Go to the control settings, there are a few new elements");
+        SendTip("Go to the control settings, there are new elements");
         SendTip($"Hold {Movement.Instance.EmojiBind.keyBind} to open the Emotion Wheel");
         SendTip("Try typing to chat /tts <color=#cccccccc>[message]</color> or /tts <color=#cccccccc>[on/off]</color>");
-        SendTip("Take a look at the bestiary, there's a little surprise :3");
+        SendTip("Use /tts-volume <color=#cccccccc>[0-100]</color> to keep ur ears comfortable");
+        SendTip("Take a look at the bestiary, there's a surprise :3");
 
         SendMsg("Cheers~ ♡");
     }
