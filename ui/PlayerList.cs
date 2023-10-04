@@ -77,7 +77,7 @@ public class PlayerList : MonoSingleton<PlayerList>
 
         // no comments
         gameObject.SetActive(Shown = !Shown);
-        Movement.ToggleCursor(Shown);
+        Movement.UpdateState();
 
         // no need to update list if we hide it
         if (Shown) Rebuild();

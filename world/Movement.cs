@@ -87,8 +87,11 @@ public class Movement : MonoSingleton<Movement>
             if (Input.GetKey(KeyCode.Space) && !Chat.Instance.Shown) StartEmoji(0xFF);
 
             // rotate the camera according to mouse sensitivity
-            rotation += InputManager.Instance.InputSource.Look.ReadValue<Vector2>() * OptionsManager.Instance.mouseSensitivity / 10f;
-            rotation.y = Mathf.Clamp(rotation.y, 5f, 170f);
+            if (!Chat.Instance.Shown && !PlayerList.Instance.Shown) // TODO replace with UIB.Shown
+            {
+                rotation += InputManager.Instance.InputSource.Look.ReadValue<Vector2>() * OptionsManager.Instance.mouseSensitivity / 10f;
+                rotation.y = Mathf.Clamp(rotation.y, 5f, 170f);
+            }
 
             var cam = CameraController.Instance.cam.transform;
             var player = NewMovement.Instance.transform.position + new Vector3(0f, 1f, 0f);
@@ -117,14 +120,30 @@ public class Movement : MonoSingleton<Movement>
         // pause stops time and weapon wheel slows it down, but in multiplayer everything should be real-time
         Time.timeScale = 1f;
 
-        // sometimes it happens that in the chat the player flies into the air
-        if (!NewMovement.Instance.dead) rb.constraints = NewMovement.Instance.enabled || Emoji == 0x0B ? RigidbodyConstraints.FreezeRotation : RigidbodyConstraints.FreezeAll;
-
         // reset slam force if the player is riding on a rocket
         if (NewMovement.Instance.ridingRocket != null) NewMovement.Instance.slamForce = 0f;
     }
 
     #region toggling
+
+    /// <summary> Updates the state machine: toggles movement, cursor and third-person camera. </summary>
+    public static void UpdateState()
+    {
+        ToggleMovement(!Chat.Instance.Shown && Instance.Emoji == 0xFF);
+        ToggleCursor(Chat.Instance.Shown || PlayerList.Instance.Shown);
+        ToggleHud(Instance.Emoji == 0xFF);
+
+        // fix ultrasoap
+        rb.constraints = Chat.Instance.Shown
+            ? RigidbodyConstraints.FreezeAll
+            : Instance.Emoji == 0xFF || Instance.Emoji == 0x0B // skateboard
+                ? RigidbodyConstraints.FreezeRotation
+                : (RigidbodyConstraints)122;
+
+        // block camera rotation
+        CameraController.Instance.enabled = CameraController.Instance.activated =
+            !Chat.Instance.Shown && !PlayerList.Instance.Shown && Instance.Emoji == 0xFF;
+    }
 
     /// <summary> Toggles the ability to move, used in the chat and etc. </summary>
     public static void ToggleMovement(bool enable)
@@ -134,9 +153,6 @@ public class Movement : MonoSingleton<Movement>
 
         // put the hook back in place
         if (!enable) HookArm.Instance.Cancel();
-
-        // fix ultrasoap
-        rb.constraints = enable || Instance.Emoji == 0x0B ? RigidbodyConstraints.FreezeRotation : RigidbodyConstraints.FreezeAll;
     }
 
     /// <summary> Toggles cursor visibility. </summary>
@@ -144,13 +160,10 @@ public class Movement : MonoSingleton<Movement>
     {
         Cursor.visible = enable;
         Cursor.lockState = enable ? CursorLockMode.None : CursorLockMode.Locked;
-
-        // block camera rotation
-        CameraController.Instance.enabled = !enable;
     }
 
-    /// <summary> Toggles the ability to rotate the camera and hud. </summary>
-    public static void ToggleCamera(bool enable)
+    /// <summary> Toggles hud visibility. </summary>
+    public static void ToggleHud(bool enable)
     {
         // hide hud, weapons and arms
         StyleHUD.Instance.transform.parent.gameObject.SetActive(enable);
@@ -160,9 +173,6 @@ public class Movement : MonoSingleton<Movement>
         // preventing some ultra stupid bug
         OptionsManager.Instance.frozen = !enable;
         Console.Instance.enabled = enable;
-
-        // block camera rotation
-        CameraController.Instance.enabled = CameraController.Instance.activated = enable;
     }
 
     #endregion
@@ -199,8 +209,8 @@ public class Movement : MonoSingleton<Movement>
         EmojiStart = Time.time;
         Emoji = id; // save id for synchronization over the network
 
-        ToggleCamera(Emoji == 0xFF);
-        if (!Chat.Instance.Shown) ToggleMovement(Emoji == 0xFF);
+        // toggle movement and third-person camera
+        UpdateState();
 
         // destroy the old preview so they don't stack
         Destroy(EmojiPreview);
