@@ -10,6 +10,7 @@ using Jaket.IO;
 using Jaket.Net.EndPoints;
 using Jaket.Net.EntityTypes;
 using Jaket.UI;
+using Jaket.World;
 using UnityEngine.SceneManagement;
 
 public class Networking : MonoBehaviour
@@ -57,7 +58,7 @@ public class Networking : MonoBehaviour
                 Entities[LocalPlayer.Id] = LocalPlayer;
 
                 // inform all players about the transition to a new level
-                Redirect(Writer.Write(w => w.String(SceneHelper.CurrentScene)), PacketType.LevelLoading);
+                Redirect(World.Instance.WriteData(), PacketType.LevelLoading);
             }
 
             Loading = false;
@@ -109,7 +110,7 @@ public class Networking : MonoBehaviour
             SteamNetworking.AcceptP2PSessionWithUser(lobby.Owner.Id);
 
             // send the current scene name to the player
-            Send(member.Id, Writer.Write(w => w.String(SceneHelper.CurrentScene)), PacketType.LevelLoading);
+            Send(member.Id, World.Instance.WriteData(), PacketType.LevelLoading);
         };
 
         SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) =>
@@ -166,7 +167,7 @@ public class Networking : MonoBehaviour
             if (SteamNetworking.IsP2PPacketAvailable((int)PacketType.LevelLoading))
             {
                 var packet = SteamNetworking.ReadP2PPacket((int)PacketType.LevelLoading);
-                if (packet.HasValue) Reader.Read(packet.Value.Data, r => SceneHelper.LoadScene(r.String()));
+                if (packet.HasValue) Reader.Read(packet.Value.Data, World.Instance.ReadData);
             }
             return; // during loading, look only for packages with the name of the desired scene
         }
