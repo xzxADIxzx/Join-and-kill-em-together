@@ -143,6 +143,14 @@ public class World : MonoSingleton<World>
         // the version is needed for a warning about incompatibility, and the difficulty is mainly needed for ultrapain
         w.String(Version.CURRENT);
         w.Int(PrefsManager.Instance.GetInt("difficulty"));
+
+        // synchronize the Ultrapain difficulty
+        w.Bool(Plugin.UltrapainLoaded);
+        if (Plugin.UltrapainLoaded)
+        {
+            w.Bool(Ultrapain.Plugin.ultrapainDifficulty);
+            w.Bool(Ultrapain.Plugin.realUltrapainDifficulty);
+        }
     });
 
     /// <summary> Reads data about the world: loads the level, sets difficulty and, in the future, fires triggers. </summary>
@@ -163,6 +171,18 @@ public class World : MonoSingleton<World>
         }
 
         PrefsManager.Instance.SetInt("difficulty", r.Int());
+
+        if (r.Bool())
+        {
+            // synchronize different values needed for Ultrapain to work
+            if (Plugin.UltrapainLoaded)
+            {
+                Ultrapain.Plugin.ultrapainDifficulty = r.Bool();
+                Ultrapain.Plugin.realUltrapainDifficulty = r.Bool();
+            }
+            // or skip the values if the mod isn't installed locally
+            else r.Bytes(2);
+        }
     }
 
     #endregion

@@ -1,6 +1,7 @@
 ﻿namespace Jaket;
 
 using BepInEx;
+using BepInEx.Bootstrap;
 using HarmonyLib;
 using UMM;
 using UnityEngine;
@@ -20,6 +21,8 @@ public class Plugin : BaseUnityPlugin
     public static Plugin Instance;
     /// <summary> Whether the plugin has been initialized. </summary>
     public static bool Initialized;
+    /// <summary> Whether the Ultrapain mod is loaded. Needed to synchronize difficulty. </summary>
+    public static bool UltrapainLoaded;
 
     public void Awake()
     {
@@ -41,6 +44,9 @@ public class Plugin : BaseUnityPlugin
 
         // notify players about the availability of an update so that they no longer whine to me about something not working
         Version.Check4Update();
+
+        // check if Ultrapain is installed
+        UltrapainLoaded = Chainloader.PluginInfos.ContainsKey("com.eternalUnion.ultraPain");
 
         // initialize content components
         DollAssets.Load();

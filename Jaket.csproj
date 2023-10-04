@@ -42,6 +42,9 @@
     <Reference Include="UnityEditor">
       <HintPath>lib\UnityEditor.dll</HintPath>
     </Reference>
+    <Reference Include="Ultrapain">
+      <HintPath>lib\Ultrapain.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
