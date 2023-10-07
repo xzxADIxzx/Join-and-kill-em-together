@@ -78,6 +78,9 @@ public class LobbyController
         Lobby?.Leave();
         Lobby = null;
 
+        // if the client has left the lobby, then load the main menu
+        if (!IsOwner && SceneHelper.CurrentScene != "Main Menu") SceneHelper.LoadScene("Main Menu");
+
         // destroy all network objects
         Networking.Clear();
 

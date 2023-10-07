@@ -142,11 +142,8 @@ public class Networking : MonoBehaviour
     /// <summary> Destroys all network objects and clears lists. </summary>
     public static void Clear()
     {
-        EachEntity(entity =>
-        {
-            // in no case can you destroy a local player
-            if (entity != LocalPlayer) Destroy(entity.gameObject);
-        });
+        // we destroy all players, but leave the enemies
+        EachPlayer(player => Destroy(player.gameObject));
 
         Entities.Clear();
         Bosses.Clear();
