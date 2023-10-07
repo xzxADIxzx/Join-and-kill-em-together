@@ -63,7 +63,6 @@ public class Movement : MonoSingleton<Movement>
 
             target.y = rb.velocity.y;
             rb.velocity = target;
-            rb.useGravity = true;
 
             // don’t let the front and rear wheels fall into the ground
             if (Physics.Raycast(player.position + player.forward * 1.2f, Vector3.down, out var hit, 1.5f, environmentMask) && hit.distance > .8f)
@@ -92,6 +91,9 @@ public class Movement : MonoSingleton<Movement>
                 rotation += InputManager.Instance.InputSource.Look.ReadValue<Vector2>() * OptionsManager.Instance.mouseSensitivity / 10f;
                 rotation.y = Mathf.Clamp(rotation.y, 5f, 170f);
             }
+
+            // turn on gravity, because if the taunt was launched on the ground, then it is disabled by default
+            rb.useGravity = true;
 
             var cam = CameraController.Instance.cam.transform;
             var player = NewMovement.Instance.transform.position + new Vector3(0f, 1f, 0f);
@@ -221,6 +223,10 @@ public class Movement : MonoSingleton<Movement>
 
         // telling how to interrupt an emotion
         HudMessageReceiver.Instance.SendHudMessage("Press <color=orange>Space</color> to interrupt the emotion", silent: true);
+
+        // stop sliding so that the preview is not underground
+        NewMovement.Instance.playerCollider.height = 3.5f;
+        NewMovement.Instance.gc.transform.localPosition = new(0f, -1.256f, 0f);
 
         // rotate the third person camera in the same direction as the first person camera
         rotation = new(CameraController.Instance.rotationY, CameraController.Instance.rotationX + 90f);
