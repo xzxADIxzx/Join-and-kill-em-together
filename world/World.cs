@@ -146,11 +146,7 @@ public class World : MonoSingleton<World>
 
         // synchronize the Ultrapain difficulty
         w.Bool(Plugin.UltrapainLoaded);
-        if (Plugin.UltrapainLoaded)
-        {
-            w.Bool(Ultrapain.Plugin.ultrapainDifficulty);
-            w.Bool(Ultrapain.Plugin.realUltrapainDifficulty);
-        }
+        if (Plugin.UltrapainLoaded) Plugin.WritePain(w);
     });
 
     /// <summary> Reads data about the world: loads the level, sets difficulty and, in the future, fires triggers. </summary>
@@ -175,11 +171,7 @@ public class World : MonoSingleton<World>
         if (r.Bool())
         {
             // synchronize different values needed for Ultrapain to work
-            if (Plugin.UltrapainLoaded)
-            {
-                Ultrapain.Plugin.ultrapainDifficulty = r.Bool();
-                Ultrapain.Plugin.realUltrapainDifficulty = r.Bool();
-            }
+            if (Plugin.UltrapainLoaded) Plugin.TogglePain(r.Bool(), r.Bool());
             // or skip the values if the mod isn't installed locally
             else r.Bytes(2);
         }

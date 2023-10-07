@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;
 
 using Jaket.Assets;
 using Jaket.Content;
+using Jaket.IO;
 using Jaket.Net;
 using Jaket.UI;
 using Jaket.World;
@@ -23,6 +24,14 @@ public class Plugin : BaseUnityPlugin
     public static bool Initialized;
     /// <summary> Whether the Ultrapain mod is loaded. Needed to synchronize difficulty. </summary>
     public static bool UltrapainLoaded;
+
+    /// <summary> Toggles Ultrapain difficulty. Placing it in a separate function is necessary to avoid errors. </summary>
+    public static void TogglePain(bool unreal, bool real)
+    { Ultrapain.Plugin.ultrapainDifficulty = unreal; Ultrapain.Plugin.realUltrapainDifficulty = real; }
+
+    /// <summary> Writes Ultrapain difficulty data. </summary>
+    public static void WritePain(Writer w)
+    { w.Bool(Ultrapain.Plugin.ultrapainDifficulty); w.Bool(Ultrapain.Plugin.realUltrapainDifficulty); }
 
     public void Awake()
     {
