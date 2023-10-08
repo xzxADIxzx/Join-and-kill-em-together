@@ -116,6 +116,17 @@ public class Movement : MonoSingleton<Movement>
         }
 
 
+        // ultrasoap
+        if (SceneHelper.CurrentScene != "Main Menu" && !NewMovement.Instance.dead)
+        {
+            rb.constraints = Chat.Instance.Shown || OptionsManager.Instance.paused || Console.IsOpen
+                ? RigidbodyConstraints.FreezeAll
+                : Instance.Emoji == 0xFF || Instance.Emoji == 0x0B // skateboard
+                    ? RigidbodyConstraints.FreezeRotation
+                    : (RigidbodyConstraints)122;
+        }
+
+
         // all the following changes are related to the network part of the game and shouldn't affect the local
         if (LobbyController.Lobby == null) return;
 
@@ -134,13 +145,6 @@ public class Movement : MonoSingleton<Movement>
         ToggleMovement(!Chat.Instance.Shown && Instance.Emoji == 0xFF);
         ToggleCursor(Chat.Instance.Shown || PlayerList.Instance.Shown);
         ToggleHud(Instance.Emoji == 0xFF);
-
-        // fix ultrasoap
-        rb.constraints = Chat.Instance.Shown
-            ? RigidbodyConstraints.FreezeAll
-            : Instance.Emoji == 0xFF || Instance.Emoji == 0x0B // skateboard
-                ? RigidbodyConstraints.FreezeRotation
-                : (RigidbodyConstraints)122;
 
         // block camera rotation
         CameraController.Instance.enabled = CameraController.Instance.activated =
