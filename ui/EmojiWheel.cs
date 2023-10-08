@@ -3,7 +3,6 @@ namespace Jaket.UI;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
 
 using Jaket.Assets;
@@ -39,15 +38,15 @@ public class EmojiWheel : MonoSingleton<EmojiWheel>
     public static void Build()
     {
         // initialize the singleton and create a canvas
-        Utils.Canvas("Emoji Wheel", Plugin.Instance.transform).AddComponent<EmojiWheel>().gameObject.SetActive(false);
+        UI.Canvas("Emoji Wheel", Plugin.Instance.transform).AddComponent<EmojiWheel>().gameObject.SetActive(false);
 
         // hide emoji wheel once loading a scene
         SceneManager.sceneLoaded += (scene, mode) => Instance.gameObject.SetActive(Instance.Shown = false);
 
         // build emoji wheel
-        Utils.CircleShadow("Shadow", Instance.transform, 0f, 0f, 640f, 640f, 245f);
+        UI.CircleShadow("Shadow", Instance.transform);
 
-        Instance.fill = Utils.Circle("Fill", Instance.transform, 0f, 0f, 0f, 0f, 1f / 6f, 240, 0f, false).GetComponent<UICircle>();
+        Instance.fill = UI.CircleImage("Fill", Instance.transform, 0f, 0f, 1f / 6f, 240, 0f);
         for (int i = 0; i < 6; i++)
         {
             float deg = 150f - i * 60f, rad = deg * Mathf.Deg2Rad;
@@ -55,11 +54,11 @@ public class EmojiWheel : MonoSingleton<EmojiWheel>
 
             var segment = new WheelSegment
             {
-                segment = Utils.Circle("Segment " + i, Instance.transform, 0f, 0f, 150f, 150f, 1f / 6f, i * 60, 8f, true).GetComponent<UICircle>(),
-                divider = Utils.Circle("Divider " + i, Instance.transform, 0f, 0f, 640f, 640f, .005f, i * 60, 245f, false).GetComponent<UICircle>(),
+                segment = UI.CircleImage("Segment " + i, Instance.transform, 150f, 150f, 1f / 6f, i * 60, 8f, true),
+                divider = UI.CircleImage("Divider " + i, Instance.transform, 640f, 640f, .005f, i * 60, 245f),
 
-                iconGlow = Utils.Image("Glow", Instance.transform, pos.x, pos.y, 285f, 150f, Color.white).GetComponent<Image>(),
-                icon = Utils.Image("Icon", Instance.transform, pos.x, pos.y, 285f, 150f, Color.white).GetComponent<Image>(),
+                iconGlow = UI.Image("Glow", Instance.transform, pos.x, pos.y, 285f, 150f),
+                icon = UI.Image("Icon", Instance.transform, pos.x, pos.y, 285f, 150f),
             };
 
             segment.icon.rectTransform.localEulerAngles = new(0f, 0f, SegmentRotations[i]);

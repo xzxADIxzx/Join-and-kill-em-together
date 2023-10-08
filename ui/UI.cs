@@ -4,6 +4,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using UnityEngine.UI.Extensions;
 
 using Jaket.Assets;
 
@@ -61,11 +62,19 @@ public class UI
         return obj;
     }
 
+    /// <summary> Creates a translucent black image, that's it. </summary>
+    public static Image Table(string name, Transform parent, float x, float y, float width, float height, Action<Transform> action = null)
+    {
+        var image = Image(name, parent, x, y, width, height, new Color(0f, 0f, 0f, .5f));
+        action?.Invoke(image.transform);
+        return image;
+    }
+
     /// <summary> Creates a new rect at the specified position with the given size. </summary>
     public static RectTransform Rect(string name, Transform parent, float x, float y, float width, float height) =>
         Component<RectTransform>(Object(name, parent), rect =>
         {
-            rect.position = new(x, y);
+            rect.anchoredPosition = new(x, y);
             rect.sizeDelta = new(width, height);
         });
 
@@ -109,11 +118,29 @@ public class UI
                               Color? color = null, bool fill = true, bool circle = false) =>
         Component<Image>(Rect(name, parent, x, y, width, height).gameObject, image =>
         {
-            image.color = color ?? new Color(0f, 0f, 0f, .5f);
+            image.color = color ?? Color.white;
             image.fillCenter = fill;
             image.sprite = circle ? UI.circle : background;
             image.type = UnityEngine.UI.Image.Type.Sliced;
         });
+
+    /// <summary> Adds a circular image with the standard sprite to the canvas. </summary>
+    public static UICircle CircleImage(string name, Transform parent, float width, float height, float arc, int rotation, float thickness, bool outline = false)
+    {
+        var obj = Rect(name, parent, 0f, 0f, width, height).gameObject;
+        if (outline) Component<Outline>(obj, outline =>
+        {
+            outline.effectDistance = new(3f, -3f);
+            outline.effectColor = Color.white;
+        });
+        return Component<UICircle>(obj, circle =>
+        {
+            circle.Arc = arc;
+            circle.ArcRotation = rotation;
+            circle.Thickness = thickness;
+            circle.Fill = false;
+        });
+    }
 
     #endregion
     #region button
@@ -123,7 +150,7 @@ public class UI
                                 Color? color = null, int size = 32, TextAnchor align = TextAnchor.MiddleCenter, UnityAction clicked = null)
     {
         var img = Image(name, parent, x, y, width, height, color, false);
-        Text(name, img.transform, x, y, width, height, color, size, align);
+        Text(name, img.transform, 0f, 0f, width, height, color, size, align);
         return Component<Button>(img.gameObject, button =>
         {
             button.targetGraphic = img;
@@ -131,6 +158,28 @@ public class UI
             button.onClick.AddListener(clicked);
         });
     }
+
+    #endregion
+    #region shadow
+
+    /// <summary> Adds a shadow located on the left by default. </summary>
+    public static Image Shadow(string name, Transform parent, float x = -800f, float y = 0f, float width = 320f, float height = 2000f) =>
+        Component<Image>(Rect(name, parent, x, y, width, height).gameObject, image =>
+        {
+            image.sprite = shadow;
+            image.color = Color.black;
+        });
+
+    /// <summary> Adds a circular shadow located in the center by default. </summary>
+    public static UICircle CircleShadow(string name, Transform parent, float x = 0f, float y = 0f, float diameter = 640f, float thickness = 245f) =>
+        Component<UICircle>(Rect(name, parent, x, y, diameter, diameter).gameObject, circle =>
+        {
+            circle.sprite = circleShadow;
+            circle.color = Color.black;
+
+            circle.Fill = false;
+            circle.Thickness = thickness;
+        });
 
     #endregion
 }
