@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
 
 using Jaket.Assets;
+using Jaket.Content;
 
 /// <summary> Class that builds the entire interface of the mod. </summary>
 public class UI
@@ -156,6 +157,38 @@ public class UI
             button.targetGraphic = img;
             button.colors = colors;
             button.onClick.AddListener(clicked);
+        });
+    }
+
+    /// <summary> Creates a command button with the appropriate color. </summary>
+    public static Button TeamButton(Team team, Transform parent, float x, float y, float width = 51f, float height = 51f, UnityAction clicked = null)
+    {
+        var img = Image(team.ToString(), parent, x, y, width, height, team.Data().Color());
+        if (team == Team.Pink) Text("UwU", img.transform, 0f, 0f, width, height, size: 24);
+        return Component<Button>(img.gameObject, button =>
+        {
+            button.targetGraphic = img;
+            button.onClick.AddListener(clicked);
+        });
+    }
+
+    #endregion
+    #region field
+
+    /// <summary> Creates an input field with a placeholder. </summary>
+    public static InputField Field(string name, Transform parent, float x, float y, float width = 1920f - 32f, float height = 32f,
+                                   int size = 24, UnityAction<string> enter = null)
+    {
+        var img = Table("Field", parent, x, y, width, height);
+        var text = Text("", img.transform, 8f, 1f, width, height, null, size, TextAnchor.MiddleLeft);
+        var placeholder = Text(name, img.transform, 8f, 1f, width, height, new Color(.8f, .8f, .8f, .8f), size, TextAnchor.MiddleLeft);
+
+        return Component<InputField>(img.gameObject, field =>
+        {
+            field.targetGraphic = img;
+            field.textComponent = text;
+            field.placeholder = placeholder;
+            field.onEndEdit.AddListener(enter);
         });
     }
 
