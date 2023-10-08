@@ -2,7 +2,10 @@ namespace Jaket.UI;
 
 using System;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
+
+using Jaket.Assets;
 
 /// <summary> Class that builds the entire interface of the mod. </summary>
 public class UI
@@ -39,4 +42,95 @@ public class UI
         Chat.Build();
         EmojiWheel.Build();
     }
+
+    #region base
+
+    /// <summary> Adds a component to the given object and returns it. Just for convenience. </summary>
+    public static T Component<T>(GameObject obj, Action<T> action) where T : Component
+    {
+        var component = obj.AddComponent<T>();
+        action.Invoke(component);
+        return component;
+    }
+
+    /// <summary> Creates a new game object and assigns it to the given transform. </summary>
+    public static GameObject Object(string name, Transform parent)
+    {
+        GameObject obj = new(name);
+        obj.transform.SetParent(parent);
+        return obj;
+    }
+
+    /// <summary> Creates a new rect at the specified position with the given size. </summary>
+    public static RectTransform Rect(string name, Transform parent, float x, float y, float width, float height) =>
+        Component<RectTransform>(Object(name, parent), rect =>
+        {
+            rect.position = new(x, y);
+            rect.sizeDelta = new(width, height);
+        });
+
+    #endregion
+    #region canvas
+
+    /// <summary> Creates a canvas that is drawn on top of the camera. </summary>
+    public static GameObject Canvas(string name, Transform parent)
+    {
+        var obj = Object(name, parent);
+        Component<Canvas>(obj, canvas =>
+        {
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 1000; // move the canvas up, otherwise it will not be visible
+        });
+        Component<CanvasScaler>(obj, scaler =>
+        {
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new(1920f, 1080f);
+        });
+        return obj.AddComponent<GraphicRaycaster>().gameObject;
+    }
+
+    #endregion
+    #region text & image
+
+    /// <summary> Adds text with the given parameters to the canvas. </summary>
+    public static Text Text(string name, Transform parent, float x, float y, float width = 320f, float height = 48f,
+                            Color? color = null, int size = 32, TextAnchor align = TextAnchor.MiddleCenter) =>
+        Component<Text>(Rect("Text", parent, x, y, width, height).gameObject, text =>
+        {
+            text.text = name;
+            text.color = color ?? Color.white;
+            text.font = DollAssets.Font;
+            text.fontSize = size;
+            text.alignment = align;
+        });
+
+    /// <summary> Adds an image with the standard sprite to the canvas. </summary>
+    public static Image Image(string name, Transform parent, float x, float y, float width = 320f, float height = 48f,
+                              Color? color = null, bool fill = true, bool circle = false) =>
+        Component<Image>(Rect(name, parent, x, y, width, height).gameObject, image =>
+        {
+            image.color = color ?? new Color(0f, 0f, 0f, .5f);
+            image.fillCenter = fill;
+            image.sprite = circle ? UI.circle : background;
+            image.type = UnityEngine.UI.Image.Type.Sliced;
+        });
+
+    #endregion
+    #region button
+
+    /// <summary> Creates a regular button that calls the given action. </summary>
+    public static Button Button(string name, Transform parent, float x, float y, float width = 320f, float height = 48f,
+                                Color? color = null, int size = 32, TextAnchor align = TextAnchor.MiddleCenter, UnityAction clicked = null)
+    {
+        var img = Image(name, parent, x, y, width, height, color, false);
+        Text(name, img.transform, x, y, width, height, color, size, align);
+        return Component<Button>(img.gameObject, button =>
+        {
+            button.targetGraphic = img;
+            button.colors = colors;
+            button.onClick.AddListener(clicked);
+        });
+    }
+
+    #endregion
 }
