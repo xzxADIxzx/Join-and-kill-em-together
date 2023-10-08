@@ -74,12 +74,8 @@ public class Plugin : BaseUnityPlugin
 
         // initialize ui components
         WidescreenFix.Load();
-        Utils.Load(); // gets some resources like images and fonts
-        PlayerList.Build();
-        PlayerIndicators.Build();
-        Chat.Build();
-        EmojiWheel.Build();
-        CinemaPlayer.Build();
+        UI.UI.Load();
+        UI.UI.Build();
 
         // initialize harmony and patch all the necessary classes
         new Harmony("Should I write something here?").PatchAll();
