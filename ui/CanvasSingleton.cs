@@ -18,7 +18,7 @@ public class CanvasSingleton<T> : MonoSingleton<T> where T : CanvasSingleton<T>
         SceneManager.sceneLoaded += (scene, mode) =>
         {
             // player indicators should only be hidden when loading into the main menu
-            if (!hideInMainMenuOnly && SceneHelper.CurrentScene == "Main Menu") Instance.gameObject.SetActive(Instance.Shown = false);
+            if (!hideInMainMenuOnly || SceneHelper.CurrentScene == "Main Menu") Instance.gameObject.SetActive(Instance.Shown = false);
         };
     }
 }

@@ -81,7 +81,8 @@ public class Plugin : BaseUnityPlugin
         new Harmony("Should I write something here?").PatchAll();
 
         // initialize keybinds
-        UKAPI.GetKeyBind("PLAYER LIST", KeyCode.F1).onPerformInScene.AddListener(PlayerList.Instance.Toggle);
+        UKAPI.GetKeyBind("LOBBY TAB", KeyCode.F1).onPerformInScene.AddListener(LobbyTab.Instance.Toggle);
+        UKAPI.GetKeyBind("PLAYER LIST", KeyCode.F2).onPerformInScene.AddListener(PlayerList.Instance.Toggle);
         UKAPI.GetKeyBind("PLAYER INDICATOR", KeyCode.Z).onPerformInScene.AddListener(PlayerIndicators.Instance.Toggle);
         UKAPI.GetKeyBind("CHAT", KeyCode.Return).onPerformInScene.AddListener(Chat.Instance.Toggle);
         UKAPI.GetKeyBind("SCROOL MESSAGES UP", KeyCode.UpArrow).onPerformInScene.AddListener(() => Chat.Instance.ScrollMessages(true));

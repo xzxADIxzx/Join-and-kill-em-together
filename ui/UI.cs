@@ -38,6 +38,7 @@ public class UI
     /// <summary> Creates singleton instances of various UI elements. </summary>
     public static void Build()
     {
+        LobbyTab.Build("Lobby Tab");
         PlayerList.Build();
         PlayerIndicators.Build();
 

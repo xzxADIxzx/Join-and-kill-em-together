@@ -86,7 +86,7 @@ public class Movement : MonoSingleton<Movement>
             if (Input.GetKey(KeyCode.Space) && !Chat.Instance.Shown) StartEmoji(0xFF);
 
             // rotate the camera according to mouse sensitivity
-            if (!Chat.Instance.Shown && !PlayerList.Instance.Shown) // TODO replace with UIB.Shown
+            if (!Chat.Instance.Shown && !LobbyTab.Instance.Shown && !PlayerList.Instance.Shown) // TODO replace with UIB.Shown
             {
                 rotation += InputManager.Instance.InputSource.Look.ReadValue<Vector2>() * OptionsManager.Instance.mouseSensitivity / 10f;
                 rotation.y = Mathf.Clamp(rotation.y, 5f, 170f);
@@ -143,12 +143,12 @@ public class Movement : MonoSingleton<Movement>
     public static void UpdateState()
     {
         ToggleMovement(!Chat.Instance.Shown && Instance.Emoji == 0xFF);
-        ToggleCursor(Chat.Instance.Shown || PlayerList.Instance.Shown);
+        ToggleCursor(Chat.Instance.Shown || LobbyTab.Instance.Shown || PlayerList.Instance.Shown);
         ToggleHud(Instance.Emoji == 0xFF);
 
         // block camera rotation
         CameraController.Instance.enabled = CameraController.Instance.activated =
-            !Chat.Instance.Shown && !PlayerList.Instance.Shown && Instance.Emoji == 0xFF;
+            !Chat.Instance.Shown && !LobbyTab.Instance.Shown && !PlayerList.Instance.Shown && Instance.Emoji == 0xFF;
     }
 
     /// <summary> Toggles the ability to move, used in the chat and etc. </summary>
