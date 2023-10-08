@@ -1,5 +1,6 @@
 namespace Jaket.HarmonyPatches;
 
+using GameConsole;
 using HarmonyLib;
 using Steamworks;
 using ULTRAKILL.Cheats;
@@ -9,6 +10,8 @@ using Jaket.Content;
 using Jaket.Net;
 using Jaket.UI;
 using Jaket.World;
+
+#region life cycle
 
 [HarmonyPatch(typeof(NewMovement), "Start")]
 public class SpawnPatch
@@ -58,6 +61,9 @@ public class DeathPatch
     }
 }
 
+#endregion
+#region lock menus
+
 [HarmonyPatch(typeof(CheatsManager), nameof(CheatsManager.HandleCheatBind))]
 public class CheatsPatch
 {
@@ -78,3 +84,15 @@ public class NoclipPatch
     // this cheat shouldn't work in chat or during animation
     static bool Prefix() => !Chat.Instance.Shown && Movement.Instance.Emoji == 0xFF;
 }
+
+#endregion
+#region common
+
+[HarmonyPatch(typeof(Grenade), "Update")]
+public class RidePatch
+{
+    // disable the ability to get off the rocket during chatting
+    static bool Prefix() => !(Chat.Instance.Shown || OptionsManager.Instance.paused || Console.IsOpen);
+}
+
+#endregion

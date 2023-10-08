@@ -95,13 +95,6 @@ public class GrenadePatch
     }
 }
 
-[HarmonyPatch(typeof(Grenade), "Update")]
-public class RidePatch
-{
-    // disable the ability to get off the rocket during chatting
-    static bool Prefix() => !Chat.Instance.Shown;
-}
-
 [HarmonyPatch(typeof(Cannonball), "Start")]
 public class CannonballPatch
 {
