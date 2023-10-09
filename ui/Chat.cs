@@ -30,8 +30,6 @@ public class Chat : MonoSingleton<Chat>
     const string BOT_PREFIX = "<color=#ff7f50><size=14>[BOT]</size></color>";
     /// <summary> Prefix that will be added to the TTS message. </summary>
     const string TTS_PREFIX = "<color=#ff7f50><size=14>[TTS]</size></color>";
-    /// <summary> Prefix that will be added to host messages. </summary>
-    public const string HOST_PREFIX = "<color=#ffd700>[HOST]</color>";
 
     /// <summary> Whether chat is visible or hidden. </summary>
     public bool Shown;
@@ -62,7 +60,7 @@ public class Chat : MonoSingleton<Chat>
     private int messageIndex;
 
     // <summary> Formats the message for a more presentable look. </summary>
-    public static string FormatMessage(string color, string author, string message) => $"{(new Friend(LobbyController.Owner).Name == author ? $"{HOST_PREFIX} " : "")}<b><color=#{color}>{author}</color><color=#ff7f50>:</color></b> {message}";
+    public static string FormatMessage(string color, string author, string message) => $"<b><color=#{color}>{author}</color><color=#ff7f50>:</color></b> {message}";
 
     // <summary> Returns the length of the message without formatting. </summary>
     public static float RawMessageLength(string message) => Regex.Replace(message, "<.*?>", string.Empty).Length;
