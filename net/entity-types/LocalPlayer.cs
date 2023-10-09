@@ -41,6 +41,7 @@ public class LocalPlayer : Entity
 
         // add a 2D audio source that will be heard from everywhere
         voice = gameObject.AddComponent<AudioSource>();
+        voice.outputAudioMixerGroup = DollAssets.Mixer.FindMatchingGroups("Master")[0];
 
         SceneManager.sceneLoaded += (scene, mode) => Invoke("UpdateWeapon", .01f);
     }

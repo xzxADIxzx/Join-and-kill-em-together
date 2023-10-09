@@ -3,6 +3,7 @@ namespace Jaket.Assets;
 using System.IO;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.Events;
 
 using Jaket.Content;
@@ -20,6 +21,9 @@ public class DollAssets
 
     /// <summary> Player doll icon. </summary>
     public static Sprite Icon;
+
+    /// <summary> Mixer processing Sam's voice. Used to change volume. </summary>
+    public static AudioMixer Mixer;
 
     /// <summary> Font used by the mod. Differs from the original in support of Cyrillic alphabet. </summary>
     public static Font Font;
@@ -42,19 +46,16 @@ public class DollAssets
         Bundle = LoadBundle();
 
         // cache the shader and the wing textures for future use
-        var V2 = AssetHelper.LoadPrefab("cb3828ada2cbefe479fed3b51739edf6").GetComponent<V2>();
-
-        Shader = V2.smr.material.shader;
+        Shader = AssetHelper.LoadPrefab("cb3828ada2cbefe479fed3b51739edf6").GetComponent<V2>().smr.material.shader;
         WingTextures = new Texture[5];
         HandTextures = new Texture[2];
 
         // loading wing textures from the bundle
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 5; i++)
         {
             var index = i; // C# sucks
             LoadAsync<Texture>("V3-wings-" + ((Team)i).ToString(), tex => WingTextures[index] = tex);
         }
-        WingTextures[4] = V2.wingTextures[1];
 
         LoadAsync<Texture>("V3-hand", tex => HandTextures[1] = tex);
         HandTextures[0] = FistControl.Instance.blueArm.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture;
@@ -90,8 +91,9 @@ public class DollAssets
         // I guess async will improve performance a little bit
         LoadAsync<Sprite>("V3-icon", sprite => Icon = sprite);
 
-        // but the font needs to be downloaded immediately, because it is needed when building the interface
+        // but the font and mixer need to be downloaded immediately, because they are needed when building the interface and local player
         Font = Bundle.LoadAsset<Font>("font.ttf");
+        Mixer = Bundle.LoadAsset<AudioMixer>("sam-audio");
     }
 
     /// <summary> Finds and loads an assets bundle. </summary>

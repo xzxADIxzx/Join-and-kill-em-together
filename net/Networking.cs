@@ -10,6 +10,7 @@ using Jaket.IO;
 using Jaket.Net.EndPoints;
 using Jaket.Net.EntityTypes;
 using Jaket.UI;
+using Jaket.World;
 using UnityEngine.SceneManagement;
 
 public class Networking : MonoBehaviour
@@ -57,7 +58,7 @@ public class Networking : MonoBehaviour
                 Entities[LocalPlayer.Id] = LocalPlayer;
 
                 // inform all players about the transition to a new level
-                Redirect(Writer.Write(w => w.String(SceneHelper.CurrentScene)), PacketType.LevelLoading);
+                Redirect(World.Instance.WriteData(), PacketType.LevelLoading);
             }
 
             Loading = false;
@@ -109,7 +110,7 @@ public class Networking : MonoBehaviour
             SteamNetworking.AcceptP2PSessionWithUser(lobby.Owner.Id);
 
             // send the current scene name to the player
-            Send(member.Id, Writer.Write(w => w.String(SceneHelper.CurrentScene)), PacketType.LevelLoading);
+            Send(member.Id, World.Instance.WriteData(), PacketType.LevelLoading);
         };
 
         SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) =>
@@ -120,8 +121,11 @@ public class Networking : MonoBehaviour
             // kill the player doll and hide the nickname above
             if (Entities.TryGetValue(member.Id, out var entity) && entity != null && entity is RemotePlayer player)
             {
-                if (LobbyController.IsOwner) player.health.target = 0f;
+                player.health.target = 0f;
                 player.canvas.SetActive(false);
+
+                // replace the entity with null so that the indicators no longer point to it
+                Entities[member.Id] = null;
             }
 
             // remove the exited player indicator
@@ -138,11 +142,8 @@ public class Networking : MonoBehaviour
     /// <summary> Destroys all network objects and clears lists. </summary>
     public static void Clear()
     {
-        EachEntity(entity =>
-        {
-            // in no case can you destroy a local player
-            if (entity != LocalPlayer) Destroy(entity.gameObject);
-        });
+        // we destroy all players, but leave the enemies
+        EachPlayer(player => Destroy(player.gameObject));
 
         Entities.Clear();
         Bosses.Clear();
@@ -163,7 +164,7 @@ public class Networking : MonoBehaviour
             if (SteamNetworking.IsP2PPacketAvailable((int)PacketType.LevelLoading))
             {
                 var packet = SteamNetworking.ReadP2PPacket((int)PacketType.LevelLoading);
-                if (packet.HasValue) Reader.Read(packet.Value.Data, r => SceneHelper.LoadScene(r.String()));
+                if (packet.HasValue) Reader.Read(packet.Value.Data, World.Instance.ReadData);
             }
             return; // during loading, look only for packages with the name of the desired scene
         }

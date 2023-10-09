@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+using Jaket.Assets;
 using Jaket.Net;
 using Jaket.Sam;
 using Jaket.World;
@@ -144,7 +145,7 @@ public class Chat : MonoSingleton<Chat>
 
         // no comments
         field.gameObject.SetActive(Shown = !Shown && LobbyController.Lobby != null);
-        if (Movement.Instance.Emoji == 0xFF) Movement.ToggleMovement(!Shown);
+        Movement.UpdateState();
 
         // focus on input field
         if (Shown) field.ActivateInputField();
@@ -190,7 +191,7 @@ public class Chat : MonoSingleton<Chat>
         {
             // focus lost for some other reason
             field.gameObject.SetActive(Shown = false);
-            if (Movement.Instance.Emoji == 0xFF) Movement.ToggleMovement(true);
+            Movement.UpdateState();
         }
     }
 
@@ -204,7 +205,19 @@ public class Chat : MonoSingleton<Chat>
         if (message != "")
         {
             // handle TTS command
-            if (message == "/tts on")
+            if (message.StartsWith("/tts-volume "))
+            {
+                if (int.TryParse(message.Substring("/tts-volume ".Length), out int value))
+                {
+                    int clamped = Mathf.Clamp(value, 0, 100);
+                    DollAssets.Mixer?.SetFloat("Volume", clamped / 2 - 30); // the value should be between -30 and 20 decibels
+
+                    ReceiveChatMessage($"<color=#00FF00>TTS volume is set to {clamped}.</color>");
+                }
+                else
+                    ReceiveChatMessage("<color=red>Failed to parse value. It must be an integer in the range from 0 to 100.</color>");
+            }
+            else if (message == "/tts on")
             {
                 autoTTS = true;
                 ReceiveChatMessage("<color=#00FF00>Auto TTS enabled.</color>");
@@ -214,6 +227,7 @@ public class Chat : MonoSingleton<Chat>
                 autoTTS = false;
                 ReceiveChatMessage("<color=red>Auto TTS disabled.</color>");
             }
+            //  or send message to the chat
             else LobbyController.Lobby?.SendChatString(autoTTS ? "/tts " + message : message);
 
             messages.Insert(0, message);
@@ -288,10 +302,11 @@ public class Chat : MonoSingleton<Chat>
         SendMsg("Hello, it's me, the main developer of this mod.");
         SendMsg("I just wanted to give some tips about Jaket:");
 
-        SendTip("Go to the control settings, there are a few new elements");
+        SendTip("Go to the control settings, there are new elements");
         SendTip($"Hold {Movement.Instance.EmojiBind.keyBind} to open the Emotion Wheel");
         SendTip("Try typing to chat /tts <color=#cccccccc>[message]</color> or /tts <color=#cccccccc>[on/off]</color>");
-        SendTip("Take a look at the bestiary, there's a little surprise :3");
+        SendTip("Use /tts-volume <color=#cccccccc>[0-100]</color> to keep ur ears comfortable");
+        SendTip("Take a look at the bestiary, there's a surprise :3");
 
         SendMsg("Cheers~ ♡");
     }

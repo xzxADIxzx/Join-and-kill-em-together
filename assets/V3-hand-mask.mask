@@ -45,6 +45,28 @@ AvatarMask:
     m_Weight: 0
   - m_Path: Metarig/Rocket 1/Rocket_end
     m_Weight: 0
+  - m_Path: Metarig/Skateboard 1
+    m_Weight: 0
+  - m_Path: Metarig/Skateboard 1/Front Wheels
+    m_Weight: 0
+  - m_Path: Metarig/Skateboard 1/Front Wheels/Front Left Wheel
+    m_Weight: 0
+  - m_Path: Metarig/Skateboard 1/Front Wheels/Front Left Wheel/Front Left Wheel_end
+    m_Weight: 0
+  - m_Path: Metarig/Skateboard 1/Front Wheels/Front Right Wheel
+    m_Weight: 0
+  - m_Path: Metarig/Skateboard 1/Front Wheels/Front Right Wheel/Front Right Wheel_end
+    m_Weight: 0
+  - m_Path: Metarig/Skateboard 1/Rear Wheels
+    m_Weight: 0
+  - m_Path: Metarig/Skateboard 1/Rear Wheels/Rear Left Wheel
+    m_Weight: 0
+  - m_Path: Metarig/Skateboard 1/Rear Wheels/Rear Left Wheel/Rear Left Wheel_end
+    m_Weight: 0
+  - m_Path: Metarig/Skateboard 1/Rear Wheels/Rear Right Wheel
+    m_Weight: 0
+  - m_Path: Metarig/Skateboard 1/Rear Wheels/Rear Right Wheel/Rear Right Wheel_end
+    m_Weight: 0
   - m_Path: Metarig/Spine 0
     m_Weight: 0
   - m_Path: Metarig/Spine 0/Left Shoulder
@@ -264,6 +286,8 @@ AvatarMask:
   - m_Path: Metarig/Throne
     m_Weight: 0
   - m_Path: Rocket
+    m_Weight: 0
+  - m_Path: Skateboard
     m_Weight: 0
   - m_Path: V3
     m_Weight: 0

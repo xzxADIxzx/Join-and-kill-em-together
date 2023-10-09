@@ -30,8 +30,8 @@ public class RemotePlayer : Entity
     /// <summary> Last and current emoji id, needed only for fun. </summary>
     private byte lastEmoji = 0xFF, emoji, rps;
 
-    /// <summary> Material of the wings. </summary>
-    private Material wingMaterial;
+    /// <summary> Materials of the wings and skateboard. </summary>
+    private Material wingMaterial, skateMaterial;
 
     /// <summary> Trail of the wings. </summary>
     private TrailRenderer wingTrail;
@@ -92,26 +92,23 @@ public class RemotePlayer : Entity
         hookZ = new();
 
         // transforms
-        head = transform.GetChild(0).GetChild(1).GetChild(5).GetChild(10).GetChild(0);
-        hand = transform.GetChild(0).GetChild(1).GetChild(5).GetChild(5).GetChild(0).GetChild(0);
+        head = transform.GetChild(0).GetChild(1).GetChild(6).GetChild(10).GetChild(0);
+        hand = transform.GetChild(0).GetChild(1).GetChild(6).GetChild(5).GetChild(0).GetChild(0);
         hand = Utils.Object("Weapons", hand).transform;
         hook = transform.GetChild(0).GetChild(1).GetChild(1);
-        hookRoot = transform.GetChild(0).GetChild(1).GetChild(5).GetChild(0).GetChild(0).GetChild(0).GetChild(0);
+        hookRoot = transform.GetChild(0).GetChild(1).GetChild(6).GetChild(0).GetChild(0).GetChild(0).GetChild(0);
         rocket = transform.GetChild(0).GetChild(1).GetChild(4).GetChild(1);
-        throne = transform.GetChild(0).GetChild(1).GetChild(6);
+        throne = transform.GetChild(0).GetChild(1).GetChild(7);
 
         // other stuff
-        wingMaterial = transform.GetChild(0).GetChild(3).GetComponent<SkinnedMeshRenderer>().materials[1];
+        wingMaterial = transform.GetChild(0).GetChild(4).GetComponent<Renderer>().materials[1];
+        skateMaterial = transform.GetChild(0).GetChild(3).GetComponent<Renderer>().materials[0];
         wingTrail = GetComponentInChildren<TrailRenderer>();
         hookWinch = GetComponentInChildren<LineRenderer>(true);
         animator = GetComponentInChildren<Animator>();
         enemyId = GetComponent<EnemyIdentifier>();
         machine = GetComponent<Machine>();
-        Voice = gameObject.AddComponent<AudioSource>();
-
-        Voice.spatialBlend = 1f; // make the sound 3D
-        Voice.minDistance = 25f; // increase the distance from which it can be heard
-        Voice.rolloffMode = AudioRolloffMode.Linear;
+        Voice = GetComponent<AudioSource>();
 
         enemyId.health = machine.health = health.target = 100f;
         enemyId.weakPoint = head.gameObject;
@@ -172,10 +169,7 @@ public class RemotePlayer : Entity
 
         if (lastTeam != team)
         {
-            lastTeam = team;
-
-            wingMaterial.mainTexture = DollAssets.WingTextures[(int)team];
-            wingMaterial.color = team.Data().WingColor(); // do this after changing the wings texture
+            wingMaterial.mainTexture = skateMaterial.mainTexture = DollAssets.WingTextures[(int)(lastTeam = team)];
 
             var color = team.Data().Color();
             wingTrail.startColor = new Color(color.r, color.g, color.b, .5f);

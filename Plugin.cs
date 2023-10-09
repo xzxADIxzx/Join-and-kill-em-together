@@ -1,6 +1,7 @@
 ﻿namespace Jaket;
 
 using BepInEx;
+using BepInEx.Bootstrap;
 using HarmonyLib;
 using UMM;
 using UnityEngine;
@@ -8,6 +9,7 @@ using UnityEngine.SceneManagement;
 
 using Jaket.Assets;
 using Jaket.Content;
+using Jaket.IO;
 using Jaket.Net;
 using Jaket.UI;
 using Jaket.World;
@@ -20,6 +22,16 @@ public class Plugin : BaseUnityPlugin
     public static Plugin Instance;
     /// <summary> Whether the plugin has been initialized. </summary>
     public static bool Initialized;
+    /// <summary> Whether the Ultrapain mod is loaded. Needed to synchronize difficulty. </summary>
+    public static bool UltrapainLoaded;
+
+    /// <summary> Toggles Ultrapain difficulty. Placing it in a separate function is necessary to avoid errors. </summary>
+    public static void TogglePain(bool unreal, bool real)
+    { Ultrapain.Plugin.ultrapainDifficulty = unreal; Ultrapain.Plugin.realUltrapainDifficulty = real; }
+
+    /// <summary> Writes Ultrapain difficulty data. </summary>
+    public static void WritePain(Writer w)
+    { w.Bool(Ultrapain.Plugin.ultrapainDifficulty); w.Bool(Ultrapain.Plugin.realUltrapainDifficulty); }
 
     public void Awake()
     {
@@ -42,6 +54,9 @@ public class Plugin : BaseUnityPlugin
         // notify players about the availability of an update so that they no longer whine to me about something not working
         Version.Check4Update();
 
+        // check if Ultrapain is installed
+        UltrapainLoaded = Chainloader.PluginInfos.ContainsKey("com.eternalUnion.ultraPain");
+
         // initialize content components
         DollAssets.Load();
         Enemies.Load();
@@ -59,18 +74,15 @@ public class Plugin : BaseUnityPlugin
 
         // initialize ui components
         WidescreenFix.Load();
-        Utils.Load(); // gets some resources like images and fonts
-        PlayerList.Build();
-        PlayerIndicators.Build();
-        Chat.Build();
-        EmojiWheel.Build();
-        CinemaPlayer.Build();
+        UI.UI.Load();
+        UI.UI.Build();
 
         // initialize harmony and patch all the necessary classes
         new Harmony("Should I write something here?").PatchAll();
 
         // initialize keybinds
-        UKAPI.GetKeyBind("PLAYER LIST", KeyCode.F1).onPerformInScene.AddListener(PlayerList.Instance.Toggle);
+        UKAPI.GetKeyBind("LOBBY TAB", KeyCode.F1).onPerformInScene.AddListener(LobbyTab.Instance.Toggle);
+        UKAPI.GetKeyBind("PLAYER LIST", KeyCode.F2).onPerformInScene.AddListener(PlayerList.Instance.Toggle);
         UKAPI.GetKeyBind("PLAYER INDICATOR", KeyCode.Z).onPerformInScene.AddListener(PlayerIndicators.Instance.Toggle);
         UKAPI.GetKeyBind("CHAT", KeyCode.Return).onPerformInScene.AddListener(Chat.Instance.Toggle);
         UKAPI.GetKeyBind("SCROOL MESSAGES UP", KeyCode.UpArrow).onPerformInScene.AddListener(() => Chat.Instance.ScrollMessages(true));
