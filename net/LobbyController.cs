@@ -56,7 +56,7 @@ public class LobbyController
             IsOwner = true;
 
             Lobby?.SetJoinable(true);
-            Lobby?.SetFriendsOnly();
+            Lobby?.SetPrivate();
 
             CreatingLobby = false;
             done.Invoke();
