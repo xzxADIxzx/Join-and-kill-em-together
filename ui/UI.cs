@@ -46,6 +46,9 @@ public class UI
         EmojiWheel.Build();
     }
 
+    /// <summary> Shortcut to hud message receiver. </summary>
+    public static void SendMsg(string message, bool silent = false) => HudMessageReceiver.Instance?.SendHudMessage(message, silent: silent);
+
     #region shown
 
     /// <summary> Returns true if at least one element of Jaket interface except indicators is currently visible. </summary>

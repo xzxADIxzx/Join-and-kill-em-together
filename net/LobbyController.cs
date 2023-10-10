@@ -27,7 +27,10 @@ public class LobbyController
     public static void Load()
     {
         // get the owner id when entering the lobby
-        SteamMatchmaking.OnLobbyEntered += lobby => LastOwner = lobby.Owner.Id;
+        SteamMatchmaking.OnLobbyEntered += lobby =>
+        {
+            if (lobby.Owner.Id != 0L) LastOwner = lobby.Owner.Id;
+        };
 
         // and leave the lobby if the owner has left it
         SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) =>
@@ -59,7 +62,7 @@ public class LobbyController
             Lobby?.SetPrivate();
 
             CreatingLobby = false;
-            done.Invoke();
+            done();
 
             // update the discord activity so everyone can know I've been working hard
             DiscordController.Instance.FetchSceneActivity(SceneHelper.CurrentScene);
@@ -98,8 +101,16 @@ public class LobbyController
     public static void InviteFriend() => SteamFriends.OpenGameInviteOverlay(Lobby.Value.Id);
 
     /// <summary> Asynchronously connects the player to the given lobby. </summary>
-    public static async void JoinLobby(Lobby lobby, SteamId id)
+    public static async void JoinLobby(Lobby lobby)
     {
+        if (Lobby?.Id == lobby.Id)
+        {
+            UI.SendMsg(
+@"""Why would you want to join yourself?!""
+<size=20><color=grey>(c) xzxADIxzx</color></size>");
+            return;
+        }
+
         if (Lobby != null) LeaveLobby();
         Debug.Log("Joining to the lobby...");
 
@@ -112,7 +123,12 @@ public class LobbyController
             // run the game in the background so that the client does not have lags upon returning from AFK
             Application.runInBackground = true;
         }
-        else Debug.LogError("Couldn't join the lobby.");
+        else UI.SendMsg(
+@"<size=20><color=red>Couldn't connect to the lobby, it's a shame.</color></size>
+Maybe it was closed or you were blocked ,_,");
+
+        // update the interface to match the new state
+        LobbyTab.Instance.Rebuild();
 
         // update the discord activity so everyone can know I've been working hard
         DiscordController.Instance.FetchSceneActivity(SceneHelper.CurrentScene);
@@ -159,6 +175,27 @@ public class LobbyController
             // usually this method is used by the server to forward packets from one of the clients
             if (member.Id != Lobby.Value.Owner.Id && member.Id != id) cons(member);
         }
+    }
+
+    #endregion
+    #region codes
+
+    /// <summary> Copies the lobby code to the clipboard. </summary>
+    public static void CopyCode()
+    {
+        GUIUtility.systemCopyBuffer = Lobby?.Id.ToString();
+        if (Lobby != null) UI.SendMsg(
+@"<size=20><color=#00FF00>The lobby code has been successfully copied to the clipboard!</color></size>
+Send it to your friends so they can join you :D");
+    }
+
+    /// <summary> Joins by the lobby code from the clipboard. </summary>
+    public static void JoinByCode()
+    {
+        if (ulong.TryParse(GUIUtility.systemCopyBuffer, out var code)) JoinLobby(new(code));
+        else UI.SendMsg(
+@"<size=20><color=red>Could not find the lobby code on your clipboard!</color></size>
+Make sure it is copied without spaces :(");
     }
 
     #endregion

@@ -224,7 +224,7 @@ public class Movement : MonoSingleton<Movement>
         else PreviewEmoji(id);
 
         // telling how to interrupt an emotion
-        HudMessageReceiver.Instance.SendHudMessage("Press <color=orange>Space</color> to interrupt the emotion", silent: true);
+        UI.SendMsg("Press <color=orange>Space</color> to interrupt the emotion", true);
 
         // stop sliding so that the preview is not underground
         NewMovement.Instance.playerCollider.height = 3.5f;

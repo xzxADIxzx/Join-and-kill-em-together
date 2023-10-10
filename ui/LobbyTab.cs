@@ -1,6 +1,5 @@
 namespace Jaket.UI;
 
-using UnityEngine;
 using UnityEngine.UI;
 
 using Jaket.Net;
@@ -24,7 +23,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
             {
                 if (LobbyController.Lobby == null)
                     // create a new lobby if not already created
-                    LobbyController.CreateLobby(this.Rebuild);
+                    LobbyController.CreateLobby(Rebuild);
                 else
                     // or leave if already connected to a lobby
                     LobbyController.LeaveLobby();
@@ -36,17 +35,8 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
         UI.Table("Lobby Codes", transform, -768f, 332f - 128f - 16f, 352f, 256f, table =>
         {
             UI.Text("--CONNECTION--", table, 0f, 96f);
-            copy = UI.Button("COPY LOBBY CODE", table, 0f, 40f, clicked: () =>
-            {
-                GUIUtility.systemCopyBuffer = LobbyController.Lobby?.Id.ToString(); // TODO move to LobbyController
-            });
-            UI.Button("JOIN BY CODE", table, 0f, -24f, clicked: () =>
-            {
-                if (ulong.TryParse(GUIUtility.systemCopyBuffer, out var code))
-                    LobbyController.JoinLobby(new(code), code);
-                else
-                    HudMessageReceiver.Instance.SendHudMessage("Failed to parse lobby code");
-            });
+            copy = UI.Button("COPY LOBBY CODE", table, 0f, 40f, clicked: LobbyController.CopyCode);
+            UI.Button("JOIN BY CODE", table, 0f, -24f, clicked: LobbyController.JoinByCode);
             UI.Button("BROWSE PUBLIC LOBBIES", table, 0f, -88f);
         });
         UI.Table("Lobby Config", transform, -768f, 60f - 64f - 16f, 352f, 128f, table =>
@@ -96,6 +86,6 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
             _ => "UNKNOWN"
         };
 
-        transform.GetChild(3).gameObject.SetActive(LobbyController.Lobby.HasValue);
+        transform.GetChild(3).gameObject.SetActive(LobbyController.Lobby.HasValue && LobbyController.IsOwner);
     }
 }

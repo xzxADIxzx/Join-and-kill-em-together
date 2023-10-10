@@ -65,7 +65,7 @@ public class Networking : MonoBehaviour
         };
 
         // fires when accepting an invitation via the Steam overlay
-        SteamFriends.OnGameLobbyJoinRequested += LobbyController.JoinLobby;
+        SteamFriends.OnGameLobbyJoinRequested += (lobby, id) => LobbyController.JoinLobby(lobby);
 
         SteamMatchmaking.OnChatMessage += (lobby, member, message) =>
         {
