@@ -70,6 +70,10 @@ public class EnemyStartPatch
                 World.Instance.Recache();
             }
 
+            // to avoid a huge number of errors in the console, need to destroy the parent object
+            if (__instance.gameObject.name == "Body" && __instance.enemyType == EnemyType.MaliciousFace)
+                Object.Destroy(__instance.transform.parent.gameObject);
+
             if (boss)
                 // will be used in the future to trigger the game's internal logic
                 __instance.gameObject.SetActive(false);
