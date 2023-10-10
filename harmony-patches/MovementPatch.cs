@@ -92,7 +92,7 @@ public class NoclipPatch
 public class RidePatch
 {
     // disable the ability to get off the rocket during chatting
-    static bool Prefix() => !(Chat.Instance.Shown || OptionsManager.Instance.paused || Console.IsOpen);
+    static bool Prefix() => !UI.AnyMovementBlocking();
 }
 
 #endregion

@@ -72,7 +72,7 @@ public class Movement : MonoSingleton<Movement>
                 player.position = new(player.position.x, hit2.point.y + 1.5f, player.position.z);
 
             // turn to the sides
-            if (!Chat.Instance.Shown)
+            if (!UI.AnyMovementBlocking())
             {
                 float dir = InputManager.Instance.InputSource.Move.ReadValue<Vector2>().x;
                 player.Rotate(new(0f, dir * 120f * Time.deltaTime, 0f));
@@ -86,7 +86,7 @@ public class Movement : MonoSingleton<Movement>
             if (Input.GetKey(KeyCode.Space) && !Chat.Instance.Shown) StartEmoji(0xFF);
 
             // rotate the camera according to mouse sensitivity
-            if (!Chat.Instance.Shown && !LobbyTab.Instance.Shown && !PlayerList.Instance.Shown) // TODO replace with UIB.Shown
+            if (!UI.AnyJaket())
             {
                 rotation += InputManager.Instance.InputSource.Look.ReadValue<Vector2>() * OptionsManager.Instance.mouseSensitivity / 10f;
                 rotation.y = Mathf.Clamp(rotation.y, 5f, 170f);
@@ -119,7 +119,7 @@ public class Movement : MonoSingleton<Movement>
         // ultrasoap
         if (SceneHelper.CurrentScene != "Main Menu" && !NewMovement.Instance.dead)
         {
-            rb.constraints = Chat.Instance.Shown || OptionsManager.Instance.paused || Console.IsOpen
+            rb.constraints = UI.AnyMovementBlocking()
                 ? RigidbodyConstraints.FreezeAll
                 : Instance.Emoji == 0xFF || Instance.Emoji == 0x0B // skateboard
                     ? RigidbodyConstraints.FreezeRotation
@@ -143,15 +143,11 @@ public class Movement : MonoSingleton<Movement>
     public static void UpdateState()
     {
         ToggleMovement(!Chat.Instance.Shown && Instance.Emoji == 0xFF);
-        ToggleCursor(Chat.Instance.Shown || LobbyTab.Instance.Shown || PlayerList.Instance.Shown);
+        ToggleCursor(UI.AnyJaket());
         ToggleHud(Instance.Emoji == 0xFF);
 
-        // block camera rotation
-        CameraController.Instance.enabled = CameraController.Instance.activated =
-            !Chat.Instance.Shown && !LobbyTab.Instance.Shown && !PlayerList.Instance.Shown && Instance.Emoji == 0xFF;
-
-        // block weapon fire
-        GunControl.Instance.activated = !Chat.Instance.Shown && !LobbyTab.Instance.Shown && !PlayerList.Instance.Shown && Instance.Emoji == 0xFF;
+        // block camera rotation & weapon fire
+        CameraController.Instance.enabled = CameraController.Instance.activated = GunControl.Instance.activated = !UI.AnyJaket() && Instance.Emoji == 0xFF;
     }
 
     /// <summary> Toggles the ability to move, used in the chat and etc. </summary>

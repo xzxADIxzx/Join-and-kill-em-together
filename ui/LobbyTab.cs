@@ -69,8 +69,8 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
     /// <summary> Toggles visibility of lobby tab. </summary>
     public void Toggle()
     {
-        // if the player is typing, then nothing needs to be done
-        if (Chat.Instance.Shown) return; // TODO UI.Any || Shown
+        // if another menu is open, then nothing needs to be done
+        if (UI.AnyJaket() && !Shown) return;
 
         gameObject.SetActive(Shown = !Shown);
         Movement.UpdateState();

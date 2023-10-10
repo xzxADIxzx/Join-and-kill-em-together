@@ -138,10 +138,12 @@ public class Chat : MonoSingleton<Chat>
     /// <summary> Toggles visibility of chat. </summary>
     public void Toggle()
     {
+        // if another menu is open, then nothing needs to be done
+        if (UI.AnyJaket() && !Shown) return;
+
         // if the player is typing, then nothing needs to be done
         if (field.text != "" && field.isFocused) return;
 
-        // no comments
         field.gameObject.SetActive(Shown = !Shown && LobbyController.Lobby != null);
         Movement.UpdateState();
 

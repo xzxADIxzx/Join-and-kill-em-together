@@ -71,10 +71,9 @@ public class PlayerList : MonoSingleton<PlayerList>
     /// <summary> Toggles visibility of player list. </summary>
     public void Toggle()
     {
-        // if the player is typing, then nothing needs to be done
-        if (Chat.Instance.Shown) return;
+        // if another menu is open, then nothing needs to be done
+        if (UI.AnyJaket() && !Shown) return;
 
-        // no comments
         gameObject.SetActive(Shown = !Shown);
         Movement.UpdateState();
 

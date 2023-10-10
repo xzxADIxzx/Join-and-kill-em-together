@@ -46,6 +46,18 @@ public class UI
         EmojiWheel.Build();
     }
 
+    #region shown
+
+    /// <summary> Returns true if at least one element of Jaket interface except indicators is currently visible. </summary>
+    public static bool AnyJaket() => LobbyTab.Instance.Shown || PlayerList.Instance.Shown || Chat.Instance.Shown || EmojiWheel.Instance.Shown;
+
+    /// <summary> Returns true if at least one built-in menu is currently visible. Cheat menu and console pause the game, so there's no need to add them. </summary>
+    public static bool AnyBuiltIn() => OptionsManager.Instance.paused || WeaponWheel.Instance.gameObject.activeSelf;
+
+    /// <summary> Returns true if at least one movement-blocking menu is currently visible. </summary>
+    public static bool AnyMovementBlocking() => Chat.Instance.Shown || OptionsManager.Instance.paused;
+
+    #endregion
     #region base
 
     /// <summary> Adds a component to the given object and returns it. Just for convenience. </summary>

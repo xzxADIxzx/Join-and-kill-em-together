@@ -127,8 +127,11 @@ public class EmojiWheel : MonoSingleton<EmojiWheel>
     /// <summary> Shows emoji selection wheel and resets the selected segment. </summary>
     public void Show()
     {
+        // if another menu is open, then nothing needs to be done
+        if (UI.AnyJaket()) return;
+
         // the wheel should be inaccessible in the tunnel between levels
-        if (FinalRank.Instance.gameObject.activeInHierarchy || WeaponWheel.Instance.gameObject.activeSelf) return;
+        if (FinalRank.Instance.gameObject.activeInHierarchy || WeaponWheel.Instance.gameObject.activeSelf) return; // TODO remove WeaponWhee.activeSelf after moving controls to Movement
 
         gameObject.SetActive(Shown = true);
         CameraController.Instance.enabled = false;
