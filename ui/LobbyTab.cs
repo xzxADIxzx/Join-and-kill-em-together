@@ -11,7 +11,7 @@ using Jaket.World;
 public class LobbyTab : CanvasSingleton<LobbyTab>
 {
     /// <summary> Lobby control buttons. </summary>
-    private Button create, invite, accessibility;
+    private Button create, invite, copy, accessibility;
     /// <summary> Current lobby access level: 0 - private, 1 - friends only, 2 - public. I was too lazy to create an enum. </summary>
     private int lobbyAccessLevel;
 
@@ -37,7 +37,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
         UI.Table("Lobby Codes", transform, -768f, 332f - 128f - 16f, 352f, 256f, table =>
         {
             UI.Text("--CONNECTION--", table, 0f, 96f);
-            UI.Button("COPY LOBBY CODE", table, 0f, 40f, clicked: () =>
+            copy = UI.Button("COPY LOBBY CODE", table, 0f, 40f, clicked: () =>
             {
                 GUIUtility.systemCopyBuffer = LobbyController.Lobby?.Id.ToString(); // TODO move to LobbyController
             });
@@ -64,6 +64,8 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
                 Rebuild();
             });
         });
+
+        Rebuild();
     }
 
     /// <summary> Toggles visibility of lobby tab. </summary>
@@ -85,7 +87,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
                 ? "CREATE LOBBY"
                 : LobbyController.IsOwner ? "CLOSE LOBBY" : "LEAVE LOBBY";
 
-        invite.interactable = LobbyController.Lobby != null;
+        invite.interactable = copy.interactable = LobbyController.Lobby != null;
 
         accessibility.GetComponentInChildren<Text>().text = lobbyAccessLevel switch
         {
@@ -94,5 +96,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
             2 => "PUBLIC",
             _ => "UNKNOWN"
         };
+
+        transform.GetChild(3).gameObject.SetActive(LobbyController.Lobby.HasValue);
     }
 }
