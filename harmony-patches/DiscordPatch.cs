@@ -30,24 +30,17 @@ public class ShopPatch
         var root = __instance.transform.GetChild(1).GetChild(1).GetChild(0);
 
         // create button redirects to discord
-        var button = Utils.Button("Join Jaket Discord", root, 0f, 0f, () => Application.OpenURL("https://discord.gg/USpt3hCBgn"), 24);
-
-        // add a stroke to match the style
-        var stroke = Utils.Image("Stroke", button.transform, 0f, 0f, 320f, 64f, Color.white).GetComponent<Image>();
-
-        // make the stroke non-clickable and remove the fill
-        stroke.raycastTarget = false;
-        stroke.fillCenter = false;
+        var button = UI.DiscordButton("Join Jaket Discord", root, 0f, 0f, size: 24).transform;
 
         // the button is a little stormy
-        button.transform.localPosition = new(0f, -128f, -20f);
-        button.transform.localRotation = Quaternion.identity;
-        button.transform.localScale = new(1f, 1f, 1f);
+        button.localPosition = new(0f, -128f, -20f);
+        button.localRotation = Quaternion.identity;
+        button.localScale = new(1f, 1f, 1f);
 
         foreach (Transform child in button.transform) child.localPosition = Vector3.zero;
 
         // add ControllerPointer so that the button can be clicked
-        button.AddComponent<ShopButton>(); // hacky
+        button.gameObject.AddComponent<ShopButton>(); // hacky
         Object.Destroy(button.GetComponent<ShopButton>());
     }
 }

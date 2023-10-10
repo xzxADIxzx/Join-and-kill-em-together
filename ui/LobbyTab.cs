@@ -1,6 +1,5 @@
 namespace Jaket.UI;
 
-using Steamworks.Data;
 using UnityEngine;
 using UnityEngine.UI;
 

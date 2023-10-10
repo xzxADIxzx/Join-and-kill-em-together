@@ -185,6 +185,18 @@ public class UI
         });
     }
 
+    /// <summary> Adds a button corresponding to the Discord style and opening a link to our server. </summary>
+    public static Button DiscordButton(string name, Transform parent, float x, float y, float width = 320f, float height = 48f, int size = 32)
+    {
+        var img = Image(name, parent, x, y, width, height, new(.345f, .396f, .949f));
+        Text(name, img.transform, 0f, 0f, width, height, size: size);
+        return Component<Button>(img.gameObject, button =>
+        {
+            button.targetGraphic = img;
+            button.onClick.AddListener(() => Application.OpenURL("https://discord.gg/USpt3hCBgn"));
+        });
+    }
+
     #endregion
     #region field
 
