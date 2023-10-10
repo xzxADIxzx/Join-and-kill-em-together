@@ -87,6 +87,10 @@ public class UI
         return image;
     }
 
+    /// <summary> Creates a table anchored to the top left corner of the screen. </summary>
+    public static Image TableAT(string name, Transform parent, float y, float width, float height, Action<Transform> action = null) =>
+        Table(name, parent, -960f + 16f + width / 2f, 540f - 16f - height / 2f - y, width, height, action);
+
     /// <summary> Creates a new rect at the specified position with the given size. </summary>
     public static RectTransform Rect(string name, Transform parent, float x, float y, float width, float height) =>
         Component<RectTransform>(Object(name, parent), rect =>

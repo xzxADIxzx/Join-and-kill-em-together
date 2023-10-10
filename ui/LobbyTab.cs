@@ -16,7 +16,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
     private void Start()
     {
         UI.Shadow("Shadow", transform);
-        UI.Table("Lobby Control", transform, -960f + 176f + 16f, 540f - 96f - 16f, 352f, 192f, table =>
+        UI.TableAT("Lobby Control", transform, 0f, 352f, 192f, table =>
         {
             UI.Text("--LOBBY--", table, 0f, 64f);
             create = UI.Button("CREATE LOBBY", table, 0f, 8f, clicked: () =>
@@ -32,14 +32,14 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
             });
             invite = UI.Button("INVITE FRIEND", table, 0f, -56f, clicked: LobbyController.InviteFriend);
         });
-        UI.Table("Lobby Codes", transform, -768f, 332f - 128f - 16f, 352f, 256f, table =>
+        UI.TableAT("Lobby Codes", transform, 208f, 352f, 256f, table =>
         {
             UI.Text("--CONNECTION--", table, 0f, 96f);
             copy = UI.Button("COPY LOBBY CODE", table, 0f, 40f, clicked: LobbyController.CopyCode);
             UI.Button("JOIN BY CODE", table, 0f, -24f, clicked: LobbyController.JoinByCode);
             UI.Button("BROWSE PUBLIC LOBBIES", table, 0f, -88f);
         });
-        UI.Table("Lobby Config", transform, -768f, 60f - 64f - 16f, 352f, 128f, table =>
+        UI.TableAT("Lobby Config", transform, 480f, 352f, 128f, table =>
         {
             UI.Text("--CONFIG--", table, 0f, 32f);
             accessibility = UI.Button("PRIVATE", table, 0f, -24f, clicked: () =>
