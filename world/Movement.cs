@@ -149,13 +149,15 @@ public class Movement : MonoSingleton<Movement>
         // block camera rotation
         CameraController.Instance.enabled = CameraController.Instance.activated =
             !Chat.Instance.Shown && !LobbyTab.Instance.Shown && !PlayerList.Instance.Shown && Instance.Emoji == 0xFF;
+
+        // block weapon fire
+        GunControl.Instance.activated = !Chat.Instance.Shown && !LobbyTab.Instance.Shown && !PlayerList.Instance.Shown && Instance.Emoji == 0xFF;
     }
 
     /// <summary> Toggles the ability to move, used in the chat and etc. </summary>
     public static void ToggleMovement(bool enable)
     {
-        NewMovement.Instance.enabled = GunControl.Instance.enabled = FistControl.Instance.enabled =
-        FistControl.Instance.activated = HookArm.Instance.enabled = enable;
+        NewMovement.Instance.enabled = FistControl.Instance.enabled = FistControl.Instance.activated = HookArm.Instance.enabled = enable;
 
         // put the hook back in place
         if (!enable) HookArm.Instance.Cancel();

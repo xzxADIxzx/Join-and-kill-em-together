@@ -40,7 +40,7 @@ public class UI
     {
         LobbyTab.Build("Lobby Tab");
         PlayerList.Build();
-        PlayerIndicators.Build();
+        PlayerIndicators.Build("Player Indicators", true);
 
         Chat.Build();
         EmojiWheel.Build();
