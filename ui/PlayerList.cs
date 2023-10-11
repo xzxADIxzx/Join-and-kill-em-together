@@ -1,74 +1,38 @@
 namespace Jaket.UI;
 
-using Steamworks;
-using System;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 using Jaket.Content;
 using Jaket.Net;
 using Jaket.World;
 
-/// <summary> List of all players and lobby controller. </summary>
-[ConfigureSingleton(SingletonFlags.NoAutoInstance)]
-public class PlayerList : MonoSingleton<PlayerList>
+/// <summary> List of all players and teams. </summary>
+public class PlayerList : CanvasSingleton<PlayerList>
 {
-    /// <summary> Whether player list is visible or hidden. </summary>
-    public bool Shown;
-
-    /// <summary> Lobby control buttons. </summary>
-    private GameObject createButton, inviteButton;
-    /// <summary> List of players itself. </summary>
-    private GameObject list;
-
-    /// <summary> Creates a singleton of player list. </summary>
-    public static void Build()
+    private void Start()
     {
-        // initialize the singleton and create a canvas
-        Utils.Canvas("Player List", Plugin.Instance.transform).AddComponent<PlayerList>().gameObject.SetActive(false);
-
-        // hide player list once loading a scene
-        SceneManager.sceneLoaded += (scene, mode) => Instance.gameObject.SetActive(Instance.Shown = false);
-
-        // build player list
-        Utils.Shadow("Shadow", Instance.transform, -810f, 0f);
-        Utils.Text("--LOBBY--", Instance.transform, -784f, 492f);
-
-        // create lobby control buttons
-        Instance.createButton = Utils.Button("", Instance.transform, -784f, 412f, () =>
+        UI.Shadow("Shadow", transform);
+        UI.TableAT("Teams", transform, 0f, 352f, 204f, table =>
         {
-            if (LobbyController.Lobby == null)
-                // create a new lobby if not already created
-                LobbyController.CreateLobby(Instance.Rebuild);
-            else
-                // or leave if already connected to a lobby
-                LobbyController.LeaveLobby();
+            UI.Text("--TEAMS--", table, 0f, 70f);
+            UI.Text("This is a PvP mechanic!\nIf you don't want to hurt each other, join the same team :3", table, 0f, 13f, height: 50f, color: Color.gray, size: 17);
 
-            Instance.Rebuild();
+            float x = -352f / 2f + 16f + 58f / 2f - (66f);
+            foreach (Team team in System.Enum.GetValues(typeof(Team))) UI.TeamButton(team, table, x += 66f, -57f, clicked: () =>
+            {
+                Networking.LocalPlayer.team = team;
+
+                // update player indicators to show only teammates & player list to display new team
+                PlayerIndicators.Instance.Rebuild();
+                Rebuild();
+            });
         });
 
-        Instance.inviteButton = Utils.Button("INVITE FRIEND", Instance.transform, -784f, 332f, LobbyController.InviteFriend);
-
-        float x = -986f;
-        foreach (Team team in Enum.GetValues(typeof(Team))) Utils.TeamButton(team, Instance.transform, x += 67f, 252f, () =>
-        {
-            // change player team
-            Networking.LocalPlayer.team = team;
-
-            // update player indicators to only show teammates & player list to display new team
-            PlayerIndicators.Instance.Rebuild();
-            Instance.Rebuild();
-        });
-
-        // create a rect transform in which there will be a players list
-        Instance.list = Utils.Rect("List", Instance.transform, 0f, 0f, 1920f, 1080f);
-        Instance.Rebuild();
-
-        // moving elements to display correctly on wide screens
-        WidescreenFix.MoveDown(Instance.transform);
+        Version.Label(transform);
+        WidescreenFix.MoveDown(transform);
     }
 
-    /// <summary> Toggles visibility of player list. </summary>
+    // <summary> Toggles visibility of player list. </summary>
     public void Toggle()
     {
         // if another menu is open, then nothing needs to be done
@@ -84,30 +48,29 @@ public class PlayerList : MonoSingleton<PlayerList>
     /// <summary> Rebuilds player list to add new players or remove players left the lobby. </summary>
     public void Rebuild()
     {
-        // update buttons based on current state
-        var text = LobbyController.CreatingLobby ? "CREATING..." :
-                   LobbyController.Lobby == null ? "CREATE LOBBY" :
-                   LobbyController.IsOwner ? "CLOSE LOBBY" : "LEAVE LOBBY";
-
-        Utils.SetText(createButton, text);
-        Utils.SetInteractable(inviteButton, LobbyController.Lobby != null);
-
-        // clear the players list
-        foreach (Transform child in list.transform) Destroy(child.gameObject);
+        // destroy old player list
+        if (transform.childCount > 3) Destroy(transform.GetChild(3).gameObject);
 
         // if the player is not in the lobby, then there is no point in adding an empty player list
         if (LobbyController.Lobby == null) return;
 
-        Utils.Text("--PLAYERS--", list.transform, -784f, 92f);
-
-        float y = 92f;
-        LobbyController.EachMember(member =>
+        float height = LobbyController.Lobby.Value.MemberCount * 64f + 64f;
+        UI.TableAT("List", transform, 220f + WidescreenFix.Offset, 352f, height, table =>
         {
-            // paint the nickname in the team color
-            var name = $"<color=#{Networking.GetTeamColor(member)}>{member.Name}</color>";
+            UI.Text("--PLAYERS--", table, 0f, height / 2f - 32f);
 
-            // add a button with a nickname forwarding to the player's profile
-            Utils.Button(name, list.transform, -784f, y -= 80f, () => SteamFriends.OpenUserOverlay(member.Id, "steamid"));
+            float y = height / 2f - 64f - 24f + (64f);
+            LobbyController.EachMember(member =>
+            {
+                if (LobbyController.LastOwner == member.Id)
+                {
+                    UI.ProfileButton(member, table, -32f, y -= 64f, 256f);
+                    UI.Button("★", table, 136f, y, 48f, 48f, new Color(1f, .7f, .1f), 40, clicked: () => UI.SendMsg("Lobby owner, your life depends on him :D"))
+                        .transform.GetChild(0).localPosition = new(.5f, 4f, 0f);
+                }
+                else
+                    UI.ProfileButton(member, table, 0f, y -= 64f);
+            });
         });
     }
 }

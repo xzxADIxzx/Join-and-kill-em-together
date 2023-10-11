@@ -13,7 +13,7 @@ public class CanvasSingleton<T> : MonoSingleton<T> where T : CanvasSingleton<T>
     public static void Build(string name, bool hideInMainMenuOnly = false, Action onLoad = null)
     {
         // initialize the singleton and create a canvas
-        UI.Canvas(name, Plugin.Instance.transform).AddComponent<T>().gameObject.SetActive(hideInMainMenuOnly);
+        UI.Canvas(name, Plugin.Instance.transform).AddComponent<T>().gameObject.SetActive(hideInMainMenuOnly || onLoad != null);
 
         // hide the interface once loading a level or main menu
         SceneManager.sceneLoaded += (scene, mode) =>

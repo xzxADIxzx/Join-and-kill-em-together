@@ -1,5 +1,6 @@
 namespace Jaket.UI;
 
+using Steamworks;
 using System;
 using UnityEngine;
 using UnityEngine.Events;
@@ -8,6 +9,7 @@ using UnityEngine.UI.Extensions;
 
 using Jaket.Assets;
 using Jaket.Content;
+using Jaket.Net;
 
 /// <summary> Class that builds the entire interface of the mod. </summary>
 public class UI
@@ -39,7 +41,7 @@ public class UI
     public static void Build()
     {
         LobbyTab.Build("Lobby Tab");
-        PlayerList.Build();
+        PlayerList.Build("Player List");
         PlayerIndicators.Build("Player Indicators", true);
 
         Chat.Build("Chat", onLoad: () => Chat.Instance.field.gameObject.SetActive(false));
@@ -181,7 +183,7 @@ public class UI
     }
 
     /// <summary> Creates a command button with the appropriate color. </summary>
-    public static Button TeamButton(Team team, Transform parent, float x, float y, float width = 51f, float height = 51f, UnityAction clicked = null)
+    public static Button TeamButton(Team team, Transform parent, float x, float y, float width = 58f, float height = 58f, UnityAction clicked = null)
     {
         var img = Image(team.ToString(), parent, x, y, width, height, team.Data().Color());
         if (team == Team.Pink) Text("UwU", img.transform, 0f, 0f, width, height, size: 24);
@@ -191,6 +193,10 @@ public class UI
             button.onClick.AddListener(clicked);
         });
     }
+
+    /// <summary> Adds a button that opens the profile of the given user. </summary>
+    public static Button ProfileButton(Friend friend, Transform parent, float x, float y, float width = 320f, float height = 48f, int size = 32) =>
+        Button(friend.Name, parent, x, y, width, height, Networking.GetTeam(friend).Data().Color(), size, clicked: () => SteamFriends.OpenUserOverlay(friend.Id, "steamid"));
 
     /// <summary> Adds a button corresponding to the Discord style and opening a link to our server. </summary>
     public static Button DiscordButton(string name, Transform parent, float x, float y, float width = 320f, float height = 48f, int size = 32)
