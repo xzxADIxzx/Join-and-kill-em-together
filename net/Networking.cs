@@ -133,10 +133,10 @@ public class Networking : MonoBehaviour
         };
 
         // create a local player to sync player data
-        LocalPlayer = Utils.Object("Local Player", Plugin.Instance.transform).AddComponent<LocalPlayer>();
+        LocalPlayer = UI.Object("Local Player").AddComponent<LocalPlayer>();
 
         // create an object to update the network logic
-        Utils.Object("Networking", Plugin.Instance.transform).AddComponent<Networking>();
+        UI.Object("Networking").AddComponent<Networking>();
     }
 
     /// <summary> Destroys all network objects and clears lists. </summary>

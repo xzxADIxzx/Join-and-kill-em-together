@@ -94,7 +94,7 @@ public class RemotePlayer : Entity
         // transforms
         head = transform.GetChild(0).GetChild(1).GetChild(6).GetChild(10).GetChild(0);
         hand = transform.GetChild(0).GetChild(1).GetChild(6).GetChild(5).GetChild(0).GetChild(0);
-        hand = Utils.Object("Weapons", hand).transform;
+        hand = UI.Object("Weapons", hand).transform;
         hook = transform.GetChild(0).GetChild(1).GetChild(1);
         hookRoot = transform.GetChild(0).GetChild(1).GetChild(6).GetChild(0).GetChild(0).GetChild(0).GetChild(0);
         rocket = transform.GetChild(0).GetChild(1).GetChild(4).GetChild(1);

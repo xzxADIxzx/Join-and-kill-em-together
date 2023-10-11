@@ -72,10 +72,10 @@ public class UI
     }
 
     /// <summary> Creates a new game object and assigns it to the given transform. </summary>
-    public static GameObject Object(string name, Transform parent)
+    public static GameObject Object(string name, Transform parent = null)
     {
         GameObject obj = new(name);
-        obj.transform.SetParent(parent);
+        obj.transform.SetParent(parent ?? Plugin.Instance.transform);
         return obj;
     }
 

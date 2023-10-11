@@ -35,7 +35,7 @@ public class World : MonoSingleton<World>
     public static void Load()
     {
         // initialize the singleton
-        Utils.Object("World", Plugin.Instance.transform).AddComponent<World>();
+        UI.Object("World").AddComponent<World>();
 
         // updates the list of objects in the level when the scene is loaded
         SceneManager.sceneLoaded += (scene, mode) => Instance.Recache();

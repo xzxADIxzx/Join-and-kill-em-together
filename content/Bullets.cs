@@ -68,8 +68,8 @@ public class Bullets
         Prefabs.RemoveAll(bullet => bullet == null);
 
         // create damage conventions
-        SynchronizedBullet = Utils.Object("Synchronized Bullet", Plugin.Instance.transform);
-        NetworkDamage = Utils.Object("Network Damage", Plugin.Instance.transform);
+        SynchronizedBullet = UI.Object("Synchronized Bullet");
+        NetworkDamage = UI.Object("Network Damage");
     }
 
     #region index

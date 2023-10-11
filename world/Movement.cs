@@ -40,7 +40,7 @@ public class Movement : MonoSingleton<Movement>
     public static void Load()
     {
         // initialize the singleton
-        Utils.Object("Movement", Plugin.Instance.transform).AddComponent<Movement>();
+        UI.Object("Movement").AddComponent<Movement>();
     }
 
     public void LateUpdate() // late update is needed in order to overwrite the time scale value
