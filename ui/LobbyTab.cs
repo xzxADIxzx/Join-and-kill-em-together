@@ -56,6 +56,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
 
         Rebuild();
         Version.Label(transform);
+        WidescreenFix.MoveDown(transform);
     }
 
     /// <summary> Toggles visibility of lobby tab. </summary>

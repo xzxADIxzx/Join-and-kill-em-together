@@ -15,9 +15,9 @@ using Jaket.Sam;
 using Jaket.World;
 
 /// <summary> Front end of the chat, back end implemented via Steamworks. </summary>
-public class Chat : MonoSingleton<Chat>
+public class Chat : CanvasSingleton<Chat>
 {
-    /// <summary> Maximum length of chat messages. </summary>
+    /// <summary> Maximum length of chat message. </summary>
     const int MAX_MESSAGE_LENGTH = 128;
     /// <summary> How many messages at a time will be shown. </summary>
     const int MESSAGES_SHOWN = 12;
@@ -30,9 +30,6 @@ public class Chat : MonoSingleton<Chat>
     const string BOT_PREFIX = "<color=#ff7f50><size=14>[BOT]</size></color>";
     /// <summary> Prefix that will be added to the TTS message. </summary>
     const string TTS_PREFIX = "<color=#ff7f50><size=14>[TTS]</size></color>";
-
-    /// <summary> Whether chat is visible or hidden. </summary>
-    public bool Shown;
 
     /// <summary> List of chat messages. </summary>
     private RectTransform list;
@@ -65,40 +62,29 @@ public class Chat : MonoSingleton<Chat>
     // <summary> Returns the length of the message without formatting. </summary>
     public static float RawMessageLength(string message) => Regex.Replace(message, "<.*?>", string.Empty).Length;
 
-    /// <summary> Creates a singleton of chat. </summary>
-    public static void Build()
+    private void Start()
     {
-        // initialize the singleton and create a canvas
-        Utils.Canvas("Chat", Plugin.Instance.transform).AddComponent<Chat>();
+        list = UI.Table("List", transform, 0f, 0f, 0f, 0f).rectTransform;
+        listBg = UI.Component<CanvasGroup>(list.gameObject, group => group.blocksRaycasts = false); // disable chat collision so it doesn't interfere with buttons
 
-        // hide chat once loading a scene
-        SceneManager.sceneLoaded += (scene, mode) => Instance.field.gameObject.SetActive(Instance.Shown = false);
+        typingBg = UI.Table("Typing", transform, 0f, 0f, 0f, 0f).rectTransform;
+        typing = UI.Text("", typingBg, 0f, 0f, 1000f, 32f, size: 24);
 
-        // add a list of messages
-        Instance.list = Utils.Image("List", Instance.transform, 0f, 0f, 0f, 0f).transform as RectTransform;
-        Instance.listBg = Instance.list.gameObject.AddComponent<CanvasGroup>();
-        Instance.listBg.blocksRaycasts = false; // necessary so that the chat does not interfere with pressing the buttons
+        ttsBg = UI.Table("TTS", transform, 0f, 0f, 128f, 32f).rectTransform;
+        UI.Text("<color=#cccccccc>Auto TTS</color>", ttsBg, 0f, 0f, size: 24);
 
-        // add a list of typing players
-        Instance.typingBg = Utils.Image("", Instance.transform, 0f, 0f, 0f, 0f).transform as RectTransform;
-        Instance.typing = Utils.Text("", Instance.typingBg, 0f, 0f, 1000f, 32f, 24).GetComponent<Text>();
+        field = UI.Field("Type a chat message and send it by pressing enter", transform, 0f, -508f, 1888f, 32f, enter: OnFocusLost);
+        field.characterLimit = MAX_MESSAGE_LENGTH;
+        field.gameObject.SetActive(false);
 
-        // add a sign about the auto TTS being turned on
-        Instance.ttsBg = Utils.Image("", Instance.transform, 0f, 0f, 128f, 32f).transform as RectTransform;
-        Utils.Text("<color=#cccccccc>Auto TTS</color>", Instance.ttsBg, 0f, 0f, 128f, 32f, 24);
-
-        // add input field
-        Instance.field = Utils.Field("Type a chat message and send it by pressing enter", Instance.transform, 0f, -508f, 1888f, 32f, 24, Instance.OnFocusLost);
-        Instance.field.characterLimit = MAX_MESSAGE_LENGTH;
-        Instance.field.gameObject.SetActive(false);
+        // start the update cycle of typing players
+        InvokeRepeating("UpdateTyping", 0f, .25f);
 
         // moving elements to display correctly on wide screens
         WidescreenFix.MoveUp(Instance.transform);
     }
 
-    public void Start() => InvokeRepeating("UpdateTyping", 0f, .25f);
-
-    public void Update()
+    private void Update()
     {
         // interpolate the transparency of the message list
         listBg.alpha = Mathf.Lerp(listBg.alpha, Shown || Time.time - lastMessageTime < 5f ? 1f : 0f, Time.deltaTime * 5f);
@@ -253,7 +239,7 @@ public class Chat : MonoSingleton<Chat>
         foreach (RectTransform child in list) child.anchoredPosition += new Vector2(0f, height);
 
         // add new message
-        var text = Utils.Text(message, list, 0f, 16f + height / 2f, WIDTH - 32f, height, 16, align: TextAnchor.MiddleLeft).transform as RectTransform;
+        var text = UI.Text(message, list, 0f, 16f + height / 2f, WIDTH - 32f, height, size: 16, align: TextAnchor.MiddleLeft).rectTransform;
         text.anchorMin = text.anchorMax = new(.5f, 0f);
         text.localScale = new(1f, 1f, 1f); // unity scales text crookedly for small resolutions, which is why it is incorrectly located
 
@@ -261,8 +247,8 @@ public class Chat : MonoSingleton<Chat>
         if (list.childCount > MESSAGES_SHOWN) DestroyImmediate(list.GetChild(0).gameObject);
 
         // scale chat panel
-        var firstChild = list.GetChild(0) as RectTransform;
-        list.sizeDelta = new(WIDTH, firstChild.anchoredPosition.y + firstChild.sizeDelta.y / 2f + 16f);
+        var first = list.GetChild(0) as RectTransform;
+        list.sizeDelta = new(WIDTH, first.anchoredPosition.y + first.sizeDelta.y / 2f + 16f);
         list.anchoredPosition = new(-644f, -428f + list.sizeDelta.y / 2f + WidescreenFix.Offset);
 
         // save the time the message was received to give the player time to read it

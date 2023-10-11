@@ -42,7 +42,7 @@ public class UI
         PlayerList.Build();
         PlayerIndicators.Build("Player Indicators", true);
 
-        Chat.Build();
+        Chat.Build("Chat", onLoad: () => Chat.Instance.field.gameObject.SetActive(false));
         EmojiWheel.Build();
     }
 
