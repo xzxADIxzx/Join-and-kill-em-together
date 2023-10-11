@@ -30,6 +30,7 @@ public class PlayerList : CanvasSingleton<PlayerList>
 
         Version.Label(transform);
         WidescreenFix.MoveDown(transform);
+        Rebuild();
     }
 
     // <summary> Toggles visibility of player list. </summary>
@@ -42,7 +43,7 @@ public class PlayerList : CanvasSingleton<PlayerList>
         Movement.UpdateState();
 
         // no need to update list if we hide it
-        if (Shown) Rebuild();
+        if (Shown && transform.childCount > 0) Rebuild();
     }
 
     /// <summary> Rebuilds player list to add new players or remove players left the lobby. </summary>

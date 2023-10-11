@@ -45,7 +45,7 @@ public class UI
         PlayerIndicators.Build("Player Indicators", true);
 
         Chat.Build("Chat", onLoad: () => Chat.Instance.field.gameObject.SetActive(false));
-        EmojiWheel.Build();
+        EmojiWheel.Build("Emoji Wheel");
     }
 
     /// <summary> Shortcut to hud message receiver. </summary>
