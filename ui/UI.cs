@@ -40,6 +40,7 @@ public class UI
     /// <summary> Creates singleton instances of various UI elements. </summary>
     public static void Build()
     {
+        LobbyList.Build("Lobby List");
         LobbyTab.Build("Lobby Tab");
         PlayerList.Build("Player List");
         PlayerIndicators.Build("Player Indicators", true);
@@ -54,13 +55,13 @@ public class UI
     #region shown
 
     /// <summary> Returns true if at least one element of Jaket interface except indicators is currently visible. </summary>
-    public static bool AnyJaket() => LobbyTab.Instance.Shown || PlayerList.Instance.Shown || Chat.Instance.Shown || EmojiWheel.Instance.Shown;
+    public static bool AnyJaket() => LobbyList.Instance.Shown || LobbyTab.Instance.Shown || PlayerList.Instance.Shown || Chat.Instance.Shown || EmojiWheel.Instance.Shown;
 
     /// <summary> Returns true if at least one built-in menu is currently visible. Cheat menu and console pause the game, so there's no need to add them. </summary>
     public static bool AnyBuiltIn() => OptionsManager.Instance.paused || WeaponWheel.Instance.gameObject.activeSelf;
 
     /// <summary> Returns true if at least one movement-blocking menu is currently visible. </summary>
-    public static bool AnyMovementBlocking() => Chat.Instance.Shown || OptionsManager.Instance.paused;
+    public static bool AnyMovementBlocking() => LobbyList.Instance.Shown || Chat.Instance.Shown || OptionsManager.Instance.paused;
 
     #endregion
     #region base

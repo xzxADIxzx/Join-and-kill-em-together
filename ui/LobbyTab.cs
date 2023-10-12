@@ -37,7 +37,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
             UI.Text("--CONNECTION--", table, 0f, 96f);
             copy = UI.Button("COPY LOBBY CODE", table, 0f, 40f, clicked: LobbyController.CopyCode);
             UI.Button("JOIN BY CODE", table, 0f, -24f, clicked: LobbyController.JoinByCode);
-            UI.Button("BROWSE PUBLIC LOBBIES", table, 0f, -88f);
+            UI.Button("BROWSE PUBLIC LOBBIES", table, 0f, -88f, clicked: LobbyList.Instance.Toggle);
         });
         UI.TableAT("Lobby Config", transform, 480f, 352f, 128f, table =>
         {
@@ -63,7 +63,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
     public void Toggle()
     {
         // if another menu is open, then nothing needs to be done
-        if (UI.AnyJaket() && !Shown) return;
+        if (UI.AnyJaket() && !Shown && !LobbyList.Instance.Shown) return;
 
         gameObject.SetActive(Shown = !Shown);
         Movement.UpdateState();
