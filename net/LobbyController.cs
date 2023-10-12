@@ -20,6 +20,8 @@ public class LobbyController
 
     /// <summary> Whether a lobby is creating right now. </summary>
     public static bool CreatingLobby;
+    /// <summary> Whether a list of public lobbies is being fetched right now. </summary>
+    public static bool FetchingLobbies;
     /// <summary> Whether the player owns the lobby. </summary>
     public static bool IsOwner;
 
@@ -196,6 +198,22 @@ Send it to your friends so they can join you :D");
         else UI.SendMsg(
 @"<size=20><color=red>Could not find the lobby code on your clipboard!</color></size>
 Make sure it is copied without spaces :(");
+    }
+
+    #endregion
+    #region browser
+
+    /// <summary> Asynchronously fetches a list of public lobbies. </summary>
+    public static void FetchLobbies(Action<Lobby[]> done)
+    {
+        var task = SteamMatchmaking.LobbyList.RequestAsync();
+        FetchingLobbies = true;
+
+        task.GetAwaiter().OnCompleted(() =>
+        {
+            FetchingLobbies = false;
+            done(task.Result);
+        });
     }
 
     #endregion
