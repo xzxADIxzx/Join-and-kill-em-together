@@ -47,7 +47,7 @@ public class LobbyList : CanvasSingleton<LobbyList>
     /// <summary> Rebuilds lobby list to match the list on Steam servers. </summary>
     public void Rebuild()
     {
-        refresh.GetComponentInChildren<Text>().text = LobbyController.FetchingLobbies ? "SEARCHING..." : "REFRESH";
+        refresh.GetComponentInChildren<Text>().text = LobbyController.FetchingLobbies ? "WAIT..." : "REFRESH";
 
         // if no lobby is found, then there is no point in adding an empty list
         if (LobbyController.Lobby == null) return;
