@@ -18,7 +18,7 @@ public class CinemaPlayer : MonoSingleton<CinemaPlayer>
     private Text time;
     /// <summary> Background of the time. </summary>
     private RectTransform timeBg;
-
+/*
     /// <summary> Creates a singleton of cinema player. </summary>
     public static void Build()
     {
@@ -62,7 +62,7 @@ public class CinemaPlayer : MonoSingleton<CinemaPlayer>
         timeBg.sizeDelta = new Vector2(width, 64f); // cinema canvas has a slightly different size
         timeBg.anchoredPosition = new Vector2(-952f + 16f + width / 2f, -588f + 16f + 32f);
     }
-
+*/
     /// <summary> Shows the video player and updates the cache. </summary>
     public void Play()
     {
