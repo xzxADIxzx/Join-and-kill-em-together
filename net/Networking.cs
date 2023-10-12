@@ -122,7 +122,7 @@ public class Networking : MonoBehaviour
             if (Entities.TryGetValue(member.Id, out var entity) && entity != null && entity is RemotePlayer player)
             {
                 player.health.target = 0f;
-                player.canvas.SetActive(false);
+                player.canvas.gameObject.SetActive(false);
 
                 // replace the entity with null so that the indicators no longer point to it
                 Entities[member.Id] = null;

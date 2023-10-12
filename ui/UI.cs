@@ -105,20 +105,33 @@ public class UI
     #region canvas
 
     /// <summary> Creates a canvas that is drawn on top of the camera. </summary>
-    public static GameObject Canvas(string name, Transform parent)
+    public static GameObject Canvas(string name, Transform parent,
+                                    RenderMode renderMode = RenderMode.ScreenSpaceOverlay, CanvasScaler.ScaleMode scaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize)
     {
         var obj = Object(name, parent);
         Component<Canvas>(obj, canvas =>
         {
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.renderMode = renderMode;
             canvas.sortingOrder = 1000; // move the canvas up, otherwise it will not be visible
         });
         Component<CanvasScaler>(obj, scaler =>
         {
-            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.uiScaleMode = scaleMode;
             scaler.referenceResolution = new(1920f, 1080f);
         });
         return obj.AddComponent<GraphicRaycaster>().gameObject;
+    }
+
+    /// <summary> Creates a canvas that is drawn in world space. </summary>
+    public static Transform WorldCanvas(string name, Transform parent, Vector3 position, float scale = .02f, Action<Transform> action = null)
+    {
+        var canvas = Canvas(name, parent, RenderMode.WorldSpace, CanvasScaler.ScaleMode.ConstantPixelSize).transform;
+        action?.Invoke(canvas);
+
+        canvas.localPosition = position; // for some unknown reason, the canvas needs to be moved & scaled after adding elements
+        canvas.localScale = new(scale, scale, scale);
+
+        return canvas;
     }
 
     #endregion

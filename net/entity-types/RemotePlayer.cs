@@ -70,7 +70,7 @@ public class RemotePlayer : Entity
     public bool typing;
 
     /// <summary> Canvas containing nickname. </summary>
-    public GameObject canvas;
+    public Transform canvas;
 
     /// <summary> Text containing nickname. </summary>
     private Text nicknameText;
@@ -130,14 +130,13 @@ public class RemotePlayer : Entity
         nickname = new Friend(Id).Name;
         float width = nickname.Length * 14f + 16f;
 
-        canvas = Utils.Canvas("Nickname", transform, width, 64f, new Vector3(0f, 5f, 0f));
-        nicknameText = Utils.Button(nickname, canvas.transform, 0f, 0f, width, 40f, 24, Color.white, TextAnchor.MiddleCenter, () => {}).GetComponentInChildren<Text>();
+        canvas = UI.WorldCanvas("Nickname", transform, new(0f, 5f, 0f), action: canvas =>
+        {
+            UI.Table(nickname, canvas, 0f, 0f, width, 40f, table => nicknameText = UI.Text(nickname, table, 0f, 0f, width, size: 24));
 
-        Utils.Image("Health Background", canvas.transform, 0f, -30f, width - 16f, 4f);
-        healthImage = Utils.Image("Health", canvas.transform, 0f, -30f, width - 16f, 4f, Color.red).transform as RectTransform;
-
-        // for some unknown reason, the canvas needs to be scaled after adding elements
-        canvas.transform.localScale = new Vector3(.02f, .02f, .02f);
+            UI.Table("Health Background", canvas, 0f, -28f, width - 16f, 4f);
+            healthImage = UI.Image("Health", canvas, 0f, -28f, width - 16f, 4f, Color.red).rectTransform;
+        });
 
         // idols can target players, which is undesirable
         int index = EnemyTracker.Instance.enemies.IndexOf(enemyId);
@@ -296,8 +295,8 @@ public class RemotePlayer : Entity
         healthImage.localScale = new(machine.health / 100f, 1f, 1f);
 
         nicknameText.color = machine.health > 0f ? Color.white : Color.red;
-        canvas.transform.LookAt(Camera.current.transform);
-        canvas.transform.Rotate(new(0f, 180f, 0f), Space.Self);
+        canvas.LookAt(Camera.current.transform);
+        canvas.Rotate(new(0f, 180f, 0f), Space.Self);
 
         // sometimes the player does not crumble after death
         if (enemyId.health <= 0f && !machine.limp) machine.GoLimp();
