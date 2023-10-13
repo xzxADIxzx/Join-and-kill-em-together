@@ -37,7 +37,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
             UI.Text("--CONNECTION--", table, 0f, 96f);
             copy = UI.Button("COPY LOBBY CODE", table, 0f, 40f, clicked: LobbyController.CopyCode);
             UI.Button("JOIN BY CODE", table, 0f, -24f, clicked: LobbyController.JoinByCode);
-            UI.Button("BROWSE PUBLIC LOBBIES", table, 0f, -88f, clicked: LobbyList.Instance.Toggle);
+            UI.Button("BROWSE PUBLIC LOBBIES", table, 0f, -88f, size: 24, clicked: LobbyList.Instance.Toggle);
         });
         UI.TableAT("Lobby Config", transform, 480f, 352f, 128f, table =>
         {

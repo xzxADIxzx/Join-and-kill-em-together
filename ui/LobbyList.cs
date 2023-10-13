@@ -1,6 +1,8 @@
 namespace Jaket.UI;
 
+using Steamworks;
 using Steamworks.Data;
+using UnityEngine;
 using UnityEngine.UI;
 
 using Jaket.Net;
@@ -13,6 +15,8 @@ public class LobbyList : CanvasSingleton<LobbyList>
     public Lobby[] Lobbies;
     /// <summary> Button that updates the lobby list. </summary>
     private Button refresh;
+    /// <summary> Content of the lobby list. </summary>
+    private RectTransform content;
 
     private void Start()
     {
@@ -33,6 +37,9 @@ public class LobbyList : CanvasSingleton<LobbyList>
 
             // add close menu button to the top right corner
             UI.Button("X", table, 280f, 232f, 48f, 48f, new(1f, .2f, .1f), 40, clicked: Toggle).transform.GetChild(0).localPosition = new(.5f, 2.5f, 0f);
+
+            // add scroll rect and get the content transform from it
+            content = UI.Scroll("List", table, 0f, -56f, 608f, 496f).content;
         });
         Rebuild();
     }
@@ -49,7 +56,22 @@ public class LobbyList : CanvasSingleton<LobbyList>
     {
         refresh.GetComponentInChildren<Text>().text = LobbyController.FetchingLobbies ? "WAIT..." : "REFRESH";
 
+        // destroy old lobby entries if the search is completed
+        if (!LobbyController.FetchingLobbies) foreach (Transform child in content) Destroy(child.gameObject);
+
         // if no lobby is found, then there is no point in adding an empty list
-        if (LobbyController.Lobby == null) return;
+        if (Lobbies == null) return;
+
+        float height = Lobbies.Length * 64f;
+        content.sizeDelta = new(608f, height);
+
+        float y = height / 2f - 48f / 2f + (64f);
+        foreach (var lobby in Lobbies)
+        {
+            var button = UI.Button(" " + lobby.Owner.Name, content, 0f, y -= 64f, 608f,
+                align: TextAnchor.MiddleLeft, clicked: () => LobbyController.JoinLobby(lobby)).transform;
+
+            UI.Text($"<color=grey>{lobby.GetData("level")} {lobby.MemberCount}/8</color> ", button, 0f, 0f, 608f, align: TextAnchor.MiddleRight);
+        }
     }
 }

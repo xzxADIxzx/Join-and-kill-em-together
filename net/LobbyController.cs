@@ -5,6 +5,7 @@ using Steamworks.Data;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 using Jaket.UI;
 
@@ -43,6 +44,9 @@ public class LobbyController
                 SceneHelper.LoadScene("Main Menu");
             }
         };
+
+        // put the level name in the lobby data so that it can be seen in the public lobbies list
+        SceneManager.sceneLoaded += (scene, mode) => Lobby?.SetData("level", SceneHelper.CurrentScene);
     }
 
     #region control
@@ -62,6 +66,7 @@ public class LobbyController
 
             Lobby?.SetJoinable(true);
             Lobby?.SetPrivate();
+            Lobby?.SetData("level", SceneHelper.CurrentScene);
 
             CreatingLobby = false;
             done();

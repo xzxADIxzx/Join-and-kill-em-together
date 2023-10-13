@@ -225,6 +225,26 @@ public class UI
     }
 
     #endregion
+    #region scroll
+
+    /// <summary> Creates an image-mask that cuts off part of the interface. </summary>
+    public static Mask Mask(string name, Transform transform, float x, float y, float width, float height) =>
+        Component<Mask>(Image(name, transform, x, y, width, height).gameObject, mask => mask.showMaskGraphic = false);
+
+    /// <summary> Creates a scroller with content. </summary>
+    public static ScrollRect Scroll(string name, Transform transform, float x, float y, float width, float height,
+                                    float contentWidth = 0f, float contentHeight = 0f, bool horizontal = false, bool vertical = true) =>
+        Component<ScrollRect>(Rect(name, transform, x, y, width, height).gameObject, rect =>
+        {
+            rect.horizontal = horizontal;
+            rect.vertical = vertical;
+
+            rect.viewport = Mask("Viewport", rect.transform, 0f, 0f, width, height).rectTransform;
+            rect.content = Rect("Content", rect.viewport, 0f, 0f, contentWidth, contentHeight);
+            rect.content.pivot = new(.5f, 1f);
+        });
+
+    #endregion
     #region field
 
     /// <summary> Creates an input field with a placeholder. </summary>
