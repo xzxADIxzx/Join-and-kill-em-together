@@ -47,6 +47,7 @@ public class Pointer : MonoBehaviour
         transform.position = position + direction.normalized * .2f;
         transform.rotation = Quaternion.LookRotation(direction);
 
+        AudioSource.PlayClipAtPoint(HudMessageReceiver.Instance.GetComponent<AudioSource>()?.clip, position);
         Invoke("Destroy", 5f);
     }
 
@@ -58,7 +59,7 @@ public class Pointer : MonoBehaviour
         circle1.localScale = new(scale1, scale1, 0f);
         circle2.localScale = new(scale2, scale2, 0f);
         pointer.localPosition = new(0f, 0f, Mathf.Sin(time) * 10f);
-        pointer.localEulerAngles = new(time, 270f, 0f);
+        pointer.localEulerAngles = new(time * 8f, 270f, 0f);
     }
 
     /// <summary> Destroys the pointer. Needed only because Invoke cannot call a delegate. </summary>

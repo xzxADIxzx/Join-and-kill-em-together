@@ -9,12 +9,15 @@ using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net;
 using Jaket.UI;
+using Jaket.UI.Elements;
 
 /// <summary> Class responsible for additions to control and local display of emotions. </summary>
 public class Movement : MonoSingleton<Movement>
 {
     /// <summary> Reference to local player's rigidbody. </summary>
     private static Rigidbody rb { get => NewMovement.Instance.rb; }
+    /// <summary> Reference to camera controller. </summary>
+    private static CameraController cc { get => CameraController.Instance; }
     /// <summary> Environmental mask needed to prevent the skateboard from riding on water. </summary>
     private static int environmentMask = LayerMaskDefaults.Get(LMD.Environment);
 
@@ -43,7 +46,16 @@ public class Movement : MonoSingleton<Movement>
         UI.Object("Movement").AddComponent<Movement>();
     }
 
-    public void LateUpdate() // late update is needed in order to overwrite the time scale value
+    private void Update()
+    {
+        if (!UI.AnyBuiltIn() && !NewMovement.Instance.dead)
+        {
+            if (Input.GetKeyDown(KeyCode.Mouse2) && Physics.Raycast(cc.transform.position, cc.transform.forward, out var hit, float.MaxValue, environmentMask))
+                Pointer.Spawn(Networking.LocalPlayer.team, hit.point, hit.normal);
+        }
+    }
+
+    private void LateUpdate() // late update is needed in order to overwrite the time scale value
     {
         // find or create a keybind if it doesn't already exist
         EmojiBind ??= UKAPI.GetKeyBind("EMOJI WHEEL", KeyCode.B);
@@ -95,7 +107,7 @@ public class Movement : MonoSingleton<Movement>
             // turn on gravity, because if the taunt was launched on the ground, then it is disabled by default
             rb.useGravity = true;
 
-            var cam = CameraController.Instance.cam.transform;
+            var cam = cc.cam.transform;
             var player = NewMovement.Instance.transform.position + new Vector3(0f, 1f, 0f);
 
             // move the camera position towards the start if the animation has just started, or towards the end if the animation ends
@@ -147,7 +159,7 @@ public class Movement : MonoSingleton<Movement>
         ToggleHud(Instance.Emoji == 0xFF);
 
         // block camera rotation & weapon fire
-        CameraController.Instance.enabled = CameraController.Instance.activated = GunControl.Instance.activated = !UI.AnyJaket() && Instance.Emoji == 0xFF;
+        cc.enabled = cc.activated = GunControl.Instance.activated = !UI.AnyJaket() && Instance.Emoji == 0xFF;
     }
 
     /// <summary> Toggles the ability to move, used in the chat and etc. </summary>
@@ -231,7 +243,7 @@ public class Movement : MonoSingleton<Movement>
         NewMovement.Instance.gc.transform.localPosition = new(0f, -1.256f, 0f);
 
         // rotate the third person camera in the same direction as the first person camera
-        rotation = new(CameraController.Instance.rotationY, CameraController.Instance.rotationX + 90f);
+        rotation = new(cc.rotationY, cc.rotationX + 90f);
         position = new();
 
         StopCoroutine("ClearEmoji");
