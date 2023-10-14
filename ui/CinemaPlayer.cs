@@ -13,12 +13,12 @@ public class CinemaPlayer : MonoSingleton<CinemaPlayer>
 {
     /// <summary> Cached cinema video player component. </summary>
     public VideoPlayer Player;
-
+/*
     /// <summary> Viewing time and video length. </summary>
     private Text time;
     /// <summary> Background of the time. </summary>
     private RectTransform timeBg;
-/*
+
     /// <summary> Creates a singleton of cinema player. </summary>
     public static void Build()
     {

@@ -2,7 +2,6 @@ namespace Jaket.UI;
 
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI.Extensions;
 
 using Jaket.Assets;
