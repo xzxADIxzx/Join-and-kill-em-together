@@ -10,6 +10,8 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
 {
     /// <summary> Lobby control buttons. </summary>
     private Button create, invite, copy, accessibility;
+    /// <summary> Input field with lobby name. </summary>
+    private InputField field;
     /// <summary> Current lobby access level: 0 - private, 1 - friends only, 2 - public. I was too lazy to create an enum. </summary>
     private int lobbyAccessLevel;
 
@@ -39,10 +41,14 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
             UI.Button("JOIN BY CODE", table, 0f, -24f, clicked: LobbyController.JoinByCode);
             UI.Button("BROWSE PUBLIC LOBBIES", table, 0f, -88f, size: 24, clicked: LobbyList.Instance.Toggle);
         });
-        UI.TableAT("Lobby Config", transform, 480f, 352f, 128f, table =>
+        UI.TableAT("Lobby Config", transform, 480f, 352f, 176f, table =>
         {
-            UI.Text("--CONFIG--", table, 0f, 32f);
-            accessibility = UI.Button("PRIVATE", table, 0f, -24f, clicked: () =>
+            UI.Text("--CONFIG--", table, 0f, 56f);
+
+            field = UI.Field("Lobby name", table, 0f, 8f, 320f, enter: name => LobbyController.Lobby?.SetData("name", name));
+            field.characterLimit = 24;
+
+            accessibility = UI.Button("PRIVATE", table, 0f, -48f, clicked: () =>
             {
                 switch (lobbyAccessLevel = ++lobbyAccessLevel % 3)
                 {
@@ -72,6 +78,10 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
     /// <summary> Rebuilds lobby tab to update control buttons. </summary>
     public void Rebuild()
     {
+        // reset config
+        if (LobbyController.Lobby == null) lobbyAccessLevel = 0;
+        else field.text = LobbyController.Lobby?.GetData("name");
+
         create.GetComponentInChildren<Text>().text = LobbyController.CreatingLobby
             ? "CREATING..."
             : LobbyController.Lobby == null

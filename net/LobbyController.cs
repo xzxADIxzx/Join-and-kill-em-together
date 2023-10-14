@@ -66,6 +66,7 @@ public class LobbyController
 
             Lobby?.SetJoinable(true);
             Lobby?.SetPrivate();
+            Lobby?.SetData("name", $"{SteamClient.Name}'s Lobby");
             Lobby?.SetData("level", MapMap(SceneHelper.CurrentScene));
 
             CreatingLobby = false;

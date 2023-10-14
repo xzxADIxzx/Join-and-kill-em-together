@@ -1,6 +1,5 @@
 namespace Jaket.UI;
 
-using Steamworks;
 using Steamworks.Data;
 using UnityEngine;
 using UnityEngine.UI;
@@ -68,10 +67,13 @@ public class LobbyList : CanvasSingleton<LobbyList>
         float y = height / 2f - 48f / 2f + (64f);
         foreach (var lobby in Lobbies)
         {
-            var button = UI.Button(" " + lobby.Owner.Name, content, 0f, y -= 64f, 608f,
-                align: TextAnchor.MiddleLeft, clicked: () => LobbyController.JoinLobby(lobby)).transform;
+            // fetch lobby's name & other data
+            lobby.Refresh();
 
-            UI.Text($"<color=grey>{lobby.GetData("level")} {lobby.MemberCount}/8</color> ", button, 0f, 0f, 608f, align: TextAnchor.MiddleRight);
+            var button = UI.Button(" " + lobby.GetData("name"), content, 0f, y -= 64f, 608f,
+                size: 28, align: TextAnchor.MiddleLeft, clicked: () => LobbyController.JoinLobby(lobby)).transform;
+
+            UI.Text($"{lobby.GetData("level")} {lobby.MemberCount}/8 ", button, 0f, 0f, 608f, 48f, UnityEngine.Color.grey, 28, TextAnchor.MiddleRight);
         }
     }
 }
