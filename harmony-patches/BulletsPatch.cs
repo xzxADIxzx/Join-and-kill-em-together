@@ -6,7 +6,6 @@ using UnityEngine;
 using Jaket.Content;
 using Jaket.Net;
 using Jaket.Net.EntityTypes;
-using Jaket.UI;
 
 [HarmonyPatch(typeof(Coin), "StartCheckingSpeed")] // for some reason, the coin has zero velocity in Start
 public class CoinPatch

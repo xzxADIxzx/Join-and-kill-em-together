@@ -6,7 +6,6 @@ using System.Collections.Generic;
 
 using Jaket.Content;
 using Jaket.IO;
-using Jaket.Net.EntityTypes;
 
 /// <summary> Network connection endpoint that contains listeners for different packet types. </summary>
 public abstract class Endpoint

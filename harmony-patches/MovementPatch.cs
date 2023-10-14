@@ -1,6 +1,5 @@
 namespace Jaket.HarmonyPatches;
 
-using GameConsole;
 using HarmonyLib;
 using Steamworks;
 using ULTRAKILL.Cheats;
