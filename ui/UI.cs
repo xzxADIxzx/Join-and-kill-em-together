@@ -179,6 +179,14 @@ public class UI
         });
     }
 
+    /// <summary> Adds a diamond-shaped image to the canvas. </summary>
+    public static DiamondGraph DiamondImage(string name, Transform parent, float width, float height, float a, float b, float c, float d, Color? color = null) =>
+        Component<DiamondGraph>(Rect(name, parent, 0f, 0f, width, height).gameObject, diamond =>
+        {
+            diamond.color = color ?? Color.white;
+            diamond.A = a; diamond.B = b; diamond.C = c; diamond.D = d;
+        });
+
     #endregion
     #region button
 
