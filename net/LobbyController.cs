@@ -46,7 +46,7 @@ public class LobbyController
         };
 
         // put the level name in the lobby data so that it can be seen in the public lobbies list
-        SceneManager.sceneLoaded += (scene, mode) => Lobby?.SetData("level", SceneHelper.CurrentScene);
+        SceneManager.sceneLoaded += (scene, mode) => Lobby?.SetData("level", MapMap(SceneHelper.CurrentScene));
     }
 
     #region control
@@ -66,7 +66,7 @@ public class LobbyController
 
             Lobby?.SetJoinable(true);
             Lobby?.SetPrivate();
-            Lobby?.SetData("level", SceneHelper.CurrentScene);
+            Lobby?.SetData("level", MapMap(SceneHelper.CurrentScene));
 
             CreatingLobby = false;
             done();
@@ -220,6 +220,15 @@ Make sure it is copied without spaces :(");
             done(task.Result);
         });
     }
+
+    /// <summary> Maps the maps names so that they are more understandable to the average player. </summary>
+    public static string MapMap(string map) => map switch
+    {
+        "uk_construct" => "Sandbox",
+        "Endless" => "Myth",
+        "CreditsMuseum2" => "Museum",
+        _ => map.Substring("Level ".Length)
+    };
 
     #endregion
 }
