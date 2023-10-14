@@ -142,7 +142,7 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Updates the state machine: toggles movement, cursor and third-person camera. </summary>
     public static void UpdateState()
     {
-        ToggleMovement(!Chat.Instance.Shown && Instance.Emoji == 0xFF);
+        ToggleMovement(!UI.AnyMovementBlocking() && Instance.Emoji == 0xFF);
         ToggleCursor(UI.AnyJaket());
         ToggleHud(Instance.Emoji == 0xFF);
 

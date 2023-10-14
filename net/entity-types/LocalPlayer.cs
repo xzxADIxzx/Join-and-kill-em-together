@@ -60,7 +60,7 @@ public class LocalPlayer : Entity
     /// <summary> Initiates self-destruction of the player. </summary>
     public void SelfDestruct()
     {
-        if (!Chat.Instance.Shown) NewMovement.Instance.GetHurt(1000, false, 0f);
+        if (!UI.AnyMovementBlocking()) NewMovement.Instance.GetHurt(1000, false, 0f);
     }
 
     public override void Write(Writer w)
