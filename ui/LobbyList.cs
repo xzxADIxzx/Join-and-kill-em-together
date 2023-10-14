@@ -23,15 +23,7 @@ public class LobbyList : CanvasSingleton<LobbyList>
         {
             UI.Text("--LOBBY BROWSER--", table, 0f, 288f, 640f);
 
-            refresh = UI.Button("REFRESH", table, -227f, 232f, 154f, clicked: () =>
-            {
-                LobbyController.FetchLobbies(lobbies =>
-                {
-                    this.Lobbies = lobbies;
-                    Rebuild();
-                });
-                Rebuild();
-            });
+            refresh = UI.Button("REFRESH", table, -227f, 232f, 154f, clicked: Refresh);
             UI.Field("Search", table, 53f, 232f, 374f, 48f, enter: text => { /* TODO */ });
 
             // add close menu button to the top right corner
@@ -40,7 +32,7 @@ public class LobbyList : CanvasSingleton<LobbyList>
             // add scroll rect and get the content transform from it
             content = UI.Scroll("List", table, 0f, -56f, 608f, 496f).content;
         });
-        Rebuild();
+        Refresh();
     }
 
     // <summary> Toggles visibility of lobby list. </summary>
@@ -48,6 +40,9 @@ public class LobbyList : CanvasSingleton<LobbyList>
     {
         gameObject.SetActive(Shown = !Shown);
         Movement.UpdateState();
+
+        // no need to refresh list if we hide it
+        if (Shown && transform.childCount > 0) Refresh();
     }
 
     /// <summary> Rebuilds lobby list to match the list on Steam servers. </summary>
@@ -75,5 +70,16 @@ public class LobbyList : CanvasSingleton<LobbyList>
 
             UI.Text($"{lobby.GetData("level")} {lobby.MemberCount}/8 ", button, 0f, 0f, 608f, 48f, UnityEngine.Color.grey, 28, TextAnchor.MiddleRight);
         }
+    }
+
+    /// <summary> Updates the list of public lobbies and rebuilds the menu. </summary>
+    public void Refresh()
+    {
+        LobbyController.FetchLobbies(lobbies =>
+        {
+            this.Lobbies = lobbies;
+            Rebuild();
+        });
+        Rebuild();
     }
 }

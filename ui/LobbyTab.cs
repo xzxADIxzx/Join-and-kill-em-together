@@ -73,6 +73,9 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
 
         gameObject.SetActive(Shown = !Shown);
         Movement.UpdateState();
+
+        // no need to update tab if we hide it
+        if (Shown && transform.childCount > 0) Rebuild();
     }
 
     /// <summary> Rebuilds lobby tab to update control buttons. </summary>
