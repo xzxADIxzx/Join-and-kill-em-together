@@ -41,6 +41,9 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Third person camera rotation. </summary>
     private Vector2 rotation;
 
+    /// <summary> Last pointer created by the player. </summary>
+    public Pointer Pointer;
+
     /// <summary> Creates a singleton of movement. </summary>
     public static void Load()
     {
@@ -57,8 +60,10 @@ public class Movement : MonoSingleton<Movement>
         {
             if (Input.GetKeyDown(KeyCode.Mouse2) && Physics.Raycast(cc.transform.position, cc.transform.forward, out var hit, float.MaxValue, environmentMask))
             {
-                Pointer.Spawn(Networking.LocalPlayer.team, hit.point, hit.normal);
-                Networking.Redirect(Writer.Write(w =>
+                if (Pointer != null) Pointer.Lifetime = 4.5f;
+                Pointer = Pointer.Spawn(Networking.LocalPlayer.team, hit.point, hit.normal);
+
+                if (LobbyController.Lobby != null) Networking.Redirect(Writer.Write(w =>
                 {
                     w.Id(Networking.LocalPlayer.Id);
                     w.Vector(hit.point);

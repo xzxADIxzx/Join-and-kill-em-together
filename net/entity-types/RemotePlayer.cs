@@ -64,6 +64,9 @@ public class RemotePlayer : Entity
     /// <summary> Component responsible for playing Sam's voice. </summary>
     public AudioSource Voice;
 
+    /// <summary> Last pointer created by the player. </summary>
+    public Pointer pointer;
+
     /// <summary> Player name. Taken from Steam. </summary>
     public string nickname;
 
@@ -392,5 +395,9 @@ public class RemotePlayer : Entity
         }
     }
 
-    public void Point(Reader r) => Pointer.Spawn(team, r.Vector(), r.Vector());
+    public void Point(Reader r)
+    {
+        if (pointer != null) pointer.Lifetime = 4.5f;
+        pointer = Pointer.Spawn(team, r.Vector(), r.Vector(), transform);
+    }
 }
