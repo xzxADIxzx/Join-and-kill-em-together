@@ -21,6 +21,8 @@ public enum PacketType
     DamageEntity,
     /// <summary> Client punched and this needs to be displayed visually on his doll. </summary>
     Punch,
+    /// <summary> Client pointed to somewhere. </summary>
+    Point,
 
     /// <summary> Need to open a certain door. Called by the host so that clients don't get stuck in a room. </summary>
     OpenDoor,

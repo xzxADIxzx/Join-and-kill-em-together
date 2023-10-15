@@ -7,6 +7,7 @@ using UnityEngine;
 
 using Jaket.Assets;
 using Jaket.Content;
+using Jaket.IO;
 using Jaket.Net;
 using Jaket.UI;
 using Jaket.UI.Elements;
@@ -51,7 +52,15 @@ public class Movement : MonoSingleton<Movement>
         if (!UI.AnyBuiltIn() && !NewMovement.Instance.dead)
         {
             if (Input.GetKeyDown(KeyCode.Mouse2) && Physics.Raycast(cc.transform.position, cc.transform.forward, out var hit, float.MaxValue, environmentMask))
+            {
                 Pointer.Spawn(Networking.LocalPlayer.team, hit.point, hit.normal);
+                Networking.Redirect(Writer.Write(w =>
+                {
+                    w.Id(Networking.LocalPlayer.Id);
+                    w.Vector(hit.point);
+                    w.Vector(hit.normal);
+                }), PacketType.Point);
+            }
         }
     }
 

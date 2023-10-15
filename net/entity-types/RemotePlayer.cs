@@ -8,6 +8,7 @@ using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.UI;
+using Jaket.UI.Elements;
 
 /// <summary>
 /// Remote player that exists both on the local machine and on the remote one.
@@ -390,4 +391,6 @@ public class RemotePlayer : Entity
                 break;
         }
     }
+
+    public void Point(Reader r) => Pointer.Spawn(team, r.Vector(), r.Vector());
 }

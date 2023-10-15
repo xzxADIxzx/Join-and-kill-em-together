@@ -27,8 +27,12 @@ public class Server : Endpoint
 
         ListenAndRedirect(PacketType.Punch, r =>
         {
-            var entity = entities[r.Id()];
-            if (entity is RemotePlayer player) player.Punch(r);
+            if (entities[r.Id()] is RemotePlayer player) player?.Punch(r);
+        });
+
+        ListenAndRedirect(PacketType.Point, r =>
+        {
+            if (entities[r.Id()] is RemotePlayer player) player?.Point(r);
         });
     }
 

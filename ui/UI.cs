@@ -61,7 +61,7 @@ public class UI
     public static bool AnyBuiltIn() => OptionsManager.Instance.paused || WeaponWheel.Instance.gameObject.activeSelf;
 
     /// <summary> Returns true if at least one movement-blocking menu is currently visible. </summary>
-    public static bool AnyMovementBlocking() => LobbyList.Instance.Shown || Chat.Instance.Shown || OptionsManager.Instance.paused;
+    public static bool AnyMovementBlocking() => (AnyJaket() && !EmojiWheel.Instance.Shown) || OptionsManager.Instance.paused;
 
     #endregion
     #region base
