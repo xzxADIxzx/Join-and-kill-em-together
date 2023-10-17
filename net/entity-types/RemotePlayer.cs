@@ -64,23 +64,14 @@ public class RemotePlayer : Entity
     /// <summary> Component responsible for playing Sam's voice. </summary>
     public AudioSource Voice;
 
+    /// <summary> Header displaying nickname and health. </summary>
+    public PlayerHeader Header;
+
     /// <summary> Last pointer created by the player. </summary>
     public Pointer pointer;
 
-    /// <summary> Player name. Taken from Steam. </summary>
-    public string nickname;
-
     /// <summary> Whether the player is typing a message. </summary>
     public bool typing;
-
-    /// <summary> Canvas containing nickname. </summary>
-    public Transform canvas;
-
-    /// <summary> Text containing nickname. </summary>
-    private Text nicknameText;
-
-    /// <summary> Image showing health. </summary>
-    private RectTransform healthImage;
 
     private void Awake()
     {
@@ -130,17 +121,7 @@ public class RemotePlayer : Entity
 
     private void Start()
     {
-        // nickname
-        nickname = new Friend(Id).Name;
-        float width = nickname.Length * 14f + 16f;
-
-        canvas = UI.WorldCanvas("Nickname", transform, new(0f, 5f, 0f), action: canvas =>
-        {
-            UI.Table(nickname, canvas, 0f, 0f, width, 40f, table => nicknameText = UI.Text(nickname, table, 0f, 0f, width, size: 24));
-
-            UI.Table("Health Background", canvas, 0f, -28f, width - 16f, 4f);
-            healthImage = UI.Image("Health", canvas, 0f, -28f, width - 16f, 4f, Color.red).rectTransform;
-        });
+        Header = new(Id, transform);
 
         // idols can target players, which is undesirable
         int index = EnemyTracker.Instance.enemies.IndexOf(enemyId);
@@ -296,11 +277,7 @@ public class RemotePlayer : Entity
 
         enemyId.health = machine.health = health.Get(LastUpdate);
         enemyId.dead = machine.health <= 0f;
-        healthImage.localScale = new(machine.health / 100f, 1f, 1f);
-
-        nicknameText.color = machine.health > 0f ? Color.white : Color.red;
-        canvas.LookAt(Camera.current.transform);
-        canvas.Rotate(new(0f, 180f, 0f), Space.Self);
+        Header.Update(machine.health);
 
         // sometimes the player does not crumble after death
         if (enemyId.health <= 0f && !machine.limp) machine.GoLimp();

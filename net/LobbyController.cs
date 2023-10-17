@@ -153,7 +153,7 @@ Maybe it was closed or you were blocked ,_,");
         if (Chat.Instance.Shown) list.Add("You");
         Networking.EachPlayer(player =>
         {
-            if (player.typing) list.Add(player.nickname);
+            if (player.typing) list.Add(player.Header.Name);
         });
 
         return list;
