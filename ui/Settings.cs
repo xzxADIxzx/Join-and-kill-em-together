@@ -1,0 +1,63 @@
+namespace Jaket.UI;
+
+using UnityEngine;
+using UnityEngine.UI;
+
+using Jaket.World;
+
+/// <summary> Global mod settings not related to the lobby. </summary>
+public class Settings : CanvasSingleton<Settings>
+{
+    /// <summary> List of all key bindings in the mod. </summary>
+    public static KeyCode LobbyTab, PlayerList, Settingz, PlayerIndicators, Pointer, Chat, ScrollUp, ScrollDown, EmojiWheel, SelfDestruction;
+
+    /// <summary> Gets the key binding value from its path. </summary>
+    public static KeyCode GetKey(string path, KeyCode def) => (KeyCode)PrefsManager.Instance.GetInt($"jaket.binds.{path}", (int)def);
+
+    /// <summary> Loads and applies all settings. </summary>
+    public static void Load()
+    {
+        LobbyTab = GetKey("lobby-tab", KeyCode.F1);
+        PlayerList = GetKey("player-list", KeyCode.F2);
+        Settingz = GetKey("settings", KeyCode.F3);
+        PlayerIndicators = GetKey("player-indicators", KeyCode.Z);
+        Pointer = GetKey("pointer", KeyCode.Mouse2);
+        Chat = GetKey("chat", KeyCode.Return);
+        ScrollUp = GetKey("scroll-up", KeyCode.UpArrow);
+        ScrollDown = GetKey("scroll-down", KeyCode.DownArrow);
+        EmojiWheel = GetKey("emoji-wheel", KeyCode.B);
+        SelfDestruction = GetKey("self-destruction", KeyCode.K);
+    }
+
+    private void Start()
+    {
+        UI.Shadow("Shadow", transform);
+        UI.TableAT("Controls", transform, 0f, 352f, 696f, table =>
+        {
+            UI.Text("--CONTROLS--", table, 0f, 316f);
+            UI.Button("RESET", table, 0f, 260f);
+
+            int y = 0;
+            UI.KeyButton("lobby-tab", LobbyTab, table, 0f, 196f + y-- * 56f);
+            UI.KeyButton("player-list", PlayerList, table, 0f, 196f + y-- * 56f);
+            UI.KeyButton("settings", Settingz, table, 0f, 196f + y-- * 56f);
+            UI.KeyButton("player-indicators", PlayerIndicators, table, 0f, 196f + y-- * 56f);
+            UI.KeyButton("pointer", Pointer, table, 0f, 196f + y-- * 56f);
+            UI.KeyButton("chat", Chat, table, 0f, 196f + y-- * 56f);
+            UI.KeyButton("scroll-messages-up", ScrollUp, table, 0f, 196f + y-- * 56f);
+            UI.KeyButton("scroll-messages-down", ScrollDown, table, 0f, 196f + y-- * 56f);
+            UI.KeyButton("emoji-wheel", EmojiWheel, table, 0f, 196f + y-- * 56f);
+            UI.KeyButton("self-destruction", SelfDestruction, table, 0f, 196f + y-- * 56f);
+        });
+    }
+
+    // <summary> Toggles visibility of settings. </summary>
+    public void Toggle()
+    {
+        // if another menu is open, then nothing needs to be done
+        if (UI.AnyJaket() && !Shown) return;
+
+        gameObject.SetActive(Shown = !Shown);
+        Movement.UpdateState();
+    }
+}

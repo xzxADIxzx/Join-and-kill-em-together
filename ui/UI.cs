@@ -35,6 +35,9 @@ public class UI
         colors = ColorBlock.defaultColorBlock;
         colors.highlightedColor = colors.selectedColor = new(.5f, .5f, .5f, 1f);
         colors.pressedColor = new(1f, 0f, 0f, 1f);
+
+        // settings must be loaded before building the interface
+        Settings.Load();
     }
 
     /// <summary> Creates singleton instances of various UI elements. </summary>
@@ -43,6 +46,7 @@ public class UI
         LobbyList.Build("Lobby List");
         LobbyTab.Build("Lobby Tab");
         PlayerList.Build("Player List");
+        Settings.Build("Settings");
         PlayerIndicators.Build("Player Indicators", true);
 
         Chat.Build("Chat", onLoad: () => Chat.Instance.field.gameObject.SetActive(false));
@@ -55,7 +59,7 @@ public class UI
     #region shown
 
     /// <summary> Returns true if at least one element of Jaket interface except indicators is currently visible. </summary>
-    public static bool AnyJaket() => LobbyList.Shown || LobbyTab.Shown || PlayerList.Shown || Chat.Shown || EmojiWheel.Shown;
+    public static bool AnyJaket() => LobbyList.Shown || LobbyTab.Shown || PlayerList.Shown || Settings.Shown || Chat.Shown || EmojiWheel.Shown;
 
     /// <summary> Returns true if at least one built-in menu is currently visible. Cheat menu and console pause the game, so there's no need to add them. </summary>
     public static bool AnyBuiltIn() => OptionsManager.Instance.paused || WeaponWheel.Instance.gameObject.activeSelf;
@@ -229,6 +233,23 @@ public class UI
         {
             button.targetGraphic = img;
             button.onClick.AddListener(() => Application.OpenURL("https://discord.gg/USpt3hCBgn"));
+        });
+    }
+
+    /// <summary> Adds a button that changes the given keybind. </summary>
+    public static Button KeyButton(string name, KeyCode current, Transform parent, float x, float y)
+    {
+        // key is the current keycode, bind is the name of the keybind
+        Text key = null, bind = Text(name.ToUpper().Replace('-', ' '), parent, x + 2f, y, size: 16, align: TextAnchor.MiddleLeft);
+
+        var img = Table("Button", bind.transform, 94f, 0f, 128f, 48f, table =>
+        {
+            key = Text(ControlsOptions.GetKeyName(current), table, 0f, 0f, 128f, 16f, size: 16);
+        });
+        return Component<Button>(img.gameObject, button =>
+        {
+            button.targetGraphic = img;
+            button.onClick.AddListener(() => Settings.Instance.Rebind(name, key, img));
         });
     }
 
