@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 public class CanvasSingleton<T> : MonoSingleton<T> where T : CanvasSingleton<T>
 {
     /// <summary> Whether the canvas is visible or hidden. </summary>
-    public bool Shown;
+    public static bool Shown;
 
     /// <summary> Creates an instance of this singleton. </summary>
     public static void Build(string name, bool hideInMainMenuOnly = false, Action onLoad = null)
@@ -23,7 +23,7 @@ public class CanvasSingleton<T> : MonoSingleton<T> where T : CanvasSingleton<T>
             {
                 // the chat doesn't need to be hidden entirely, just the input field
                 if (onLoad != null) onLoad();
-                else Instance.gameObject.SetActive(Instance.Shown = false);
+                else Instance.gameObject.SetActive(Shown = false);
             }
         };
     }

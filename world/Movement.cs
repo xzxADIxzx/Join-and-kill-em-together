@@ -79,10 +79,10 @@ public class Movement : MonoSingleton<Movement>
         EmojiBind ??= UKAPI.GetKeyBind("EMOJI WHEEL", KeyCode.B);
 
         // if the emoji wheel is invisible and the key has been pressed for 0.25 seconds, then show it
-        if (!EmojiWheel.Instance.Shown && EmojiBind.HoldTime > .25f) EmojiWheel.Instance.Show();
+        if (!EmojiWheel.Shown && EmojiBind.HoldTime > .25f) EmojiWheel.Instance.Show();
 
         // if the emoji wheel is visible, but the key is not pressed, then hide it
-        if (EmojiWheel.Instance.Shown && !EmojiBind.IsPressedInScene) EmojiWheel.Instance.Hide();
+        if (EmojiWheel.Shown && !EmojiBind.IsPressedInScene) EmojiWheel.Instance.Hide();
 
         // skateboard logic
         if (Emoji == 0x0B)
@@ -113,7 +113,7 @@ public class Movement : MonoSingleton<Movement>
         if (Emoji != 0xFF)
         {
             // cancel animation if space is pressed
-            if (Input.GetKey(KeyCode.Space) && !Chat.Instance.Shown) StartEmoji(0xFF);
+            if (Input.GetKey(KeyCode.Space) && !Chat.Shown) StartEmoji(0xFF);
 
             // rotate the camera according to mouse sensitivity
             if (!UI.AnyJaket())

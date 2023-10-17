@@ -81,7 +81,7 @@ public class LocalPlayer : Entity
         w.Bool(NewMovement.Instance.boost && !NewMovement.Instance.sliding);
         w.Bool(NewMovement.Instance.ridingRocket != null);
         w.Bool(!NewMovement.Instance.gc.onGround);
-        w.Bool(Chat.Instance.Shown);
+        w.Bool(Chat.Shown);
         w.Bool(FistControl.Instance.shopping);
 
         w.Bool(hook != Vector3.zero && HookArm.Instance.enabled);

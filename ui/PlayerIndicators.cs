@@ -26,7 +26,7 @@ public class PlayerIndicators : CanvasSingleton<PlayerIndicators>
     public void Toggle()
     {
         // if the player is typing, then nothing needs to be done
-        if (Chat.Instance.Shown) return;
+        if (Chat.Shown) return;
 
         // no comments
         gameObject.SetActive(Shown = !Shown);

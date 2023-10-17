@@ -69,7 +69,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
     public void Toggle()
     {
         // if another menu is open, then nothing needs to be done
-        if (UI.AnyJaket() && !Shown && !LobbyList.Instance.Shown) return;
+        if (UI.AnyJaket() && !Shown && !LobbyList.Shown) return;
 
         gameObject.SetActive(Shown = !Shown);
         Movement.UpdateState();

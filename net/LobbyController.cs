@@ -150,7 +150,7 @@ Maybe it was closed or you were blocked ,_,");
     {
         List<string> list = new();
 
-        if (Chat.Instance.Shown) list.Add("You");
+        if (Chat.Shown) list.Add("You");
         Networking.EachPlayer(player =>
         {
             if (player.typing) list.Add(player.Header.Name);
