@@ -8,7 +8,6 @@ using UMM;
 using UnityEngine;
 using UnityEngine.UI;
 
-using Jaket.Assets;
 using Jaket.Net;
 using Jaket.Sam;
 using Jaket.World;
@@ -195,7 +194,7 @@ public class Chat : CanvasSingleton<Chat>
                 if (int.TryParse(message.Substring("/tts-volume ".Length), out int value))
                 {
                     int clamped = Mathf.Clamp(value, 0, 100);
-                    DollAssets.Mixer?.SetFloat("Volume", clamped / 2 - 30); // the value should be between -30 and 20 decibels
+                    Settings.Instance.ChangeTTSVolume(clamped);
 
                     ReceiveChatMessage($"<color=#00FF00>TTS volume is set to {clamped}.</color>");
                 }

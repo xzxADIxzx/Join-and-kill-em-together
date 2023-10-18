@@ -3,6 +3,7 @@ namespace Jaket.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
+using Jaket.Assets;
 using Jaket.World;
 
 /// <summary> Global mod settings not related to the lobby. </summary>
@@ -31,6 +32,8 @@ public class Settings : CanvasSingleton<Settings>
         ScrollDown = GetKey("scroll-messages-down", KeyCode.DownArrow);
         EmojiWheel = GetKey("emoji-wheel", KeyCode.B);
         SelfDestruction = GetKey("self-destruction", KeyCode.K);
+
+        DollAssets.Mixer?.SetFloat("Volume", PrefsManager.Instance.GetInt("jaket.tts.volume") / 2f - 30f);
     }
 
     private void Start()
@@ -100,5 +103,12 @@ public class Settings : CanvasSingleton<Settings>
 
         background.color = new(1f, .7f, .1f);
         Rebinding = true;
+    }
+
+    // <summary> Changes and saves Sam's voice volume. </summary>
+    public void ChangeTTSVolume(int volume)
+    {
+        DollAssets.Mixer?.SetFloat("Volume", volume / 2f - 30f); // the value should be between -30 and 20 decibels
+        PrefsManager.Instance.SetInt("jaket.tts.volume", volume);
     }
 }
