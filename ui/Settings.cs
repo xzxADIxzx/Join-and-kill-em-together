@@ -9,6 +9,10 @@ using Jaket.World;
 /// <summary> Global mod settings not related to the lobby. </summary>
 public class Settings : CanvasSingleton<Settings>
 {
+    /// <summary> List of internal names of all key bindings. </summary>
+    public static readonly string[] Keybinds =
+    { "lobby-tab", "player-list", "settings", "player-indicators", "pointer", "chat", "scroll-messages-up", "scroll-messages-down", "emoji-wheel", "self-destruction" };
+
     /// <summary> List of all key bindings in the mod. </summary>
     public static KeyCode LobbyTab, PlayerList, Settingz, PlayerIndicators, Pointer, Chat, ScrollUp, ScrollDown, EmojiWheel, SelfDestruction;
     /// <summary> Gets the key binding value from its path. </summary>
@@ -33,7 +37,7 @@ public class Settings : CanvasSingleton<Settings>
         EmojiWheel = GetKey("emoji-wheel", KeyCode.B);
         SelfDestruction = GetKey("self-destruction", KeyCode.K);
 
-        DollAssets.Mixer?.SetFloat("Volume", PrefsManager.Instance.GetInt("jaket.tts.volume") / 2f - 30f);
+        DollAssets.Mixer?.SetFloat("Volume", PrefsManager.Instance.GetInt("jaket.tts.volume", 60) / 2f - 30f);
     }
 
     private void Start()
@@ -42,19 +46,11 @@ public class Settings : CanvasSingleton<Settings>
         UI.TableAT("Controls", transform, 0f, 352f, 696f, table =>
         {
             UI.Text("--CONTROLS--", table, 0f, 316f);
-            UI.Button("RESET", table, 0f, 260f);
+            UI.Button("RESET", table, 0f, 260f, clicked: ResetKeybinds);
 
-            int y = 0; // no way
-            UI.KeyButton("lobby-tab", LobbyTab, table, 0f, 196f + y-- * 56f);
-            UI.KeyButton("player-list", PlayerList, table, 0f, 196f + y-- * 56f);
-            UI.KeyButton("settings", Settingz, table, 0f, 196f + y-- * 56f);
-            UI.KeyButton("player-indicators", PlayerIndicators, table, 0f, 196f + y-- * 56f);
-            UI.KeyButton("pointer", Pointer, table, 0f, 196f + y-- * 56f);
-            UI.KeyButton("chat", Chat, table, 0f, 196f + y-- * 56f);
-            UI.KeyButton("scroll-messages-up", ScrollUp, table, 0f, 196f + y-- * 56f);
-            UI.KeyButton("scroll-messages-down", ScrollDown, table, 0f, 196f + y-- * 56f);
-            UI.KeyButton("emoji-wheel", EmojiWheel, table, 0f, 196f + y-- * 56f);
-            UI.KeyButton("self-destruction", SelfDestruction, table, 0f, 196f + y-- * 56f);
+            var list = new[] { LobbyTab, PlayerList, Settingz, PlayerIndicators, Pointer, Chat, ScrollUp, ScrollDown, EmojiWheel, SelfDestruction };
+            for (int i = 0; i < list.Length; i++)
+                UI.KeyButton(Keybinds[i], list[i], table, 0f, 196f - i * 56f);
         });
     }
 
@@ -94,6 +90,21 @@ public class Settings : CanvasSingleton<Settings>
         Movement.UpdateState();
     }
 
+    #region controls
+
+    // <summary> Resets control settings. </summary>
+    public void ResetKeybinds()
+    {
+        // remove keys from preferences to reset key bindings to defaults
+        foreach (var name in Keybinds) PrefsManager.Instance.DeleteKey($"jaket.binds.{name}");
+        Load(); // load default values
+
+        // update the labels in the buttons
+        var list = new[] { LobbyTab, PlayerList, Settingz, PlayerIndicators, Pointer, Chat, ScrollUp, ScrollDown, EmojiWheel, SelfDestruction };
+        for (int i = 0; i < list.Length; i++)
+            transform.GetChild(1).GetChild(i + 2).GetChild(0).GetComponentInChildren<Text>().text = ControlsOptions.GetKeyName(list[i]);
+    }
+
     // <summary> Starts rebinding the given key. </summary>
     public void Rebind(string path, Text text, Image background)
     {
@@ -105,10 +116,15 @@ public class Settings : CanvasSingleton<Settings>
         Rebinding = true;
     }
 
+    #endregion
+    #region other
+
     // <summary> Changes and saves Sam's voice volume. </summary>
     public void ChangeTTSVolume(int volume)
     {
         DollAssets.Mixer?.SetFloat("Volume", volume / 2f - 30f); // the value should be between -30 and 20 decibels
         PrefsManager.Instance.SetInt("jaket.tts.volume", volume);
     }
+
+    #endregion
 }
