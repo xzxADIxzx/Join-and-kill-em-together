@@ -56,20 +56,31 @@ public class Movement : MonoSingleton<Movement>
 
     private void Update()
     {
-        if (!UI.AnyBuiltIn() && !NewMovement.Instance.dead)
-        {
-            if (Input.GetKeyDown(KeyCode.Mouse2) && Physics.Raycast(cc.transform.position, cc.transform.forward, out var hit, float.MaxValue, environmentMask))
-            {
-                if (Pointer != null) Pointer.Lifetime = 4.5f;
-                Pointer = Pointer.Spawn(Networking.LocalPlayer.team, hit.point, hit.normal);
+        // mod and game menus may conflict
+        if (UI.AnyBuiltIn() || Settings.Instance.Rebinding) return;
 
-                if (LobbyController.Lobby != null) Networking.Redirect(Writer.Write(w =>
-                {
-                    w.Id(Networking.LocalPlayer.Id);
-                    w.Vector(hit.point);
-                    w.Vector(hit.normal);
-                }), PacketType.Point);
-            }
+        if (Input.GetKeyDown(Settings.LobbyTab)) LobbyTab.Instance.Toggle();
+        if (Input.GetKeyDown(Settings.PlayerList)) PlayerList.Instance.Toggle();
+        if (Input.GetKeyDown(Settings.Settingz)) Settings.Instance.Toggle();
+
+        if (Input.GetKeyDown(Settings.PlayerIndicators)) PlayerIndicators.Instance.Toggle();
+        if (Input.GetKeyDown(Settings.Chat)) Chat.Instance.Toggle();
+        if (Input.GetKeyDown(Settings.ScrollUp)) Chat.Instance.ScrollMessages(true);
+        if (Input.GetKeyDown(Settings.ScrollDown)) Chat.Instance.ScrollMessages(false);
+        if (Input.GetKeyDown(Settings.SelfDestruction)) Networking.LocalPlayer.SelfDestruct();
+
+        if (Input.GetKeyDown(Settings.Pointer) && !UI.AnyJaket() &&
+            Physics.Raycast(cc.transform.position, cc.transform.forward, out var hit, float.MaxValue, environmentMask))
+        {
+            if (Pointer != null) Pointer.Lifetime = 4.5f;
+            Pointer = Pointer.Spawn(Networking.LocalPlayer.team, hit.point, hit.normal);
+
+            if (LobbyController.Lobby != null) Networking.Redirect(Writer.Write(w =>
+            {
+                w.Id(Networking.LocalPlayer.Id);
+                w.Vector(hit.point);
+                w.Vector(hit.normal);
+            }), PacketType.Point);
         }
     }
 

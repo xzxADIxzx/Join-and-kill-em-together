@@ -62,7 +62,7 @@ public class UI
     public static bool AnyJaket() => LobbyList.Shown || LobbyTab.Shown || PlayerList.Shown || Settings.Shown || Chat.Shown || EmojiWheel.Shown;
 
     /// <summary> Returns true if at least one built-in menu is currently visible. Cheat menu and console pause the game, so there's no need to add them. </summary>
-    public static bool AnyBuiltIn() => OptionsManager.Instance.paused || WeaponWheel.Instance.gameObject.activeSelf;
+    public static bool AnyBuiltIn() => OptionsManager.Instance.paused || NewMovement.Instance.dead || WeaponWheel.Instance.gameObject.activeSelf;
 
     /// <summary> Returns true if at least one movement-blocking menu is currently visible. </summary>
     public static bool AnyMovementBlocking() => (AnyJaket() && !EmojiWheel.Shown) || OptionsManager.Instance.paused;
@@ -89,7 +89,7 @@ public class UI
     /// <summary> Creates a translucent black image, that's it. </summary>
     public static Image Table(string name, Transform parent, float x, float y, float width, float height, Action<Transform> action = null)
     {
-        var image = Image(name, parent, x, y, width, height, new Color(0f, 0f, 0f, .5f));
+        var image = Image(name, parent, x, y, width, height, new(0f, 0f, 0f, .5f));
         action?.Invoke(image.transform);
         return image;
     }

@@ -27,8 +27,8 @@ public class Settings : CanvasSingleton<Settings>
         PlayerIndicators = GetKey("player-indicators", KeyCode.Z);
         Pointer = GetKey("pointer", KeyCode.Mouse2);
         Chat = GetKey("chat", KeyCode.Return);
-        ScrollUp = GetKey("scroll-up", KeyCode.UpArrow);
-        ScrollDown = GetKey("scroll-down", KeyCode.DownArrow);
+        ScrollUp = GetKey("scroll-messages-up", KeyCode.UpArrow);
+        ScrollDown = GetKey("scroll-messages-down", KeyCode.DownArrow);
         EmojiWheel = GetKey("emoji-wheel", KeyCode.B);
         SelfDestruction = GetKey("self-destruction", KeyCode.K);
     }

@@ -80,16 +80,6 @@ public class Plugin : BaseUnityPlugin
         // initialize harmony and patch all the necessary classes
         new Harmony("Should I write something here?").PatchAll();
 
-        // initialize keybinds
-        UKAPI.GetKeyBind("LOBBY TAB", KeyCode.F1).onPerformInScene.AddListener(LobbyTab.Instance.Toggle);
-        UKAPI.GetKeyBind("PLAYER LIST", KeyCode.F2).onPerformInScene.AddListener(PlayerList.Instance.Toggle);
-        UKAPI.GetKeyBind("SETTINGS", KeyCode.F3).onPerformInScene.AddListener(Settings.Instance.Toggle);
-        UKAPI.GetKeyBind("PLAYER INDICATOR", KeyCode.Z).onPerformInScene.AddListener(PlayerIndicators.Instance.Toggle);
-        UKAPI.GetKeyBind("CHAT", KeyCode.Return).onPerformInScene.AddListener(Chat.Instance.Toggle);
-        UKAPI.GetKeyBind("SCROOL MESSAGES UP", KeyCode.UpArrow).onPerformInScene.AddListener(() => Chat.Instance.ScrollMessages(true));
-        UKAPI.GetKeyBind("SCROOL MESSAGES DOWN", KeyCode.DownArrow).onPerformInScene.AddListener(() => Chat.Instance.ScrollMessages(false));
-        UKAPI.GetKeyBind("INITIATE SELF-DESTRUCTION", KeyCode.K).onPerformInScene.AddListener(Networking.LocalPlayer.SelfDestruct);
-
         // mark the plugin as initialized and log a message about it
         Initialized = true;
         Debug.Log("Jaket successfully initialized.");
