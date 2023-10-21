@@ -51,7 +51,7 @@ public class Movement : MonoSingleton<Movement>
         UI.Object("Movement").AddComponent<Movement>();
 
         // interrupt emoji to prevent some bugs
-        SceneManager.sceneLoaded += (scene, mode) => Instance.StartEmoji(0xFF);
+        SceneManager.sceneLoaded += (scene, mode) => Instance.StartEmoji(0xFF, false);
     }
 
     private void Update()
@@ -258,13 +258,13 @@ public class Movement : MonoSingleton<Movement>
     }
 
     /// <summary> Triggers an emoji with the given id. </summary>
-    public void StartEmoji(byte id)
+    public void StartEmoji(byte id, bool updateState = true)
     {
         EmojiStart = Time.time;
         Emoji = id; // save id for synchronization over the network
 
         // toggle movement and third-person camera
-        UpdateState();
+        if (updateState) UpdateState();
 
         // destroy the old preview so they don't stack
         Destroy(EmojiPreview);
