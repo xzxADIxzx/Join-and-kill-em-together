@@ -176,6 +176,15 @@ public class Movement : MonoSingleton<Movement>
 
         // reset slam force if the player is riding on a rocket
         if (NewMovement.Instance.ridingRocket != null) NewMovement.Instance.slamForce = 0f;
+
+        // disable cheats if they are prohibited in the lobby
+        if (!LobbyController.CheatsAllowed && CheatsController.Instance.cheatsEnabled)
+        {
+            CheatsController.Instance.cheatsEnabled = false;
+            CheatsManager.Instance.transform.GetChild(0).GetChild(0).gameObject.SetActive(false);
+
+            UI.SendMsg("Cheats are prohibited in this lobby!");
+        }
     }
 
     #region toggling

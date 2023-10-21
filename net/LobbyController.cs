@@ -26,6 +26,11 @@ public class LobbyController
     /// <summary> Whether the player owns the lobby. </summary>
     public static bool IsOwner;
 
+    /// <summary> Whether PvP is allowed in this lobby. </summary>
+    public static bool PvPAllowed => Lobby?.GetData("pvp") == "True";
+    /// <summary> Whether cheats are allowed in this lobby. </summary>
+    public static bool CheatsAllowed => Lobby?.GetData("cheats") == "True";
+
     /// <summary> Creates the necessary listeners for proper work with a lobby. </summary>
     public static void Load()
     {
@@ -68,6 +73,7 @@ public class LobbyController
             Lobby?.SetPrivate();
             Lobby?.SetData("name", $"{SteamClient.Name}'s Lobby");
             Lobby?.SetData("level", MapMap(SceneHelper.CurrentScene));
+            Lobby?.SetData("pvp", "True"); Lobby?.SetData("cheats", "True");
 
             CreatingLobby = false;
             done();

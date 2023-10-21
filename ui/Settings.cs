@@ -52,6 +52,9 @@ public class Settings : CanvasSingleton<Settings>
             for (int i = 0; i < list.Length; i++)
                 UI.KeyButton(Keybinds[i], list[i], table, 0f, 196f - i * 56f);
         });
+
+        Version.Label(transform);
+        WidescreenFix.MoveDown(transform);
     }
 
     private void OnGUI()

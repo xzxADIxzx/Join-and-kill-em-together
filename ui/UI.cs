@@ -264,7 +264,7 @@ public class UI
             toggle.onValueChanged.AddListener(clicked);
             Table("Button", toggle.transform, width / 2f - 32f, 0f, 32f, 32f, table =>
             {
-                toggle.graphic = Image("Checkmark", table, 0f, 0f, checkmark: true);
+                toggle.graphic = Image("Checkmark", table, 0f, 0f, 32f, 32f, checkmark: true);
             });
         });
 
