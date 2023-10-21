@@ -15,7 +15,7 @@ using Jaket.Net;
 public class UI
 {
     /// <summary> Various sprites from which the interface is built. </summary>
-    private static Sprite background, shadow, circleShadow, circle;
+    private static Sprite background, shadow, circleShadow, circle, checkmark;
     /// <summary> Set of colors for buttons. </summary>
     private static ColorBlock colors;
 
@@ -30,6 +30,7 @@ public class UI
         shadow = find("horizontalgradientslowfalloff");
         circleShadow = find("weaponwheelbackground");
         circle = find("circle");
+        checkmark = find("pixelx");
 
         // create a color scheme for buttons
         colors = ColorBlock.defaultColorBlock;
@@ -156,12 +157,12 @@ public class UI
 
     /// <summary> Adds an image with the standard sprite to the canvas. </summary>
     public static Image Image(string name, Transform parent, float x, float y, float width = 320f, float height = 48f,
-                              Color? color = null, bool fill = true, bool circle = false) =>
+                              Color? color = null, bool fill = true, bool circle = false, bool checkmark = false) =>
         Component<Image>(Rect(name, parent, x, y, width, height).gameObject, image =>
         {
             image.color = color ?? Color.white;
             image.fillCenter = fill;
-            image.sprite = circle ? UI.circle : background;
+            image.sprite = circle ? UI.circle : checkmark ? UI.checkmark : background;
             image.type = UnityEngine.UI.Image.Type.Sliced;
         });
 
@@ -252,6 +253,20 @@ public class UI
             button.onClick.AddListener(() => Settings.Instance.Rebind(name, key, img));
         });
     }
+
+    #endregion
+    #region toggle
+
+    /// <summary> Creates an input field with a placeholder. </summary>
+    public static Toggle Toggle(string name, Transform parent, float x, float y, float width = 320f, float height = 48f, int size = 32, UnityAction<bool> clicked = null) =>
+        Component<Toggle>(Text(name, parent, x, y, width, height, size: size, align: TextAnchor.MiddleLeft).gameObject, toggle =>
+        {
+            toggle.onValueChanged.AddListener(clicked);
+            Table("Button", toggle.transform, width / 2f - 32f, 0f, 32f, 32f, table =>
+            {
+                toggle.graphic = Image("Checkmark", table, 0f, 0f, checkmark: true);
+            });
+        });
 
     #endregion
     #region scroll

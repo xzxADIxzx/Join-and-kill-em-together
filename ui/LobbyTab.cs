@@ -1,5 +1,6 @@
 namespace Jaket.UI;
 
+using UnityEngine;
 using UnityEngine.UI;
 
 using Jaket.Net;
@@ -41,14 +42,14 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
             UI.Button("JOIN BY CODE", table, 0f, -24f, clicked: LobbyController.JoinByCode);
             UI.Button("BROWSE PUBLIC LOBBIES", table, 0f, -88f, size: 24, clicked: LobbyList.Instance.Toggle);
         });
-        UI.TableAT("Lobby Config", transform, 480f, 352f, 176f, table =>
+        UI.TableAT("Lobby Config", transform, 480f, 352f, 398f, table =>
         {
-            UI.Text("--CONFIG--", table, 0f, 56f);
+            UI.Text("--CONFIG--", table, 0f, 167f);
 
-            field = UI.Field("Lobby name", table, 0f, 8f, 320f, enter: name => LobbyController.Lobby?.SetData("name", name));
+            field = UI.Field("Lobby name", table, 0f, 119f, 320f, enter: name => LobbyController.Lobby?.SetData("name", name));
             field.characterLimit = 24;
 
-            accessibility = UI.Button("PRIVATE", table, 0f, -48f, clicked: () =>
+            accessibility = UI.Button("PRIVATE", table, 0f, 63f, clicked: () =>
             {
                 switch (lobbyAccessLevel = ++lobbyAccessLevel % 3)
                 {
@@ -58,6 +59,12 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
                 }
                 Rebuild();
             });
+
+            UI.Toggle("Allow PvP", table, 0f, 7f, clicked: allow => { });
+            UI.Toggle("Allow cheats", table, 0f, -41f, clicked: allow => { });
+
+            UI.Text("Percentage per player is the number of percentages that will be added to the boss's health for each player starting from the second",
+                    table, 0f, -104f, height: 62f, color: Color.gray, size: 16);
         });
 
         Rebuild();
