@@ -46,6 +46,14 @@ public class Enemy : Entity
         healthBar = GetComponent<BossHealthBar>();
         fakeFerryman = GetComponent<FerrymanFake>();
 
+        // multiply health
+        if (LobbyController.IsOwner)
+        {
+            if (enemyId.machine) LobbyController.ScaleHealth(ref enemyId.machine.health);
+            else if (enemyId.spider) LobbyController.ScaleHealth(ref enemyId.spider.health);
+            else if (enemyId.statue) LobbyController.ScaleHealth(ref enemyId.statue.health);
+        }
+
         // prevent bosses from going into the second phase instantly
         health.target = enemyId.health;
 

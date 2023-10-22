@@ -33,6 +33,9 @@ public class LobbyController
     /// <summary> Number of percentages that will be added to the boss's health for each player. </summary>
     public static float PPP = .125f * 3f;
 
+    /// <summary> Scales health to increase difficulty. </summary>
+    public static void ScaleHealth(ref float health) => health *= 1f + (Lobby == null ? 0f : Lobby.Value.MemberCount - 1f) * PPP;
+
     /// <summary> Creates the necessary listeners for proper work with a lobby. </summary>
     public static void Load()
     {
