@@ -269,7 +269,7 @@ public class UI
         });
 
     #endregion
-    #region scroll
+    #region scroll & slider
 
     /// <summary> Creates an image-mask that cuts off part of the interface. </summary>
     public static Mask Mask(string name, Transform transform, float x, float y, float width, float height) =>
@@ -286,6 +286,19 @@ public class UI
             rect.viewport = Mask("Viewport", rect.transform, 0f, 0f, width, height).rectTransform;
             rect.content = Rect("Content", rect.viewport, 0f, 0f, contentWidth, contentHeight);
             rect.content.pivot = new(.5f, 1f);
+        });
+
+    /// <summary> Creates a slider with a handle. </summary>
+    public static Slider Slider(string name, Transform parent, float x, float y, float width, float height, int max, Action<int> enter = null) =>
+        Component<Slider>(Table(name, parent, x, y, width, height).gameObject, slider =>
+        {
+            slider.fillRect = Image("Fill", slider.transform, 0f, 0f, 0f, 0f).rectTransform;
+            slider.targetGraphic = Image("Handle", slider.transform, 0f, 0f, height, 0f);
+            slider.handleRect = slider.targetGraphic.rectTransform;
+
+            slider.wholeNumbers = true;
+            slider.maxValue = max;
+            slider.onValueChanged.AddListener(value => enter((int)value));
         });
 
     #endregion

@@ -30,6 +30,8 @@ public class LobbyController
     public static bool PvPAllowed => Lobby?.GetData("pvp") == "True";
     /// <summary> Whether cheats are allowed in this lobby. </summary>
     public static bool CheatsAllowed => Lobby?.GetData("cheats") == "True";
+    /// <summary> Number of percentages that will be added to the boss's health for each player. </summary>
+    public static float PPP = .125f * 3f;
 
     /// <summary> Creates the necessary listeners for proper work with a lobby. </summary>
     public static void Load()

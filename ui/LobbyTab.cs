@@ -44,14 +44,14 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
             UI.Button("JOIN BY CODE", table, 0f, -24f, clicked: LobbyController.JoinByCode);
             UI.Button("BROWSE PUBLIC LOBBIES", table, 0f, -88f, size: 24, clicked: LobbyList.Instance.Toggle);
         });
-        UI.TableAT("Lobby Config", transform, 480f, 352f, 398f, table =>
+        UI.TableAT("Lobby Config", transform, 480f, 352f, 430f, table =>
         {
-            UI.Text("--CONFIG--", table, 0f, 167f);
+            UI.Text("--CONFIG--", table, 0f, 183f);
 
-            field = UI.Field("Lobby name", table, 0f, 119f, 320f, enter: name => LobbyController.Lobby?.SetData("name", name));
+            field = UI.Field("Lobby name", table, 0f, 135f, 320f, enter: name => LobbyController.Lobby?.SetData("name", name));
             field.characterLimit = 24;
 
-            accessibility = UI.Button("PRIVATE", table, 0f, 63f, clicked: () =>
+            accessibility = UI.Button("PRIVATE", table, 0f, 79f, clicked: () =>
             {
                 switch (lobbyAccessLevel = ++lobbyAccessLevel % 3)
                 {
@@ -62,11 +62,16 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
                 Rebuild();
             });
 
-            pvp = UI.Toggle("Allow PvP", table, 0f, 7f, clicked: allow => LobbyController.Lobby?.SetData("pvp", allow.ToString()));
-            cheats = UI.Toggle("Allow cheats", table, 0f, -41f, clicked: allow => LobbyController.Lobby?.SetData("cheats", allow.ToString()));
+            pvp = UI.Toggle("ALLOW PvP", table, 0f, 23f, clicked: allow => LobbyController.Lobby?.SetData("pvp", allow.ToString()));
+            cheats = UI.Toggle("ALLOW CHEATS", table, 0f, -25f, clicked: allow => LobbyController.Lobby?.SetData("cheats", allow.ToString()));
 
             UI.Text("Percentage per player is the number of percentages that will be added to the boss's health for each player starting from the second",
-                    table, 0f, -104f, height: 62f, color: Color.gray, size: 16);
+                    table, 0f, -88f, height: 62f, color: Color.gray, size: 16);
+
+            UI.Text("BOSS HP:", table, 0f, -151f, align: TextAnchor.MiddleLeft);
+            var PPP = UI.Text("38PPP", table, 0f, -151f, align: TextAnchor.MiddleRight);
+
+            UI.Slider("Health Multiplier", table, 0f, -191f, 320f, 16f, 16, value => PPP.text = $"{(int)((LobbyController.PPP = value / 8f) * 100)}PPP");
         });
 
         Rebuild();
