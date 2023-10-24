@@ -19,17 +19,17 @@ It's also in development, but with gnashing of teeth it's already playable.
 * Ultrapain difficulty support.
 
 ## Installation
-Before installation, it's important to know that the mod needs **BepInEx** and **Ultra Mod Manager** to work.   
-Without them nothing will make a *beep boop* sound.
+Before installation, it's important to know that the mod needs **BepInEx** to work.   
+Without it nothing will make a *beep boop* sound.
 
 ### Mod manager
 Mod manager will do everything itself, that's what the mod manager is for.
 
 ### Manual
 1. Download the mod zip archive from Thunderstore.
-2. Find the **UMM Mods** folder.
+2. Find the plugins folder.
 3. Extract the content of the archive into a subfolder.   
-Example: UMM Mods/Jaket/Jaket.dll and etc.
+Example: BepInEx/plugins/Jaket/Jaket.dll and etc.
 
 ## Bulding
 To compile you need .NET SDK 6.0 and Git.
@@ -39,7 +39,7 @@ To compile you need .NET SDK 6.0 and Git.
    2. Delete the **BundleBuilder.cs** file from the assets folder, because it requires **UnityEditor.dll** but is not needed to run the mod.
 2. Run `dotnet restore`
 3. Create lib folder in root directory.
-   1. Copy **Assembly-CSharp.dll**, **Facepunch.Steamworks.Win64.dll**, **UMM.dll**, **UnityEngine.UI.dll** and **UnityUIExtensions.dll** from `ULTRAKILL\ULTRAKILL_Data\Managed`
+   1. Copy **Assembly-CSharp.dll**, **Facepunch.Steamworks.Win64.dll**, **UnityEngine.UI.dll** and **UnityUIExtensions.dll** from `ULTRAKILL\ULTRAKILL_Data\Managed`
    2. As well as **BepInEx.dll** and **0Harmony.dll** from `ULTRAKILL\BepInEx\core`
    3. And download **Ultrapain.dll** from Thunderstore.
 4. Compile the mod with `dotnet build`.
@@ -49,4 +49,4 @@ To compile you need .NET SDK 6.0 and Git.
 
 ## Afterword
 The mod is still in development, so numerous bugs may occur.   
-Anyway feel free to ping me on the discord **xzxADIxzx#7729** or join our [server](https://discord.gg/USpt3hCBgn).
+Anyway feel free to ping me on the discord **xzxADIxzx** or join our [server](https://discord.gg/USpt3hCBgn).

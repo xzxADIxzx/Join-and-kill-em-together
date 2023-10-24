@@ -4,7 +4,6 @@ using Steamworks;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using UMM;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -222,7 +221,7 @@ public class Chat : CanvasSingleton<Chat>
         messageIndex = -1;
 
         // if the message was sent not by the button that toggles the chat, then need to do it yourself
-        if (!Input.GetKeyDown(UKAPI.GetKeyBind("CHAT").keyBind)) Toggle();
+        if (!Input.GetKeyDown(Settings.Chat)) Toggle();
     }
 
     #region receive
