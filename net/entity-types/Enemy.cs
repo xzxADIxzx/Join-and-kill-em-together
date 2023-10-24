@@ -47,7 +47,7 @@ public class Enemy : Entity
         fakeFerryman = GetComponent<FerrymanFake>();
 
         // multiply health
-        if (LobbyController.IsOwner)
+        if (LobbyController.IsOwner && healthBar != null)
         {
             if (enemyId.machine) LobbyController.ScaleHealth(ref enemyId.machine.health);
             else if (enemyId.spider) LobbyController.ScaleHealth(ref enemyId.spider.health);
