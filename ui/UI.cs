@@ -10,6 +10,7 @@ using UnityEngine.UI.Extensions;
 using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net;
+using Jaket.World;
 
 /// <summary> Class that builds the entire interface of the mod. </summary>
 public class UI
@@ -48,9 +49,9 @@ public class UI
         LobbyTab.Build("Lobby Tab");
         PlayerList.Build("Player List");
         Settings.Build("Settings");
-        PlayerIndicators.Build("Player Indicators", true);
+        PlayerIndicators.Build("Player Indicators", hideEvent: Events.OnMainMenuLoaded);
 
-        Chat.Build("Chat", onLoad: () => Chat.Instance.field.gameObject.SetActive(false));
+        Chat.Build("Chat", hideAction: () => Chat.Instance.field.gameObject.SetActive(false));
         EmojiWheel.Build("Emoji Wheel");
     }
 
