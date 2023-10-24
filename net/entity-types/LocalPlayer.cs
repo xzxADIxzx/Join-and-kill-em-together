@@ -2,7 +2,6 @@ namespace Jaket.Net.EntityTypes;
 
 using Steamworks;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 using Jaket.Assets;
 using Jaket.Content;
@@ -43,7 +42,7 @@ public class LocalPlayer : Entity
         voice = gameObject.AddComponent<AudioSource>();
         voice.outputAudioMixerGroup = DollAssets.Mixer.FindMatchingGroups("Master")[0];
 
-        SceneManager.sceneLoaded += (scene, mode) => Invoke("UpdateWeapon", .01f);
+        Events.OnLoaded += () => Invoke("UpdateWeapon", .01f);
     }
 
     /// <summary> Caches different things related to weapons and paints hands. </summary>

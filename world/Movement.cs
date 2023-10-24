@@ -4,7 +4,6 @@ using GameConsole;
 using System.Collections;
 using UMM;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 using Jaket.Assets;
 using Jaket.Content;
@@ -51,7 +50,7 @@ public class Movement : MonoSingleton<Movement>
         UI.Object("Movement").AddComponent<Movement>();
 
         // interrupt emoji to prevent some bugs
-        SceneManager.sceneLoaded += (scene, mode) => Instance.StartEmoji(0xFF, false);
+        Events.OnLoaded += () => Instance.StartEmoji(0xFF, false);
     }
 
     private void Update()

@@ -2,7 +2,6 @@ namespace Jaket.World;
 
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 using Jaket.Content;
 using Jaket.IO;
@@ -38,7 +37,7 @@ public class World : MonoSingleton<World>
         UI.Object("World").AddComponent<World>();
 
         // updates the list of objects in the level when the scene is loaded
-        SceneManager.sceneLoaded += (scene, mode) => Instance.Recache();
+        Events.OnLoaded += Instance.Recache;
 
         // create activators to synchronize different things in the level
         World.Instance.activators.AddRange(new Activator[]

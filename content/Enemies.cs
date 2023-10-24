@@ -2,9 +2,9 @@ namespace Jaket.Content;
 
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 using Jaket.Net.EntityTypes;
+using Jaket.World;
 
 /// <summary> List of all enemies in the game and some useful methods. </summary>
 public class Enemies
@@ -15,7 +15,7 @@ public class Enemies
     /// <summary> Loads all enemies for future use. </summary>
     public static void Load()
     {
-        SceneManager.sceneLoaded += (scene, mode) =>
+        Events.OnLoaded += () =>
         {
             // for some INCREDIBLE reasons, SOME players are missing some enemies on first load, so you need to wait for loading to some level
             if (SceneHelper.CurrentScene == "Main Menu" || Prefabs.Count == 33) return;

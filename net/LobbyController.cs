@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 using Jaket.UI;
+using Jaket.World;
 
 /// <summary> Lobby controller with several useful methods. </summary>
 public class LobbyController
@@ -56,7 +57,7 @@ public class LobbyController
         };
 
         // put the level name in the lobby data so that it can be seen in the public lobbies list
-        SceneManager.sceneLoaded += (scene, mode) => Lobby?.SetData("level", MapMap(SceneHelper.CurrentScene));
+        Events.OnLoaded += () => Lobby?.SetData("level", MapMap(SceneHelper.CurrentScene));
     }
 
     #region control

@@ -11,7 +11,6 @@ using Jaket.Net.EndPoints;
 using Jaket.Net.EntityTypes;
 using Jaket.UI;
 using Jaket.World;
-using UnityEngine.SceneManagement;
 
 public class Networking : MonoBehaviour
 {
@@ -41,7 +40,7 @@ public class Networking : MonoBehaviour
         Server.Load();
         Client.Load();
 
-        SceneManager.sceneLoaded += (scene, mode) =>
+        Events.OnLoaded += () =>
         {
             // if the player exits to the main menu, then this is equivalent to leaving the lobby
             if (SceneHelper.CurrentScene == "Main Menu")

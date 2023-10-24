@@ -1,7 +1,6 @@
 namespace Jaket.UI;
 
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Video;
 
@@ -26,7 +25,7 @@ public class CinemaPlayer : MonoSingleton<CinemaPlayer>
         Utils.Canvas("Cinema Player", Plugin.Instance.transform).AddComponent<CinemaPlayer>();
 
         // hide cinema player once loading a scene
-        SceneManager.sceneLoaded += (scene, mode) => Instance.gameObject.SetActive(false);
+        Events.OnLoaded += () => Instance.gameObject.SetActive(false);
     }
 
     private void Start()
