@@ -2,7 +2,6 @@ namespace Jaket.World;
 
 using GameConsole;
 using System.Collections;
-using UMM;
 using UnityEngine;
 
 using Jaket.Assets;
@@ -22,14 +21,12 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Environmental mask needed to prevent the skateboard from riding on water. </summary>
     private static int environmentMask = LayerMaskDefaults.Get(LMD.Environment);
 
-    /// <summary> Emoji selection wheel keybind. </summary>
-    public UKKeyBind EmojiBind;
     /// <summary> Current emotion preview, can be null. </summary>
     public GameObject EmojiPreview;
     /// <summary> An array containing the length of all emotions in seconds. </summary>
     public float[] EmojiLegnth = { 2.458f, 4.708f, 1.833f, 2.875f, 0f, 9.083f, -1f, 12.125f, -1f, 3.292f, 0f, -1f };
-    /// <summary> Start time of the current emotion. </summary>
-    public float EmojiStart;
+    /// <summary> Start time of the current emotion and hold time of the emotion wheel key. </summary>
+    public float EmojiStart, HoldTime;
     /// <summary> Id of the currently playing emoji. </summary>
     public byte Emoji = 0xFF, Rps;
 
@@ -81,19 +78,21 @@ public class Movement : MonoSingleton<Movement>
                 w.Vector(hit.normal);
             }), PacketType.Point);
         }
+
+        if (Input.GetKey(Settings.EmojiWheel))
+        {
+            HoldTime += Time.deltaTime; // if the key has been pressed for 0.25 seconds, show the emoji wheel
+            if (!EmojiWheel.Shown && HoldTime > .25f) EmojiWheel.Instance.Show();
+        }
+        else
+        {
+            HoldTime = 0f;
+            if (EmojiWheel.Shown) EmojiWheel.Instance.Hide();
+        }
     }
 
-    private void LateUpdate() // late update is needed in order to overwrite the time scale value
+    private void LateUpdate() // late update is needed to overwrite the time scale value and camera rotation
     {
-        // find or create a keybind if it doesn't already exist
-        EmojiBind ??= UKAPI.GetKeyBind("EMOJI WHEEL", KeyCode.B);
-
-        // if the emoji wheel is invisible and the key has been pressed for 0.25 seconds, then show it
-        if (!EmojiWheel.Shown && EmojiBind.HoldTime > .25f) EmojiWheel.Instance.Show();
-
-        // if the emoji wheel is visible, but the key is not pressed, then hide it
-        if (EmojiWheel.Shown && !EmojiBind.IsPressedInScene) EmojiWheel.Instance.Hide();
-
         // skateboard logic
         if (Emoji == 0x0B)
         {

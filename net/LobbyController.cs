@@ -58,6 +58,9 @@ public class LobbyController
 
         // put the level name in the lobby data so that it can be seen in the public lobbies list
         Events.OnLoaded += () => Lobby?.SetData("level", MapMap(SceneHelper.CurrentScene));
+
+        // if the player exits to the main menu, then this is equivalent to leaving the lobby
+        Events.OnMainMenuLoaded += LeaveLobby;
     }
 
     #region control

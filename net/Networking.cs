@@ -42,14 +42,8 @@ public class Networking : MonoBehaviour
 
         Events.OnLoaded += () =>
         {
-            // if the player exits to the main menu, then this is equivalent to leaving the lobby
-            if (SceneHelper.CurrentScene == "Main Menu")
-            {
-                LobbyController.LeaveLobby();
-                return;
-            }
-
             Clear(); // for safety
+            Loading = false;
 
             if (LobbyController.IsOwner)
             {
@@ -59,8 +53,6 @@ public class Networking : MonoBehaviour
                 // inform all players about the transition to a new level
                 Redirect(World.Instance.WriteData(), PacketType.LevelLoading);
             }
-
-            Loading = false;
         };
 
         // fires when accepting an invitation via the Steam overlay

@@ -287,7 +287,7 @@ public class Chat : CanvasSingleton<Chat>
         SendMsg("I just wanted to give some tips about Jaket:");
 
         SendTip("Go to the control settings, there are new elements");
-        SendTip($"Hold {Movement.Instance.EmojiBind.keyBind} to open the Emotion Wheel");
+        SendTip($"Hold {Settings.EmojiWheel} to open the Emotion Wheel");
         SendTip("Try typing to chat /tts <color=#cccccccc>[message]</color> or /tts <color=#cccccccc>[on/off]</color>");
         SendTip("Use /tts-volume <color=#cccccccc>[0-100]</color> to keep ur ears comfortable");
         SendTip("Take a look at the bestiary, there's a surprise :3");
