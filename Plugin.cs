@@ -37,19 +37,19 @@ public class Plugin : BaseUnityPlugin
     {
         // save an instance for later use
         Instance = this;
-
         // rename the game object for a more presentable look
         gameObject.name = "Jaket";
 
-        // adds an event listener for plugin initialization
-        SceneManager.sceneLoaded += (scene, mode) => Init();
+        // adds an event listener to the scene loading
+        Events.Load();
+        // interface components and assets bundle can only be loaded from the main menu
+        Events.OnMainMenuLoaded += Init;
     }
 
     /// <summary> Initializes the plugin if it has not already been initialized. </summary>
     public void Init()
     {
-        // ui components can only be initialized in the main menu, because they need some resources
-        if (Initialized || SceneHelper.CurrentScene != "Main Menu") return;
+        if (Initialized) return;
 
         // notify players about the availability of an update so that they no longer whine to me about something not working
         Version.Check4Update();

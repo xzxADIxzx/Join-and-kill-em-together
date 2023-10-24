@@ -3,6 +3,27 @@ namespace Jaket.World;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
+/// <summary> List of events used by the mod. Some of them are combined into one for simplicity. </summary>
+public class Events
+{
+    /// <summary> Events triggered after loading any scene and the main menu. </summary>
+    public static SafeEvent OnLoaded = new(), OnMainMenuLoaded = new();
+
+    /// <summary> Subscribes to some events to fire some safe events. </summary>
+    public static void Load()
+    {
+        SceneManager.sceneLoaded += (scene, mode) =>
+        {
+            // any scene has loaded
+            OnLoaded.Fire();
+
+            // the main menu has loaded, this is much less often used, but it is used
+            if (SceneHelper.CurrentScene == "Main Menu") OnMainMenuLoaded.Fire();
+        };
+    }
+}
 
 /// <summary> Safe event that will output all exceptions to the Unity console and guarantee the execution of each listener, regardless of errors. </summary>
 public class SafeEvent
