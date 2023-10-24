@@ -28,7 +28,7 @@ public class Enemy : Entity
     /// <summary> Enemy health, position and rotation. </summary>
     public FloatLerp health, x, y, z, rotation;
     /// <summary> Whether the enemy is a boss and should have a health bar. </summary>
-    public bool boss;
+    public bool boss, haveSecondPhase;
     /// <summary> Whether the enemy is a fake ferryman. </summary>
     public bool fake;
 
@@ -178,7 +178,7 @@ public class Enemy : Entity
         w.Vector(transform.position);
         w.Float(transform.eulerAngles.y);
 
-        w.Bool(healthBar != null);
+        w.Bool(healthBar != null); w.Bool(healthBar == null ? false : healthBar.healthLayers.Length > 1);
         w.Bool(fakeFerryman != null);
         if (idol) w.Id(targetId);
         w.Byte(subtype);
@@ -192,7 +192,7 @@ public class Enemy : Entity
         x.Read(r); y.Read(r); z.Read(r);
         rotation.Read(r);
 
-        boss = r.Bool();
+        boss = r.Bool(); haveSecondPhase = r.Bool();
         fake = r.Bool();
         if (idol) targetId = r.Id();
         subtype = r.Byte();

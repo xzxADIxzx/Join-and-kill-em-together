@@ -179,3 +179,15 @@ public class FakeFerrymanDeathPatch
         if (LobbyController.IsOwner && __instance.TryGetComponent<Enemy>(out var enemy)) Networking.Redirect(Writer.Write(w => w.Id(enemy.Id)), PacketType.EnemyDied);
     }
 }
+
+[HarmonyPatch(typeof(BossHealthBar), "Awake")]
+public class HealthBarPatch
+{
+    // // this is necessary to correctly display the boss's health
+    static void Prefix(BossHealthBar __instance)
+    {
+        if (__instance.TryGetComponent<Enemy>(out var enemy)) __instance.healthLayers = enemy.haveSecondPhase
+                ? new HealthLayer[] { new() { health = enemy.health.target / 2f }, new() { health = enemy.health.target / 2f } }
+                : new HealthLayer[] { new() { health = enemy.health.target } };
+    }
+}
