@@ -54,13 +54,13 @@ public class PlayerIndicators : CanvasSingleton<PlayerIndicators>
     public void AddIndicator(RemotePlayer player)
     {
         // indicators should only point to teammates, so you can even play hide and seek
-        if (player.team != Networking.LocalPlayer.team) return;
+        if (player.team != Networking.LocalPlayer.team && LobbyController.PvPAllowed) return;
 
         // save the player's transform in order to rotate an indicator towards it in the future
         targets.Add(player.transform);
 
         // create a new team color indicator and add it to the list
-        var indicator = UI.Image("indicator", transform, 0f, 0f, 88f, 88f, player.team.Data().Color(), circle: true);
+        var indicator = UI.Image("Indicator", transform, 0f, 0f, 88f, 88f, player.team.Data().Color(), circle: true);
         indicator.type = Image.Type.Filled;
         indicators.Add(indicator);
     }

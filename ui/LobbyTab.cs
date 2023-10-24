@@ -69,7 +69,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
                     table, 0f, -88f, height: 62f, color: Color.gray, size: 16);
 
             UI.Text("BOSS HP:", table, 0f, -151f, align: TextAnchor.MiddleLeft);
-            var PPP = UI.Text("38PPP", table, 0f, -151f, align: TextAnchor.MiddleRight);
+            var PPP = UI.Text("0PPP", table, 0f, -151f, align: TextAnchor.MiddleRight);
 
             UI.Slider("Health Multiplier", table, 0f, -191f, 320f, 16f, 16, value => PPP.text = $"{(int)((LobbyController.PPP = value / 8f) * 100)}PPP");
         });
