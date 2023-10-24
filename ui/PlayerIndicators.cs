@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using Jaket.Content;
 using Jaket.Net;
 using Jaket.Net.EntityTypes;
+using Jaket.World;
 
 /// <summary> Indicators showing the location of teammates near the cursor. </summary>
 public class PlayerIndicators : CanvasSingleton<PlayerIndicators>
@@ -16,7 +17,9 @@ public class PlayerIndicators : CanvasSingleton<PlayerIndicators>
     /// <summary> List of indicators themselves. </summary>
     public List<Image> indicators = new();
 
-    public void Update()
+    private void Start() => Events.OnTeamChanged += Rebuild;
+
+    private void Update()
     {
         // update all indicators, nothing else to do huh
         for (int i = 0; i < targets.Count; i++) UpdateIndicator(targets[i], indicators[i]);

@@ -21,9 +21,8 @@ public class PlayerList : CanvasSingleton<PlayerList>
             foreach (Team team in System.Enum.GetValues(typeof(Team))) UI.TeamButton(team, table, x += 66f, -57f, clicked: () =>
             {
                 Networking.LocalPlayer.team = team;
+                Events.OnTeamChanged.Fire();
 
-                // update player indicators to show only teammates & player list to display new team
-                PlayerIndicators.Instance.Rebuild();
                 Rebuild();
             });
         });

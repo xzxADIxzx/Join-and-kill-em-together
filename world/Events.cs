@@ -1,5 +1,6 @@
 namespace Jaket.World;
 
+using Steamworks;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +11,8 @@ public class Events
 {
     /// <summary> Events triggered after loading any scene and the main menu. </summary>
     public static SafeEvent OnLoaded = new(), OnMainMenuLoaded = new();
+    /// <summary> Event triggered when team composition changes. </summary>
+    public static SafeEvent OnTeamChanged = new();
 
     /// <summary> Subscribes to some events to fire some safe events. </summary>
     public static void Load()
@@ -22,6 +25,8 @@ public class Events
             // the main menu has loaded, this is much less often used, but it is used
             if (SceneHelper.CurrentScene == "Main Menu") OnMainMenuLoaded.Fire();
         };
+
+        SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) => OnTeamChanged.Fire();
     }
 }
 

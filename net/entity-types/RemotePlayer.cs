@@ -1,14 +1,13 @@
 namespace Jaket.Net.EntityTypes;
 
-using Steamworks;
 using UnityEngine;
-using UnityEngine.UI;
 
 using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.UI;
 using Jaket.UI.Elements;
+using Jaket.World;
 
 /// <summary>
 /// Remote player that exists both on the local machine and on the remote one.
@@ -159,7 +158,7 @@ public class RemotePlayer : Entity
             transform.GetChild(0).GetChild(0).gameObject.SetActive(team == Team.Pink);
 
             // update player indicators to only show teammates
-            PlayerIndicators.Instance.Rebuild();
+            Events.OnTeamChanged.Fire();
         }
 
         gameObject.tag = team == Networking.LocalPlayer.team || !LobbyController.PvPAllowed ? "Untagged" : "Enemy"; // toggle friendly fire

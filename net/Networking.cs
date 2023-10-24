@@ -126,9 +126,6 @@ public class Networking : MonoBehaviour
                 // replace the entity with null so that the indicators no longer point to it
                 Entities[member.Id] = null;
             }
-
-            // remove the exited player indicator
-            PlayerIndicators.Instance.Rebuild();
         };
 
         // create a local player to sync player data
