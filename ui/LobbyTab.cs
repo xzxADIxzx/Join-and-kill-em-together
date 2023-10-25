@@ -71,7 +71,11 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
             UI.Text("BOSS HP:", table, 0f, -151f, align: TextAnchor.MiddleLeft);
             var PPP = UI.Text("0PPP", table, 0f, -151f, align: TextAnchor.MiddleRight);
 
-            UI.Slider("Health Multiplier", table, 0f, -191f, 320f, 16f, 16, value => PPP.text = $"{(int)((LobbyController.PPP = value / 8f) * 100)}PPP");
+            UI.Slider("Health Multiplier", table, 0f, -191f, 320f, 16f, 16, value =>
+            {
+                PPP.text = $"{(int)((LobbyController.PPP = value / 8f) * 100)}PPP";
+                LobbyController.Lobby?.SetData("ppp", LobbyController.PPP.ToString());
+            });
         });
 
         Rebuild();

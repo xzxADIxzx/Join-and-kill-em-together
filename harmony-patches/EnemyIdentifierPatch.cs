@@ -183,11 +183,32 @@ public class FakeFerrymanDeathPatch
 [HarmonyPatch(typeof(BossHealthBar), "Awake")]
 public class HealthBarPatch
 {
-    // // this is necessary to correctly display the boss's health
+    // this is necessary to correctly display the boss's health
     static void Prefix(BossHealthBar __instance)
     {
-        if (__instance.TryGetComponent<Enemy>(out var enemy)) __instance.healthLayers = enemy.haveSecondPhase
-                ? new HealthLayer[] { new() { health = enemy.health.target / 2f }, new() { health = enemy.health.target / 2f } }
-                : new HealthLayer[] { new() { health = enemy.health.target } };
+        if (LobbyController.Lobby == null || !__instance.TryGetComponent<EnemyIdentifier>(out var enemyId)) return;
+
+        if (LobbyController.IsOwner || enemyId.enemyType == EnemyType.Minos || enemyId.enemyType == EnemyType.Leviathan)
+        {
+            // get the PPP value if the player is not the host
+            if (!LobbyController.IsOwner) float.TryParse(LobbyController.Lobby?.GetData("ppp"), out LobbyController.PPP);
+
+            enemyId.ForceGetHealth(); // the health of the identifier changes, it's only an indicator of real health, so you can do whatever you want with it
+            LobbyController.ScaleHealth(ref enemyId.health);
+
+            if (__instance.healthLayers.Length == 0)
+                __instance.healthLayers = new HealthLayer[] { new() { health = enemyId.health } };
+            else
+            {
+                float sum = 0f; // sum of the health of all layers except the last one
+                for (int i = 0; i < __instance.healthLayers.Length - 1; i++) sum += __instance.healthLayers[i].health;
+
+                // change the health of the last bar so that it does not turn green
+                __instance.healthLayers[__instance.healthLayers.Length - 1].health = enemyId.health - sum;
+            }
+        }
+        else if (__instance.TryGetComponent<Enemy>(out var enemy)) __instance.healthLayers = enemy.haveSecondPhase
+            ? new HealthLayer[] { new() { health = enemy.health.target / 2f }, new() { health = enemy.health.target / 2f } }
+            : new HealthLayer[] { new() { health = enemy.health.target } };
     }
 }
