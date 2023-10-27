@@ -21,6 +21,11 @@ public class Settings : CanvasSingleton<Settings>
     /// <summary> Gets the key binding value from its path. </summary>
     public static KeyCode GetKey(string path, KeyCode def) => (KeyCode)prefs.GetInt($"jaket.binds.{path}", (int)def);
 
+    /// <summary> Whether the hand is forced to be green even in a single-player game. </summary>
+    public static bool ForceGreenArm;
+    /// <summary> Whether freeze frames are disabled. </summary>
+    public static bool DisableFreezeFrames;
+
     /// <summary> Whether a key binding is being reassigned. </summary>
     public bool Rebinding;
     /// <summary> Components of a key remap button and the path to the keybind. </summary>
@@ -40,6 +45,9 @@ public class Settings : CanvasSingleton<Settings>
         EmojiWheel = GetKey("emoji-wheel", KeyCode.B);
         SelfDestruction = GetKey("self-destruction", KeyCode.K);
 
+        ForceGreenArm = prefs.GetBool("jaket.force-arm", false);
+        DisableFreezeFrames = prefs.GetBool("jaket.disable-freeze", true);
+
         DollAssets.Mixer?.SetFloat("Volume", prefs.GetInt("jaket.tts.volume", 60) / 2f - 30f);
     }
 
@@ -54,6 +62,16 @@ public class Settings : CanvasSingleton<Settings>
             var list = new[] { LobbyTab, PlayerList, Settingz, PlayerIndicators, Pointer, Chat, ScrollUp, ScrollDown, EmojiWheel, SelfDestruction };
             for (int i = 0; i < list.Length; i++)
                 UI.KeyButton(Keybinds[i], list[i], table, 0f, 196f - i * 56f);
+        });
+        UI.TableAT("Other", transform, 712f, 352f, 224f, table =>
+        {
+            UI.Text("--OTHER--", table, 0f, 80f);
+            UI.Button("RESET", table, 0f, 24f, clicked: ResetOther);
+
+            UI.Toggle("FORCE ARM TO ALWAYS BE GREEN", table, 0f, -32f, size: 16, clicked: force => prefs.SetBool("jaket.force-arm", ForceGreenArm = force))
+                .isOn = ForceGreenArm;
+            UI.Toggle("DISABLE FREEZE FRAMES", table, 0f, -80f, size: 16, clicked: disable => prefs.SetBool("jaket.disable-freeze", DisableFreezeFrames = disable))
+                .isOn = DisableFreezeFrames;
         });
 
         Version.Label(transform);
@@ -109,6 +127,16 @@ public class Settings : CanvasSingleton<Settings>
         var list = new[] { LobbyTab, PlayerList, Settingz, PlayerIndicators, Pointer, Chat, ScrollUp, ScrollDown, EmojiWheel, SelfDestruction };
         for (int i = 0; i < list.Length; i++)
             transform.GetChild(1).GetChild(i + 2).GetChild(0).GetComponentInChildren<Text>().text = ControlsOptions.GetKeyName(list[i]);
+    }
+
+    // <summary> Resets other settings. </summary>
+    public void ResetOther()
+    {
+        prefs.DeleteKey("jaket.force-arm"); prefs.DeleteKey("jaket.disable-freeze");
+        Load();
+
+        transform.GetChild(2).GetChild(2).GetComponent<Toggle>().isOn = ForceGreenArm;
+        transform.GetChild(2).GetChild(3).GetComponent<Toggle>().isOn = DisableFreezeFrames;
     }
 
     // <summary> Starts rebinding the given key. </summary>
