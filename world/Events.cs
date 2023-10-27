@@ -13,6 +13,8 @@ public class Events
     public static SafeEvent OnLoaded = new(), OnMainMenuLoaded = new();
     /// <summary> Event triggered when team composition changes. </summary>
     public static SafeEvent OnTeamChanged = new();
+    /// <summary> Event triggered when a weapon or hand changes: weapon swap, hand color change. </summary>
+    public static SafeEvent OnWeaponChanged = new();
 
     /// <summary> Subscribes to some events to fire some safe events. </summary>
     public static void Load()

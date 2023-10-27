@@ -9,19 +9,20 @@ using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net;
 using Jaket.Net.EntityTypes;
+using Jaket.World;
 
 [HarmonyPatch(typeof(GunControl), nameof(GunControl.SwitchWeapon), typeof(int), typeof(List<GameObject>), typeof(bool), typeof(bool), typeof(bool))]
 public class GunSwitchPatch
 {
     // caching different things for optimization
-    static void Postfix() => Networking.LocalPlayer.UpdateWeapon();
+    static void Postfix() => Events.OnWeaponChanged.Fire();
 }
 
 [HarmonyPatch(typeof(GunControl), nameof(GunControl.ForceWeapon))]
 public class GunForcePatch
 {
     // picked weapons also need to be painted
-    static void Postfix() => Networking.LocalPlayer.UpdateWeapon();
+    static void Postfix() => Events.OnWeaponChanged.Fire();
 }
 
 [HarmonyPatch(typeof(GunColorGetter), nameof(GunColorGetter.UpdateColor))]

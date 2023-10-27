@@ -5,7 +5,6 @@ using Steamworks.Data;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 using Jaket.UI;
 using Jaket.World;
@@ -91,7 +90,7 @@ public class LobbyController
             DiscordController.Instance.FetchSceneActivity(SceneHelper.CurrentScene);
 
             // update the color of the hand
-            Networking.LocalPlayer.UpdateWeapon();
+            Events.OnWeaponChanged.Fire();
 
             // run the game in the background to stop freezing the server
             Application.runInBackground = true;
@@ -114,7 +113,7 @@ public class LobbyController
         DiscordController.Instance.FetchSceneActivity(SceneHelper.CurrentScene);
 
         // return the color of the hands
-        Networking.LocalPlayer.UpdateWeapon();
+        Events.OnWeaponChanged.Fire();
 
         // return as it was, don't run the game in the background
         Application.runInBackground = false;

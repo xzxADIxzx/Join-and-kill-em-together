@@ -39,11 +39,12 @@ public class LocalPlayer : Entity
         Voice = gameObject.AddComponent<AudioSource>();
         Voice.outputAudioMixerGroup = DollAssets.Mixer.FindMatchingGroups("Master")[0];
 
-        Events.OnLoaded += () => Invoke("UpdateWeapon", .01f);
+        Events.OnLoaded += () => Invoke("UpdateWeapons", .01f);
+        Events.OnWeaponChanged += UpdateWeapons;
     }
 
     /// <summary> Caches different things related to weapons and paints hands. </summary>
-    public void UpdateWeapon()
+    public void UpdateWeapons()
     {
         weapon = (byte)Weapons.CurrentIndex();
         renderer = GunControl.Instance.currentWeapon?.GetComponentInChildren<GunColorGetter>()?.GetComponent<Renderer>();

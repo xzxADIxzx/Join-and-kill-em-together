@@ -170,7 +170,7 @@ public class Movement : MonoSingleton<Movement>
         if (LobbyController.Lobby == null) return;
 
         // pause stops time and weapon wheel slows it down, but in multiplayer everything should be real-time
-        Time.timeScale = 1f;
+        if (Settings.DisableFreezeFrames || UI.AnyBuiltIn()) Time.timeScale = 1f;
 
         // reset slam force if the player is riding on a rocket
         if (NewMovement.Instance.ridingRocket != null) NewMovement.Instance.slamForce = 0f;

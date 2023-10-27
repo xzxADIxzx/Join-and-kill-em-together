@@ -68,8 +68,11 @@ public class Settings : CanvasSingleton<Settings>
             UI.Text("--OTHER--", table, 0f, 80f);
             UI.Button("RESET", table, 0f, 24f, clicked: ResetOther);
 
-            UI.Toggle("FORCE ARM TO ALWAYS BE GREEN", table, 0f, -32f, size: 16, clicked: force => prefs.SetBool("jaket.force-arm", ForceGreenArm = force))
-                .isOn = ForceGreenArm;
+            UI.Toggle("FORCE ARM TO ALWAYS BE GREEN", table, 0f, -32f, size: 16, clicked: force =>
+            {
+                prefs.SetBool("jaket.force-arm", ForceGreenArm = force);
+                Events.OnWeaponChanged.Fire();
+            }).isOn = ForceGreenArm;
             UI.Toggle("DISABLE FREEZE FRAMES", table, 0f, -80f, size: 16, clicked: disable => prefs.SetBool("jaket.disable-freeze", DisableFreezeFrames = disable))
                 .isOn = DisableFreezeFrames;
         });
