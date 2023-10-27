@@ -9,6 +9,9 @@ using Jaket.World;
 /// <summary> Global mod settings not related to the lobby. </summary>
 public class Settings : CanvasSingleton<Settings>
 {
+    /// <summary> Reference to preference manager. </summary>
+    private static PrefsManager prefs { get => PrefsManager.Instance; }
+
     /// <summary> List of internal names of all key bindings. </summary>
     public static readonly string[] Keybinds =
     { "lobby-tab", "player-list", "settings", "player-indicators", "pointer", "chat", "scroll-messages-up", "scroll-messages-down", "emoji-wheel", "self-destruction" };
@@ -16,7 +19,7 @@ public class Settings : CanvasSingleton<Settings>
     /// <summary> List of all key bindings in the mod. </summary>
     public static KeyCode LobbyTab, PlayerList, Settingz, PlayerIndicators, Pointer, Chat, ScrollUp, ScrollDown, EmojiWheel, SelfDestruction;
     /// <summary> Gets the key binding value from its path. </summary>
-    public static KeyCode GetKey(string path, KeyCode def) => (KeyCode)PrefsManager.Instance.GetInt($"jaket.binds.{path}", (int)def);
+    public static KeyCode GetKey(string path, KeyCode def) => (KeyCode)prefs.GetInt($"jaket.binds.{path}", (int)def);
 
     /// <summary> Whether a key binding is being reassigned. </summary>
     public bool Rebinding;
@@ -37,7 +40,7 @@ public class Settings : CanvasSingleton<Settings>
         EmojiWheel = GetKey("emoji-wheel", KeyCode.B);
         SelfDestruction = GetKey("self-destruction", KeyCode.K);
 
-        DollAssets.Mixer?.SetFloat("Volume", PrefsManager.Instance.GetInt("jaket.tts.volume", 60) / 2f - 30f);
+        DollAssets.Mixer?.SetFloat("Volume", prefs.GetInt("jaket.tts.volume", 60) / 2f - 30f);
     }
 
     private void Start()
@@ -79,7 +82,7 @@ public class Settings : CanvasSingleton<Settings>
                     : KeyCode.RightShift;
 
         text.text = ControlsOptions.GetKeyName(key);
-        PrefsManager.Instance.SetInt($"jaket.binds.{path}", (int)key);
+        prefs.SetInt($"jaket.binds.{path}", (int)key);
         Load(); // update control settings
     }
 
@@ -99,7 +102,7 @@ public class Settings : CanvasSingleton<Settings>
     public void ResetKeybinds()
     {
         // remove keys from preferences to reset key bindings to defaults
-        foreach (var name in Keybinds) PrefsManager.Instance.DeleteKey($"jaket.binds.{name}");
+        foreach (var name in Keybinds) prefs.DeleteKey($"jaket.binds.{name}");
         Load(); // load default values
 
         // update the labels in the buttons
@@ -126,7 +129,7 @@ public class Settings : CanvasSingleton<Settings>
     public void ChangeTTSVolume(int volume)
     {
         DollAssets.Mixer?.SetFloat("Volume", volume / 2f - 30f); // the value should be between -30 and 20 decibels
-        PrefsManager.Instance.SetInt("jaket.tts.volume", volume);
+        prefs.SetInt("jaket.tts.volume", volume);
     }
 
     #endregion
