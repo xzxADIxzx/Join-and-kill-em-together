@@ -261,7 +261,7 @@ public class Chat : CanvasSingleton<Chat>
     {
         if (author.IsMe)
             // play the message in the player's position if he is its author
-            SamAPI.TryPlay(message, Networking.LocalPlayer.voice);
+            SamAPI.TryPlay(message, Networking.LocalPlayer.Voice);
         else
             // or find the author among other players and play the sound from them
             Networking.EachPlayer(player =>

@@ -62,7 +62,7 @@ public class SawbladePatch
     static bool Prefix(Nail __instance, Transform other) =>
         __instance.sawblade && other.TryGetComponent<EnemyIdentifierIdentifier>(out var eid) &&
         eid.eid != null && eid.eid.TryGetComponent<RemotePlayer>(out var player)
-        ? player.team != Networking.LocalPlayer.team
+        ? player.team != Networking.LocalPlayer.Team
         : true;
 }
 

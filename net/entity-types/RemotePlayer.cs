@@ -161,7 +161,7 @@ public class RemotePlayer : Entity
             Events.OnTeamChanged.Fire();
         }
 
-        gameObject.tag = team == Networking.LocalPlayer.team || !LobbyController.PvPAllowed ? "Untagged" : "Enemy"; // toggle friendly fire
+        gameObject.tag = team == Networking.LocalPlayer.Team || !LobbyController.PvPAllowed ? "Untagged" : "Enemy"; // toggle friendly fire
 
         if (lastWeapon != weapon)
         {

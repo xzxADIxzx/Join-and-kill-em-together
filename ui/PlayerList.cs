@@ -20,7 +20,7 @@ public class PlayerList : CanvasSingleton<PlayerList>
             float x = -352f / 2f + 16f + 58f / 2f - (66f);
             foreach (Team team in System.Enum.GetValues(typeof(Team))) UI.TeamButton(team, table, x += 66f, -57f, clicked: () =>
             {
-                Networking.LocalPlayer.team = team;
+                Networking.LocalPlayer.Team = team;
                 Events.OnTeamChanged.Fire();
 
                 Rebuild();

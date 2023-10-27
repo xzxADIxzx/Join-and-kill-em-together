@@ -9,6 +9,7 @@ using UnityEngine.Events;
 using Jaket.Content;
 using Jaket.Net;
 using Jaket.Net.EntityTypes;
+using Jaket.UI;
 
 /// <summary> Class that works with the assets bundle for the player doll. </summary>
 public class DollAssets
@@ -171,5 +172,5 @@ public class DollAssets
     }
 
     /// <summary> Returns the hand texture currently in use. Depends on whether the player is in the lobby or not. </summary>
-    public static Texture HandTexture() => HandTextures[LobbyController.Lobby == null ? 0 : 1];
+    public static Texture HandTexture() => HandTextures[LobbyController.Lobby != null || Settings.ForceGreenArm ? 1 : 0];
 }

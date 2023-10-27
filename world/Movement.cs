@@ -69,7 +69,7 @@ public class Movement : MonoSingleton<Movement>
             Physics.Raycast(cc.transform.position, cc.transform.forward, out var hit, float.MaxValue, environmentMask))
         {
             if (Pointer != null) Pointer.Lifetime = 4.5f;
-            Pointer = Pointer.Spawn(Networking.LocalPlayer.team, hit.point, hit.normal);
+            Pointer = Pointer.Spawn(Networking.LocalPlayer.Team, hit.point, hit.normal);
 
             if (LobbyController.Lobby != null) Networking.Redirect(Writer.Write(w =>
             {
@@ -244,7 +244,7 @@ public class Movement : MonoSingleton<Movement>
         anim.SetInteger("Rps", Rps);
 
         // apply team to emotion preview
-        var team = Networking.LocalPlayer.team;
+        var team = Networking.LocalPlayer.Team;
         var mat1 = EmojiPreview.transform.GetChild(0).GetChild(4).GetComponent<Renderer>().materials[1];
         var mat2 = EmojiPreview.transform.GetChild(0).GetChild(3).GetComponent<Renderer>().materials[0];
 

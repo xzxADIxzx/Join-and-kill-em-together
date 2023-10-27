@@ -113,7 +113,7 @@ public class EnemyDamagePatch
         Networking.Redirect(Writer.Write(w =>
         {
             w.Id(entity.Id);
-            w.Byte((byte)Networking.LocalPlayer.team);
+            w.Byte((byte)Networking.LocalPlayer.Team);
             w.Bool(melee);
 
             w.Vector(force);
