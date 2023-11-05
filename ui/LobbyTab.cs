@@ -20,6 +20,8 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
 
     private void Start()
     {
+        Events.OnLobbyAction += Rebuild;
+
         UI.Shadow("Shadow", transform);
         UI.TableAT("Lobby Control", transform, 0f, 352f, 192f, table =>
         {
@@ -28,7 +30,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
             {
                 if (LobbyController.Lobby == null)
                     // create a new lobby if not already created
-                    LobbyController.CreateLobby(Rebuild);
+                    LobbyController.CreateLobby();
                 else
                     // or leave if already connected to a lobby
                     LobbyController.LeaveLobby();

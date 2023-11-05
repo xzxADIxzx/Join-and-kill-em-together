@@ -65,7 +65,7 @@ public class LobbyController
     #region control
 
     /// <summary> Asynchronously creates a new lobby and connects to it. </summary>
-    public static void CreateLobby(Action done)
+    public static void CreateLobby()
     {
         if (Lobby != null || CreatingLobby) return;
 
@@ -84,16 +84,7 @@ public class LobbyController
             Lobby?.SetData("pvp", "True"); Lobby?.SetData("cheats", "True");
 
             CreatingLobby = false;
-            done();
-
-            // update the discord activity so everyone can know I've been working hard
-            DiscordController.Instance.FetchSceneActivity(SceneHelper.CurrentScene);
-
-            // update the color of the hand
-            Events.OnWeaponChanged.Fire();
-
-            // run the game in the background to stop freezing the server
-            Application.runInBackground = true;
+            Events.OnLobbyAction.Fire();
         });
     }
 
@@ -106,17 +97,8 @@ public class LobbyController
         // if the client has left the lobby, then load the main menu
         if (!IsOwner && SceneHelper.CurrentScene != "Main Menu") SceneHelper.LoadScene("Main Menu");
 
-        // destroy all network objects
-        Networking.Clear();
-
-        // remove mini-ads if the player is playing alone
-        DiscordController.Instance.FetchSceneActivity(SceneHelper.CurrentScene);
-
-        // return the color of the hands
-        Events.OnWeaponChanged.Fire();
-
-        // return as it was, don't run the game in the background
-        Application.runInBackground = false;
+        Networking.Clear(); // destroy all network objects
+        Events.OnLobbyAction.Fire();
     }
 
     /// <summary> Opens a steam overlay with a selection of a friend to invite to the lobby. </summary>
@@ -141,19 +123,12 @@ public class LobbyController
         {
             Lobby = lobby;
             IsOwner = false;
-
-            // run the game in the background so that the client does not have lags upon returning from AFK
-            Application.runInBackground = true;
         }
         else UI.SendMsg(
 @"<size=20><color=red>Couldn't connect to the lobby, it's a shame.</color></size>
 Maybe it was closed or you were blocked ,_,");
 
-        // update the interface to match the new state
-        LobbyTab.Instance.Rebuild();
-
-        // update the discord activity so everyone can know I've been working hard
-        DiscordController.Instance.FetchSceneActivity(SceneHelper.CurrentScene);
+        Events.OnLobbyAction.Fire();
     }
 
     #endregion

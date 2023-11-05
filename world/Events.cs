@@ -6,11 +6,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+using Jaket.Net;
+
 /// <summary> List of events used by the mod. Some of them are combined into one for simplicity. </summary>
 public class Events
 {
     /// <summary> Events triggered after loading any scene and the main menu. </summary>
     public static SafeEvent OnLoaded = new(), OnMainMenuLoaded = new();
+    /// <summary> Event triggered when an action is taken on the lobby: creation, closing or connection. </summary>
+    public static SafeEvent OnLobbyAction = new();
     /// <summary> Event triggered when team composition changes. </summary>
     public static SafeEvent OnTeamChanged = new();
     /// <summary> Event triggered when a weapon or hand changes: weapon swap, hand color change. </summary>
@@ -29,6 +33,15 @@ public class Events
         };
 
         SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) => OnTeamChanged.Fire();
+
+        // interaction with the lobby affects many aspects of the game
+        OnLobbyAction += OnTeamChanged.Fire;
+        OnLobbyAction += OnWeaponChanged.Fire;
+
+        // update the discord activity so everyone can know I've been working hard
+        OnLobbyAction += () => DiscordController.Instance.FetchSceneActivity(SceneHelper.CurrentScene);
+        // toggle the ability of the game to run in the background, because multiplayer requires it
+        OnLobbyAction += () => Application.runInBackground = LobbyController.Lobby != null;
     }
 }
 
