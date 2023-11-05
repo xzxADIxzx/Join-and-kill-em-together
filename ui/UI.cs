@@ -210,6 +210,14 @@ public class UI
         });
     }
 
+    /// <summary> Creates a square button with a char-icon. </summary>
+    public static Button IconButton(string icon, Transform parent, float x, float y, Color? color = null, Vector3? offset = null, UnityAction clicked = null)
+    {
+        var btn = Button(icon, parent, x, y, 48f, 48f, color, 40, clicked: clicked);
+        btn.transform.GetChild(0).localPosition = offset ?? new(.5f, 2.5f, 0f);
+        return btn;
+    }
+
     /// <summary> Creates a command button with the appropriate color. </summary>
     public static Button TeamButton(Team team, Transform parent, float x, float y, float width = 58f, float height = 58f, UnityAction clicked = null)
     {

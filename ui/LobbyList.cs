@@ -34,7 +34,7 @@ public class LobbyList : CanvasSingleton<LobbyList>
             });
 
             // add close menu button to the top right corner
-            UI.Button("X", table, 280f, 232f, 48f, 48f, new(1f, .2f, .1f), 40, clicked: Toggle).transform.GetChild(0).localPosition = new(.5f, 2.5f, 0f);
+            UI.IconButton("X", table, 280f, 232f, new(1f, .2f, .1f), clicked: Toggle);
 
             // add scroll rect and get the content transform from it
             content = UI.Scroll("List", table, 0f, -56f, 608f, 496f).content;

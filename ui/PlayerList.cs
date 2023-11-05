@@ -65,8 +65,7 @@ public class PlayerList : CanvasSingleton<PlayerList>
                 if (LobbyController.LastOwner == member.Id)
                 {
                     UI.ProfileButton(member, table, -32f, y -= 64f, 256f);
-                    UI.Button("★", table, 136f, y, 48f, 48f, new(1f, .7f, .1f), 40, clicked: () => UI.SendMsg("Lobby owner, your life depends on him :D"))
-                        .transform.GetChild(0).localPosition = new(.5f, 4f, 0f);
+                    UI.IconButton("★", table, 136f, y, new(1f, .7f, .1f), new(.5f, 4f, 0f), clicked: () => UI.SendMsg("Lobby owner, your life depends on him :D"));
                 }
                 else
                     UI.ProfileButton(member, table, 0f, y -= 64f);
