@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+using Jaket.Content;
 using Jaket.UI;
 using Jaket.World;
 
@@ -18,6 +19,8 @@ public class LobbyController
     public static SteamId Owner => Lobby == null ? SteamClient.SteamId : Lobby.Value.Owner.Id;
     /// <summary> Id of the last lobby owner, needed to track the exit of the host. </summary>
     public static SteamId LastOwner;
+    /// <summary> Id of the last kicked player. </summary>
+    public static SteamId LastKicked;
 
     /// <summary> Whether a lobby is creating right now. </summary>
     public static bool CreatingLobby;
@@ -133,6 +136,16 @@ Maybe it was closed or you were blocked ,_,");
 
     #endregion
     #region members
+
+    /// <summary> Kicks the member from the lobby, or rather asks him to leave, because Valve has not added such functionality to its API. </summary>
+    public static void KickMember(Friend member)
+    {
+        // who does the client think he is?!
+        if (!IsOwner) return;
+
+        Networking.SendEmpty(LastKicked = member.Id, PacketType.Kick);
+        Lobby?.SendChatString($"<system><color=red>Player {member.Name} was kicked!</color>");
+    }
 
     /// <summary> Returns a list of nicknames of players currently typing. </summary>
     public static List<string> TypingPlayers()

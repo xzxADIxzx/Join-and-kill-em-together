@@ -32,6 +32,8 @@ public class Client : Endpoint
 
         Listen(PacketType.LevelLoading, r => World.Instance.ReadData(r)); // instance is null at client load time so arrow function is required
 
+        Listen(PacketType.Kick, r => LobbyController.LeaveLobby());
+
         Listen(PacketType.HostDied, r =>
         {
             // in the sandbox after death, enemies are not destroyed

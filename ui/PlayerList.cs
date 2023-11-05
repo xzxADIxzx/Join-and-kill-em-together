@@ -65,10 +65,17 @@ public class PlayerList : CanvasSingleton<PlayerList>
                 if (LobbyController.LastOwner == member.Id)
                 {
                     UI.ProfileButton(member, table, -32f, y -= 64f, 256f);
-                    UI.IconButton("★", table, 136f, y, new(1f, .7f, .1f), new(.5f, 4f, 0f), clicked: () => UI.SendMsg("Lobby owner, your life depends on him :D"));
+                    UI.IconButton("★", table, 136f, y, new(1f, .7f, .1f), new(.5f, 4f, 0f), () => UI.SendMsg("Lobby owner, your life depends on him :D"));
                 }
                 else
-                    UI.ProfileButton(member, table, 0f, y -= 64f);
+                {
+                    if (LobbyController.IsOwner)
+                    {
+                        UI.ProfileButton(member, table, -32f, y -= 64f, 256f);
+                        UI.IconButton("X", table, 136f, y, new(1f, .2f, .1f), clicked: () => LobbyController.KickMember(member));
+                    }
+                    else UI.ProfileButton(member, table, 0f, y -= 64f);
+                }
             });
         });
     }

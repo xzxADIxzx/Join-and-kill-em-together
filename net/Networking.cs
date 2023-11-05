@@ -98,7 +98,7 @@ public class Networking : MonoBehaviour
             lobby.SendChatString($"<system><color=#00FF00>Player {member.Name} joined!</color>");
 
             // confirm the connection with the player
-            SteamNetworking.AcceptP2PSessionWithUser(lobby.Owner.Id);
+            SteamNetworking.AcceptP2PSessionWithUser(member.Id);
 
             // send the current scene name to the player
             Send(member.Id, World.Instance.WriteData(), PacketType.LevelLoading);
@@ -107,7 +107,8 @@ public class Networking : MonoBehaviour
         SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) =>
         {
             // send notification to chat
-            if (LobbyController.IsOwner) lobby.SendChatString($"<system><color=red>Player {member.Name} left!</color>");
+            if (LobbyController.IsOwner && LobbyController.LastKicked != member.Id)
+                lobby.SendChatString($"<system><color=red>Player {member.Name} left!</color>");
 
             // kill the player doll and hide the nickname above
             if (Entities.TryGetValue(member.Id, out var entity) && entity != null && entity is RemotePlayer player)

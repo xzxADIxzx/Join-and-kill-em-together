@@ -7,6 +7,8 @@ public enum PacketType
     Snapshot,
     /// <summary> Host asks to load a level, the packet contains its name. </summary>
     LevelLoading,
+    /// <summary> Hey Client, could you leave the lobby please? The host asks you to leave the lobby because you were kicked... Cheers~ :heart: </summary>
+    Kick,
 
     /// <summary> Owner of the lobby has died, which means you need to destroy all enemies. </summary>
     HostDied,
