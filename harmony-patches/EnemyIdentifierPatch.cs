@@ -196,6 +196,9 @@ public class HealthBarPatch
             enemyId.ForceGetHealth(); // the health of the identifier changes, it's only an indicator of real health, so you can do whatever you want with it
             LobbyController.ScaleHealth(ref enemyId.health);
 
+            // boss bar will do all the work
+            if (__instance.healthLayers == null) return;
+
             if (__instance.healthLayers.Length == 0)
                 __instance.healthLayers = new HealthLayer[] { new() { health = enemyId.health } };
             else

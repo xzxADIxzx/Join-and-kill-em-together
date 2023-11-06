@@ -64,10 +64,12 @@ public class UI
     public static bool AnyJaket() => LobbyList.Shown || LobbyTab.Shown || PlayerList.Shown || Settings.Shown || Chat.Shown || EmojiWheel.Shown;
 
     /// <summary> Returns true if at least one built-in menu is currently visible. Cheat menu and console pause the game, so there's no need to add them. </summary>
-    public static bool AnyBuiltIn() => OptionsManager.Instance.paused || NewMovement.Instance.dead || WeaponWheel.Instance.gameObject.activeSelf;
+    public static bool AnyBuiltIn() => (OptionsManager.Instance != null && OptionsManager.Instance.paused)
+                                    || (NewMovement.Instance != null && NewMovement.Instance.dead)
+                                    || (WeaponWheel.Instance != null && WeaponWheel.Instance.gameObject.activeSelf);
 
     /// <summary> Returns true if at least one movement-blocking menu is currently visible. </summary>
-    public static bool AnyMovementBlocking() => (AnyJaket() && !EmojiWheel.Shown) || OptionsManager.Instance.paused;
+    public static bool AnyMovementBlocking() => (AnyJaket() && !EmojiWheel.Shown) || (OptionsManager.Instance != null && OptionsManager.Instance.paused);
 
     #endregion
     #region base
