@@ -7,6 +7,7 @@ using UnityEngine;
 
 using Jaket.Content;
 using Jaket.Net;
+using Jaket.Net.EntityTypes;
 using Jaket.UI;
 using Jaket.World;
 
@@ -92,6 +93,17 @@ public class RidePatch
 {
     // disable the ability to get off the rocket during chatting
     static bool Prefix() => !UI.AnyMovementBlocking();
+}
+
+[HarmonyPatch(typeof(CameraFrustumTargeter), "set_CurrentTarget")]
+public class AimPatch
+{
+    // auto aim shouldn't shoot at teammates
+    static void Prefix(ref Collider value)
+    {
+        if (value != null && value.TryGetComponent<RemotePlayer>(out var player) &&
+           (player.team == Networking.LocalPlayer.Team || !LobbyController.PvPAllowed)) value = null;
+    }
 }
 
 #endregion
