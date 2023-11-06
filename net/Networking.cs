@@ -33,12 +33,17 @@ public class Networking : MonoBehaviour
     public static LocalPlayer LocalPlayer;
     /// <summary> Whether a scene is loading right now. </summary>
     public static bool Loading;
+    /// <summary> Whether multiplayer was used in the current level. </summary>
+    public static bool WasMultiplayerUsed;
 
     /// <summary> Loads server, client and event listeners. </summary>
     public static void Load()
     {
         Server.Load();
         Client.Load();
+
+        Events.OnLoaded += () => WasMultiplayerUsed = LobbyController.Lobby.HasValue;
+        Events.OnLobbyAction += () => WasMultiplayerUsed |= LobbyController.Lobby.HasValue;
 
         Events.OnLoaded += () =>
         {
@@ -138,7 +143,6 @@ public class Networking : MonoBehaviour
         Bosses.Clear();
     }
 
-    // TODO create a separate thread to increase fps?
     public void Awake() => InvokeRepeating("NetworkUpdate", 0f, SNAPSHOTS_SPACING);
 
     /// <summary> Core network logic. Part of it is moved to the server and the client. </summary>
