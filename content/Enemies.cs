@@ -54,7 +54,6 @@ public class Enemies
         var obj = type != EntityType.MaliciousFace ?
                 Object.Instantiate(Prefabs[(int)type].gameObject) :
                 Object.Instantiate(Prefabs[(int)type].transform.parent.gameObject).transform.GetChild(0).gameObject;
-        obj.name = "Net"; // needed to prevent object looping between client and server
 
         var enemy = obj.AddComponent<Enemy>();
 

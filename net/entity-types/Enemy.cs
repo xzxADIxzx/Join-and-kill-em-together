@@ -34,6 +34,8 @@ public class Enemy : Entity
 
     private void Awake()
     {
+        gameObject.name = "Net"; // needed to prevent object looping between client and server
+
         // interpolations
         health = new FloatLerp();
         x = new FloatLerp();
@@ -105,8 +107,8 @@ public class Enemy : Entity
         if (LobbyController.IsOwner) return;
 
         enemyId.health = health.Get(LastUpdate);
-        transform.position = new Vector3(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
-        transform.eulerAngles = new Vector3(0f, rotation.GetAngel(LastUpdate), 0f);
+        transform.position = new(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
+        transform.eulerAngles = new(0f, rotation.GetAngel(LastUpdate), 0f);
 
         // this is necessary so that the health of the bosses is the same for all clients
         if (enemyId.machine != null) enemyId.machine.health = enemyId.health;
