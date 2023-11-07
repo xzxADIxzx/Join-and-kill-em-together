@@ -39,6 +39,9 @@
     <Reference Include="UnityEditor">
       <HintPath>lib\UnityEditor.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.AddressableAssets">
+      <HintPath>lib\Unity.Addressables.dll</HintPath>
+    </Reference>
     <Reference Include="Ultrapain">
       <HintPath>lib\Ultrapain.dll</HintPath>
     </Reference>
