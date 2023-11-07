@@ -13,38 +13,23 @@
       https://nuget.samboy.dev/v3/index.json
     </RestoreAdditionalProjectSources>
     <RootNamespace>Jaket</RootNamespace>
-    <NoWarn>IDE1006</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
 	  <PackageReference Include="UnityEngine.Modules" Version="2019.4.40" IncludeAssets="compile" />
-    <Reference Include="BepInEx">
-      <HintPath>lib\BepInEx.dll</HintPath>
-    </Reference>
-    <Reference Include="Harmony">
-      <HintPath>lib\0Harmony.dll</HintPath>
-    </Reference>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>lib\Assembly-CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Facepunch.Steamworks.Win64">
-      <HintPath>lib\Facepunch.Steamworks.Win64.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>lib\UnityEngine.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UI.Extensions">
-      <HintPath>lib\UnityUIExtensions.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor">
-      <HintPath>lib\UnityEditor.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.AddressableAssets">
-      <HintPath>lib\Unity.Addressables.dll</HintPath>
-    </Reference>
-    <Reference Include="Ultrapain">
-      <HintPath>lib\Ultrapain.dll</HintPath>
-    </Reference>
+
+    <Reference Include="BepInEx">                       <HintPath>lib\BepInEx.dll                   </HintPath> </Reference>
+    <Reference Include="Harmony">                       <HintPath>lib\0Harmony.dll                  </HintPath> </Reference>
+
+    <Reference Include="Assembly-CSharp">               <HintPath>lib\Assembly-CSharp.dll           </HintPath> </Reference>
+    <Reference Include="Facepunch.Steamworks.Win64">    <HintPath>lib\Facepunch.Steamworks.Win64.dll</HintPath> </Reference>
+
+    <Reference Include="UnityEngine.AddressableAssets"> <HintPath>lib\Unity.Addressables.dll        </HintPath> </Reference>
+    <Reference Include="UnityEngine.UI">                <HintPath>lib\UnityEngine.UI.dll            </HintPath> </Reference>
+    <Reference Include="UnityEngine.UI.Extensions">     <HintPath>lib\UnityUIExtensions.dll         </HintPath> </Reference>
+    <Reference Include="UnityEditor">                   <HintPath>lib\UnityEditor.dll               </HintPath> </Reference>
+
+    <Reference Include="Ultrapain">                     <HintPath>lib\Ultrapain.dll                 </HintPath> </Reference>
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
