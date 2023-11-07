@@ -3,8 +3,8 @@ namespace Jaket.Content;
 using System.Collections.Generic;
 using UnityEngine;
 
+using Jaket.Assets;
 using Jaket.Net.EntityTypes;
-using Jaket.World;
 
 /// <summary> List of all enemies in the game and some useful methods. </summary>
 public class Enemies
@@ -15,20 +15,7 @@ public class Enemies
     /// <summary> Loads all enemies for future use. </summary>
     public static void Load()
     {
-        Events.OnLoaded += () =>
-        {
-            // for some INCREDIBLE reasons, SOME players are missing some enemies on first load, so you need to wait for loading to some level
-            if (SceneHelper.CurrentScene == "Main Menu" || Prefabs.Count == 33) return;
-
-            // find all enemy prefabs
-            var all = Resources.FindObjectsOfTypeAll<EnemyIdentifier>();
-
-            // null check is needed to make sure that the object is on the right scene
-            foreach (var enemy in all) if (enemy.gameObject.scene.name == null) Prefabs.Add(enemy);
-
-            // sort enemies by name to make sure their order is the same for different clients
-            Prefabs.Sort((p1, p2) => p1.name.CompareTo(p2.name));
-        };
+        foreach (var name in GameAssets.Enemies) Prefabs.Add(GameAssets.Enemy(name).GetComponentInChildren<EnemyIdentifier>());
     }
 
     #region index
