@@ -95,7 +95,7 @@ public class RidePatch
     static bool Prefix() => !UI.AnyMovementBlocking();
 }
 
-[HarmonyPatch(typeof(CameraFrustumTargeter), "set_CurrentTarget")]
+[HarmonyPatch(typeof(CameraFrustumTargeter), "CurrentTarget", MethodType.Setter)]
 public class AimPatch
 {
     // auto aim shouldn't shoot at teammates

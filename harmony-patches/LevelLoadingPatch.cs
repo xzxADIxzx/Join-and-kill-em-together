@@ -34,7 +34,7 @@ public class SavedLevelPatch
     static bool Prefix() => LevelLoadingPatch.Prefix();
 }
 
-[HarmonyPatch(typeof(GameStateManager), "get_CanSubmitScores")]
+[HarmonyPatch(typeof(GameStateManager), "CanSubmitScores", MethodType.Getter)]
 public class SubmitScoresPatch
 {
     static void Postfix(ref bool __result) => __result &= !Networking.WasMultiplayerUsed;
