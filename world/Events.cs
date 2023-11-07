@@ -7,9 +7,10 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 using Jaket.Net;
+using Jaket.UI;
 
 /// <summary> List of events used by the mod. Some of them are combined into one for simplicity. </summary>
-public class Events
+public class Events : MonoSingleton<Events>
 {
     /// <summary> Events triggered after loading any scene and the main menu. </summary>
     public static SafeEvent OnLoaded = new(), OnMainMenuLoaded = new();
@@ -20,9 +21,15 @@ public class Events
     /// <summary> Event triggered when a weapon or hand changes: weapon swap, hand color change. </summary>
     public static SafeEvent OnWeaponChanged = new();
 
+    /// <summary> List of tasks that will need to be completed in the late update. </summary>
+    public static Queue<Action> Tasks = new();
+
     /// <summary> Subscribes to some events to fire some safe events. </summary>
     public static void Load()
     {
+        // initialize the singleton
+        UI.Object("Events").AddComponent<Events>();
+
         SceneManager.sceneLoaded += (scene, mode) =>
         {
             // any scene has loaded
@@ -43,6 +50,14 @@ public class Events
         OnLobbyAction += () => DiscordController.Instance.FetchSceneActivity(SceneHelper.CurrentScene);
         // toggle the ability of the game to run in the background, because multiplayer requires it
         OnLobbyAction += () => Application.runInBackground = LobbyController.Lobby != null;
+    }
+
+    /// <summary> Posts the task for execution in the late update. </summary>
+    public static void Post(Action task) => Tasks.Enqueue(task);
+
+    private void LateUpdate()
+    {
+        while (Tasks.Count > 0) Tasks.Dequeue()?.Invoke();
     }
 }
 
