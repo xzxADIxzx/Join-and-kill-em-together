@@ -3,7 +3,7 @@ namespace Jaket.Content;
 /// <summary> All entity types. Will replenish over time. </summary>
 public enum EntityType
 {
-    Filth,
+    Filth = 0,
     Stray,
     Schism,
     Soldier,
@@ -36,7 +36,39 @@ public enum EntityType
     FleshPanopticon_Face,
     MinosPrime,
     SisyphusPrime,
-    Hand = 33,
-    Leviathan = 34,
-    Player = 35
+    Hand,
+    Leviathan,
+
+    Jacob = 35,
+    Mako,
+    Jake,
+    Dalia,
+    V1,
+    Jericho,
+    Meganeko,
+    Tucker,
+    BigRock,
+    Dawg,
+    Sam,
+    Cameron,
+    Gianni,
+    Salad,
+    Mandy,
+    Joy,
+    Weyte,
+    Heckteck,
+    Hakita,
+    Lenval,
+    CabalCrow,
+    Quetzal,
+    John,
+    PITR,
+    BJ,
+    Francis,
+    Vvizard,
+    Lucas,
+    Scott,
+    KGC,
+
+    Player = 65
 }
