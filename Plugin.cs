@@ -60,6 +60,7 @@ public class Plugin : BaseUnityPlugin
         Enemies.Load();
         Weapons.Load();
         Bullets.Load(); // load it after weapons
+        Items.Load();
 
         // initialize networking components
         Networking.Load(); // load before lobby controller
