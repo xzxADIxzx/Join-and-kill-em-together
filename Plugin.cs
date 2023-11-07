@@ -80,6 +80,6 @@ public class Plugin : BaseUnityPlugin
 
         // mark the plugin as initialized and log a message about it
         Initialized = true;
-        Debug.Log("Jaket successfully initialized.");
+        Debug.Log("Jaket successfully initialized!");
     }
 }

@@ -77,6 +77,8 @@ public class Networking : MonoBehaviour
         {
             // send some useful information to the chat so that players know about the mod's features
             Chat.Instance.Hello();
+            // turn on player indicators because many don't even know about their existence
+            PlayerIndicators.Instance.gameObject.SetActive(PlayerIndicators.Shown = true);
 
             // destroy all entities, since the player could join from another lobby
             Clear();

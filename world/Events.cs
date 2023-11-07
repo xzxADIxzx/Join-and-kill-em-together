@@ -53,11 +53,14 @@ public class SafeEvent
     private List<Action> listeners = new();
 
     /// <summary> Fires the event, i.e. fires its listeners, ensuring that they all will be executed regardless of exceptions. </summary>
-    public void Fire() => listeners.ForEach(listener =>
+    public void Fire()
     {
-        try { listener(); }
-        catch (Exception ex) { Debug.LogException(ex); }
-    });
+        for (int i = 0; i < listeners.Count; i++)
+        {
+            try { listeners[i](); }
+            catch (Exception ex) { Debug.LogException(ex); }
+        }
+    }
 
     /// <summary> Subscribes to the safe event: the listener can throw exceptions safely. </summary>
     public static SafeEvent operator +(SafeEvent e, Action listener) { e.listeners.Add(listener); return e; }

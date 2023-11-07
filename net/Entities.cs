@@ -10,7 +10,7 @@ using Jaket.World;
 public class Entities
 {
     /// <summary> Dictionary of entity types to their providers. </summary>
-    public static Dictionary<EntityType, Prov> providers = new();
+    public static Dictionary<EntityType, Prov> Providers = new();
     /// <summary> Last used id, next id's are guaranteed to be greater than it. </summary>
     public static ulong LastId;
 
@@ -20,18 +20,18 @@ public class Entities
         for (int i = 0; i <= 32; i++)
         {
             var type = (EntityType)i;
-            providers.Add(type, () => Enemies.Instantiate(type));
+            Providers.Add(type, () => Enemies.Instantiate(type));
         }
 
-        providers.Add(EntityType.Hand, () => World.Instance.Hand);
-        providers.Add(EntityType.Leviathan, () => World.Instance.Leviathan);
-        providers.Add(EntityType.Player, DollAssets.CreateDoll);
+        Providers.Add(EntityType.Hand, () => World.Instance.Hand);
+        Providers.Add(EntityType.Leviathan, () => World.Instance.Leviathan);
+        Providers.Add(EntityType.Player, DollAssets.CreateDoll);
     }
 
     /// <summary> Returns an entity of the given type. </summary>
     public static Entity Get(ulong id, EntityType type)
     {
-        var entity = providers[type]();
+        var entity = Providers[type]();
         if (entity == null) return null;
 
         entity.Id = id;
