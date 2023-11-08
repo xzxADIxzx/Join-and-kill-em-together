@@ -49,7 +49,7 @@ public class Items
     public static void SyncPlushy(ItemIdentifier itemId)
     {
         // the game destroys the itemId of its preview
-        if (LobbyController.Lobby == null || itemId == null) return;
+        if (LobbyController.Lobby == null || itemId == null || itemId.gameObject == null) return;
 
         // the item was created remotely or loaded from assets
         if (itemId.gameObject.name == "Net" || itemId.gameObject.scene.name == null) return;

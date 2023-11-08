@@ -96,7 +96,11 @@ public class LocalPlayer : Entity
 
         #region item
 
-        if (HeldItem != null && !HeldItem.IsOwner) HeldItem = null;
+        if (HeldItem != null && !HeldItem.IsOwner)
+        {
+            HeldItem = null;
+            FistControl.Instance.currentPunch.ForceThrow();
+        }
 
         w.Bool(HeldItem != null);
         if (HeldItem != null)

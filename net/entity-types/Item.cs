@@ -22,6 +22,8 @@ public class Item : Entity
     private RemotePlayer player;
     /// <summary> Whether the player is holding an item. </summary>
     private bool holding;
+    /// <summary> Time of last transfer of the item from one client to another. </summary>
+    private float lastTransferTime;
 
     private void Awake()
     {
@@ -71,6 +73,7 @@ public class Item : Entity
     public void PickUp()
     {
         Owner = Networking.LocalPlayer.Id;
+        lastTransferTime = Time.time;
         Networking.LocalPlayer.HeldItem = this;
     }
 
@@ -86,7 +89,13 @@ public class Item : Entity
     {
         LastUpdate = Time.time;
 
-        Owner = r.Id();
+        ulong id = r.Id(); // this is necessary so that clients don't fight for ownership of the item
+        if (Owner != id && Time.time > lastTransferTime + 1f)
+        {
+            Owner = id;
+            lastTransferTime = Time.time;
+        }
+
         x.Read(r); y.Read(r); z.Read(r);
         rx.Read(r); ry.Read(r); rz.Read(r);
         holding = r.Bool();
