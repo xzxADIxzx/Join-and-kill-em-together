@@ -23,8 +23,7 @@ public class Bullets
     /// <summary> Loads all bullets for future use. </summary>
     public static void Load()
     {
-        var all = Weapons.Prefabs;
-        foreach (var weapon in all)
+        foreach (var weapon in Weapons.Prefabs)
         {
             if (weapon.TryGetComponent<Revolver>(out var revolver))
             {

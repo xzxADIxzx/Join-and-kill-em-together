@@ -131,11 +131,8 @@ public class EnemyDeathPatch
 {
     static void Prefix(EnemyIdentifier __instance)
     {
-        // if the lobby is null or the name is Net, then either the player isn't connected or this enemy was created remotely
-        if (LobbyController.Lobby == null || __instance.gameObject.name == "Net") return;
-
         // only the host should report death
-        if (!LobbyController.IsOwner || __instance.dead) return;
+        if (LobbyController.Lobby == null || !LobbyController.IsOwner || __instance.dead) return;
 
         // if the enemy doesn't have an entity component, then it was created before the lobby
         if (!__instance.TryGetComponent<Enemy>(out var enemy)) return;

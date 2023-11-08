@@ -20,8 +20,8 @@ public class GameAssets
     public static readonly string[] Plushies = new[]
     {
         "Jacob", "Mako", "HEALTH - Jake", "Dalia", "Jericho", "Meganeko", "Tucker", "BigRock", "Dawg", "Sam",
-        "Cameron", "Gianni", "Salad", "Mandy", "Joy", "Weyte", "Heckteck", "Hakita", "Lenval", "CabalCrow Variant",
-        "Quetzal", "HEALTH - John", "PITR", "HEALTH - BJ", "Francis", "Vvizard", "Lucas", "Scott", "KGC", ""
+        "Cameron", "Gianni", "Salad", "Mandy", "Joy", "Weyte", "Heckteck", "Hakita", "Lenval", ". (CabalCrow) Variant",
+        "Quetzal", "HEALTH - John", "PITR", "HEALTH - BJ", "Francis", "Vvizard", "Lucas", "Scott", "KGC", "."
     };
 
     /// <summary> Loads an enemy prefab by name. </summary>
@@ -29,5 +29,6 @@ public class GameAssets
     /// <summary> Loads an item prefab by name. </summary>
     public static GameObject Item(string name) => AssetHelper.LoadPrefab($"Assets/Prefabs/Items/{name}.prefab");
     /// <summary> Loads a dev plushy prefab by name. </summary>
-    public static GameObject Plushy(string name) => AssetHelper.LoadPrefab($"Assets/Prefabs/Items/DevPlushies/DevPlushie{(name == "" ? "" : $" ({name})")}.prefab");
+    public static GameObject Plushy(string name) =>
+        AssetHelper.LoadPrefab($"Assets/Prefabs/Items/DevPlushies/DevPlushie{(name.StartsWith(".") ? name.Substring(1) : $" ({name})")}.prefab");
 }

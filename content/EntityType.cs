@@ -43,7 +43,6 @@ public enum EntityType
     Mako,
     Jake,
     Dalia,
-    V1,
     Jericho,
     Meganeko,
     Tucker,
@@ -69,6 +68,7 @@ public enum EntityType
     Lucas,
     Scott,
     KGC,
+    V1,
 
     Player = 65
 }
