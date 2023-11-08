@@ -63,7 +63,6 @@ public class Movement : MonoSingleton<Movement>
         if (Input.GetKeyDown(Settings.Chat)) Chat.Instance.Toggle();
         if (Input.GetKeyDown(Settings.ScrollUp)) Chat.Instance.ScrollMessages(true);
         if (Input.GetKeyDown(Settings.ScrollDown)) Chat.Instance.ScrollMessages(false);
-        if (Input.GetKeyDown(Settings.SelfDestruction)) Networking.LocalPlayer.SelfDestruct();
 
         if (Input.GetKeyDown(Settings.Pointer) && !UI.AnyJaket() &&
             Physics.Raycast(cc.transform.position, cc.transform.forward, out var hit, float.MaxValue, environmentMask))
@@ -89,6 +88,8 @@ public class Movement : MonoSingleton<Movement>
             HoldTime = 0f;
             if (EmojiWheel.Shown) EmojiWheel.Instance.Hide();
         }
+
+        if (Input.GetKeyDown(Settings.SelfDestruction) && !UI.AnyMovementBlocking()) NewMovement.Instance.GetHurt(1000, false, 0f);
     }
 
     private void LateUpdate() // late update is needed to overwrite the time scale value and camera rotation

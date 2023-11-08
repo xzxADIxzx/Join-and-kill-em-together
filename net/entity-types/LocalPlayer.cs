@@ -35,8 +35,7 @@ public class LocalPlayer : Entity
         Id = SteamClient.SteamId;
         Type = EntityType.Player;
 
-        // add a 2D audio source that will be heard from everywhere
-        Voice = gameObject.AddComponent<AudioSource>();
+        Voice = gameObject.AddComponent<AudioSource>(); // add a 2D audio source that will be heard from everywhere
         Voice.outputAudioMixerGroup = DollAssets.Mixer.FindMatchingGroups("Master")[0];
 
         Events.OnLoaded += () => Invoke("UpdateWeapons", .01f);
@@ -52,12 +51,6 @@ public class LocalPlayer : Entity
         FistControl.Instance.blueArm.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture();
         var arm = GunControl.Instance.currentWeapon?.transform.GetChild(0).Find("RightArm");
         if (arm != null) arm.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture();
-    }
-
-    /// <summary> Initiates self-destruction of the player. </summary>
-    public void SelfDestruct()
-    {
-        if (!UI.AnyMovementBlocking()) NewMovement.Instance.GetHurt(1000, false, 0f);
     }
 
     public override void Write(Writer w)
