@@ -80,8 +80,9 @@ public class Networking : MonoBehaviour
             // turn on player indicators because many don't even know about their existence
             PlayerIndicators.Instance.gameObject.SetActive(PlayerIndicators.Shown = true);
 
-            // destroy all entities, since the player could join from another lobby
+            // destroy all entities, since the player could join from another lobby, and sync all items
             Clear();
+            Items.SyncAll();
 
             if (LobbyController.IsOwner)
                 // the lobby has just been created, so just add the local player to the list of entities

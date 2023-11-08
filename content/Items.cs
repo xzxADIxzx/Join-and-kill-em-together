@@ -18,10 +18,7 @@ public class Items
     public static void Load()
     {
         // find and synchronize all the plushies on the level
-        Events.OnLoaded += () => Events.Post(() =>
-        {
-            foreach (var item in Object.FindObjectsOfType<ItemIdentifier>()) SyncPlushy(item);
-        });
+        Events.OnLoaded += () => Events.Post(SyncAll);
 
         foreach (var name in GameAssets.Plushies) Prefabs.Add(GameAssets.Plushy(name).transform);
     }
@@ -41,6 +38,12 @@ public class Items
 
     #endregion
     #region sync
+
+    /// <summary> Synchronizes all plushies and items in the level. </summary>
+    public static void SyncAll()
+    {
+        foreach (var item in Object.FindObjectsOfType<ItemIdentifier>()) SyncPlushy(item);
+    }
 
     /// <summary> Synchronizes the plushy between host and clients. </summary>
     public static void SyncPlushy(ItemIdentifier itemId)
