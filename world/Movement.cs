@@ -15,9 +15,9 @@ using Jaket.UI.Elements;
 public class Movement : MonoSingleton<Movement>
 {
     /// <summary> Reference to local player's rigidbody. </summary>
-    private static Rigidbody rb { get => NewMovement.Instance.rb; }
+    private static Rigidbody rb => NewMovement.Instance.rb;
     /// <summary> Reference to camera controller. </summary>
-    private static CameraController cc { get => CameraController.Instance; }
+    private static CameraController cc => CameraController.Instance;
     /// <summary> Environmental mask needed to prevent the skateboard from riding on water. </summary>
     private static int environmentMask = LayerMaskDefaults.Get(LMD.Environment);
 

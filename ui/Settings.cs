@@ -10,7 +10,7 @@ using Jaket.World;
 public class Settings : CanvasSingleton<Settings>
 {
     /// <summary> Reference to preference manager. </summary>
-    private static PrefsManager prefs { get => PrefsManager.Instance; }
+    private static PrefsManager prefs => PrefsManager.Instance;
 
     /// <summary> List of internal names of all key bindings. </summary>
     public static readonly string[] Keybinds =

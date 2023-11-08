@@ -14,7 +14,7 @@ public abstract class Endpoint
     protected Dictionary<PacketType, PacketListener> listeners = new();
 
     /// <summary> Reference to Networking.Entities. </summary>
-    protected Dictionary<ulong, Entity> entities { get => Networking.Entities; }
+    protected Dictionary<ulong, Entity> entities => Networking.Entities;
 
     /// <summary> Loads endpoint listeners and other stuff. </summary>
     public abstract void Load();
