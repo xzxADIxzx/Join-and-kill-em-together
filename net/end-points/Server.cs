@@ -19,6 +19,9 @@ public class Server : Endpoint
 
             // read player data
             entities[sender]?.Read(r);
+
+            // read item data if available
+            if (r.Bool() && entities.TryGetValue(r.Id(), out var entity) && entity is Item item && item != null) item.Read(r);
         });
 
         ListenAndRedirect(PacketType.SpawnBullet, Bullets.Read);

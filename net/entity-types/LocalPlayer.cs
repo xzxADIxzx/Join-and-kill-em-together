@@ -24,6 +24,8 @@ public class LocalPlayer : Entity
     public bool Parried;
     /// <summary> Hook position. Will be zero if the hook is not currently in use. </summary>
     public Vector3 Hook;
+    /// <summary> The entity of the item the player is currently holding in their hands. </summary>
+    public Item HeldItem;
 
     /// <summary> Index of the current weapon in the global list. </summary>
     private byte weapon;
@@ -91,6 +93,19 @@ public class LocalPlayer : Entity
             else w.Bytes(new byte[12]);
         }
         else w.Bytes(new byte[13]);
+
+        #region item
+
+        if (HeldItem != null && !HeldItem.IsOwner) HeldItem = null;
+
+        w.Bool(HeldItem != null);
+        if (HeldItem != null)
+        {
+            w.Id(HeldItem.Id);
+            HeldItem.Write(w);
+        }
+
+        #endregion
     }
 
     // there is no point in reading anything, because it is a local player
