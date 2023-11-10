@@ -34,7 +34,7 @@ public class Enemy : Entity
 
     private void Awake()
     {
-        gameObject.name = "Net"; // needed to prevent object looping between client and server
+        if (!LobbyController.IsOwner) gameObject.name = "Net"; // needed to prevent object looping between client and server
 
         // interpolations
         health = new FloatLerp();
