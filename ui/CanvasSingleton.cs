@@ -22,4 +22,8 @@ public class CanvasSingleton<T> : MonoSingleton<T> where T : CanvasSingleton<T>
         // hide the interface once loading a level or main menu
         hideEvent += hideAction;
     }
+
+    /// <summary> Creates a listener that creates an instance of this singleton on top of another one. </summary>
+    public static void Build<L>() where L : MonoSingleton<L> =>
+        Events.OnLoaded += () => MonoSingleton<L>.Instance.gameObject.AddComponent<T>();
 }

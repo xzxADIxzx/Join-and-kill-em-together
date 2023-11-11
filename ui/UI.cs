@@ -45,11 +45,15 @@ public class UI
     /// <summary> Creates singleton instances of various UI elements. </summary>
     public static void Build()
     {
+        // the listener is created here because a player info instance is created every time the scene is loaded
+        Events.OnTeamChanged += () => PlayerInfo.Instance?.Rebuild();
+
         LobbyList.Build("Lobby List");
         LobbyTab.Build("Lobby Tab");
         PlayerList.Build("Player List");
         Settings.Build("Settings");
         PlayerIndicators.Build("Player Indicators", hideEvent: Events.OnMainMenuLoaded);
+        PlayerInfo.Build<StyleHUD>();
 
         Chat.Build("Chat", hideAction: () => Chat.Instance.field.gameObject.SetActive(false));
         EmojiWheel.Build("Emoji Wheel");
@@ -86,7 +90,7 @@ public class UI
     public static GameObject Object(string name, Transform parent = null)
     {
         GameObject obj = new(name);
-        obj.transform.SetParent(parent ?? Plugin.Instance.transform);
+        obj.transform.SetParent(parent ?? Plugin.Instance.transform, false);
         return obj;
     }
 

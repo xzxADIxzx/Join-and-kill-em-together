@@ -60,6 +60,7 @@ public class Movement : MonoSingleton<Movement>
         if (Input.GetKeyDown(Settings.Settingz)) Settings.Instance.Toggle();
 
         if (Input.GetKeyDown(Settings.PlayerIndicators)) PlayerIndicators.Instance.Toggle();
+        if (Input.GetKeyDown(Settings.PlayerInfo)) PlayerInfo.Instance?.Toggle();
         if (Input.GetKeyDown(Settings.Chat)) Chat.Instance.Toggle();
         if (Input.GetKeyDown(Settings.ScrollUp)) Chat.Instance.ScrollMessages(true);
         if (Input.GetKeyDown(Settings.ScrollDown)) Chat.Instance.ScrollMessages(false);
