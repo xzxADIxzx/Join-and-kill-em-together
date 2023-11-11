@@ -10,7 +10,6 @@ using Jaket.Net.EntityTypes;
 using Jaket.UI;
 
 /// <summary> Class that manages objects in the level, such as doors and etc. </summary>
-[ConfigureSingleton(SingletonFlags.NoAutoInstance)]
 public class World : MonoSingleton<World>
 {
     /// <summary> List of all doors in the level, updated when a level is loaded. </summary>

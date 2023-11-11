@@ -12,7 +12,7 @@ using Jaket.Net.EntityTypes;
 using Jaket.UI;
 using Jaket.World;
 
-public class Networking : MonoBehaviour
+public class Networking : MonoSingleton<Networking>
 {
     /// <summary> Number of snapshots to be sent per second. </summary>
     public const int SNAPSHOTS_PER_SECOND = 20;
@@ -146,7 +146,7 @@ public class Networking : MonoBehaviour
         Bosses.Clear();
     }
 
-    public void Awake() => InvokeRepeating("NetworkUpdate", 0f, SNAPSHOTS_SPACING);
+    private void Start() => InvokeRepeating("NetworkUpdate", 0f, SNAPSHOTS_SPACING);
 
     /// <summary> Core network logic. Part of it is moved to the server and the client. </summary>
     public void NetworkUpdate()

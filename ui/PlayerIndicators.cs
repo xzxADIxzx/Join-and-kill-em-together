@@ -31,7 +31,6 @@ public class PlayerIndicators : CanvasSingleton<PlayerIndicators>
         // if the player is typing, then nothing needs to be done
         if (Chat.Shown) return;
 
-        // no comments
         gameObject.SetActive(Shown = !Shown);
 
         // no need to update indicators if we hide them
