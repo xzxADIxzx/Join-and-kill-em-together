@@ -18,6 +18,9 @@ public class RemotePlayer : Entity
     /// <summary> Player health, position and rotation. </summary>
     public FloatLerp health, x, y, z, bodyRotation, headRotation, hookX, hookY, hookZ;
 
+    /// <summary> Player's railgun charge. From 0 to 10. </summary>
+    public byte RailCharge;
+
     /// <summary> Transforms of the head, the hand holding a weapon and other stuff. </summary>
     public Transform head, hand, hook, hookRoot, rocket, throne;
 
@@ -58,7 +61,7 @@ public class RemotePlayer : Entity
     private EnemyIdentifier enemyId;
 
     /// <summary> Machine component of the player doll. </summary>
-    private Machine machine;
+    public Machine machine;
 
     /// <summary> Component responsible for playing Sam's voice. </summary>
     public AudioSource Voice;
@@ -300,6 +303,7 @@ public class RemotePlayer : Entity
         w.Float(bodyRotation.target);
         w.Float(headRotation.target);
 
+        w.Byte(RailCharge);
         w.Byte((byte)team);
         w.Byte(weapon);
         w.Byte(emoji);
@@ -330,6 +334,7 @@ public class RemotePlayer : Entity
         bodyRotation.Read(r);
         headRotation.Read(r);
 
+        RailCharge = r.Byte();
         team = (Team)r.Byte();
         weapon = r.Byte();
         emoji = r.Byte();

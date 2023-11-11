@@ -12,8 +12,8 @@ public class PlayerInfoEntry : MonoBehaviour
     /// <summary> Player whose information this entry displays. </summary>
     private RemotePlayer player;
 
-    /// <summary> Component containing the name. </summary>
-    private Text text;
+    /// <summary> Component containing the name and rail charge. </summary>
+    private Text pname, railc;
     /// <summary> Health images that the player directly sees. </summary>
     private RectTransform health, overhealth;
 
@@ -23,7 +23,8 @@ public class PlayerInfoEntry : MonoBehaviour
 
     private void Start()
     {
-        text = UI.Text($"<b>{player.Header.Name}</b>", transform, 0f, -8f, 524f, align: TextAnchor.UpperLeft);
+        pname = UI.Text($"<b>{player.Header.Name}</b>", transform, 0f, -8f, 524f, align: TextAnchor.UpperLeft);
+        railc = UI.Text("", transform, 0f, -8f, 524f, align: TextAnchor.UpperRight);
 
         UI.Image("Health Background", transform, 0f, -20f, 524f, 8f, Color.black);
         health = UI.Image("Health", transform, 0f, 0f, 524f, 8f, Color.red).rectTransform;
@@ -33,7 +34,9 @@ public class PlayerInfoEntry : MonoBehaviour
     private void Update()
     {
         float hp = player.machine.health;
-        text.color = hp > 0f ? Color.white : Color.red;
+
+        pname.color = hp > 0f ? Color.white : Color.red;
+        railc.text = $"<color=#D8D8D8>[<color=#0080FF>{new string('I', player.RailCharge)}</color><color=#cccccccc>{new string('-', 10 - player.RailCharge)}</color>]</color>";
 
         health.localScale = new(Mathf.Min(hp / 100f, 1f), 1f, 1f);
         health.localPosition = new(-(1f - health.localScale.x) * 262f, -20f, 0f);

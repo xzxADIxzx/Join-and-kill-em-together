@@ -62,6 +62,7 @@ public class LocalPlayer : Entity
         w.Float(NewMovement.Instance.transform.eulerAngles.y);
         w.Float(135f - Mathf.Clamp(CameraController.Instance.rotationX, -40f, 80f));
 
+        w.Byte((byte)Mathf.Floor(WeaponCharges.Instance.raicharge * 2f));
         w.Byte((byte)Team);
         w.Byte(weapon);
         w.Byte(Movement.Instance.Emoji);
