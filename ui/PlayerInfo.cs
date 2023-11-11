@@ -1,9 +1,11 @@
 namespace Jaket.UI;
 
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 using Jaket.Net;
+using Jaket.Net.EntityTypes;
 using Jaket.UI.Elements;
 
 /// <summary> Teammates information displayed in the bottom right corner of the screen. </summary>
@@ -36,13 +38,16 @@ public class PlayerInfo : CanvasSingleton<PlayerInfo>
         Destroy(Root?.gameObject);
         if (!Shown) return;
 
-        // build new table
-        float height = LobbyController.Lobby == null
-            ? 48f
-            : LobbyController.Lobby.Value.MemberCount == 1
-                ? 48f
-                : (LobbyController.Lobby.Value.MemberCount - 1) * 56f + 8f;
+        // find teammates
+        List<RemotePlayer> teammates = new();
+        Networking.EachPlayer(player =>
+        {
+            // the player should only see information about teammates
+            if (player.team == Networking.LocalPlayer.Team || !LobbyController.PvPAllowed) teammates.Add(player);
+        });
 
+        // build new table
+        float height = teammates.Count == 0 ? 48f : teammates.Count * 56f + 8f;
         Root = UI.Table("Player Info", transform, 0f, 0f, 540f, height);
 
         Root.rectTransform.localPosition = new(-75f, -556f + height / 2f, 0f);
@@ -50,17 +55,13 @@ public class PlayerInfo : CanvasSingleton<PlayerInfo>
         Root.rectTransform.localScale = Vector3.one;
 
         // build content
-        if (LobbyController.Lobby == null || LobbyController.Lobby?.MemberCount == 1)
-            UI.Text("<color=#D8D8D8>[<color=orange>There are no players in the lobby</color>]</color>", Root.rectTransform, 0f, 0f, 540f, size: 24);
+        if (teammates.Count == 0)
+            UI.Text("<color=#D8D8D8>[<color=orange>There are no teammates in your team</color>]</color>", Root.rectTransform, 0f, 0f, 540f, size: 24);
         else
         {
             float y = height / 2f - 32f + (56f);
-            Networking.EachPlayer(player =>
-            {
-                // the player should only see information about teammates
-                if (player.team == Networking.LocalPlayer.Team || !LobbyController.PvPAllowed)
-                    PlayerInfoEntry.Build(player, UI.Rect(player.Header.Name, Root.rectTransform, 0f, y -= 56f, 524f, 48f));
-            });
+            teammates.ForEach(player =>
+                PlayerInfoEntry.Build(player, UI.Rect(player.Header.Name, Root.rectTransform, 0f, y -= 56f, 524f, 48f)));
         }
     }
 }
