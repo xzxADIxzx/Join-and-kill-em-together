@@ -14,10 +14,11 @@ public class Settings : CanvasSingleton<Settings>
 
     /// <summary> List of internal names of all key bindings. </summary>
     public static readonly string[] Keybinds =
-    { "lobby-tab", "player-list", "settings", "player-indicators", "pointer", "chat", "scroll-messages-up", "scroll-messages-down", "emoji-wheel", "self-destruction" };
+    { "lobby-tab", "player-list", "settings", "player-indicators", "player-information", "pointer",
+      "chat", "scroll-messages-up", "scroll-messages-down", "emoji-wheel", "self-destruction" };
 
     /// <summary> List of all key bindings in the mod. </summary>
-    public static KeyCode LobbyTab, PlayerList, Settingz, PlayerIndicators, Pointer, Chat, ScrollUp, ScrollDown, EmojiWheel, SelfDestruction;
+    public static KeyCode LobbyTab, PlayerList, Settingz, PlayerIndicators, PlayerInfo, Pointer, Chat, ScrollUp, ScrollDown, EmojiWheel, SelfDestruction;
     /// <summary> Gets the key binding value from its path. </summary>
     public static KeyCode GetKey(string path, KeyCode def) => (KeyCode)prefs.GetInt($"jaket.binds.{path}", (int)def);
 
@@ -38,6 +39,7 @@ public class Settings : CanvasSingleton<Settings>
         PlayerList = GetKey("player-list", KeyCode.F2);
         Settingz = GetKey("settings", KeyCode.F3);
         PlayerIndicators = GetKey("player-indicators", KeyCode.Z);
+        PlayerInfo = GetKey("player-information", KeyCode.X);
         Pointer = GetKey("pointer", KeyCode.Mouse2);
         Chat = GetKey("chat", KeyCode.Return);
         ScrollUp = GetKey("scroll-messages-up", KeyCode.UpArrow);
@@ -54,16 +56,16 @@ public class Settings : CanvasSingleton<Settings>
     private void Start()
     {
         UI.Shadow("Shadow", transform);
-        UI.TableAT("Controls", transform, 0f, 352f, 696f, table =>
+        UI.TableAT("Controls", transform, 0f, 352f, 730f, table =>
         {
-            UI.Text("--CONTROLS--", table, 0f, 316f);
-            UI.Button("RESET", table, 0f, 260f, clicked: ResetKeybinds);
+            UI.Text("--CONTROLS--", table, 0f, 333f);
+            UI.Button("RESET", table, 0f, 277f, clicked: ResetKeybinds);
 
-            var list = new[] { LobbyTab, PlayerList, Settingz, PlayerIndicators, Pointer, Chat, ScrollUp, ScrollDown, EmojiWheel, SelfDestruction };
+            var list = new[] { LobbyTab, PlayerList, Settingz, PlayerIndicators, PlayerInfo, Pointer, Chat, ScrollUp, ScrollDown, EmojiWheel, SelfDestruction };
             for (int i = 0; i < list.Length; i++)
-                UI.KeyButton(Keybinds[i], list[i], table, 0f, 196f - i * 56f);
+                UI.KeyButton(Keybinds[i], list[i], table, 0f, 213f - i * 54f);
         });
-        UI.TableAT("Other", transform, 712f, 352f, 224f, table =>
+        UI.TableAT("Other", transform, 746f, 352f, 224f, table =>
         {
             UI.Text("--OTHER--", table, 0f, 80f);
             UI.Button("RESET", table, 0f, 24f, clicked: ResetOther);
@@ -127,7 +129,7 @@ public class Settings : CanvasSingleton<Settings>
         Load(); // load default values
 
         // update the labels in the buttons
-        var list = new[] { LobbyTab, PlayerList, Settingz, PlayerIndicators, Pointer, Chat, ScrollUp, ScrollDown, EmojiWheel, SelfDestruction };
+        var list = new[] { LobbyTab, PlayerList, Settingz, PlayerIndicators, PlayerInfo, Pointer, Chat, ScrollUp, ScrollDown, EmojiWheel, SelfDestruction };
         for (int i = 0; i < list.Length; i++)
             transform.GetChild(1).GetChild(i + 2).GetChild(0).GetComponentInChildren<Text>().text = ControlsOptions.GetKeyName(list[i]);
     }
