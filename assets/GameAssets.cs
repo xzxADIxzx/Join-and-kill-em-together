@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary> Class that works with the assets of the game. </summary>
 public class GameAssets
 {
-    /// <summary> List of names of all enemies. </summary>
+    /// <summary> List of internal names of all enemies. </summary>
     public static readonly string[] Enemies = new[]
     {
         "Zombie", "Projectile Zombie", "Super Projectile Zombie", "ShotgunHusk", "MinosBoss", "Stalker",
@@ -16,12 +16,20 @@ public class GameAssets
         "DroneSkull Variant", "MinosPrime", "SisyphusPrime",
     };
 
-    /// <summary> List of names of all dev plushies. </summary>
+    /// <summary> List of internal names of all dev plushies. </summary>
     public static readonly string[] Plushies = new[]
     {
         "Jacob", "Mako", "HEALTH - Jake", "Dalia", "Jericho", "Meganeko", "Tucker", "BigRock", "Dawg", "Sam",
         "Cameron", "Gianni", "Salad", "Mandy", "Joy", "Weyte", "Heckteck", "Hakita", "Lenval", ". (CabalCrow) Variant",
         "Quetzal", "HEALTH - John", "PITR", "HEALTH - BJ", "Francis", "Vvizard", "Lucas", "Scott", "KGC", "."
+    };
+
+    /// <summary> List of readable names of all dev plushies needed for the /plushy command. </summary>
+    public static readonly string[] PlushiesButReadable = new[]
+    {
+        "Jacob", "Maximilian", "Jake", "Dalia", "Jericho", "Meganeko", "Tucker", "BigRock", "Victoria", "Samuel",
+        "Cameron", "Gianni", "Salad", "Mandy", "Joy", "Weyte", "Heckteck", "Hakita", "Lenval", "CabalCrow",
+        "Quetzal", "John", "Pitr", "BJ", "Francis", "Vvizard", "Lucas", "Scott", "KGC", "V1"
     };
 
     /// <summary> Loads an enemy prefab by name. </summary>

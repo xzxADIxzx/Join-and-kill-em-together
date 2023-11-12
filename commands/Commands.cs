@@ -1,7 +1,12 @@
 namespace Jaket.Commands;
 
+using System;
 using UnityEngine;
 
+using Jaket.Assets;
+using Jaket.Content;
+using Jaket.IO;
+using Jaket.Net;
 using Jaket.UI;
 
 /// <summary> List of chat commands used by the mod. </summary>
@@ -51,6 +56,33 @@ public class Commands
             {
                 chat.AutoTTS = false;
                 chat.ReceiveChatMessage("<color=red>Auto TTS disabled.</color>");
+            }
+        });
+
+        Handler.Register("plushies", "Displays the list of all dev plushies", args =>
+        {
+            string[] plushies = (string[])GameAssets.PlushiesButReadable.Clone();
+            Array.Sort(plushies); // sort alphabetically for a more presentable look
+
+            chat.ReceiveChatMessage(string.Join(", ", plushies));
+        });
+        Handler.Register("plushy", "<name>", "Spawns a plushy by name", args =>
+        {
+            string name = args.Length == 0 ? null : args[0];
+            int index = Array.IndexOf(GameAssets.PlushiesButReadable, name);
+
+            if (index == -1)
+                chat.ReceiveChatMessage($"<color=red>Plushy named {name} not found.</color>");
+            else
+            {
+                if (LobbyController.IsOwner)
+                    Items.InstantiatePlushy((EntityType)index + 35).transform.position = NewMovement.Instance.transform.position;
+                else
+                    Networking.Redirect(Writer.Write(w =>
+                    {
+                        w.Byte((byte)(index + 35));
+                        w.Vector(NewMovement.Instance.transform.position);
+                    }), PacketType.SpawnEntity);
             }
         });
     }

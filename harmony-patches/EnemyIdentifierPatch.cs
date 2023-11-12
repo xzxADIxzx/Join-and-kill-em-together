@@ -56,7 +56,9 @@ public class EnemyStartPatch
 
         if (LobbyController.IsOwner)
         {
-            var enemy = __instance.gameObject.AddComponent<Enemy>();
+            if (__instance.TryGetComponent<Enemy>(out var enemy)) return true;
+
+            enemy = __instance.gameObject.AddComponent<Enemy>();
             Networking.Entities[enemy.Id] = enemy;
 
             return true;
