@@ -24,6 +24,23 @@ public class Server : Endpoint
             if (r.Bool() && entities.TryGetValue(r.Id(), out var entity) && entity is Item item && item != null) item.Read(r);
         });
 
+        Listen(PacketType.SpawnEntity, r =>
+        {
+            // the client asked to spawn the entity
+            ulong id = Entities.NextId();
+            byte type = r.Byte();
+
+            // but we need to make sure they can spawn it
+            if ((type > 32 && type < 35) || type > 64) return;
+            var entity = Entities.Get(id, (EntityType)type);
+
+            if (entity != null)
+            {
+                entity.transform.position = r.Vector();
+                entities[id] = entity;
+            }
+        });
+
         ListenAndRedirect(PacketType.SpawnBullet, Bullets.Read);
 
         ListenAndRedirect(PacketType.DamageEntity, r => entities[r.Id()]?.Damage(r));

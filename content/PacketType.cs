@@ -17,6 +17,8 @@ public enum PacketType
     /// <summary> Boss has died, which means you need to kill his original enemy identifier. </summary>
     BossDefeated,
 
+    /// <summary> Client ask the creation of an entity. </summary>
+    SpawnEntity,
     /// <summary> Client ask the creation of a bullet. </summary>
     SpawnBullet,
     /// <summary> Client dealt damage to an entity. </summary>

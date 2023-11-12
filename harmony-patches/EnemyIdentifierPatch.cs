@@ -78,8 +78,18 @@ public class EnemyStartPatch
                 // will be used in the future to trigger the game's internal logic
                 __instance.gameObject.SetActive(false);
             else
+            {
+                // ask host to spawn enemy if it was spawned via sandbox arm
+                if (__instance.GetComponent<Sandbox.SandboxEnemy>() != null)
+                    Networking.Redirect(Writer.Write(w =>
+                    {
+                        w.Byte((byte)Enemies.CopiedIndex(__instance));
+                        w.Vector(__instance.transform.position);
+                    }), PacketType.SpawnEntity);
+
                 // the enemy is no longer needed, so destroy it
-                Object.Destroy(__instance.gameObject); // TODO ask host to spawn enemy if playing sandbox
+                Object.Destroy(__instance.gameObject);
+            }
 
             return false;
         }
