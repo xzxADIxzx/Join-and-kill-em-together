@@ -10,13 +10,11 @@ public class Reader
 {
     /// <summary> Input for reader. </summary>
     private BinaryReader r;
-
     /// <summary> Creates a reader with the given input. </summary>
     private Reader(BinaryReader r) => this.r = r;
 
     /// <summary> Current cursor position in the stream. </summary>
     public long Position { get => r.BaseStream.Position; set => r.BaseStream.Position = value; }
-
     /// <summary> Stream length. </summary>
     public long Length { get => r.BaseStream.Length; }
 

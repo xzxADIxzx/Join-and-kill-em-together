@@ -76,7 +76,12 @@ public class Commands
             else
             {
                 if (LobbyController.IsOwner)
-                    Items.InstantiatePlushy((EntityType)index + 35).transform.position = NewMovement.Instance.transform.position;
+                {
+                    var item = Items.InstantiatePlushy((EntityType)index + 35);
+
+                    item.transform.position = NewMovement.Instance.transform.position;
+                    Networking.Entities[item.Id] = item;
+                }
                 else
                     Networking.Redirect(Writer.Write(w =>
                     {
