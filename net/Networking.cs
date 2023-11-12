@@ -15,7 +15,7 @@ using Jaket.World;
 public class Networking : MonoSingleton<Networking>
 {
     /// <summary> Number of snapshots to be sent per second. </summary>
-    public const int SNAPSHOTS_PER_SECOND = 20;
+    public const int SNAPSHOTS_PER_SECOND = 18;
     /// <summary> Number of seconds between snapshots. </summary>
     public const float SNAPSHOTS_SPACING = 1f / SNAPSHOTS_PER_SECOND;
 
