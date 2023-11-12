@@ -50,7 +50,7 @@ public class Settings : CanvasSingleton<Settings>
         ForceGreenArm = prefs.GetBool("jaket.force-arm", false);
         DisableFreezeFrames = prefs.GetBool("jaket.disable-freeze", true);
 
-        DollAssets.Mixer?.SetFloat("Volume", prefs.GetInt("jaket.tts.volume", 60) / 2f - 30f);
+        DollAssets.Mixer?.SetFloat("Volume", GetTTSVolume() / 2f - 30f);
     }
 
     private void Start()
@@ -159,11 +159,14 @@ public class Settings : CanvasSingleton<Settings>
     #region other
 
     // <summary> Changes and saves Sam's voice volume. </summary>
-    public void ChangeTTSVolume(int volume)
+    public static void ChangeTTSVolume(int volume)
     {
         DollAssets.Mixer?.SetFloat("Volume", volume / 2f - 30f); // the value should be between -30 and 20 decibels
         prefs.SetInt("jaket.tts.volume", volume);
     }
+
+    // <summary> Returns the volume of Sam's voice. </summary>
+    public static int GetTTSVolume() => prefs.GetInt("jaket.tts.volume", 60);
 
     #endregion
 }
