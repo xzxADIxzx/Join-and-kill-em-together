@@ -261,10 +261,9 @@ public class Chat : CanvasSingleton<Chat>
         SendMsg("Hello, it's me, the main developer of this mod.");
         SendMsg("I just wanted to give some tips about Jaket:");
 
-        SendTip("Go to the control settings, there are new elements");
+        SendTip($"Try pressing the {Settings.LobbyTab}, {Settings.PlayerList} and {Settings.Settingz} keys");
         SendTip($"Hold {Settings.EmojiWheel} to open the Emotion Wheel");
-        SendTip("Try typing to chat /tts <color=#cccccccc>[message]</color> or /tts <color=#cccccccc>[on/off]</color>");
-        SendTip("Use /tts-volume <color=#cccccccc>[0-100]</color> to keep ur ears comfortable");
+        SendTip("Try typing to chat /help");
         SendTip("Take a look at the bestiary, there's a surprise :3");
 
         SendMsg("Cheers~ ♡");

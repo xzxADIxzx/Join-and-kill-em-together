@@ -25,7 +25,7 @@ public class Commands
         });
         Handler.Register("hello", "Resends tips for new players", args => chat.Hello(true));
 
-        Handler.Register("tts-volume", "[0-100]", "Changes Sam's volume to keep ur ears comfortable", args =>
+        Handler.Register("tts-volume", "[0-100]", "Sets Sam's volume to keep ur ears comfortable", args =>
         {
             if (args.Length == 0)
                 chat.ReceiveChatMessage($"<color=orange>TTS volume is {Settings.GetTTSVolume()}.</color>");
