@@ -68,8 +68,8 @@ public class Commands
         });
         Handler.Register("plushy", "<name>", "Spawns a plushy by name", args =>
         {
-            string name = args.Length == 0 ? null : args[0];
-            int index = Array.IndexOf(GameAssets.PlushiesButReadable, name);
+            string name = args.Length == 0 ? null : args[0].ToLower();
+            int index = Array.FindIndex(GameAssets.PlushiesButReadable, plushy => plushy.ToLower() == name);
 
             if (index == -1)
                 chat.ReceiveChatMessage($"<color=red>Plushy named {name} not found.</color>");
