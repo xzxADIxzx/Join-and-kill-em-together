@@ -16,8 +16,6 @@ public class Command
         this.Handler = handler;
     }
 
-    public Command(string name, string desc, Action<string[]> handler) : this(name, "", desc, handler) { }
-
     /// <summary> Handles the command call and its arguments. </summary>
     public void Handle(string args)
     {
