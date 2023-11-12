@@ -15,10 +15,10 @@ public class CommandHandler
     {
         // the message is not a command, because they start with /
         if (!message.StartsWith("/")) return false;
-        message = message.Substring(1);
+        message = message.Substring(1).Trim();
 
         // find a command by name and run it
-        string name = message.Substring(message.IndexOf(' ')).ToLower();
+        string name = (message.Contains(" ") ? message.Substring(0, message.IndexOf(' ')) : message).ToLower();
         foreach (var command in Commands)
             if (command.Name == name)
             {
