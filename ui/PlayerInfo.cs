@@ -36,7 +36,7 @@ public class PlayerInfo : CanvasSingleton<PlayerInfo>
     {
         // destroy old information
         Destroy(Root?.gameObject);
-        if (!Shown) return;
+        if (!Shown || SceneHelper.CurrentScene == "Main Menu") return;
 
         // find teammates
         List<RemotePlayer> teammates = new();
