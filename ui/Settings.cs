@@ -159,7 +159,7 @@ public class Settings : CanvasSingleton<Settings>
     #region other
 
     // <summary> Changes and saves Sam's voice volume. </summary>
-    public static void ChangeTTSVolume(int volume)
+    public static void SetTTSVolume(int volume)
     {
         DollAssets.Mixer?.SetFloat("Volume", volume / 2f - 30f); // the value should be between -30 and 20 decibels
         prefs.SetInt("jaket.tts.volume", volume);

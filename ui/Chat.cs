@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
 
+using Jaket.Commands;
 using Jaket.Net;
 using Jaket.Sam;
 using Jaket.World;
@@ -39,7 +40,7 @@ public class Chat : CanvasSingleton<Chat>
     private RectTransform typingBg;
 
     /// <summary> Whether auto TTS is enabled. </summary>
-    private bool autoTTS;
+    public bool AutoTTS;
     /// <summary> Background of the auto TTS sign. </summary>
     private RectTransform ttsBg;
 
@@ -89,7 +90,7 @@ public class Chat : CanvasSingleton<Chat>
         // update auto TTS sign width and position
         float width = typingBg.gameObject.activeSelf ? typingBg.anchoredPosition.x + typingBg.sizeDelta.x / 2f + 80f : -880f;
 
-        ttsBg.gameObject.SetActive(autoTTS && Shown);
+        ttsBg.gameObject.SetActive(AutoTTS && Shown);
         ttsBg.anchoredPosition = new Vector2(width, typingBg.anchoredPosition.y);
     }
 
@@ -187,32 +188,7 @@ public class Chat : CanvasSingleton<Chat>
         // if the message is not empty, then send it to other players and remember it
         if (message != "")
         {
-            // handle TTS command
-            if (message.StartsWith("/tts-volume "))
-            {
-                if (int.TryParse(message.Substring("/tts-volume ".Length), out int value))
-                {
-                    int clamped = Mathf.Clamp(value, 0, 100);
-                    Settings.ChangeTTSVolume(clamped);
-
-                    ReceiveChatMessage($"<color=#00FF00>TTS volume is set to {clamped}.</color>");
-                }
-                else
-                    ReceiveChatMessage("<color=red>Failed to parse value. It must be an integer in the range from 0 to 100.</color>");
-            }
-            else if (message == "/tts on")
-            {
-                autoTTS = true;
-                ReceiveChatMessage("<color=#00FF00>Auto TTS enabled.</color>");
-            }
-            else if (message == "/tts off")
-            {
-                autoTTS = false;
-                ReceiveChatMessage("<color=red>Auto TTS disabled.</color>");
-            }
-            //  or send message to the chat
-            else LobbyController.Lobby?.SendChatString(autoTTS ? "/tts " + message : message);
-
+            if (!Commands.Handler.Handle(message)) LobbyController.Lobby?.SendChatString(AutoTTS ? "/tts " + message : message);
             messages.Insert(0, message);
         }
 
@@ -274,10 +250,10 @@ public class Chat : CanvasSingleton<Chat>
     }
 
     /// <summary> Sends some useful information to the chat. </summary>
-    public void Hello()
+    public void Hello(bool force = false)
     {
         // if the last owner of the lobby is not equal to 0, then the lobby is not created for the first time and there is no need to print info
-        if (LobbyController.LastOwner != 0L) return;
+        if (LobbyController.LastOwner != 0L && !force) return;
 
         void SendMsg(string msg) => ReceiveChatMessage("0096FF", BOT_PREFIX + "xzxADIxzx", msg, oneline: true);
         void SendTip(string tip) => SendMsg($"<size=14>* {tip}</size>");
