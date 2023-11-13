@@ -27,6 +27,7 @@ public class Item : Entity
 
     private void Awake()
     {
+        bool plushy = name.StartsWith("DevPlushie");
         gameObject.name = "Net"; // needed to prevent object looping between client and server
 
         // interpolations
@@ -41,7 +42,7 @@ public class Item : Entity
         rb = GetComponent<Rigidbody>();
         if (LobbyController.IsOwner)
         {
-            int index = Items.PlushyIndex(transform);
+            int index = plushy ? Items.PlushyIndex(transform) : Items.ItemIndex(GetComponent<ItemIdentifier>());
             if (index == -1)
             {
                 Destroy(this);
@@ -49,7 +50,7 @@ public class Item : Entity
             }
 
             Id = Entities.NextId();
-            Type = (EntityType)index + 35;
+            Type = (EntityType)(plushy ? index + 35 : index);
             Owner = Networking.LocalPlayer.Id;
         }
     }
@@ -101,5 +102,5 @@ public class Item : Entity
         holding = r.Bool();
     }
 
-    public override void Damage(Reader r) {}
+    public override void Damage(Reader r) { }
 }

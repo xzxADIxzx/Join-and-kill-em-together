@@ -31,7 +31,7 @@ public class Server : Endpoint
             byte type = r.Byte();
 
             // but we need to make sure they can spawn it
-            if ((type > 32 && type < 35) || type > 64) return;
+            if ((type > 32 && type < 35) || type > 71) return;
             var entity = Entities.Get(id, (EntityType)type);
 
             if (entity != null)

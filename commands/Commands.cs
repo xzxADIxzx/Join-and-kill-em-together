@@ -77,7 +77,7 @@ public class Commands
             {
                 if (LobbyController.IsOwner)
                 {
-                    var item = Items.InstantiatePlushy((EntityType)index + 35);
+                    var item = Items.Instantiate((EntityType)index + 42);
 
                     item.transform.position = NewMovement.Instance.transform.position;
                     Networking.Entities[item.Id] = item;
@@ -85,7 +85,7 @@ public class Commands
                 else
                     Networking.Redirect(Writer.Write(w =>
                     {
-                        w.Byte((byte)(index + 35));
+                        w.Byte((byte)(index + 42));
                         w.Vector(NewMovement.Instance.transform.position);
                     }), PacketType.SpawnEntity);
             }

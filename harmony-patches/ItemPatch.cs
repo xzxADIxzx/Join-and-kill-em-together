@@ -9,7 +9,7 @@ using Jaket.World;
 [HarmonyPatch(typeof(ItemIdentifier), MethodType.Constructor)]
 public class ItemSyncPatch
 {
-    static void Prefix(ItemIdentifier __instance) => Events.Post(() => Items.SyncPlushy(__instance));
+    static void Prefix(ItemIdentifier __instance) => Events.Post(() => Items.Sync(__instance));
 }
 
 [HarmonyPatch(typeof(ItemIdentifier), "PickUp")]

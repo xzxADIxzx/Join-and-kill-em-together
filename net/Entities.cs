@@ -26,10 +26,10 @@ public class Entities
         Providers.Add(EntityType.Hand, () => World.Instance.Hand);
         Providers.Add(EntityType.Leviathan, () => World.Instance.Leviathan);
 
-        for (int i = 35; i <= 64; i++)
+        for (int i = 35; i <= 71; i++)
         {
             var type = (EntityType)i;
-            Providers.Add(type, () => Items.InstantiatePlushy(type));
+            Providers.Add(type, () => Items.Instantiate(type));
         }
 
         Providers.Add(EntityType.Player, DollAssets.CreateDoll);
