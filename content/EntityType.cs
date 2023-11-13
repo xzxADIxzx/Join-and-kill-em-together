@@ -39,7 +39,15 @@ public enum EntityType
     Hand,
     Leviathan,
 
-    Jacob = 35,
+    AppleBait = 35,
+    SkullBait,
+    BlueSkull,
+    RedSkull,
+    Soap,
+    Torch,
+    Florp,
+
+    Jacob = 42,
     Mako,
     Jake,
     Dalia,
@@ -70,5 +78,5 @@ public enum EntityType
     KGC,
     V1,
 
-    Player = 65
+    Player = 72
 }

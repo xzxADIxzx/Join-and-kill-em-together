@@ -16,6 +16,10 @@ public class GameAssets
         "DroneSkull Variant", "MinosPrime", "SisyphusPrime",
     };
 
+    /// <summary> List of internal names of all items. </summary>
+    public static readonly string[] Items = new[]
+    { ".Apple Bait", ".Maurice Bait", "SkullBlue", "SkullRed", "Soap", "Torch", "Florp Throwable" };
+
     /// <summary> List of internal names of all dev plushies. </summary>
     public static readonly string[] Plushies = new[]
     {
@@ -34,8 +38,11 @@ public class GameAssets
 
     /// <summary> Loads an enemy prefab by name. </summary>
     public static GameObject Enemy(string name) => AssetHelper.LoadPrefab($"Assets/Prefabs/Enemies/{name}.prefab");
+
     /// <summary> Loads an item prefab by name. </summary>
-    public static GameObject Item(string name) => AssetHelper.LoadPrefab($"Assets/Prefabs/Items/{name}.prefab");
+    public static GameObject Item(string name) =>
+        AssetHelper.LoadPrefab($"Assets/Prefabs/{(name.StartsWith(".") ? $"Fishing/{name.Substring(1)}" : $"Items/{name}")}.prefab");
+
     /// <summary> Loads a dev plushy prefab by name. </summary>
     public static GameObject Plushy(string name) =>
         AssetHelper.LoadPrefab($"Assets/Prefabs/Items/DevPlushies/DevPlushie{(name.StartsWith(".") ? name.Substring(1) : $" ({name})")}.prefab");
