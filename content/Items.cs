@@ -27,16 +27,16 @@ public class Items
     #region index
 
     /// <summary> Finds item index by identifier. </summary>
-    public static int ItemIndex(ItemIdentifier itemId) => itemId.itemType switch
+    public static int ItemIndex(ItemIdentifier itemId) => itemId.transform.GetChild(0).name switch
     {
-        ItemType.SkullBlue => (int)EntityType.BlueSkull,
-        ItemType.SkullRed => (int)EntityType.RedSkull,
-        ItemType.Soap => (int)EntityType.Soap,
-        ItemType.Torch => (int)EntityType.Torch,
-        _ => itemId.transform.GetChild(0).name switch
+        "Apple Bait" => (int)EntityType.AppleBait,
+        "Maurice Prop" => (int)EntityType.SkullBait,
+        _ => itemId.itemType switch
         {
-            "Apple Bait" => (int)EntityType.AppleBait,
-            "Maurice Prop" => (int)EntityType.SkullBait,
+            ItemType.SkullBlue => (int)EntityType.BlueSkull,
+            ItemType.SkullRed => (int)EntityType.RedSkull,
+            ItemType.Soap => (int)EntityType.Soap,
+            ItemType.Torch => (int)EntityType.Torch,
             _ => (int)EntityType.Florp
         }
     };

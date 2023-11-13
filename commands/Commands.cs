@@ -44,7 +44,7 @@ public class Commands
             else
                 chat.ReceiveChatMessage("<color=red>Failed to parse value. It must be an integer in the range from 0 to 100.</color>");
         });
-        Handler.Register("auto-tts", "[on/off]", "Turns auto reading of all messages", args =>
+        Handler.Register("tts-auto", "[on/off]", "Turns auto reading of all messages", args =>
         {
             bool enable = args.Length == 0 ? !chat.AutoTTS : (args[0] == "on" ? true : args[0] == "off" ? false : !chat.AutoTTS);
             if (enable)
