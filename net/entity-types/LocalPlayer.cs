@@ -100,7 +100,9 @@ public class LocalPlayer : Entity
         if (HeldItem != null && !HeldItem.IsOwner)
         {
             HeldItem = null;
+
             FistControl.Instance.currentPunch.ForceThrow();
+            if (FistControl.Instance.currentPunch.holding) FistControl.Instance.currentPunch.PlaceHeldObject(new ItemPlaceZone[0], null);
         }
 
         w.Bool(HeldItem != null);
