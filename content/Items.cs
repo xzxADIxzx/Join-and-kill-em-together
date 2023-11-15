@@ -58,6 +58,9 @@ public class Items
     /// <summary> Synchronizes all items & plushies in the level. </summary>
     public static void SyncAll()
     {
+        foreach (var zone in Resources.FindObjectsOfTypeAll<ItemPlaceZone>())
+            if (zone.gameObject.scene.name != null) zone.transform.SetParent(null);
+
         foreach (var item in Resources.FindObjectsOfTypeAll<ItemIdentifier>()) Sync(item);
     }
 

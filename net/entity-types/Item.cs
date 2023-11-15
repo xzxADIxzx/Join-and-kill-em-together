@@ -81,7 +81,7 @@ public class Item : Entity
         // remove from the altar
         if (!placed && itemId.ipz != null)
         {
-            itemId.transform.SetParent(null);
+            transform.SetParent(null);
             itemId.ipz.CheckItem();
             itemId.ipz = null;
         }
@@ -93,7 +93,7 @@ public class Item : Entity
             foreach (var col in colliders)
                 if (col.gameObject.layer == 22 && col.TryGetComponent<ItemPlaceZone>(out var zone))
                 {
-                    itemId.transform.SetParent(col.transform);
+                    transform.SetParent(col.transform);
                     zone.CheckItem();
                 }
         }
