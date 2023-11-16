@@ -58,10 +58,19 @@ public class Items
     /// <summary> Synchronizes all items & plushies in the level. </summary>
     public static void SyncAll()
     {
-        foreach (var zone in Resources.FindObjectsOfTypeAll<ItemPlaceZone>())
-            if (zone.gameObject.scene.name != null) zone.transform.SetParent(null);
+        List<ItemPlaceZone> altars = new(Resources.FindObjectsOfTypeAll<ItemPlaceZone>());
+        altars.RemoveAll(altar => altar.gameObject.scene.name == null);
 
+        foreach (var zone in altars) zone.transform.SetParent(null);
         foreach (var item in Resources.FindObjectsOfTypeAll<ItemIdentifier>()) Sync(item);
+        foreach (var zone in altars)
+        {
+            // at level 5-3 there are altars that activate skulls in the mirror part of the level, but the client has these skulls destroyed
+            if (zone.activateOnSuccess.Length > 0 && zone.activateOnSuccess[0] == null) zone.activateOnSuccess = new GameObject[] { zone.activateOnSuccess[1] };
+
+            // re-linking skulls with altars
+            if (zone.GetComponentInChildren<ItemIdentifier>() == null && zone.TryGetComponent<Collider>(out var col)) col.enabled = true;
+        }
     }
 
     /// <summary> Synchronizes the item / plushy between host and clients. </summary>
@@ -78,7 +87,7 @@ public class Items
             var item = itemId.gameObject.AddComponent<Item>();
             Networking.Entities[item.Id] = item;
         }
-        else Object.Destroy(itemId.gameObject);
+        else Object.DestroyImmediate(itemId.gameObject);
     }
 
     #endregion
