@@ -49,12 +49,12 @@ public class Commands
             bool enable = args.Length == 0 ? !chat.AutoTTS : (args[0] == "on" ? true : args[0] == "off" ? false : !chat.AutoTTS);
             if (enable)
             {
-                chat.AutoTTS = true;
+                Settings.SetAutoTTS(chat.AutoTTS = true);
                 chat.ReceiveChatMessage("<color=#00FF00>Auto TTS enabled.</color>");
             }
             else
             {
-                chat.AutoTTS = false;
+                Settings.SetAutoTTS(chat.AutoTTS = false);
                 chat.ReceiveChatMessage("<color=red>Auto TTS disabled.</color>");
             }
         });

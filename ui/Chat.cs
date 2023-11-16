@@ -75,6 +75,9 @@ public class Chat : CanvasSingleton<Chat>
         field.characterLimit = MAX_MESSAGE_LENGTH;
         field.gameObject.SetActive(false);
 
+        // load settings
+        AutoTTS = Settings.GetAutoTTS();
+
         // start the update cycle of typing players
         InvokeRepeating("UpdateTyping", 0f, .25f);
 

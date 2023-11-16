@@ -168,5 +168,8 @@ public class Settings : CanvasSingleton<Settings>
     // <summary> Returns the volume of Sam's voice. </summary>
     public static int GetTTSVolume() => prefs.GetInt("jaket.tts.volume", 60);
 
+    public static void SetAutoTTS(bool enabled) => prefs.SetBool("jaket.tts.auto", enabled);
+    public static bool GetAutoTTS() => prefs.GetBool("jaket.tts.auto");
+
     #endregion
 }
