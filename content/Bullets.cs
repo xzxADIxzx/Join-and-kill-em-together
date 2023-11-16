@@ -179,7 +179,8 @@ public class Bullets
     public static void DealDamage(EnemyIdentifier enemyId, Reader r)
     {
         r.Byte(); // skip team because enemies don't have a team
-        if (r.Bool()) enemyId.hitter = Melee[0]; // if the damage was caused by a melee, then this must be reported to EnemyIdentifier
+        byte id = r.Byte();
+        if (id != 0xFF) enemyId.hitter = Melee[id]; // if the damage was caused by a melee, then this must be reported to EnemyIdentifier
 
         // dealing direct damage
         enemyId.DeliverDamage(enemyId.gameObject, r.Vector(), Vector3.zero, r.Float(), r.Bool(), r.Float(), NetworkDamage);

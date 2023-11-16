@@ -126,7 +126,7 @@ public class EnemyDamagePatch
         {
             w.Id(entity.Id);
             w.Byte((byte)Networking.LocalPlayer.Team);
-            w.Bool(melee);
+            w.Byte((byte)Bullets.Melee.IndexOf(__instance.hitter));
 
             w.Vector(force);
             w.Float(multiplier);
