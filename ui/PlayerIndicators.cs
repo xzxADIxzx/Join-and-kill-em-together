@@ -2,39 +2,24 @@ namespace Jaket.UI;
 
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 using Jaket.Content;
 using Jaket.Net;
 using Jaket.Net.EntityTypes;
+using Jaket.World;
 
 /// <summary> Indicators showing the location of teammates near the cursor. </summary>
-[ConfigureSingleton(SingletonFlags.NoAutoInstance)]
-public class PlayerIndicators : MonoSingleton<PlayerIndicators>
+public class PlayerIndicators : CanvasSingleton<PlayerIndicators>
 {
-    /// <summary> Whether indicators are visible or hidden. </summary>
-    public bool Shown = true;
-
     /// <summary> List of all indicator targets. </summary>
     public List<Transform> targets = new();
     /// <summary> List of indicators themselves. </summary>
     public List<Image> indicators = new();
 
-    /// <summary> Creates a singleton of player indicators. </summary>
-    public static void Build()
-    {
-        // initialize the singleton and create a canvas
-        Utils.Canvas("Player Indicator", Plugin.Instance.transform).AddComponent<PlayerIndicators>();
+    private void Start() => Events.OnTeamChanged += Rebuild;
 
-        // hide player indicators once loading the main menu
-        SceneManager.sceneLoaded += (scene, mode) =>
-        {
-            if (SceneHelper.CurrentScene == "Main Menu") Instance.gameObject.SetActive(Instance.Shown = false);
-        };
-    }
-
-    public void Update()
+    private void Update()
     {
         // update all indicators, nothing else to do huh
         for (int i = 0; i < targets.Count; i++) UpdateIndicator(targets[i], indicators[i]);
@@ -44,9 +29,8 @@ public class PlayerIndicators : MonoSingleton<PlayerIndicators>
     public void Toggle()
     {
         // if the player is typing, then nothing needs to be done
-        if (Chat.Instance.Shown) return;
+        if (Chat.Shown) return;
 
-        // no comments
         gameObject.SetActive(Shown = !Shown);
 
         // no need to update indicators if we hide them
@@ -69,13 +53,13 @@ public class PlayerIndicators : MonoSingleton<PlayerIndicators>
     public void AddIndicator(RemotePlayer player)
     {
         // indicators should only point to teammates, so you can even play hide and seek
-        if (player.team != Networking.LocalPlayer.team) return;
+        if (player.team != Networking.LocalPlayer.Team && LobbyController.PvPAllowed) return;
 
         // save the player's transform in order to rotate an indicator towards it in the future
         targets.Add(player.transform);
 
         // create a new team color indicator and add it to the list
-        var indicator = Utils.Image("indicator", transform, 0f, 0f, 88f, 88f, player.team.Data().Color(), true).GetComponent<Image>();
+        var indicator = UI.Image("Indicator", transform, 0f, 0f, 88f, 88f, player.team.Data().Color(), circle: true);
         indicator.type = Image.Type.Filled;
         indicators.Add(indicator);
     }

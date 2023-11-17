@@ -6,7 +6,6 @@ using UnityEngine;
 using Jaket.Content;
 using Jaket.Net;
 using Jaket.Net.EntityTypes;
-using Jaket.UI;
 
 [HarmonyPatch(typeof(Coin), "StartCheckingSpeed")] // for some reason, the coin has zero velocity in Start
 public class CoinPatch
@@ -63,7 +62,7 @@ public class SawbladePatch
     static bool Prefix(Nail __instance, Transform other) =>
         __instance.sawblade && other.TryGetComponent<EnemyIdentifierIdentifier>(out var eid) &&
         eid.eid != null && eid.eid.TryGetComponent<RemotePlayer>(out var player)
-        ? player.team != Networking.LocalPlayer.team
+        ? player.team != Networking.LocalPlayer.Team
         : true;
 }
 

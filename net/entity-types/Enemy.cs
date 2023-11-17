@@ -28,12 +28,14 @@ public class Enemy : Entity
     /// <summary> Enemy health, position and rotation. </summary>
     public FloatLerp health, x, y, z, rotation;
     /// <summary> Whether the enemy is a boss and should have a health bar. </summary>
-    public bool boss;
+    public bool boss, haveSecondPhase;
     /// <summary> Whether the enemy is a fake ferryman. </summary>
     public bool fake;
 
     private void Awake()
     {
+        if (!LobbyController.IsOwner) gameObject.name = "Net"; // needed to prevent object looping between client and server
+
         // interpolations
         health = new FloatLerp();
         x = new FloatLerp();
@@ -45,6 +47,14 @@ public class Enemy : Entity
         enemyId = GetComponent<EnemyIdentifier>();
         healthBar = GetComponent<BossHealthBar>();
         fakeFerryman = GetComponent<FerrymanFake>();
+
+        // multiply health
+        if (LobbyController.IsOwner && healthBar != null)
+        {
+            if (enemyId.machine) LobbyController.ScaleHealth(ref enemyId.machine.health);
+            else if (enemyId.spider) LobbyController.ScaleHealth(ref enemyId.spider.health);
+            else if (enemyId.statue) LobbyController.ScaleHealth(ref enemyId.statue.health);
+        }
 
         // prevent bosses from going into the second phase instantly
         health.target = enemyId.health;
@@ -97,8 +107,8 @@ public class Enemy : Entity
         if (LobbyController.IsOwner) return;
 
         enemyId.health = health.Get(LastUpdate);
-        transform.position = new Vector3(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
-        transform.eulerAngles = new Vector3(0f, rotation.GetAngel(LastUpdate), 0f);
+        transform.position = new(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
+        transform.eulerAngles = new(0f, rotation.GetAngel(LastUpdate), 0f);
 
         // this is necessary so that the health of the bosses is the same for all clients
         if (enemyId.machine != null) enemyId.machine.health = enemyId.health;
@@ -118,17 +128,17 @@ public class Enemy : Entity
             GetComponent<Animator>().runtimeAnimatorController = Array.Find(Resources.FindObjectsOfTypeAll<RuntimeAnimatorController>(), c => c.name == "FerrymanIntro2");
 
             // add components that will trigger an animation when the ferryman touches a coin
-            var trigger = Utils.Object("Coin Trigger", transform);
+            var trigger = UI.Object("Coin Trigger", transform);
             trigger.transform.localPosition = new();
             trigger.transform.localScale = new(3f, 3f, 3f);
 
-            Utils.Component<CapsuleCollider>(trigger, collider =>
+            UI.Component<CapsuleCollider>(trigger, collider =>
             {
                 collider.height = 2f;
                 collider.isTrigger = true;
             });
 
-            Utils.Component<CoinActivated>(trigger, coin =>
+            UI.Component<CoinActivated>(trigger, coin =>
             {
                 coin.disableCoin = true;
                 coin.events = new UltrakillEvent() { onActivate = new UnityEvent() };
@@ -170,7 +180,7 @@ public class Enemy : Entity
         w.Vector(transform.position);
         w.Float(transform.eulerAngles.y);
 
-        w.Bool(healthBar != null);
+        w.Bool(healthBar != null); w.Bool(healthBar == null ? false : healthBar.healthLayers.Length > 1);
         w.Bool(fakeFerryman != null);
         if (idol) w.Id(targetId);
         w.Byte(subtype);
@@ -184,7 +194,7 @@ public class Enemy : Entity
         x.Read(r); y.Read(r); z.Read(r);
         rotation.Read(r);
 
-        boss = r.Bool();
+        boss = r.Bool(); haveSecondPhase = r.Bool();
         fake = r.Bool();
         if (idol) targetId = r.Id();
         subtype = r.Byte();

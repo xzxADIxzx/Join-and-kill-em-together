@@ -4,20 +4,18 @@ using Steamworks;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using UMM;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-using Jaket.Assets;
+using Jaket.Commands;
 using Jaket.Net;
 using Jaket.Sam;
 using Jaket.World;
 
 /// <summary> Front end of the chat, back end implemented via Steamworks. </summary>
-public class Chat : MonoSingleton<Chat>
+public class Chat : CanvasSingleton<Chat>
 {
-    /// <summary> Maximum length of chat messages. </summary>
+    /// <summary> Maximum length of chat message. </summary>
     const int MAX_MESSAGE_LENGTH = 128;
     /// <summary> How many messages at a time will be shown. </summary>
     const int MESSAGES_SHOWN = 12;
@@ -31,9 +29,6 @@ public class Chat : MonoSingleton<Chat>
     /// <summary> Prefix that will be added to the TTS message. </summary>
     const string TTS_PREFIX = "<color=#ff7f50><size=14>[TTS]</size></color>";
 
-    /// <summary> Whether chat is visible or hidden. </summary>
-    public bool Shown;
-
     /// <summary> List of chat messages. </summary>
     private RectTransform list;
     /// <summary> Canvas group used to change the chat transparency. </summary>
@@ -45,7 +40,7 @@ public class Chat : MonoSingleton<Chat>
     private RectTransform typingBg;
 
     /// <summary> Whether auto TTS is enabled. </summary>
-    private bool autoTTS;
+    public bool AutoTTS;
     /// <summary> Background of the auto TTS sign. </summary>
     private RectTransform ttsBg;
 
@@ -65,40 +60,32 @@ public class Chat : MonoSingleton<Chat>
     // <summary> Returns the length of the message without formatting. </summary>
     public static float RawMessageLength(string message) => Regex.Replace(message, "<.*?>", string.Empty).Length;
 
-    /// <summary> Creates a singleton of chat. </summary>
-    public static void Build()
+    private void Start()
     {
-        // initialize the singleton and create a canvas
-        Utils.Canvas("Chat", Plugin.Instance.transform).AddComponent<Chat>();
+        list = UI.Table("List", transform, 0f, 0f, 0f, 0f).rectTransform;
+        listBg = UI.Component<CanvasGroup>(list.gameObject, group => group.blocksRaycasts = false); // disable chat collision so it doesn't interfere with buttons
 
-        // hide chat once loading a scene
-        SceneManager.sceneLoaded += (scene, mode) => Instance.field.gameObject.SetActive(Instance.Shown = false);
+        typingBg = UI.Table("Typing", transform, 0f, 0f, 0f, 0f).rectTransform;
+        typing = UI.Text("", typingBg, 0f, 0f, 1000f, 32f, size: 24);
 
-        // add a list of messages
-        Instance.list = Utils.Image("List", Instance.transform, 0f, 0f, 0f, 0f).transform as RectTransform;
-        Instance.listBg = Instance.list.gameObject.AddComponent<CanvasGroup>();
-        Instance.listBg.blocksRaycasts = false; // necessary so that the chat does not interfere with pressing the buttons
+        ttsBg = UI.Table("TTS", transform, 0f, 0f, 128f, 32f).rectTransform;
+        UI.Text("<color=#cccccccc>Auto TTS</color>", ttsBg, 0f, 0f, size: 24);
 
-        // add a list of typing players
-        Instance.typingBg = Utils.Image("", Instance.transform, 0f, 0f, 0f, 0f).transform as RectTransform;
-        Instance.typing = Utils.Text("", Instance.typingBg, 0f, 0f, 1000f, 32f, 24).GetComponent<Text>();
+        field = UI.Field("Type a chat message and send it by pressing enter", transform, 0f, -508f, 1888f, 32f, enter: OnFocusLost);
+        field.characterLimit = MAX_MESSAGE_LENGTH;
+        field.gameObject.SetActive(false);
 
-        // add a sign about the auto TTS being turned on
-        Instance.ttsBg = Utils.Image("", Instance.transform, 0f, 0f, 128f, 32f).transform as RectTransform;
-        Utils.Text("<color=#cccccccc>Auto TTS</color>", Instance.ttsBg, 0f, 0f, 128f, 32f, 24);
+        // load settings
+        AutoTTS = Settings.GetAutoTTS();
 
-        // add input field
-        Instance.field = Utils.Field("Type a chat message and send it by pressing enter", Instance.transform, 0f, -508f, 1888f, 32f, 24, Instance.OnFocusLost);
-        Instance.field.characterLimit = MAX_MESSAGE_LENGTH;
-        Instance.field.gameObject.SetActive(false);
+        // start the update cycle of typing players
+        InvokeRepeating("UpdateTyping", 0f, .25f);
 
         // moving elements to display correctly on wide screens
         WidescreenFix.MoveUp(Instance.transform);
     }
 
-    public void Start() => InvokeRepeating("UpdateTyping", 0f, .25f);
-
-    public void Update()
+    private void Update()
     {
         // interpolate the transparency of the message list
         listBg.alpha = Mathf.Lerp(listBg.alpha, Shown || Time.time - lastMessageTime < 5f ? 1f : 0f, Time.deltaTime * 5f);
@@ -106,7 +93,7 @@ public class Chat : MonoSingleton<Chat>
         // update auto TTS sign width and position
         float width = typingBg.gameObject.activeSelf ? typingBg.anchoredPosition.x + typingBg.sizeDelta.x / 2f + 80f : -880f;
 
-        ttsBg.gameObject.SetActive(autoTTS && Shown);
+        ttsBg.gameObject.SetActive(AutoTTS && Shown);
         ttsBg.anchoredPosition = new Vector2(width, typingBg.anchoredPosition.y);
     }
 
@@ -138,10 +125,12 @@ public class Chat : MonoSingleton<Chat>
     /// <summary> Toggles visibility of chat. </summary>
     public void Toggle()
     {
+        // if another menu is open, then nothing needs to be done
+        if (UI.AnyJaket() && !Shown) return;
+
         // if the player is typing, then nothing needs to be done
         if (field.text != "" && field.isFocused) return;
 
-        // no comments
         field.gameObject.SetActive(Shown = !Shown && LobbyController.Lobby != null);
         Movement.UpdateState();
 
@@ -202,32 +191,7 @@ public class Chat : MonoSingleton<Chat>
         // if the message is not empty, then send it to other players and remember it
         if (message != "")
         {
-            // handle TTS command
-            if (message.StartsWith("/tts-volume "))
-            {
-                if (int.TryParse(message.Substring("/tts-volume ".Length), out int value))
-                {
-                    int clamped = Mathf.Clamp(value, 0, 100);
-                    DollAssets.Mixer?.SetFloat("Volume", clamped / 2 - 30); // the value should be between -30 and 20 decibels
-
-                    ReceiveChatMessage($"<color=#00FF00>TTS volume is set to {clamped}.</color>");
-                }
-                else
-                    ReceiveChatMessage("<color=red>Failed to parse value. It must be an integer in the range from 0 to 100.</color>");
-            }
-            else if (message == "/tts on")
-            {
-                autoTTS = true;
-                ReceiveChatMessage("<color=#00FF00>Auto TTS enabled.</color>");
-            }
-            else if (message == "/tts off")
-            {
-                autoTTS = false;
-                ReceiveChatMessage("<color=red>Auto TTS disabled.</color>");
-            }
-            //  or send message to the chat
-            else LobbyController.Lobby?.SendChatString(autoTTS ? "/tts " + message : message);
-
+            if (!Commands.Handler.Handle(message)) LobbyController.Lobby?.SendChatString(AutoTTS ? "/tts " + message : message);
             messages.Insert(0, message);
         }
 
@@ -236,7 +200,7 @@ public class Chat : MonoSingleton<Chat>
         messageIndex = -1;
 
         // if the message was sent not by the button that toggles the chat, then need to do it yourself
-        if (!Input.GetKeyDown(UKAPI.GetKeyBind("CHAT").keyBind)) Toggle();
+        if (!Input.GetKeyDown(Settings.Chat)) Toggle();
     }
 
     #region receive
@@ -251,7 +215,7 @@ public class Chat : MonoSingleton<Chat>
         foreach (RectTransform child in list) child.anchoredPosition += new Vector2(0f, height);
 
         // add new message
-        var text = Utils.Text(message, list, 0f, 16f + height / 2f, WIDTH - 32f, height, 16, align: TextAnchor.MiddleLeft).transform as RectTransform;
+        var text = UI.Text(message, list, 0f, 16f + height / 2f, WIDTH - 32f, height, size: 16, align: TextAnchor.MiddleLeft).rectTransform;
         text.anchorMin = text.anchorMax = new(.5f, 0f);
         text.localScale = new(1f, 1f, 1f); // unity scales text crookedly for small resolutions, which is why it is incorrectly located
 
@@ -259,8 +223,8 @@ public class Chat : MonoSingleton<Chat>
         if (list.childCount > MESSAGES_SHOWN) DestroyImmediate(list.GetChild(0).gameObject);
 
         // scale chat panel
-        var firstChild = list.GetChild(0) as RectTransform;
-        list.sizeDelta = new(WIDTH, firstChild.anchoredPosition.y + firstChild.sizeDelta.y / 2f + 16f);
+        var first = list.GetChild(0) as RectTransform;
+        list.sizeDelta = new(WIDTH, first.anchoredPosition.y + first.sizeDelta.y / 2f + 16f);
         list.anchoredPosition = new(-644f, -428f + list.sizeDelta.y / 2f + WidescreenFix.Offset);
 
         // save the time the message was received to give the player time to read it
@@ -276,7 +240,7 @@ public class Chat : MonoSingleton<Chat>
     {
         if (author.IsMe)
             // play the message in the player's position if he is its author
-            SamAPI.TryPlay(message, Networking.LocalPlayer.voice);
+            SamAPI.TryPlay(message, Networking.LocalPlayer.Voice);
         else
             // or find the author among other players and play the sound from them
             Networking.EachPlayer(player =>
@@ -289,10 +253,10 @@ public class Chat : MonoSingleton<Chat>
     }
 
     /// <summary> Sends some useful information to the chat. </summary>
-    public void Hello()
+    public void Hello(bool force = false)
     {
         // if the last owner of the lobby is not equal to 0, then the lobby is not created for the first time and there is no need to print info
-        if (LobbyController.LastOwner != 0L) return;
+        if (LobbyController.LastOwner != 0L && !force) return;
 
         void SendMsg(string msg) => ReceiveChatMessage("0096FF", BOT_PREFIX + "xzxADIxzx", msg, oneline: true);
         void SendTip(string tip) => SendMsg($"<size=14>* {tip}</size>");
@@ -300,10 +264,9 @@ public class Chat : MonoSingleton<Chat>
         SendMsg("Hello, it's me, the main developer of this mod.");
         SendMsg("I just wanted to give some tips about Jaket:");
 
-        SendTip("Go to the control settings, there are new elements");
-        SendTip($"Hold {Movement.Instance.EmojiBind.keyBind} to open the Emotion Wheel");
-        SendTip("Try typing to chat /tts <color=#cccccccc>[message]</color> or /tts <color=#cccccccc>[on/off]</color>");
-        SendTip("Use /tts-volume <color=#cccccccc>[0-100]</color> to keep ur ears comfortable");
+        SendTip($"Try pressing the {Settings.LobbyTab}, {Settings.PlayerList} and {Settings.Settingz} keys");
+        SendTip($"Hold {Settings.EmojiWheel} to open the Emotion Wheel");
+        SendTip("Try typing to chat /help");
         SendTip("Take a look at the bestiary, there's a surprise :3");
 
         SendMsg("Cheers~ ♡");

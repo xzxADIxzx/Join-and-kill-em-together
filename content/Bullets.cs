@@ -23,8 +23,7 @@ public class Bullets
     /// <summary> Loads all bullets for future use. </summary>
     public static void Load()
     {
-        var all = Weapons.Prefabs;
-        foreach (var weapon in all)
+        foreach (var weapon in Weapons.Prefabs)
         {
             if (weapon.TryGetComponent<Revolver>(out var revolver))
             {
@@ -68,8 +67,8 @@ public class Bullets
         Prefabs.RemoveAll(bullet => bullet == null);
 
         // create damage conventions
-        SynchronizedBullet = Utils.Object("Synchronized Bullet", Plugin.Instance.transform);
-        NetworkDamage = Utils.Object("Network Damage", Plugin.Instance.transform);
+        SynchronizedBullet = UI.Object("Synchronized Bullet");
+        NetworkDamage = UI.Object("Network Damage");
     }
 
     #region index
@@ -180,7 +179,8 @@ public class Bullets
     public static void DealDamage(EnemyIdentifier enemyId, Reader r)
     {
         r.Byte(); // skip team because enemies don't have a team
-        if (r.Bool()) enemyId.hitter = Melee[0]; // if the damage was caused by a melee, then this must be reported to EnemyIdentifier
+        byte id = r.Byte();
+        if (id != 0xFF) enemyId.hitter = Melee[id]; // if the damage was caused by a melee, then this must be reported to EnemyIdentifier
 
         // dealing direct damage
         enemyId.DeliverDamage(enemyId.gameObject, r.Vector(), Vector3.zero, r.Float(), r.Bool(), r.Float(), NetworkDamage);

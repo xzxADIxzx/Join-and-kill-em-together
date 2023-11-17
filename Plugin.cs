@@ -3,9 +3,7 @@
 using BepInEx;
 using BepInEx.Bootstrap;
 using HarmonyLib;
-using UMM;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 using Jaket.Assets;
 using Jaket.Content;
@@ -37,19 +35,19 @@ public class Plugin : BaseUnityPlugin
     {
         // save an instance for later use
         Instance = this;
-
         // rename the game object for a more presentable look
         gameObject.name = "Jaket";
 
-        // adds an event listener for plugin initialization
-        SceneManager.sceneLoaded += (scene, mode) => Init();
+        // adds an event listener to the scene loading
+        Events.Load();
+        // interface components and assets bundle can only be loaded from the main menu
+        Events.OnMainMenuLoaded += Init;
     }
 
     /// <summary> Initializes the plugin if it has not already been initialized. </summary>
     public void Init()
     {
-        // ui components can only be initialized in the main menu, because they need some resources
-        if (Initialized || SceneHelper.CurrentScene != "Main Menu") return;
+        if (Initialized) return;
 
         // notify players about the availability of an update so that they no longer whine to me about something not working
         Version.Check4Update();
@@ -58,10 +56,12 @@ public class Plugin : BaseUnityPlugin
         UltrapainLoaded = Chainloader.PluginInfos.ContainsKey("com.eternalUnion.ultraPain");
 
         // initialize content components
+        Commands.Commands.Load();
         DollAssets.Load();
         Enemies.Load();
         Weapons.Load();
         Bullets.Load(); // load it after weapons
+        Items.Load();
 
         // initialize networking components
         Networking.Load(); // load before lobby controller
@@ -80,17 +80,8 @@ public class Plugin : BaseUnityPlugin
         // initialize harmony and patch all the necessary classes
         new Harmony("Should I write something here?").PatchAll();
 
-        // initialize keybinds
-        UKAPI.GetKeyBind("LOBBY TAB", KeyCode.F1).onPerformInScene.AddListener(LobbyTab.Instance.Toggle);
-        UKAPI.GetKeyBind("PLAYER LIST", KeyCode.F2).onPerformInScene.AddListener(PlayerList.Instance.Toggle);
-        UKAPI.GetKeyBind("PLAYER INDICATOR", KeyCode.Z).onPerformInScene.AddListener(PlayerIndicators.Instance.Toggle);
-        UKAPI.GetKeyBind("CHAT", KeyCode.Return).onPerformInScene.AddListener(Chat.Instance.Toggle);
-        UKAPI.GetKeyBind("SCROOL MESSAGES UP", KeyCode.UpArrow).onPerformInScene.AddListener(() => Chat.Instance.ScrollMessages(true));
-        UKAPI.GetKeyBind("SCROOL MESSAGES DOWN", KeyCode.DownArrow).onPerformInScene.AddListener(() => Chat.Instance.ScrollMessages(false));
-        UKAPI.GetKeyBind("INITIATE SELF-DESTRUCTION", KeyCode.K).onPerformInScene.AddListener(Networking.LocalPlayer.SelfDestruct);
-
         // mark the plugin as initialized and log a message about it
         Initialized = true;
-        Debug.Log("Jaket successfully initialized.");
+        Debug.Log("Jaket successfully initialized!");
     }
 }

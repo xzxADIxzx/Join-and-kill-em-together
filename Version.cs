@@ -1,6 +1,7 @@
 namespace Jaket;
 
 using System;
+using UnityEngine;
 using UnityEngine.Networking;
 
 public class Version
@@ -15,13 +16,13 @@ public class Version
     public const string TAG = "\"tag_name\": \"V", NAME = "\"name\": \"";
 
     /// <summary> Notifies the player that their version of the mod is outdated. </summary>
-    public static void Notify(string latest, string name) => HudMessageReceiver.Instance.SendHudMessage(
+    public static void Notify(string latest, string name) => UI.UI.SendMsg(
 $@"Your version of the Jaket mod is <color=orange>outdated</color>!
 Update the poor little mod <color=#FF66FF>please</color> :3
 <size=20><color=grey>{CURRENT} -> {latest} {name}</color></size>");
 
     /// <summary> Notifies the player that their version of the mod doesn't match the host's one. </summary>
-    public static void NotifyHost() => HudMessageReceiver.Instance.SendHudMessage(
+    public static void NotifyHost() => UI.UI.SendMsg(
 $@"<size=20>Your version of the Jaket mod doesn't match the host's one!</size>
 This may lead to <color=orange>dire consequences</color> D:");
 
@@ -51,5 +52,14 @@ This may lead to <color=orange>dire consequences</color> D:");
         name = result.Substring(nameIndex += NAME.Length, result.IndexOf('"', nameIndex) - nameIndex);
 
         return true;
+    }
+
+    /// <summary> Adds the mod version to the bottom left edge of the screen. </summary>
+    public static void Label(Transform parent)
+    {
+        UI.UI.Table("Version", parent, -768f, -498f, 352f, 52f, table =>
+        {
+            UI.UI.Text($"Jaket version is {CURRENT}", table, 0f, 0f, color: Color.gray, size: 20);
+        });
     }
 }

@@ -2,7 +2,6 @@ namespace Jaket.World;
 
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 using Jaket.Content;
 using Jaket.IO;
@@ -11,7 +10,6 @@ using Jaket.Net.EntityTypes;
 using Jaket.UI;
 
 /// <summary> Class that manages objects in the level, such as doors and etc. </summary>
-[ConfigureSingleton(SingletonFlags.NoAutoInstance)]
 public class World : MonoSingleton<World>
 {
     /// <summary> List of all doors in the level, updated when a level is loaded. </summary>
@@ -35,10 +33,10 @@ public class World : MonoSingleton<World>
     public static void Load()
     {
         // initialize the singleton
-        Utils.Object("World", Plugin.Instance.transform).AddComponent<World>();
+        UI.Object("World").AddComponent<World>();
 
         // updates the list of objects in the level when the scene is loaded
-        SceneManager.sceneLoaded += (scene, mode) => Instance.Recache();
+        Events.OnLoaded += Instance.Recache;
 
         // create activators to synchronize different things in the level
         World.Instance.activators.AddRange(new Activator[]

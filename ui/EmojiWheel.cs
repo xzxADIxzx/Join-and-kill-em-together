@@ -2,7 +2,6 @@ namespace Jaket.UI;
 
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI.Extensions;
 
 using Jaket.Assets;
@@ -11,11 +10,8 @@ using Jaket.World;
 using static System.Array;
 
 /// <summary> Wheel for selecting emotions that will be displayed as an animation of the player doll. </summary>
-[ConfigureSingleton(SingletonFlags.NoAutoInstance)]
-public class EmojiWheel : MonoSingleton<EmojiWheel>
+public class EmojiWheel : CanvasSingleton<EmojiWheel>
 {
-    /// <summary> Whether emoji wheel is visible or hidden. </summary>
-    public bool Shown;
     /// <summary> Whether the second page of emoji wheel is open. </summary>
     public bool Second;
 
@@ -34,19 +30,11 @@ public class EmojiWheel : MonoSingleton<EmojiWheel>
     /// <summary> How long is the current segment selected. </summary>
     private float holdTime;
 
-    /// <summary> Creates a singleton of emoji wheel. </summary>
-    public static void Build()
+    private void Start()
     {
-        // initialize the singleton and create a canvas
-        UI.Canvas("Emoji Wheel", Plugin.Instance.transform).AddComponent<EmojiWheel>().gameObject.SetActive(false);
+        UI.CircleShadow("Shadow", transform);
+        fill = UI.CircleImage("Fill", transform, 0f, 0f, 1f / 6f, 240, 0f);
 
-        // hide emoji wheel once loading a scene
-        SceneManager.sceneLoaded += (scene, mode) => Instance.gameObject.SetActive(Instance.Shown = false);
-
-        // build emoji wheel
-        UI.CircleShadow("Shadow", Instance.transform);
-
-        Instance.fill = UI.CircleImage("Fill", Instance.transform, 0f, 0f, 1f / 6f, 240, 0f);
         for (int i = 0; i < 6; i++)
         {
             float deg = 150f - i * 60f, rad = deg * Mathf.Deg2Rad;
@@ -54,22 +42,22 @@ public class EmojiWheel : MonoSingleton<EmojiWheel>
 
             var segment = new WheelSegment
             {
-                segment = UI.CircleImage("Segment " + i, Instance.transform, 150f, 150f, 1f / 6f, i * 60, 8f, true),
-                divider = UI.CircleImage("Divider " + i, Instance.transform, 640f, 640f, .005f, i * 60, 245f),
+                segment = UI.CircleImage("Segment " + i, transform, 150f, 150f, 1f / 6f, i * 60, 8f, true),
+                divider = UI.CircleImage("Divider " + i, transform, 640f, 640f, .005f, i * 60, 245f),
 
-                iconGlow = UI.Image("Glow", Instance.transform, pos.x, pos.y, 285f, 150f),
-                icon = UI.Image("Icon", Instance.transform, pos.x, pos.y, 285f, 150f),
+                iconGlow = UI.Image("Glow", transform, pos.x, pos.y, 285f, 150f),
+                icon = UI.Image("Icon", transform, pos.x, pos.y, 285f, 150f),
             };
 
-            segment.icon.rectTransform.localEulerAngles = new(0f, 0f, SegmentRotations[i]);
-            segment.iconGlow.rectTransform.localEulerAngles = new(0f, 0f, SegmentRotations[i]);
-
-            Instance.Segments.Add(segment);
+            segment.icon.transform.localEulerAngles = segment.iconGlow.transform.localEulerAngles = new(0f, 0f, SegmentRotations[i]);
             segment.SetActive(false);
+
+            Segments.Add(segment);
         }
+        UpdateIcons();
     }
 
-    public void Update()
+    private void Update()
     {
         // the weapon wheel should be unavailable while the emoji wheel is open
         WeaponWheel.Instance.gameObject.SetActive(false);
@@ -121,20 +109,23 @@ public class EmojiWheel : MonoSingleton<EmojiWheel>
                 Segments[i].iconGlow.sprite = DollAssets.EmojiGlows[j];
             }
         }
-        else Instance.Invoke("UpdateIcons", 5f);
+        else Invoke("UpdateIcons", 5f);
     }
 
     /// <summary> Shows emoji selection wheel and resets the selected segment. </summary>
     public void Show()
     {
+        // if another menu is open, then nothing needs to be done
+        if (UI.AnyJaket()) return;
+
         // the wheel should be inaccessible in the tunnel between levels
-        if (FinalRank.Instance.gameObject.activeInHierarchy || WeaponWheel.Instance.gameObject.activeSelf) return;
+        if (FinalRank.Instance.gameObject.activeInHierarchy) return;
 
         gameObject.SetActive(Shown = true);
         CameraController.Instance.enabled = false;
 
         Second = false;
-        UpdateIcons();
+        if (Segments.Count > 0) UpdateIcons();
 
         lastSelected = selected = -1;
         direction = Vector2.zero;

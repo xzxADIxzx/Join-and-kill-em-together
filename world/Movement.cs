@@ -2,30 +2,31 @@ namespace Jaket.World;
 
 using GameConsole;
 using System.Collections;
-using UMM;
 using UnityEngine;
 
 using Jaket.Assets;
 using Jaket.Content;
+using Jaket.IO;
 using Jaket.Net;
 using Jaket.UI;
+using Jaket.UI.Elements;
 
 /// <summary> Class responsible for additions to control and local display of emotions. </summary>
 public class Movement : MonoSingleton<Movement>
 {
     /// <summary> Reference to local player's rigidbody. </summary>
-    private static Rigidbody rb { get => NewMovement.Instance.rb; }
+    private static Rigidbody rb => NewMovement.Instance.rb;
+    /// <summary> Reference to camera controller. </summary>
+    private static CameraController cc => CameraController.Instance;
     /// <summary> Environmental mask needed to prevent the skateboard from riding on water. </summary>
     private static int environmentMask = LayerMaskDefaults.Get(LMD.Environment);
 
-    /// <summary> Emoji selection wheel keybind. </summary>
-    public UKKeyBind EmojiBind;
     /// <summary> Current emotion preview, can be null. </summary>
     public GameObject EmojiPreview;
     /// <summary> An array containing the length of all emotions in seconds. </summary>
     public float[] EmojiLegnth = { 2.458f, 4.708f, 1.833f, 2.875f, 0f, 9.083f, -1f, 12.125f, -1f, 3.292f, 0f, -1f };
-    /// <summary> Start time of the current emotion. </summary>
-    public float EmojiStart;
+    /// <summary> Start time of the current emotion and hold time of the emotion wheel key. </summary>
+    public float EmojiStart, HoldTime;
     /// <summary> Id of the currently playing emoji. </summary>
     public byte Emoji = 0xFF, Rps;
 
@@ -36,24 +37,64 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Third person camera rotation. </summary>
     private Vector2 rotation;
 
+    /// <summary> Last pointer created by the player. </summary>
+    public Pointer Pointer;
+
     /// <summary> Creates a singleton of movement. </summary>
     public static void Load()
     {
         // initialize the singleton
-        Utils.Object("Movement", Plugin.Instance.transform).AddComponent<Movement>();
+        UI.Object("Movement").AddComponent<Movement>();
+
+        // interrupt emoji to prevent some bugs
+        Events.OnLoaded += () => Instance.StartEmoji(0xFF, false);
     }
 
-    public void LateUpdate() // late update is needed in order to overwrite the time scale value
+    private void Update()
     {
-        // find or create a keybind if it doesn't already exist
-        EmojiBind ??= UKAPI.GetKeyBind("EMOJI WHEEL", KeyCode.B);
+        // mod and game menus may conflict
+        if (UI.AnyBuiltIn() || Settings.Instance.Rebinding) return;
 
-        // if the emoji wheel is invisible and the key has been pressed for 0.25 seconds, then show it
-        if (!EmojiWheel.Instance.Shown && EmojiBind.HoldTime > .25f) EmojiWheel.Instance.Show();
+        if (Input.GetKeyDown(Settings.LobbyTab)) LobbyTab.Instance.Toggle();
+        if (Input.GetKeyDown(Settings.PlayerList)) PlayerList.Instance.Toggle();
+        if (Input.GetKeyDown(Settings.Settingz)) Settings.Instance.Toggle();
 
-        // if the emoji wheel is visible, but the key is not pressed, then hide it
-        if (EmojiWheel.Instance.Shown && !EmojiBind.IsPressedInScene) EmojiWheel.Instance.Hide();
+        if (Input.GetKeyDown(Settings.PlayerIndicators)) PlayerIndicators.Instance.Toggle();
+        if (Input.GetKeyDown(Settings.PlayerInfo)) PlayerInfo.Instance?.Toggle();
+        if (Input.GetKeyDown(Settings.Chat)) Chat.Instance.Toggle();
+        if (Input.GetKeyDown(Settings.ScrollUp)) Chat.Instance.ScrollMessages(true);
+        if (Input.GetKeyDown(Settings.ScrollDown)) Chat.Instance.ScrollMessages(false);
 
+        if (Input.GetKeyDown(Settings.Pointer) && !UI.AnyJaket() &&
+            Physics.Raycast(cc.transform.position, cc.transform.forward, out var hit, float.MaxValue, environmentMask))
+        {
+            if (Pointer != null) Pointer.Lifetime = 4.5f;
+            Pointer = Pointer.Spawn(Networking.LocalPlayer.Team, hit.point, hit.normal);
+
+            if (LobbyController.Lobby != null) Networking.Redirect(Writer.Write(w =>
+            {
+                w.Id(Networking.LocalPlayer.Id);
+                w.Vector(hit.point);
+                w.Vector(hit.normal);
+            }), PacketType.Point);
+        }
+
+        if (Input.GetKey(Settings.EmojiWheel))
+        {
+            HoldTime += Time.deltaTime; // if the key has been pressed for 0.25 seconds, show the emoji wheel
+            if (!EmojiWheel.Shown && HoldTime > .25f) EmojiWheel.Instance.Show();
+        }
+        else
+        {
+            HoldTime = 0f;
+            if (EmojiWheel.Shown) EmojiWheel.Instance.Hide();
+        }
+
+        if (Input.GetKeyDown(Settings.SelfDestruction) && !UI.AnyMovementBlocking()) NewMovement.Instance.GetHurt(1000, false, 0f);
+    }
+
+    private void LateUpdate() // late update is needed to overwrite the time scale value and camera rotation
+    {
         // skateboard logic
         if (Emoji == 0x0B)
         {
@@ -72,7 +113,7 @@ public class Movement : MonoSingleton<Movement>
                 player.position = new(player.position.x, hit2.point.y + 1.5f, player.position.z);
 
             // turn to the sides
-            if (!Chat.Instance.Shown)
+            if (!UI.AnyMovementBlocking())
             {
                 float dir = InputManager.Instance.InputSource.Move.ReadValue<Vector2>().x;
                 player.Rotate(new(0f, dir * 120f * Time.deltaTime, 0f));
@@ -83,10 +124,10 @@ public class Movement : MonoSingleton<Movement>
         if (Emoji != 0xFF)
         {
             // cancel animation if space is pressed
-            if (Input.GetKey(KeyCode.Space) && !Chat.Instance.Shown) StartEmoji(0xFF);
+            if (Input.GetKey(KeyCode.Space) && !Chat.Shown) StartEmoji(0xFF);
 
             // rotate the camera according to mouse sensitivity
-            if (!Chat.Instance.Shown && !LobbyTab.Instance.Shown && !PlayerList.Instance.Shown) // TODO replace with UIB.Shown
+            if (!UI.AnyJaket())
             {
                 rotation += InputManager.Instance.InputSource.Look.ReadValue<Vector2>() * OptionsManager.Instance.mouseSensitivity / 10f;
                 rotation.y = Mathf.Clamp(rotation.y, 5f, 170f);
@@ -95,7 +136,7 @@ public class Movement : MonoSingleton<Movement>
             // turn on gravity, because if the taunt was launched on the ground, then it is disabled by default
             rb.useGravity = true;
 
-            var cam = CameraController.Instance.cam.transform;
+            var cam = cc.cam.transform;
             var player = NewMovement.Instance.transform.position + new Vector3(0f, 1f, 0f);
 
             // move the camera position towards the start if the animation has just started, or towards the end if the animation ends
@@ -119,7 +160,7 @@ public class Movement : MonoSingleton<Movement>
         // ultrasoap
         if (SceneHelper.CurrentScene != "Main Menu" && !NewMovement.Instance.dead)
         {
-            rb.constraints = Chat.Instance.Shown || OptionsManager.Instance.paused || Console.IsOpen
+            rb.constraints = UI.AnyMovementBlocking()
                 ? RigidbodyConstraints.FreezeAll
                 : Instance.Emoji == 0xFF || Instance.Emoji == 0x0B // skateboard
                     ? RigidbodyConstraints.FreezeRotation
@@ -131,10 +172,19 @@ public class Movement : MonoSingleton<Movement>
         if (LobbyController.Lobby == null) return;
 
         // pause stops time and weapon wheel slows it down, but in multiplayer everything should be real-time
-        Time.timeScale = 1f;
+        if (Settings.DisableFreezeFrames || UI.AnyBuiltIn()) Time.timeScale = 1f;
 
         // reset slam force if the player is riding on a rocket
         if (NewMovement.Instance.ridingRocket != null) NewMovement.Instance.slamForce = 0f;
+
+        // disable cheats if they are prohibited in the lobby
+        if (!LobbyController.CheatsAllowed && CheatsController.Instance.cheatsEnabled)
+        {
+            CheatsController.Instance.cheatsEnabled = false;
+            CheatsManager.Instance.transform.GetChild(0).GetChild(0).gameObject.SetActive(false);
+
+            UI.SendMsg("Cheats are prohibited in this lobby!");
+        }
     }
 
     #region toggling
@@ -142,20 +192,18 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Updates the state machine: toggles movement, cursor and third-person camera. </summary>
     public static void UpdateState()
     {
-        ToggleMovement(!Chat.Instance.Shown && Instance.Emoji == 0xFF);
-        ToggleCursor(Chat.Instance.Shown || LobbyTab.Instance.Shown || PlayerList.Instance.Shown);
+        ToggleMovement(!UI.AnyMovementBlocking() && Instance.Emoji == 0xFF);
+        ToggleCursor(UI.AnyJaket());
         ToggleHud(Instance.Emoji == 0xFF);
 
-        // block camera rotation
-        CameraController.Instance.enabled = CameraController.Instance.activated =
-            !Chat.Instance.Shown && !LobbyTab.Instance.Shown && !PlayerList.Instance.Shown && Instance.Emoji == 0xFF;
+        // block camera rotation & weapon fire
+        cc.enabled = cc.activated = GunControl.Instance.activated = !UI.AnyJaket() && Instance.Emoji == 0xFF;
     }
 
     /// <summary> Toggles the ability to move, used in the chat and etc. </summary>
     public static void ToggleMovement(bool enable)
     {
-        NewMovement.Instance.enabled = GunControl.Instance.enabled = FistControl.Instance.enabled =
-        FistControl.Instance.activated = HookArm.Instance.enabled = enable;
+        NewMovement.Instance.enabled = FistControl.Instance.enabled = FistControl.Instance.activated = HookArm.Instance.enabled = enable;
 
         // put the hook back in place
         if (!enable) HookArm.Instance.Cancel();
@@ -198,7 +246,7 @@ public class Movement : MonoSingleton<Movement>
         anim.SetInteger("Rps", Rps);
 
         // apply team to emotion preview
-        var team = Networking.LocalPlayer.team;
+        var team = Networking.LocalPlayer.Team;
         var mat1 = EmojiPreview.transform.GetChild(0).GetChild(4).GetComponent<Renderer>().materials[1];
         var mat2 = EmojiPreview.transform.GetChild(0).GetChild(3).GetComponent<Renderer>().materials[0];
 
@@ -210,13 +258,13 @@ public class Movement : MonoSingleton<Movement>
     }
 
     /// <summary> Triggers an emoji with the given id. </summary>
-    public void StartEmoji(byte id)
+    public void StartEmoji(byte id, bool updateState = true)
     {
         EmojiStart = Time.time;
         Emoji = id; // save id for synchronization over the network
 
         // toggle movement and third-person camera
-        UpdateState();
+        if (updateState) UpdateState();
 
         // destroy the old preview so they don't stack
         Destroy(EmojiPreview);
@@ -226,14 +274,14 @@ public class Movement : MonoSingleton<Movement>
         else PreviewEmoji(id);
 
         // telling how to interrupt an emotion
-        HudMessageReceiver.Instance.SendHudMessage("Press <color=orange>Space</color> to interrupt the emotion", silent: true);
+        UI.SendMsg("Press <color=orange>Space</color> to interrupt the emotion", true);
 
         // stop sliding so that the preview is not underground
         NewMovement.Instance.playerCollider.height = 3.5f;
         NewMovement.Instance.gc.transform.localPosition = new(0f, -1.256f, 0f);
 
         // rotate the third person camera in the same direction as the first person camera
-        rotation = new(CameraController.Instance.rotationY, CameraController.Instance.rotationX + 90f);
+        rotation = new(cc.rotationY, cc.rotationX + 90f);
         position = new();
 
         StopCoroutine("ClearEmoji");

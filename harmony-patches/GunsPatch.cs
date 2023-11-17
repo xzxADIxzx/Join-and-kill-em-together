@@ -9,19 +9,20 @@ using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net;
 using Jaket.Net.EntityTypes;
+using Jaket.World;
 
 [HarmonyPatch(typeof(GunControl), nameof(GunControl.SwitchWeapon), typeof(int), typeof(List<GameObject>), typeof(bool), typeof(bool), typeof(bool))]
 public class GunSwitchPatch
 {
     // caching different things for optimization
-    static void Postfix() => Networking.LocalPlayer.UpdateWeapon();
+    static void Postfix() => Events.OnWeaponChanged.Fire();
 }
 
 [HarmonyPatch(typeof(GunControl), nameof(GunControl.ForceWeapon))]
 public class GunForcePatch
 {
     // picked weapons also need to be painted
-    static void Postfix() => Networking.LocalPlayer.UpdateWeapon();
+    static void Postfix() => Events.OnWeaponChanged.Fire();
 }
 
 [HarmonyPatch(typeof(GunColorGetter), nameof(GunColorGetter.UpdateColor))]
@@ -51,8 +52,8 @@ public class PunchPatch
             w.Id(SteamClient.SteamId);
             w.Byte(0);
 
-            w.Bool(Networking.LocalPlayer.parried);
-            Networking.LocalPlayer.parried = false;
+            w.Bool(Networking.LocalPlayer.Parried);
+            Networking.LocalPlayer.Parried = false;
         }), PacketType.Punch);
     }
 }
@@ -61,7 +62,7 @@ public class PunchPatch
 public class ParryPatch
 {
     // save parry for different animations
-    static void Prefix() => Networking.LocalPlayer.parried = true;
+    static void Prefix() => Networking.LocalPlayer.Parried = true;
 }
 
 [HarmonyPatch(typeof(HookArm), "Update")]
@@ -76,6 +77,6 @@ public class HookPatch
         if (!LobbyController.IsOwner) ___lightTarget = false;
 
         // synchronize hook position
-        Networking.LocalPlayer.hook = ___forcingFistControl ? ___hookPoint : Vector3.zero;
+        Networking.LocalPlayer.Hook = ___forcingFistControl ? ___hookPoint : Vector3.zero;
     }
 }

@@ -19,6 +19,26 @@ public class Server : Endpoint
 
             // read player data
             entities[sender]?.Read(r);
+
+            // read item data if available
+            if (r.Bool() && entities.TryGetValue(r.Id(), out var entity) && entity is Item item && item != null) item.Read(r);
+        });
+
+        Listen(PacketType.SpawnEntity, r =>
+        {
+            // the client asked to spawn the entity
+            ulong id = Entities.NextId();
+            byte type = r.Byte();
+
+            // but we need to make sure they can spawn it
+            if ((type > 32 && type < 35) || type > 71) return;
+            var entity = Entities.Get(id, (EntityType)type);
+
+            if (entity != null)
+            {
+                entity.transform.position = r.Vector();
+                entities[id] = entity;
+            }
         });
 
         ListenAndRedirect(PacketType.SpawnBullet, Bullets.Read);
@@ -27,8 +47,12 @@ public class Server : Endpoint
 
         ListenAndRedirect(PacketType.Punch, r =>
         {
-            var entity = entities[r.Id()];
-            if (entity is RemotePlayer player) player.Punch(r);
+            if (entities[r.Id()] is RemotePlayer player) player?.Punch(r);
+        });
+
+        ListenAndRedirect(PacketType.Point, r =>
+        {
+            if (entities[r.Id()] is RemotePlayer player) player?.Point(r);
         });
     }
 

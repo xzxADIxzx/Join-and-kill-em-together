@@ -44,7 +44,9 @@ public class Leviathan : Entity
         levi = GetComponent<LeviathanController>();
         animator = levi.head.GetComponent<Animator>();
 
-        if (!LobbyController.IsOwner)
+        if (LobbyController.IsOwner)
+            LobbyController.ScaleHealth(ref levi.stat.health);
+        else
         {
             levi.active = levi.head.active = false;
             health.target = levi.eid.health;

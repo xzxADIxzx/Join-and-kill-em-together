@@ -11,12 +11,11 @@ using Jaket.Net.EndPoints;
 using Jaket.Net.EntityTypes;
 using Jaket.UI;
 using Jaket.World;
-using UnityEngine.SceneManagement;
 
-public class Networking : MonoBehaviour
+public class Networking : MonoSingleton<Networking>
 {
     /// <summary> Number of snapshots to be sent per second. </summary>
-    public const int SNAPSHOTS_PER_SECOND = 20;
+    public const int SNAPSHOTS_PER_SECOND = 18;
     /// <summary> Number of seconds between snapshots. </summary>
     public const float SNAPSHOTS_SPACING = 1f / SNAPSHOTS_PER_SECOND;
 
@@ -34,6 +33,8 @@ public class Networking : MonoBehaviour
     public static LocalPlayer LocalPlayer;
     /// <summary> Whether a scene is loading right now. </summary>
     public static bool Loading;
+    /// <summary> Whether multiplayer was used in the current level. </summary>
+    public static bool WasMultiplayerUsed;
 
     /// <summary> Loads server, client and event listeners. </summary>
     public static void Load()
@@ -41,16 +42,13 @@ public class Networking : MonoBehaviour
         Server.Load();
         Client.Load();
 
-        SceneManager.sceneLoaded += (scene, mode) =>
-        {
-            // if the player exits to the main menu, then this is equivalent to leaving the lobby
-            if (SceneHelper.CurrentScene == "Main Menu")
-            {
-                LobbyController.LeaveLobby();
-                return;
-            }
+        Events.OnLoaded += () => WasMultiplayerUsed = LobbyController.Lobby.HasValue;
+        Events.OnLobbyAction += () => WasMultiplayerUsed |= LobbyController.Lobby.HasValue;
 
+        Events.OnLoaded += () =>
+        {
             Clear(); // for safety
+            Loading = false;
 
             if (LobbyController.IsOwner)
             {
@@ -60,12 +58,10 @@ public class Networking : MonoBehaviour
                 // inform all players about the transition to a new level
                 Redirect(World.Instance.WriteData(), PacketType.LevelLoading);
             }
-
-            Loading = false;
         };
 
         // fires when accepting an invitation via the Steam overlay
-        SteamFriends.OnGameLobbyJoinRequested += LobbyController.JoinLobby;
+        SteamFriends.OnGameLobbyJoinRequested += (lobby, id) => LobbyController.JoinLobby(lobby);
 
         SteamMatchmaking.OnChatMessage += (lobby, member, message) =>
         {
@@ -81,9 +77,13 @@ public class Networking : MonoBehaviour
         {
             // send some useful information to the chat so that players know about the mod's features
             Chat.Instance.Hello();
+            // turn on player indicators & info because many don't even know about their existence
+            PlayerIndicators.Instance.gameObject.SetActive(PlayerIndicators.Shown = true);
+            if (!PlayerInfo.Shown) PlayerInfo.Instance.Toggle();
 
-            // destroy all entities, since the player could join from another lobby
+            // destroy all entities, since the player could join from another lobby, and sync all items
             Clear();
+            Items.SyncAll();
 
             if (LobbyController.IsOwner)
                 // the lobby has just been created, so just add the local player to the list of entities
@@ -107,7 +107,7 @@ public class Networking : MonoBehaviour
             lobby.SendChatString($"<system><color=#00FF00>Player {member.Name} joined!</color>");
 
             // confirm the connection with the player
-            SteamNetworking.AcceptP2PSessionWithUser(lobby.Owner.Id);
+            SteamNetworking.AcceptP2PSessionWithUser(member.Id);
 
             // send the current scene name to the player
             Send(member.Id, World.Instance.WriteData(), PacketType.LevelLoading);
@@ -116,27 +116,25 @@ public class Networking : MonoBehaviour
         SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) =>
         {
             // send notification to chat
-            if (LobbyController.IsOwner) lobby.SendChatString($"<system><color=red>Player {member.Name} left!</color>");
+            if (LobbyController.IsOwner && LobbyController.LastKicked != member.Id)
+                lobby.SendChatString($"<system><color=red>Player {member.Name} left!</color>");
 
             // kill the player doll and hide the nickname above
             if (Entities.TryGetValue(member.Id, out var entity) && entity != null && entity is RemotePlayer player)
             {
                 player.health.target = 0f;
-                player.canvas.SetActive(false);
+                player.Header.Hide();
 
                 // replace the entity with null so that the indicators no longer point to it
                 Entities[member.Id] = null;
             }
-
-            // remove the exited player indicator
-            PlayerIndicators.Instance.Rebuild();
         };
 
         // create a local player to sync player data
-        LocalPlayer = Utils.Object("Local Player", Plugin.Instance.transform).AddComponent<LocalPlayer>();
+        LocalPlayer = UI.Object("Local Player").AddComponent<LocalPlayer>();
 
         // create an object to update the network logic
-        Utils.Object("Networking", Plugin.Instance.transform).AddComponent<Networking>();
+        UI.Object("Networking").AddComponent<Networking>();
     }
 
     /// <summary> Destroys all network objects and clears lists. </summary>
@@ -149,8 +147,7 @@ public class Networking : MonoBehaviour
         Bosses.Clear();
     }
 
-    // TODO create a separate thread to increase fps?
-    public void Awake() => InvokeRepeating("NetworkUpdate", 0f, SNAPSHOTS_SPACING);
+    private void Start() => InvokeRepeating("NetworkUpdate", 0f, SNAPSHOTS_SPACING);
 
     /// <summary> Core network logic. Part of it is moved to the server and the client. </summary>
     public void NetworkUpdate()
@@ -221,7 +218,7 @@ public class Networking : MonoBehaviour
 
     /// <summary> Returns the team of the given friend. </summary>
     public static Team GetTeam(Friend friend) => friend.IsMe
-        ? LocalPlayer.team
+        ? LocalPlayer.Team
         : (Entities.TryGetValue(friend.Id, out var entity) && entity is RemotePlayer player ? player.team : Team.Yellow);
 
     /// <summary> Returns the hex color of the friend's team. </summary>

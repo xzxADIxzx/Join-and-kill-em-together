@@ -8,23 +8,26 @@ using UnityEngine;
 /// <summary> Builtin binary writer but with some extra methods for convenience. </summary>
 public class Writer
 {
+    /// <summary> Stream used to avoid memory allocation. </summary>
+    private static MemoryStream stream = new();
+    /// <summary> Singleton is needed because BinaryWriter.Close will close MemoryStream. </summary>
+    private static BinaryWriter singleton = new(stream);
+
     /// <summary> Output for writer. </summary>
     private BinaryWriter w;
-
     /// <summary> Creates a writer with the given output. </summary>
     private Writer(BinaryWriter w) => this.w = w;
 
     /// <summary> Current cursor position in the stream. </summary>
     public long Position { get => w.BaseStream.Position; set => w.BaseStream.Position = value; }
-
     /// <summary> Stream length. </summary>
     public long Length { get => w.BaseStream.Length; }
 
     /// <summary> Writes data to return byte array via writer. </summary>
     public static byte[] Write(Action<Writer> cons)
     {
-        MemoryStream stream = new();
-        using (var w = new BinaryWriter(stream)) cons(new Writer(w));
+        stream.SetLength(0);
+        cons(new Writer(singleton));
 
         return stream.ToArray();
     }

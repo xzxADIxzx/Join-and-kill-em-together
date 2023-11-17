@@ -1,13 +1,13 @@
 namespace Jaket.Net.EntityTypes;
 
-using Steamworks;
 using UnityEngine;
-using UnityEngine.UI;
 
 using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.UI;
+using Jaket.UI.Elements;
+using Jaket.World;
 
 /// <summary>
 /// Remote player that exists both on the local machine and on the remote one.
@@ -17,6 +17,9 @@ public class RemotePlayer : Entity
 {
     /// <summary> Player health, position and rotation. </summary>
     public FloatLerp health, x, y, z, bodyRotation, headRotation, hookX, hookY, hookZ;
+
+    /// <summary> Player's railgun charge. From 0 to 10. </summary>
+    public byte RailCharge;
 
     /// <summary> Transforms of the head, the hand holding a weapon and other stuff. </summary>
     public Transform head, hand, hook, hookRoot, rocket, throne;
@@ -58,25 +61,19 @@ public class RemotePlayer : Entity
     private EnemyIdentifier enemyId;
 
     /// <summary> Machine component of the player doll. </summary>
-    private Machine machine;
+    public Machine machine;
 
     /// <summary> Component responsible for playing Sam's voice. </summary>
     public AudioSource Voice;
 
-    /// <summary> Player name. Taken from Steam. </summary>
-    public string nickname;
+    /// <summary> Header displaying nickname and health. </summary>
+    public PlayerHeader Header;
+
+    /// <summary> Last pointer created by the player. </summary>
+    public Pointer pointer;
 
     /// <summary> Whether the player is typing a message. </summary>
     public bool typing;
-
-    /// <summary> Canvas containing nickname. </summary>
-    public GameObject canvas;
-
-    /// <summary> Text containing nickname. </summary>
-    private Text nicknameText;
-
-    /// <summary> Image showing health. </summary>
-    private RectTransform healthImage;
 
     private void Awake()
     {
@@ -94,7 +91,7 @@ public class RemotePlayer : Entity
         // transforms
         head = transform.GetChild(0).GetChild(1).GetChild(6).GetChild(10).GetChild(0);
         hand = transform.GetChild(0).GetChild(1).GetChild(6).GetChild(5).GetChild(0).GetChild(0);
-        hand = Utils.Object("Weapons", hand).transform;
+        hand = UI.Object("Weapons", hand).transform;
         hook = transform.GetChild(0).GetChild(1).GetChild(1);
         hookRoot = transform.GetChild(0).GetChild(1).GetChild(6).GetChild(0).GetChild(0).GetChild(0).GetChild(0);
         rocket = transform.GetChild(0).GetChild(1).GetChild(4).GetChild(1);
@@ -126,18 +123,7 @@ public class RemotePlayer : Entity
 
     private void Start()
     {
-        // nickname
-        nickname = new Friend(Id).Name;
-        float width = nickname.Length * 14f + 16f;
-
-        canvas = Utils.Canvas("Nickname", transform, width, 64f, new Vector3(0f, 5f, 0f));
-        nicknameText = Utils.Button(nickname, canvas.transform, 0f, 0f, width, 40f, 24, Color.white, TextAnchor.MiddleCenter, () => {}).GetComponentInChildren<Text>();
-
-        Utils.Image("Health Background", canvas.transform, 0f, -30f, width - 16f, 4f);
-        healthImage = Utils.Image("Health", canvas.transform, 0f, -30f, width - 16f, 4f, Color.red).transform as RectTransform;
-
-        // for some unknown reason, the canvas needs to be scaled after adding elements
-        canvas.transform.localScale = new Vector3(.02f, .02f, .02f);
+        Header = new(Id, transform);
 
         // idols can target players, which is undesirable
         int index = EnemyTracker.Instance.enemies.IndexOf(enemyId);
@@ -175,10 +161,10 @@ public class RemotePlayer : Entity
             transform.GetChild(0).GetChild(0).gameObject.SetActive(team == Team.Pink);
 
             // update player indicators to only show teammates
-            PlayerIndicators.Instance.Rebuild();
+            Events.OnTeamChanged.Fire();
         }
 
-        gameObject.tag = team == Networking.LocalPlayer.team ? "Untagged" : "Enemy"; // toggle friendly fire
+        gameObject.tag = team == Networking.LocalPlayer.Team || !LobbyController.PvPAllowed ? "Untagged" : "Enemy"; // toggle friendly fire
 
         if (lastWeapon != weapon)
         {
@@ -293,11 +279,7 @@ public class RemotePlayer : Entity
 
         enemyId.health = machine.health = health.Get(LastUpdate);
         enemyId.dead = machine.health <= 0f;
-        healthImage.localScale = new(machine.health / 100f, 1f, 1f);
-
-        nicknameText.color = machine.health > 0f ? Color.white : Color.red;
-        canvas.transform.LookAt(Camera.current.transform);
-        canvas.transform.Rotate(new(0f, 180f, 0f), Space.Self);
+        Header.Update(machine.health);
 
         // sometimes the player does not crumble after death
         if (enemyId.health <= 0f && !machine.limp) machine.GoLimp();
@@ -321,6 +303,7 @@ public class RemotePlayer : Entity
         w.Float(bodyRotation.target);
         w.Float(headRotation.target);
 
+        w.Byte(RailCharge);
         w.Byte((byte)team);
         w.Byte(weapon);
         w.Byte(emoji);
@@ -351,6 +334,7 @@ public class RemotePlayer : Entity
         bodyRotation.Read(r);
         headRotation.Read(r);
 
+        RailCharge = r.Byte();
         team = (Team)r.Byte();
         weapon = r.Byte();
         emoji = r.Byte();
@@ -390,5 +374,11 @@ public class RemotePlayer : Entity
                 shock.GetComponent<PhysicalShockwave>().force = r.Float();
                 break;
         }
+    }
+
+    public void Point(Reader r)
+    {
+        if (pointer != null) pointer.Lifetime = 4.5f;
+        pointer = Pointer.Spawn(team, r.Vector(), r.Vector(), transform);
     }
 }

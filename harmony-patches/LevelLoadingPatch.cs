@@ -1,11 +1,13 @@
 namespace Jaket.HarmonyPatches;
 
 using HarmonyLib;
+using UnityEngine.UI;
 
+using Jaket.Content;
 using Jaket.Net;
 
 [HarmonyPatch(typeof(FinalRank), nameof(FinalRank.LevelChange))]
-public class FinalRankPatch
+public class LevelLoadingPatch
 {
     public static bool Prefix()
     {
@@ -23,11 +25,30 @@ public class FinalRankPatch
 [HarmonyPatch(typeof(AbruptLevelChanger), nameof(AbruptLevelChanger.AbruptChangeLevel))]
 public class LevelChangerPatch
 {
-    static bool Prefix() => FinalRankPatch.Prefix();
+    static bool Prefix() => LevelLoadingPatch.Prefix();
 }
 
 [HarmonyPatch(typeof(AbruptLevelChanger), nameof(AbruptLevelChanger.GoToSavedLevel))]
 public class SavedLevelPatch
 {
-    static bool Prefix() => FinalRankPatch.Prefix();
+    static bool Prefix() => LevelLoadingPatch.Prefix();
+}
+
+[HarmonyPatch(typeof(GameStateManager), "CanSubmitScores", MethodType.Getter)]
+public class SubmitScoresPatch
+{
+    static void Postfix(ref bool __result) => __result &= !Networking.WasMultiplayerUsed;
+}
+
+[HarmonyPatch(typeof(FinalRank), nameof(FinalRank.SetInfo))]
+public class FinalRankPatch
+{
+    static void Postfix(FinalRank __instance)
+    {
+        if (Networking.WasMultiplayerUsed)
+        {
+            __instance.totalRank.transform.parent.GetComponent<Image>().color = Team.Pink.Data().Color();
+            __instance.extraInfo.text += "- <color=#FF4BD3>MULTIPLAYER USED</color>\n";
+        }
+    }
 }

@@ -56,7 +56,9 @@ public class EnemyStartPatch
 
         if (LobbyController.IsOwner)
         {
-            var enemy = __instance.gameObject.AddComponent<Enemy>();
+            if (__instance.TryGetComponent<Enemy>(out var enemy)) return true;
+
+            enemy = __instance.gameObject.AddComponent<Enemy>();
             Networking.Entities[enemy.Id] = enemy;
 
             return true;
@@ -70,12 +72,26 @@ public class EnemyStartPatch
                 World.Instance.Recache();
             }
 
+            // to avoid a huge number of errors in the console, need to destroy the parent object
+            if (__instance.gameObject.name == "Body" && __instance.enemyType == EnemyType.MaliciousFace)
+                Object.Destroy(__instance.transform.parent.gameObject);
+
             if (boss)
                 // will be used in the future to trigger the game's internal logic
                 __instance.gameObject.SetActive(false);
             else
+            {
+                // ask host to spawn enemy if it was spawned via sandbox arm
+                if (__instance.GetComponent<Sandbox.SandboxEnemy>() != null)
+                    Networking.Redirect(Writer.Write(w =>
+                    {
+                        w.Byte((byte)Enemies.CopiedIndex(__instance));
+                        w.Vector(__instance.transform.position);
+                    }), PacketType.SpawnEntity);
+
                 // the enemy is no longer needed, so destroy it
-                Object.Destroy(__instance.gameObject); // TODO ask host to spawn enemy if playing sandbox
+                Object.Destroy(__instance.gameObject);
+            }
 
             return false;
         }
@@ -109,8 +125,8 @@ public class EnemyDamagePatch
         Networking.Redirect(Writer.Write(w =>
         {
             w.Id(entity.Id);
-            w.Byte((byte)Networking.LocalPlayer.team);
-            w.Bool(melee);
+            w.Byte((byte)Networking.LocalPlayer.Team);
+            w.Byte((byte)Bullets.Melee.IndexOf(__instance.hitter));
 
             w.Vector(force);
             w.Float(multiplier);
@@ -127,11 +143,8 @@ public class EnemyDeathPatch
 {
     static void Prefix(EnemyIdentifier __instance)
     {
-        // if the lobby is null or the name is Net, then either the player isn't connected or this enemy was created remotely
-        if (LobbyController.Lobby == null || __instance.gameObject.name == "Net") return;
-
         // only the host should report death
-        if (!LobbyController.IsOwner || __instance.dead) return;
+        if (LobbyController.Lobby == null || !LobbyController.IsOwner || __instance.dead) return;
 
         // if the enemy doesn't have an entity component, then it was created before the lobby
         if (!__instance.TryGetComponent<Enemy>(out var enemy)) return;
@@ -173,5 +186,41 @@ public class FakeFerrymanDeathPatch
     static void Prefix(FerrymanFake __instance)
     {
         if (LobbyController.IsOwner && __instance.TryGetComponent<Enemy>(out var enemy)) Networking.Redirect(Writer.Write(w => w.Id(enemy.Id)), PacketType.EnemyDied);
+    }
+}
+
+[HarmonyPatch(typeof(BossHealthBar), "Awake")]
+public class HealthBarPatch
+{
+    // this is necessary to correctly display the boss's health
+    static void Prefix(BossHealthBar __instance)
+    {
+        if (LobbyController.Lobby == null || !__instance.TryGetComponent<EnemyIdentifier>(out var enemyId)) return;
+
+        if (LobbyController.IsOwner || enemyId.enemyType == EnemyType.Minos || enemyId.enemyType == EnemyType.Leviathan)
+        {
+            // get the PPP value if the player is not the host
+            if (!LobbyController.IsOwner) float.TryParse(LobbyController.Lobby?.GetData("ppp"), out LobbyController.PPP);
+
+            enemyId.ForceGetHealth(); // the health of the identifier changes, it's only an indicator of real health, so you can do whatever you want with it
+            LobbyController.ScaleHealth(ref enemyId.health);
+
+            // boss bar will do all the work
+            if (__instance.healthLayers == null) return;
+
+            if (__instance.healthLayers.Length == 0)
+                __instance.healthLayers = new HealthLayer[] { new() { health = enemyId.health } };
+            else
+            {
+                float sum = 0f; // sum of the health of all layers except the last one
+                for (int i = 0; i < __instance.healthLayers.Length - 1; i++) sum += __instance.healthLayers[i].health;
+
+                // change the health of the last bar so that it does not turn green
+                __instance.healthLayers[__instance.healthLayers.Length - 1].health = enemyId.health - sum;
+            }
+        }
+        else if (__instance.TryGetComponent<Enemy>(out var enemy)) __instance.healthLayers = enemy.haveSecondPhase
+            ? new HealthLayer[] { new() { health = enemy.health.target / 2f }, new() { health = enemy.health.target / 2f } }
+            : new HealthLayer[] { new() { health = enemy.health.target } };
     }
 }

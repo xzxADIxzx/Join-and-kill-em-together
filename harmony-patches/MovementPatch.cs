@@ -1,6 +1,5 @@
 namespace Jaket.HarmonyPatches;
 
-using GameConsole;
 using HarmonyLib;
 using Steamworks;
 using ULTRAKILL.Cheats;
@@ -8,6 +7,7 @@ using UnityEngine;
 
 using Jaket.Content;
 using Jaket.Net;
+using Jaket.Net.EntityTypes;
 using Jaket.UI;
 using Jaket.World;
 
@@ -68,21 +68,21 @@ public class DeathPatch
 public class CheatsPatch
 {
     // cheats shouldn't work in chat or during animation
-    static bool Prefix() => !Chat.Instance.Shown && Movement.Instance.Emoji == 0xFF;
+    static bool Prefix() => !UI.AnyMovementBlocking() && Movement.Instance.Emoji == 0xFF;
 }
 
 [HarmonyPatch(typeof(CheatsController), nameof(CheatsController.Update))]
 public class CheatsMenuPatch
 {
     // cheat menu shouldn't appear in chat or during animation
-    static bool Prefix() => !Chat.Instance.Shown && Movement.Instance.Emoji == 0xFF;
+    static bool Prefix() => !UI.AnyMovementBlocking() && Movement.Instance.Emoji == 0xFF;
 }
 
 [HarmonyPatch(typeof(Noclip), nameof(Noclip.Update))]
 public class NoclipPatch
 {
     // this cheat shouldn't work in chat or during animation
-    static bool Prefix() => !Chat.Instance.Shown && Movement.Instance.Emoji == 0xFF;
+    static bool Prefix() => !UI.AnyMovementBlocking() && Movement.Instance.Emoji == 0xFF;
 }
 
 #endregion
@@ -92,7 +92,18 @@ public class NoclipPatch
 public class RidePatch
 {
     // disable the ability to get off the rocket during chatting
-    static bool Prefix() => !(Chat.Instance.Shown || OptionsManager.Instance.paused || Console.IsOpen);
+    static bool Prefix() => !UI.AnyMovementBlocking();
+}
+
+[HarmonyPatch(typeof(CameraFrustumTargeter), "CurrentTarget", MethodType.Setter)]
+public class AimPatch
+{
+    // auto aim shouldn't shoot at teammates
+    static void Prefix(ref Collider value)
+    {
+        if (value != null && value.TryGetComponent<RemotePlayer>(out var player) &&
+           (player.team == Networking.LocalPlayer.Team || !LobbyController.PvPAllowed)) value = null;
+    }
 }
 
 #endregion
