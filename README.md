@@ -3,7 +3,7 @@
 ![Stars](https://img.shields.io/github/stars/xzxADIxzx/Join-and-kill-em-together?style=for-the-badge&logo=githubsponsors&color=EA4AAA)
 
 # Join and kill 'em together
-Multikill is still in development, so I created my own multiplayer mod for ultrakill.   
+Multikill is still in development, so I created my own multiplayer mod for Ultrakill.   
 It's also in development, but with gnashing of teeth it's already playable.
 
 ## Features

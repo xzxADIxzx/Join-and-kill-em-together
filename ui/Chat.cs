@@ -25,9 +25,9 @@ public class Chat : CanvasSingleton<Chat>
     const float WIDTH = 600f;
 
     /// <summary> Prefix that will be added to bot messages. </summary>
-    const string BOT_PREFIX = "<color=#ff7f50><size=14>[BOT]</size></color>";
+    public const string BOT_PREFIX = "<color=#ff7f50><size=14>[BOT]</size></color>";
     /// <summary> Prefix that will be added to the TTS message. </summary>
-    const string TTS_PREFIX = "<color=#ff7f50><size=14>[TTS]</size></color>";
+    public const string TTS_PREFIX = "<color=#ff7f50><size=14>[TTS]</size></color>";
 
     /// <summary> List of chat messages. </summary>
     private RectTransform list;
