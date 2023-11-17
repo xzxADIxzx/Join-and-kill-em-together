@@ -94,6 +94,9 @@ public class LobbyController
     /// <summary> Leaves the lobby, if the player is the owner, then all other players will be thrown into the main menu. </summary>
     public static void LeaveLobby()
     {
+        // this is necessary in order to free up resources allocated for unread packets, otherwise there may be ghost players in the chat
+        if (!IsOwner && Lobby != null) SteamNetworking.CloseP2PSessionWithUser(Lobby.Value.Owner.Id);
+
         Lobby?.Leave();
         Lobby = null;
 

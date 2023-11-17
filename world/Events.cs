@@ -39,7 +39,7 @@ public class Events : MonoSingleton<Events>
             if (SceneHelper.CurrentScene == "Main Menu") OnMainMenuLoaded.Fire();
         };
 
-        SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) => OnTeamChanged.Fire();
+        SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) => Post(OnTeamChanged.Fire);
         SteamMatchmaking.OnLobbyDataChanged += lobby => OnLobbyAction.Fire();
 
         // interaction with the lobby affects many aspects of the game
