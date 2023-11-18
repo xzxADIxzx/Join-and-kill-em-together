@@ -37,6 +37,13 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Third person camera rotation. </summary>
     private Vector2 rotation;
 
+    /// <summary> Speed at which the skateboard moves. </summary>
+    private float skateboardSpeed;
+    /// <summary> When the maximum skateboard speed is exceeded, deceleration is activated. </summary>
+    private bool slowsDown;
+    /// <summary> Current falling particle object. </summary>
+    private GameObject fallParticle;
+
     /// <summary> Last pointer created by the player. </summary>
     public Pointer Pointer;
 
@@ -98,9 +105,37 @@ public class Movement : MonoSingleton<Movement>
         // skateboard logic
         if (Emoji == 0x0B)
         {
+            // speed & dash logic
+            skateboardSpeed = Mathf.MoveTowards(skateboardSpeed, 20f, (slowsDown ? 24f : 12f) * Time.deltaTime);
+            nm.boostCharge = Mathf.MoveTowards(nm.boostCharge, 300f, 70f * Time.deltaTime);
+
+            if (InputManager.Instance.InputSource.Dodge.WasPerformedThisFrame)
+            {
+                if (nm.boostCharge >= 100f)
+                {
+                    skateboardSpeed += 20f;
+                    nm.boostCharge -= 100f;
+
+                    Instantiate(nm.dodgeParticle, nm.transform.position, nm.transform.rotation);
+                    AudioSource.PlayClipAtPoint(nm.dodgeSound, nm.transform.position);
+                }
+                else Instantiate(nm.staminaFailSound);
+            }
+
+            if (skateboardSpeed >= 70f && !slowsDown)
+            {
+                slowsDown = true;
+                fallParticle = Instantiate(nm.fallParticle, nm.transform);
+            }
+            if (skateboardSpeed <= 40f && slowsDown)
+            {
+                slowsDown = false;
+                Destroy(fallParticle);
+            }
+
             // move the skateboard forward
-            var target = player.forward * 20f;
             var player = nm.transform;
+            var target = player.forward * skateboardSpeed;
 
             target.y = nm.rb.velocity.y;
             nm.rb.velocity = target;
@@ -283,6 +318,7 @@ public class Movement : MonoSingleton<Movement>
         // rotate the third person camera in the same direction as the first person camera
         rotation = new(cc.rotationY, cc.rotationX + 90f);
         position = new();
+        skateboardSpeed = 0f;
 
         StopCoroutine("ClearEmoji");
         if (EmojiLegnth[id] != -1f) StartCoroutine("ClearEmoji");
