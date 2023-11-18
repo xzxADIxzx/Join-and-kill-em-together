@@ -14,8 +14,8 @@ using Jaket.UI.Elements;
 /// <summary> Class responsible for additions to control and local display of emotions. </summary>
 public class Movement : MonoSingleton<Movement>
 {
-    /// <summary> Reference to local player's rigidbody. </summary>
-    private static Rigidbody rb => NewMovement.Instance.rb;
+    /// <summary> Reference to new movement. </summary>
+    private static NewMovement nm => NewMovement.Instance;
     /// <summary> Reference to camera controller. </summary>
     private static CameraController cc => CameraController.Instance;
     /// <summary> Environmental mask needed to prevent the skateboard from riding on water. </summary>
@@ -90,7 +90,7 @@ public class Movement : MonoSingleton<Movement>
             if (EmojiWheel.Shown) EmojiWheel.Instance.Hide();
         }
 
-        if (Input.GetKeyDown(Settings.SelfDestruction) && !UI.AnyMovementBlocking()) NewMovement.Instance.GetHurt(1000, false, 0f);
+        if (Input.GetKeyDown(Settings.SelfDestruction) && !UI.AnyMovementBlocking()) nm.GetHurt(1000, false, 0f);
     }
 
     private void LateUpdate() // late update is needed to overwrite the time scale value and camera rotation
@@ -99,11 +99,11 @@ public class Movement : MonoSingleton<Movement>
         if (Emoji == 0x0B)
         {
             // move the skateboard forward
-            var player = NewMovement.Instance.transform;
             var target = player.forward * 20f;
+            var player = nm.transform;
 
-            target.y = rb.velocity.y;
-            rb.velocity = target;
+            target.y = nm.rb.velocity.y;
+            nm.rb.velocity = target;
 
             // don’t let the front and rear wheels fall into the ground
             if (Physics.Raycast(player.position + player.forward * 1.2f, Vector3.down, out var hit, 1.5f, environmentMask) && hit.distance > .8f)
@@ -134,10 +134,10 @@ public class Movement : MonoSingleton<Movement>
             }
 
             // turn on gravity, because if the taunt was launched on the ground, then it is disabled by default
-            rb.useGravity = true;
+            nm.rb.useGravity = true;
 
             var cam = cc.cam.transform;
-            var player = NewMovement.Instance.transform.position + new Vector3(0f, 1f, 0f);
+            var player = nm.transform.position + new Vector3(0f, 1f, 0f);
 
             // move the camera position towards the start if the animation has just started, or towards the end if the animation ends
             bool ends = Emoji == 0xFF || (Time.time - EmojiStart > EmojiLegnth[Emoji] && EmojiLegnth[Emoji] != -1f);
@@ -158,9 +158,9 @@ public class Movement : MonoSingleton<Movement>
 
 
         // ultrasoap
-        if (SceneHelper.CurrentScene != "Main Menu" && !NewMovement.Instance.dead)
+        if (SceneHelper.CurrentScene != "Main Menu" && !nm.dead)
         {
-            rb.constraints = UI.AnyMovementBlocking()
+            nm.rb.constraints = UI.AnyMovementBlocking()
                 ? RigidbodyConstraints.FreezeAll
                 : Instance.Emoji == 0xFF || Instance.Emoji == 0x0B // skateboard
                     ? RigidbodyConstraints.FreezeRotation
@@ -175,7 +175,7 @@ public class Movement : MonoSingleton<Movement>
         if (Settings.DisableFreezeFrames || UI.AnyBuiltIn()) Time.timeScale = 1f;
 
         // reset slam force if the player is riding on a rocket
-        if (NewMovement.Instance.ridingRocket != null) NewMovement.Instance.slamForce = 0f;
+        if (nm.ridingRocket != null) nm.slamForce = 0f;
 
         // disable cheats if they are prohibited in the lobby
         if (!LobbyController.CheatsAllowed && CheatsController.Instance.cheatsEnabled)
@@ -203,7 +203,7 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Toggles the ability to move, used in the chat and etc. </summary>
     public static void ToggleMovement(bool enable)
     {
-        NewMovement.Instance.enabled = FistControl.Instance.enabled = FistControl.Instance.activated = HookArm.Instance.enabled = enable;
+        nm.enabled = FistControl.Instance.enabled = FistControl.Instance.activated = HookArm.Instance.enabled = enable;
 
         // put the hook back in place
         if (!enable) HookArm.Instance.Cancel();
@@ -235,7 +235,7 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Creates a preview of the given emoji in player coordinates. </summary>
     public void PreviewEmoji(byte id)
     {
-        EmojiPreview = Instantiate(DollAssets.Preview, NewMovement.Instance.transform);
+        EmojiPreview = Instantiate(DollAssets.Preview, nm.transform);
         EmojiPreview.transform.localPosition = new(0f, -1.5f, 0f);
         EmojiPreview.transform.localScale = new(2.18f, 2.18f, 2.18f); // preview created for terminal and too small
 
@@ -277,8 +277,8 @@ public class Movement : MonoSingleton<Movement>
         UI.SendMsg("Press <color=orange>Space</color> to interrupt the emotion", true);
 
         // stop sliding so that the preview is not underground
-        NewMovement.Instance.playerCollider.height = 3.5f;
-        NewMovement.Instance.gc.transform.localPosition = new(0f, -1.256f, 0f);
+        nm.playerCollider.height = 3.5f;
+        nm.gc.transform.localPosition = new(0f, -1.256f, 0f);
 
         // rotate the third person camera in the same direction as the first person camera
         rotation = new(cc.rotationY, cc.rotationX + 90f);
