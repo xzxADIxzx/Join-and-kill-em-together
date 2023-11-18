@@ -57,6 +57,7 @@ public class UI
 
         Chat.Build("Chat", hideAction: () => Chat.Instance.field.gameObject.SetActive(false));
         EmojiWheel.Build("Emoji Wheel");
+        Skateboard.Build("Skateboard");
     }
 
     /// <summary> Shortcut to hud message receiver. </summary>
@@ -170,7 +171,7 @@ public class UI
             image.color = color ?? Color.white;
             image.fillCenter = fill;
             image.sprite = circle ? UI.circle : checkmark ? UI.checkmark : background;
-            image.type = UnityEngine.UI.Image.Type.Sliced;
+            image.type = circle ? UnityEngine.UI.Image.Type.Filled : UnityEngine.UI.Image.Type.Sliced;
         });
 
     /// <summary> Adds a circular image with the standard sprite to the canvas. </summary>

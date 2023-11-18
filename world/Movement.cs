@@ -103,6 +103,7 @@ public class Movement : MonoSingleton<Movement>
     private void LateUpdate() // late update is needed to overwrite the time scale value and camera rotation
     {
         // skateboard logic
+        Skateboard.Instance.gameObject.SetActive(Emoji == 0x0B);
         if (Emoji == 0x0B)
         {
             // speed & dash logic
@@ -111,10 +112,13 @@ public class Movement : MonoSingleton<Movement>
 
             if (InputManager.Instance.InputSource.Dodge.WasPerformedThisFrame)
             {
-                if (nm.boostCharge >= 100f)
+                if (nm.boostCharge >= 100f || (AssistController.Instance.majorEnabled && AssistController.Instance.infiniteStamina))
                 {
                     skateboardSpeed += 20f;
                     nm.boostCharge -= 100f;
+
+                    // major assists make it possible to dash endlessly so we need to clamp boost charge
+                    if (nm.boostCharge < 0f) nm.boostCharge = 0f;
 
                     Instantiate(nm.dodgeParticle, nm.transform.position, nm.transform.rotation);
                     AudioSource.PlayClipAtPoint(nm.dodgeSound, nm.transform.position);
@@ -303,6 +307,7 @@ public class Movement : MonoSingleton<Movement>
 
         // destroy the old preview so they don't stack
         Destroy(EmojiPreview);
+        Destroy(fallParticle);
 
         // if id is -1, then the emotion was not selected
         if (id == 0xFF) return;
