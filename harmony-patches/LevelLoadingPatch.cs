@@ -1,9 +1,9 @@
 namespace Jaket.HarmonyPatches;
 
 using HarmonyLib;
+using System.Text.RegularExpressions;
 using UnityEngine.UI;
 
-using Jaket.Content;
 using Jaket.Net;
 
 [HarmonyPatch(typeof(FinalRank), nameof(FinalRank.LevelChange))]
@@ -47,8 +47,17 @@ public class FinalRankPatch
     {
         if (Networking.WasMultiplayerUsed)
         {
-            __instance.totalRank.transform.parent.GetComponent<Image>().color = Team.Pink.Data().Color();
+            __instance.totalRank.transform.parent.GetComponent<Image>().color = new(1f, .3f, .7f);
             __instance.extraInfo.text += "- <color=#FF4BD3>MULTIPLAYER USED</color>\n";
         }
+    }
+}
+
+[HarmonyPatch(typeof(FinalRank), nameof(FinalRank.SetRank))]
+public class RankColorPatch
+{
+    static void Postfix(FinalRank __instance)
+    {
+        if (Networking.WasMultiplayerUsed) __instance.totalRank.text = Regex.Replace(__instance.totalRank.text, "<.*?>", "");
     }
 }
