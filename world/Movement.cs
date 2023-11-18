@@ -226,6 +226,9 @@ public class Movement : MonoSingleton<Movement>
         }
     }
 
+    /// <summary> Returns the rounded speed of the skateboard. </summary>
+    public int SkateboardSpeed() => (int)skateboardSpeed;
+
     #region toggling
 
     /// <summary> Updates the state machine: toggles movement, cursor and third-person camera. </summary>
