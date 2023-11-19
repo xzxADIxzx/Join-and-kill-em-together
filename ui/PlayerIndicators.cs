@@ -59,9 +59,7 @@ public class PlayerIndicators : CanvasSingleton<PlayerIndicators>
         targets.Add(player.transform);
 
         // create a new team color indicator and add it to the list
-        var indicator = UI.Image("Indicator", transform, 0f, 0f, 88f, 88f, player.team.Data().Color(), circle: true);
-        indicator.type = Image.Type.Filled;
-        indicators.Add(indicator);
+        indicators.Add(UI.Image("Indicator", transform, 0f, 0f, 88f, 88f, player.team.Data().Color(), circle: true));
     }
 
     /// <summary> Updates the size and rotation of the indicator. </summary>

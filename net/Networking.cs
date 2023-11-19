@@ -128,6 +128,12 @@ public class Networking : MonoSingleton<Networking>
                 // replace the entity with null so that the indicators no longer point to it
                 Entities[member.Id] = null;
             }
+
+            // returning the exited player's items back to the host owner
+            if (LobbyController.IsOwner) EachItem(item =>
+            {
+                if (item.Owner == member.Id) item.Owner = SteamClient.SteamId;
+            });
         };
 
         // create a local player to sync player data
@@ -187,6 +193,13 @@ public class Networking : MonoSingleton<Networking>
     {
         foreach (var entity in Entities.Values)
             if (entity != null && entity is RemotePlayer player) cons(player);
+    }
+
+    /// <summary> Iterates each item. </summary>
+    public static void EachItem(Action<Item> cons)
+    {
+        foreach (var entity in Entities.Values)
+            if (entity != null && entity is Item item) cons(item);
     }
 
     #endregion

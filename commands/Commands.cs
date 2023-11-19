@@ -90,5 +90,25 @@ public class Commands
                     }), PacketType.SpawnEntity);
             }
         });
+
+        Handler.Register("authors", "Displays the list of all mod developers", args =>
+        {
+            void SendMsg(string msg) => chat.ReceiveChatMessage($"<size=14>{msg}</size>", true);
+
+            SendMsg("Leading developers:");
+            SendMsg("* <color=#0096FF>xzxADIxzx</color> - the main developer of this mod");
+            SendMsg("* <color=#8A2BE2>Sowler</color> - owner of the Discord server and just a good friend");
+            SendMsg("* <color=#FFA000>Fumboy</color> - textures and a part of animations");
+
+            SendMsg("Contributors:");
+            SendMsg("* <color=#00E666>Rey Hunter</color> - really cool icons for emotions");
+            SendMsg("* <color=#00E666>Ardub, OMaciej</color> - fixes and features");
+
+            SendMsg("Testers:");
+            SendMsg("<color=#cccccc>Fenicemaster, AndruGhost, Subjune, FruitCircuit</color>");
+
+            chat.ReceiveChatMessage("0096FF", Chat.BOT_PREFIX + "xzxADIxzx", "Thank you all, I couldn't have done it alone ♡", oneline: true);
+        });
+        Handler.Register("support", "Support the author by buying him a coffee", args => Application.OpenURL("https://www.buymeacoffee.com/adidev"));
     }
 }
