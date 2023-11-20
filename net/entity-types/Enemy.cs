@@ -32,6 +32,11 @@ public class Enemy : Entity
     /// <summary> Whether the enemy is a fake ferryman. </summary>
     public bool fake;
 
+    /// <summary> Whether the enemy has buff (radiance). </summary>
+    public bool healthBuff, damageBuff, speedBuff;
+    /// <summary> Radiance buff. </summary>
+    public float damageBuffModifier, speedBuffModifier, radianceTier;
+
     private void Awake()
     {
         if (!LobbyController.IsOwner) gameObject.name = "Net"; // needed to prevent object looping between client and server
@@ -110,6 +115,14 @@ public class Enemy : Entity
         transform.position = new(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
         transform.eulerAngles = new(0f, rotation.GetAngel(LastUpdate), 0f);
 
+        // radiance
+        enemyId.healthBuff = healthBuff;
+        enemyId.damageBuff = damageBuff;
+        enemyId.damageBuffModifier = damageBuffModifier;
+        enemyId.speedBuff = speedBuff;
+        enemyId.speedBuffModifier = speedBuffModifier;
+        enemyId.radianceTier = radianceTier;
+
         // this is necessary so that the health of the bosses is the same for all clients
         if (enemyId.machine != null) enemyId.machine.health = enemyId.health;
         else if (enemyId.spider != null) enemyId.spider.health = enemyId.health;
@@ -180,6 +193,19 @@ public class Enemy : Entity
         w.Vector(transform.position);
         w.Float(transform.eulerAngles.y);
 
+        // radiance
+
+        // don't need to sync health buff, because health is synced
+        w.Bool(enemyId.healthBuff); // health buff
+
+        w.Bool(enemyId.damageBuff); // damage buff
+        w.Float(enemyId.damageBuffModifier);
+
+        w.Bool(enemyId.speedBuff); // speed buff
+        w.Float(enemyId.speedBuffModifier);
+
+        w.Float(enemyId.radianceTier); // radiance tier
+
         w.Bool(healthBar != null); w.Bool(healthBar == null ? false : healthBar.healthLayers.Length > 1);
         w.Bool(fakeFerryman != null);
         if (idol) w.Id(targetId);
@@ -193,6 +219,17 @@ public class Enemy : Entity
         health.Read(r);
         x.Read(r); y.Read(r); z.Read(r);
         rotation.Read(r);
+ 
+        // radiance
+        healthBuff = r.Bool(); // health buff
+
+        damageBuff = r.Bool(); // damage buff
+        damageBuffModifier = r.Float();
+
+        speedBuff = r.Bool(); // speed buff
+        speedBuffModifier = r.Float();
+
+        radianceTier = r.Float(); // radiance tier
 
         boss = r.Bool(); haveSecondPhase = r.Bool();
         fake = r.Bool();
