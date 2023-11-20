@@ -39,8 +39,6 @@ public class CyberGrind : MonoSingleton<CyberGrind>
             // pattern
             w.String(data);
         }), PacketType.CybergrindAction);
-        // used for debugging
-        MonoSingleton<HudMessageReceiver>.Instance.SendHudMessage($"Wave {EndlessGridInstance.currentWave} sent with {Encoding.UTF8.GetBytes(data).Length} bytes of pattern");
     }
 
     /// <summary> Load pattern serialized pattern and wave from server. </summary>
@@ -49,8 +47,6 @@ public class CyberGrind : MonoSingleton<CyberGrind>
     {
         // sets current pattern to give it to LoadPattern method of original class
         CurrentPattern = DeserializePattern(data);
-        // start a new wave with server pattern
-        MonoSingleton<HudMessageReceiver>.Instance.SendHudMessage($"Received {currentWave} wave and {Encoding.UTF8.GetBytes(data).Length} bytes of pattern");
         // set current wave to synced one
         CurrentWave = currentWave;
         LoadPattern(CurrentPattern);
