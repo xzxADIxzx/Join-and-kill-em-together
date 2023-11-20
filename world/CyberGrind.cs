@@ -18,12 +18,10 @@ public class CyberGrind : MonoSingleton<CyberGrind>
     public static Text WaveNumberTextInstance;
     /// <summary> UI Text, used for displaying current enemies left. </summary>
     public static Text EnemiesLeftTextInstance;
+    public static DeathZone GridDeathZoneInstance;
 
     /// <summary> Current wave count used for sync. </summary>
     public static int CurrentWave;
-    /// <summary> Current death enemies count used for sync. </summary>
-    public static int DeadEnemies;
-
     /// <summary> Current pattern used for sync. </summary>
     public static ArenaPattern CurrentPattern;
 
@@ -69,7 +67,7 @@ public class CyberGrind : MonoSingleton<CyberGrind>
     }
 
     /// <summary> Loads current pattern. </summary>
-    public void LoadCurrentPattern() => LoadPattern(CurrentPattern);
+    public static void LoadCurrentPattern() => LoadPattern(CurrentPattern);
 
     /// <summary> Deserialize pattern to load it to client. </summary>
     /// <param name="data"> String to deserialize to <see cref="ArenaPattern"/>. </param>

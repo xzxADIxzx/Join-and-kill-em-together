@@ -1,11 +1,11 @@
-﻿using HarmonyLib;
-using Jaket.Net;
-using Jaket.World;
+﻿namespace Jaket.HarmonyPatches;
+
+using HarmonyLib;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
 
-namespace Jaket.HarmonyPatches;
+using Jaket.Net;
+using Jaket.World;
 
 #pragma warning disable IDE0051 // Remove unused private members
 #pragma warning disable RCS1213 // Remove unused member declaration.
@@ -33,8 +33,10 @@ public class EndlessGridStartPatch
     {
         // used to easily access the current endless grid instance
         CyberGrind.EndlessGridInstance = __instance;
-        // change y position of death zones to prevent enemies randomly dying
-        foreach (var deathZone in Resources.FindObjectsOfTypeAll<DeathZone>()) deathZone.transform.position = deathZone.transform.position with { y = deathZone.transform.position.y - 10 };
+
+        // getting cybergrind grid deathzone to change it later
+        foreach (var deathZone in Resources.FindObjectsOfTypeAll<DeathZone>()) if (deathZone.name == "Cube") CyberGrind.GridDeathZoneInstance = deathZone;
+
         // don't skip original method
         return true;
     }
@@ -46,8 +48,10 @@ public class EndlessGridStartPatch
         if (LobbyController.Lobby != null || LobbyController.IsOwner)
             // check if no current pattern is loaded and the player is the client
             if (CyberGrind.CurrentPattern != null && !LobbyController.IsOwner)
-                // wait 1.5 seconds before loading the current pattern to in time to be downloaded from the server
-                CyberGrind.Instance.Invoke("LoadCurrentPattern", 1.5f);
+                CyberGrind.LoadCurrentPattern();
+            else
+                // send empty pattern when game starts and the player is the owner to prevent load previous cybergrind pattern
+                CyberGrind.SendPattern(new ArenaPattern());
         else
         {
             // resetting values if the player is not in a lobby.
@@ -98,7 +102,10 @@ public class EndlessGridUpdatePatch
             // remove dead enemies or null enemies from the list
             enemies.RemoveAll(e => e.dead || e is null);
             // set enemies left text on the client, replacing original
-            ___enemiesLeftText.text = string.Concat(EnemyTracker.Instance.enemies.Count);
+            ___enemiesLeftText.text = EnemyTracker.Instance.enemies.Count.ToString();
         }
+        // change y position of cybergrind grid deathzone when lobby created or not to prevent enemies randomly dying
+        var dz = CyberGrind.GridDeathZoneInstance;
+        if (dz != null) dz.transform.position = dz.transform.position with { y = LobbyController.Lobby != null ? -10 : 0.5f };
     }
 }

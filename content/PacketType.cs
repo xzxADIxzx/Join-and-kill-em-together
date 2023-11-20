@@ -34,6 +34,6 @@ public enum PacketType
     ActivateObject,
     /// <summary> Any action with the cinema, like starting a video, pausing or rewinding. </summary>
     CinemaAction,
-    /// <summary> When Cybergrind seed host is shuffled </summary>
+    /// <summary> Any action with CyberGrind, like pattern and wave. </summary>
     CybergrindAction
 }
