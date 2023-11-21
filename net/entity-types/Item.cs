@@ -26,6 +26,8 @@ public class Item : Entity
     private bool holding;
     /// <summary> Whether the item is placed on an altar. </summary>
     private bool placed;
+    /// <summary> Whether the item is a torch. </summary>
+    private bool torch;
 
     /// <summary> Time of last transfer of the item from one client to another. </summary>
     private float lastTransferTime;
@@ -46,6 +48,7 @@ public class Item : Entity
         // other
         rb = GetComponent<Rigidbody>();
         itemId = GetComponent<ItemIdentifier>();
+        torch = GetComponent<Torch>() != null;
 
         if (LobbyController.IsOwner)
         {
@@ -86,16 +89,22 @@ public class Item : Entity
             itemId.ipz = null;
         }
 
-        // put on the altar
-        if (placed && itemId.ipz == null)
+        // put on the altar or light the torches
+        if ((placed && itemId.ipz == null) || torch)
         {
-            var colliders = Physics.OverlapSphere(transform.position, 0.01f, 20971776, QueryTriggerInteraction.Collide);
+            var colliders = Physics.OverlapSphere(transform.position, 0.5f, 20971776, QueryTriggerInteraction.Collide);
             foreach (var col in colliders)
-                if (col.gameObject.layer == 22 && col.TryGetComponent<ItemPlaceZone>(out var zone))
+            {
+                if (col.gameObject.layer != 22) continue;
+
+                if (placed && itemId.ipz == null && col.TryGetComponent<ItemPlaceZone>(out var zone))
                 {
                     transform.SetParent(col.transform);
                     zone.CheckItem();
                 }
+
+                if (torch && col.TryGetComponent<Flammable>(out var flammable)) flammable.Burn(4f);
+            }
         }
     }
 
