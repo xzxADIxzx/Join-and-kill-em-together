@@ -7,7 +7,7 @@ using UnityEngine.Networking;
 public class Version
 {
     /// <summary> Current version of the mod installed by the player. </summary>
-    public const string CURRENT = "0.8.18";
+    public const string CURRENT = "1.0.0";
     /// <summary> Repository of the mod, where the newest version will be taken from. </summary>
     public const string REPO = "xzxADIxzx/Join-and-kill-em-together";
     /// <summary> Github API URL. I think it's not difficult to guess. </summary>
