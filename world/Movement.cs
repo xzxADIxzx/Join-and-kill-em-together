@@ -98,6 +98,7 @@ public class Movement : MonoSingleton<Movement>
         }
 
         if (Input.GetKeyDown(Settings.SelfDestruction) && !UI.AnyMovementBlocking()) nm.GetHurt(1000, false, 0f);
+        if (Input.GetKeyDown(KeyCode.F11)) InteractiveGuide.Instance.Launch();
     }
 
     private void LateUpdate() // late update is needed to overwrite the time scale value and camera rotation
