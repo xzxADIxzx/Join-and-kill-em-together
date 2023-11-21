@@ -239,6 +239,9 @@ public class Movement : MonoSingleton<Movement>
         ToggleCursor(UI.AnyJaket());
         ToggleHud(Instance.Emoji == 0xFF);
 
+        // block pause
+        OptionsManager.Instance.frozen = Instance.Emoji != 0xFF || InteractiveGuide.Shown;
+
         // block camera rotation & weapon fire
         cc.enabled = cc.activated = GunControl.Instance.activated = !UI.AnyJaket() && Instance.Emoji == 0xFF;
     }
@@ -268,7 +271,6 @@ public class Movement : MonoSingleton<Movement>
         FistControl.Instance.gameObject.SetActive(enable);
 
         // preventing some ultra stupid bug
-        OptionsManager.Instance.frozen = !enable;
         Console.Instance.enabled = enable;
     }
 

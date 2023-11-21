@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Jaket.Net;
+using Jaket.World;
 
 /// <summary> Small interactive guide for new players. </summary>
 public class InteractiveGuide : CanvasSingleton<InteractiveGuide>
@@ -38,10 +39,15 @@ public class InteractiveGuide : CanvasSingleton<InteractiveGuide>
 
     private void Update()
     {
-        if (index < Conditions.Count && (Conditions[index]() || Input.GetKeyDown(KeyCode.Escape)))
+        if (Shown && index < Conditions.Count && (Conditions[index]() || Input.GetKeyDown(KeyCode.Escape)))
         {
             transform.GetChild(index++).gameObject.SetActive(false);
             if (index < Conditions.Count) transform.GetChild(index).gameObject.SetActive(true);
+            else
+            {
+                Shown = false;
+                Movement.UpdateState();
+            }
         }
     }
 
@@ -64,7 +70,7 @@ public class InteractiveGuide : CanvasSingleton<InteractiveGuide>
         if (SceneHelper.CurrentScene == "Main Menu")
         {
             foreach (Transform child in transform) child.gameObject.SetActive(false);
-            index = 0;
+            index = 0; Shown = false;
         }
         else if (!offered) UI.SendMsg(OFFER, offered = true);
     }
@@ -73,6 +79,7 @@ public class InteractiveGuide : CanvasSingleton<InteractiveGuide>
     public void Launch()
     {
         foreach (Transform child in transform) child.gameObject.SetActive(false);
-        transform.GetChild(index = 0).gameObject.SetActive(true);
+        transform.GetChild(index = 0).gameObject.SetActive(Shown = true);
+        Movement.UpdateState();
     }
 }
