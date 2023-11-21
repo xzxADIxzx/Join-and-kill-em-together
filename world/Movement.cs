@@ -98,6 +98,7 @@ public class Movement : MonoSingleton<Movement>
         }
 
         if (Input.GetKeyDown(Settings.SelfDestruction) && !UI.AnyMovementBlocking()) nm.GetHurt(1000, false, 0f);
+        if (Input.GetKeyDown(KeyCode.F11)) InteractiveGuide.Instance.Launch();
     }
 
     private void LateUpdate() // late update is needed to overwrite the time scale value and camera rotation
@@ -238,6 +239,9 @@ public class Movement : MonoSingleton<Movement>
         ToggleCursor(UI.AnyJaket());
         ToggleHud(Instance.Emoji == 0xFF);
 
+        // block pause
+        OptionsManager.Instance.frozen = Instance.Emoji != 0xFF || InteractiveGuide.Shown;
+
         // block camera rotation & weapon fire
         cc.enabled = cc.activated = GunControl.Instance.activated = !UI.AnyJaket() && Instance.Emoji == 0xFF;
     }
@@ -267,7 +271,6 @@ public class Movement : MonoSingleton<Movement>
         FistControl.Instance.gameObject.SetActive(enable);
 
         // preventing some ultra stupid bug
-        OptionsManager.Instance.frozen = !enable;
         Console.Instance.enabled = enable;
     }
 

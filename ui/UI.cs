@@ -58,6 +58,7 @@ public class UI
         Chat.Build("Chat", hideAction: () => Chat.Instance.field.gameObject.SetActive(false));
         EmojiWheel.Build("Emoji Wheel");
         Skateboard.Build("Skateboard");
+        InteractiveGuide.Build("Interactive Guide", hideAction: () => InteractiveGuide.Instance.OfferAssistance());
     }
 
     /// <summary> Shortcut to hud message receiver. </summary>
