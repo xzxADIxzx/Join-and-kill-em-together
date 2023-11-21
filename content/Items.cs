@@ -81,6 +81,8 @@ public class Items
 
         // the item was created remotely or loaded from assets
         if (itemId.gameObject.name == "Net" || itemId.gameObject.name.Contains("Book") || itemId.gameObject.scene.name == null) return;
+        // sometimes the developer just deactivates the skulls instead of removing them
+        if (!itemId.gameObject.activeSelf) return;
 
         if (LobbyController.IsOwner)
         {
