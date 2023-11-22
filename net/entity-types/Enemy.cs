@@ -70,6 +70,15 @@ public class Enemy : Entity
 
             Id = Entities.NextId();
             Type = (EntityType)index;
+
+            // in the second phase the same object is used as in the anticipatory one
+            if (SceneHelper.CurrentScene == "Level 4-4" && enemyId.enemyType == EnemyType.V2 && healthBar != null &&
+                TryGetComponent<V2>(out var V2) && !V2.firstPhase)
+            {
+                Networking.Entities[Id] = this;
+                DestroyImmediate(healthBar);
+                healthBar = gameObject.AddComponent<BossHealthBar>();
+            }
         }
 
         // run a loop that will update the target id of the idol every second
@@ -165,7 +174,7 @@ public class Enemy : Entity
         if (!fake) enemyId.InstaKill();
 
         // reduce health to zero because the host destroyed enemy
-        health.target = 0f;
+        enemyId.health = 0f;
 
         // destroy the boss bar, because it looks just awful
         if (healthBar != null) healthBar.Invoke("DestroyBar", 2f);
