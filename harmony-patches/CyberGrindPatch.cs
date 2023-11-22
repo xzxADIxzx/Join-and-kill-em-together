@@ -19,9 +19,9 @@ public class EndlessGridLoadPatternPatch
         if (LobbyController.Lobby != null)
         {
             // send pattern if the player is the owner of the lobby
-            if (LobbyController.IsOwner) CyberGrind.SendPattern(pattern);
+            if (LobbyController.IsOwner) CyberGrind.Instance.SendPattern(pattern);
             // replacing client pattern with server pattern on client
-            else pattern = CyberGrind.CurrentPattern;
+            else pattern = CyberGrind.Instance.CurrentPattern;
         }
     }
 }
@@ -29,13 +29,10 @@ public class EndlessGridLoadPatternPatch
 [HarmonyPatch(typeof(EndlessGrid), "Start")]
 public class EndlessGridStartPatch
 {
-    static bool Prefix(EndlessGrid __instance)
+    static bool Prefix()
     {
-        // used to easily access the current endless grid instance
-        CyberGrind.EndlessGridInstance = __instance;
-
         // getting cybergrind grid deathzone to change it later
-        foreach (var deathZone in Resources.FindObjectsOfTypeAll<DeathZone>()) if (deathZone.name == "Cube") CyberGrind.GridDeathZoneInstance = deathZone;
+        foreach (var deathZone in Resources.FindObjectsOfTypeAll<DeathZone>()) if (deathZone.name == "Cube") CyberGrind.Instance.GridDeathZoneInstance = deathZone;
 
         // don't skip original method
         return true;
@@ -44,19 +41,27 @@ public class EndlessGridStartPatch
     // use postfix to wait object to initialize
     static void Postfix()
     {
+        var cg = CyberGrind.Instance;
         // check when the player in a lobby 
         if (LobbyController.Lobby != null || LobbyController.IsOwner)
-            // check if no current pattern is loaded and the player is the client
-            if (CyberGrind.CurrentPattern != null && !LobbyController.IsOwner)
-                CyberGrind.LoadCurrentPattern();
-            else
-                // send empty pattern when game starts and the player is the owner to prevent load previous cybergrind pattern
-                CyberGrind.SendPattern(new ArenaPattern());
+        {
+            // check if current pattern is loaded and the player is the client
+            if (cg.CurrentPattern != null && !LobbyController.IsOwner)
+            {
+                // sets as first time
+                cg.LoadTimes = 0;
+                // loads current pattern from the server
+                cg.LoadCurrentPattern();
+            }
+            // send empty pattern when game starts and the player is the owner to prevent load previous cybergrind pattern
+            else cg.SendPattern(new ArenaPattern());
+        }
         else
         {
             // resetting values if the player is not in a lobby.
-            CyberGrind.CurrentWave = 0;
-            CyberGrind.CurrentPattern = null;
+            cg.LoadTimes = 0;
+            cg.CurrentWave = 0;
+            cg.CurrentPattern = null;
         }
     }
 }
@@ -84,7 +89,7 @@ public class EndlessGridUpdatePatch
         if (LobbyController.Lobby != null && !LobbyController.IsOwner)
         {
             // set the current wave on the client to original cybergrind singleton to sync with the server
-            __instance.currentWave = CyberGrind.CurrentWave;
+            __instance.currentWave = CyberGrind.Instance.CurrentWave;
             // set death enemies to prevent start new wave on the client to sync it
             ___anw.deadEnemies = -999;
         }
@@ -105,7 +110,7 @@ public class EndlessGridUpdatePatch
             ___enemiesLeftText.text = EnemyTracker.Instance.enemies.Count.ToString();
         }
         // change y position of cybergrind grid deathzone when lobby created or not to prevent enemies randomly dying
-        var dz = CyberGrind.GridDeathZoneInstance;
+        var dz = CyberGrind.Instance.GridDeathZoneInstance;
         if (dz != null) dz.transform.position = dz.transform.position with { y = LobbyController.Lobby != null ? -10 : 0.5f };
     }
 }

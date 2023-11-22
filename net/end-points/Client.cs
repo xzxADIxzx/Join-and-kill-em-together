@@ -87,7 +87,7 @@ public class Client : Endpoint
 
         Listen(PacketType.CinemaAction, r => Cinema.Play(r.String()));
 
-        Listen(PacketType.CybergrindAction, r => CyberGrind.LoadPattern(r.Int(), r.String()));
+        Listen(PacketType.CybergrindAction, r => CyberGrind.Instance.LoadPattern(r.Int(), r.String()));
     }
 
     public override void Update()
