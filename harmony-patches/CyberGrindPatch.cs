@@ -45,14 +45,12 @@ public class EndlessGridStartPatch
         // check when the player in a lobby 
         if (LobbyController.Lobby != null || LobbyController.IsOwner)
         {
+            // sets as first time
+            cg.LoadTimes = 0;
             // check if current pattern is loaded and the player is the client
             if (cg.CurrentPattern != null && !LobbyController.IsOwner)
-            {
-                // sets as first time
-                cg.LoadTimes = 0;
                 // loads current pattern from the server
                 cg.LoadCurrentPattern();
-            }
             // send empty pattern when game starts and the player is the owner to prevent load previous cybergrind pattern
             else cg.SendPattern(new ArenaPattern());
         }
