@@ -71,6 +71,7 @@ public class Plugin : BaseUnityPlugin
         // initialize world components
         World.World.Load(); // C# sucks
         Movement.Load();
+        CyberGrind.Load();
 
         // initialize ui components
         WidescreenFix.Load();
