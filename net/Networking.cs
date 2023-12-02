@@ -103,14 +103,23 @@ public class Networking : MonoSingleton<Networking>
             // if you are not the owner of the lobby, then you do not need to do anything
             if (!LobbyController.IsOwner) return;
 
-            // send notification to chat
-            lobby.SendChatString($"<system><color=#00FF00>Player {member.Name} joined!</color>");
+            // check if player on banlist
+            if (LobbyController.IsOnBanList(member.Id))
+            {
+                lobby.SendChatString($"<system><color=#FF0000>Player {member.Name} attempted to join but is banned!</color>");
+                Networking.SendEmpty(member.Id, PacketType.Ban);
+            }
+            else
+            {
+                // send notification to chat
+                lobby.SendChatString($"<system><color=#00FF00>Player {member.Name} joined!</color>");
 
-            // confirm the connection with the player
-            SteamNetworking.AcceptP2PSessionWithUser(member.Id);
+                // confirm the connection with the player
+                SteamNetworking.AcceptP2PSessionWithUser(member.Id);
 
-            // send the current scene name to the player
-            Send(member.Id, World.Instance.WriteData(), PacketType.LevelLoading);
+                // send the current scene name to the player
+                Send(member.Id, World.Instance.WriteData(), PacketType.LevelLoading);
+            }
         };
 
         SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) =>

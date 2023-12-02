@@ -3,12 +3,14 @@ namespace Jaket.Net;
 using Steamworks;
 using Steamworks.Data;
 using System;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using UnityEngine;
 
 using Jaket.Content;
 using Jaket.UI;
 using Jaket.World;
+using System.IO;
 
 /// <summary> Lobby controller with several useful methods. </summary>
 public class LobbyController
@@ -21,6 +23,8 @@ public class LobbyController
     public static SteamId LastOwner;
     /// <summary> Id of the last kicked player. </summary>
     public static SteamId LastKicked;
+    /// <summary> Ids of banned players. </summary>
+    public static List<SteamId> BannedPlayers;
 
     /// <summary> Whether a lobby is creating right now. </summary>
     public static bool CreatingLobby;
@@ -38,6 +42,9 @@ public class LobbyController
 
     /// <summary> Scales health to increase difficulty. </summary>
     public static void ScaleHealth(ref float health) => health *= 1f + (Lobby == null ? 0f : Lobby.Value.MemberCount - 1f) * PPP;
+
+    /// <summary> Returns the path of the banlist. </summary>
+    private static string GetBanlistPath() => Path.Combine(Application.persistentDataPath, "banlist.jaket.json");
 
     /// <summary> Creates the necessary listeners for proper work with a lobby. </summary>
     public static void Load()
@@ -148,6 +155,28 @@ Maybe it was closed or you were blocked ,_,");
 
         Networking.SendEmpty(LastKicked = member.Id, PacketType.Kick);
         Lobby?.SendChatString($"<system><color=red>Player {member.Name} was kicked!</color>");
+    }
+
+    /// <summary> Bans the member from the lobby, or rather asks him to leave, because Valve has not added such functionality to its API. </summary>
+    public static void BanMember(Friend member)
+    {
+      // who does the client think he is?!
+      if (!IsOwner) return;
+
+      BannedPlayers.Add(member.Id);
+      string serialized = JsonConvert.SerializeObject(BannedPlayers, Formatting.None);
+      string path = Path.Combine(Application.persistentDataPath, "banlist.jaket.json"); // Maybe not the place to put this?
+      File.WriteAllText(path, serialized);
+
+      Networking.SendEmpty(LastKicked = member.Id, PacketType.Ban);
+      Lobby?.SendChatString($"<system><color=red>Player {member.Name} was banned!</color>");
+    }
+
+    /// <summary> Check if a player is on banlist. </summary>
+    public static bool IsOnBanList(SteamId toCheck)
+    {
+        if (BannedPlayers.Count == 0) BannedPlayers = JsonConvert.DeserializeObject<List<SteamId>>(File.ReadAllText(GetBanlistPath()));
+        return BannedPlayers.Contains(toCheck);
     }
 
     /// <summary> Returns a list of nicknames of players currently typing. </summary>

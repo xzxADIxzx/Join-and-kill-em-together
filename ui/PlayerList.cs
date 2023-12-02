@@ -72,8 +72,9 @@ public class PlayerList : CanvasSingleton<PlayerList>
                     if (LobbyController.IsOwner)
                     {
                         UI.ProfileButton(member, table, -32f, y -= 64f, 256f);
-                        UI.IconButton("X", table, 136f, y, new(1f, .2f, .1f), clicked: () => LobbyController.KickMember(member));
-                    }
+                        UI.IconButton("K", table, 136f, y, new(1f, .2f, .1f), clicked: () => LobbyController.KickMember(member));
+                        UI.IconButton("B", table, 125f, y, new(1f, .2f, .1f), clicked: () => LobbyController.BanMember(member));
+                }
                     else UI.ProfileButton(member, table, 0f, y -= 64f);
                 }
             });
