@@ -73,5 +73,7 @@ public class Writer
 
     public void Id(SteamId value) => Marshal.WriteInt64(mem, Inc(8), Ulong2long(value));
 
+    public void Enum<T>(T value) where T : Enum => Byte(Convert.ToByte(value));
+
     #endregion
 }

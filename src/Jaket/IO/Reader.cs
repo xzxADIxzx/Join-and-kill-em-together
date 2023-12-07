@@ -68,5 +68,7 @@ public class Reader
 
     public SteamId Id() => Long2Ulong(Marshal.ReadInt64(mem, Inc(8)));
 
+    public T Enum<T>() where T : Enum => (T)System.Enum.ToObject(typeof(T), Byte());
+
     #endregion
 }

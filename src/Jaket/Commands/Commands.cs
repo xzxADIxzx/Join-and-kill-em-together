@@ -83,11 +83,13 @@ public class Commands
                     Networking.Entities[item.Id] = item;
                 }
                 else
-                    Networking.Redirect(Writer.Write(w =>
+                    Writer.Write(w =>
                     {
+                        w.Enum(PacketType.SpawnEntity);
+
                         w.Byte((byte)(index + 42));
                         w.Vector(NewMovement.Instance.transform.position);
-                    }), PacketType.SpawnEntity);
+                    }, Networking.Redirect, 14);
             }
         });
 
@@ -102,7 +104,7 @@ public class Commands
 
             SendMsg("Contributors:");
             SendMsg("* <color=#00E666>Rey Hunter</color> - really cool icons for emotions");
-            SendMsg("* <color=#00E666>Ardub, OMaciej</color> - fixes and features");
+            SendMsg("* <color=#00E666>Ardub</color> - invaluable help with The Cyber Grind <size=12><color=#cccccc>(he did 90% of the work)</color></size>");
 
             SendMsg("Testers:");
             SendMsg("<color=#cccccc>Fenicemaster, AndruGhost, Subjune, FruitCircuit</color>");
