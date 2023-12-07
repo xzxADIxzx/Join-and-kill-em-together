@@ -15,9 +15,9 @@ public class Writer
     public readonly int Length;
 
     /// <summary> Pointer to the allocated memory. </summary>
-    private IntPtr mem;
+    public readonly IntPtr mem;
     /// <summary> Creates a writer with the given memory. </summary>
-    private Writer(IntPtr memory, int length) { this.mem = memory; this.Length = length; }
+    public Writer(IntPtr memory, int length) { this.mem = memory; this.Length = length; }
 
     /// <summary> Allocates memory and writes data there. </summary>
     public static void Write(Action<Writer> cons, Action<IntPtr, int> result, int memoryAmount = 96)
@@ -31,7 +31,7 @@ public class Writer
     /// <summary> Converts float to integer. </summary>
     public static unsafe int Float2Int(float value) => *(int*)(&value);
     /// <summary> Converts ulong to long. </summary>
-    public static unsafe long ULong2long(ulong value) => *(long*)(&value);
+    public static unsafe long Ulong2long(ulong value) => *(long*)(&value);
 
     /// <summary> Moves the cursor by a given number of bytes and returns the old cursor position. </summary>
     public int Inc(int amount)
@@ -71,7 +71,7 @@ public class Writer
 
     public void Color(Color32 value) => Int(value.rgba);
 
-    public void Id(SteamId value) => Marshal.WriteInt64(mem, Inc(8), ULong2long(value));
+    public void Id(SteamId value) => Marshal.WriteInt64(mem, Inc(8), Ulong2long(value));
 
     #endregion
 }

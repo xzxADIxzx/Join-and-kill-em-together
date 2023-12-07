@@ -15,9 +15,9 @@ public class Reader
     public readonly int Length;
 
     /// <summary> Pointer to the allocated memory. </summary>
-    private IntPtr mem;
+    public readonly IntPtr mem;
     /// <summary> Creates a reader with the given memory. </summary>
-    private Reader(IntPtr memory, int length) { this.mem = memory; this.Length = length; }
+    public Reader(IntPtr memory, int length) { this.mem = memory; this.Length = length; }
 
     /// <summary> Reads data from the given memory via reader. </summary>
     public static void Read(IntPtr memory, int length, Action<Reader> cons) => cons(new(memory, length));
