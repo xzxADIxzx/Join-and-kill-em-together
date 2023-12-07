@@ -8,7 +8,7 @@ using UnityEngine.Events;
 
 using Jaket.Content;
 using Jaket.Net;
-using Jaket.Net.EntityTypes;
+using Jaket.Net.Types;
 using Jaket.UI;
 
 /// <summary> Class that works with the assets bundle for the player doll. </summary>
