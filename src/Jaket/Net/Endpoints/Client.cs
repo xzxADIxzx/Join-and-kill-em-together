@@ -1,16 +1,20 @@
-namespace Jaket.Net.EndPoints;
+namespace Jaket.Net.Endpoints;
 
 using Steamworks;
+using Steamworks.Data;
 using UnityEngine;
 
 using Jaket.Content;
 using Jaket.IO;
-using Jaket.Net.EntityTypes;
+using Jaket.Net.Types;
 using Jaket.World;
 
-/// <summary> Endpoint of the client connected to the host. </summary>
-public class Client : Endpoint
+/// <summary> Client endpoint processing socket events and host packets. </summary>
+public class Client : Endpoint, IConnectionManager
 {
+    /// <summary> Steam networking sockets API backend. </summary>
+    public ConnectionManager Manager { get; protected set; }
+
     public override void Load()
     {
         Listen(PacketType.Snapshot, r =>
@@ -55,18 +59,6 @@ public class Client : Endpoint
             if (entity is Enemy enemy) enemy?.Kill();
         });
 
-        Listen(PacketType.BossDefeated, r =>
-        {
-            // maybe sending the name is not the best idea, but I don't have any others
-            string bossName = r.String();
-
-            // find the original of the killed boss
-            var boss = Networking.Bosses.Find(enemyId => enemyId != null && enemyId.gameObject.name == bossName);
-
-            // kill the boss to trigger the internal logic of the game
-            if (boss != null) Object.Destroy(boss.gameObject);
-        });
-
         Listen(PacketType.SpawnBullet, Bullets.Read);
 
         Listen(PacketType.DamageEntity, r => entities[r.Id()]?.Damage(r));
@@ -92,13 +84,38 @@ public class Client : Endpoint
 
     public override void Update()
     {
-        // write player data
-        byte[] data = Writer.Write(Networking.LocalPlayer.Write);
+        // read incoming data
+        Manager.Receive(1024);
 
-        // send player data
-        Networking.SendSnapshot(LobbyController.Owner, data);
+        // write data
+        Writer.Write(w =>
+        {
+            w.Enum(PacketType.Snapshot);
+            Networking.LocalPlayer.Write(w);
+        }, Networking.Redirect);
 
-        // read incoming packets
-        UpdateListeners();
+        // flush data
+        Manager.Connection.Flush();
+        Pointers.Free();
     }
+
+    public override void Close() => Manager?.Close();
+
+    public void Connect(SteamId id)
+    {
+        Manager = SteamNetworkingSockets.ConnectRelay<ConnectionManager>(id, 4242);
+        Manager.Interface = this;
+    }
+
+    #region manager
+
+    public void OnConnecting(ConnectionInfo info) { }
+
+    public void OnConnected(ConnectionInfo info) { }
+
+    public void OnDisconnected(ConnectionInfo info) { }
+
+    public void OnMessage(System.IntPtr data, int size, long msg, long time, int channel) => Handle(Manager.Connection, LobbyController.LastOwner, data, size);
+
+    #endregion
 }
