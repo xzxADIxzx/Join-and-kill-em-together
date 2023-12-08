@@ -1,4 +1,4 @@
-namespace Jaket.World;
+namespace Jaket;
 
 using Steamworks;
 using System;
@@ -7,7 +7,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 using Jaket.Net;
-using Jaket.UI;
 
 /// <summary> List of events used by the mod. Some of them are combined into one for simplicity. </summary>
 public class Events : MonoSingleton<Events>
@@ -28,7 +27,7 @@ public class Events : MonoSingleton<Events>
     public static void Load()
     {
         // initialize the singleton
-        UI.Object("Events").AddComponent<Events>();
+        UI.UI.Object("Events").AddComponent<Events>();
 
         SceneManager.sceneLoaded += (scene, mode) =>
         {
