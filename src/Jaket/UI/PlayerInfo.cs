@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using Jaket.Net;
-using Jaket.Net.EntityTypes;
+using Jaket.Net.Types;
 using Jaket.UI.Elements;
 
 /// <summary> Teammates information displayed in the bottom right corner of the screen. </summary>

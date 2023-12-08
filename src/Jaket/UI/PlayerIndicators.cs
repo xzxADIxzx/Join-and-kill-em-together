@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 using Jaket.Content;
 using Jaket.Net;
-using Jaket.Net.EntityTypes;
+using Jaket.Net.Types;
 using Jaket.World;
 
 /// <summary> Indicators showing the location of teammates near the cursor. </summary>

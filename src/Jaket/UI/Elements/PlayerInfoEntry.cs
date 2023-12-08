@@ -3,7 +3,7 @@ namespace Jaket.UI.Elements;
 using UnityEngine;
 using UnityEngine.UI;
 
-using Jaket.Net.EntityTypes;
+using Jaket.Net.Types;
 using Jaket.UI;
 
 /// <summary> Interface element displaying information about the player such as name, health and railgun charge. </summary>
