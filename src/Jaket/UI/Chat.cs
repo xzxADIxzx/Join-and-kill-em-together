@@ -62,6 +62,8 @@ public class Chat : CanvasSingleton<Chat>
 
     private void Start()
     {
+        Events.OnLobbyEntered += () => Hello(); // send some useful information to the chat so that players know about the mod's features
+
         list = UI.Table("List", transform, 0f, 0f, 0f, 0f).rectTransform;
         listBg = UI.Component<CanvasGroup>(list.gameObject, group => group.blocksRaycasts = false); // disable chat collision so it doesn't interfere with buttons
 

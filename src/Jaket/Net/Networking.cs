@@ -68,15 +68,7 @@ public class Networking : MonoSingleton<Networking>
 
         SteamMatchmaking.OnLobbyEntered += lobby =>
         {
-            // send some useful information to the chat so that players know about the mod's features
-            Chat.Instance.Hello();
-            // turn on player indicators & info because many don't even know about their existence
-            PlayerIndicators.Instance.gameObject.SetActive(PlayerIndicators.Shown = true);
-            if (!PlayerInfo.Shown) PlayerInfo.Instance.Toggle();
-
-            Clear(); // destroy all entities, since the player could join from another lobby, and sync all items
-            Items.SyncAll();
-
+            Clear(); // destroy all entities, since the player could join from another lobby
             if (LobbyController.IsOwner)
             {
                 // open the server so people can join it

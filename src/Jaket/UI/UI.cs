@@ -10,7 +10,6 @@ using UnityEngine.UI.Extensions;
 using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net;
-using Jaket.World;
 
 /// <summary> Class that builds the entire interface of the mod. </summary>
 public class UI
@@ -46,6 +45,7 @@ public class UI
     public static void Build()
     {
         // the listener is created here because a player info instance is created every time the scene is loaded
+        Events.OnLobbyEntered += () => { if (!PlayerInfo.Shown) PlayerInfo.Instance?.Toggle(); };
         Events.OnTeamChanged += () => PlayerInfo.Instance?.Rebuild();
 
         LobbyList.Build("Lobby List");

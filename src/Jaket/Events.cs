@@ -15,6 +15,8 @@ public class Events : MonoSingleton<Events>
     public static SafeEvent OnLoaded = new(), OnMainMenuLoaded = new();
     /// <summary> Event triggered when an action is taken on the lobby: creation, closing or connection. </summary>
     public static SafeEvent OnLobbyAction = new();
+    /// <summary> Event triggered when the local player enters a lobby. </summary>
+    public static SafeEvent OnLobbyEntered = new();
     /// <summary> Event triggered when team composition changes. </summary>
     public static SafeEvent OnTeamChanged = new();
     /// <summary> Event triggered when a weapon or hand changes: weapon swap, hand color change. </summary>
@@ -40,6 +42,7 @@ public class Events : MonoSingleton<Events>
 
         SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) => Post(OnTeamChanged.Fire);
         SteamMatchmaking.OnLobbyDataChanged += lobby => OnLobbyAction.Fire();
+        SteamMatchmaking.OnLobbyEntered += lobby => OnLobbyEntered.Fire();
 
         // interaction with the lobby affects many aspects of the game
         OnLobbyAction += OnTeamChanged.Fire;

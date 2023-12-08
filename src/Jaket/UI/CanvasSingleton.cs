@@ -2,8 +2,6 @@ namespace Jaket.UI;
 
 using System;
 
-using Jaket.World;
-
 /// <summary> Singleton based on canvas. Used for interface construction. </summary>
 public class CanvasSingleton<T> : MonoSingleton<T> where T : CanvasSingleton<T>
 {
