@@ -1,4 +1,4 @@
-namespace Jaket.Net.EntityTypes;
+namespace Jaket.Net.Types;
 
 using UnityEngine;
 
@@ -9,32 +9,17 @@ using Jaket.World;
 /// <summary> Minos hand representation responsible for synchronizing animations and attacks. </summary>
 public class Hand : Entity
 {
-    /// <summary> Enemy identifier component needed for health synchronization. </summary>
-    private EnemyIdentifier enemyId;
-
     /// <summary> Minos hand health. </summary>
-    private FloatLerp health;
-
-    /// <summary> Animator is required to synchronize attacks, because they are launched through animations. </summary>
-    private Animator animator;
-
+    private FloatLerp health = new();
     /// <summary> Hand position used to synchronize attacks. </summary>
     public byte HandPos = 0xFF, LastHandPos = 0xFF;
 
     private void Awake()
     {
-        if (LobbyController.IsOwner)
-        {
-            Id = Entities.NextId();
-            Type = EntityType.Hand;
-        }
-
-        health = new();
-        enemyId = GetComponent<EnemyIdentifier>();
-        animator = GetComponent<Animator>();
+        Init(_ => EntityType.Hand);
 
         if (LobbyController.IsOwner)
-            LobbyController.ScaleHealth(ref enemyId.statue.health);
+            LobbyController.ScaleHealth(ref EnemyId.statue.health);
         else
             GetComponent<MinosArm>().enabled = false; // artificial intelligence of the hand is not needed by clients
 
@@ -45,10 +30,10 @@ public class Hand : Entity
     {
         if (LobbyController.IsOwner) return;
 
-        enemyId.health = enemyId.statue.health = health.Get(LastUpdate);
-        enemyId.dead = enemyId.health <= 0f;
+        EnemyId.health = EnemyId.statue.health = health.Get(LastUpdate);
+        EnemyId.dead = EnemyId.health <= 0f;
 
-        if (LastHandPos != HandPos) animator.SetTrigger((LastHandPos = HandPos) switch
+        if (LastHandPos != HandPos) Animator.SetTrigger((LastHandPos = HandPos) switch
         {
             0 => "SlamDown",
             1 => "SlamLeft",
@@ -59,7 +44,7 @@ public class Hand : Entity
 
     public override void Write(Writer w)
     {
-        w.Float(enemyId.health);
+        w.Float(EnemyId.health);
         w.Byte(HandPos);
     }
 
@@ -70,6 +55,4 @@ public class Hand : Entity
         health.Read(r);
         HandPos = r.Byte();
     }
-
-    public override void Damage(Reader r) => Bullets.DealDamage(enemyId, r);
 }

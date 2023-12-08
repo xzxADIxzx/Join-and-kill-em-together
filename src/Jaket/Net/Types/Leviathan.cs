@@ -1,4 +1,4 @@
-namespace Jaket.Net.EntityTypes;
+namespace Jaket.Net.Types;
 
 using UnityEngine;
 
@@ -12,9 +12,6 @@ public class Leviathan : Entity
     /// <summary> Boss controller containing references to the head and tail of Leviathan. </summary>
     private LeviathanController levi;
 
-    /// <summary> Head animator needed to synchronize attacks and position. </summary>
-    private Animator animator;
-
     /// <summary> Leviathan health, position and rotation. </summary>
     private FloatLerp health, headX, headY, headZ, tailX, tailY, tailZ, headRotation, tailRotation;
 
@@ -23,26 +20,17 @@ public class Leviathan : Entity
 
     private void Awake()
     {
-        if (LobbyController.IsOwner)
-        {
-            Id = Entities.NextId();
-            Type = EntityType.Leviathan;
-        }
+        Init(_ => EntityType.Leviathan);
 
-        // interpolations
         health = new();
-        headX = new();
-        headY = new();
-        headZ = new();
-        tailX = new();
-        tailY = new();
-        tailZ = new();
+        headX = new(); headY = new(); headZ = new();
+        tailX = new(); tailY = new(); tailZ = new();
         headRotation = new();
         tailRotation = new();
 
-        // other stuff
         levi = GetComponent<LeviathanController>();
-        animator = levi.head.GetComponent<Animator>();
+        EnemyId = levi.eid;
+        Animator = levi.head.GetComponent<Animator>();
 
         if (LobbyController.IsOwner)
             LobbyController.ScaleHealth(ref levi.stat.health);
@@ -59,8 +47,8 @@ public class Leviathan : Entity
     {
         if (LobbyController.IsOwner) return;
 
-        levi.eid.health = levi.stat.health = health.Get(LastUpdate);
-        levi.eid.dead = levi.stat.health <= 0f;
+        EnemyId.health = levi.stat.health = health.Get(LastUpdate);
+        EnemyId.dead = levi.stat.health <= 0f;
 
         levi.head.transform.position = new(headX.Get(LastUpdate), headY.Get(LastUpdate), headZ.Get(LastUpdate));
         levi.tail.transform.position = new(tailX.Get(LastUpdate), tailY.Get(LastUpdate), tailZ.Get(LastUpdate));
@@ -74,18 +62,18 @@ public class Leviathan : Entity
             switch (HeadPos)
             {
                 case 0:
-                    animator.SetBool("ProjectileBurst", levi.head.active = true);
-                    animator.SetBool("Sunken", false);
+                    Animator.SetBool("ProjectileBurst", levi.head.active = true);
+                    Animator.SetBool("Sunken", false);
                     break;
                 case 1:
-                    animator.SetBool("ProjectileBurst", levi.head.active = false);
-                    animator.SetBool("Sunken", false);
+                    Animator.SetBool("ProjectileBurst", levi.head.active = false);
+                    Animator.SetBool("Sunken", false);
 
-                    animator.SetTrigger("Bite");
+                    Animator.SetTrigger("Bite");
                     break;
                 case 0xFF: // -1 when converted to byte gives 0xFF
-                    animator.SetBool("ProjectileBurst", levi.head.active = false);
-                    animator.SetBool("Sunken", true);
+                    Animator.SetBool("ProjectileBurst", levi.head.active = false);
+                    Animator.SetBool("Sunken", true);
                     break;
             }
         }
@@ -130,6 +118,4 @@ public class Leviathan : Entity
         HeadPos = r.Byte();
         TailPos = r.Byte();
     }
-
-    public override void Damage(Reader r) => Bullets.DealDamage(levi.eid, r);
 }

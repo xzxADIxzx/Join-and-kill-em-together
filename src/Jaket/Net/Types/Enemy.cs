@@ -1,4 +1,4 @@
-namespace Jaket.Net.EntityTypes;
+namespace Jaket.Net.Types;
 
 using System;
 using UnityEngine;
@@ -11,8 +11,6 @@ using Jaket.UI;
 /// <summary> Representation of the most enemies in the game responsible for synchronizing position and target of the idols. </summary>
 public class Enemy : Entity
 {
-    /// <summary> Enemy identifier component. </summary>
-    private EnemyIdentifier enemyId;
     /// <summary> Null if the enemy is not a boss. </summary>
     private BossHealthBar healthBar;
     /// <summary> Null if the enemy is not a fake ferryman. </summary>
@@ -34,52 +32,33 @@ public class Enemy : Entity
 
     private void Awake()
     {
-        if (!LobbyController.IsOwner) gameObject.name = "Net"; // needed to prevent object looping between client and server
+        Init(Enemies.Type);
 
-        // interpolations
-        health = new FloatLerp();
-        x = new FloatLerp();
-        y = new FloatLerp();
-        z = new FloatLerp();
-        rotation = new FloatLerp();
+        health = new();
+        x = new(); y = new(); z = new();
+        rotation = new();
 
-        // other stuff
-        enemyId = GetComponent<EnemyIdentifier>();
         healthBar = GetComponent<BossHealthBar>();
         fakeFerryman = GetComponent<FerrymanFake>();
 
         // multiply health
         if (LobbyController.IsOwner && healthBar != null)
         {
-            if (enemyId.machine) LobbyController.ScaleHealth(ref enemyId.machine.health);
-            else if (enemyId.spider) LobbyController.ScaleHealth(ref enemyId.spider.health);
-            else if (enemyId.statue) LobbyController.ScaleHealth(ref enemyId.statue.health);
-        }
-
-        // prevent bosses from going into the second phase instantly
-        health.target = enemyId.health;
-
-        if (LobbyController.IsOwner)
-        {
-            int index = Enemies.CopiedIndex(enemyId);
-            if (index == -1)
-            {
-                Destroy(this);
-                return;
-            }
-
-            Id = Entities.NextId();
-            Type = (EntityType)index;
+            if (EnemyId.machine) LobbyController.ScaleHealth(ref EnemyId.machine.health);
+            else if (EnemyId.spider) LobbyController.ScaleHealth(ref EnemyId.spider.health);
+            else if (EnemyId.statue) LobbyController.ScaleHealth(ref EnemyId.statue.health);
 
             // in the second phase the same object is used as in the anticipatory one
-            if (SceneHelper.CurrentScene == "Level 4-4" && enemyId.enemyType == EnemyType.V2 && healthBar != null &&
-                TryGetComponent<V2>(out var V2) && !V2.firstPhase)
+            if (SceneHelper.CurrentScene == "Level 4-4" && EnemyId.enemyType == EnemyType.V2 && TryGetComponent<V2>(out var V2) && !V2.firstPhase)
             {
                 Networking.Entities[Id] = this;
                 DestroyImmediate(healthBar);
                 healthBar = gameObject.AddComponent<BossHealthBar>();
             }
         }
+
+        // prevent bosses from going into the second phase instantly
+        health.target = EnemyId.health;
 
         // run a loop that will update the target id of the idol every second
         if (TryGetComponent<Idol>(out idol) && LobbyController.IsOwner) InvokeRepeating("UpdateTarget", 0f, 1f);
@@ -98,7 +77,7 @@ public class Enemy : Entity
         // apply the enemy subtype if there is one
         if (LobbyController.IsOwner || subtype == 0) return;
 
-        if (enemyId.enemyType == EnemyType.Swordsmachine)
+        if (EnemyId.enemyType == EnemyType.Swordsmachine)
         {
             var original = GameObject.Find("S - Secret Fight").transform.GetChild(0).GetChild(0).GetChild(subtype == 1 ? 2 : 1);
 
@@ -106,7 +85,7 @@ public class Enemy : Entity
             transform.GetChild(0).GetChild(2).GetComponent<Renderer>().material = original.transform.GetChild(0).GetChild(2).GetComponent<Renderer>().material;
         }
 
-        if (enemyId.enemyType == EnemyType.Sisyphus)
+        if (EnemyId.enemyType == EnemyType.Sisyphus)
             foreach (var renderer in transform.GetComponentsInChildren<SkinnedMeshRenderer>())
                 renderer.material.color = subtype == 1 ? new(1f, .25f, .25f) : new(.25f, .5f, 1f);
     }
@@ -115,14 +94,14 @@ public class Enemy : Entity
     {
         if (LobbyController.IsOwner) return;
 
-        enemyId.health = health.Get(LastUpdate);
+        EnemyId.health = health.Get(LastUpdate);
         transform.position = new(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
         transform.eulerAngles = new(0f, rotation.GetAngel(LastUpdate), 0f);
 
         // this is necessary so that the health of the bosses is the same for all clients
-        if (enemyId.machine != null) enemyId.machine.health = enemyId.health;
-        else if (enemyId.spider != null) enemyId.spider.health = enemyId.health;
-        else if (enemyId.statue != null) enemyId.statue.health = enemyId.health;
+        if (EnemyId.machine != null) EnemyId.machine.health = EnemyId.health;
+        else if (EnemyId.spider != null) EnemyId.spider.health = EnemyId.health;
+        else if (EnemyId.statue != null) EnemyId.statue.health = EnemyId.health;
 
         // add a health bar if the enemy is a boss
         if (boss && healthBar == null) healthBar = gameObject.AddComponent<BossHealthBar>();
@@ -167,25 +146,11 @@ public class Enemy : Entity
     /// <summary> Updates the target id of the idol for transmission to clients. </summary>
     public void UpdateTarget() => targetId = idol.target != null && idol.target.TryGetComponent<Enemy>(out var target) ? target.Id : ulong.MaxValue;
 
-    /// <summary> Kills the enemy to avoid desynchronization. </summary>
-    public void Kill()
-    {
-        // it looks funny
-        if (!fake) enemyId.InstaKill();
-
-        // reduce health to zero because the host destroyed enemy
-        enemyId.health = 0f;
-
-        // destroy the boss bar, because it looks just awful
-        if (healthBar != null) healthBar.Invoke("DestroyBar", 2f);
-
-        // destroy the component to allow enemies like Malicious Face and Drone to fall
-        Destroy(fake ? gameObject : this);
-    }
+    #region entity
 
     public override void Write(Writer w)
     {
-        w.Float(enemyId.health);
+        w.Float(EnemyId.health);
         w.Vector(transform.position);
         w.Float(transform.eulerAngles.y);
 
@@ -209,5 +174,18 @@ public class Enemy : Entity
         subtype = r.Byte();
     }
 
-    public override void Damage(Reader r) => Bullets.DealDamage(enemyId, r);
+    public override void Kill()
+    {
+        // it looks funny
+        if (!fake) EnemyId.InstaKill();
+        // reduce health to zero because the host destroyed enemy
+        EnemyId.health = 0f;
+
+        // destroy the boss bar, because it looks just awful
+        healthBar?.Invoke("DestroyBar", 3f);
+        // destroy the component to allow enemies like Malicious Face and Drone to fall
+        Destroy(fake ? gameObject : this);
+    }
+
+    #endregion
 }
