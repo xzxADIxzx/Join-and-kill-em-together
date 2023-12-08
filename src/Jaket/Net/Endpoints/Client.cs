@@ -88,11 +88,7 @@ public class Client : Endpoint, IConnectionManager
         Manager.Receive(1024);
 
         // write data
-        Writer.Write(w =>
-        {
-            w.Enum(PacketType.Snapshot);
-            Networking.LocalPlayer.Write(w);
-        }, Networking.Redirect);
+        Networking.Send(PacketType.Snapshot, Networking.LocalPlayer.Write);
 
         // flush data
         Manager.Connection.Flush();

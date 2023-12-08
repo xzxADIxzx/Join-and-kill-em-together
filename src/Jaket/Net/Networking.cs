@@ -60,11 +60,7 @@ public class Networking : MonoSingleton<Networking>
             Entities[LocalPlayer.Id] = LocalPlayer;
 
             // inform all players about the transition to a new level
-            if (LobbyController.IsOwner) Writer.Write(w =>
-            {
-                w.Enum(PacketType.LevelLoading);
-                World.Instance.WriteData(w);
-            }, Redirect);
+            if (LobbyController.IsOwner) Send(PacketType.LevelLoading, World.Instance.WriteData);
         };
 
         // fires when accepting an invitation via the Steam overlay
@@ -108,11 +104,7 @@ public class Networking : MonoSingleton<Networking>
             lobby.SendChatString($"<system><color=#00FF00>Player {member.Name} joined!</color>");
 
             // send the current scene name to the player
-            Writer.Write(w =>
-            {
-                w.Enum(PacketType.LevelLoading);
-                World.Instance.WriteData(w);
-            }, (data, size) => FindCon(member.Id)?.SendMessage(data, size));
+            Send(PacketType.LevelLoading, World.Instance.WriteData, (data, size) => FindCon(member.Id)?.SendMessage(data, size));
         };
 
         SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) =>
@@ -227,6 +219,10 @@ public class Networking : MonoSingleton<Networking>
         else
             Client.Manager.Connection.SendMessage(data, size);
     }
+
+    /// <summary> Allocates memory, writes the packet there and sends it. </summary>
+    public static void Send(PacketType packetType, Action<Writer> cons = null, Action<IntPtr, int> result = null, int size = 96) =>
+        Writer.Write(w => { w.Enum(packetType); cons?.Invoke(w); }, result ?? Redirect, size);
 
     #endregion
 }

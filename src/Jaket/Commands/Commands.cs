@@ -83,13 +83,11 @@ public class Commands
                     Networking.Entities[item.Id] = item;
                 }
                 else
-                    Writer.Write(w =>
+                    Networking.Send(PacketType.SpawnEntity, w =>
                     {
-                        w.Enum(PacketType.SpawnEntity);
-
                         w.Byte((byte)(index + 42));
                         w.Vector(NewMovement.Instance.transform.position);
-                    }, Networking.Redirect, 14);
+                    }, size: 14);
             }
         });
 

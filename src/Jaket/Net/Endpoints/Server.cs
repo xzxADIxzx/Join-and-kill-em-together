@@ -68,14 +68,12 @@ public class Server : Endpoint, ISocketManager
         Manager.Receive(1024);
 
         // write data
-        Networking.EachEntity(entity => Writer.Write(w =>
+        Networking.EachEntity(entity => Networking.Send(PacketType.Snapshot, w =>
         {
-            w.Enum(PacketType.Snapshot);
             w.Id(entity.Id);
             w.Enum(entity.Type);
-
             entity.Write(w);
-        }, Networking.Redirect));
+        }));
 
         // flush data
         Manager.Connected.ForEach(con => con.Flush());
