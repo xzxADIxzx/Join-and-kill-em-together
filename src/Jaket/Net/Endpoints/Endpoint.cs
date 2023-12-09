@@ -43,7 +43,11 @@ public abstract class Endpoint
     /// <summary> Handles the packet and calls the corresponding listener. </summary>
     public void Handle(Connection con, SteamId sender, Reader r)
     {
-        if (listeners.TryGetValue((PacketType)r.Byte(), out var listener)) listener(con, sender, r);
+        var type = r.Enum<PacketType>(); // if the client hasn't downloaded the level yet, then it only needs a packet with the level name
+        if (Networking.Loading && type != PacketType.LevelLoading) return;
+
+        // find the required listener and transfer control to it, all it has to do is read the payload
+        if (listeners.TryGetValue(type, out var listener)) listener(con, sender, r);
     }
     /// <summary> Handles the packet from unmanaged memory. </summary>
     public void Handle(Connection con, SteamId sender, IntPtr data, int size) => Reader.Read(data, size, r => Handle(con, sender, r));
