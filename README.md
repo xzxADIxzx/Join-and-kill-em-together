@@ -51,7 +51,7 @@ To compile you will need .NET SDK 6.0 and Git.
 
 1. Clone the repository with `git clone https://github.com/xzxADIxzx/Join-and-kill-em-together.git`
    1. Run `cd <path-to-cloned-repository>`
-   2. Delete the **BundleBuilder.cs** file from the assets folder because it requires **UnityEditor.dll** but is not needed to run the mod.
+   2. Delete the **BundleBuilder.cs** file from the `src/Jaket/Assets` folder because it requires **UnityEditor.dll** but is not needed to run the mod.
 2. Run `dotnet restore`
 3. Create lib folder in root directory.
    1. Copy **Assembly-CSharp.dll**, **Facepunch.Steamworks.Win64.dll**, **UnityEngine.UI.dll** and **UnityUIExtensions.dll** from `ULTRAKILL\ULTRAKILL_Data\Managed`

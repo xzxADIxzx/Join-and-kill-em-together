@@ -24,11 +24,11 @@ public class Enemy : Entity
     private byte subtype;
 
     /// <summary> Enemy health, position and rotation. </summary>
-    public FloatLerp health, x, y, z, rotation;
+    private FloatLerp health, x, y, z, rotation;
     /// <summary> Whether the enemy is a boss and should have a health bar. </summary>
-    public bool boss, haveSecondPhase;
+    private bool boss, haveSecondPhase;
     /// <summary> Whether the enemy is a fake ferryman. </summary>
-    public bool fake;
+    private bool fake;
 
     private void Awake()
     {
@@ -145,6 +145,13 @@ public class Enemy : Entity
 
     /// <summary> Updates the target id of the idol for transmission to clients. </summary>
     public void UpdateTarget() => targetId = idol.target != null && idol.target.TryGetComponent<Enemy>(out var target) ? target.Id : ulong.MaxValue;
+
+    /// <summary> Turns on the spawn effect and moves the object so that the effect does not appear at the origin. </summary>
+    public void SpawnEffect()
+    {
+        EnemyId.spawnIn = true;
+        transform.position = new(x.target, y.target, z.target);
+    }
 
     #region entity
 

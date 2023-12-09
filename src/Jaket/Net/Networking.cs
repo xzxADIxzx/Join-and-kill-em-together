@@ -141,7 +141,7 @@ public class Networking : MonoSingleton<Networking>
     /// <summary> Core network logic should have been here, but in fact it is located in the server and client classes. </summary>
     private void NetworkUpdate()
     {
-        // the player isn't connected to the lobby, and no logic needs to be updated
+        // the player isn't connected to the lobby and the logic doesn't need to be updated
         if (LobbyController.Lobby == null) return;
 
         // update the server or client depending on the role of the player
@@ -214,7 +214,7 @@ public class Networking : MonoSingleton<Networking>
 
     /// <summary> Allocates memory, writes the packet there and sends it. </summary>
     public static void Send(PacketType packetType, Action<Writer> cons = null, Action<IntPtr, int> result = null, int size = 96) =>
-        Writer.Write(w => { w.Enum(packetType); cons?.Invoke(w); }, result ?? Redirect, size);
+        Writer.Write(w => { w.Enum(packetType); cons?.Invoke(w); }, result ?? Redirect, cons == null ? 1 : size + 1);
 
     #endregion
 }
