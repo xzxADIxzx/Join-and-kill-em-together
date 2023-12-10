@@ -17,22 +17,16 @@ public class Entities
     /// <summary> Loads providers into the dictionary. </summary>
     public static void Load()
     {
-        for (int i = 0; i <= 32; i++)
-        {
-            var type = (EntityType)i;
+        Providers.Add(EntityType.Player, DollAssets.CreateDoll);
+
+        for (var type = EntityType.Filth; type <= EntityType.SisyphusPrime; type++)
             Providers.Add(type, () => Enemies.Instantiate(type));
-        }
 
         Providers.Add(EntityType.Hand, () => World.Instance.Hand);
         Providers.Add(EntityType.Leviathan, () => World.Instance.Leviathan);
 
-        for (int i = 35; i <= 71; i++)
-        {
-            var type = (EntityType)i;
+        for (var type = EntityType.AppleBait; type <= EntityType.V1; type++)
             Providers.Add(type, () => Items.Instantiate(type));
-        }
-
-        Providers.Add(EntityType.Player, DollAssets.CreateDoll);
     }
 
     /// <summary> Returns an entity of the given type. </summary>
