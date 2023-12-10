@@ -51,9 +51,13 @@ public class Plugin : BaseUnityPlugin
 
         // notify players about the availability of an update so that they no longer whine to me about something not working
         Version.Check4Update();
-
         // check if Ultrapain is installed
         UltrapainLoaded = Chainloader.PluginInfos.ContainsKey("com.eternalUnion.ultraPain");
+
+        // initialize networking components
+        Networking.Load(); // load before lobby controller
+        Entities.Load();
+        LobbyController.Load();
 
         // initialize content components
         Commands.Commands.Load();
@@ -62,11 +66,6 @@ public class Plugin : BaseUnityPlugin
         Weapons.Load();
         Bullets.Load(); // load it after weapons
         Items.Load();
-
-        // initialize networking components
-        Networking.Load(); // load before lobby controller
-        Entities.Load();
-        LobbyController.Load();
 
         // initialize world components
         World.World.Load(); // C# sucks

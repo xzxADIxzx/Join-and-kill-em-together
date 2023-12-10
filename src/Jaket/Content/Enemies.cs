@@ -59,10 +59,8 @@ public class Enemies
     /// <summary> Synchronizes the enemy between host and clients. </summary>
     public static bool Sync(EnemyIdentifier enemyId)
     {
-        if (LobbyController.Lobby == null) return true;
+        if (LobbyController.Lobby == null || enemyId.dead) return true;
 
-        // I don't even want to know why this happens
-        if (enemyId.dead) return true;
         // level 0-2 contains several cutscenes that don't need to be removed
         if (SceneHelper.CurrentScene == "Level 0-2" && enemyId.enemyType == EnemyType.Swordsmachine && enemyId.GetComponent<BossHealthBar>() == null) return true;
         // levels 2-4 and 5-4 contain unique bosses that needs to be dealt with separately
@@ -105,6 +103,33 @@ public class Enemies
                 Object.DestroyImmediate(enemyId.gameObject);
 
             return false;
+        }
+    }
+
+    /// <summary> Synchronizes damage dealt to the enemy. </summary>
+    public static bool SyncDamage(EnemyIdentifier enemyId, float damage, bool explode, float critDamage, GameObject source)
+    {
+        if (LobbyController.Lobby == null || enemyId.dead) return true;
+
+        if (source == Bullets.NetDmg) return true; // the damage was received over the network
+        if (source == Bullets.Fake) return false; // bullets are only needed for visual purposes and mustn't cause damage
+
+        if (enemyId.TryGetComponent<Entity>(out var entity) && (entity is not RemotePlayer player || !player.dashing))
+            Bullets.SyncDamage(entity.Id, enemyId.hitter, damage, explode, critDamage);
+
+        // the entity was created before the lobby
+        return true;
+    }
+
+    /// <summary> Synchronizes the death of the enemy. </summary>
+    public static void SyncDeath(EnemyIdentifier enemyId)
+    {
+        if (LobbyController.Lobby == null || enemyId.dead || !LobbyController.IsOwner) return;
+
+        if (enemyId.TryGetComponent<Enemy>(out var enemy))
+        {
+            Networking.Send(PacketType.EnemyDied, w => w.Id(enemy.Id), size: 4);
+            Object.Destroy(enemy);
         }
     }
 }
