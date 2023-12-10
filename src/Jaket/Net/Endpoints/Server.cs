@@ -32,13 +32,15 @@ public class Server : Endpoint, ISocketManager
 
         Listen(PacketType.SpawnEntity, r =>
         {
+            if (!LobbyController.CheatsAllowed) return;
+
             // the client asked to spawn the entity
             ulong id = Entities.NextId();
-            byte type = r.Byte();
+            var type = r.Enum<EntityType>();
 
             // but we need to make sure they can spawn it
-            if ((type > 32 && type < 35) || type > 71) return;
-            var entity = Entities.Get(id, (EntityType)type);
+            if (type.IsCommonEnemy() || type.IsPlushy()) return;
+            var entity = Entities.Get(id, type);
 
             if (entity != null)
             {

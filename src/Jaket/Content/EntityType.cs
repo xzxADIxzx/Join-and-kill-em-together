@@ -3,8 +3,14 @@ namespace Jaket.Content;
 /// <summary> All entity types. Will replenish over time. </summary>
 public enum EntityType
 {
+    EnemyOffset = Filth,
+    ItemOffset = AppleBait,
+    PlushyOffset = Jacob,
+
     None = -1,
-    Filth = 0,
+    Player,
+
+    Filth,
     Stray,
     Schism,
     Soldier,
@@ -40,7 +46,7 @@ public enum EntityType
     Hand,
     Leviathan,
 
-    AppleBait = 35,
+    AppleBait,
     SkullBait,
     BlueSkull,
     RedSkull,
@@ -48,7 +54,7 @@ public enum EntityType
     Torch,
     Florp,
 
-    Jacob = 42,
+    Jacob,
     Mako,
     Jake,
     Dalia,
@@ -77,7 +83,22 @@ public enum EntityType
     Lucas,
     Scott,
     KGC,
-    V1,
+    V1
+}
 
-    Player = 72
+/// <summary> Extension class that allows you to get entity class. </summary>
+public static class TypeExtensions
+{
+    /// <summary> Whether the type is an enemy. </summary>
+    public static bool IsEnemy(this EntityType type) => type >= EntityType.EnemyOffset && type < EntityType.ItemOffset;
+
+    /// <summary> Whether the type is a common enemy that can be spawned by the sandbox arm. </summary>
+    public static bool IsCommonEnemy(this EntityType type) =>
+        IsEnemy(type) && type < EntityType.Hand && type != EntityType.TheCorpseOfKingMinos && type != EntityType.SomethingWicked;
+
+    /// <summary> Whether the type is an item. </summary>
+    public static bool IsItem(this EntityType type) => type >= EntityType.ItemOffset && type < EntityType.PlushyOffset;
+
+    /// <summary> Whether the type is a plushy. </summary>
+    public static bool IsPlushy(this EntityType type) => type >= EntityType.PlushyOffset;
 }

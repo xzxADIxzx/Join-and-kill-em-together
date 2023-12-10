@@ -37,7 +37,7 @@ public class Enemies
 
         // the remaining enemies can be found by their type
         int index = Prefabs.FindIndex(prefab => prefab.enemyClass == enemyId.enemyClass && prefab.enemyType == enemyId.enemyType);
-        return index == -1 ? EntityType.None : (EntityType)index;
+        return index == -1 ? EntityType.None : (EntityType.EnemyOffset + index);
     }
     public static EntityType Type(Entity entity) => entity.EnemyId == null ? EntityType.None : Type(entity.EnemyId);
 
@@ -47,8 +47,8 @@ public class Enemies
         // Malicious face's enemyId is in a child object
         // https://discord.com/channels/1132614140414935070/1132614140876292190/1146507403102257162
         var obj = type != EntityType.MaliciousFace ?
-                Object.Instantiate(Prefabs[(int)type].gameObject) :
-                Object.Instantiate(Prefabs[(int)type].transform.parent.gameObject).transform.GetChild(0).gameObject;
+                Object.Instantiate(Prefabs[type - EntityType.EnemyOffset].gameObject) :
+                Object.Instantiate(Prefabs[type - EntityType.EnemyOffset].transform.parent.gameObject).transform.GetChild(0).gameObject;
 
         // for some reasons, the size of the Cerberus is smaller than necessary
         if (type == EntityType.Cerberus) obj.transform.localScale = new(4f, 4f, 4f);
