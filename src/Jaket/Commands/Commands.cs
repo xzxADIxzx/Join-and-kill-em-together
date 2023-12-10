@@ -86,7 +86,7 @@ public class Commands
                     {
                         w.Byte((byte)(index + 42));
                         w.Vector(NewMovement.Instance.transform.position);
-                    }, size: 14);
+                    }, size: 13);
             }
         });
 

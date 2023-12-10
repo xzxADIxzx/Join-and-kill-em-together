@@ -146,9 +146,6 @@ public class DollAssets
         // create a doll from the prefab obtained from the bundle
         var obj = Object.Instantiate(Doll, Vector3.zero, Quaternion.identity);
 
-        // it is necessary that the client doesn't consider the enemyId as a local object
-        obj.name = "Net";
-
         // add components
         var enemyId = obj.AddComponent<EnemyIdentifier>();
         var machine = obj.AddComponent<Machine>();
