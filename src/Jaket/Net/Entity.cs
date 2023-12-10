@@ -25,13 +25,13 @@ public abstract class Entity : MonoBehaviour
     public float LastUpdate;
 
     /// <summary> Adds itself to the entities list if the player is the host, and finds different components specific to different entities. </summary>
-    protected void Init(Func<Entity, EntityType> prov, bool remote = false)
+    protected void Init(Func<Entity, EntityType> prov, Func<bool> remote = null)
     {
         EnemyId = GetComponent<EnemyIdentifier>();
         ItemId = GetComponent<ItemIdentifier>();
         Animator = GetComponentInChildren<Animator>();
 
-        if (LobbyController.IsOwner && !remote)
+        if (remote == null ? LobbyController.IsOwner : !remote())
         {
             var provided = prov(this);
             if (provided == EntityType.None)

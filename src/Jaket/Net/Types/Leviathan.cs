@@ -14,7 +14,6 @@ public class Leviathan : Entity
 
     /// <summary> Leviathan health, position and rotation. </summary>
     private FloatLerp health, headX, headY, headZ, tailX, tailY, tailZ, headRotation, tailRotation;
-
     /// <summary> Head and tail positions used to synchronize attacks. </summary>
     public byte HeadPos, LastHeadPos, TailPos, LastTailPos;
 

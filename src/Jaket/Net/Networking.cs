@@ -107,13 +107,7 @@ public class Networking : MonoSingleton<Networking>
 
             // kill the player doll and hide the nickname above
             if (Entities.TryGetValue(member.Id, out var entity) && entity != null && entity is RemotePlayer player)
-            {
-                player.health.target = 0f;
-                player.Header.Hide();
-
-                // replace the entity with null so that the indicators no longer point to it
-                Entities[member.Id] = null;
-            }
+                player.Kill();
 
             // returning the exited player's items back to the host owner & close the connection
             if (LobbyController.IsOwner)
