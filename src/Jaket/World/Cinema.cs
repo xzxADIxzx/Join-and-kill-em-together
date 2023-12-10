@@ -5,7 +5,6 @@ using UnityEngine.Networking;
 using UnityEngine.Video;
 
 using Jaket.Content;
-using Jaket.IO;
 using Jaket.Net;
 using Jaket.UI;
 
@@ -29,7 +28,7 @@ public class Cinema
         if (done && Parse(result, out var url))
         {
             Play(url); // play the video and send the link to it to all clients
-            Networking.Redirect(Writer.Write(w => w.String(url)), PacketType.CinemaAction);
+            Networking.Send(PacketType.CinemaAction, w => w.String(url));
 
             // turn on the video player
             CinemaPlayer.Instance.Play();
