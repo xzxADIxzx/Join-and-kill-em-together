@@ -6,7 +6,7 @@ using UnityEngine;
 /// <summary> List of all weapons in the game and some useful methods. </summary>
 public class Weapons
 {
-    /// <summary> List of all weapons in the game. </summary>
+    /// <summary> List of prefabs of all weapons. </summary>
     public static List<GameObject> Prefabs = new();
 
     /// <summary> Loads all weapons for future use. </summary>
@@ -33,35 +33,22 @@ public class Weapons
         Prefabs.AddRange(GunSetter.Instance.rocketRed);
     }
 
-    #region index
-
-    /// <summary> Finds weapon index by name. </summary>
-    public static int Index(string name) => Prefabs.FindIndex(prefab => prefab.name == name);
-
-    /// <summary> Finds weapon index by the name of its clone. </summary>
-    public static int CopiedIndex(string name) => Index(name.Substring(0, name.IndexOf("(Clone)")));
-
-    /// <summary> Finds current weapon index. </summary>
-    public static int CurrentIndex() => GunControl.Instance.currentWeapon == null ? -1 : CopiedIndex(GunControl.Instance.currentWeapon.name);
-
-    #endregion
-    #region instantiation
-
-    /// <summary> Recursively iterates through all children of the transform and changes their layer to Outdoors. </summary>
-    public static void FixLayer(Transform transform)
+    /// <summary> Finds the weapon type by the name. </summary>
+    public static byte Type(GameObject weapon)
     {
-        transform.gameObject.layer = 25;
-        foreach (Transform child in transform) FixLayer(child);
+        string name = weapon.name.Substring(0, weapon.name.IndexOf("("));
+        return (byte)Prefabs.FindIndex(prefab => prefab.name == name);
     }
+    public static byte Type() => GunControl.Instance.currentWeapon == null ? (byte)0xFF : Type(GunControl.Instance.currentWeapon);
 
-    /// <summary> Creates a weapon with the given index and assigns its parent transform. </summary>
-    public static GameObject Instantiate(int index, Transform parent)
+    /// <summary> Spawns a weapon with the given type and assigns its parent transform. </summary>
+    public static GameObject Instantiate(byte type, Transform parent)
     {
-        var obj = Object.Instantiate(Prefabs[index], parent);
-        obj.SetActive(true); // idk why, but weapon prefabs are disabled by default
+        var obj = Object.Instantiate(Prefabs[type], parent);
 
-        // by default, weapons are on the AlwaysOnTop layer
-        FixLayer(obj.transform); // some weapons have a display and other details, so we recursively go through them all
+        // weapon prefabs are disabled and are located in the AlwaysOnTop layer
+        obj.SetActive(true);
+        FixLayer(obj.transform);
 
         // destroy revolver's and shotgun's hand
         Object.Destroy(obj.transform.GetChild(0).Find("RightArm")?.gameObject);
@@ -77,5 +64,10 @@ public class Weapons
         return obj;
     }
 
-    #endregion
+    /// <summary> Recursively iterates through all children of the transform and changes their layer to Outdoors. </summary>
+    public static void FixLayer(Transform transform)
+    {
+        transform.gameObject.layer = 25;
+        foreach (Transform child in transform) FixLayer(child);
+    }
 }

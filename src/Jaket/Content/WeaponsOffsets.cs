@@ -7,7 +7,6 @@ public class WeaponsOffsets
 {
     /// <summary> All revolvers have the same offset, which is kinda cool. </summary>
     public static Vector4 RevolverOffset = new(.001f, .0022f, .0012f, .0019f);
-
     /// <summary> The same situation with alternative revolvers. </summary>
     public static Vector4 AltRevolverOffset = new(.0011f, .0017f, .0013f, .0019f);
 
