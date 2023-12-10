@@ -58,7 +58,6 @@ public class Networking : MonoSingleton<Networking>
 
             // re-add the local player, because the list was cleared 
             Entities[LocalPlayer.Id] = LocalPlayer;
-
             // inform all players about the transition to a new level
             if (LobbyController.IsOwner) Send(PacketType.LevelLoading, World.Instance.WriteData);
         };
@@ -73,7 +72,6 @@ public class Networking : MonoSingleton<Networking>
             {
                 // open the server so people can join it
                 Server.Open();
-
                 // the lobby has just been created, so just add the local player to the list of entities
                 Entities[LocalPlayer.Id] = LocalPlayer;
             }
@@ -81,7 +79,6 @@ public class Networking : MonoSingleton<Networking>
             {
                 // establishing a connection with the owner of the lobby
                 Client.Connect(lobby.Owner.Id);
-
                 // prevent objects from loading before the scene is loaded
                 Loading = true;
             }
@@ -89,7 +86,6 @@ public class Networking : MonoSingleton<Networking>
 
         SteamMatchmaking.OnLobbyMemberJoined += (lobby, member) =>
         {
-            // if you are not the owner of the lobby, then you do not need to do anything
             if (!LobbyController.IsOwner) return;
 
             // send notification to chat
@@ -101,23 +97,31 @@ public class Networking : MonoSingleton<Networking>
 
         SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) =>
         {
-            // send notification to chat
-            if (LobbyController.IsOwner && LobbyController.LastKicked != member.Id)
-                lobby.SendChatString($"<system><color=red>Player {member.Name} left!</color>");
-
             // kill the player doll and hide the nickname above
             if (Entities.TryGetValue(member.Id, out var entity) && entity != null && entity is RemotePlayer player)
                 player.Kill();
 
+            if (!LobbyController.IsOwner) return;
+
+            // send notification to chat
+            if (LobbyController.LastKicked != member.Id) lobby.SendChatString($"<system><color=red>Player {member.Name} left!</color>");
+
             // returning the exited player's items back to the host owner & close the connection
-            if (LobbyController.IsOwner)
+            FindCon(member.Id)?.Close();
+            EachItem(item =>
             {
-                FindCon(member.Id)?.Close();
-                EachItem(item =>
-                {
-                    if (item.Owner == member.Id) item.Owner = SteamClient.SteamId;
-                });
-            }
+                if (item.Owner == member.Id) item.Owner = SteamClient.SteamId;
+            });
+        };
+
+        SteamMatchmaking.OnChatMessage += (lobby, member, message) =>
+        {
+            if (message.StartsWith("<system>")) // I think it's okay
+                Chat.Instance.ReceiveChatMessage(message.Substring("<system>".Length));
+            else if (message.StartsWith("/tts "))
+                Chat.Instance.ReceiveTTSMessage(member, message.Substring("/tts ".Length));
+            else
+                Chat.Instance.ReceiveChatMessage(GetTeamColor(member), member.Name, message);
         };
     }
 
