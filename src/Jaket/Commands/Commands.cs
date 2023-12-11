@@ -75,16 +75,11 @@ public class Commands
             else
             {
                 if (LobbyController.IsOwner)
-                {
-                    var item = Items.Instantiate((EntityType)index + 42);
-
-                    item.transform.position = NewMovement.Instance.transform.position;
-                    Networking.Entities[item.Id] = item;
-                }
+                    Items.Instantiate(EntityType.PlushyOffset + index).transform.position = NewMovement.Instance.transform.position;
                 else
                     Networking.Send(PacketType.SpawnEntity, w =>
                     {
-                        w.Byte((byte)(index + 42));
+                        w.Enum(EntityType.PlushyOffset + index);
                         w.Vector(NewMovement.Instance.transform.position);
                     }, size: 13);
             }

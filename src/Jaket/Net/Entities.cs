@@ -20,13 +20,19 @@ public class Entities
         Providers.Add(EntityType.Player, DollAssets.CreateDoll);
 
         for (var type = EntityType.Filth; type <= EntityType.SisyphusPrime; type++)
-            Providers.Add(type, () => Enemies.Instantiate(type));
+        {
+            var sucks = type;
+            Providers.Add(sucks, () => Enemies.Instantiate(sucks));
+        }
 
         Providers.Add(EntityType.Hand, () => World.Instance.Hand);
         Providers.Add(EntityType.Leviathan, () => World.Instance.Leviathan);
 
         for (var type = EntityType.AppleBait; type <= EntityType.V1; type++)
-            Providers.Add(type, () => Items.Instantiate(type));
+        {
+            var sucks = type;
+            Providers.Add(sucks, () => Items.Instantiate(sucks));
+        }
     }
 
     /// <summary> Returns an entity of the given type. </summary>

@@ -3,10 +3,6 @@ namespace Jaket.Content;
 /// <summary> All entity types. Will replenish over time. </summary>
 public enum EntityType
 {
-    EnemyOffset = Filth,
-    ItemOffset = AppleBait,
-    PlushyOffset = Jacob,
-
     None = -1,
     Player,
 
@@ -83,7 +79,11 @@ public enum EntityType
     Lucas,
     Scott,
     KGC,
-    V1
+    V1,
+
+    EnemyOffset = Filth,
+    ItemOffset = AppleBait,
+    PlushyOffset = Jacob
 }
 
 /// <summary> Extension class that allows you to get entity class. </summary>
