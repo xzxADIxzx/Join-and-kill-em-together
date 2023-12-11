@@ -20,7 +20,7 @@ public class Client : Endpoint, IConnectionManager
         Listen(PacketType.Snapshot, r =>
         {
             ulong id = r.Id();
-            EntityType type = (EntityType)r.Byte();
+            var type = r.Enum<EntityType>();
 
             // if the entity is not in the list, add a new one with the given type or local if available
             if (!entities.ContainsKey(id)) entities[id] = id == SteamClient.SteamId ? Networking.LocalPlayer : Entities.Get(id, type);

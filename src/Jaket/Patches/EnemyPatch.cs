@@ -39,6 +39,6 @@ public class OtherPatch
     [HarmonyPatch(typeof(FerrymanFake), nameof(FerrymanFake.OnLand))]
     static void FerryDeath(FerrymanFake __instance)
     {
-        if (LobbyController.IsOwner && __instance.TryGetComponent<Enemy>(out var enemy)) Networking.Send(PacketType.EnemyDied, w => w.Id(enemy.Id), size: 4);
+        if (LobbyController.IsOwner && __instance.TryGetComponent<Enemy>(out var enemy)) Networking.Send(PacketType.EnemyDied, w => w.Id(enemy.Id), size: 8);
     }
 }

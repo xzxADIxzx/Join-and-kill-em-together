@@ -87,7 +87,7 @@ public class Bullets
 
             w.Vector(blast.transform.position);
             w.Vector(blast.transform.localEulerAngles);
-        }, size: 29);
+        }, size: 33);
     }
 
     /// <summary> Synchronizes the shockwave of the player. </summary>
@@ -101,7 +101,7 @@ public class Bullets
             w.Byte(2);
 
             w.Float(force);
-        }, size: 9);
+        }, size: 13);
     }
 
     #endregion
@@ -120,7 +120,7 @@ public class Bullets
             w.Float(damage);
             w.Bool(explode);
             w.Float(critDamage);
-        }, size: 15);
+        }, size: 19);
     }
 
     /// <summary> Deals bullet damage to the enemy. </summary>
