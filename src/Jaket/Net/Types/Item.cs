@@ -1,4 +1,4 @@
-namespace Jaket.Net.EntityTypes;
+namespace Jaket.Net.Types;
 
 using UnityEngine;
 
@@ -9,7 +9,7 @@ using Jaket.IO;
 public class Item : Entity
 {
     /// <summary> Id of the player who last held the item. </summary>
-    public ulong LastOwner, Owner;
+    public ulong LastOwner, Owner = LobbyController.LastOwner;
     /// <summary> Whether the player owns the item. </summary>
     public bool IsOwner => Owner == Networking.LocalPlayer.Id;
 
@@ -17,8 +17,6 @@ public class Item : Entity
     private FloatLerp x, y, z, rx, ry, rz;
     /// <summary> Reference to the component needed to change the kinematics. </summary>
     private Rigidbody rb;
-    /// <summary> Identifier used to synchronize altars. </summary>
-    private ItemIdentifier itemId;
 
     /// <summary> Player holding an item in their hands. </summary>
     private RemotePlayer player;
@@ -34,35 +32,13 @@ public class Item : Entity
 
     private void Awake()
     {
-        bool plushy = name.StartsWith("DevPlushie");
-        gameObject.name = "Net"; // needed to prevent object looping between client and server
+        Init(Items.Type);
 
-        // interpolations
-        x = new FloatLerp();
-        y = new FloatLerp();
-        z = new FloatLerp();
-        rx = new FloatLerp();
-        ry = new FloatLerp();
-        rz = new FloatLerp();
+        x = new(); y = new(); z = new();
+        rx = new(); ry = new(); rz = new();
 
-        // other
         rb = GetComponent<Rigidbody>();
-        itemId = GetComponent<ItemIdentifier>();
         torch = GetComponent<Torch>() != null;
-
-        if (LobbyController.IsOwner)
-        {
-            int index = plushy ? Items.PlushyIndex(transform) : Items.ItemIndex(itemId);
-            if (index == -1)
-            {
-                Destroy(this);
-                return;
-            }
-
-            Id = Entities.NextId();
-            Type = (EntityType)(plushy ? index + 35 : index);
-            Owner = Networking.LocalPlayer.Id;
-        }
     }
 
     private void Update()
@@ -77,27 +53,26 @@ public class Item : Entity
         if (rb != null) rb.isKinematic = true;
 
         transform.position = holding && this.player != null
-            ? this.player.usingHook ? this.player.hook.position : this.player.hookRoot.position
+            ? this.player.HoldPosition()
             : new(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
-        transform.eulerAngles = new(rx.Get(LastUpdate), ry.Get(LastUpdate), rz.Get(LastUpdate));
+        transform.eulerAngles = new(rx.GetAngel(LastUpdate), ry.GetAngel(LastUpdate), rz.GetAngel(LastUpdate));
 
         // remove from the altar
-        if (!placed && itemId.ipz != null)
+        if (!placed && ItemId.ipz != null)
         {
             transform.SetParent(null);
-            itemId.ipz.CheckItem();
-            itemId.ipz = null;
+            ItemId.ipz.CheckItem();
+            ItemId.ipz = null;
         }
-
         // put on the altar or light the torches
-        if ((placed && itemId.ipz == null) || torch)
+        if ((placed && ItemId.ipz == null) || torch)
         {
             var colliders = Physics.OverlapSphere(transform.position, 0.5f, 20971776, QueryTriggerInteraction.Collide);
             foreach (var col in colliders)
             {
                 if (col.gameObject.layer != 22) continue;
 
-                if (placed && itemId.ipz == null && col.TryGetComponent<ItemPlaceZone>(out var zone))
+                if (placed && ItemId.ipz == null && col.TryGetComponent<ItemPlaceZone>(out var zone))
                 {
                     transform.SetParent(col.transform);
                     zone.CheckItem();
@@ -115,13 +90,15 @@ public class Item : Entity
         Networking.LocalPlayer.HeldItem = this;
     }
 
+    #region entity
+
     public override void Write(Writer w)
     {
         w.Id(Owner);
         w.Vector(transform.position);
         w.Vector(transform.eulerAngles);
         w.Bool(IsOwner ? FistControl.Instance.heldObject?.gameObject == gameObject : holding);
-        w.Bool(IsOwner ? itemId.ipz != null : placed);
+        w.Bool(IsOwner ? ItemId.ipz != null : placed);
     }
 
     public override void Read(Reader r)
@@ -141,5 +118,5 @@ public class Item : Entity
         placed = r.Bool();
     }
 
-    public override void Damage(Reader r) { }
+    #endregion
 }

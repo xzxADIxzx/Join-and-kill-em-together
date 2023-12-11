@@ -114,7 +114,7 @@ public class Enemies
         if (source == Bullets.NetDmg) return true; // the damage was received over the network
         if (source == Bullets.Fake) return false; // bullets are only needed for visual purposes and mustn't cause damage
 
-        if (enemyId.TryGetComponent<Entity>(out var entity) && (entity is not RemotePlayer player || !player.dashing))
+        if (enemyId.TryGetComponent<Entity>(out var entity) && (entity is not RemotePlayer player || !player.Invincible()))
             Bullets.SyncDamage(entity.Id, enemyId.hitter, damage, explode, critDamage);
 
         // the entity was created before the lobby

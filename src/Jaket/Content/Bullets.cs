@@ -75,8 +75,8 @@ public class Bullets
 
     #region special
 
-    /// <summary> Sends the explosion of the knuckleblaster. </summary>
-    public static void SendBlast(GameObject blast)
+    /// <summary> Synchronizes the explosion of the knuckleblaster. </summary>
+    public static void SyncBlast(GameObject blast)
     {
         // checking if this is really knuckleblaster explosion
         if (LobbyController.Lobby == null || blast?.name != "Explosion Wave(Clone)") return;
@@ -90,8 +90,8 @@ public class Bullets
         }, size: 29);
     }
 
-    /// <summary> Sends the shockwave of the player. </summary>
-    public static void SendShock(GameObject shock, float force)
+    /// <summary> Synchronizes the shockwave of the player. </summary>
+    public static void SyncShock(GameObject shock, float force)
     {
         // checking if this is really a player's shockwave
         if (LobbyController.Lobby == null || shock?.name != "PhysicalShockwavePlayer(Clone)") return;

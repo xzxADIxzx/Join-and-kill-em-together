@@ -42,6 +42,8 @@ public class Hand : Entity
         });
     }
 
+    #region entity
+
     public override void Write(Writer w)
     {
         w.Float(EnemyId.health);
@@ -55,4 +57,6 @@ public class Hand : Entity
         health.Read(r);
         HandPos = r.Byte();
     }
+
+    #endregion
 }

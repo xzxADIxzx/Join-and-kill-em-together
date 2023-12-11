@@ -86,6 +86,8 @@ public class Leviathan : Entity
         }
     }
 
+    #region entity
+
     public override void Write(Writer w)
     {
         w.Float(levi.eid.health);
@@ -117,4 +119,6 @@ public class Leviathan : Entity
         HeadPos = r.Byte();
         TailPos = r.Byte();
     }
+
+    #endregion
 }
