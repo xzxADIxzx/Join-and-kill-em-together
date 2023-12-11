@@ -40,7 +40,8 @@ public class BestiaryPatch
 [Serializable]
 public class BestiaryEntry
 {
+    /// <summary> Bestiary entry fields displayed in terminal. </summary>
     public string name, type, description, strategy;
-
+    /// <summary> Loads the V3 bestiary entry from the bundle. </summary>
     public static BestiaryEntry Load() => JsonUtility.FromJson<BestiaryEntry>(DollAssets.Bundle.LoadAsset<TextAsset>("V3-bestiary-entry").text);
 }

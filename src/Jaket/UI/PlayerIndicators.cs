@@ -16,11 +16,7 @@ public class PlayerIndicators : CanvasSingleton<PlayerIndicators>
     /// <summary> List of indicators themselves. </summary>
     public List<Image> indicators = new();
 
-    private void Start()
-    {
-        Events.OnLobbyEntered += () => { if (!Shown) Toggle(); }; // turn on player indicators because many don't even know about their existence
-        Events.OnTeamChanged += Rebuild;
-    }
+    private void Start() => Events.OnTeamChanged += Rebuild;
 
     private void Update()
     {

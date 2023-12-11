@@ -45,7 +45,11 @@ public class UI
     public static void Build()
     {
         // the listener is created here because a player info instance is created every time the scene is loaded
-        Events.OnLobbyEntered += () => { if (!PlayerInfo.Shown) PlayerInfo.Instance?.Toggle(); };
+        Events.OnLobbyEntered += () =>
+        {   // turn on player indicators & info because many don't even know about their existence
+            if (!PlayerIndicators.Shown) PlayerIndicators.Instance?.Toggle();
+            if (!PlayerInfo.Shown) PlayerInfo.Instance?.Toggle();
+        };
         Events.OnTeamChanged += () => PlayerInfo.Instance?.Rebuild();
 
         LobbyList.Build("Lobby List");
