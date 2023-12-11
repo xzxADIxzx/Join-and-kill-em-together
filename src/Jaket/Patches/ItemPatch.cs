@@ -10,9 +10,9 @@ public class ItemPatch
 {
     [HarmonyPrefix]
     [HarmonyPatch(MethodType.Constructor)]
-    static void StartPatch(ItemIdentifier __instance) => Events.Post(() => Items.Sync(__instance));
+    static void Start(ItemIdentifier __instance) => Events.Post(() => Items.Sync(__instance));
 
     [HarmonyPrefix]
     [HarmonyPatch("PickUp")]
-    static void PickPatch(ItemIdentifier __instance) => __instance.GetComponent<Item>()?.PickUp();
+    static void PickUp(ItemIdentifier __instance) => __instance.GetComponent<Item>()?.PickUp();
 }

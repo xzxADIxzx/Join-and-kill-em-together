@@ -5,34 +5,32 @@ using HarmonyLib;
 using Jaket.Net;
 using Jaket.World;
 
-[HarmonyPatch(typeof(LeviathanHead), "Update")]
-public class HeadPatch
+[HarmonyPatch]
+public class LeviathanPatch
 {
-    static void Postfix(int ___previousAttack, ref int ___projectilesLeftInBurst, ref bool ___lookAtPlayer, ref bool ___rotateBody, ref bool ___inAction)
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(LeviathanHead), "Update")]
+    static void Head(int ___previousAttack, ref int ___projectilesLeftInBurst, ref bool ___lookAtPlayer, ref bool ___rotateBody, ref bool ___inAction)
     {
-        if (LobbyController.Lobby == null) return;
-
+        if (LobbyController.Lobby == null || World.Instance.Leviathan == null) return;
         if (LobbyController.IsOwner)
         {
             // update the position of the head to synchronize its attacks
-            if (World.Instance.Leviathan != null) World.Instance.Leviathan.HeadPos = (byte)___previousAttack;
+            World.Instance.Leviathan.HeadPos = (byte)___previousAttack;
         }
         else
         {
-            // replenish ammo
-            ___projectilesLeftInBurst = 100;
+            ___projectilesLeftInBurst = 100; // replenish ammo
 
             // disable animations and changing of attacks so that the leviathan does not shake
             ___lookAtPlayer = ___rotateBody = false;
             ___inAction = true;
         }
     }
-}
 
-[HarmonyPatch(typeof(LeviathanTail), nameof(LeviathanTail.ChangePosition))]
-public class TailPatch
-{
-    static void Postfix(int ___previousSpawnPosition)
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(LeviathanTail), nameof(LeviathanTail.ChangePosition))]
+    static void Tail(int ___previousSpawnPosition)
     {
         // update the position of the tail to synchronize its attacks
         if (LobbyController.Lobby != null && LobbyController.IsOwner) World.Instance.Leviathan.TailPos = (byte)___previousSpawnPosition;
