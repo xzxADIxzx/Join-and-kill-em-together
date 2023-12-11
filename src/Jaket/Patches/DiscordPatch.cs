@@ -7,28 +7,25 @@ using UnityEngine;
 using Jaket.Net;
 using Jaket.UI;
 
-[HarmonyPatch(typeof(DiscordController), "SendActivity")]
-public class DiscordControllerPatch
+[HarmonyPatch]
+public class DiscordPatch
 {
-    static void Prefix(ref Activity ___cachedActivity)
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(DiscordController), "SendActivity")]
+    static void Activity(ref Activity ___cachedActivity)
     {
         // update the discord activity so everyone can know I've been working hard
         if (LobbyController.Lobby != null) ___cachedActivity.State = "Playing multiplayer via Jaket";
     }
-}
 
-[HarmonyPatch(typeof(ShopZone), "Start")]
-public class ShopPatch
-{
-    static void Prefix(ShopZone __instance)
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(ShopZone), "Start")]
+    static void Button(ShopZone __instance)
     {
         // patch only the most common shops
         if (__instance.gameObject.name != "Shop") return;
 
-        // find tip box
         var root = __instance.transform.GetChild(1).GetChild(1).GetChild(0);
-
-        // create button redirects to discord
         var button = UI.DiscordButton("Join Jaket Discord", root, 0f, 0f, size: 24).transform;
 
         // the button is a little stormy
@@ -39,7 +36,6 @@ public class ShopPatch
         foreach (Transform child in button.transform) child.localPosition = Vector3.zero;
 
         // add ControllerPointer so that the button can be clicked
-        button.gameObject.AddComponent<ShopButton>(); // hacky
-        Object.Destroy(button.GetComponent<ShopButton>());
+        Object.Destroy(button.gameObject.AddComponent<ShopButton>()); // hacky
     }
 }
