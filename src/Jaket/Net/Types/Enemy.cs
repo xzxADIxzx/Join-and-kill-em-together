@@ -153,6 +153,11 @@ public class Enemy : Entity
         transform.position = new(x.target, y.target, z.target);
     }
 
+    /// <summary> Returns boss bar layers created based on maximum health and number of phases. </summary>
+    public HealthLayer[] Layers() => haveSecondPhase
+            ? new HealthLayer[] { new() { health = health.target / 2f }, new() { health = health.target / 2f } }
+            : new HealthLayer[] { new() { health = health.target } };
+
     #region entity
 
     public override void Write(Writer w)
