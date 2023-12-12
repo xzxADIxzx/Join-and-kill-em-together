@@ -233,7 +233,7 @@ public class UI
     /// <summary> Creates a command button with the appropriate color. </summary>
     public static Button TeamButton(Team team, Transform parent, float x, float y, float width = 58f, float height = 58f, UnityAction clicked = null)
     {
-        var img = Image(team.ToString(), parent, x, y, width, height, team.Data().Color());
+        var img = Image(team.ToString(), parent, x, y, width, height, team.Color());
         if (team == Team.Pink) Text("UwU", img.transform, 0f, 0f, width, height, size: 24);
         return Component<Button>(img.gameObject, button =>
         {
@@ -244,7 +244,7 @@ public class UI
 
     /// <summary> Adds a button that opens the profile of the given user. </summary>
     public static Button ProfileButton(Friend friend, Transform parent, float x, float y, float width = 320f, float height = 48f, int size = 32) =>
-        Button(friend.Name, parent, x, y, width, height, Networking.GetTeam(friend).Data().Color(), size, clicked: () => SteamFriends.OpenUserOverlay(friend.Id, "steamid"));
+        Button(friend.Name, parent, x, y, width, height, Networking.GetTeam(friend).Color(), size, clicked: () => SteamFriends.OpenUserOverlay(friend.Id, "steamid"));
 
     /// <summary> Adds a button corresponding to the Discord style and opening a link to our server. </summary>
     public static Button DiscordButton(string name, Transform parent, float x, float y, float width = 320f, float height = 48f, int size = 32)

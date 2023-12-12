@@ -188,7 +188,7 @@ public class Networking : MonoSingleton<Networking>
         : (Entities.TryGetValue(friend.Id, out var entity) && entity != null && entity is RemotePlayer player ? player.team : Team.Yellow);
 
     /// <summary> Returns the hex color of the friend's team. </summary>
-    public static string GetTeamColor(Friend friend) => ColorUtility.ToHtmlStringRGBA(GetTeam(friend).Data().Color());
+    public static string GetTeamColor(Friend friend) => ColorUtility.ToHtmlStringRGBA(GetTeam(friend).Color());
 
     /// <summary> This class is a little broken, so you have to use crutches. </summary>
     public static NetIdentity GetIdentity(ConnectionInfo info) => (NetIdentity)AccessTools.DeclaredField(typeof(ConnectionInfo), 0).GetValue(info);

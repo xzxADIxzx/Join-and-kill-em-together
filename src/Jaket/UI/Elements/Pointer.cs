@@ -28,7 +28,7 @@ public class Pointer : MonoBehaviour
     public static Pointer Spawn(Team team, Vector3 position, Vector3 direction, Transform player = null) =>
         UI.Component<Pointer>(UI.Object("Pointer"), pointer =>
         {
-            pointer.color = team.Data().Color();
+            pointer.color = team.Color();
             pointer.color.a = .85f;
 
             pointer.position = position;
