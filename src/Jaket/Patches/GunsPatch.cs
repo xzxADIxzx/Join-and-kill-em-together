@@ -42,7 +42,7 @@ public class ArmsPatch
 
             w.Bool(Networking.LocalPlayer.Parried);
             Networking.LocalPlayer.Parried = false;
-        });
+        }, size: 10);
     }
 
     [HarmonyPrefix]

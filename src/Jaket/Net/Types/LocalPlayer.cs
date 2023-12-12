@@ -1,4 +1,4 @@
-namespace Jaket.Net.EntityTypes;
+namespace Jaket.Net.Types;
 
 using Steamworks;
 using UnityEngine;
@@ -15,6 +15,9 @@ using Jaket.World;
 /// </summary>
 public class LocalPlayer : Entity
 {
+    private NewMovement nm => NewMovement.Instance;
+    private FistControl fc => FistControl.Instance;
+
     /// <summary> Local player's team, changes through the players list. </summary>
     public Team Team;
     /// <summary> Component that reproduces the voice of the local player, not his teammates. </summary>
@@ -32,7 +35,7 @@ public class LocalPlayer : Entity
     /// <summary> Weapon rendering component, needed to get weapon colors. </summary>
     private Renderer renderer;
 
-    private void Awake()
+    private void Start() // start is needed to wait for assets to load
     {
         Id = SteamClient.SteamId;
         Type = EntityType.Player;
@@ -40,42 +43,46 @@ public class LocalPlayer : Entity
         Voice = gameObject.AddComponent<AudioSource>(); // add a 2D audio source that will be heard from everywhere
         Voice.outputAudioMixerGroup = DollAssets.Mixer.FindMatchingGroups("Master")[0];
 
-        Events.OnLoaded += () => Invoke("UpdateWeapons", .01f);
+        Events.OnLoaded += () => Events.Post(UpdateWeapons);
         Events.OnWeaponChanged += UpdateWeapons;
     }
 
     /// <summary> Caches different things related to weapons and paints hands. </summary>
     public void UpdateWeapons()
     {
-        weapon = (byte)Weapons.CurrentIndex();
+        weapon = Weapons.Type();
         renderer = GunControl.Instance.currentWeapon?.GetComponentInChildren<GunColorGetter>()?.GetComponent<Renderer>();
 
-        FistControl.Instance.blueArm.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture();
+        // according to the lore, the player plays for V3, so we need to paint the hand
+        fc.blueArm.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture();
+
         var arm = GunControl.Instance.currentWeapon?.transform.GetChild(0).Find("RightArm");
         if (arm != null) arm.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture();
     }
 
+    #region entity
+
     public override void Write(Writer w)
     {
-        w.Float(NewMovement.Instance.hp);
-        w.Vector(NewMovement.Instance.transform.position);
-        w.Float(NewMovement.Instance.transform.eulerAngles.y);
+        w.Float(nm.hp);
+        w.Vector(nm.transform.position);
+        w.Float(nm.transform.eulerAngles.y);
         w.Float(135f - Mathf.Clamp(CameraController.Instance.rotationX, -40f, 80f));
 
         w.Byte((byte)Mathf.Floor(WeaponCharges.Instance.raicharge * 2f));
-        w.Byte((byte)Team);
+        w.Enum(Team);
         w.Byte(weapon);
         w.Byte(Movement.Instance.Emoji);
         w.Byte(Movement.Instance.Rps);
 
-        w.Bool(NewMovement.Instance.walking);
-        w.Bool(NewMovement.Instance.sliding);
-        w.Bool(NewMovement.Instance.slamForce > 0f && !NewMovement.Instance.gc.onGround);
-        w.Bool(NewMovement.Instance.boost && !NewMovement.Instance.sliding);
-        w.Bool(NewMovement.Instance.ridingRocket != null);
-        w.Bool(!NewMovement.Instance.gc.onGround);
+        w.Bool(nm.walking);
+        w.Bool(nm.sliding);
+        w.Bool(nm.slamForce > 0f && !nm.gc.onGround);
+        w.Bool(nm.boost && !nm.sliding);
+        w.Bool(nm.ridingRocket != null);
+        w.Bool(!nm.gc.onGround);
         w.Bool(Chat.Shown);
-        w.Bool(FistControl.Instance.shopping);
+        w.Bool(fc.shopping);
 
         w.Bool(Hook != Vector3.zero && HookArm.Instance.enabled);
         w.Vector(Hook);
@@ -91,9 +98,9 @@ public class LocalPlayer : Entity
                 w.Color(renderer.material.GetColor("_CustomColor2"));
                 w.Color(renderer.material.GetColor("_CustomColor3"));
             }
-            else w.Bytes(new byte[12]);
+            else w.Inc(12);
         }
-        else w.Bytes(new byte[13]);
+        else w.Inc(13);
 
         #region item
 
@@ -101,8 +108,8 @@ public class LocalPlayer : Entity
         {
             HeldItem = null;
 
-            FistControl.Instance.currentPunch.ForceThrow();
-            if (FistControl.Instance.currentPunch.holding) FistControl.Instance.currentPunch.PlaceHeldObject(new ItemPlaceZone[0], null);
+            fc.currentPunch.ForceThrow();
+            if (fc.currentPunch.holding) fc.currentPunch.PlaceHeldObject(new ItemPlaceZone[0], null);
         }
 
         w.Bool(HeldItem != null);
@@ -116,17 +123,19 @@ public class LocalPlayer : Entity
     }
 
     // there is no point in reading anything, because it is a local player
-    public override void Read(Reader r) {}
+    public override void Read(Reader r) { }
 
     public override void Damage(Reader r)
     {
-        // no need to deal damage if an ally hits you
-        if ((Team)r.Byte() == Team || !LobbyController.PvPAllowed) return;
-
-        r.Byte(); // skip melee
-        r.Vector(); // skip force, huh
-
-        // otherwise, you need to damage the player
-        NewMovement.Instance.GetHurt(Mathf.CeilToInt(r.Float() * 5f), false, 0f, r.Bool());
+        if (!r.Enum<Team>().Ally()) // no need to deal damage if an ally hits you
+        {
+            r.Inc(1); // skip damage type because it's useless
+            NewMovement.Instance.GetHurt(Mathf.CeilToInt(r.Float() * 5f), false, 0f, r.Bool());
+        }
     }
+
+    // why would you need this?
+    public override void Kill() { }
+
+    #endregion
 }
