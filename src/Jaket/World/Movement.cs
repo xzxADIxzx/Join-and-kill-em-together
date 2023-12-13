@@ -1,12 +1,13 @@
 namespace Jaket.World;
 
 using GameConsole;
+using HarmonyLib;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 using Jaket.Assets;
 using Jaket.Content;
-using Jaket.IO;
 using Jaket.Net;
 using Jaket.UI;
 using Jaket.UI.Elements;
@@ -14,12 +15,9 @@ using Jaket.UI.Elements;
 /// <summary> Class responsible for additions to control and local display of emotions. </summary>
 public class Movement : MonoSingleton<Movement>
 {
-    /// <summary> Reference to new movement. </summary>
     private static NewMovement nm => NewMovement.Instance;
-    /// <summary> Reference to camera controller. </summary>
+    private static FistControl fc => FistControl.Instance;
     private static CameraController cc => CameraController.Instance;
-    /// <summary> Environmental mask needed to prevent the skateboard from riding on water. </summary>
-    private static int environmentMask = LayerMaskDefaults.Get(LMD.Environment);
 
     /// <summary> Current emotion preview, can be null. </summary>
     public GameObject EmojiPreview;
@@ -37,6 +35,8 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Third person camera rotation. </summary>
     private Vector2 rotation;
 
+    /// <summary> Environmental mask needed to prevent the skateboard from riding on water. </summary>
+    private readonly int mask = LayerMaskDefaults.Get(LMD.Environment);
     /// <summary> Speed at which the skateboard moves. </summary>
     private float skateboardSpeed;
     /// <summary> When the maximum skateboard speed is exceeded, deceleration is activated. </summary>
@@ -68,22 +68,22 @@ public class Movement : MonoSingleton<Movement>
 
         if (Input.GetKeyDown(Settings.PlayerIndicators)) PlayerIndicators.Instance.Toggle();
         if (Input.GetKeyDown(Settings.PlayerInfo)) PlayerInfo.Instance?.Toggle();
+
         if (Input.GetKeyDown(Settings.Chat)) Chat.Instance.Toggle();
         if (Input.GetKeyDown(Settings.ScrollUp)) Chat.Instance.ScrollMessages(true);
         if (Input.GetKeyDown(Settings.ScrollDown)) Chat.Instance.ScrollMessages(false);
 
-        if (Input.GetKeyDown(Settings.Pointer) && !UI.AnyJaket() &&
-            Physics.Raycast(cc.transform.position, cc.transform.forward, out var hit, float.MaxValue, environmentMask))
+        if (Input.GetKeyDown(Settings.Pointer) && Physics.Raycast(cc.transform.position, cc.transform.forward, out var hit, float.MaxValue, mask))
         {
             if (Pointer != null) Pointer.Lifetime = 4.5f;
             Pointer = Pointer.Spawn(Networking.LocalPlayer.Team, hit.point, hit.normal);
 
-            if (LobbyController.Lobby != null) Networking.Redirect(Writer.Write(w =>
+            if (LobbyController.Lobby != null) Networking.Send(PacketType.Point, w =>
             {
                 w.Id(Networking.LocalPlayer.Id);
                 w.Vector(hit.point);
                 w.Vector(hit.normal);
-            }), PacketType.Point);
+            }, size: 32);
         }
 
         if (Input.GetKey(Settings.EmojiWheel))
@@ -140,24 +140,17 @@ public class Movement : MonoSingleton<Movement>
 
             // move the skateboard forward
             var player = nm.transform;
-            var target = player.forward * skateboardSpeed;
-
-            target.y = nm.rb.velocity.y;
-            nm.rb.velocity = target;
+            nm.rb.velocity = (player.forward * skateboardSpeed) with { y = nm.rb.velocity.y };
 
             // don’t let the front and rear wheels fall into the ground
-            if (Physics.Raycast(player.position + player.forward * 1.2f, Vector3.down, out var hit, 1.5f, environmentMask) && hit.distance > .8f)
+            if (Physics.Raycast(player.position + player.forward * 1.2f, Vector3.down, out var hit, 1.5f, mask) && hit.distance > .8f)
                 player.position = new(player.position.x, hit.point.y + 1.5f, player.position.z);
 
-            if (Physics.Raycast(player.position - player.forward * 1.2f, Vector3.down, out var hit2, 1.5f, environmentMask) && hit2.distance > .8f)
+            if (Physics.Raycast(player.position - player.forward * 1.2f, Vector3.down, out var hit2, 1.5f, mask) && hit2.distance > .8f)
                 player.position = new(player.position.x, hit2.point.y + 1.5f, player.position.z);
 
             // turn to the sides
-            if (!UI.AnyMovementBlocking())
-            {
-                float dir = InputManager.Instance.InputSource.Move.ReadValue<Vector2>().x;
-                player.Rotate(new(0f, dir * 120f * Time.deltaTime, 0f));
-            }
+            if (!UI.AnyMovementBlocking()) player.Rotate(new(0f, InputManager.Instance.InputSource.Move.ReadValue<Vector2>().x * 120f * Time.deltaTime, 0f));
         }
 
         // third person camera
@@ -180,19 +173,17 @@ public class Movement : MonoSingleton<Movement>
             var player = nm.transform.position + new Vector3(0f, 1f, 0f);
 
             // move the camera position towards the start if the animation has just started, or towards the end if the animation ends
-            bool ends = Emoji == 0xFF || (Time.time - EmojiStart > EmojiLegnth[Emoji] && EmojiLegnth[Emoji] != -1f);
+            bool ends = Time.time - EmojiStart > EmojiLegnth[Emoji] && EmojiLegnth[Emoji] != -1f;
             position = Vector3.MoveTowards(position, ends ? end : start, 12f * Time.deltaTime);
 
-            // return the camera to its original position
+            // return the camera to its original position and rotate it around the player
             cam.position = player + position;
-
-            // rotate the camera around the player
             cam.RotateAround(player, Vector3.left, rotation.y);
             cam.RotateAround(player, Vector3.up, rotation.x);
             cam.LookAt(player);
 
             // do not let the camera fall through the ground
-            if (Physics.SphereCast(player, .25f, cam.position - player, out var hit, position.magnitude, LayerMaskDefaults.Get(LMD.Environment)))
+            if (Physics.SphereCast(player, .25f, cam.position - player, out var hit, position.magnitude, mask))
                 cam.position = hit.point + .5f * hit.normal;
         }
 
@@ -222,6 +213,9 @@ public class Movement : MonoSingleton<Movement>
         {
             CheatsController.Instance.cheatsEnabled = false;
             CheatsManager.Instance.transform.GetChild(0).GetChild(0).gameObject.SetActive(false);
+
+            var cheats = AccessTools.DeclaredField(typeof(CheatsManager), "idToCheat").GetValue(CheatsManager.Instance) as Dictionary<string, ICheat>;
+            cheats.Values.Do(CheatsManager.Instance.DisableCheat);
 
             UI.SendMsg("Cheats are prohibited in this lobby!");
         }
