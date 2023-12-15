@@ -5,6 +5,23 @@ using UnityEngine;
 /// <summary> Class that works with the assets of the game. </summary>
 public class GameAssets
 {
+    /// <summary> List of rooms that mustn't be unloaded in multiplayer, because don't have doors that would load them. </summary>
+    public static readonly string[] RoomExceptions = new[]
+    {
+        /* 0-1 */ "3 - Gun Room",
+        /* 0-2 */ "1A - First Room", "5B - Secret Arena", "9 - Crushers Arena", "9B - Swordsmachine Arena Hallway",
+        /* 0-3 */ "1 - Main Room - Floor 1", "2 - Side Hallway - Floor 1", "4 - Side Stairway - Floor 1-2",
+        /* 0-4 */ "1A - Hallway 1A",
+        /* 1-1 */ "2 - Indoors", "3 - Skull Field",
+        /* 1-2 */ "1 - First Room", "5 - Double Hallway", "7B - Lava Room",
+        /* 1-3 */ "1 - Water Hall",
+        /* 1-4 */ "1 - Opener", "3DL - Super Door", "3TL - Window Room",
+        /* 2-2 */ "2 - Tunnel 1 ",
+        /* 2-3 */ "1 - Main Hall", "1-3 Connectors", "3-2 Connector", "5 - Final Arena",
+        /* 3-1/2 */ "1 - Opening",
+        // TODO check the second act
+    };
+
     /// <summary> List of internal names of all enemies. </summary>
     public static readonly string[] Enemies = new[]
     {

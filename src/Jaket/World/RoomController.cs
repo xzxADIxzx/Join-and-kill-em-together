@@ -1,9 +1,11 @@
 namespace Jaket.World;
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-using Jaket.Net.Types;
+using Jaket.Assets;
+using Jaket.Net;
 using Jaket.UI;
 
 /// <summary>
@@ -12,13 +14,25 @@ using Jaket.UI;
 /// </summary>
 public class RoomController : MonoBehaviour
 {
-    /// <summary> Number of players in the room. </summary>
-    public int PlayersIn { private set; get; }
     /// <summary> List of doors to this room. </summary>
     public List<Door> Doors = new();
+    /// <summary> Number of players in the room. </summary>
+    public int PlayersIn
+    {
+        get
+        {
+            int amount = 0;
+            Networking.EachObserver(obs =>
+            {
+                if (obs.x > min.x && obs.y > min.y && obs.z > min.z &&
+                    obs.x < max.x && obs.y < max.y && obs.z < max.z) amount++;
+            });
+            return amount;
+        }
+    }
 
-    /// <summary> Object containing immutable room parts such as walls. </summary>
-    private Transform nonstuff;
+    /// <summary> Whether this room is an exception. In this case, it won't be unloaded even when there are no players in it. </summary>
+    private bool exception;
     /// <summary> Highest and lowest point of the room. </summary>
     private Vector3 min, max;
 
@@ -26,14 +40,14 @@ public class RoomController : MonoBehaviour
     public static void Build(Transform room)
     {
         // there must only be one controller in the room
-        if (room.Find("Net") != null) return;
-
-        string index = room.name.Contains(" - ") ? room.name.Substring(0, room.name.IndexOf(" - ")) : "Nonstuff";
-        UI.Component<RoomController>(UI.Object("Net", room), controller => controller.nonstuff = room.Find(index + " Nonstuff") ?? room);
+        if (room.Find("Net") == null) UI.Component<RoomController>(UI.Object("Net", room), c => c.Build());
     }
 
-    private void Start()
+    private void Build()
     {
+        // check for an exception
+        if (Array.Exists(GameAssets.RoomExceptions, ex => ex == transform.parent.name)) { exception = true; return; }
+
         // find the highest and lowest point of the room
         void ExpandBounds(Vector3 pos)
         {
@@ -55,7 +69,7 @@ public class RoomController : MonoBehaviour
         }
         void ExpandBoundsRecursively(Transform transform, int layer)
         {
-            if (++layer <= 3)
+            if (++layer <= 4)
                 foreach (Transform child in transform)
                     if (child.gameObject.activeSelf)
                     {
@@ -63,41 +77,25 @@ public class RoomController : MonoBehaviour
                         ExpandBoundsRecursively(child, layer);
                     }
         }
-        ExpandBoundsRecursively(nonstuff, 0);
+        ExpandBoundsRecursively(transform.parent, 0);
 
-        // add a trigger that will track the player’s presence in the room
-        UI.Component<BoxCollider>(gameObject, box =>
+        // push the boundaries a little
+        min -= Vector3.one * 10f;
+        max += Vector3.one * 10f;
+
+        // find all of the doors to this room (they are always on the Invisible layer)
+        var colliders = Physics.OverlapBox((min + max) / 2f, (max - min) / 2f, Quaternion.identity, 1 << 16, QueryTriggerInteraction.Collide);
+        foreach (var col in colliders)
         {
-            var center = (min + max) / 2f;
+            if (col.TryGetComponent<DoorController>(out var controller))
+                Doors.Add(controller.transform.parent.GetComponentInChildren<Door>());
 
-            box.isTrigger = true;
-            box.center = transform.InverseTransformPoint(center);
-            box.size = max - min;
-
-            // find all of the doors to this room (they are always on the Invisible layer)
-            var colliders = Physics.OverlapBox(center, box.bounds.extents, Quaternion.identity, 1 << 16, QueryTriggerInteraction.Collide);
-            foreach (var col in colliders)
-            {
-                if (!col.isTrigger) continue;
-                else if (col.TryGetComponent<Door>(out var door)) Doors.Add(door);
-                else if (col.TryGetComponent<DoorController>(out var controller))
-                    Doors.Add(controller.transform.parent.gameObject.GetComponentInChildren<Door>());
-            }
-        });
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.tag == "Player" || (other.name == "Net" && other.GetComponent<RemotePlayer>() != null)) PlayersIn++;
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.tag == "Player" || (other.name == "Net" && other.GetComponent<RemotePlayer>() != null)) PlayersIn--;
+            else if (col.TryGetComponent<Door>(out var door)) Doors.Add(door);
+        }
     }
 
     private void OnDisable()
     {
-        if (PlayersIn > 0 || Doors.Exists(door => door != null && door.open)) Events.Post(() => transform.parent.gameObject.SetActive(true));
+        if (exception || PlayersIn > 0 || Doors.Exists(door => door != null && door.open)) Events.Post(() => transform.parent.gameObject.SetActive(true));
     }
 }

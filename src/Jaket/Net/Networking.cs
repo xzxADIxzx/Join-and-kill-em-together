@@ -158,6 +158,13 @@ public class Networking : MonoSingleton<Networking>
         foreach (var con in Server.Manager.Connected) cons(con);
     }
 
+    /// <summary> Iterates through each player observing the world. </summary>
+    public static void EachObserver(Action<Vector3> cons)
+    {
+        cons(NewMovement.Instance.transform.position);
+        EachPlayer(player => cons(player.transform.position));
+    }
+
     /// <summary> Iterates each entity. </summary>
     public static void EachEntity(Action<Entity> cons)
     {
@@ -211,7 +218,7 @@ public class Networking : MonoSingleton<Networking>
     }
 
     /// <summary> Allocates memory, writes the packet there and sends it. </summary>
-    public static void Send(PacketType packetType, Action<Writer> cons = null, Action<IntPtr, int> result = null, int size = 96) =>
+    public static void Send(PacketType packetType, Action<Writer> cons = null, Action<IntPtr, int> result = null, int size = 128) =>
         Writer.Write(w => { w.Enum(packetType); cons?.Invoke(w); }, result ?? Redirect, cons == null ? 1 : size + 1);
 
     #endregion
