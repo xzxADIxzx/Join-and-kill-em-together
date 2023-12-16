@@ -46,7 +46,7 @@ public class Reader
     public byte[] Bytes(int amount)
     {
         var bytes = new byte[amount];
-        Marshal.Copy(mem, bytes, Inc(amount), amount);
+        Marshal.Copy(mem + Inc(amount), bytes, 0, amount);
         return bytes;
     }
 
