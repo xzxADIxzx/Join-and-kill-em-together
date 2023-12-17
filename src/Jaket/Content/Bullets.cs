@@ -26,52 +26,68 @@ public class Bullets
     /// <summary> Loads all bullets for future use. </summary>
     public static void Load()
     {
+        void Add(GameObject bullet, string name)
+        {
+            if (bullet != null && !Prefabs.Contains(bullet))
+            {
+                Prefabs.Add(bullet);
+                bullet.name = name;
+            }
+        }
+        int rv = 0, ng = 0, rc = 0;
         foreach (var weapon in Weapons.Prefabs)
         {
             if (weapon.TryGetComponent<Revolver>(out var revolver))
             {
-                Prefabs.Add(revolver.revolverBeam);
-                Prefabs.Add(revolver.revolverBeamSuper);
-                Prefabs.Add(revolver.coin); // a coin is also a bullet, honestly-honestly
-                continue;
+                Add(revolver.revolverBeam, $"RV{++rv} PRI");
+                Add(revolver.revolverBeamSuper, $"RV{rv} ALT");
+                Add(revolver.coin, "Coin"); // a coin is also a bullet, honestly-honestly
             }
-
+            else
             if (weapon.TryGetComponent<Shotgun>(out var shotgun))
             {
-                Prefabs.Add(shotgun.bullet);
-                Prefabs.Add(shotgun.grenade);
-                Prefabs.Add(shotgun.explosion);
-                continue;
+                Add(shotgun.bullet, $"SG PRI");
+                Add(shotgun.grenade, $"SG ALT");
+                Add(shotgun.explosion, $"SG EXT");
             }
-
+            else
             if (weapon.TryGetComponent<Nailgun>(out var nailgun))
             {
-                Prefabs.Add(nailgun.nail);
-                Prefabs.Add(nailgun.heatedNail);
-                Prefabs.Add(nailgun.magnetNail);
-                continue;
+                Add(nailgun.nail, $"NG{++ng} PRI");
+                Add(nailgun.heatedNail, $"NG{ng} ALT");
+                Add(nailgun.magnetNail, $"NG{ng} EXT");
             }
-
+            else
             if (weapon.TryGetComponent<Railcannon>(out var railcannon))
             {
-                Prefabs.Add(railcannon.beam);
-                continue;
+                Add(railcannon.beam, $"RC{++rc} PRI");
             }
-
+            else
             if (weapon.TryGetComponent<RocketLauncher>(out var launcher))
             {
-                Prefabs.Add(launcher.rocket);
-                Prefabs.Add(launcher.cannonBall?.gameObject);
-                continue;
+                Add(launcher.rocket, $"RL PRI");
+                Add(launcher.cannonBall?.gameObject, $"RL ALT");
             }
         }
-
-        // some variants are missing some projectiles
-        Prefabs.RemoveAll(bullet => bullet == null);
 
         Fake = UI.Object("Fake", Networking.Instance.transform);
         NetDmg = UI.Object("Network Damage", Networking.Instance.transform);
     }
+
+    /// <summary> Finds the bullet type by the name. </summary>
+    public static byte Type(string name)
+    {
+        name = name.Substring(0, name.IndexOf("(Clone)"));
+        return (byte)Prefabs.FindIndex(prefab => prefab.name == name);
+    }
+    public static EntityType Type(Entity entity) => entity.gameObject.name switch
+    {
+        "NG1 EXT" => EntityType.Harpoon,
+        "RC3 PRI" => EntityType.Drill,
+        "RL PRI" => EntityType.Rocket,
+        "RL ALT" => EntityType.Ball,
+        _ => EntityType.None
+    };
 
     #region special
 
