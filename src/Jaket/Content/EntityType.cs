@@ -81,9 +81,15 @@ public enum EntityType
     KGC,
     V1,
 
+    Harpoon,
+    Drill,
+    Rocket,
+    Ball,
+
     EnemyOffset = Filth,
     ItemOffset = AppleBait,
-    PlushyOffset = Jacob
+    PlushyOffset = Jacob,
+    BulletOffset = Harpoon
 }
 
 /// <summary> Extension class that allows you to get entity class. </summary>
@@ -100,5 +106,8 @@ public static class TypeExtensions
     public static bool IsItem(this EntityType type) => type >= EntityType.ItemOffset && type < EntityType.PlushyOffset;
 
     /// <summary> Whether the type is a plushy. </summary>
-    public static bool IsPlushy(this EntityType type) => type >= EntityType.PlushyOffset;
+    public static bool IsPlushy(this EntityType type) => type >= EntityType.PlushyOffset && type < EntityType.BulletOffset;
+
+    /// <summary> Whether the type is a bullet. </summary>
+    public static bool IsBullet(this EntityType type) => type >= EntityType.BulletOffset;
 }
