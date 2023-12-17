@@ -6,6 +6,7 @@ using Steamworks.Data;
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net.Types;
+using Jaket.World;
 
 /// <summary> Host endpoint processing socket events and client packets. </summary>
 public class Server : Endpoint, ISocketManager
@@ -114,7 +115,8 @@ public class Server : Endpoint, ISocketManager
             con.Close();
     }
 
-    public void OnConnected(Connection con, ConnectionInfo info) { }
+    public void OnConnected(Connection con, ConnectionInfo info) =>
+        Networking.Send(PacketType.LevelLoading, World.Instance.WriteData, (data, size) => con.SendMessage(data, size));
 
     public void OnDisconnected(Connection con, ConnectionInfo info) { }
 

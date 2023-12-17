@@ -90,9 +90,6 @@ public class Networking : MonoSingleton<Networking>
 
             // send notification to chat
             lobby.SendChatString($"<system><color=#00FF00>Player {member.Name} joined!</color>");
-
-            // send the current scene name to the player
-            Send(PacketType.LevelLoading, World.Instance.WriteData, (data, size) => FindCon(member.Id)?.SendMessage(data, size));
         };
 
         SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) =>
