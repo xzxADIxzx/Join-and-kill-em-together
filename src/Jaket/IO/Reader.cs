@@ -50,12 +50,6 @@ public class Reader
         return bytes;
     }
 
-    public byte[] AllBytes()
-    {
-        Position = 0;
-        return Bytes((int)Length);
-    }
-
     public int Int() => Marshal.ReadInt32(mem, Inc(4));
 
     public float Float() => Int2Float(Marshal.ReadInt32(mem, Inc(4)));

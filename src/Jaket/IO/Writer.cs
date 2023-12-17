@@ -58,7 +58,7 @@ public class Writer
     public void String(string value)
     {
         value ??= "";
-        Int(value.Length);
+        Int(value.Length * 2);
         Bytes(Encoding.Unicode.GetBytes(value));
     }
 
