@@ -1,4 +1,4 @@
-namespace Jaket.HarmonyPatches;
+namespace Jaket.Patches;
 
 using Discord;
 using HarmonyLib;
