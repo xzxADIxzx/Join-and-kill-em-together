@@ -59,7 +59,8 @@ public class Events : MonoSingleton<Events>
 
     private void LateUpdate()
     {
-        while (Tasks.Count > 0) Tasks.Dequeue()?.Invoke();
+        int amount = Tasks.Count;
+        for (int i = 0; i < amount; i++) Tasks.Dequeue()?.Invoke();
     }
 }
 
