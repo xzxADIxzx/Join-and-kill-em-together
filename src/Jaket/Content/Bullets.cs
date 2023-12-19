@@ -1,6 +1,5 @@
 namespace Jaket.Content;
 
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -75,19 +74,68 @@ public class Bullets
     }
 
     /// <summary> Finds the bullet type by the name. </summary>
-    public static byte Type(string name)
+    public static byte CType(string name)
     {
         name = name.Substring(0, name.IndexOf("(Clone)"));
         return (byte)Prefabs.FindIndex(prefab => prefab.name == name);
     }
-    public static EntityType Type(Entity entity) => entity.gameObject.name switch
+    public static EntityType EType(string name) => name switch
     {
-        "NG1 EXT" => EntityType.Harpoon,
-        "RC3 PRI" => EntityType.Drill,
         "RL PRI" => EntityType.Rocket,
         "RL ALT" => EntityType.Ball,
         _ => EntityType.None
     };
+
+    /// <summary> Spawns a bullet with the given type or other data. </summary>
+    public static void CInstantiate(Reader r)
+    {
+        var obj = Object.Instantiate(Prefabs[r.Byte()]);
+        obj.name = "Net"; // these bullets are not entities, so you need to manually change the name
+
+        obj.transform.position = r.Vector();
+        obj.transform.eulerAngles = r.Vector();
+
+        if (r.Position < r.Length) obj.GetComponent<Rigidbody>().velocity = r.Vector();
+    }
+
+    /// <summary> Synchronizes the bullet between host and clients. </summary>
+    public static void Sync(GameObject bullet, bool hasRigidbody, bool applyOffset)
+    {
+        if (LobbyController.Lobby == null || bullet.name.Contains("Net")) return;
+
+        if (bullet.name != "RL PRI" && bullet.name != "RL ALT")
+        {
+            var type = CType(bullet.name);
+            if (type == 0xFF) return; // how? these are probably enemy projectiles
+
+            Networking.Send(PacketType.SpawnBullet, w =>
+            {
+                w.Byte(type);
+                w.Vector(bullet.transform.position + (applyOffset ? bullet.transform.forward * 2f : Vector3.zero));
+                w.Vector(bullet.transform.eulerAngles);
+
+                if (hasRigidbody) w.Vector(bullet.GetComponent<Rigidbody>().velocity);
+            }, size: hasRigidbody ? 37 : 25);
+        }
+        else
+        {
+            var type = EType(bullet.name);
+            if (type == EntityType.None) return;
+
+            Networking.Send(PacketType.SpawnEntity, w =>
+            {
+                w.Enum(type);
+                w.Vector(bullet.transform.position);
+            }, size: 13);
+        }
+    }
+
+    /// <summary> Synchronizes the bullet and marks it as fake if it was downloaded from the network. </summary>
+    public static void Sync(GameObject bullet, ref GameObject sourceWeapon, bool hasRigidbody, bool applyOffset)
+    {
+        if (sourceWeapon == null) sourceWeapon = Fake; // mark synced bullets as fake
+        Sync(bullet, hasRigidbody, applyOffset);
+    }
 
     #region special
 
@@ -126,7 +174,7 @@ public class Bullets
     /// <summary> Synchronizes damage dealt to the enemy. </summary>
     public static void SyncDamage(ulong enemyId, string hitter, float damage, bool explode, float critDamage)
     {
-        byte type = (byte)Array.IndexOf(Types, hitter);
+        byte type = (byte)System.Array.IndexOf(Types, hitter);
         if (type != 0xFF) Networking.Send(PacketType.DamageEntity, w =>
         {
             w.Id(enemyId);

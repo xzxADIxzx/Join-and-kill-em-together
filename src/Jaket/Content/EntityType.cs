@@ -81,15 +81,13 @@ public enum EntityType
     KGC,
     V1,
 
-    Harpoon,
-    Drill,
     Rocket,
     Ball,
 
     EnemyOffset = Filth,
     ItemOffset = AppleBait,
     PlushyOffset = Jacob,
-    BulletOffset = Harpoon
+    BulletOffset = Rocket
 }
 
 /// <summary> Extension class that allows you to get entity class. </summary>
