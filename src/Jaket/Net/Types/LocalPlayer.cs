@@ -129,8 +129,8 @@ public class LocalPlayer : Entity
     {
         if (!r.Enum<Team>().Ally()) // no need to deal damage if an ally hits you
         {
-            r.Inc(1); // skip damage type because it's useless
-            NewMovement.Instance.GetHurt(Mathf.CeilToInt(r.Float() * 5f), false, 0f, r.Bool());
+            byte type = r.Byte();
+            NewMovement.Instance.GetHurt(Mathf.CeilToInt(r.Float() * (Bullets.Types[type] == "drill" ? 2f : 5f)), false, 0f, r.Bool());
         }
     }
 
