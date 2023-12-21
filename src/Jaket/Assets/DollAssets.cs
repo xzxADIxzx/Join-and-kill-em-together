@@ -59,7 +59,7 @@ public class DollAssets
         }
 
         LoadAsync<Texture>("V3-hand", tex => HandTextures[1] = tex);
-        HandTextures[0] = FistControl.Instance.blueArm.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture;
+        HandTextures[0] = FistControl.Instance.blueArm.ToAsset().GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture;
 
         // load icons for emoji wheel
         EmojiIcons = new Sprite[12];

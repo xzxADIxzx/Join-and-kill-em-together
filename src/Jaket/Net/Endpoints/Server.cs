@@ -50,7 +50,7 @@ public class Server : Endpoint, ISocketManager
             }
         });
 
-        ListenAndRedirect(PacketType.SpawnBullet, Bullets.Read);
+        ListenAndRedirect(PacketType.SpawnBullet, Bullets.CInstantiate);
 
         ListenAndRedirect(PacketType.DamageEntity, r => entities[r.Id()]?.Damage(r));
 
@@ -79,7 +79,7 @@ public class Server : Endpoint, ISocketManager
         }));
 
         // flush data
-        Manager.Connected.ForEach(con => con.Flush());
+        foreach (var con in Manager.Connected) con.Flush();
         Pointers.Free();
     }
 

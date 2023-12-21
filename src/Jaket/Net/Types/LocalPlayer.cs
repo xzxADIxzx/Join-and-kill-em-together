@@ -54,7 +54,7 @@ public class LocalPlayer : Entity
         renderer = GunControl.Instance.currentWeapon?.GetComponentInChildren<GunColorGetter>()?.GetComponent<Renderer>();
 
         // according to the lore, the player plays for V3, so we need to paint the hand
-        fc.blueArm.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture();
+        fc.blueArm.ToAsset().GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture();
 
         var arm = GunControl.Instance.currentWeapon?.transform.GetChild(0).Find("RightArm");
         if (arm != null) arm.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture();

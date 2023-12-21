@@ -59,7 +59,7 @@ public class Client : Endpoint, IConnectionManager
             if (entity is Enemy enemy) enemy?.Kill();
         });
 
-        Listen(PacketType.SpawnBullet, Bullets.Read);
+        Listen(PacketType.SpawnBullet, Bullets.CInstantiate);
 
         Listen(PacketType.DamageEntity, r => entities[r.Id()]?.Damage(r));
 

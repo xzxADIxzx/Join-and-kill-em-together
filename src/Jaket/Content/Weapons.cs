@@ -12,25 +12,25 @@ public class Weapons
     /// <summary> Loads all weapons for future use. </summary>
     public static void Load()
     {
-        Prefabs.AddRange(GunSetter.Instance.revolverPierce);
-        Prefabs.AddRange(GunSetter.Instance.revolverRicochet);
-        Prefabs.AddRange(GunSetter.Instance.revolverTwirl);
+        Prefabs.AddRange(GunSetter.Instance.revolverPierce.ToAssets());
+        Prefabs.AddRange(GunSetter.Instance.revolverRicochet.ToAssets());
+        Prefabs.AddRange(GunSetter.Instance.revolverTwirl.ToAssets());
 
-        Prefabs.AddRange(GunSetter.Instance.shotgunGrenade);
-        Prefabs.AddRange(GunSetter.Instance.shotgunPump);
-        Prefabs.AddRange(GunSetter.Instance.shotgunRed);
+        Prefabs.AddRange(GunSetter.Instance.shotgunGrenade.ToAssets());
+        Prefabs.AddRange(GunSetter.Instance.shotgunPump.ToAssets());
+        Prefabs.AddRange(GunSetter.Instance.shotgunRed.ToAssets());
 
-        Prefabs.AddRange(GunSetter.Instance.nailMagnet);
-        Prefabs.AddRange(GunSetter.Instance.nailOverheat);
-        Prefabs.AddRange(GunSetter.Instance.nailRed);
+        Prefabs.AddRange(GunSetter.Instance.nailMagnet.ToAssets());
+        Prefabs.AddRange(GunSetter.Instance.nailOverheat.ToAssets());
+        Prefabs.AddRange(GunSetter.Instance.nailRed.ToAssets());
 
-        Prefabs.AddRange(GunSetter.Instance.railCannon);
-        Prefabs.AddRange(GunSetter.Instance.railHarpoon);
-        Prefabs.AddRange(GunSetter.Instance.railMalicious);
+        Prefabs.AddRange(GunSetter.Instance.railCannon.ToAssets());
+        Prefabs.AddRange(GunSetter.Instance.railHarpoon.ToAssets());
+        Prefabs.AddRange(GunSetter.Instance.railMalicious.ToAssets());
 
-        Prefabs.AddRange(GunSetter.Instance.rocketBlue);
-        Prefabs.AddRange(GunSetter.Instance.rocketGreen);
-        Prefabs.AddRange(GunSetter.Instance.rocketRed);
+        Prefabs.AddRange(GunSetter.Instance.rocketBlue.ToAssets());
+        Prefabs.AddRange(GunSetter.Instance.rocketGreen.ToAssets());
+        Prefabs.AddRange(GunSetter.Instance.rocketRed.ToAssets());
     }
 
     /// <summary> Finds the weapon type by the name. </summary>
