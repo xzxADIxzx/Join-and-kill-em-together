@@ -95,8 +95,7 @@ public class Server : Endpoint, ISocketManager
 
     public void OnConnecting(Connection con, ConnectionInfo info)
     {
-        // the legend about NetIdentity Identity => this.address instead of this.identity
-        var identity = Networking.GetIdentity(info);
+        var identity = info.Identity;
 
         // multiple connections are prohibited
         if (identity.IsSteamId && Networking.FindCon(identity.SteamId).HasValue)
