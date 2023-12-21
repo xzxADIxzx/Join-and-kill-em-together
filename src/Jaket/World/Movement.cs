@@ -243,7 +243,7 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Toggles the ability to move, used in the chat and etc. </summary>
     public static void ToggleMovement(bool enable)
     {
-        nm.enabled = FistControl.Instance.enabled = FistControl.Instance.activated = HookArm.Instance.enabled = enable;
+        nm.enabled = fc.enabled = fc.activated = HookArm.Instance.enabled = enable;
 
         // put the hook back in place
         if (!enable) HookArm.Instance.Cancel();
@@ -262,7 +262,7 @@ public class Movement : MonoSingleton<Movement>
         // hide hud, weapons and arms
         StyleHUD.Instance.transform.parent.gameObject.SetActive(enable);
         GunControl.Instance.gameObject.SetActive(enable);
-        FistControl.Instance.gameObject.SetActive(enable);
+        fc.gameObject.SetActive(enable);
 
         // preventing some ultra stupid bug
         Console.Instance.enabled = enable;
