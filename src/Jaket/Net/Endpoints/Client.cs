@@ -85,7 +85,7 @@ public class Client : Endpoint, IConnectionManager
     public override void Update()
     {
         // read incoming data
-        Manager.Receive(1024);
+        Manager.Receive(256); Manager.Receive(256); Manager.Receive(256); Manager.Receive(256); // WHY
 
         // write data
         Networking.Send(PacketType.Snapshot, Networking.LocalPlayer.Write);
