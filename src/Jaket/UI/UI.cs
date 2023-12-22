@@ -266,7 +266,7 @@ public class UI
 
         var img = Table("Button", bind.transform, 94f, 0f, 128f, 48f, table =>
         {
-            key = Text(ControlsOptions.GetKeyName(current), table, 0f, 0f, 128f, 16f, size: 16);
+            key = Text(Settings.KeyName(current), table, 0f, 0f, 128f, 16f, size: 16);
         });
         return Component<Button>(img.gameObject, button =>
         {

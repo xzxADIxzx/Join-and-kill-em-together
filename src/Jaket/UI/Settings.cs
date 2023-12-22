@@ -104,7 +104,7 @@ public class Settings : CanvasSingleton<Settings>
                     ? KeyCode.LeftShift
                     : KeyCode.RightShift;
 
-        text.text = ControlsOptions.GetKeyName(key);
+        text.text = KeyName(key);
         prefs.SetInt($"jaket.binds.{path}", (int)key);
         Load(); // update control settings
     }
@@ -119,6 +119,20 @@ public class Settings : CanvasSingleton<Settings>
         Movement.UpdateState();
     }
 
+    // <summary> Returns the name of the given key. </summary>
+    public static string KeyName(KeyCode key) => key switch
+    {
+        KeyCode.LeftAlt => "LEFT ALT",
+        KeyCode.RightAlt => "RIGHT ALT",
+        KeyCode.LeftShift => "LEFT SHIFT",
+        KeyCode.RightShift => "RIGHT SHIFT",
+        KeyCode.LeftControl => "LEFT CONTROL",
+        KeyCode.RightControl => "RIGHT CONTROL",
+        KeyCode.Return => "ENTER",
+        KeyCode.CapsLock => "CAPS LOCK",
+        _ => key.ToString().Replace("Alpha", "").Replace("Keypad", "Num ").ToUpper()
+    };
+
     #region controls
 
     // <summary> Resets control settings. </summary>
@@ -131,7 +145,7 @@ public class Settings : CanvasSingleton<Settings>
         // update the labels in the buttons
         var list = new[] { LobbyTab, PlayerList, Settingz, PlayerIndicators, PlayerInfo, Pointer, Chat, ScrollUp, ScrollDown, EmojiWheel, SelfDestruction };
         for (int i = 0; i < list.Length; i++)
-            transform.GetChild(1).GetChild(i + 2).GetChild(0).GetComponentInChildren<Text>().text = ControlsOptions.GetKeyName(list[i]);
+            transform.GetChild(1).GetChild(i + 2).GetChild(0).GetComponentInChildren<Text>().text = KeyName(list[i]);
     }
 
     // <summary> Resets other settings. </summary>
