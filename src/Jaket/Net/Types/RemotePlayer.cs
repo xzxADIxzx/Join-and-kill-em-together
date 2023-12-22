@@ -1,4 +1,4 @@
-namespace Jaket.Net.EntityTypes;
+namespace Jaket.Net.Types;
 
 using UnityEngine;
 
@@ -7,7 +7,6 @@ using Jaket.Content;
 using Jaket.IO;
 using Jaket.UI;
 using Jaket.UI.Elements;
-using Jaket.World;
 
 /// <summary>
 /// Remote player that exists both on the local machine and on the remote one.
@@ -16,7 +15,7 @@ using Jaket.World;
 public class RemotePlayer : Entity
 {
     /// <summary> Player health, position and rotation. </summary>
-    public FloatLerp health, x, y, z, bodyRotation, headRotation, hookX, hookY, hookZ;
+    private FloatLerp health, x, y, z, bodyRotation, headRotation, hookX, hookY, hookZ;
 
     /// <summary> Player's railgun charge. From 0 to 10. </summary>
     public byte RailCharge;
@@ -48,17 +47,11 @@ public class RemotePlayer : Entity
     /// <summary> Custom weapon colors. </summary>
     private Color32 color1, color2, color3;
 
-    /// <summary> Doll animator. Created by me in Unity and uploaded in mod via bundle. </summary>
-    private Animator animator;
-
     /// <summary> Animator states that affect which animation will be played. </summary>
-    public bool walking, sliding, falling, wasDashing, dashing, wasRiding, riding, wasInAir, inAir, wasUsingHook, usingHook, wasShopping, shopping;
+    private bool walking, sliding, falling, wasDashing, dashing, wasRiding, riding, wasInAir, inAir, wasUsingHook, usingHook, wasShopping, shopping;
 
     /// <summary> Slide and fall particle transforms. </summary>
     private Transform slideParticle, fallParticle;
-
-    /// <summary> Enemy component of the player doll. </summary>
-    private EnemyIdentifier enemyId;
 
     /// <summary> Machine component of the player doll. </summary>
     public Machine machine;
@@ -77,6 +70,8 @@ public class RemotePlayer : Entity
 
     private void Awake()
     {
+        Init(null, () => true);
+
         // interpolations
         health = new();
         x = new();
@@ -102,19 +97,17 @@ public class RemotePlayer : Entity
         skateMaterial = transform.GetChild(0).GetChild(3).GetComponent<Renderer>().materials[0];
         wingTrail = GetComponentInChildren<TrailRenderer>();
         hookWinch = GetComponentInChildren<LineRenderer>(true);
-        animator = GetComponentInChildren<Animator>();
-        enemyId = GetComponent<EnemyIdentifier>();
         machine = GetComponent<Machine>();
         Voice = GetComponent<AudioSource>();
 
-        enemyId.health = machine.health = health.target = 100f;
-        enemyId.weakPoint = head.gameObject;
+        EnemyId.health = machine.health = health.target = 100f;
+        EnemyId.weakPoint = head.gameObject;
         hookWinch.material = HookArm.Instance.GetComponent<LineRenderer>().material;
 
         // on some levels there are no weapons at all
         if (GunSetter.Instance == null) return;
 
-        var prefab = GunSetter.Instance.rocketBlue[0].GetComponent<RocketLauncher>().rocket.transform.GetChild(1).GetChild(0).gameObject;
+        var prefab = GunSetter.Instance.rocketBlue[0].ToAsset().GetComponent<RocketLauncher>().rocket.transform.GetChild(1).GetChild(0).gameObject;
         var flash = Instantiate(prefab, rocket).transform;
 
         flash.localPosition = new();
@@ -126,7 +119,7 @@ public class RemotePlayer : Entity
         Header = new(Id, transform);
 
         // idols can target players, which is undesirable
-        int index = EnemyTracker.Instance.enemies.IndexOf(enemyId);
+        int index = EnemyTracker.Instance.enemies.IndexOf(EnemyId);
         if (index != -1)
         {
             EnemyTracker.Instance.enemies.RemoveAt(index);
@@ -137,14 +130,14 @@ public class RemotePlayer : Entity
     private void Update()
     {
         // if animator is null, then the player is dead, but if health is greater than zero, then he has revived
-        if (health.target > 0f && animator == null)
+        if (health.target > 0f && Animator == null)
         {
             Destroy(gameObject); // destroy the doll so that the client restore it
             return;
         }
 
         // prevent null pointer
-        if (animator == null) return;
+        if (Animator == null) return;
 
         transform.position = new(x.Get(LastUpdate), y.Get(LastUpdate) - (sliding ? .3f : 1.5f), z.Get(LastUpdate));
         transform.eulerAngles = new(0f, bodyRotation.GetAngel(LastUpdate), 0f);
@@ -154,7 +147,7 @@ public class RemotePlayer : Entity
         {
             wingMaterial.mainTexture = skateMaterial.mainTexture = DollAssets.WingTextures[(int)(lastTeam = team)];
 
-            var color = team.Data().Color();
+            var color = team.Color();
             wingTrail.startColor = new Color(color.r, color.g, color.b, .5f);
 
             // the pink team has cat ears
@@ -164,7 +157,7 @@ public class RemotePlayer : Entity
             Events.OnTeamChanged.Fire();
         }
 
-        gameObject.tag = team == Networking.LocalPlayer.Team || !LobbyController.PvPAllowed ? "Untagged" : "Enemy"; // toggle friendly fire
+        gameObject.tag = team.Ally() ? "Untagged" : "Enemy"; // toggle friendly fire
 
         if (lastWeapon != weapon)
         {
@@ -200,9 +193,9 @@ public class RemotePlayer : Entity
         {
             lastEmoji = emoji;
 
-            animator.SetTrigger("Show Emoji");
-            animator.SetInteger("Emoji", emoji);
-            animator.SetInteger("Rps", rps);
+            Animator.SetTrigger("Show Emoji");
+            Animator.SetInteger("Emoji", emoji);
+            Animator.SetInteger("Rps", rps);
 
             // toggle the visibility of the throne
             throne.gameObject.SetActive(emoji == 6);
@@ -216,13 +209,13 @@ public class RemotePlayer : Entity
         if (wasDashing != dashing)
         {
             // fire the trigger if the player dashed
-            if (wasDashing = dashing) animator.SetTrigger("Dash");
+            if (wasDashing = dashing) Animator.SetTrigger("Dash");
         }
 
         if (wasRiding != riding)
         {
             // fire the trigger if the started riding on a rocket
-            if (wasRiding = riding) animator.SetTrigger("Ride");
+            if (wasRiding = riding) Animator.SetTrigger("Ride");
 
             // toggle the visibility of the rocket effects
             rocket.gameObject.SetActive(riding);
@@ -231,13 +224,13 @@ public class RemotePlayer : Entity
         if (wasInAir != inAir)
         {
             // fire the trigger if the player jumped
-            if (wasInAir = inAir) animator.SetTrigger("Jump");
+            if (wasInAir = inAir) Animator.SetTrigger("Jump");
         }
 
         if (wasUsingHook != usingHook)
         {
             // fire the trigger if the player threw a hook
-            if (wasUsingHook = usingHook) animator.SetTrigger("Throw Hook");
+            if (wasUsingHook = usingHook) Animator.SetTrigger("Throw Hook");
 
             // toggle the visibility of the hook
             hook.gameObject.SetActive(usingHook);
@@ -246,16 +239,16 @@ public class RemotePlayer : Entity
         if (wasShopping != shopping)
         {
             // fire the trigger if the player opened a shop
-            if (wasShopping = shopping) animator.SetTrigger("Open Shop");
+            if (wasShopping = shopping) Animator.SetTrigger("Open Shop");
         }
 
-        animator.SetBool("Walking", walking);
-        animator.SetBool("Sliding", sliding);
-        animator.SetBool("Dashing", dashing);
-        animator.SetBool("Riding", riding);
-        animator.SetBool("InAir", inAir);
-        animator.SetBool("UsingHook", usingHook);
-        animator.SetBool("Shopping", shopping);
+        Animator.SetBool("Walking", walking);
+        Animator.SetBool("Sliding", sliding);
+        Animator.SetBool("Dashing", dashing);
+        Animator.SetBool("Riding", riding);
+        Animator.SetBool("InAir", inAir);
+        Animator.SetBool("UsingHook", usingHook);
+        Animator.SetBool("Shopping", shopping);
 
         if (sliding && slideParticle == null)
         {
@@ -277,12 +270,16 @@ public class RemotePlayer : Entity
         else if (!falling && fallParticle != null)
             Destroy(fallParticle.gameObject);
 
-        enemyId.health = machine.health = health.Get(LastUpdate);
-        enemyId.dead = machine.health <= 0f;
+        EnemyId.health = machine.health = health.Get(LastUpdate);
+        EnemyId.dead = machine.health <= 0f;
         Header.Update(machine.health);
 
         // sometimes the player does not crumble after death
-        if (enemyId.health <= 0f && !machine.limp) machine.GoLimp();
+        if (EnemyId.health <= 0f)
+        {
+            machine.limp = false;
+            machine.GoLimp();
+        }
     }
 
     private void LateUpdate()
@@ -296,6 +293,40 @@ public class RemotePlayer : Entity
         hookWinch.SetPosition(1, hook.position);
     }
 
+    #region special
+
+    /// <summary> Plays the punching animation and creates a shockwave as needed. </summary>
+    public void Punch(Reader r)
+    {
+        switch (r.Byte())
+        {
+            case 0:
+                Animator.SetTrigger(r.Bool() ? "Parry" : "Punch");
+                break;
+            case 1:
+                Instantiate(FistControl.Instance.redArm.ToAsset().GetComponent<Punch>().blastWave, r.Vector(), Quaternion.Euler(r.Vector())).name = "Net";
+                break;
+            case 2:
+                var shock = Instantiate(NewMovement.Instance.gc.shockwave, transform.position, Quaternion.identity);
+                shock.name = "Net";
+                shock.GetComponent<PhysicalShockwave>().force = r.Float();
+                break;
+        }
+    }
+
+    /// <summary> Creates a pointer that will draw a line from itself to the player. </summary>
+    public void Point(Reader r)
+    {
+        if (pointer != null) pointer.Lifetime = 4.5f;
+        pointer = Pointer.Spawn(team, r.Vector(), r.Vector(), transform);
+    }
+
+    public bool Invincible() => dashing;
+    public Vector3 HoldPosition() => usingHook ? hook.position : hookRoot.position;
+
+    #endregion
+    #region entity
+
     public override void Write(Writer w)
     {
         w.Float(health.target);
@@ -304,7 +335,7 @@ public class RemotePlayer : Entity
         w.Float(headRotation.target);
 
         w.Byte(RailCharge);
-        w.Byte((byte)team);
+        w.Enum(team);
         w.Byte(weapon);
         w.Byte(emoji);
         w.Byte(rps);
@@ -335,7 +366,7 @@ public class RemotePlayer : Entity
         headRotation.Read(r);
 
         RailCharge = r.Byte();
-        team = (Team)r.Byte();
+        team = r.Enum<Team>();
         weapon = r.Byte();
         emoji = r.Byte();
         rps = r.Byte();
@@ -356,29 +387,16 @@ public class RemotePlayer : Entity
         color1 = r.Color(); color2 = r.Color(); color3 = r.Color();
     }
 
-    public override void Damage(Reader r) => Bullets.DealDamage(enemyId, r);
+    public override void Damage(Reader r) => Bullets.DealDamage(EnemyId, r);
 
-    public void Punch(Reader r)
+    public override void Kill()
     {
-        switch (r.Byte())
-        {
-            case 0:
-                animator.SetTrigger(r.Bool() ? "Parry" : "Punch");
-                break;
-            case 1:
-                Instantiate(FistControl.Instance.redArm.GetComponent<Punch>().blastWave, r.Vector(), Quaternion.Euler(r.Vector())).name = "Net";
-                break;
-            case 2:
-                var shock = Instantiate(NewMovement.Instance.gc.shockwave, transform.position, Quaternion.identity);
-                shock.name = "Net";
-                shock.GetComponent<PhysicalShockwave>().force = r.Float();
-                break;
-        }
+        health.target = 0f; // reset the health so that Update can kill the enemy correctly
+        Header.Hide();
+
+        Networking.Entities[Id] = null; // replace the entity with null so that the indicators no longer point to it
+        Events.OnTeamChanged.Fire();
     }
 
-    public void Point(Reader r)
-    {
-        if (pointer != null) pointer.Lifetime = 4.5f;
-        pointer = Pointer.Spawn(team, r.Vector(), r.Vector(), transform);
-    }
+    #endregion
 }
