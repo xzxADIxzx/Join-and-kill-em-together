@@ -8,7 +8,6 @@ using UnityEngine;
 
 using Jaket.Content;
 using Jaket.UI;
-using Jaket.World;
 
 /// <summary> Lobby controller with several useful methods. </summary>
 public class LobbyController
@@ -95,7 +94,11 @@ public class LobbyController
     public static void LeaveLobby()
     {
         // this is necessary in order to free up resources allocated for unread packets, otherwise there may be ghost players in the chat
-        if (!IsOwner && Lobby != null) SteamNetworking.CloseP2PSessionWithUser(Lobby.Value.Owner.Id);
+        if (Lobby != null)
+        {
+            Networking.Server.Close();
+            Networking.Client.Close();
+        }
 
         Lobby?.Leave();
         Lobby = null;
@@ -146,7 +149,7 @@ Maybe it was closed or you were blocked ,_,");
         // who does the client think he is?!
         if (!IsOwner) return;
 
-        Networking.SendEmpty(LastKicked = member.Id, PacketType.Kick);
+        Networking.Send(PacketType.Kick, null, (data, size) => Networking.FindCon(LastKicked = member.Id)?.SendMessage(data, size));
         Lobby?.SendChatString($"<system><color=red>Player {member.Name} was kicked!</color>");
     }
 
@@ -162,6 +165,16 @@ Maybe it was closed or you were blocked ,_,");
         });
 
         return list;
+    }
+
+    public static bool Contains(SteamId id)
+    {
+        if (Lobby == null) return false;
+
+        foreach (var member in Lobby?.Members)
+            if (member.Id == id) return true;
+
+        return false;
     }
 
     /// <summary> Iterates each lobby member. </summary>
