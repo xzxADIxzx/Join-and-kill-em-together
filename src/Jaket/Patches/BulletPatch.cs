@@ -60,3 +60,23 @@ public class CommonBulletsPatch
             : true;
 }
 
+[HarmonyPatch]
+public class EntityBulletsPatch
+{
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(Cannonball), "Start")]
+    static void CannonballSpawn(Cannonball __instance) => Bullets.Sync(__instance.gameObject, ref __instance.sourceWeapon, true, false);
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(Cannonball), nameof(Cannonball.Break))]
+    static void CannonballDeath(Cannonball __instance) => Bullets.SyncDeath(__instance.gameObject);
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(Cannonball), nameof(Cannonball.Launch))]
+    static void CannonballParry(Cannonball __instance) => __instance.GetComponent<Bullet>()?.PickUp();
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(Cannonball), nameof(Cannonball.Unlaunch))]
+    static void CannonballHook(Cannonball __instance) => __instance.GetComponent<Bullet>()?.PickUp();
+}
+
