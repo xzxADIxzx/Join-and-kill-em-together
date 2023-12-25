@@ -47,6 +47,15 @@ public class LocalPlayer : Entity
         Events.OnWeaponChanged += UpdateWeapons;
     }
 
+    private void Update()
+    {
+        if (HeldItem == null || HeldItem.IsOwner) return;
+        HeldItem = null;
+
+        fc.currentPunch.ForceThrow();
+        if (fc.currentPunch.holding) fc.currentPunch.PlaceHeldObject(new ItemPlaceZone[0], null);
+    }
+
     /// <summary> Caches different things related to weapons and paints hands. </summary>
     public void UpdateWeapons()
     {
@@ -101,25 +110,6 @@ public class LocalPlayer : Entity
             else w.Inc(12);
         }
         else w.Inc(13);
-
-        #region item
-
-        if (HeldItem != null && !HeldItem.IsOwner)
-        {
-            HeldItem = null;
-
-            fc.currentPunch.ForceThrow();
-            if (fc.currentPunch.holding) fc.currentPunch.PlaceHeldObject(new ItemPlaceZone[0], null);
-        }
-
-        w.Bool(HeldItem != null);
-        if (HeldItem != null)
-        {
-            w.Id(HeldItem.Id);
-            HeldItem.Write(w);
-        }
-
-        #endregion
     }
 
     // there is no point in reading anything, because it is a local player
