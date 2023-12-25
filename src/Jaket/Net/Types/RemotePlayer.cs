@@ -232,8 +232,8 @@ public class RemotePlayer : Entity
             // fire the trigger if the player threw a hook
             if (wasUsingHook = usingHook) Animator.SetTrigger("Throw Hook");
 
-            // toggle the visibility of the hook
             hook.gameObject.SetActive(usingHook);
+            hook.position = new(hookX.target, hookY.target, hookZ.target);
         }
 
         if (wasShopping != shopping)

@@ -78,7 +78,7 @@ public class Enemies
         // the enemy was created remotely
         if (enemyId.gameObject.name == "Net")
         {
-            enemyId.GetComponent<Enemy>()?.SpawnEffect();
+            if (!LobbyController.IsOwner) enemyId.GetComponent<Enemy>()?.SpawnEffect();
             return true;
         }
         if (LobbyController.IsOwner)

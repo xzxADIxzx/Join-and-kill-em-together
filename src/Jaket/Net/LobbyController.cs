@@ -50,11 +50,7 @@ public class LobbyController
         // and leave the lobby if the owner has left it
         SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) =>
         {
-            if (member.Id == LastOwner)
-            {
-                LeaveLobby(); // leave the lobby to avoid bugs and load into the main menu
-                SceneHelper.LoadScene("Main Menu");
-            }
+            if (member.Id == LastOwner) LeaveLobby();
         };
 
         // put the level name in the lobby data so that it can be seen in the public lobbies list

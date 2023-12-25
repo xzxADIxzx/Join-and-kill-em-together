@@ -30,7 +30,6 @@ public class Client : Endpoint, IConnectionManager
             if (entities[id] == null && (type == EntityType.Hand || type == EntityType.Leviathan || type == EntityType.Player))
                 entities[id] = Entities.Get(id, type);
 
-            // read entity data
             entities[id]?.Read(r);
         });
 

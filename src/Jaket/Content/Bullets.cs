@@ -81,8 +81,8 @@ public class Bullets
     }
     public static EntityType EType(string name) => name switch
     {
-        "RL PRI" => EntityType.Rocket,
-        "RL ALT" => EntityType.Ball,
+        "RL PRI(Clone)" => EntityType.Rocket,
+        "RL ALT(Clone)" => EntityType.Ball,
         _ => EntityType.None
     };
 
@@ -103,7 +103,7 @@ public class Bullets
     {
         if (LobbyController.Lobby == null || bullet.name.Contains("Net")) return;
 
-        if (bullet.name != "RL PRI" && bullet.name != "RL ALT")
+        if (bullet.name != "RL PRI(Clone)" && bullet.name != "RL ALT(Clone)")
         {
             var type = CType(bullet.name);
             if (type == 0xFF) return; // how? these are probably enemy projectiles
