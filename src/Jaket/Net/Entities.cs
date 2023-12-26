@@ -33,6 +33,9 @@ public class Entities
             var sucks = type;
             Providers.Add(sucks, () => Items.Instantiate(sucks));
         }
+
+        Providers.Add(EntityType.Rocket, () => Bullets.EInstantiate(EntityType.Rocket));
+        Providers.Add(EntityType.Ball, () => Bullets.EInstantiate(EntityType.Ball));
     }
 
     /// <summary> Returns an entity of the given type. </summary>
