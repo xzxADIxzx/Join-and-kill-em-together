@@ -5,6 +5,7 @@ using UnityEngine;
 
 using Jaket.IO;
 using Jaket.Net;
+using Jaket.Net.Types;
 using Jaket.UI;
 
 /// <summary> List of all bullets in the game and some useful methods. </summary>
@@ -76,7 +77,7 @@ public class Bullets
     /// <summary> Finds the bullet type by the name. </summary>
     public static byte CType(string name)
     {
-        name = name.Substring(0, name.IndexOf("(Clone)"));
+        name = name.Contains("(") ? name.Substring(0, name.IndexOf("(")) : name;
         return (byte)Prefabs.FindIndex(prefab => prefab.name == name);
     }
     public static EntityType EType(string name) => name switch
@@ -97,6 +98,11 @@ public class Bullets
 
         if (r.Position < r.Length) obj.GetComponent<Rigidbody>().velocity = r.Vector();
     }
+    public static Bullet EInstantiate(EntityType type) => Object.Instantiate(Prefabs[CType(type switch
+    {
+        EntityType.Rocket => "RL PRI",
+        EntityType.Ball or _ => "RL ALT"
+    })]).AddComponent<Bullet>();
 
     /// <summary> Synchronizes the bullet between host and clients. </summary>
     public static void Sync(GameObject bullet, bool hasRigidbody, bool applyOffset)
@@ -119,29 +125,48 @@ public class Bullets
         }
         else
         {
-            var type = EType(bullet.name);
-            if (type == EntityType.None) return;
-
-            Networking.Send(PacketType.SpawnEntity, w =>
+            if (LobbyController.IsOwner)
+                bullet.AddComponent<Bullet>();
+            else
             {
-                w.Enum(type);
-                w.Vector(bullet.transform.position);
-            }, size: 13);
+                var type = EType(bullet.name);
+                if (type == EntityType.None) return;
+
+                Networking.Send(PacketType.SpawnEntity, w =>
+                {
+                    w.Enum(type);
+                    w.Vector(bullet.transform.position);
+
+                    w.Vector(bullet.transform.eulerAngles);
+                    w.Float(bullet.GetComponent<Rigidbody>().velocity.magnitude);
+                }, size: hasRigidbody ? 57 : 45);
+
+                Object.DestroyImmediate(bullet);
+            }
         }
     }
 
     /// <summary> Synchronizes the bullet and marks it as fake if it was downloaded from the network. </summary>
     public static void Sync(GameObject bullet, ref GameObject sourceWeapon, bool hasRigidbody, bool applyOffset)
     {
-        if (sourceWeapon == null) sourceWeapon = Fake; // mark synced bullets as fake
+        if (sourceWeapon == null && bullet.name == "Net") sourceWeapon = Fake; // mark synced bullets as fake
         Sync(bullet, hasRigidbody, applyOffset);
+    }
+
+    /// <summary> Synchronizes the "death" of the bullet. </summary>
+    public static void SyncDeath(GameObject bullet)
+    {
+        if (bullet.TryGetComponent<Bullet>(out var comp) && comp.IsOwner) Networking.Send(PacketType.EnemyDied, w => w.Id(comp.Id), size: 8);
     }
 
     #region special
 
     /// <summary> Synchronizes the explosion of the knuckleblaster. </summary>
-    public static void SyncBlast(GameObject blast)
+    public static void SyncBlast(GameObject blast, ref GameObject sourceWeapon)
     {
+        // if this is not done, the explosion will cause damage to its creator
+        if (blast.name == "Net") sourceWeapon = Fake;
+
         // checking if this is really knuckleblaster explosion
         if (LobbyController.Lobby == null || blast?.name != "Explosion Wave(Clone)") return;
         Networking.Send(PacketType.Punch, w =>
