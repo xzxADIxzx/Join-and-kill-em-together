@@ -49,14 +49,7 @@ public class Client : Endpoint, IConnectionManager
             });
         });
 
-        Listen(PacketType.EnemyDied, r =>
-        {
-            // find the killed enemy in the list of entities
-            var entity = entities[r.Id()];
-
-            // kill the enemy so that there is no desynchronization
-            if (entity is Enemy enemy) enemy?.Kill();
-        });
+        Listen(PacketType.EnemyDied, r => entities[r.Id()]?.Kill());
 
         Listen(PacketType.SpawnBullet, Bullets.CInstantiate);
 
@@ -87,7 +80,11 @@ public class Client : Endpoint, IConnectionManager
         Manager.Receive(256); Manager.Receive(256); Manager.Receive(256); Manager.Receive(256); // WHY
 
         // write data
-        Networking.Send(PacketType.Snapshot, Networking.LocalPlayer.Write);
+        Networking.EachOwned(entity => Networking.Send(PacketType.Snapshot, w =>
+        {
+            w.Id(entity.Id);
+            entity.Write(w);
+        }));
 
         // flush data
         Manager.Connection.Flush();

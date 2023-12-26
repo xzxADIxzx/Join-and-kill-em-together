@@ -169,6 +169,14 @@ public class Networking : MonoSingleton<Networking>
             if (entity != null) cons(entity);
     }
 
+    /// <summary> Iterates each entity the player owns. </summary>
+    public static void EachOwned(Action<Entity> cons)
+    {
+        cons(LocalPlayer);
+        foreach (var entity in Entities.Values)
+            if (entity != null && entity is OwnableEntity ownable && ownable.IsOwner) cons(entity);
+    }
+
     /// <summary> Iterates each player. </summary>
     public static void EachPlayer(Action<RemotePlayer> cons)
     {
