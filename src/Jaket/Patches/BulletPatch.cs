@@ -45,7 +45,7 @@ public class CommonBulletsPatch
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(Explosion), "Start")]
-    static void Blast(Explosion __instance) => Bullets.SyncBlast(__instance.transform.parent?.gameObject);
+    static void Blast(Explosion __instance) => Bullets.SyncBlast(__instance.transform.parent?.gameObject, ref __instance.sourceWeapon);
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(PhysicalShockwave), "Start")]
@@ -73,10 +73,10 @@ public class EntityBulletsPatch
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(Cannonball), nameof(Cannonball.Launch))]
-    static void CannonballParry(Cannonball __instance) => __instance.GetComponent<Bullet>()?.PickUp();
+    static void CannonballParry(Cannonball __instance) => __instance.GetComponent<Bullet>()?.TakeOwnage();
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(Cannonball), nameof(Cannonball.Unlaunch))]
-    static void CannonballHook(Cannonball __instance) => __instance.GetComponent<Bullet>()?.PickUp();
+    static void CannonballHook(Cannonball __instance) => __instance.GetComponent<Bullet>()?.TakeOwnage();
 }
 
