@@ -18,17 +18,14 @@ public class Server : Endpoint, ISocketManager
     {
         Listen(PacketType.Snapshot, (con, sender, r) =>
         {
-            // if the player does not have a doll, then create it
-            if (!entities.ContainsKey(sender)) entities[sender] = Entities.Get(sender, EntityType.Player);
-
-            // sometimes players disappear for some unknown reason, and sometimes I destroy them myself
-            if (entities[sender] == null) entities[sender] = Entities.Get(sender, EntityType.Player);
-
-            // read player data
-            entities[sender]?.Read(r);
-
-            // read item data if available
-            if (r.Bool() && entities.TryGetValue(r.Id(), out var entity) && entity is Item item && item != null) item.Read(r);
+            ulong id = r.Id();
+            if (id == sender)
+            {
+                // sometimes I destroy players, sometimes they disappear for no reason
+                if (!entities.ContainsKey(id) || entities[id] == null) entities[id] = Entities.Get(id, EntityType.Player);
+                entities[id]?.Read(r);
+            }
+            else if (entities.TryGetValue(id, out var entity) && entity != null && entity is OwnableEntity ownable) ownable.Read(r);
         });
 
         Listen(PacketType.SpawnEntity, r =>
