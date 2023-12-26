@@ -101,12 +101,12 @@ public class LocalPlayer : Entity
             bool custom = renderer.material.name.Contains("Custom");
             w.Bool(custom);
 
-            if (custom)
+            if (custom) UI.Properties(renderer, block =>
             {
-                w.Color(renderer.material.GetColor("_CustomColor1"));
-                w.Color(renderer.material.GetColor("_CustomColor2"));
-                w.Color(renderer.material.GetColor("_CustomColor3"));
-            }
+                w.Color(block.GetColor("_CustomColor1"));
+                w.Color(block.GetColor("_CustomColor2"));
+                w.Color(block.GetColor("_CustomColor3"));
+            });
             else w.Inc(12);
         }
         else w.Inc(13);

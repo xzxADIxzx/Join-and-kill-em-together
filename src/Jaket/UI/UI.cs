@@ -18,6 +18,8 @@ public class UI
     private static Sprite background, shadow, circleShadow, circle, checkmark;
     /// <summary> Set of colors for buttons. </summary>
     private static ColorBlock colors;
+    /// <summary> Block used to get and set material properties. </summary>
+    private static MaterialPropertyBlock block = new();
 
     /// <summary> Loads the resources needed for interface. </summary>
     public static void Load()
@@ -119,6 +121,14 @@ public class UI
             rect.anchoredPosition = new(x, y);
             rect.sizeDelta = new(width, height);
         });
+
+    /// <summary> Gets and optionally sets renderer properties. </summary>
+    public static void Properties(Renderer renderer, Action<MaterialPropertyBlock> cons, bool set = false)
+    {
+        renderer.GetPropertyBlock(block);
+        cons(block);
+        if (set) renderer.SetPropertyBlock(block);
+    }
 
     #endregion
     #region canvas

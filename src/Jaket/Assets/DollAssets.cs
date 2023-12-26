@@ -154,7 +154,6 @@ public class DollAssets
         enemyId.enemyType = EnemyType.V2;
         enemyId.weaknesses = new string[0];
         enemyId.burners = new();
-        machine.limp = true;
         machine.destroyOnDeath = new GameObject[0];
         machine.hurtSounds = new AudioClip[0];
 

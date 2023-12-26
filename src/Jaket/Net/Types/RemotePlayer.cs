@@ -177,12 +177,12 @@ public class RemotePlayer : Entity
                     if (customColors)
                     {
                         renderer.materials = getter.coloredMaterials;
-                        foreach (var mat in renderer.materials)
+                        UI.Properties(renderer, block =>
                         {
-                            mat.SetColor("_CustomColor1", color1);
-                            mat.SetColor("_CustomColor2", color2);
-                            mat.SetColor("_CustomColor3", color3);
-                        }
+                            block.SetColor("_CustomColor1", color1);
+                            block.SetColor("_CustomColor2", color2);
+                            block.SetColor("_CustomColor3", color3);
+                        }, true);
                     }
                     else renderer.materials = getter.defaultMaterials;
                 }
