@@ -25,7 +25,7 @@ public abstract class Entity : MonoBehaviour
     public float LastUpdate;
 
     /// <summary> Adds itself to the entities list if the player is the host, and finds different components specific to different entities. </summary>
-    protected void Init(Func<Entity, EntityType> prov, Func<bool> remote = null)
+    protected virtual void Init(Func<Entity, EntityType> prov, Func<bool> remote = null)
     {
         EnemyId = GetComponent<EnemyIdentifier>();
         ItemId = GetComponent<ItemIdentifier>();
@@ -81,5 +81,48 @@ public abstract class Entity : MonoBehaviour
 
         /// <summary> Returns the intermediate value of the angle. </summary>
         public float GetAngel(float lastUpdate) => Mathf.LerpAngle(last, target, (Time.time - lastUpdate) / Networking.SNAPSHOTS_SPACING);
+    }
+}
+
+/// <summary> Entity that has an owner and can be passed from client to client. </summary>
+public abstract class OwnableEntity : Entity
+{
+    /// <summary> Id of the entity owner. </summary>
+    public ulong Owner = LobbyController.IsOwner ? Networking.LocalPlayer.Id : 0L;
+    /// <summary> Whether the player owns the entity. </summary>
+    public bool IsOwner => Owner == Networking.LocalPlayer.Id;
+
+    /// <summary> Time of last transfer of the entity from one client to another. </summary>
+    public float LastTransferTime { get; protected set; }
+    /// <summary> Event triggered when ownership of the entity is transferred. </summary>
+    public Action OnTransferred;
+
+    protected override void Init(Func<Entity, EntityType> prov, Func<bool> remote = null)
+    {
+        base.Init(prov, remote);
+        OnTransferred = () => LastTransferTime = Time.time;
+    }
+
+    /// <summary> Transfers ownership of the entity to the local player. </summary>
+    public void TakeOwnage()
+    {
+        if (IsOwner) return;
+
+        Owner = Networking.LocalPlayer.Id;
+        OnTransferred();
+    }
+
+    public override void Write(Writer w) => w.Id(Owner);
+
+    public override void Read(Reader r)
+    {
+        LastUpdate = Time.time;
+
+        ulong id = r.Id(); // this is necessary so that clients don't fight for ownership of the entity
+        if (Owner != id && Time.time > LastTransferTime + 1f)
+        {
+            Owner = id;
+            OnTransferred();
+        }
     }
 }
