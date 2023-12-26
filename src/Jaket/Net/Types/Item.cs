@@ -6,13 +6,8 @@ using Jaket.Content;
 using Jaket.IO;
 
 /// <summary> Representation of all items in the game, except glasses. </summary>
-public class Item : Entity
+public class Item : OwnableEntity
 {
-    /// <summary> Id of the player who last held the item. </summary>
-    public ulong LastOwner, Owner = LobbyController.LastOwner;
-    /// <summary> Whether the player owns the item. </summary>
-    public bool IsOwner => Owner == Networking.LocalPlayer.Id;
-
     /// <summary> Item position and rotation. </summary>
     private FloatLerp x, y, z, rx, ry, rz;
     /// <summary> Reference to the component needed to change the kinematics. </summary>
@@ -27,12 +22,10 @@ public class Item : Entity
     /// <summary> Whether the item is a torch. </summary>
     private bool torch;
 
-    /// <summary> Time of last transfer of the item from one client to another. </summary>
-    private float lastTransferTime;
-
     private void Awake()
     {
         Init(Items.Type);
+        OnTransferred += () => this.player = Networking.Entities.TryGetValue(Owner, out var entity) && entity is RemotePlayer player ? player : null;
 
         x = new(); y = new(); z = new();
         rx = new(); ry = new(); rz = new();
@@ -43,9 +36,6 @@ public class Item : Entity
 
     private void Update()
     {
-        // update the player holding the item
-        if (LastOwner != Owner && Networking.Entities.TryGetValue(LastOwner = Owner, out var entity) && entity is RemotePlayer player) this.player = player;
-
         // the game itself will update everything for the owner of the item
         if (IsOwner) return;
 
@@ -85,8 +75,7 @@ public class Item : Entity
 
     public void PickUp()
     {
-        Owner = Networking.LocalPlayer.Id;
-        lastTransferTime = Time.time;
+        TakeOwnage();
         Networking.LocalPlayer.HeldItem = this;
     }
 
@@ -94,7 +83,7 @@ public class Item : Entity
 
     public override void Write(Writer w)
     {
-        w.Id(Owner);
+        base.Write(w);
         w.Vector(transform.position);
         w.Vector(transform.eulerAngles);
         w.Bool(IsOwner ? FistControl.Instance.heldObject?.gameObject == gameObject : holding);
@@ -103,15 +92,7 @@ public class Item : Entity
 
     public override void Read(Reader r)
     {
-        LastUpdate = Time.time;
-
-        ulong id = r.Id(); // this is necessary so that clients don't fight for ownership of the item
-        if (Owner != id && Time.time > lastTransferTime + 1f)
-        {
-            Owner = id;
-            lastTransferTime = Time.time;
-        }
-
+        base.Read(r);
         x.Read(r); y.Read(r); z.Read(r);
         rx.Read(r); ry.Read(r); rz.Read(r);
         holding = r.Bool();
