@@ -85,6 +85,26 @@ public class Commands
             }
         });
 
+        Handler.Register("level", "<layer> <level>", "Loads the given level", args =>
+        {
+            if (!LobbyController.IsOwner)
+                chat.ReceiveChatMessage($"<color=red>Only the lobby owner can load levels.</color>");
+            else if (args.Length < 2)
+                chat.ReceiveChatMessage($"<color=red>Insufficient number of arguments.</color>");
+            else if
+            (
+                int.TryParse(args[0], out int layer) && layer >= 0 && layer <= 7 &&
+                int.TryParse(args[1], out int level) && level >= 1 && level <= 5 &&
+                (level == 5 ? layer == 0 : true) && (layer == 3 || layer == 6 ? level <= 2 : true)
+            )
+            {
+                SceneHelper.LoadScene($"Level {layer}-{level}");
+                chat.ReceiveChatMessage($"<color=#00FF00>Level {layer}-{level} is loading.</color>");
+            }
+            else
+                chat.ReceiveChatMessage("<color=red>Layer must be an integer from 0 to 7. Level must be an integer from 1 to 5.</color>");
+        });
+
         Handler.Register("authors", "Displays the list of all mod developers", args =>
         {
             void SendMsg(string msg) => chat.ReceiveChatMessage($"<size=14>{msg}</size>", true);
