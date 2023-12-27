@@ -74,7 +74,7 @@ public class Bullet : OwnableEntity
 
     public override void Kill()
     {
-        grenade?.Explode();
+        grenade?.Explode(harmless: true);
         ball?.Break();
     }
 

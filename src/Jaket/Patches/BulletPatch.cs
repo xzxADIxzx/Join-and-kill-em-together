@@ -50,6 +50,10 @@ public class CommonBulletsPatch
     static void Shock(PhysicalShockwave __instance) => Bullets.SyncShock(__instance.gameObject, __instance.force);
 
     [HarmonyPrefix]
+    [HarmonyPatch(typeof(Grenade), nameof(Grenade.Explode))]
+    static bool Core(Grenade __instance) => __instance.rocket || __instance.name != "Net";
+
+    [HarmonyPrefix]
     [HarmonyPatch(typeof(Nail), "TouchEnemy")]
     static bool Sawblade(Nail __instance, Transform other) =>
         __instance.sawblade && other.TryGetComponent<EnemyIdentifierIdentifier>(out var eid) &&
