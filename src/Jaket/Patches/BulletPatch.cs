@@ -62,8 +62,16 @@ public class CommonBulletsPatch
 public class EntityBulletsPatch
 {
     [HarmonyPostfix]
+    [HarmonyPatch(typeof(Grenade), "Start")] // DO NOT USE AWAKE
+    static void GrenadeSpawn(Grenade __instance) => Events.Post2(() => Bullets.Sync(__instance.gameObject, true, false));
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(Grenade), nameof(Grenade.Explode))]
+    static void GrenadeDeath(Grenade __instance) => Bullets.SyncDeath(__instance.gameObject);
+
+    [HarmonyPostfix]
     [HarmonyPatch(typeof(Cannonball), "Start")]
-    static void CannonballSpawn(Cannonball __instance) => Bullets.Sync(__instance.gameObject, ref __instance.sourceWeapon, true, false);
+    static void CannonballSpawn(Cannonball __instance) => Bullets.Sync(__instance.gameObject, true, false);
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(Cannonball), nameof(Cannonball.Break))]
