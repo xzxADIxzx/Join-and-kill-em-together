@@ -48,7 +48,7 @@ public class Writer
     public void Bool(bool value) => Marshal.WriteByte(mem, Inc(1), (byte)(value ? 0xFF : 0x00));
 
     public void Bools(bool v0 = false, bool v1 = false, bool v2 = false, bool v3 = false, bool v4 = false, bool v5 = false, bool v6 = false, bool v7 = false) =>
-        Byte((byte)((v0 ? 1 : 0) | (v1 ? 1 << 1 : 0) | (v2 ? 1 << 2 : 0) | (v3 ? 1 << 3 : 0) | (v4 ? 4 << 1 : 0) | (v5 ? 1 << 5 : 0) | (v6 ? 1 << 6 : 0) | (v7 ? 1 << 7 : 0)));
+        Byte((byte)((v0 ? 1 : 0) | (v1 ? 1 << 1 : 0) | (v2 ? 1 << 2 : 0) | (v3 ? 1 << 3 : 0) | (v4 ? 1 << 4 : 0) | (v5 ? 1 << 5 : 0) | (v6 ? 1 << 6 : 0) | (v7 ? 1 << 7 : 0)));
 
     public void Byte(byte value) => Marshal.WriteByte(mem, Inc(1), value);
 
