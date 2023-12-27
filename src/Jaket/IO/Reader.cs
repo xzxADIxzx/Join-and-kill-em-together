@@ -41,6 +41,13 @@ public class Reader
 
     public bool Bool() => Marshal.ReadByte(mem, Inc(1)) == 0xFF;
 
+    public void Bools(out bool v0, out bool v1, out bool v2, out bool v3, out bool v4, out bool v5, out bool v6, out bool v7)
+    {
+        byte value = Byte();
+        v0 = (value & 1 << 0) != 0; v1 = (value & 1 << 1) != 0; v2 = (value & 1 << 2) != 0; v3 = (value & 1 << 3) != 0;
+        v4 = (value & 1 << 4) != 0; v5 = (value & 1 << 5) != 0; v6 = (value & 1 << 6) != 0; v7 = (value & 1 << 7) != 0;
+    }
+
     public byte Byte() => Marshal.ReadByte(mem, Inc(1));
 
     public byte[] Bytes(int amount)

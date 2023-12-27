@@ -340,14 +340,7 @@ public class RemotePlayer : Entity
         w.Byte(emoji);
         w.Byte(rps);
 
-        w.Bool(walking);
-        w.Bool(sliding);
-        w.Bool(falling);
-        w.Bool(dashing);
-        w.Bool(riding);
-        w.Bool(inAir);
-        w.Bool(typing);
-        w.Bool(shopping);
+        w.Bools(walking, sliding, falling, dashing, riding, inAir, typing, shopping);
 
         w.Bool(usingHook);
         w.Float(hookX.target); w.Float(hookY.target); w.Float(hookZ.target);
@@ -371,14 +364,7 @@ public class RemotePlayer : Entity
         emoji = r.Byte();
         rps = r.Byte();
 
-        walking = r.Bool();
-        sliding = r.Bool();
-        falling = r.Bool();
-        dashing = r.Bool();
-        riding = r.Bool();
-        inAir = r.Bool();
-        typing = r.Bool();
-        shopping = r.Bool();
+        r.Bools(out walking, out sliding, out falling, out dashing, out riding, out inAir, out typing, out shopping);
 
         usingHook = r.Bool();
         hookX.Read(r); hookY.Read(r); hookZ.Read(r);

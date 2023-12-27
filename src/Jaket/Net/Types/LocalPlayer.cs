@@ -84,14 +84,8 @@ public class LocalPlayer : Entity
         w.Byte(Movement.Instance.Emoji);
         w.Byte(Movement.Instance.Rps);
 
-        w.Bool(nm.walking);
-        w.Bool(nm.sliding);
-        w.Bool(nm.slamForce > 0f && !nm.gc.onGround);
-        w.Bool(nm.boost && !nm.sliding);
-        w.Bool(nm.ridingRocket != null);
-        w.Bool(!nm.gc.onGround);
-        w.Bool(Chat.Shown);
-        w.Bool(fc.shopping);
+        w.Bools(nm.walking, nm.sliding, nm.slamForce > 0f && !nm.gc.onGround, nm.boost && !nm.sliding,
+                nm.ridingRocket != null, !nm.gc.onGround, Chat.Shown, fc.shopping);
 
         w.Bool(Hook != Vector3.zero && HookArm.Instance.enabled);
         w.Vector(Hook);
