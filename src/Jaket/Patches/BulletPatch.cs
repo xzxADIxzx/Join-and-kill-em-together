@@ -10,11 +10,9 @@ using Jaket.Net.Types;
 [HarmonyPatch]
 public class CommonBulletsPatch
 {
-    static void Post2(Action action) => Events.Post(() => Events.Post(action));
-
     [HarmonyPrefix]
     [HarmonyPatch(typeof(Coin), "Start")]
-    static void Coin(Coin __instance) => Post2(() => Bullets.Sync(__instance.gameObject, ref __instance.sourceWeapon, true, false));
+    static void Coin(Coin __instance) => Events.Post2(() => Bullets.Sync(__instance.gameObject, ref __instance.sourceWeapon, true, false));
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(RevolverBeam), "Start")]
@@ -39,7 +37,7 @@ public class CommonBulletsPatch
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(Harpoon), "Start")]
-    static void Harpoon(Harpoon __instance, Rigidbody ___rb) => Post2(() => Bullets.Sync(__instance.gameObject, true, true));
+    static void Harpoon(Harpoon __instance, Rigidbody ___rb) => Events.Post2(() => Bullets.Sync(__instance.gameObject, true, true));
 
 
 

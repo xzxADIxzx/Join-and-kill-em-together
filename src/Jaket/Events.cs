@@ -56,6 +56,8 @@ public class Events : MonoSingleton<Events>
 
     /// <summary> Posts the task for execution in the late update. </summary>
     public static void Post(Action task) => Tasks.Enqueue(task);
+    /// <summary> Posts the task for execution in the next frame. </summary>
+    public static void Post2(Action task) => Post(() => Post(task));
 
     private void LateUpdate()
     {
