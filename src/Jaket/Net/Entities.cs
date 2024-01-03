@@ -19,7 +19,7 @@ public class Entities
     {
         Providers.Add(EntityType.Player, DollAssets.CreateDoll);
 
-        for (var type = EntityType.Filth; type <= EntityType.SisyphusPrime; type++)
+        for (var type = EntityType.Filth; type <= EntityType.Puppet; type++)
         {
             var sucks = type;
             Providers.Add(sucks, () => Enemies.Instantiate(sucks));

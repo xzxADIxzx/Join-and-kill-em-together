@@ -25,12 +25,12 @@ public class GameAssets
     /// <summary> List of internal names of all enemies. </summary>
     public static readonly string[] Enemies = new[]
     {
-        "Zombie", "Projectile Zombie", "Super Projectile Zombie", "ShotgunHusk", "MinosBoss", "Stalker",
-        "Sisyphus", "Ferryman", "SwordsMachineNonboss", "Drone", "Streetcleaner", "V2",
-        "Mindflayer", "V2 Green Arm Variant", "Turret", "Spider", "StatueEnemy", "Mass",
-        "Idol", "Gabriel", "Virtue", "Gabriel 2nd Variant", "Wicked", "Cancerous Rodent",
-        "Very Cancerous Rodent", "Mandalore", "Flesh Prison", "DroneFlesh", "Flesh Prison 2", "DroneFleshCamera Variant",
-        "DroneSkull Variant", "MinosPrime", "SisyphusPrime",
+        "Zombie", "Projectile Zombie", "Super Projectile Zombie", "ShotgunHusk", "MinosBoss", "Stalker", "Sisyphus", "Ferryman",
+        "SwordsMachineNonboss", "Drone", "Streetcleaner", "Mindflayer", "V2", "V2 Green Arm Variant", "Turret", "Gutterman",
+        "Guttertank", "Brain", "CentaurRocketLauncher", "CentaurMortar", "CentaurTower", "Spider", "StatueEnemy", "Mass",
+        "Idol", "Mannequin", "Minotaur", "Virtue", "Gabriel", "Gabriel 2nd Variant", "Wicked", "Flesh Prison",
+        "DroneFlesh", "Flesh Prison 2", "DroneFleshCamera Variant", "DroneSkull Variant", "MinosPrime", "SisyphusPrime", "Cancerous Rodent", "Very Cancerous Rodent",
+        "Mandalore", "Big Johninator", "Puppet"
     };
 
     /// <summary> List of internal names of all items. </summary>
