@@ -63,4 +63,7 @@ public class GameAssets
     /// <summary> Loads a dev plushy prefab by name. </summary>
     public static GameObject Plushy(string name) =>
         AssetHelper.LoadPrefab($"Assets/Prefabs/Items/DevPlushies/DevPlushie{(name.StartsWith(".") ? name.Substring(1) : $" ({name})")}.prefab");
+
+    /// <summary> Loads the torch prefab. </summary>
+    public static GameObject Torch() => AssetHelper.LoadPrefab("Assets/Prefabs/Levels/Interactive/Altar (Torch) Variant.prefab");
 }
