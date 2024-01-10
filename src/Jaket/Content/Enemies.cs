@@ -27,13 +27,15 @@ public class Enemies
         name = name.Contains("(") ? name.Substring(0, name.IndexOf("(")).Trim() : name;
 
         // there are the necessary crutches, because the developer incorrectly set the types of some opponents
-        if (name.StartsWith("V2 Green Arm")) return EntityType.V2_GreenArm;
-        if (name == "Very Cancerous Rodent") return EntityType.VeryCancerousRodent;
-        if (name == "Mandalore") return EntityType.Mandalore;
-
-        if (name == "Flesh Prison 2") return EntityType.FleshPanopticon;
-        if (name == "DroneFlesh") return EntityType.FleshPrison_Eye;
-        if (name == "DroneSkull Variant") return EntityType.FleshPanopticon_Face;
+        switch (name)
+        {
+            case "V2 Green Arm Variant": return EntityType.V2_GreenArm;
+            case "Very Cancerous Rodent": return EntityType.VeryCancerousRodent;
+            case "DroneFlesh": return EntityType.FleshPrison_Eye;
+            case "DroneSkull Variant": return EntityType.FleshPanopticon_Face;
+            case "Mandalore": return EntityType.Mandalore;
+            case "Big Johninator": return EntityType.Johninator;
+        }
 
         // the remaining enemies can be found by their type
         int index = Prefabs.FindIndex(prefab => prefab.enemyClass == enemyId.enemyClass && prefab.enemyType == enemyId.enemyType);
