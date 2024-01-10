@@ -89,4 +89,3 @@ public class EntityBulletsPatch
     [HarmonyPatch(typeof(Cannonball), nameof(Cannonball.Unlaunch))]
     static void CannonballHook(Cannonball __instance) => __instance.GetComponent<Bullet>()?.TakeOwnage();
 }
-
