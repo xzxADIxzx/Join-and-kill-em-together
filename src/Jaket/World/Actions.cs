@@ -50,3 +50,22 @@ public class StaticAction : WorldAction
     /// <summary> Creates a static action that destroys an object in the world. </summary>
     public static StaticAction Destroy(string level, string path) => new(level, () => GameObject.Destroy(GameObject.Find(path)));
 }
+
+/// <summary> Action that can be launched remotely. </summary>
+public class NetAction : WorldAction
+{
+    /// <summary> Name of the synchronized object. </summary>
+    public string Name;
+    /// <summary> Position of the object used to find it. </summary>
+    public Vector3 Position;
+
+    public NetAction(string level, Action action, string name, Vector3 position) : base(level, action) { this.Name = name; this.Position = position; }
+
+    /// <summary> Creates a net action that enables an object that has an ObjectActivator component. </summary>
+    public static NetAction Sync(string level, string name, Vector3 position, Action<GameObject> action = null) => new(level, () =>
+    {
+        action ??= obj => obj?.SetActive(true);
+        foreach (var obj in Resources.FindObjectsOfTypeAll<ObjectActivator>())
+            if (obj.gameObject.scene != null && obj.name == name && obj.transform.position == position) action(obj?.gameObject);
+    }, name, position);
+}
