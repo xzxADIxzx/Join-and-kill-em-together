@@ -6,6 +6,7 @@ using UnityEngine;
 
 using Jaket.Net;
 using Jaket.Net.Types;
+using Jaket.World;
 
 [HarmonyPatch(typeof(ActivateArena))]
 public class ArenaPatch
@@ -57,6 +58,24 @@ public class DoorPatch
         {
             __instance.doorUsers.Remove(player.EnemyId);
             __instance.enemyIn = __instance.doorUsers.Count > 0;
+        }
+    }
+}
+
+[HarmonyPatch(typeof(ObjectActivator))]
+public class ActivatorPatch
+{
+    [HarmonyPrefix]
+    [HarmonyPatch(nameof(ObjectActivator.Activate))]
+    static void Activate(ObjectActivator __instance)
+    {
+        if (LobbyController.Lobby != null)
+        {
+            World.EachStatic(sa => sa.Run());
+            World.EachNet(na =>
+            {
+                if (na.Name == __instance.name && na.Position == __instance.transform.position) World.SyncActivation(na);
+            });
         }
     }
 }
