@@ -1,6 +1,5 @@
 namespace Jaket.Patches;
 
-using System;
 using HarmonyLib;
 using UnityEngine;
 
@@ -51,7 +50,14 @@ public class CommonBulletsPatch
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(Grenade), nameof(Grenade.Explode))]
-    static bool Core(Grenade __instance) => __instance.rocket || __instance.name != "Net";
+    static bool Core(Grenade __instance)
+    {
+        // if the grenade is a rocket or local, then explode it, otherwise skip the explosion because it will be synced
+        if (__instance.rocket || __instance.name != "Net") return true;
+
+        Object.Destroy(__instance.gameObject);
+        return false;
+    }
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(Nail), "TouchEnemy")]
