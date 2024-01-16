@@ -65,9 +65,7 @@ public class Client : Endpoint, IConnectionManager
             if (entities[r.Id()] is RemotePlayer player) player?.Point(r);
         });
 
-        Listen(PacketType.OpenDoor, r => World.Instance.OpenDoor(r.Int()));
-
-        Listen(PacketType.ActivateObject, r => World.Instance.ActivateObject(r.Int()));
+        Listen(PacketType.ActivateObject, r => World.Instance.ReadAction(r));
 
         Listen(PacketType.CinemaAction, r => Cinema.Play(r.String()));
 

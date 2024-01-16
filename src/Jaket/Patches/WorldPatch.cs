@@ -65,7 +65,7 @@ public class DoorPatch
 [HarmonyPatch(typeof(ObjectActivator))]
 public class ActivatorPatch
 {
-    [HarmonyPrefix]
+    [HarmonyPostfix]
     [HarmonyPatch(nameof(ObjectActivator.Activate))]
     static void Activate(ObjectActivator __instance)
     {
