@@ -101,6 +101,16 @@ public class Commands
                 SceneHelper.LoadScene($"Level {layer}-{level}");
                 chat.ReceiveChatMessage($"<color=#00FF00>Level {layer}-{level} is loading.</color>");
             }
+            else if (args[1].ToUpper() == "S" && int.TryParse(args[0], out level) && level >= 0 && level <= 6 && level != 3 && level != 6)
+            {
+                SceneHelper.LoadScene($"Level {level}-S");
+                chat.ReceiveChatMessage($"<color=#00FF00>Secret level {level}-S is loading.</color>");
+            }
+            else if (args[0].ToUpper() == "P" && int.TryParse(args[1], out level) && level >= 1 && level <= 2)
+            {
+                SceneHelper.LoadScene($"Level P-{level}");
+                chat.ReceiveChatMessage($"<color=#00FF00>Prime level P-{level} is loading.</color>");
+            }
             else
                 chat.ReceiveChatMessage("<color=red>Layer must be an integer from 0 to 7. Level must be an integer from 1 to 5.</color>");
         });
