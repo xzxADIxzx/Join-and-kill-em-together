@@ -62,20 +62,27 @@ public class DoorPatch
     }
 }
 
-[HarmonyPatch(typeof(ObjectActivator))]
-public class ActivatorPatch
+[HarmonyPatch]
+public class ActionPatch
 {
     [HarmonyPostfix]
-    [HarmonyPatch(nameof(ObjectActivator.Activate))]
+    [HarmonyPatch(typeof(ObjectActivator), nameof(ObjectActivator.Activate))]
     static void Activate(ObjectActivator __instance)
     {
         if (LobbyController.Lobby != null)
         {
             World.EachStatic(sa => sa.Run());
-            World.EachNet(na =>
+            if (LobbyController.IsOwner) World.EachNet(na =>
             {
                 if (na.Name == __instance.name && na.Position == __instance.transform.position) World.SyncActivation(na);
             });
         }
+    }
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(FinalDoor), nameof(FinalDoor.Open))]
+    static void Open(FinalDoor __instance)
+    {
+        if (LobbyController.Lobby != null) World.SyncOpening(__instance);
     }
 }

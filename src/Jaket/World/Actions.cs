@@ -64,8 +64,8 @@ public class NetAction : WorldAction
     /// <summary> Creates a net action that enables an object that has an ObjectActivator component. </summary>
     public static NetAction Sync(string level, string name, Vector3 position, Action<GameObject> action = null) => new(level, () =>
     {
-        action ??= obj => obj?.SetActive(true);
+        action ??= obj => obj.SetActive(true);
         foreach (var obj in Resources.FindObjectsOfTypeAll<ObjectActivator>())
-            if (obj.gameObject.scene != null && obj.name == name && obj.transform.position == position) action(obj?.gameObject);
+            if (obj.gameObject.scene != null && obj.name == name && obj.transform.position == position) action(obj.gameObject);
     }, name, position);
 }

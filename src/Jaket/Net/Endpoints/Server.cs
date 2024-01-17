@@ -60,6 +60,8 @@ public class Server : Endpoint, ISocketManager
         {
             if (entities[r.Id()] is RemotePlayer player) player?.Point(r);
         });
+
+        Listen(PacketType.ActivateObject, r => World.Instance.ReadAction(r));
     }
 
     public override void Update()

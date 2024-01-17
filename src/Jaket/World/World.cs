@@ -70,12 +70,14 @@ public class World : MonoSingleton<World>
             // there is a door in the arena through which V2 escapes and you also need to synchronize the outro and the exit building
             NetAction.Sync("Level 4-4", "Checkpoint Activator", new(177.5f, 663.5f, 243f), obj =>
             {
-                obj?.transform.parent.gameObject.SetActive(true);
-                obj?.transform.parent.parent.Find("Wall").gameObject.SetActive(false);
+                obj.transform.parent.gameObject.SetActive(true);
+                obj.transform.parent.parent.Find("Wall").gameObject.SetActive(false);
             }),
             NetAction.Sync("Level 4-4", "BossOutro", new(117.5f, 663.5f, 323f)),
             NetAction.Sync("Level 4-4", "ExitBuilding Raise", new(1027f, 261f, 202.5f), obj =>
             {
+                obj.SetActive(true);
+
                 var exit = obj.transform.parent.Find("ExitBuilding");
                 exit.GetComponent<Door>().Close();
                 exit.Find("GrapplePoint (2)").gameObject.SetActive(true);
@@ -88,19 +90,19 @@ public class World : MonoSingleton<World>
             NetAction.Sync("Level P-1", "MinosPrimeIntro", new(405f, -598.5f, 110f)),
             NetAction.Sync("Level P-1", "End", new(405f, -598.5f, 110f), obj =>
             {
-                obj?.SetActive(true);
-                obj?.transform.parent.Find("Cube (2)").gameObject.SetActive(false);
+                obj.SetActive(true);
+                obj.transform.parent.Find("Cube (2)").gameObject.SetActive(false);
 
                 GameObject.Find("Music 3").SetActive(false);
-                obj?.transform.parent.Find("Lights").gameObject.SetActive(false);
+                obj.transform.parent.Find("Lights").gameObject.SetActive(false);
 
                 StatsManager.Instance.StopTimer();
             }),
             NetAction.Sync("Level P-2", "PrimeIntro", new(-102f, -61.25f, -450f)),
             NetAction.Sync("Level P-2", "Outro", new(-102f, -61.25f, -450f), obj =>
             {
-                obj?.SetActive(true);
-                obj?.transform.parent.Find("Backwall").gameObject.SetActive(false);
+                obj.SetActive(true);
+                obj.transform.parent.Find("Backwall").gameObject.SetActive(false);
 
                 GameObject.Find("BossMusics/Sisyphus").SetActive(false);
                 GameObject.Find("IntroObjects/Decorations").SetActive(false);
@@ -186,16 +188,39 @@ public class World : MonoSingleton<World>
     /// <summary> Reads the world action and activates it. </summary>
     public void ReadAction(Reader r)
     {
-        byte index = r.Byte();
-        if (Actions[index] is NetAction na)
+        void Find<T>(Vector3 pos, System.Action<T> cons) where T : Component
+        { foreach (var door in Resources.FindObjectsOfTypeAll<T>()) if (door.transform.position == pos) cons(door); }
+
+        switch (r.Byte())
         {
-            Activated.Add(index);
-            na.Run();
+            case 0:
+                byte index = r.Byte();
+                if (Actions[index] is NetAction na)
+                {
+                    Activated.Add(index);
+                    na.Run();
+                }
+                break;
+
+            case 1: Find<FinalDoor>(r.Vector(), d => d.transform.Find("FinalDoorOpener").gameObject.SetActive(true)); break;
+            case 2: Find<Door>(r.Vector(), d => d.Open()); break;
         }
     }
 
     /// <summary> Synchronizes network action activation. </summary>
-    public static void SyncActivation(NetAction action) => Networking.Send(Content.PacketType.ActivateObject, w => w.Byte((byte)Actions.IndexOf(action)), size: 1);
+    public static void SyncActivation(NetAction action) => Networking.Send(Content.PacketType.ActivateObject, w =>
+    {
+        w.Byte(0);
+        w.Byte((byte)Actions.IndexOf(action));
+    }, size: 2);
+
+
+    /// <summary> Synchronizes final door state. </summary>
+    public static void SyncOpening(FinalDoor door) => Networking.Send(Content.PacketType.ActivateObject, w =>
+    {
+        w.Byte(1);
+        w.Vector(door.transform.position);
+    }, size: 13);
 
     #endregion
 }
