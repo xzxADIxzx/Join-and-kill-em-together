@@ -1,4 +1,4 @@
-﻿namespace Jaket.HarmonyPatches;
+﻿namespace Jaket.Patches;
 
 using HarmonyLib;
 using UnityEngine;
@@ -7,13 +7,12 @@ using UnityEngine.UI;
 using Jaket.Net;
 using Jaket.World;
 
-#pragma warning disable IDE0051 // Remove unused private members
-#pragma warning disable RCS1213 // Remove unused member declaration.
-
-[HarmonyPatch(typeof(EndlessGrid), "LoadPattern")]
-public class EndlessGridLoadPatternPatch
+[HarmonyPatch(typeof(EndlessGrid))]
+public class CyberGrindPatch
 {
-    static void Prefix(ref ArenaPattern pattern)
+    [HarmonyPrefix]
+    [HarmonyPatch("LoadPattern")]
+    static void Load(ref ArenaPattern pattern)
     {
         // load current pattern in client
         if (LobbyController.Lobby != null)
@@ -24,25 +23,26 @@ public class EndlessGridLoadPatternPatch
             else pattern = CyberGrind.Instance.CurrentPattern;
         }
     }
-}
 
-[HarmonyPatch(typeof(EndlessGrid), "Start")]
-public class EndlessGridStartPatch
-{
-    static bool Prefix()
+    // dont allow to launch CyberGrind to client
+    [HarmonyPrefix]
+    [HarmonyPatch("OnTriggerEnter")]
+    static bool Enter(ref Text ___waveNumberText)
     {
-        // getting cybergrind grid deathzone to change it later
-        foreach (var deathZone in Resources.FindObjectsOfTypeAll<DeathZone>()) if (deathZone.name == "Cube") CyberGrind.Instance.GridDeathZoneInstance = deathZone;
-
-        // don't skip original method
-        return true;
+        // for some reason, the wave number text is not shown on the client
+        ___waveNumberText.transform.parent.parent.gameObject.SetActive(value: true);
+        // don't activate trigger if the player is not the owner of the lobby
+        return LobbyController.Lobby == null || LobbyController.IsOwner;
     }
 
-    // use postfix to wait object to initialize
-    static void Postfix()
+    [HarmonyPostfix]
+    [HarmonyPatch("Start")]
+    static void Start()
     {
+        // getting Cyber Grind deathzone to change it later
+        foreach (var deathZone in Resources.FindObjectsOfTypeAll<DeathZone>()) if (deathZone.name == "Cube") CyberGrind.Instance.GridDeathZoneInstance = deathZone;
+
         var cg = CyberGrind.Instance;
-        // check when the player in a lobby 
         if (LobbyController.Lobby != null || LobbyController.IsOwner)
         {
             // sets as first time
@@ -52,7 +52,7 @@ public class EndlessGridStartPatch
                 // loads current pattern from the server
                 cg.LoadCurrentPattern();
             // send empty pattern when game starts and the player is the owner to prevent load previous cybergrind pattern
-            else cg.SendPattern(new ArenaPattern());
+            else cg.SendPattern(new ArenaPattern()); // TODO looks like a crutch
         }
         else
         {
@@ -62,26 +62,10 @@ public class EndlessGridStartPatch
             cg.CurrentPattern = null;
         }
     }
-}
 
-[HarmonyPatch(typeof(EndlessGrid), "OnTriggerEnter")]
-public class EndlessGridOnTriggerEnterPatch
-{
-    // dont allow to launch CyberGrind to client
-    static bool Prefix(ref Text ___waveNumberText)
-    {
-        // for some reason, the wave number text is not shown on the client
-        ___waveNumberText.transform.parent.parent.gameObject.SetActive(value: true);
-        // don't activate trigger if the player is not the owner of the lobby
-        if (LobbyController.Lobby != null && !LobbyController.IsOwner) return false;
-        return true;
-    }
-}
-
-[HarmonyPatch(typeof(EndlessGrid), "Update")]
-public class EndlessGridUpdatePatch
-{
-    static bool Prefix(ref ActivateNextWave ___anw, EndlessGrid __instance)
+    [HarmonyPrefix]
+    [HarmonyPatch("Update")]
+    static bool PreUpdate(ref ActivateNextWave ___anw, EndlessGrid __instance)
     {
         // check if the player is not the owner of the lobby (client)
         if (LobbyController.Lobby != null && !LobbyController.IsOwner)
@@ -94,8 +78,9 @@ public class EndlessGridUpdatePatch
         return true;
     }
 
-    // use postfix to change object after original object is changed
-    static void Postfix(ref Text ___enemiesLeftText)
+    [HarmonyPostfix]
+    [HarmonyPatch("Update")]
+    static void PostUpdate(ref Text ___enemiesLeftText)
     {
         // check if the player is not the owner of the lobby (client)
         if (LobbyController.Lobby != null && !LobbyController.IsOwner)
