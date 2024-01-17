@@ -69,20 +69,23 @@ public class ActionPatch
     [HarmonyPatch(typeof(ObjectActivator), nameof(ObjectActivator.Activate))]
     static void Activate(ObjectActivator __instance)
     {
-        if (LobbyController.Lobby != null)
+        if (LobbyController.Lobby != null && LobbyController.IsOwner) World.EachNet(na =>
         {
-            World.EachStatic(sa => sa.Run());
-            if (LobbyController.IsOwner) World.EachNet(na =>
-            {
-                if (na.Name == __instance.name && na.Position == __instance.transform.position) World.SyncActivation(na);
-            });
-        }
+            if (na.Name == __instance.name && na.Position == __instance.transform.position) World.SyncActivation(na);
+        });
     }
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(FinalDoor), nameof(FinalDoor.Open))]
-    static void Open(FinalDoor __instance)
+    static void OpenDoor(FinalDoor __instance)
     {
         if (LobbyController.Lobby != null) World.SyncOpening(__instance);
+    }
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(Door), nameof(Door.Open))]
+    static void OpenCase(Door __instance)
+    {
+        if (LobbyController.Lobby != null && LobbyController.IsOwner && __instance.name.Contains("Case")) World.SyncOpening(__instance, false);
     }
 }

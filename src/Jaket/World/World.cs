@@ -47,21 +47,25 @@ public class World : MonoSingleton<World>
             StaticAction.PlaceTorches("Level P-1", new(-0.84f, -10f, 16.4f), 2f),
 
             // launching the Minos boss fight unloads some of the locations, which is undesirable
-            StaticAction.Find("Level 2-4", "4 - Second Encounter/4 Nonstuff/DoorsActivator", obj =>
+            StaticAction.Find("Level 2-4", "DoorsActivator", new(425f, -10f, 650f), obj =>
             {
                 var objs = obj.GetComponent<ObjectActivator>().events.toDisActivateObjects;
                 objs[1] = objs[2] = null;
             }),
 
+            // enable arenas that are disabled by default
+            StaticAction.Enable("Level 4-2", "6A - Indoor Garden", new(-19f, 35f, 953.9481f)),
+            StaticAction.Enable("Level 4-2", "6B - Outdoor Arena", new(35f, 35f, 954f)),
+
             // destroy objects in any way interfering with multiplayer
-            StaticAction.Destroy("Level 2-4", "4 - Second Encounter/4 Nonstuff/Doorway Blockers"),
-            StaticAction.Destroy("Level 2-4", "4 - Second Encounter/4 Nonstuff/MetroBlockDoor (1)"),
-            StaticAction.Destroy("Level 2-4", "4 - Second Encounter/4 Nonstuff/MetroBlockDoor (2)"),
-            StaticAction.Destroy("Level 4-2", "6A Activator"),
-            StaticAction.Destroy("Level 4-2", "6B Activator"),
-            StaticAction.Destroy("Level 5-2", "Arena 1"),
-            StaticAction.Destroy("Level 5-2", "Arena 2"),
-            StaticAction.Destroy("Level 6-1", "Fight/Cage"),
+            StaticAction.Destroy("Level 2-4", "Doorway Blockers", new(425f, -10f, 650f)),
+            StaticAction.Destroy("Level 2-4", "MetroBlockDoor (1)", new(425f, 27f, 615f)),
+            StaticAction.Destroy("Level 2-4", "MetroBlockDoor (2)", new(425f, 27f, 525f)),
+            StaticAction.Destroy("Level 4-2", "6A Activator", new(-79f, 45f, 954f)),
+            StaticAction.Destroy("Level 4-2", "6B Activator", new(116f, 19.5f, 954f)),
+            StaticAction.Destroy("Level 5-2", "Arena 1", new(87.5f, -53f, 1240f)),
+            StaticAction.Destroy("Level 5-2", "Arena 2", new(87.5f, -53f, 1240f)),
+            StaticAction.Destroy("Level 6-1", "Cage", new(168.5f, -130f, 140f)),
 
             // there are just a couple of little things that need to be synchronized
             NetAction.Sync("Level 4-2", "DoorOpeners", new(-1.5f, -18f, 774.5f)),
@@ -215,10 +219,10 @@ public class World : MonoSingleton<World>
     }, size: 2);
 
 
-    /// <summary> Synchronizes final door state. </summary>
-    public static void SyncOpening(FinalDoor door) => Networking.Send(Content.PacketType.ActivateObject, w =>
+    /// <summary> Synchronizes final door or skull case state. </summary>
+    public static void SyncOpening(Component door, bool final = true) => Networking.Send(Content.PacketType.ActivateObject, w =>
     {
-        w.Byte(1);
+        w.Byte((byte)(final ? 1 : 2));
         w.Vector(door.transform.position);
     }, size: 13);
 

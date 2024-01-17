@@ -42,13 +42,15 @@ public class StaticAction : WorldAction
         }
     });
     /// <summary> Creates a static action that finds an object in the world. </summary>
-    public static StaticAction Find(string level, string path, Action<GameObject> cons) => new(level, () =>
+    public static StaticAction Find(string level, string name, Vector3 position, Action<GameObject> action) => new(level, () =>
     {
-        var obj = GameObject.Find(path);
-        if (obj) cons(obj);
+        foreach (var obj in Resources.FindObjectsOfTypeAll<GameObject>())
+            if (obj.gameObject.scene != null && obj.transform.position == position && obj.name == name) action(obj);
     });
+    /// <summary> Creates a static action that enables an object in the world. </summary>
+    public static StaticAction Enable(string level, string name, Vector3 position) => Find(level, name, position, obj => obj.SetActive(true));
     /// <summary> Creates a static action that destroys an object in the world. </summary>
-    public static StaticAction Destroy(string level, string path) => new(level, () => GameObject.Destroy(GameObject.Find(path)));
+    public static StaticAction Destroy(string level, string name, Vector3 position) => Find(level, name, position, GameObject.Destroy);
 }
 
 /// <summary> Action that can be launched remotely. </summary>
@@ -66,6 +68,6 @@ public class NetAction : WorldAction
     {
         action ??= obj => obj.SetActive(true);
         foreach (var obj in Resources.FindObjectsOfTypeAll<ObjectActivator>())
-            if (obj.gameObject.scene != null && obj.name == name && obj.transform.position == position) action(obj.gameObject);
+            if (obj.gameObject.scene != null && obj.transform.position == position && obj.name == name) action(obj.gameObject);
     }, name, position);
 }
