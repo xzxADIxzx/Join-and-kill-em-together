@@ -119,7 +119,7 @@ public class EmojiWheel : CanvasSingleton<EmojiWheel>
         if (UI.AnyJaket()) return;
 
         // the wheel should be inaccessible in the tunnel between levels
-        if (FinalRank.Instance.gameObject.activeInHierarchy) return;
+        if (FinalRank.Instance != null && FinalRank.Instance.gameObject.activeInHierarchy) return;
 
         gameObject.SetActive(Shown = true);
         CameraController.Instance.enabled = false;
