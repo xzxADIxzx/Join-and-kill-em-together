@@ -23,6 +23,7 @@
 
     <Reference Include="Assembly-CSharp">               <HintPath>lib\Assembly-CSharp.dll           </HintPath> </Reference>
     <Reference Include="Facepunch.Steamworks.Win64">    <HintPath>lib\Facepunch.Steamworks.Win64.dll</HintPath> </Reference>
+    <Reference Include="plog">                          <HintPath>lib\plog.dll                      </HintPath> </Reference>
 
     <Reference Include="TMPro">                         <HintPath>lib\Unity.TextMeshPro.dll         </HintPath> </Reference>
     <Reference Include="UnityEngine.Addressables">      <HintPath>lib\Unity.Addressables.dll        </HintPath> </Reference>
