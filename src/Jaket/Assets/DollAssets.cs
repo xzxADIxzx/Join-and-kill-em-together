@@ -101,7 +101,7 @@ public class DollAssets
     public static AssetBundle LoadBundle()
     {
         string assembly = Plugin.Instance.Info.Location;
-        string directory = assembly.Substring(0, assembly.LastIndexOf(Path.DirectorySeparatorChar));
+        string directory = Path.GetDirectoryName(assembly);
         string bundle = Path.Combine(directory, "jaket-player-doll.bundle");
 
         return AssetBundle.LoadFromFile(bundle);

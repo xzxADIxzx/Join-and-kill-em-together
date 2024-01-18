@@ -3,7 +3,6 @@
 using BepInEx;
 using BepInEx.Bootstrap;
 using HarmonyLib;
-using UnityEngine;
 
 using Jaket.Assets;
 using Jaket.Content;
@@ -37,6 +36,11 @@ public class Plugin : BaseUnityPlugin
         Instance = this;
         // rename the game object for a more presentable look
         gameObject.name = "Jaket";
+
+        // create output points for logs
+        Log.Load();
+        // note the fact that the mod is loading
+        Log.Info("Loading jaket...");
 
         // adds an event listener to the scene loading
         Events.Load();
@@ -82,6 +86,6 @@ public class Plugin : BaseUnityPlugin
 
         // mark the plugin as initialized and log a message about it
         Initialized = true;
-        Debug.Log("Jaket successfully initialized!");
+        Log.Info("Jaket initialized!");
     }
 }
