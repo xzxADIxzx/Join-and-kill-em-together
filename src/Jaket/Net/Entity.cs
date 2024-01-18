@@ -36,6 +36,7 @@ public abstract class Entity : MonoBehaviour
             var provided = prov(this);
             if (provided == EntityType.None)
             {
+                Log.Warning($"Couldn't find entity type of the object {name}");
                 Destroy(this);
                 return;
             }
@@ -108,6 +109,7 @@ public abstract class OwnableEntity : Entity
     {
         if (IsOwner) return;
 
+        Log.Debug($"Ownership of {this.Id} transferred from {Owner} to local player");
         Owner = Networking.LocalPlayer.Id;
         OnTransferred();
     }
@@ -121,6 +123,7 @@ public abstract class OwnableEntity : Entity
         ulong id = r.Id(); // this is necessary so that clients don't fight for ownership of the entity
         if (Owner != id && Time.time > LastTransferTime + 1f)
         {
+            Log.Debug($"Ownership of {this.Id} transferred from {Owner} to {id}");
             Owner = id;
             OnTransferred();
         }

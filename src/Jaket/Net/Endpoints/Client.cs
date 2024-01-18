@@ -99,11 +99,11 @@ public class Client : Endpoint, IConnectionManager
 
     #region manager
 
-    public void OnConnecting(ConnectionInfo info) { }
+    public void OnConnecting(ConnectionInfo info) => Log.Info("[Client] Connecting...");
 
-    public void OnConnected(ConnectionInfo info) { }
+    public void OnConnected(ConnectionInfo info) => Log.Info("[Client] Connected");
 
-    public void OnDisconnected(ConnectionInfo info) { }
+    public void OnDisconnected(ConnectionInfo info) => Log.Info("[Client] Disconnected");
 
     public void OnMessage(System.IntPtr data, int size, long msg, long time, int channel) => Handle(Manager.Connection, LobbyController.LastOwner, data, size);
 

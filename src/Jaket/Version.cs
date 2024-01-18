@@ -35,6 +35,7 @@ This may lead to <color=orange>dire consequences</color> D:");
     /// <summary> Fetches a json file with all versions of the mod from GitHub. </summary>
     public static void Fetch(Action<bool, string> result)
     {
+        Log.Info("Checking for updates...");
         var request = UnityWebRequest.Get($"{GITHUB_API}/repos/{REPO}/releases");
         request.SendWebRequest().completed += _ => result(request.isDone, request.downloadHandler.text);
     }

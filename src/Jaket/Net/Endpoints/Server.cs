@@ -94,11 +94,13 @@ public class Server : Endpoint, ISocketManager
 
     public void OnConnecting(Connection con, ConnectionInfo info)
     {
+        Log.Info("[Server] Someone is connecting...");
         var identity = info.Identity;
 
         // multiple connections are prohibited
         if (identity.IsSteamId && Networking.FindCon(identity.SteamId).HasValue)
         {
+            Log.Debug("[Server] Connection is rejected: already connected");
             con.Close();
             return;
         }
@@ -110,13 +112,19 @@ public class Server : Endpoint, ISocketManager
         if (identity.IsSteamId && LobbyController.Contains(identity.SteamId))
             con.Accept();
         else
+        {
+            Log.Debug("[Server] Connection rejected: either a non-steam user or not in the lobby");
             con.Close();
+        }
     }
 
-    public void OnConnected(Connection con, ConnectionInfo info) =>
+    public void OnConnected(Connection con, ConnectionInfo info)
+    {
+        Log.Info($"[Server] {info.Identity.SteamId} connected");
         Networking.Send(PacketType.LevelLoading, World.Instance.WriteData, (data, size) => con.SendMessage(data, size));
+    }
 
-    public void OnDisconnected(Connection con, ConnectionInfo info) { }
+    public void OnDisconnected(Connection con, ConnectionInfo info) => Log.Info($"[Server] {info.Identity.SteamId} disconnected");
 
     public void OnMessage(Connection con, NetIdentity id, System.IntPtr data, int size, long msg, long time, int channel) => Handle(con, id.SteamId, data, size);
 

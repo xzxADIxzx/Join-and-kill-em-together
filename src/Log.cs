@@ -4,6 +4,8 @@ using plog;
 using System;
 using System.IO;
 
+using Jaket.Net;
+
 /// <summary> Custom logger used only by the mod for convenience. </summary>
 public class Log
 {
@@ -17,17 +19,25 @@ public class Log
     /// <summary> Output point for long-term logging. </summary>
     public static string LogPath;
 
-    /// <summary> Creates output points for logs and adds a handler for output to the console. </summary>
+    /// <summary> Creates output points for logs and subscribes to some events. </summary>
     public static void Load()
     {
         Logger = new("Jaket");
         LogPath = Path.Combine(Path.GetDirectoryName(Plugin.Instance.Info.Location), "logs", $"Log {Time.Replace(':', '.')}.txt");
+
+        Events.OnLobbyAction += () =>
+        {
+            var lobby = LobbyController.Lobby == null ? "null" : $"{LobbyController.Lobby?.GetData("name")} ({LobbyController.Lobby.Value.Id})";
+            var owner = LobbyController.Lobby?.Owner.ToString() ?? "null";
+            Debug($"Lobby status updated: cl is {lobby}, owner is {owner}");
+        };
+        Events.OnLobbyEntered += () => Debug("Entered the new lobby");
     }
 
     /// <summary> Formats and writes the msg to all output points. </summary>
     public static void LogLevel(Level level, string msg)
     {
-        Logger.Log(msg, level switch
+        Logger.Log(level == Level.Debug ? $"<color=#CCCCCC>{msg}</color>" : msg, level switch
         {
             Level.Debug or Level.Info => plog.Models.Level.Info,
             Level.Warning => plog.Models.Level.Warning,
