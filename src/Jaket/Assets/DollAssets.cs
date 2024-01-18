@@ -100,9 +100,9 @@ public class DollAssets
     /// <summary> Finds and loads an assets bundle. </summary>
     public static AssetBundle LoadBundle()
     {
-        string assembly = Assembly.GetExecutingAssembly().Location;                                  // location of Jaket.dll
-        string directory = assembly.Substring(0, assembly.LastIndexOf(Path.DirectorySeparatorChar)); // mod folder
-        string bundle = Path.Combine(directory, "jaket-player-doll.bundle");                         // location of bundle
+        string assembly = Plugin.Instance.Info.Location;
+        string directory = assembly.Substring(0, assembly.LastIndexOf(Path.DirectorySeparatorChar));
+        string bundle = Path.Combine(directory, "jaket-player-doll.bundle");
 
         return AssetBundle.LoadFromFile(bundle);
     }
