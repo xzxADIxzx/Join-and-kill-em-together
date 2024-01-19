@@ -30,7 +30,7 @@ public class Plugin : BaseUnityPlugin
     public static void WritePain(Writer w)
     { w.Bool(Ultrapain.Plugin.ultrapainDifficulty); w.Bool(Ultrapain.Plugin.realUltrapainDifficulty); }
 
-    public void Awake()
+    private void Awake()
     {
         // save an instance for later use
         Instance = this;
@@ -47,6 +47,8 @@ public class Plugin : BaseUnityPlugin
         // interface components and assets bundle can only be loaded from the main menu
         Events.OnMainMenuLoaded += Init;
     }
+
+    private void OnApplicationQuit() => Log.Flush();
 
     /// <summary> Initializes the plugin if it has not already been initialized. </summary>
     public void Init()

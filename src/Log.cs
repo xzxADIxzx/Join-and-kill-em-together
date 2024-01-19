@@ -2,6 +2,7 @@ namespace Jaket;
 
 using plog;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 using Jaket.Net;
@@ -13,6 +14,11 @@ public class Log
     public const string TIME_FORMAT = "yyyy.MM.dd HH:mm:ss";
     /// <summary> Formatted regional time. </summary>
     public static string Time => DateTime.Now.ToString(TIME_FORMAT);
+
+    /// <summary> Number of logs that will be stored in memory before being written. </summary>
+    public const int STORAGE_CAPACITY = 32;
+    /// <summary> Logs waiting their turn to be written. </summary>
+    public static List<string> ToWrite = new();
 
     /// <summary> Output point for Unity and in-game console. </summary>
     public static Logger Logger;
@@ -43,6 +49,20 @@ public class Log
             Level.Warning => plog.Models.Level.Warning,
             Level.Error or _ => plog.Models.Level.Error,
         });
+
+        ToWrite.Add($"[{Time}] [{new[] { 'D', 'I', 'W', 'E' }[(int)level]}] {msg}");
+        if (ToWrite.Count > STORAGE_CAPACITY) Flush();
+    }
+
+    /// <summary> Flushes all logs to a file; creates a folder if it doesn't exist. </summary>
+    public static void Flush()
+    {
+        if (ToWrite.Count == 0) return;
+
+        Directory.CreateDirectory(Path.GetDirectoryName(LogPath)); // ensure that the folder is exists
+        File.AppendAllLines(LogPath, ToWrite);
+
+        ToWrite.Clear();
     }
 
     public static void Debug(string msg) => LogLevel(Level.Debug, msg);
