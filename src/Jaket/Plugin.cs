@@ -61,7 +61,7 @@ public class Plugin : BaseUnityPlugin
         UltrapainLoaded = Chainloader.PluginInfos.ContainsKey("com.eternalUnion.ultraPain");
 
         // initialize networking components
-        Networking.Load(); // load before lobby controller
+        Networking.Load();
         Entities.Load();
         LobbyController.Load();
 
@@ -70,11 +70,11 @@ public class Plugin : BaseUnityPlugin
         DollAssets.Load();
         Enemies.Load();
         Weapons.Load();
-        Bullets.Load(); // load it after weapons
+        Bullets.Load(); // load it after weapons & networking
         Items.Load();
 
         // initialize world components
-        World.World.Load(); // C# sucks
+        World.World.Load();
         Movement.Load();
         CyberGrind.Load();
 

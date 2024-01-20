@@ -91,10 +91,14 @@ public class DollAssets
 
         // I guess async will improve performance a little bit
         LoadAsync<Sprite>("V3-icon", sprite => Icon = sprite);
+        LoadAsync<AudioMixer>("sam-audio", mix =>
+        {
+            Mixer = mix;
+            Networking.LocalPlayer.Voice.outputAudioMixerGroup = Mixer.FindMatchingGroups("Master")[0];
+        });
 
-        // but the font and mixer need to be downloaded immediately, because they are needed when building the interface and local player
+        // but the font must be loaded immediately, because it is needed to build the interface
         Font = Bundle.LoadAsset<Font>("font.ttf");
-        Mixer = Bundle.LoadAsset<AudioMixer>("sam-audio");
     }
 
     /// <summary> Finds and loads an assets bundle. </summary>

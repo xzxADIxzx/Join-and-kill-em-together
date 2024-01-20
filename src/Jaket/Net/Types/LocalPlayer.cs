@@ -35,13 +35,12 @@ public class LocalPlayer : Entity
     /// <summary> Weapon rendering component, needed to get weapon colors. </summary>
     private Renderer renderer;
 
-    private void Start() // start is needed to wait for assets to load
+    private void Awake()
     {
         Id = SteamClient.SteamId;
         Type = EntityType.Player;
 
         Voice = gameObject.AddComponent<AudioSource>(); // add a 2D audio source that will be heard from everywhere
-        Voice.outputAudioMixerGroup = DollAssets.Mixer.FindMatchingGroups("Master")[0];
 
         Events.OnLoaded += () => Events.Post(UpdateWeapons);
         Events.OnWeaponChanged += UpdateWeapons;
