@@ -13,7 +13,7 @@ public class ArenaPatch
 {
     [HarmonyPrefix]
     [HarmonyPatch(nameof(ActivateArena.Activate))]
-    static void Start(ActivateArena __instance)
+    static void Activate(ActivateArena __instance)
     {
         // do not allow the doors to close because this will cause a lot of desync
         if (LobbyController.Lobby != null) __instance.doors = new Door[0];
@@ -71,7 +71,7 @@ public class ActionPatch
     {
         if (LobbyController.Lobby != null && LobbyController.IsOwner) World.EachNet(na =>
         {
-            if (na.Name == __instance.name && na.Position == __instance.transform.position) World.SyncActivation(na);
+            if (na.Position == __instance.transform.position && na.Name == __instance.name) World.SyncActivation(na);
         });
     }
 

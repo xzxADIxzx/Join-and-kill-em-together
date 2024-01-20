@@ -35,6 +35,10 @@ public class World : MonoSingleton<World>
                 foreach (var room in door.deactivatedRooms) RoomController.Build(room.transform);
             }
 
+            // change the layer from PlayerOnly to Invisible so that other players can also launch a wave
+            foreach (var trigger in Resources.FindObjectsOfTypeAll<ActivateArena>())
+                trigger.gameObject.layer = 16;
+
             if (LobbyController.Lobby != null) Instance.Restore();
         };
         Events.OnLobbyEntered += () => Instance.Restore();
@@ -68,6 +72,7 @@ public class World : MonoSingleton<World>
             StaticAction.Destroy("Level 2-4", "MetroBlockDoor (2)", new(425f, 27f, 525f)),
             StaticAction.Destroy("Level 4-2", "6A Activator", new(-79f, 45f, 954f)),
             StaticAction.Destroy("Level 4-2", "6B Activator", new(116f, 19.5f, 954f)),
+            StaticAction.Destroy("Level 5-1", "HudMessage", new(0f, -100f, 295.5f)),
             StaticAction.Destroy("Level 5-2", "Arena 1", new(87.5f, -53f, 1240f)),
             StaticAction.Destroy("Level 5-2", "Arena 2", new(87.5f, -53f, 1240f)),
             StaticAction.Destroy("Level 6-1", "Cage", new(168.5f, -130f, 140f)),
@@ -94,6 +99,11 @@ public class World : MonoSingleton<World>
 
             // there is a checkpoint deactivator at level 5-1, the deactivation of which needs to be synchronized
             NetAction.Sync("Level 5-1", "CheckPointsUndisabler", new(0f, -50f, 350f)),
+            NetAction.Sync("Level 5-1", "Opener", new(218.5f, -41f, 234.5f), obj =>
+            {
+                obj.SetActive(true);
+                obj.transform.parent.gameObject.SetActive(true);
+            }),
 
             // Minos & Sisyphus have unique cutscenes and non-functional level exits
             NetAction.Sync("Level P-1", "MinosPrimeIntro", new(405f, -598.5f, 110f)),
