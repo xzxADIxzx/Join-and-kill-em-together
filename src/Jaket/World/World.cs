@@ -59,7 +59,7 @@ public class World : MonoSingleton<World>
             // for some reason this object cannot be found located
             StaticAction.Find("Level 5-2", "6 (Secret)", new(-3.5f, -3f, 940.5f), obj =>
             {
-                Object.DestroyImmediate(obj.transform.Find("Altar (Blue Skull) Variant").gameObject);
+                Object.Destroy(obj.transform.Find("Altar (Blue Skull) Variant").GetChild(0).gameObject);
             }),
 
             // enable arenas that are disabled by default
