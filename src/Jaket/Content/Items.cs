@@ -16,7 +16,10 @@ public class Items
     /// <summary> Loads all items for future use. </summary>
     public static void Load()
     {
-        Events.OnLoaded += () => Events.Post(SyncAll);
+        Events.OnLoaded += () =>
+        {
+            if (LobbyController.Lobby != null) Events.Post(SyncAll);
+        };
         Events.OnLobbyEntered += () => Events.Post(SyncAll);
 
         foreach (var name in GameAssets.Items) Prefabs.Add(GameAssets.Item(name).transform);
