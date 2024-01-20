@@ -52,6 +52,11 @@ public class World : MonoSingleton<World>
                 var objs = obj.GetComponent<ObjectActivator>().events.toDisActivateObjects;
                 objs[1] = objs[2] = null;
             }),
+            // for some reason this object cannot be found located
+            StaticAction.Find("Level 5-2", "6 (Secret)", new(-3.5f, -3f, 940.5f), obj =>
+            {
+                Object.DestroyImmediate(obj.transform.Find("Altar (Blue Skull) Variant").gameObject);
+            }),
 
             // enable arenas that are disabled by default
             StaticAction.Enable("Level 4-2", "6A - Indoor Garden", new(-19f, 35f, 953.9481f)),
