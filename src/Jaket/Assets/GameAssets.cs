@@ -8,18 +8,23 @@ public class GameAssets
     /// <summary> List of rooms that mustn't be unloaded in multiplayer, because don't have doors that would load them. </summary>
     public static readonly string[] RoomExceptions = new[]
     {
-        /* 0-1 */ "3 - Gun Room",
+        /* 0-1 */ "3 - Gun Room", "4 - Hallway",
         /* 0-2 */ "1A - First Room", "5B - Secret Arena", "9 - Crushers Arena", "9B - Swordsmachine Arena Hallway",
-        /* 0-3 */ "1 - Main Room - Floor 1", "2 - Side Hallway - Floor 1", "4 - Side Stairway - Floor 1-2",
+        /* 0-3 */ "1 - Main Room - Floor 1", "2 - Side Hallway - Floor 1", "4 - Side Stairway - Floor 1-2", "10 - Main Room - Floor 2",
         /* 0-4 */ "1A - Hallway 1A",
+        /* 0-5 */ "1 - Opening Hallway",
         /* 1-1 */ "2 - Indoors", "3 - Skull Field",
-        /* 1-2 */ "1 - First Room", "5 - Double Hallway", "7B - Lava Room",
+        /* 1-2 */ "1 - First Room", "7B - Lava Room",
         /* 1-3 */ "1 - Water Hall",
         /* 1-4 */ "1 - Opener", "3DL - Super Door", "3TL - Window Room",
         /* 2-2 */ "2 - Tunnel 1 ",
-        /* 2-3 */ "1 - Main Hall", "1-3 Connectors", "3-2 Connector", "5 - Final Arena",
+        /* 2-3 */ "1 - Main Hall", "1-3 Connectors", "3-2 Connector", "4 - End Hallway", "5 - Final Arena",
         /* 3-1/2 */ "1 - Opening",
-        // TODO check the second act
+        /* 4-2 */ "6A - Indoor Garden", "6B - Outdoor Arena",
+        /* 4-3 */ "2 - Torches Arena", "4 - Pit Room",
+        /* 5-1 */ "2 - Elevator",
+        /* 5-3 */ "1 - Hallway", "2B - Forward Pathway",
+        /* 6-1 */ "1 - Entryway",
     };
 
     /// <summary> List of internal names of all enemies. </summary>
