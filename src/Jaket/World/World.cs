@@ -67,15 +67,18 @@ public class World : MonoSingleton<World>
             StaticAction.Enable("Level 4-2", "6B - Outdoor Arena", new(35f, 35f, 954f)),
 
             // destroy objects in any way interfering with multiplayer
+            StaticAction.Destroy("Level 2-3", "4 & 5 Fake", new(-26f, 12.5f, 375f)),
             StaticAction.Destroy("Level 2-4", "Doorway Blockers", new(425f, -10f, 650f)),
             StaticAction.Destroy("Level 2-4", "MetroBlockDoor (1)", new(425f, 27f, 615f)),
             StaticAction.Destroy("Level 2-4", "MetroBlockDoor (2)", new(425f, 27f, 525f)),
             StaticAction.Destroy("Level 4-2", "6A Activator", new(-79f, 45f, 954f)),
             StaticAction.Destroy("Level 4-2", "6B Activator", new(116f, 19.5f, 954f)),
             StaticAction.Destroy("Level 5-1", "HudMessage", new(0f, -100f, 295.5f)),
+            StaticAction.Destroy("Level 5-1", "Door", new(218.5f, -41f, 234.5f)),
             StaticAction.Destroy("Level 5-2", "Arena 1", new(87.5f, -53f, 1240f)),
             StaticAction.Destroy("Level 5-2", "Arena 2", new(87.5f, -53f, 1240f)),
             StaticAction.Destroy("Level 6-1", "Cage", new(168.5f, -130f, 140f)),
+            StaticAction.Destroy("Level 6-1", "Cube", new(102f, -165f, -503f)),
 
             // there are just a couple of little things that need to be synchronized
             NetAction.Sync("Level 4-2", "DoorOpeners", new(-1.5f, -18f, 774.5f)),
@@ -97,13 +100,10 @@ public class World : MonoSingleton<World>
                 exit.Find("GrapplePoint (2)").gameObject.SetActive(true);
             }),
 
-            // there is a checkpoint deactivator at level 5-1, the deactivation of which needs to be synchronized
+            // there is a checkpoint deactivator, the deactivation of which needs to be synchronized, and some metro doors
             NetAction.Sync("Level 5-1", "CheckPointsUndisabler", new(0f, -50f, 350f)),
-            NetAction.Sync("Level 5-1", "Opener", new(218.5f, -41f, 234.5f), obj =>
-            {
-                obj.SetActive(true);
-                obj.transform.parent.gameObject.SetActive(true);
-            }),
+            NetAction.Sync("Level 5-1", "DelayedActivator", new(-15f, 36f, 698f)),
+            NetAction.Sync("Level 5-1", "DelayedActivator", new(-15f, 38f, 778f)),
 
             // Minos & Sisyphus have unique cutscenes and non-functional level exits
             NetAction.Sync("Level P-1", "MinosPrimeIntro", new(405f, -598.5f, 110f)),
