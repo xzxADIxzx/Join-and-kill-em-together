@@ -89,6 +89,8 @@ public class RoomPatch
             __instance.newRooms = rooms;
 
             __instance.onRestart?.Invoke();
+            __instance.toActivate?.SetActive(true);
+
             var trn = __instance.transform;
             Movement.Instance.Respawn(trn.position + trn.right * .1f + Vector3.up * 1.25f, trn.eulerAngles.y);
         }
@@ -119,6 +121,8 @@ public class ActionPatch
     [HarmonyPatch(typeof(Door), nameof(Door.Open))]
     static void OpenCase(Door __instance)
     {
-        if (LobbyController.Lobby != null && LobbyController.IsOwner && __instance.name.Contains("Case")) World.SyncOpening(__instance, false);
+        var name = __instance.name;
+        if (LobbyController.Lobby != null && LobbyController.IsOwner &&
+           (name.Contains("Case") || name.Contains("Glass") || name.Contains("Cover"))) World.SyncOpening(__instance, false);
     }
 }
