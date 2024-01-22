@@ -3,6 +3,7 @@ namespace Jaket.World;
 using System.Collections.Generic;
 using UnityEngine;
 
+using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net;
 using Jaket.Net.Types;
@@ -152,9 +153,6 @@ public class World : MonoSingleton<World>
     /// <summary> Reads data about the world: loads the level, sets difficulty and, in the future, fires triggers. </summary>
     public void ReadData(Reader r)
     {
-        // the host may have restarted the same level, so the triggers have to be reset
-        // Instance.Clear();
-
         // reset all of the activated actions
         Activated.Clear();
         // load the host level, it is the main function of this packet
@@ -227,7 +225,7 @@ public class World : MonoSingleton<World>
     }
 
     /// <summary> Synchronizes network action activation. </summary>
-    public static void SyncActivation(NetAction action) => Networking.Send(Content.PacketType.ActivateObject, w =>
+    public static void SyncActivation(NetAction action) => Networking.Send(PacketType.ActivateObject, w =>
     {
         w.Byte(0);
         w.Byte((byte)Actions.IndexOf(action));
@@ -235,7 +233,7 @@ public class World : MonoSingleton<World>
 
 
     /// <summary> Synchronizes final door or skull case state. </summary>
-    public static void SyncOpening(Component door, bool final = true) => Networking.Send(Content.PacketType.ActivateObject, w =>
+    public static void SyncOpening(Component door, bool final = true) => Networking.Send(PacketType.ActivateObject, w =>
     {
         w.Byte((byte)(final ? 1 : 2));
         w.Vector(door.transform.position);
