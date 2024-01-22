@@ -224,6 +224,24 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Returns the rounded speed of the skateboard. </summary>
     public int SkateboardSpeed() => (int)skateboardSpeed;
 
+    /// <summary> Repeats a part of the checkpoint logic, needed in order to avoid resetting rooms. </summary>
+    public void Respawn(Vector3 position, float rotation)
+    {
+        cc.activated = nm.enabled = true;
+        nm.transform.position = position;
+        nm.rb.velocity = Vector3.zero;
+
+        if (MonoSingleton<PlayerTracker>.Instance.playerType == PlayerType.FPS)
+            cc.ResetCamera(rotation);
+        else
+            PlatformerMovement.Instance.ResetCamera(rotation);
+
+        nm.Respawn();
+        nm.GetHealth(0, true);
+        cc.StopShake();
+        nm.ActivatePlayer();
+    }
+
     #region toggling
 
     /// <summary> Updates the state machine: toggles movement, cursor and third-person camera. </summary>

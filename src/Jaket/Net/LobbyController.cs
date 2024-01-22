@@ -239,6 +239,7 @@ Make sure it is copied without spaces :(");
     /// <summary> Maps the maps names so that they are more understandable to the average player. </summary>
     public static string MapMap(string map) => map switch
     {
+        "Tutorial" => "Tutorial",
         "uk_construct" => "Sandbox",
         "Endless" => "Myth",
         "CreditsMuseum2" => "Museum",

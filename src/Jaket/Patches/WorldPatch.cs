@@ -1,6 +1,7 @@
 namespace Jaket.Patches;
 
 using HarmonyLib;
+using System.Collections.Generic;
 using ULTRAKILL.Cheats;
 using UnityEngine;
 
@@ -58,6 +59,38 @@ public class DoorPatch
         {
             __instance.doorUsers.Remove(player.EnemyId);
             __instance.enemyIn = __instance.doorUsers.Count > 0;
+        }
+    }
+}
+
+[HarmonyPatch(typeof(CheckPoint))]
+public class RoomPatch
+{
+    /// <summary> Copy of the list of the rooms to reset. </summary>
+    private static List<GameObject> rooms;
+
+    [HarmonyPrefix]
+    [HarmonyPatch(nameof(CheckPoint.OnRespawn))]
+    static void ClearRooms(CheckPoint __instance)
+    {
+        if (LobbyController.Lobby != null)
+        {
+            rooms = __instance.newRooms;
+            __instance.newRooms = new();
+        }
+    }
+
+    [HarmonyPostfix]
+    [HarmonyPatch(nameof(CheckPoint.OnRespawn))]
+    static void RestoreRooms(CheckPoint __instance)
+    {
+        if (LobbyController.Lobby != null)
+        {
+            __instance.newRooms = rooms;
+
+            __instance.onRestart?.Invoke();
+            var trn = __instance.transform;
+            Movement.Instance.Respawn(trn.position + trn.right * .1f + Vector3.up * 1.25f, trn.eulerAngles.y);
         }
     }
 }
