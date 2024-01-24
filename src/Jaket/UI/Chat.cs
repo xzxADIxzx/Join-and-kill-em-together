@@ -234,8 +234,8 @@ public class Chat : CanvasSingleton<Chat>
     }
 
     /// <summary> Writes a message to the chat, formatting it beforehand. </summary>
-    public void ReceiveChatMessage(string color, string author, string message, bool tts = false, bool oneline = false)
-        => ReceiveChatMessage(FormatMessage(color, tts ? TTS_PREFIX + author : author, message), oneline);
+    public void ReceiveChatMessage(string color, string author, string message, bool oneline = false)
+        => ReceiveChatMessage(FormatMessage(color, author, message), oneline);
 
     /// <summary> Speaks the message before writing it. </summary>
     public void ReceiveTTSMessage(Friend author, string message)
@@ -251,7 +251,7 @@ public class Chat : CanvasSingleton<Chat>
             });
 
         // write a message to chat
-        ReceiveChatMessage(Networking.GetTeamColor(author), author.Name, message, true);
+        ReceiveChatMessage(Networking.GetTeamColor(author), TTS_PREFIX + author.Name, message);
     }
 
     /// <summary> Sends some useful information to the chat. </summary>
@@ -260,7 +260,7 @@ public class Chat : CanvasSingleton<Chat>
         // if the last owner of the lobby is not equal to 0, then the lobby is not created for the first time and there is no need to print info
         if (LobbyController.LastOwner != 0L && !force) return;
 
-        void SendMsg(string msg) => ReceiveChatMessage("0096FF", BOT_PREFIX + "xzxADIxzx", msg, oneline: true);
+        void SendMsg(string msg) => ReceiveChatMessage("0096FF", BOT_PREFIX + "xzxADIxzx", msg, true);
         void SendTip(string tip) => SendMsg($"<size=14>* {tip}</size>");
 
         SendMsg("Hello, it's me, the main developer of this mod.");
