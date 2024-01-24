@@ -157,7 +157,7 @@ Maybe it was closed or you were blocked ,_,");
         if (Chat.Shown) list.Add("You");
         Networking.EachPlayer(player =>
         {
-            if (player.typing) list.Add(player.Header.Name);
+            if (player.Typing) list.Add(player.Header.Name);
         });
 
         return list;

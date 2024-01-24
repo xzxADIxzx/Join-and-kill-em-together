@@ -20,7 +20,7 @@ public class Writer
     public Writer(IntPtr memory, int length) { this.mem = memory; this.Length = length; }
 
     /// <summary> Allocates memory and writes data there. </summary>
-    public static void Write(Action<Writer> cons, Action<IntPtr, int> result, int memoryAmount = 66)
+    public static void Write(Action<Writer> cons, Action<IntPtr, int> result, int memoryAmount = 64)
     {
         Writer instance = new(Marshal.AllocHGlobal(memoryAmount), memoryAmount);
         cons(instance);

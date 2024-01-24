@@ -33,7 +33,7 @@ public class PlayerInfoEntry : MonoBehaviour
 
     private void Update()
     {
-        float hp = player.machine.health;
+        float hp = player.Health;
 
         pname.color = hp > 0f ? Color.white : Color.red;
         railc.text = $"<color=#D8D8D8>[<color=#0080FF>{new string('I', player.RailCharge)}</color><color=#cccccccc>{new string('-', 10 - player.RailCharge)}</color>]</color>";

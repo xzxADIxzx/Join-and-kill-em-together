@@ -44,7 +44,7 @@ public class PlayerInfo : CanvasSingleton<PlayerInfo>
         Networking.EachPlayer(player =>
         {
             // the player should only see information about teammates
-            if (player.team.Ally()) teammates.Add(player);
+            if (player.Team.Ally()) teammates.Add(player);
         });
 
         // build new table

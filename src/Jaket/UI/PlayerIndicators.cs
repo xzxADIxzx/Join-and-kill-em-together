@@ -52,13 +52,13 @@ public class PlayerIndicators : CanvasSingleton<PlayerIndicators>
     public void AddIndicator(RemotePlayer player)
     {
         // indicators should only point to teammates, so you can even play hide and seek
-        if (!player.team.Ally()) return;
+        if (!player.Team.Ally()) return;
 
         // save the player's transform in order to rotate an indicator towards it in the future
         targets.Add(player.transform);
 
         // create a new team color indicator and add it to the list
-        indicators.Add(UI.Image("Indicator", transform, 0f, 0f, 88f, 88f, player.team.Color(), circle: true));
+        indicators.Add(UI.Image("Indicator", transform, 0f, 0f, 88f, 88f, player.Team.Color(), circle: true));
     }
 
     /// <summary> Updates the size and rotation of the indicator. </summary>

@@ -66,6 +66,6 @@ public class CommonPatch
     [HarmonyPatch(typeof(CameraFrustumTargeter), "CurrentTarget", MethodType.Setter)]
     static void AutoAim(ref Collider value)
     {
-        if (value != null && value.TryGetComponent<RemotePlayer>(out var player) && player.team.Ally()) value = null;
+        if (value != null && value.TryGetComponent<RemotePlayer>(out var player) && player.Team.Ally()) value = null;
     }
 }

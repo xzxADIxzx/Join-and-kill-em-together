@@ -64,7 +64,7 @@ public class CommonBulletsPatch
     static bool Sawblade(Nail __instance, Transform other) =>
         __instance.sawblade && other.TryGetComponent<EnemyIdentifierIdentifier>(out var eid) &&
         eid.eid != null && eid.eid.TryGetComponent<RemotePlayer>(out var player)
-            ? !player.team.Ally()
+            ? !player.Team.Ally()
             : true;
 }
 

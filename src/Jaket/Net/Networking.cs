@@ -197,7 +197,7 @@ public class Networking : MonoSingleton<Networking>
     /// <summary> Returns the team of the given friend. </summary>
     public static Team GetTeam(Friend friend) => friend.IsMe
         ? LocalPlayer.Team
-        : (Entities.TryGetValue(friend.Id, out var entity) && entity != null && entity is RemotePlayer player ? player.team : Team.Yellow);
+        : (Entities.TryGetValue(friend.Id, out var entity) && entity != null && entity is RemotePlayer player ? player.Team : Team.Yellow);
 
     /// <summary> Returns the hex color of the friend's team. </summary>
     public static string GetTeamColor(Friend friend) => ColorUtility.ToHtmlStringRGBA(GetTeam(friend).Color());
@@ -220,7 +220,7 @@ public class Networking : MonoSingleton<Networking>
     }
 
     /// <summary> Allocates memory, writes the packet there and sends it. </summary>
-    public static void Send(PacketType packetType, Action<Writer> cons = null, Action<IntPtr, int> result = null, int size = 66) =>
+    public static void Send(PacketType packetType, Action<Writer> cons = null, Action<IntPtr, int> result = null, int size = 64) =>
         Writer.Write(w => { w.Enum(packetType); cons?.Invoke(w); }, result ?? Redirect, cons == null ? 1 : size + 1);
 
     #endregion

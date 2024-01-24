@@ -19,7 +19,7 @@ public class Enemy : Entity
     /// <summary> Whether the enemy is an idol or not. </summary>
     private Idol idol;
     /// <summary> Idol target id in global entity list. Will be equal to the maximum value if there is no target. </summary>
-    private ulong lastTargetId = ulong.MaxValue, targetId;
+    private ulong targetId, lastTargetId = ulong.MaxValue;
     /// <summary> Enemy subtype. 0 - standard, 1 - Agony or Angry, 2 - Tundra or Rude. </summary>
     private byte subtype;
 
