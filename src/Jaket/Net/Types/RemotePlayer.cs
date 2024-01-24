@@ -96,7 +96,7 @@ public class RemotePlayer : Entity
         // on some levels there are no weapons at all
         if (GunSetter.Instance == null) return; // TODO use synced rocket?
 
-        var prefab = Bullets.Prefabs[Bullets.CType("RL PRI")].GetComponent<RocketLauncher>().rocket.GetComponent<SpriteRenderer>().gameObject;
+        var prefab = Bullets.Prefabs[Bullets.CType("RL PRI")].GetComponentInChildren<SpriteRenderer>().gameObject;
         var flash = Instantiate(prefab, rocket).transform;
 
         flash.localPosition = new();
