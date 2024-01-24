@@ -1,7 +1,6 @@
 namespace Jaket.Patches;
 
 using HarmonyLib;
-using Steamworks;
 using ULTRAKILL.Cheats;
 using UnityEngine;
 
@@ -28,16 +27,15 @@ public class MovementPatch
     {
         // sometimes fake death messages are sent to the chat
         if (invincible && __instance.gameObject.layer == 15) return;
+        if (Invincibility.Enabled) return;
 
         if (__instance.hp > 0 && __instance.hp - damage <= 0)
         {
             // player death message
-            LobbyController.Lobby?.SendChatString($"<system><color=orange>Player {SteamClient.Name} died.</color>");
+            LobbyController.Lobby?.SendChatString("#/d");
 
-            // close the chat to prevent some bugs
+            // close the chat & interrupt the emoji to avoid bugs
             Chat.Instance.field.gameObject.SetActive(false);
-
-            // interrupt the emoji to avoid bugs
             Movement.Instance.StartEmoji(0xFF);
         }
     }

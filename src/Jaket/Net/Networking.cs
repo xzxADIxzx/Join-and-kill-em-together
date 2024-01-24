@@ -1,6 +1,5 @@
 namespace Jaket.Net;
 
-using HarmonyLib;
 using Steamworks;
 using Steamworks.Data;
 using System;
@@ -17,6 +16,8 @@ using Jaket.World;
 /// <summary> Class responsible for updating endpoints, transmitting packets and managing entities. </summary>
 public class Networking : MonoSingleton<Networking>
 {
+    private static Chat chat => Chat.Instance;
+
     /// <summary> Number of snapshots to be sent per second. </summary>
     public const int SNAPSHOTS_PER_SECOND = 16;
     /// <summary> Number of seconds between snapshots. </summary>
@@ -84,41 +85,35 @@ public class Networking : MonoSingleton<Networking>
             }
         };
 
-        SteamMatchmaking.OnLobbyMemberJoined += (lobby, member) =>
-        {
-            if (!LobbyController.IsOwner) return;
-
-            // send notification to chat
-            lobby.SendChatString($"<system><color=#00FF00>Player {member.Name} joined!</color>");
-        };
+        SteamMatchmaking.OnLobbyMemberJoined += (lobby, member) => chat.ReceiveChatMessage($"<color=#00FF00>Player {member.Name} joined!</color>");
 
         SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) =>
         {
+            chat.ReceiveChatMessage($"<color=red>Player {member.Name} left!</color>");
+
             // kill the player doll and hide the nickname above
-            if (Entities.TryGetValue(member.Id, out var entity) && entity != null && entity is RemotePlayer player)
-                player.Kill();
+            if (Entities.TryGetValue(member.Id, out var entity) && entity != null && entity is RemotePlayer player) player.Kill();
 
             if (!LobbyController.IsOwner) return;
-
-            // send notification to chat
-            if (LobbyController.LastKicked != member.Id) lobby.SendChatString($"<system><color=red>Player {member.Name} left!</color>");
 
             // returning the exited player's items back to the host owner & close the connection
             FindCon(member.Id)?.Close();
             EachItem(item =>
             {
-                if (item.Owner == member.Id) item.Owner = SteamClient.SteamId;
+                if (item.Owner == member.Id) item.TakeOwnage();
             });
         };
 
         SteamMatchmaking.OnChatMessage += (lobby, member, message) =>
         {
-            if (message.StartsWith("<system>")) // I think it's okay
-                Chat.Instance.ReceiveChatMessage(message.Substring("<system>".Length));
+            if (message == "#/d")
+                chat.ReceiveChatMessage($"<color=orange>Player {member.Name} died.</color>");
+            else if (message.StartsWith("#/k") && ulong.TryParse(message.Substring(3), out ulong id))
+                chat.ReceiveChatMessage($"<color=red>Player {new Friend(id).Name} was kicked!</color>");
             else if (message.StartsWith("/tts "))
-                Chat.Instance.ReceiveTTSMessage(member, message.Substring("/tts ".Length));
+                chat.ReceiveTTSMessage(member, message.Substring("/tts ".Length));
             else
-                Chat.Instance.ReceiveChatMessage(GetTeamColor(member), member.Name, message);
+                chat.ReceiveChatMessage(GetTeamColor(member), member.Name, message);
         };
     }
 

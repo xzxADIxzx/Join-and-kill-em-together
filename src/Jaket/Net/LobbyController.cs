@@ -146,7 +146,7 @@ Maybe it was closed or you were blocked ,_,");
         if (!IsOwner) return;
 
         Networking.Send(PacketType.Kick, null, (data, size) => Networking.FindCon(LastKicked = member.Id)?.SendMessage(data, size));
-        Lobby?.SendChatString($"<system><color=red>Player {member.Name} was kicked!</color>");
+        Lobby?.SendChatString("#/k" + member.Id);
     }
 
     /// <summary> Returns a list of nicknames of players currently typing. </summary>
