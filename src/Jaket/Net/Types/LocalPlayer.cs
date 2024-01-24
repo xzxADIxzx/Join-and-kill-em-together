@@ -72,11 +72,11 @@ public class LocalPlayer : Entity
 
     public override void Write(Writer w)
     {
-        w.Float(nm.hp);
         w.Vector(nm.transform.position);
         w.Float(nm.transform.eulerAngles.y);
         w.Float(135f - Mathf.Clamp(CameraController.Instance.rotationX, -40f, 80f));
 
+        w.Byte((byte)nm.hp);
         w.Byte((byte)Mathf.Floor(WeaponCharges.Instance.raicharge * 2f));
         w.Enum(Team);
         w.Byte(weapon);
@@ -84,7 +84,7 @@ public class LocalPlayer : Entity
         w.Byte(Movement.Instance.Rps);
 
         w.Bools(nm.walking, nm.sliding, nm.slamForce > 0f && !nm.gc.onGround, nm.boost && !nm.sliding,
-                nm.ridingRocket != null, !nm.gc.onGround, Chat.Shown, fc.shopping);
+                nm.ridingRocket != null, !nm.gc.onGround, fc.shopping, Chat.Shown);
 
         w.Bool(Hook != Vector3.zero && HookArm.Instance.enabled);
         w.Vector(Hook);
