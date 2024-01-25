@@ -60,7 +60,11 @@ public class Networking : MonoSingleton<Networking>
             // re-add the local player, because the list was cleared 
             Entities[LocalPlayer.Id] = LocalPlayer;
             // inform all players about the transition to a new level
-            if (LobbyController.IsOwner) Send(PacketType.LevelLoading, World.Instance.WriteData);
+            if (LobbyController.IsOwner)
+            {
+                World.Instance.Activated.Clear();
+                Send(PacketType.LevelLoading, World.Instance.WriteData);
+            }
         };
 
         // fires when accepting an invitation via the Steam overlay

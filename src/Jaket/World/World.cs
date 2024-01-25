@@ -15,7 +15,7 @@ public class World : MonoSingleton<World>
     /// <summary> List of all possible actions with the world. </summary>
     public static List<WorldAction> Actions = new();
     /// <summary> List of activated actions, cleared only when the host loads a new level. </summary>
-    private List<byte> Activated = new();
+    public List<byte> Activated = new();
 
     /// <summary> There is no prefab for the mini-boss at levels 2-4. </summary>
     public Hand Hand;
@@ -144,16 +144,18 @@ public class World : MonoSingleton<World>
     /// <summary> Writes data about the world such as level, difficulty and, in the future, triggers fired. </summary>
     public void WriteData(Writer w)
     {
-        // write the scene at the very beginning for compatibility with earlier versions
         w.String(SceneHelper.CurrentScene);
 
         // the version is needed for a warning about incompatibility, and the difficulty is mainly needed for ultrapain
         w.String(Version.CURRENT);
-        w.Int(PrefsManager.Instance.GetInt("difficulty"));
+        w.Byte((byte)PrefsManager.Instance.GetInt("difficulty"));
 
         // synchronize the Ultrapain difficulty
         w.Bool(Plugin.UltrapainLoaded);
         if (Plugin.UltrapainLoaded) Plugin.WritePain(w);
+
+        // synchronize activated actions
+        w.Bytes(Activated.ToArray());
     }
 
     /// <summary> Reads data about the world: loads the level, sets difficulty and, in the future, fires triggers. </summary>
@@ -164,15 +166,13 @@ public class World : MonoSingleton<World>
         // load the host level, it is the main function of this packet
         SceneHelper.LoadScene(r.String());
 
-        // if the data in the packet has run out, it means the host has a version of the mod before the “New Era of Communication” update
         // if the mod version doesn't match the host's one, then reading the packet is complete, as this may lead to bigger bugs
-        if (r.Position == r.Length || r.String() != Version.CURRENT) // TODO outdated because the way information is transmitted has changed
+        if (r.String() != Version.CURRENT)
         {
             Version.NotifyHost();
             return;
         }
-
-        PrefsManager.Instance.SetInt("difficulty", r.Int());
+        PrefsManager.Instance.SetInt("difficulty", r.Byte());
 
         if (r.Bool())
         {
@@ -181,6 +181,8 @@ public class World : MonoSingleton<World>
             // or skip the values if the mod isn't installed locally
             else r.Inc(2);
         }
+
+        Activated.AddRange(r.Bytes(r.Length - r.Position));
     }
 
     #endregion
@@ -233,8 +235,13 @@ public class World : MonoSingleton<World>
     /// <summary> Synchronizes network action activation. </summary>
     public static void SyncActivation(NetAction action) => Networking.Send(PacketType.ActivateObject, w =>
     {
-        w.Byte(0);
-        w.Byte((byte)Actions.IndexOf(action));
+        byte index = (byte)Actions.IndexOf(action);
+        if (index != 0xFF)
+        {
+            Instance.Activated.Add(index);
+            w.Byte(0);
+            w.Byte(index);
+        }
     }, size: 2);
 
 
