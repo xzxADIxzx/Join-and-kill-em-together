@@ -90,7 +90,6 @@ public class Legacy
             if (A != 0) break;
             Inc(ref mem56);
             X = mem56;
-            // A = '.';
             input[X] = '.';
         }
         A = mem64;

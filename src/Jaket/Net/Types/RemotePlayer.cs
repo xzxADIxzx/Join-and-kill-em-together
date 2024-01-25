@@ -94,7 +94,7 @@ public class RemotePlayer : Entity
         hookWinch.material = HookArm.Instance.GetComponent<LineRenderer>().material;
 
         // on some levels there are no weapons at all
-        if (GunSetter.Instance == null) return; // TODO use synced rocket?
+        if (GunSetter.Instance == null) return;
 
         var prefab = Bullets.Prefabs[Bullets.CType("RL PRI")].GetComponentInChildren<SpriteRenderer>().gameObject;
         var flash = Instantiate(prefab, rocket).transform;

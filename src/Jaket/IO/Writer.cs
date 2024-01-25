@@ -24,7 +24,7 @@ public class Writer
     {
         Writer instance = new(Marshal.AllocHGlobal(memoryAmount), memoryAmount);
         cons(instance);
-        result(instance.mem, instance.Position); // 96 bytes are allocated in memory by default, which is enough for each entity, but not all of this memory is used
+        result(instance.mem, instance.Position); // 64 bytes are allocated in memory by default, which is enough for each entity, but not all of this memory is used
         Pointers.Add(instance.mem);
     }
 

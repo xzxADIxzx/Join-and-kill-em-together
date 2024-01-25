@@ -62,6 +62,7 @@ public class World : MonoSingleton<World>
             {
                 Object.Destroy(obj.transform.Find("Altar (Blue Skull) Variant").GetChild(0).gameObject);
             }),
+            // disable door blocker
             StaticAction.Find("Level P-1", "Trigger", new(360f, -568.5f, 110f), obj =>
             {
                 obj.GetComponent<ObjectActivator>().events.toActivateObjects[4] = null;
@@ -84,6 +85,7 @@ public class World : MonoSingleton<World>
             StaticAction.Destroy("Level 5-2", "Arena 2", new(87.5f, -53f, 1240f)),
             StaticAction.Destroy("Level 6-1", "Cage", new(168.5f, -130f, 140f)),
             StaticAction.Destroy("Level 6-1", "Cube", new(102f, -165f, -503f)),
+            StaticAction.Destroy("Level 7-4", "ArenaWalls", new(-26.5f, 470f, 763.75f)),
 
             // there are just a couple of little things that need to be synchronized
             NetAction.Sync("Level 4-2", "DoorOpeners", new(-1.5f, -18f, 774.5f)),
