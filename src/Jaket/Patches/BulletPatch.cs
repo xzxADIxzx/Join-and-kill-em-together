@@ -80,6 +80,18 @@ public class EntityBulletsPatch
     static void GrenadeDeath(Grenade __instance) => Bullets.SyncDeath(__instance.gameObject);
 
     [HarmonyPostfix]
+    [HarmonyPatch(typeof(Grenade), nameof(Grenade.PlayerRideStart))]
+    static void GrenadeRide(Grenade __instance) => __instance.GetComponent<Bullet>()?.TakeOwnage();
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(Grenade), nameof(Grenade.frozen), MethodType.Getter)]
+    static void GrenadeFrozen(Grenade __instance, ref bool __result)
+    {
+        // pass the network value in the most crutch and optimized way
+        if (__instance.rocketSpeed != 100f) __result = __instance.rocketSpeed == 98f;
+    }
+
+    [HarmonyPostfix]
     [HarmonyPatch(typeof(Cannonball), "Start")]
     static void CannonballSpawn(Cannonball __instance) => Bullets.Sync(__instance.gameObject, true, false);
 

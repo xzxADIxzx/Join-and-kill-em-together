@@ -1,5 +1,6 @@
 namespace Jaket.Net.Types;
 
+using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Content;
@@ -15,6 +16,10 @@ public class Bullet : OwnableEntity
 
     /// <summary> Grenade component. Null if the bullet is a cannonball. </summary>
     private Grenade grenade;
+    /// <summary> Whether the rocket is frozen by the owner. </summary>
+    public bool Frozen;
+    /// <summary> Whether the player is currently riding the rocket. </summary>
+    public bool Riding;
 
     /// <summary> Cannonball component. Null if the bullet is a rocket. </summary>
     private Cannonball ball;
@@ -28,6 +33,7 @@ public class Bullet : OwnableEntity
         {
             if (rb) rb.isKinematic = !IsOwner;
             if (ball) ball.ghostCollider = !IsOwner;
+            if (grenade) Exploded(!IsOwner);
 
             // the client must teleport the bullet, because all entities spawn at the origin
             if (!LobbyController.IsOwner) Events.Post(() =>
@@ -54,6 +60,8 @@ public class Bullet : OwnableEntity
         transform.eulerAngles = new(rx.GetAngel(LastUpdate), ry.GetAngel(LastUpdate), rz.GetAngel(LastUpdate));
     }
 
+    private void Exploded(bool value) => AccessTools.Field(typeof(Grenade), "exploded").SetValue(grenade, value);
+
     #region entity
 
     public override void Write(Writer w)
@@ -62,6 +70,12 @@ public class Bullet : OwnableEntity
         w.Vector(transform.position);
         w.Vector(transform.eulerAngles);
         w.Float(InitSpeed);
+
+        if (grenade)
+        {
+            w.Bool(IsOwner ? grenade.playerRiding : Riding);
+            w.Bool(IsOwner ? grenade.frozen : Frozen);
+        }
     }
 
     public override void Read(Reader r)
@@ -70,10 +84,18 @@ public class Bullet : OwnableEntity
         x.Read(r); y.Read(r); z.Read(r);
         rx.Read(r); ry.Read(r); rz.Read(r);
         InitSpeed = r.Float();
+
+        if (grenade)
+        {
+            gameObject.SetActive(IsOwner || !(Riding = r.Bool()));
+            grenade.rocketSpeed = IsOwner ? 100f : (Frozen = r.Bool()) ? 98f : 99f;
+        }
     }
 
     public override void Kill()
     {
+        if (grenade) Exploded(false);
+
         grenade?.Explode(harmless: true);
         ball?.Break();
     }
