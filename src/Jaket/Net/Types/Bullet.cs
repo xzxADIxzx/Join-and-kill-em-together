@@ -52,6 +52,16 @@ public class Bullet : OwnableEntity
         ball = GetComponent<Cannonball>();
     }
 
+    private void Start()
+    {
+        if (LobbyController.IsOwner && !IsOwner) // bruh
+        {
+            x.target = transform.position.x;
+            y.target = transform.position.y;
+            z.target = transform.position.z;
+        }
+    }
+
     private void Update()
     {
         if (IsOwner) return;
