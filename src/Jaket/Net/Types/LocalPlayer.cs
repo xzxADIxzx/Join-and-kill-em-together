@@ -62,10 +62,14 @@ public class LocalPlayer : Entity
         renderer = GunControl.Instance.currentWeapon?.GetComponentInChildren<GunColorGetter>()?.GetComponent<Renderer>();
 
         // according to the lore, the player plays for V3, so we need to paint the hand
-        fc.transform.GetChild(2).GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture();
+        var punch = fc.transform.Find("Arm Blue(Clone)");
+        if (punch) punch.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture();
 
-        var arm = GunControl.Instance.currentWeapon?.transform.GetChild(0).Find("RightArm");
-        if (arm != null) arm.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture();
+        var right = GunControl.Instance.currentWeapon?.transform.GetChild(0).Find("RightArm");
+        if (right) right.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture();
+
+        // var knuckle = fc.transform.Find("Arm Red(Clone)");
+        // if (knuckle) punch.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture(punch: false);
     }
 
     #region entity
