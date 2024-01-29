@@ -67,6 +67,7 @@ public class Plugin : BaseUnityPlugin
         Bullets.Load();
         Items.Load();
 
+        Administration.Load();
         LobbyController.Load();
         Networking.Load();
         Entities.Load();

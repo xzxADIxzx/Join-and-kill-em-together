@@ -59,6 +59,9 @@ public class Bullet : OwnableEntity
             x.target = transform.position.x;
             y.target = transform.position.y;
             z.target = transform.position.z;
+            rx.target = transform.eulerAngles.x;
+            ry.target = transform.eulerAngles.y;
+            rz.target = transform.eulerAngles.z;
         }
     }
 

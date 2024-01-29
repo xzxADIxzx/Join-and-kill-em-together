@@ -44,7 +44,7 @@ public class Entities
         var entity = Providers[type]();
         if (entity == null) return null;
 
-        if (entity.Id == 0L) entity.Id = id;
+        entity.Id = id;
         entity.Type = type;
 
         return entity;

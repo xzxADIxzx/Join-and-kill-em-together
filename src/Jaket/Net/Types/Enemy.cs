@@ -190,13 +190,11 @@ public class Enemy : Entity
     {
         // it looks funny
         if (!fake) EnemyId.InstaKill();
-        // reduce health to zero because the host destroyed enemy
-        EnemyId.health = 0f;
 
         // destroy the boss bar, because it looks just awful
         healthBar?.Invoke("DestroyBar", 3f);
         // destroy the component to allow enemies like Malicious Face and Drone to fall
-        Destroy(fake ? gameObject : this);
+        DestroyImmediate(fake ? gameObject : this);
     }
 
     #endregion
