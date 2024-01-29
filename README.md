@@ -2,6 +2,7 @@
 [![Support](https://img.shields.io/badge/Buy%20Me%20a-Coffee-FFDD00?style=for-the-badge&logo=buymeacoffee)](https://www.buymeacoffee.com/adidev)
 [![License](https://img.shields.io/github/license/xzxADIxzx/Join-and-kill-em-together?style=for-the-badge)](https://github.com/xzxADIxzx/Join-and-kill-em-together/blob/main/LICENSE)
 [![Stars](https://img.shields.io/github/stars/xzxADIxzx/Join-and-kill-em-together?style=for-the-badge&logo=githubsponsors&color=EA4AAA)](https://github.com/xzxADIxzx/Join-and-kill-em-together)
+[![Devlogs](https://img.shields.io/badge/dev-logs-FF0000?style=for-the-badge&logo=youtube)](https://www.youtube.com/playlist?list=PLcTAO30JMDuRpoBTAkvu2ELKDM74j43Tz)
 
 # Join and kill 'em together
 This modification made by [me](https://github.com/xzxADIxzx) and my team adds support for multiplayer via Steamworks to ULTRAKILL. The idea to create this project came to me immediately after completing the game in a week, and since MULTIKILL is still in development, nothing stopped me from speedrunning programming.
@@ -51,10 +52,10 @@ To compile you will need .NET SDK 6.0 and Git.
 
 1. Clone the repository with `git clone https://github.com/xzxADIxzx/Join-and-kill-em-together.git`
    1. Run `cd <path-to-cloned-repository>`
-   2. Delete the **BundleBuilder.cs** file from the assets folder because it requires **UnityEditor.dll** but is not needed to run the mod.
+   2. Delete the **BundleBuilder.cs** file from the `src/Jaket/Assets` folder because it requires **UnityEditor.dll** but is not needed to run the mod.
 2. Run `dotnet restore`
 3. Create lib folder in root directory.
-   1. Copy **Assembly-CSharp.dll**, **Facepunch.Steamworks.Win64.dll**, **UnityEngine.UI.dll** and **UnityUIExtensions.dll** from `ULTRAKILL\ULTRAKILL_Data\Managed`
+   1. Copy **Assembly-CSharp.dll**, **Facepunch.Steamworks.Win64.dll**, **plog.dll**, **Unity.Addressables.dll**, **Unity.TextMeshPro.dll**, **UnityEngine.UI.dll** and **UnityUIExtensions.dll** from `ULTRAKILL\ULTRAKILL_Data\Managed`
    2. As well as **BepInEx.dll** and **0Harmony.dll** from `ULTRAKILL\BepInEx\core`
    3. And download **Ultrapain.dll** from [Thunderstore](https://thunderstore.io/c/ultrakill/p/EternalsTeam/UltraPain).
 4. Compile the mod with `dotnet build`
