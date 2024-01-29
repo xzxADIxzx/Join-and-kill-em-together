@@ -139,16 +139,6 @@ Maybe it was closed or you were blocked ,_,");
     #endregion
     #region members
 
-    /// <summary> Kicks the member from the lobby, or rather asks him to leave, because Valve has not added such functionality to its API. </summary>
-    public static void KickMember(Friend member)
-    {
-        // who does the client think he is?!
-        if (!IsOwner) return;
-
-        Networking.Send(PacketType.Kick, null, (data, size) => Networking.FindCon(LastKicked = member.Id)?.SendMessage(data, size));
-        Lobby?.SendChatString("#/k" + member.Id);
-    }
-
     /// <summary> Returns a list of nicknames of players currently typing. </summary>
     public static List<string> TypingPlayers()
     {
