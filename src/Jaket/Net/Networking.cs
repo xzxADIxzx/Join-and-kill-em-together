@@ -14,7 +14,7 @@ using Jaket.UI;
 using Jaket.World;
 
 /// <summary> Class responsible for updating endpoints, transmitting packets and managing entities. </summary>
-public class Networking : MonoSingleton<Networking>
+public class Networking
 {
     private static Chat chat => Chat.Instance;
 
@@ -44,10 +44,10 @@ public class Networking : MonoSingleton<Networking>
         Server.Load();
         Client.Load();
 
-        // create an object to update the network logic
-        UI.Object("Networking").AddComponent<Networking>();
         // create a local player to sync player data
-        LocalPlayer = UI.Object("Local Player", Instance.transform).AddComponent<LocalPlayer>();
+        LocalPlayer = UI.Object("Local Player").AddComponent<LocalPlayer>();
+        // update network logic every tick
+        Events.EveryTick += NetworkUpdate;
 
         Events.OnLoaded += () => WasMultiplayerUsed = LobbyController.Lobby.HasValue;
         Events.OnLobbyAction += () => WasMultiplayerUsed |= LobbyController.Lobby.HasValue;
@@ -124,16 +124,12 @@ public class Networking : MonoSingleton<Networking>
     /// <summary> Destroys all players and clears lists. </summary>
     public static void Clear()
     {
-        EachPlayer(player => Destroy(player.gameObject));
+        EachPlayer(player => GameObject.Destroy(player.gameObject));
         Entities.Clear();
     }
 
-    #region cycle
-
-    private void Start() => InvokeRepeating("NetworkUpdate", 0f, SNAPSHOTS_SPACING);
-
     /// <summary> Core network logic should have been here, but in fact it is located in the server and client classes. </summary>
-    private void NetworkUpdate()
+    private static void NetworkUpdate()
     {
         // the player isn't connected to the lobby and the logic doesn't need to be updated
         if (LobbyController.Lobby == null) return;
@@ -145,7 +141,6 @@ public class Networking : MonoSingleton<Networking>
             Client.Update();
     }
 
-    #endregion
     #region iteration
 
     /// <summary> Iterates each connection. </summary>

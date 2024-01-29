@@ -231,7 +231,7 @@ public class Movement : MonoSingleton<Movement>
         nm.transform.position = position;
         nm.rb.velocity = Vector3.zero;
 
-        if (MonoSingleton<PlayerTracker>.Instance.playerType == PlayerType.FPS)
+        if (PlayerTracker.Instance.playerType == PlayerType.FPS)
             cc.ResetCamera(rotation);
         else
             PlatformerMovement.Instance.ResetCamera(rotation);

@@ -70,8 +70,8 @@ public class Bullets
             }
         }
 
-        Fake = UI.Object("Fake", Networking.Instance.transform);
-        NetDmg = UI.Object("Network Damage", Networking.Instance.transform);
+        Fake = UI.Object("Fake");
+        NetDmg = UI.Object("Network Damage");
     }
 
     /// <summary> Finds the bullet type by the name. </summary>
