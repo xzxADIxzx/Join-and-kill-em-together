@@ -78,7 +78,7 @@ public class SafeEvent
         for (int i = 0; i < listeners.Count; i++)
         {
             try { listeners[i](); }
-            catch (Exception ex) { Debug.LogException(ex); }
+            catch (Exception ex) { Log.Error(ex); }
         }
     }
 
