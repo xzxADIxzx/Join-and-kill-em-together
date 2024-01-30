@@ -93,7 +93,10 @@ public class DollAssets
         LoadAsync<AudioMixer>("sam-audio", mix =>
         {
             Mixer = mix;
-            Networking.LocalPlayer.Voice.outputAudioMixerGroup = Mixer.FindMatchingGroups("Master")[0];
+            Events.Post(() =>
+            {
+                Networking.LocalPlayer.Voice.outputAudioMixerGroup = Mixer.FindMatchingGroups("Master")[0];
+            });
         });
 
         // but the font must be loaded immediately, because it is needed to build the interface
