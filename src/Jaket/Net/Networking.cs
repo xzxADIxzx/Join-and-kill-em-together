@@ -113,7 +113,7 @@ public class Networking
             if (message == "#/d")
                 chat.ReceiveChatMessage($"<color=orange>Player {member.Name} died.</color>");
             else if (message.StartsWith("#/k") && ulong.TryParse(message.Substring(3), out ulong id))
-                chat.ReceiveChatMessage($"<color=red>Player {new Friend(id).Name} was kicked!</color>");
+                chat.ReceiveChatMessage($"<color=red>Player {new Friend(id).Name} was banned!</color>");
             else if (message.StartsWith("/tts "))
                 chat.ReceiveTTSMessage(member, message.Substring("/tts ".Length));
             else
