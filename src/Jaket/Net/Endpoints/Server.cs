@@ -105,6 +105,14 @@ public class Server : Endpoint, ISocketManager
             return;
         }
 
+        // check if the player is banned
+        if (identity.IsSteamId && Administration.Banned.Contains(identity.SteamId))
+        {
+            Log.Debug("[Server] Connection is rejected: banned");
+            con.Close();
+            return;
+        }
+
         // this will be used later to find the connection by the id
         con.ConnectionName = identity.SteamId.ToString();
 
