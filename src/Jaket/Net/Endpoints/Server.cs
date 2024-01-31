@@ -109,11 +109,16 @@ public class Server : Endpoint, ISocketManager
         con.ConnectionName = identity.SteamId.ToString();
 
         // only steam users in the lobby can connect to the server
-        if (identity.IsSteamId && LobbyController.Contains(identity.SteamId))
+        if (identity.IsSteamId && LobbyController.Contains(identity.SteamId) && !Administration.Banned.Contains(identity.SteamId))
             con.Accept();
         else
         {
-            Log.Debug("[Server] Connection rejected: either a non-steam user or not in the lobby");
+            if (!identity.IsSteamId)
+                Log.Debug("[Server] Connection rejected: Non-steam user tried joining.");
+            if (!LobbyController.Contains(identity.SteamId))
+                Log.Debug("[Server] Connection rejected: User tried joining, but they aren't in the lobby.");
+            if (Administration.Banned.Contains(identity.SteamId))
+                Log.Debug("[Server] Connection rejected: User who tried joining is banned.");
             con.Close();
         }
     }
