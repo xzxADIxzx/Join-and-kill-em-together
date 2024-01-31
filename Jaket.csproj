@@ -18,20 +18,20 @@
   <ItemGroup>
 	  <PackageReference Include="UnityEngine.Modules" Version="2019.4.40" IncludeAssets="compile" />
 
-    <Reference Include="BepInEx">                       <HintPath>lib\BepInEx.dll                   </HintPath> </Reference>
-    <Reference Include="0Harmony">                      <HintPath>lib\0Harmony.dll                  </HintPath> </Reference>
+    <Reference Include="lib\BepInEx.dll" />
+    <Reference Include="lib\0Harmony.dll" />
 
-    <Reference Include="Assembly-CSharp">               <HintPath>lib\Assembly-CSharp.dll           </HintPath> </Reference>
-    <Reference Include="Facepunch.Steamworks.Win64">    <HintPath>lib\Facepunch.Steamworks.Win64.dll</HintPath> </Reference>
-    <Reference Include="plog">                          <HintPath>lib\plog.dll                      </HintPath> </Reference>
+    <Reference Include="lib\Assembly-CSharp.dll" />
+    <Reference Include="lib\Facepunch.Steamworks.Win64.dll" />
+    <Reference Include="lib\plog.dll" />
 
-    <Reference Include="Unity.TextMeshPro">             <HintPath>lib\Unity.TextMeshPro.dll         </HintPath> </Reference>
-    <Reference Include="Unity.Addressables">            <HintPath>lib\Unity.Addressables.dll        </HintPath> </Reference>
-    <Reference Include="UnityEngine.UI">                <HintPath>lib\UnityEngine.UI.dll            </HintPath> </Reference>
-    <Reference Include="UnityUIExtensions">             <HintPath>lib\UnityUIExtensions.dll         </HintPath> </Reference>
-    <Reference Include="UnityEditor">                   <HintPath>lib\UnityEditor.dll               </HintPath> </Reference>
+    <Reference Include="lib\Unity.TextMeshPro.dll" />
+    <Reference Include="lib\Unity.Addressables.dll" />
+    <Reference Include="lib\UnityEngine.UI.dll" />
+    <Reference Include="lib\UnityUIExtensions.dll" />
+    <Reference Include="lib\UnityEditor.dll" />
 
-    <Reference Include="Ultrapain">                     <HintPath>lib\Ultrapain.dll                 </HintPath> </Reference>
+    <Reference Include="lib\Ultrapain.dll" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
