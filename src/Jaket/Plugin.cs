@@ -61,25 +61,22 @@ public class Plugin : BaseUnityPlugin
         // check if Ultrapain is installed
         UltrapainLoaded = Chainloader.PluginInfos.ContainsKey("com.eternalUnion.ultraPain");
 
-        // initialize networking components
-        Networking.Load();
-        Entities.Load();
-        LobbyController.Load();
-
-        // initialize content components
         Commands.Commands.Load();
         DollAssets.Load();
         Enemies.Load();
         Weapons.Load();
-        Bullets.Load(); // load it after weapons & networking
+        Bullets.Load();
         Items.Load();
 
-        // initialize world components
+        Administration.Load();
+        LobbyController.Load();
+        Networking.Load();
+        Entities.Load();
+
         World.World.Load();
         Movement.Load();
         CyberGrind.Load();
 
-        // initialize ui components
         WidescreenFix.Load();
         UI.UI.Load();
         UI.UI.Build();

@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 namespace Jaket.Assets;
 
 using System.IO;
@@ -20,3 +21,4 @@ public class BundleBuilder
         BuildPipeline.BuildAssetBundles(BundleDir, BuildAssetBundleOptions.None, BuildTarget.StandaloneWindows);
     }
 }
+#endif
