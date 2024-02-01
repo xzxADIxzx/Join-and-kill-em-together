@@ -92,11 +92,10 @@ public class Movement : MonoSingleton<Movement>
 
             if (Input.GetKeyDown(Settings.Spray))
             {
-                Log.Info($"Spraying at {hit.point} with normal {hit.normal}");
+                if (Spray != null) Spray.Lifetime = 2f;
                 Spray = Spray.Spawn(hit.point, hit.normal);
             }
         }
-
 
         if (Input.GetKey(Settings.EmojiWheel))
         {

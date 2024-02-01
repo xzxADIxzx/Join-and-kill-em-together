@@ -190,11 +190,11 @@ public class UI
         });
 
     /// <summary> Adds an image with the given texture to the canvas. </summary>
-    public static Image ImageFromTexture2D(string name, Transform parent, float x, float y, Texture2D texture, float width = 320f, float height = 48f, bool fill = true) =>
+    public static Image ImageFromTexture(string name, Transform parent, float x, float y, Texture2D texture, float width = 320f, float height = 48f, bool preserveAspect = true) =>
         Component<Image>(Rect(name, parent, x, y, width, height).gameObject, image =>
         {
             image.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
-            image.type = fill ? UnityEngine.UI.Image.Type.Filled : UnityEngine.UI.Image.Type.Simple;
+            image.preserveAspect = preserveAspect;
         });
 
     /// <summary> Adds a circular image with the standard sprite to the canvas. </summary>
