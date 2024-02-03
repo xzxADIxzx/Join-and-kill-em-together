@@ -17,7 +17,7 @@ public class Spray : MonoBehaviour
     private Transform Canvas;
 
     /// <summary> How long the spray will last in seconds. </summary>
-    public float Lifetime = 10f;
+    public float Lifetime = 20f;
     private float ProcessTime = 0f;
 
     /// <summary> Creates a new spray at the given position with the given direction. </summary> 
