@@ -47,7 +47,10 @@ public class CachedSpray
     /// <summary> Converts the bytes to a texture. </summary>
     public static Texture2D GetTexture(byte[] bytes)
     {
-        var texture = new Texture2D(2, 2);
+        var texture = new Texture2D(2, 2)
+        {
+            filterMode = FilterMode.Point
+        };
         if (bytes.Length > 0) texture.LoadImage(bytes);
         return texture;
     }
