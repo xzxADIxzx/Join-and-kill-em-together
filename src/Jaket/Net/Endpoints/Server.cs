@@ -60,6 +60,12 @@ public class Server : Endpoint, ISocketManager
         {
             if (entities[r.Id()] is RemotePlayer player) player?.Point(r);
         });
+        ListenAndRedirect(PacketType.Spray, r => 
+        {
+            var id = r.Id();
+            if (entities[id] is RemotePlayer player) player?.Spray(id, r);
+        });
+        ListenAndRedirect(PacketType.ImageChunk, SprayManager.LoadImageFromNetwork);
 
         Listen(PacketType.ActivateObject, r => World.Instance.ReadAction(r));
     }

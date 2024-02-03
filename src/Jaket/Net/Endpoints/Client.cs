@@ -64,6 +64,12 @@ public class Client : Endpoint, IConnectionManager
         {
             if (entities[r.Id()] is RemotePlayer player) player?.Point(r);
         });
+        Listen(PacketType.Spray, r =>
+        {
+            var id = r.Id();
+            if (entities[id] is RemotePlayer player) player?.Spray(id, r);
+        });
+        Listen(PacketType.ImageChunk, SprayManager.LoadImageFromNetwork);
 
         Listen(PacketType.ActivateObject, r => World.Instance.ReadAction(r));
 

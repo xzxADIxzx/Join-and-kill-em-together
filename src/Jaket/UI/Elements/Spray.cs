@@ -3,12 +3,16 @@ namespace Jaket.UI.Elements;
 using UnityEngine;
 
 using Jaket.UI;
+using System;
+using UnityEngine.UI;
 
 /// <summary> Represents a player created spray that contains a image. </summary>
 public class Spray : MonoBehaviour
 {
+    private CachedSpray CachedSpray;
     /// <summary> Spray's position in space. </summary>
     private Vector3 Position, Direction;
+    public Texture2D Texture;
 
     private Transform Canvas;
 
@@ -26,16 +30,6 @@ public class Spray : MonoBehaviour
 
     public void Start()
     {
-        if (SprayManager.CurrentSprayTexture == null)
-        {
-            Log.Warning("Spray you want to create is invalid!");
-            return;
-        }
-
-        // creates the image in the world
-        Canvas = UI.WorldCanvas("Spray image", transform, new(), action: canvas => UI.ImageFromTexture("Image", canvas, 0f, 0f, SprayManager.CurrentSprayTexture, 128f, 128f));
-        Canvas.GetComponent<Canvas>().sortingOrder = -1; // ADI's implementation is set sorting order to 1000, so we need to set it to -1, because it causes rendering issues
-        
         transform.position = Position + Direction.normalized * .01f; // adding some offset to prevent z-fighting
         transform.rotation = Quaternion.LookRotation(Direction);
         transform.rotation *= Quaternion.Euler(0, 180, 0); // rotates the spray so that it always faces the player
@@ -43,14 +37,27 @@ public class Spray : MonoBehaviour
         SpawnDust();
     }
 
+    public void AssignImage(Texture2D texture)
+    {
+        Texture = texture;
+ 
+        // creates the image in the world
+        Log.Debug($"Creating image in the world.");
+        Canvas = UI.WorldCanvas("Spray image", transform, new(), action: canvas => {
+            UI.ImageFromTexture("Image", canvas, 0f, 0f, Texture, 128f, 128f);
+        });
+        Log.Debug("Done creating image in the world");
+        Canvas.GetComponent<Canvas>().sortingOrder = -1; // ADI's implementation is set sorting order to 1000, so we need to set it to -1, because it causes rendering issues
+    }
+
     /// <summary> Spawns a white dust particles. </summary>
     public void SpawnDust(int amount = 3, float scale = 1f)
     {
         var particlePrefab = AssetHelper.LoadPrefab("Assets/Particles/ImpactParticle.prefab");
-        for (var i = 0; i < amount; i++) // To make it look more cloudy
+        for (var i = 0; i < amount; i++) // make it look more cloudy
         {
             var particle = Instantiate(particlePrefab, transform.position, Quaternion.identity);
-            particle.transform.localScale = new Vector3(scale, scale, scale);
+            particle.transform.localScale = Vector3.one * scale;
             // don't play the sound, because we need only particle
             particle.GetComponent<AudioSource>().Stop();
         }
@@ -72,6 +79,8 @@ public class Spray : MonoBehaviour
             return;
         }
 
+        if (Canvas == null) return;
+
         // Shrink the spray as it gets older
         var shrinkTime = Lifetime * 0.2f;
         var remaining = Lifetime - shrinkTime;
@@ -79,8 +88,8 @@ public class Spray : MonoBehaviour
         {
             var t = (ProcessTime - remaining) / shrinkTime;
             t = InOutCubic(t); // cubic interpolation looks better
-            var scale = (1f - t) * .02f; // initial scale is 0.02
-            Canvas.transform.localScale = new Vector3(scale, scale, 1f);
+            var scale = (1f - t) * .02f; // initial scale is 0.02 
+            Canvas.localScale = Vector3.one * scale;
         }
     }
 }

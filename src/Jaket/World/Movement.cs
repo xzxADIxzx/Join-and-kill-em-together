@@ -90,11 +90,7 @@ public class Movement : MonoSingleton<Movement>
                 }, size: 32);
             }
 
-            if (Input.GetKeyDown(Settings.Spray))
-            {
-                if (Spray != null) Spray.Lifetime = 2f;
-                Spray = Spray.Spawn(hit.point, hit.normal);
-            }
+            if (Input.GetKeyDown(Settings.Spray)) SprayManager.CreateClientSpray(hit.point, hit.normal);
         }
 
         if (Input.GetKey(Settings.EmojiWheel))
