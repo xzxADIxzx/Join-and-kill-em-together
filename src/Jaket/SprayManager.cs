@@ -11,6 +11,8 @@ using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net;
 using Jaket.UI.Elements;
+using System.Threading;
+using UnityEngine.SceneManagement;
 
 public class CachedSpray
 {
@@ -100,6 +102,15 @@ public class SprayManager
         }
         else
             Log.Warning($"No spray found! Please add a new one or check file extensions! Supported: {string.Join(", ", SupportedTypes)}");
+
+        // clear cached sprays, because new player has no cached sprays and sprayer doesn't send them
+        // this implementation is not optimal, but it's ok for now
+        SteamMatchmaking.OnLobbyMemberJoined += (_, member) => ClearCachedSprays();
+        SteamMatchmaking.OnLobbyMemberLeave += (_, member) => {
+            Log.Debug("Lobby member left, removing cached spray");
+            ClearCachedSpray(member.Id); // also remove cached player spray because they are now worthless
+        };
+        SceneManager.sceneLoaded += (_, _) => ClearCachedSprays(); // remove cached sprays when scene is loaded
     }
 
     #region load & upload
@@ -195,7 +206,13 @@ public class SprayManager
         }, size: 32);
 
         var cachedSpray = CheckForCachedSpray(Networking.LocalPlayer.Id);
-        if (cachedSpray == null && LobbyController.Lobby != null) UploadImage2Network(); // if no cached spray, upload it
+        // if no cached spray, upload it
+        if (cachedSpray == null && LobbyController.Lobby != null) 
+        {
+            // spawn a thread to upload the image, because it's slow, and don't want to freeze the game
+            var t = new Thread(UploadImage2Network) { IsBackground = true };
+            t.Start();
+        }
         cachedSpray?.AssignData(CurrentSpray); // assign the current spray, because it's client side
 
         // if no cached spray we should assign texture after creating the spray
@@ -225,7 +242,7 @@ public class SprayManager
     /// <summary> Caches the spray in the memory. </summary>
     public static CachedSpray CacheSpray(SteamId owner)
     {
-        Log.Info($"Caching spray for {owner}");
+        Log.Debug($"Caching spray for {owner}");
         var cachedSpray = new CachedSpray(owner);
         CachedSprays.Add(cachedSpray);
         return cachedSpray;
@@ -233,4 +250,13 @@ public class SprayManager
 
     /// <summary> Checks if the given owner has a cached spray. Returns CachedSpray if found, so no need to load it. </summary>
     public static CachedSpray CheckForCachedSpray(SteamId owner) => CachedSprays.Find(s => s.Owner == owner);
+
+    /// <summary> Removes all cached sprays. Sprays need to be loaded again. </summary>
+    public static void ClearCachedSprays()
+    {
+        Log.Debug("Clearing cached sprays");
+        CachedSprays.Clear();
+    }
+    /// <summary> Removes the cached spray from player. </summary>
+    public static void ClearCachedSpray(SteamId owner) => CachedSprays.RemoveAll(s => s.Owner == owner);
 }
