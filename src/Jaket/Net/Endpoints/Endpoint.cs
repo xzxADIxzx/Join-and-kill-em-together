@@ -34,17 +34,19 @@ public abstract class Endpoint
     public void ListenAndRedirect(PacketType type, Action<Reader> listener) => listeners.Add(type, (con, sender, r) =>
     {
         listener(r);
-        Networking.EachConnection(connection =>
-        {
-            if (connection != con) connection.SendMessage(r.mem, r.Length);
-        });
+        Redirect(r, con);
+    });
+    /// <summary> Forwards data to clients. </summary>
+    public void Redirect(Reader data, Connection ignore) => Networking.EachConnection(con =>
+    {
+        if (con != ignore) con.SendMessage(data.mem, data.Length);
     });
 
     /// <summary> Handles the packet and calls the corresponding listener. </summary>
     public void Handle(Connection con, SteamId sender, Reader r)
     {
         var type = r.Enum<PacketType>(); // if the client hasn't downloaded the level yet, then it only needs a packet with the level name
-        if (Networking.Loading && type != PacketType.LevelLoading) return;
+        if (Networking.Loading && type != PacketType.LoadLevel) return;
 
         // find the required listener and transfer control to it, all it has to do is read the payload
         if (listeners.TryGetValue(type, out var listener)) listener(con, sender, r);

@@ -33,27 +33,15 @@ public class Client : Endpoint, IConnectionManager
             entities[id]?.Read(r);
         });
 
-        Listen(PacketType.LevelLoading, r => World.Instance.ReadData(r)); // instance is null at client load time so arrow function is required
+        Listen(PacketType.LoadLevel, r => World.Instance.ReadData(r));
 
         Listen(PacketType.Kick, r => LobbyController.LeaveLobby());
-
-        Listen(PacketType.HostDied, r =>
-        {
-            // in the sandbox after death, enemies are not destroyed
-            if (SceneHelper.CurrentScene == "uk_construct") return;
-
-            Networking.EachEntity(entity =>
-            {
-                // destroy all enemies, because the host died and was thrown back to the checkpoint
-                if (entity is Enemy) Object.Destroy(entity.gameObject);
-            });
-        });
-
-        Listen(PacketType.EnemyDied, r => entities[r.Id()]?.Kill());
 
         Listen(PacketType.SpawnBullet, Bullets.CInstantiate);
 
         Listen(PacketType.DamageEntity, r => entities[r.Id()]?.Damage(r));
+
+        Listen(PacketType.KillEntity, r => entities[r.Id()]?.Kill());
 
         Listen(PacketType.Punch, r =>
         {
@@ -69,7 +57,7 @@ public class Client : Endpoint, IConnectionManager
 
         Listen(PacketType.CinemaAction, r => Cinema.Play(r.String()));
 
-        Listen(PacketType.CybergrindAction, r => CyberGrind.Instance.LoadPattern(r));
+        Listen(PacketType.CyberGrindAction, r => CyberGrind.Instance.LoadPattern(r));
     }
 
     public override void Update()

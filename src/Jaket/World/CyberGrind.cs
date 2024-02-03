@@ -35,7 +35,7 @@ public class CyberGrind : MonoSingleton<CyberGrind> // TODO a lot of work
 
     /// <summary> Sends the current arena pattern to all clients. </summary>
     /// <param name="pattern"> Pattern to send to clients. </param>
-    public void SendPattern(ArenaPattern pattern) => Networking.Send(PacketType.CybergrindAction, w =>
+    public void SendPattern(ArenaPattern pattern) => Networking.Send(PacketType.CyberGrindAction, w =>
     {
         w.Int(EndlessGrid.Instance.currentWave);
         w.String(pattern.heights);

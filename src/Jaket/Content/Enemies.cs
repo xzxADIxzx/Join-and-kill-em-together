@@ -130,7 +130,7 @@ public class Enemies
 
         if (enemyId.TryGetComponent<Enemy>(out var enemy))
         {
-            Networking.Send(PacketType.EnemyDied, w => w.Id(enemy.Id), size: 8);
+            Networking.Send(PacketType.KillEntity, w => w.Id(enemy.Id), size: 8);
             Object.Destroy(enemy);
         }
     }

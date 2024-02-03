@@ -28,28 +28,60 @@ public class Server : Endpoint, ISocketManager
             else if (entities.TryGetValue(id, out var entity) && entity != null && entity is OwnableEntity ownable) ownable.Read(r);
         });
 
-        Listen(PacketType.SpawnEntity, r =>
+        Listen(PacketType.SpawnEntity, (con, sender, r) =>
         {
-            if (!LobbyController.CheatsAllowed) return;
-
-            // the client asked to spawn the entity
-            ulong id = Entities.NextId();
             var type = r.Enum<EntityType>();
-
-            // but we need to make sure they can spawn it
-            if (type.IsCommonEnemy() || type.IsPlushy()) return;
-            var entity = Entities.Get(id, type);
-
-            if (entity != null)
+            if (type.IsBullet() && Administration.CanSpawnEntityBullet(sender))
             {
-                entity.transform.position = r.Vector();
-                entities[id] = entity;
+                var bullet = Bullets.EInstantiate(type);
+
+                bullet.transform.position = r.Vector();
+                bullet.transform.eulerAngles = r.Vector();
+                bullet.InitSpeed = r.Float();
+
+                bullet.Owner = sender;
+                bullet.OnTransferred();
+                Administration.EntityBullets[sender].Add(bullet);
+            }
+            else if (type.IsEnemy() && LobbyController.CheatsAllowed)
+            {
+                var enemy = Enemies.Instantiate(type);
+                enemy.transform.position = r.Vector();
+
+                Administration.EnemySpawned(sender, enemy, type.IsBigEnemy());
+            }
+            else if (type.IsPlushy())
+            {
+                var plushy = Items.Instantiate(type);
+                plushy.transform.position = r.Vector();
+
+                Administration.PlushySpawned(sender, plushy);
             }
         });
 
-        ListenAndRedirect(PacketType.SpawnBullet, Bullets.CInstantiate);
+        Listen(PacketType.SpawnBullet, (con, sender, r) =>
+        {
+            var type = r.Byte(); r.Position = 1; // extract the bullet type
+            int cost = type == 4 ? 2 : type >= 17 && type <= 19 ? 8 : 1; // coin - 2, rail - 8, other - default
+
+            if (Administration.CanSpawnCommonBullet(sender, cost))
+            {
+                Bullets.CInstantiate(r);
+                Redirect(r, con);
+            }
+        });
 
         ListenAndRedirect(PacketType.DamageEntity, r => entities[r.Id()]?.Damage(r));
+
+        Listen(PacketType.KillEntity, (con, sender, r) =>
+        {
+            var entity = entities[r.Id()];
+            if (entity && entity is Bullet bullet && bullet.Owner == sender)
+            {
+                bullet.Kill();
+                Redirect(r, con);
+            }
+        });
 
         ListenAndRedirect(PacketType.Punch, r =>
         {
@@ -129,7 +161,7 @@ public class Server : Endpoint, ISocketManager
     public void OnConnected(Connection con, ConnectionInfo info)
     {
         Log.Info($"[Server] {info.Identity.SteamId} connected");
-        Networking.Send(PacketType.LevelLoading, World.Instance.WriteData, (data, size) => con.SendMessage(data, size));
+        Networking.Send(PacketType.LoadLevel, World.Instance.WriteData, (data, size) => con.SendMessage(data, size));
     }
 
     public void OnDisconnected(Connection con, ConnectionInfo info) => Log.Info($"[Server] {info.Identity.SteamId} disconnected");

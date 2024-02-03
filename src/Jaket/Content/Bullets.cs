@@ -156,7 +156,7 @@ public class Bullets
     /// <summary> Synchronizes the "death" of the bullet. </summary>
     public static void SyncDeath(GameObject bullet)
     {
-        if (bullet.TryGetComponent<Bullet>(out var comp) && comp.IsOwner) Networking.Send(PacketType.EnemyDied, w => w.Id(comp.Id), size: 8);
+        if (bullet.TryGetComponent<Bullet>(out var comp) && comp.IsOwner) Networking.Send(PacketType.KillEntity, w => w.Id(comp.Id), size: 8);
     }
 
     #region special
