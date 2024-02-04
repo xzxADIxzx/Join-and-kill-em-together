@@ -1,7 +1,6 @@
 ﻿namespace Jaket.World;
 
 using HarmonyLib;
-using UnityEngine.UI;
 
 using Jaket.Content;
 using Jaket.IO;
@@ -11,12 +10,10 @@ using Jaket.UI;
 /// <summary> Class responsible for Cyber Grind synchronization. </summary>
 public class CyberGrind : MonoSingleton<CyberGrind> // TODO a lot of work
 {
-    /// <summary> Text used for displaying current wave number. </summary>
-    public Text WaveNumberTextInstance;
-    /// <summary> Text used for displaying current enemies left. </summary>
-    public Text EnemiesLeftTextInstance;
+    private static EndlessGrid grid => EndlessGrid.Instance;
+    private static NewMovement nm => NewMovement.Instance;
 
-    /// <summary> Current wave count used for sync. </summary>
+    /// <summary> Current wave number used for display on the Huge Flying Panel™. </summary>
     public int CurrentWave;
     /// <summary> How many times pattern is loaded. Can't be bigger than 1. </summary>
     public int LoadTimes; // TODO replace with boolean
@@ -36,7 +33,7 @@ public class CyberGrind : MonoSingleton<CyberGrind> // TODO a lot of work
     /// <param name="pattern"> Pattern to send to clients. </param>
     public void SendPattern(ArenaPattern pattern) => Networking.Send(PacketType.CyberGrindAction, w =>
     {
-        w.Int(EndlessGrid.Instance.currentWave);
+        w.Int(grid.currentWave);
         w.String(pattern.heights);
         w.String(pattern.prefabs);
     }, size: 4096); // the pattern size is always different, but IO+Networking will send the required size, so we feel free to allocate with a margin
@@ -58,7 +55,7 @@ public class CyberGrind : MonoSingleton<CyberGrind> // TODO a lot of work
         // sets current pattern to give it to LoadPattern method of original class
         CurrentPattern = pattern;
         // start a new wave with server pattern
-        AccessTools.Method(typeof(EndlessGrid), "NextWave").Invoke(EndlessGrid.Instance, new object[] { });
+        AccessTools.Method(typeof(EndlessGrid), "NextWave").Invoke(grid, new object[] { });
 
         // Do not make new wave if it is the first time
         if (LoadTimes < 1)
@@ -67,21 +64,18 @@ public class CyberGrind : MonoSingleton<CyberGrind> // TODO a lot of work
             return;
         }
 
-        // Resetting weapon charges (for example, railgun will be charged and etc.)
-        WeaponCharges.Instance.MaxCharges();
-
         // play cheering sound effect
         var cr = CrowdReactions.Instance;
         cr.React(cr.cheerLong);
 
-        // resetting values after each wave
-        var nmov = NewMovement.Instance;
-        if (nmov.hp > 0)
+        if (nm.hp > 0)
         {
-            nmov.ResetHardDamage();
-            nmov.exploded = false;
-            nmov.GetHealth(999, silent: true);
-            nmov.FullStamina();
+            WeaponCharges.Instance.MaxCharges();
+
+            nm.ResetHardDamage();
+            nm.exploded = false;
+            nm.GetHealth(999, silent: true);
+            nm.FullStamina();
         }
     }
 

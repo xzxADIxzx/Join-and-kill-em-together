@@ -24,7 +24,7 @@ public class CyberGrindPatch
         }
     }
 
-    // dont allow to launch CyberGrind to client
+    // don't allow to launch CyberGrind to client
     [HarmonyPrefix]
     [HarmonyPatch("OnTriggerEnter")]
     static bool Enter(ref Text ___waveNumberText)
@@ -48,7 +48,7 @@ public class CyberGrindPatch
             if (cg.CurrentPattern != null && !LobbyController.IsOwner)
                 // loads current pattern from the server
                 cg.LoadCurrentPattern();
-            // send empty pattern when game starts and the player is the owner to prevent load previous cybergrind pattern
+            // send empty pattern when game starts and the player is the owner to prevent load previous CyberGrind pattern
             else cg.SendPattern(new ArenaPattern()); // TODO looks like a crutch
         }
         else
@@ -67,7 +67,7 @@ public class CyberGrindPatch
         // check if the player is not the owner of the lobby (client)
         if (LobbyController.Lobby != null && !LobbyController.IsOwner)
         {
-            // set the current wave on the client to original cybergrind singleton to sync with the server
+            // set the current wave on the client to original CyberGrind singleton to sync with the server
             __instance.currentWave = CyberGrind.Instance.CurrentWave;
             // set death enemies to prevent start new wave on the client to sync it
             ___anw.deadEnemies = -999;
