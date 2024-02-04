@@ -112,8 +112,15 @@ public class Networking
         {
             if (message == "#/d")
                 chat.ReceiveChatMessage($"<color=orange>Player {member.Name} died.</color>");
+
             else if (message.StartsWith("#/k") && ulong.TryParse(message.Substring(3), out ulong id))
                 chat.ReceiveChatMessage($"<color=red>Player {new Friend(id).Name} was banned!</color>");
+
+            else if (message.StartsWith("#/s") && byte.TryParse(message.Substring(3), out byte team))
+            {
+                if (LocalPlayer.Team == (Team)team) StyleHUD.Instance.AddPoints(Mathf.RoundToInt(250f * StyleCalculator.Instance.airTime), "<color=#32CD32>FRATRICIDE</color>");
+            }
+
             else if (message.StartsWith("/tts "))
                 chat.ReceiveTTSMessage(member, message.Substring("/tts ".Length));
             else

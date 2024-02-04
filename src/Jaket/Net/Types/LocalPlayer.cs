@@ -114,10 +114,13 @@ public class LocalPlayer : Entity
 
     public override void Damage(Reader r)
     {
-        if (!r.Enum<Team>().Ally()) // no need to deal damage if an ally hits you
+        var team = r.Enum<Team>();
+        if (!nm.dead && !team.Ally()) // no need to deal damage if an ally hits you
         {
             byte type = r.Byte();
-            NewMovement.Instance.GetHurt(Mathf.CeilToInt(r.Float() * (Bullets.Types[type] == "drill" ? 2f : 5f)), false, 0f, r.Bool());
+            nm.GetHurt(Mathf.CeilToInt(r.Float() * (Bullets.Types[type] == "drill" ? 1f : 5f)), false, 0f, r.Bool());
+
+            if (nm.dead) LobbyController.Lobby?.SendChatString("#/s" + (byte)team);
         }
     }
 
