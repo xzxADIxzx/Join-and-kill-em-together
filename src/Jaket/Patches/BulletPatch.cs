@@ -66,6 +66,29 @@ public class CommonBulletsPatch
         eid.eid != null && eid.eid.TryGetComponent<RemotePlayer>(out var player)
             ? !player.Team.Ally()
             : true;
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(Harpoon), "FixedUpdate")]
+    static void HarpoonDamage(Harpoon __instance, ref float ___drillCooldown)
+    {
+        // this is necessary so that only the one who created the harpoon causes the damage
+        if (__instance.name == "Net") ___drillCooldown = 1f;
+    }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(Harpoon), "OnTriggerEnter")]
+    static bool HarpoonLogic(Harpoon __instance, Collider other, ref bool ___hit, ref Rigidbody ___rb)
+    {
+        if (__instance.name == "Net" && !___hit && other.gameObject == NewMovement.Instance.gameObject)
+        {
+            ___hit = true;
+            ___rb.constraints = RigidbodyConstraints.FreezeAll;
+            __instance.transform.SetParent(other.transform, true);
+
+            return false;
+        }
+        else return true;
+    }
 }
 
 [HarmonyPatch]
