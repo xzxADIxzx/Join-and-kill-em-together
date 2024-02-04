@@ -6,14 +6,17 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Linq;
 using UnityEngine;
+using System.Threading;
+using UnityEngine.SceneManagement;
+using System;
 
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net;
 using Jaket.UI.Elements;
-using System.Threading;
-using UnityEngine.SceneManagement;
+using Jaket.UI;
 
+/// <summary> Cached spray, that contains the spray and the image data and caches it. </summary>
 public class CachedSpray
 {
     /// <summary> Maximum size of the spray in bytes. </summary>
@@ -58,6 +61,38 @@ public class CachedSpray
     }
 }
 
+/// <summary> File that contains the spray and the image data. </summary>
+public class SprayFile
+{
+    public const int ShortNameLength = 8;
+    public const int ImageMaxSize = 512 * 1024;
+
+    public string Name;
+    public byte[] ImageData;
+    public Texture2D Texture;
+
+    public SprayFile(string name, byte[] data)
+    {
+        Name = name;
+        ImageData = data;
+        Texture = GetTexture(data);
+    }
+
+    /// <summary> Shortens the name of the file to a maximum of 8 characters. </summary>
+    public string GetShortName(int length = ShortNameLength) => Name.Length > length ? Name.Substring(0, length) + "..." : Name;
+
+    /// <summary> Converts the bytes to a texture. </summary>
+    public static Texture2D GetTexture(byte[] bytes)
+    {
+        var texture = new Texture2D(2, 2) { filterMode = FilterMode.Point };
+        if (bytes.Length > 0) texture.LoadImage(bytes);
+        return texture;
+    }
+    
+    /// <summary> Returns true if the image is too big. </summary>
+    public bool CheckSize() => ImageData.Length > ImageMaxSize;
+}
+
 /// <summary> Manages the sprays of the player and loading them. </summary>
 public class SprayManager
 {
@@ -69,9 +104,11 @@ public class SprayManager
     /// <summary> Directory, where the sprays are located. </summary>
     public static string SpraysPath;
     /// <summary> The current client's spray raw bytes texture. </summary>
-    public static byte[] CurrentSpray;
+    public static SprayFile CurrentSpray;
     /// <summary> List of cached sprays that loaded from server. </summary>
     public static List<CachedSpray> CachedSprays = new();
+
+    public static List<SprayFile> FileSprays = new();
 
     public static Dictionary<ulong, Writer> Streams = new();
     /// <summary> Size of the packet, that sends the image chunk. </summary>
@@ -83,49 +120,57 @@ public class SprayManager
         ModDirectory = Path.GetDirectoryName(Plugin.Instance.Info.Location);
         SpraysPath = Path.Combine(ModDirectory, "sprays");
 
-        var files = Directory.GetFiles(SpraysPath);
-        var currentSprayFilePath = string.Empty;
-        foreach (var file in files)
-        {
-            var ext = Path.GetExtension(file).Substring(1); // remove dot
-            // check if file is image, if not, skip
-            if (!SupportedTypes.Contains(ext)) continue;
-
-            // set the current spray path
-            currentSprayFilePath = Path.Combine(SpraysPath, file);
-        }
-
-        if (currentSprayFilePath != null)
-        {
-            Log.Info($"Spray found: {currentSprayFilePath}");
-            LoadImageFromPath(currentSprayFilePath);
-        }
-        else
-            Log.Warning($"No spray found! Please add a new one or check file extensions! Supported: {string.Join(", ", SupportedTypes)}");
+        LoadFileSprays();
 
         // clear cached sprays, because new player has no cached sprays and sprayer doesn't send them
         // this implementation is not optimal, but it's ok for now
         SteamMatchmaking.OnLobbyMemberJoined += (_, member) => ClearCachedSprays();
-        SteamMatchmaking.OnLobbyMemberLeave += (_, member) => {
+        SteamMatchmaking.OnLobbyMemberLeave += (_, member) =>
+        {
             Log.Debug("Lobby member left, removing cached spray");
             ClearCachedSpray(member.Id); // also remove cached player spray because they are now worthless
         };
         SceneManager.sceneLoaded += (_, _) => ClearCachedSprays(); // remove cached sprays when scene is loaded
     }
 
+    public static void LoadFileSprays()
+    {
+        FileSprays.Clear();
+        
+        var files = Directory.GetFiles(SpraysPath);
+        var currentSprayFilePath = string.Empty;
+        for (int i = 0; i < Mathf.Min(files.Length, 5); i++)
+        {
+            var file = files[i];
+            var ext = Path.GetExtension(file).Substring(1); // remove dot
+            // check if file is image, if not, skip
+            if (!SupportedTypes.Contains(ext)) continue;
+
+            currentSprayFilePath = Path.Combine(SpraysPath, file);
+            FileSprays.Add(new SprayFile(Path.GetFileName(file), LoadImageFromPath(currentSprayFilePath)));
+        }
+
+        // print all file sprays
+        Log.Debug($"Loaded {FileSprays.Count} file sprays: {string.Join(", ", FileSprays.Select(f => f.Name))}");
+    }
+
+    /// <summary> Iterates over all files in the sprays directory. Max 5. </summary>
+    public static void EachFileSpray(Action<SprayFile> action) => FileSprays.ForEach(action);
+    /// <summary> Changes the current spray based on the name. If not found, returns false. </summary>
+    public static bool ChangeFileSpray(string name)
+    {
+        var fileSpray = FileSprays.FirstOrDefault(f => f.Name == name);
+        CurrentSpray = fileSpray;
+        return fileSpray != null;
+    }
+
     #region load & upload
 
     /// <summary> Loads the image from the given path. </summary>
-    public static void LoadImageFromPath(string path = null)
+    public static byte[] LoadImageFromPath(string path = null)
     {
         var bytes = File.ReadAllBytes(path);
-        // Check if the file less than 512kb
-        if (bytes.Length > CachedSpray.MaxSize)
-        {
-            Log.Error("Spray is too big! Max 512kb only allowed!");
-            return;
-        }
-        CurrentSpray = bytes;
+        return bytes;
     }
 
     /// <summary> Loads an image from the client. </summary>
@@ -164,7 +209,7 @@ public class SprayManager
     /// <summary> Uploads the current spray to the clients. </summary>
     public static void UploadImage2Network()
     {
-        var data = CurrentSpray;
+        var data = CurrentSpray.ImageData;
 
         Log.Debug("Uploading new spray");
         // initialize a stream
@@ -196,6 +241,11 @@ public class SprayManager
     /// <summary> Creates a client spray and send spray. </summary>
     public static void CreateClientSpray(Vector3 position, Vector3 direction)
     {
+        if (CurrentSpray == null)
+        {
+            UI.UI.SendMsg($"You not set any spray! Please set one! ({Settings.Settingz})");
+        }
+
         Log.Info("Creating new spray");
         // send spray to the clients
         if (LobbyController.Lobby != null) Networking.Send(PacketType.Spray, w =>
@@ -207,16 +257,23 @@ public class SprayManager
 
         var cachedSpray = CheckForCachedSpray(Networking.LocalPlayer.Id);
         // if no cached spray, upload it
-        if (cachedSpray == null && LobbyController.Lobby != null) 
+        if (cachedSpray == null && LobbyController.Lobby != null)
         {
             // spawn a thread to upload the image, because it's slow, and don't want to freeze the game
             var t = new Thread(UploadImage2Network) { IsBackground = true };
             t.Start();
         }
-        cachedSpray?.AssignData(CurrentSpray); // assign the current spray, because it's client side
+
+        var imageData = CurrentSpray.ImageData;
+        if (cachedSpray != null && LobbyController.Lobby != null) // don't change the current spray, because it's cached
+        {
+            UI.UI.SendMsg($"There's already cached spray");
+            imageData = cachedSpray.ImageData;
+        }
+        cachedSpray?.AssignData(imageData); // assign the current spray, because it's client side
 
         // if no cached spray we should assign texture after creating the spray
-        var spray = CreateSpray(Networking.LocalPlayer.Id, position, direction, cachedSpray == null ? CurrentSpray : null);
+        var spray = CreateSpray(Networking.LocalPlayer.Id, position, direction, cachedSpray == null ? imageData : null);
     }
 
     public static CachedSpray CreateSpray(SteamId owner, Vector3 position, Vector3 direction, byte[] imageData = null)
@@ -228,6 +285,12 @@ public class SprayManager
             Log.Debug($"Cached spray already exists for {owner}");
             if (cachedSpray.SprayExists())
                 cachedSpray.Spray.Lifetime = 3f; // we don't want to have many sprays in the scene at once
+        }
+
+        if (SpraySettings.Instance.DisableSprays && owner != Networking.LocalPlayer.Id)
+        {
+            Log.Debug($"Sprays is disabled for {owner}");
+            return cachedSpray;
         }
 
         // create the spray in scene

@@ -65,6 +65,8 @@ public class Settings : CanvasSingleton<Settings>
             var list = new[] { LobbyTab, PlayerList, Settingz, PlayerIndicators, PlayerInfo, Pointer, Chat, ScrollUp, ScrollDown, EmojiWheel, SelfDestruction, Spray };
             for (int i = 0; i < list.Length; i++)
                 UI.KeyButton(Keybinds[i], list[i], table, 0f, 213f - i * 54f);
+
+            UI.Button("SPRAYS SETTINGS", table, 0f, -620f, clicked: ShowSpraysSettings);
         });
         UI.TableAT("Other", transform, 746f, 352f, 224f, table =>
         {
@@ -82,6 +84,13 @@ public class Settings : CanvasSingleton<Settings>
 
         Version.Label(transform);
         WidescreenFix.MoveDown(transform);
+    }
+
+    /// <summary> Shows the Sprays settings menu. </summary>
+    public void ShowSpraysSettings()
+    {
+        Toggle(false);
+        SpraySettings.Instance.Toggle(true);
     }
 
     private void OnGUI()
@@ -111,13 +120,15 @@ public class Settings : CanvasSingleton<Settings>
     }
 
     // <summary> Toggles visibility of settings. </summary>
-    public void Toggle()
+    public void Toggle(bool updateState = true)
     {
         // if another menu is open, then nothing needs to be done
         if (UI.AnyJaket() && !Shown) return;
 
+        SpraySettings.Instance.Toggle(false);
+
         gameObject.SetActive(Shown = !Shown);
-        Movement.UpdateState();
+        if (updateState) Movement.UpdateState();
     }
 
     // <summary> Returns the name of the given key. </summary>

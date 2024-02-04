@@ -58,6 +58,7 @@ public class UI
         LobbyTab.Build("Lobby Tab");
         PlayerList.Build("Player List");
         Settings.Build("Settings");
+        SpraySettings.Build("Spray Settings");
         PlayerIndicators.Build("Player Indicators", hideEvent: Events.OnMainMenuLoaded);
         PlayerInfo.Build<StyleHUD>();
 
@@ -245,6 +246,13 @@ public class UI
     {
         var btn = Button(icon, parent, x, y, 48f, 48f, color, 40, clicked: clicked);
         btn.transform.GetChild(0).localPosition = offset ?? new(.5f, 2.5f, 0f);
+        return btn;
+    }
+
+    public static Button IconTextureButton(string name, Texture2D icon, Transform parent, float x, float y, UnityAction clicked = null, Color? color = null)
+    {
+        var btn = Button(name, parent, x + 32, y, width: 248f, color: color, clicked: clicked);
+        ImageFromTexture("Icon", btn.transform, -248f / 2 - 44f, 0f, icon, 48f, 48f);
         return btn;
     }
 
