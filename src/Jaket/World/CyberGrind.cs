@@ -46,7 +46,12 @@ public class CyberGrind
 
         // do not reset any value if it is the first load
         var col = grid.GetComponent<Collider>();
-        if (col.enabled) { col.enabled = false; return; }
+        if (col.enabled)
+        {
+            col.enabled = false; // start the timer and the music
+            GameObject.Find("Everything").transform.Find("Timer").gameObject.SetActive(true);
+            return;
+        }
 
         // play cheering sound effect
         var cr = CrowdReactions.Instance;
