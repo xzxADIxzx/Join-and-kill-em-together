@@ -39,9 +39,6 @@ public class CyberGrindPatch
     [HarmonyPatch("Start")]
     static void Start()
     {
-        // getting Cyber Grind deathzone to change it later
-        foreach (var deathZone in Resources.FindObjectsOfTypeAll<DeathZone>()) if (deathZone.name == "Cube") CyberGrind.Instance.GridDeathZoneInstance = deathZone;
-
         var cg = CyberGrind.Instance;
         if (LobbyController.Lobby != null || LobbyController.IsOwner)
         {
@@ -92,8 +89,5 @@ public class CyberGrindPatch
             // set enemies left text on the client, replacing original
             ___enemiesLeftText.text = EnemyTracker.Instance.enemies.Count.ToString();
         }
-        // change y position of cybergrind grid deathzone when lobby created or not to prevent enemies randomly dying
-        var dz = CyberGrind.Instance.GridDeathZoneInstance;
-        if (dz != null) dz.transform.position = dz.transform.position with { y = LobbyController.Lobby != null ? -10 : 0.5f };
     }
 }

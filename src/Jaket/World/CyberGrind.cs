@@ -15,7 +15,6 @@ public class CyberGrind : MonoSingleton<CyberGrind> // TODO a lot of work
     public Text WaveNumberTextInstance;
     /// <summary> Text used for displaying current enemies left. </summary>
     public Text EnemiesLeftTextInstance;
-    public DeathZone GridDeathZoneInstance;
 
     /// <summary> Current wave count used for sync. </summary>
     public int CurrentWave;
