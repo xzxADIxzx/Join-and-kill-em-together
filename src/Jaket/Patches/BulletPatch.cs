@@ -79,7 +79,7 @@ public class CommonBulletsPatch
     [HarmonyPatch(typeof(Harpoon), "OnTriggerEnter")]
     static bool HarpoonLogic(Harpoon __instance, Collider other, ref bool ___hit, ref Rigidbody ___rb)
     {
-        if (__instance.name == "Net" && other.gameObject == NewMovement.Instance.gameObject)
+        if (__instance.name == "Net" && !___hit && other.gameObject == NewMovement.Instance.gameObject)
         {
             ___hit = true;
             ___rb.constraints = RigidbodyConstraints.FreezeAll;

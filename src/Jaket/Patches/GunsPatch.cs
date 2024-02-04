@@ -35,7 +35,15 @@ public class ArmsPatch
     [HarmonyPatch(typeof(Punch), "ActiveStart")]
     static void Puncn()
     {
-        if (LobbyController.Lobby != null) Networking.Send(PacketType.Punch, w =>
+        if (LobbyController.Lobby == null) return;
+
+        foreach (var harpoon in NewMovement.Instance.GetComponentsInChildren<Harpoon>())
+        {
+            Bullets.Punch(harpoon);
+            harpoon.name = "Punched";
+        }
+
+        Networking.Send(PacketType.Punch, w =>
         {
             w.Id(Networking.LocalPlayer.Id);
             w.Byte(0);

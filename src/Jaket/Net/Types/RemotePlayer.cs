@@ -1,5 +1,6 @@
 namespace Jaket.Net.Types;
 
+using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Assets;
@@ -245,6 +246,14 @@ public class RemotePlayer : Entity
     /// <summary> Plays the punching animation and creates a shockwave as needed. </summary>
     public void Punch(Reader r)
     {
+        var field = AccessTools.Field(typeof(Harpoon), "target");
+        foreach (var harpoon in Object.FindObjectsOfType<Harpoon>())
+            if ((field.GetValue(harpoon) as EnemyIdentifierIdentifier)?.eid == EnemyId)
+            {
+                Bullets.Punch(harpoon);
+                harpoon.name = "Net";
+            }
+
         switch (r.Byte())
         {
             case 0:
