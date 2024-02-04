@@ -1,37 +1,25 @@
 ﻿namespace Jaket.World;
 
 using HarmonyLib;
+using UnityEngine;
 
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net;
-using Jaket.UI;
 
 /// <summary> Class responsible for Cyber Grind synchronization. </summary>
-public class CyberGrind : MonoSingleton<CyberGrind> // TODO a lot of work
+public class CyberGrind
 {
     private static EndlessGrid grid => EndlessGrid.Instance;
     private static NewMovement nm => NewMovement.Instance;
 
     /// <summary> Current wave number used for display on the Huge Flying Panel™. </summary>
-    public int CurrentWave;
-    /// <summary> How many times pattern is loaded. Can't be bigger than 1. </summary>
-    public int LoadTimes; // TODO replace with boolean
-
-    /// <summary> Current pattern used for sync. </summary>
-    public ArenaPattern CurrentPattern;
-    public int LoadCount;
-
-    /// <summary> Creates a singleton of cyber grind sync tool. </summary>
-    public static void Load()
-    {
-        // initialize the singleton
-        UI.Object("Cyber Grind").AddComponent<CyberGrind>();
-    }
+    public static int CurrentWave;
+    /// <summary> Current pattern containing heights and prefabs. </summary>
+    public static ArenaPattern CurrentPattern;
 
     /// <summary> Sends the current arena pattern to all clients. </summary>
-    /// <param name="pattern"> Pattern to send to clients. </param>
-    public void SendPattern(ArenaPattern pattern) => Networking.Send(PacketType.CyberGrindAction, w =>
+    public static void SyncPattern(ArenaPattern pattern) => Networking.Send(PacketType.CyberGrindAction, w =>
     {
         w.Int(grid.currentWave);
         w.String(pattern.heights);
@@ -39,30 +27,26 @@ public class CyberGrind : MonoSingleton<CyberGrind> // TODO a lot of work
     }, size: 4096); // the pattern size is always different, but IO+Networking will send the required size, so we feel free to allocate with a margin
 
     /// <summary> Reads and loads a pattern from memory. </summary>
-    public void LoadPattern(Reader r)
+    public static void LoadPattern(Reader r)
     {
-        // set current wave to synced one
+        // read the wave and activate the Huge Flying Panel™
         CurrentWave = r.Int();
-        // sets current pattern to give it to LoadPattern method of original class
+        grid.waveNumberText.transform.parent.parent.gameObject.SetActive(true);
+
+        // read the pattern and launch the wave
         CurrentPattern = new ArenaPattern { heights = r.String(), prefabs = r.String() };
         LoadPattern(CurrentPattern);
     }
 
     /// <summary> Loads the given pattern and invokes the next wave. </summary>
-    /// <param name="pattern"> <see cref="ArenaPattern"/> to load. </param>
-    public void LoadPattern(ArenaPattern pattern)
+    public static void LoadPattern(ArenaPattern pattern)
     {
-        // sets current pattern to give it to LoadPattern method of original class
-        CurrentPattern = pattern;
-        // start a new wave with server pattern
+        // start a new wave with the synced pattern
         AccessTools.Method(typeof(EndlessGrid), "NextWave").Invoke(grid, new object[] { });
 
-        // Do not make new wave if it is the first time
-        if (LoadTimes < 1)
-        {
-            LoadTimes++;
-            return;
-        }
+        // do not reset any value if it is the first load
+        var col = grid.GetComponent<Collider>();
+        if (col.enabled) { col.enabled = false; return; }
 
         // play cheering sound effect
         var cr = CrowdReactions.Instance;
@@ -78,7 +62,4 @@ public class CyberGrind : MonoSingleton<CyberGrind> // TODO a lot of work
             nm.FullStamina();
         }
     }
-
-    /// <summary> Loads the current pattern. </summary>
-    public void LoadCurrentPattern() => LoadPattern(CurrentPattern);
 }
