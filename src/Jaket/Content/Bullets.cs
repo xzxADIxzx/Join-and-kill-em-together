@@ -1,5 +1,6 @@
 namespace Jaket.Content;
 
+using HarmonyLib;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -156,7 +157,7 @@ public class Bullets
     /// <summary> Synchronizes the "death" of the bullet. </summary>
     public static void SyncDeath(GameObject bullet)
     {
-        if (bullet.TryGetComponent<Bullet>(out var comp) && comp.IsOwner) Networking.Send(PacketType.EnemyDied, w => w.Id(comp.Id), size: 8);
+        if (bullet.TryGetComponent<Bullet>(out var comp) && comp.IsOwner) Networking.Send(PacketType.KillEntity, w => w.Id(comp.Id), size: 8);
     }
 
     #region special
@@ -191,6 +192,17 @@ public class Bullets
 
             w.Float(force);
         }, size: 13);
+    }
+
+    /// <summary> Turns the harpoon 180 degrees and then punches it. </summary>
+    public static void Punch(Harpoon harpoon)
+    {
+        // null pointer fix
+        AccessTools.Field(typeof(Harpoon), "aud").SetValue(harpoon, harpoon.GetComponent<AudioSource>());
+
+        harpoon.transform.Rotate(new(0f, 180f, 0f), Space.Self);
+        harpoon.transform.position += harpoon.transform.forward;
+        harpoon.Punched();
     }
 
     #endregion

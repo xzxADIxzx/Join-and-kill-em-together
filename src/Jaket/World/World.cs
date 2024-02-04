@@ -67,6 +67,8 @@ public class World : MonoSingleton<World>
             {
                 obj.GetComponent<ObjectActivator>().events.toActivateObjects[4] = null;
             }),
+            // move the death zone, because entities spawn at the origin
+            StaticAction.Find("Endless", "Cube", new(-40f, 0.5f, 102.5f), obj => obj.transform.position = new(-40f, -10f, 102.5f)),
 
             // enable arenas that are disabled by default
             StaticAction.Enable("Level 4-2", "6A - Indoor Garden", new(-19f, 35f, 953.9481f)),

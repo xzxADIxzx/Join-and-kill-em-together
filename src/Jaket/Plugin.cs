@@ -75,7 +75,6 @@ public class Plugin : BaseUnityPlugin
 
         World.World.Load();
         Movement.Load();
-        CyberGrind.Load();
 
         WidescreenFix.Load();
         UI.UI.Load();
