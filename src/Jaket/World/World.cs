@@ -42,7 +42,7 @@ public class World : MonoSingleton<World>
 
             if (LobbyController.Lobby != null) Instance.Restore();
         };
-        Events.OnLobbyEntered += () => Instance.Restore();
+        Events.OnLobbyEntered += Instance.Restore;
 
         // create world actions to synchronize different things in the level
         Actions.AddRange(new WorldAction[]

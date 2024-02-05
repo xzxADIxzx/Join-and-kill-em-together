@@ -2,7 +2,6 @@ namespace Jaket.Net.Endpoints;
 
 using Steamworks;
 using Steamworks.Data;
-using UnityEngine;
 
 using Jaket.Content;
 using Jaket.IO;
