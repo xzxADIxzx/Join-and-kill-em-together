@@ -18,6 +18,14 @@ public class CyberGrind
     /// <summary> Current pattern containing heights and prefabs. </summary>
     public static ArenaPattern CurrentPattern;
 
+    /// <summary> Number of living players. </summary>
+    public static int PlayersAlive()
+    {
+        int amount = nm.dead ? 0 : 1;
+        Networking.EachPlayer(p => amount += p.Health == 0 ? 0 : 1);
+        return amount;
+    }
+
     /// <summary> Sends the current arena pattern to all clients. </summary>
     public static void SyncPattern(ArenaPattern pattern) => Networking.Send(PacketType.CyberGrindAction, w =>
     {
@@ -66,5 +74,6 @@ public class CyberGrind
             nm.GetHealth(999, silent: true);
             nm.FullStamina();
         }
+        else Movement.Instance.CyberRespawn();
     }
 }

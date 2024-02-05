@@ -55,6 +55,9 @@ public class Movement : MonoSingleton<Movement>
 
         // interrupt emoji to prevent some bugs
         Events.OnLoaded += () => Instance.StartEmoji(0xFF, false);
+
+        // update death screen text to display number of living players in the Cyber Grind
+        Instance.InvokeRepeating("DeathScreenUpdate", 0f, 1f);
     }
 
     private void Update()
@@ -187,7 +190,6 @@ public class Movement : MonoSingleton<Movement>
                 cam.position = hit.point + .5f * hit.normal;
         }
 
-
         // ultrasoap
         if (SceneHelper.CurrentScene != "Main Menu" && !nm.dead)
         {
@@ -197,6 +199,7 @@ public class Movement : MonoSingleton<Movement>
                     ? RigidbodyConstraints.FreezeRotation
                     : (RigidbodyConstraints)122;
         }
+
 
 
         // all the following changes are related to the network part of the game and shouldn't affect the local
@@ -219,6 +222,33 @@ public class Movement : MonoSingleton<Movement>
 
             UI.SendMsg("Cheats are prohibited in this lobby!");
         }
+
+        // fake Cyber Grind death
+        if (nm.dead && nm.endlessMode)
+        {
+            nm.blackScreen.gameObject.SetActive(true);
+            nm.screenHud.SetActive(false);
+
+            if (nm.blackScreen.color.a < 0.5f)
+            {
+                nm.blackScreen.color = nm.blackScreen.color with { a = nm.blackScreen.color.a + .75f * Time.deltaTime };
+                nm.youDiedText.color = nm.youDiedText.color with { a = nm.blackScreen.color.a };
+            }
+        }
+    }
+
+    private void DeathScreenUpdate()
+    {
+        // disable text override component if the player is in tge Cyber Grind
+        nm.youDiedText.GetComponents<MonoBehaviour>()[1].enabled = !nm.endlessMode;
+        if (nm.endlessMode)
+        {
+            int alive = CyberGrind.PlayersAlive();
+            nm.youDiedText.text = $"[YOUR UNIT IS DISABLED]\n\n\n\n\n\nWait until the next wave\nPlayers alive: [{alive}]";
+
+            var final = nm.GetComponentInChildren<FinalCyberRank>();
+            if (alive == 0 && final.savedTime == 0f) final.GameOver();
+        }
     }
 
     /// <summary> Returns the rounded speed of the skateboard. </summary>
@@ -240,6 +270,13 @@ public class Movement : MonoSingleton<Movement>
         nm.GetHealth(0, true);
         cc.StopShake();
         nm.ActivatePlayer();
+    }
+
+    /// <summary> Respawns Cyber Grind players. </summary>
+    public void CyberRespawn()
+    {
+        nm.Respawn();
+        nm.transform.position = new(0f, 80f, 62.5f);
     }
 
     #region toggling

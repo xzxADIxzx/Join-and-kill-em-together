@@ -22,6 +22,9 @@ public class CyberGrindPatch
             CyberGrind.SyncPattern(pattern);
         else
             pattern = CyberGrind.CurrentPattern;
+
+        // respawn the host if he is dead
+        if (LobbyController.IsOwner && NewMovement.Instance.dead) Movement.Instance.CyberRespawn();
     }
 
     [HarmonyPrefix]
@@ -50,4 +53,12 @@ public class CyberGrindPatch
             ___enemiesLeftText.text = list.Count.ToString();
         }
     }
+}
+
+[HarmonyPatch(typeof(FinalCyberRank))]
+public class CyberDeathPatch
+{
+    [HarmonyPrefix]
+    [HarmonyPatch(nameof(FinalCyberRank.GameOver))]
+    static bool GameOver() => LobbyController.Lobby == null || CyberGrind.PlayersAlive() == 0;
 }
