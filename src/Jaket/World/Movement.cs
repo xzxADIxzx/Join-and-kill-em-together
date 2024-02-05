@@ -247,7 +247,11 @@ public class Movement : MonoSingleton<Movement>
             nm.youDiedText.text = $"[YOUR UNIT IS DISABLED]\n\n\n\n\n\nWait until the next wave\nPlayers alive: [{alive}]";
 
             var final = nm.GetComponentInChildren<FinalCyberRank>();
-            if (alive == 0 && final.savedTime == 0f) final.GameOver();
+            if (alive == 0 && final.savedTime == 0f)
+            {
+                final.GameOver();
+                Destroy(nm.blackScreen.gameObject);
+            }
         }
     }
 
