@@ -55,7 +55,7 @@ public class SteamPatch
          * create a friend group (lobby id as the value) and set the group size (lobby member count)
          * check out https://wiki.facepunch.com/steamworks/Grouping_Friends and https://partner.steamgames.com/doc/api/ISteamFriends#SetRichPresence
         */
-        SteamFriends.SetRichPresence("steam_player_group", lobby.Value.Id.ToString());
+        SteamFriends.SetRichPresence("steam_player_group", lobby.Value.GetData("name"));
         SteamFriends.SetRichPresence("steam_player_group_size", lobby.Value.MemberCount.ToString());
     }
 }
