@@ -54,6 +54,8 @@ public class Events : MonoSingleton<Events>
 
         // update the discord activity so everyone can know I've been working hard
         OnLobbyAction += () => DiscordController.Instance.FetchSceneActivity(SceneHelper.CurrentScene);
+        // same as the line above
+        OnLobbyAction += () => SteamController.Instance.FetchSceneActivity(SceneHelper.CurrentScene);
         // toggle the ability of the game to run in the background, because multiplayer requires it
         OnLobbyAction += () => Application.runInBackground = LobbyController.Lobby != null;
     }
