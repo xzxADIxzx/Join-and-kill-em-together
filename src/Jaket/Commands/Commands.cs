@@ -127,6 +127,7 @@ public class Commands
             SendMsg("Contributors:");
             SendMsg("* <color=#00E666>Rey Hunter</color> - really cool icons for emotions");
             SendMsg("* <color=#00E666>Ardub</color> - invaluable help with The Cyber Grind <size=12><color=#cccccc>(he did 90% of the work)</color></size>");
+            SendMsg("* <color=#00E666>Kekson1a</color> - Steam Rich Presence support</size>");
 /*
             SendMsg("Translators:");
             SendMsg("<color=#cccccc>NotPhobos - Spanish, sSAR - Italian, Theoyeah - French, Sowler - Polish, Ukrainian</color>");

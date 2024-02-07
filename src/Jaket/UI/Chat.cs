@@ -18,7 +18,7 @@ public class Chat : CanvasSingleton<Chat>
     /// <summary> Maximum length of chat message. </summary>
     const int MAX_MESSAGE_LENGTH = 128;
     /// <summary> How many messages at a time will be shown. </summary>
-    const int MESSAGES_SHOWN = 12;
+    const int MESSAGES_SHOWN = 14;
     /// <summary> How many characters fit in one line of chat. </summary>
     const int SYMBOLS_PER_ROW = 63;
     /// <summary> Chat width in pixels. </summary>

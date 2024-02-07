@@ -11,6 +11,7 @@ This modification made by [me](https://github.com/xzxADIxzx) and my team adds su
 * Integration with Steam
    * Public, friends only and private lobbies
    * Invitations via Steam or lobby code
+   * Rich Presence
 * Automatic check for updates
    * Please stop playing on version 0.3.0
 * User interface
