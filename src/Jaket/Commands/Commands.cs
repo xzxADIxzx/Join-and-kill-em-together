@@ -129,7 +129,7 @@ public class Commands
             SendMsg("* <color=#00E666>Ardub</color> - invaluable help with The Cyber Grind <size=12><color=#cccccc>(he did 90% of the work)</color></size>");
 /*
             SendMsg("Translators:");
-            SendMsg("<color=#cccccc>NotPhobos - Spanish, sSAR - Italian, Theoyeah - French, Sowler - Polish</color>");
+            SendMsg("<color=#cccccc>NotPhobos - Spanish, sSAR - Italian, Theoyeah - French, Sowler - Polish, Ukrainian</color>");
 */
             SendMsg("Testers:");
             SendMsg("<color=#cccccc>Fenicemaster, AndruGhost, Subjune, FruitCircuit</color>");
