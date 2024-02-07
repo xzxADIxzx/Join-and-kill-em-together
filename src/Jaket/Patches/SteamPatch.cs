@@ -4,6 +4,7 @@ using HarmonyLib;
 
 using Jaket.Net;
 using Steamworks;
+using Steamworks.Data;
 
 [HarmonyPatch]
 public class SteamPatch
@@ -26,11 +27,11 @@ public class SteamPatch
 
         // #AtCyberGrind is the steam_display localization string for Cyber Grind, just "%difficulty% | Cyber Grind: Wave %wave%" without setting its values
         if (key == "wave" && steamDisplay == "#AtCyberGrind")
-            value += " | Multiplayer via Jacket";
+            value += " | Multiplayer via Jaket";
 
         // #AtStandardLevel is the steam_display localization string for Cyber Grind, just "%difficulty% | %level% without setting its values
         if (key == "level" && steamDisplay == "#AtStandardLevel")
-            value += " | Multiplayer via Jacket";
+            value += " | Multiplayer via Jaket";
         /*
          * other steam_display values for ULTRAKILL include:
          * #AtMainMenu (displays "Main Menu" in your activity)
@@ -41,7 +42,7 @@ public class SteamPatch
         */
     }
 
-    static void RefreshGroupActivity(Steamworks.Data.Lobby? lobby)
+    static void RefreshGroupActivity(Lobby? lobby)
     {
         if (lobby == null)
         {
