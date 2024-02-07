@@ -2,7 +2,6 @@ namespace Jaket.Net.Endpoints;
 
 using Steamworks;
 using Steamworks.Data;
-using UnityEngine;
 
 using Jaket.Content;
 using Jaket.IO;
@@ -57,7 +56,7 @@ public class Client : Endpoint, IConnectionManager
 
         Listen(PacketType.CinemaAction, r => Cinema.Play(r.String()));
 
-        Listen(PacketType.CyberGrindAction, r => CyberGrind.Instance.LoadPattern(r));
+        Listen(PacketType.CyberGrindAction, CyberGrind.LoadPattern);
     }
 
     public override void Update()

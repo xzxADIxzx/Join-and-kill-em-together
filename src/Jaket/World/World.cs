@@ -42,7 +42,7 @@ public class World : MonoSingleton<World>
 
             if (LobbyController.Lobby != null) Instance.Restore();
         };
-        Events.OnLobbyEntered += () => Instance.Restore();
+        Events.OnLobbyEntered += Instance.Restore;
 
         // create world actions to synchronize different things in the level
         Actions.AddRange(new WorldAction[]
@@ -60,13 +60,17 @@ public class World : MonoSingleton<World>
             // for some reason this object cannot be found located
             StaticAction.Find("Level 5-2", "6 (Secret)", new(-3.5f, -3f, 940.5f), obj =>
             {
-                Object.Destroy(obj.transform.Find("Altar (Blue Skull) Variant").GetChild(0).gameObject);
+                Destroy(obj.transform.Find("Altar (Blue Skull) Variant").GetChild(0).gameObject);
             }),
+            // fix the red altar at the very beggining of the level
+            StaticAction.Find("Level 7-1", "Cube", new(0f, 3.4f, 582.5f), obj => obj.transform.position = new(0f, 7.4f, 582.5f)),
             // disable door blocker
             StaticAction.Find("Level P-1", "Trigger", new(360f, -568.5f, 110f), obj =>
             {
                 obj.GetComponent<ObjectActivator>().events.toActivateObjects[4] = null;
             }),
+            // move the death zone, because entities spawn at the origin
+            StaticAction.Find("Endless", "Cube", new(-40f, 0.5f, 102.5f), obj => obj.transform.position = new(-40f, -10f, 102.5f)),
 
             // enable arenas that are disabled by default
             StaticAction.Enable("Level 4-2", "6A - Indoor Garden", new(-19f, 35f, 953.9481f)),
@@ -85,6 +89,9 @@ public class World : MonoSingleton<World>
             StaticAction.Destroy("Level 5-2", "Arena 2", new(87.5f, -53f, 1240f)),
             StaticAction.Destroy("Level 6-1", "Cage", new(168.5f, -130f, 140f)),
             StaticAction.Destroy("Level 6-1", "Cube", new(102f, -165f, -503f)),
+            StaticAction.Destroy("Level 7-1", "SkullRed", new(-66.25f, 9.8f, 485f)),
+            StaticAction.Destroy("Level 7-1", "ViolenceArenaDoor", new(-120f, 0f, 530.5f)),
+            StaticAction.Destroy("Level 7-1", "Walkway Arena -> Stairway Up", new(80f, -25f, 590f)),
             StaticAction.Destroy("Level 7-4", "ArenaWalls", new(-26.5f, 470f, 763.75f)),
 
             // there are just a couple of little things that need to be synchronized

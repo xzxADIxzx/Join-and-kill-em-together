@@ -19,6 +19,7 @@ This modification made by [me](https://github.com/xzxADIxzx) and my team adds su
    * Information about teammates: their health and rail charge
    * List of public lobbies so you never get bored
    * Chat, in case you have no other means of communication
+   * Interactive guide to help you understand the basics
 * Interaction between players
    * Up to 5 teams, making available both the passage of the campaign and PvP
    * Emotions wheel to tease your friends or bosses
@@ -27,9 +28,11 @@ This modification made by [me](https://github.com/xzxADIxzx) and my team adds su
 * Synchronization of everything
    * Players, their weapons, weapons paint, fists, hook, animations, particles and even head rotation
    * All projectiles in the game and chargeback damage
+   * All sorts of items such as torches, skulls and developer plushies
    * Synchronization of position and health of enemies
    * Synchronization of special bosses such as Leviathan and Minos' hand
    * Synchronization of different triggers at levels
+   * Synchronization of the Cyber Grind
 * Ultrapain difficulty support
 
 ## Installation

@@ -94,7 +94,7 @@ public class Enemies
             if (enemyId.GetComponent<Sandbox.SandboxEnemy>() != null)
                 Networking.Send(PacketType.SpawnEntity, w =>
                 {
-                    w.Enum(Enemies.Type(enemyId));
+                    w.Enum(Type(enemyId));
                     w.Vector(enemyId.transform.position);
                 }, size: 13);
 
