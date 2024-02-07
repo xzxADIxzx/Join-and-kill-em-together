@@ -37,7 +37,7 @@ public class SteamPatch
          * #AtMainMenu (displays "Main Menu" in your activity)
          * #AtCustomLevel (displays "Playing Custom Level" in your activity)
          * #UnknownLevel (displays "???" in your activity)
-         * these have no additional localization values, this is why they are not included here
+         * these have no additional localization values, so we cannot add "| Multiplayer via Jaket" to them
          * for more info, check out SteamController.FetchSceneActivity(string scene)
         */
     }
