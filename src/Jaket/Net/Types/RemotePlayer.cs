@@ -119,7 +119,7 @@ public class RemotePlayer : Entity
 
     private void Update()
     {
-        Header.Update(Health);
+        Header.Update(Health, Typing);
         if (Animator == null) // the player is dead
         {
             if (Health != 0) Destroy(gameObject); // the player has respawned, the doll needs to be recreated
