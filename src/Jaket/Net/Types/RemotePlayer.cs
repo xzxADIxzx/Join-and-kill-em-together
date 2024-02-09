@@ -1,7 +1,6 @@
 namespace Jaket.Net.Types;
 
 using HarmonyLib;
-using Steamworks;
 using UnityEngine;
 
 using Jaket.Assets;
@@ -276,11 +275,6 @@ public class RemotePlayer : Entity
     {
         if (Pointer != null) Pointer.Lifetime = 4.5f;
         Pointer = Pointer.Spawn(Team, r.Vector(), r.Vector(), transform);
-    }
-
-    public void Spray(SteamId id, Reader r)
-    {
-        SprayManager.CreateSpray(id, r.Vector(), r.Vector());
     }
 
     #endregion

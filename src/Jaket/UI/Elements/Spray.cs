@@ -3,17 +3,14 @@ namespace Jaket.UI.Elements;
 using UnityEngine;
 
 using Jaket.UI;
-using System;
-using UnityEngine.UI;
 
 /// <summary> Represents a player created spray that contains a image. </summary>
 public class Spray : MonoBehaviour
 {
-    private CachedSpray CachedSpray;
     /// <summary> Spray's position in space. </summary>
     private Vector3 Position, Direction;
+    
     public Texture2D Texture;
-
     private Transform Canvas;
 
     /// <summary> How long the spray will last in seconds. </summary>
@@ -42,12 +39,9 @@ public class Spray : MonoBehaviour
         Texture = texture;
  
         // creates the image in the world
-        Log.Debug($"Creating image in the world.");
-        Canvas = UI.WorldCanvas("Spray image", transform, new(), action: canvas => {
-            UI.ImageFromTexture("Image", canvas, 0f, 0f, Texture, 128f, 128f);
-        });
-        Log.Debug("Done creating image in the world");
-        Canvas.GetComponent<Canvas>().sortingOrder = -1; // ADI's implementation is set sorting order to 1000, so we need to set it to -1, because it causes rendering issues
+        Canvas = UI.WorldCanvas("Spray image", transform, new(), action: canvas => UI.ImageFromTexture("Image", canvas, 0f, 0f, Texture, 128f, 128f));
+        // ADI's implementation is set sorting order to 1000, so we need to set it to -1, because it causes rendering issues
+        Canvas.GetComponent<Canvas>().sortingOrder = -1; 
     }
 
     /// <summary> Spawns a white dust particles. </summary>
@@ -63,6 +57,8 @@ public class Spray : MonoBehaviour
         }
     }
 
+    #region cubic interpolation
+
     public static float InCubic(float t) => t * t * t;
     public static float InOutCubic(float t)
     {
@@ -70,8 +66,11 @@ public class Spray : MonoBehaviour
         return 1 - InCubic((1 - t) * 2) / 2;
     }
 
+    #endregion
+
     public void Update()
     {
+        // destroy the spray if it's too old
         if ((ProcessTime += Time.deltaTime) > Lifetime) 
         {
             SpawnDust(1, .3f);

@@ -74,7 +74,7 @@ public class UI
     #region shown
 
     /// <summary> Returns true if at least one element of Jaket interface except indicators is currently visible. </summary>
-    public static bool AnyJaket() => LobbyList.Shown || LobbyTab.Shown || PlayerList.Shown || Settings.Shown || Chat.Shown || EmojiWheel.Shown;
+    public static bool AnyJaket() => LobbyList.Shown || LobbyTab.Shown || PlayerList.Shown || Settings.Shown || Chat.Shown || EmojiWheel.Shown || SpraySettings.Shown;
 
     /// <summary> Returns true if at least one built-in menu is currently visible. Cheat menu and console pause the game, so there's no need to add them. </summary>
     public static bool AnyBuiltIn() => (OptionsManager.Instance != null && OptionsManager.Instance.paused)

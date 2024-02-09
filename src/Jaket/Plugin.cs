@@ -8,8 +8,8 @@ using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net;
+using Jaket.Sprays;
 using Jaket.UI;
-using Jaket.UI.Elements;
 using Jaket.World;
 
 /// <summary> Plugin main class. Essentially only initializes all other components. </summary>

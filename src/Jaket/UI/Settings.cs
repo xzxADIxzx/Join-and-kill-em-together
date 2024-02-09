@@ -123,7 +123,7 @@ public class Settings : CanvasSingleton<Settings>
     public void Toggle(bool updateState = true)
     {
         // if another menu is open, then nothing needs to be done
-        if (UI.AnyJaket() && !Shown) return;
+        if (UI.AnyJaket() && !Shown && !SpraySettings.Shown) return;
 
         SpraySettings.Instance.Toggle(false);
 

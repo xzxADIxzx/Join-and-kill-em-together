@@ -11,6 +11,7 @@ using Jaket.Content;
 using Jaket.Net;
 using Jaket.UI;
 using Jaket.UI.Elements;
+using Jaket.Sprays;
 
 /// <summary> Class responsible for additions to control and local display of emotions. </summary>
 public class Movement : MonoSingleton<Movement>
@@ -75,7 +76,8 @@ public class Movement : MonoSingleton<Movement>
         if (Input.GetKeyDown(Settings.ScrollUp)) Chat.Instance.ScrollMessages(true);
         if (Input.GetKeyDown(Settings.ScrollDown)) Chat.Instance.ScrollMessages(false);
 
-        if (Physics.Raycast(cc.transform.position, cc.transform.forward, out var hit, float.MaxValue, mask))
+        if ((Input.GetKeyDown(Settings.Spray) || Input.GetKeyDown(Settings.Pointer)) // just for optimization reason
+            && Physics.Raycast(cc.transform.position, cc.transform.forward, out var hit, float.MaxValue, mask))
         {
             if (Input.GetKeyDown(Settings.Pointer))
             {

@@ -72,7 +72,7 @@ public class PlayerList : CanvasSingleton<PlayerList>
                     if (LobbyController.IsOwner)
                     {
                         UI.ProfileButton(member, table, -32f, y -= 64f, 256f);
-                        UI.IconButton("X", table, 136f, y, new(1f, .2f, .1f), clicked: () => Administration.Ban(member));
+                        UI.IconButton("X", table, 136f, y, new(1f, .2f, .1f), clicked: () => Administration.Ban(member.Id));
                     }
                     else UI.ProfileButton(member, table, 0f, y -= 64f);
                 }

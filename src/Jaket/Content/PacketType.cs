@@ -23,10 +23,13 @@ public enum PacketType
     Punch,
     /// <summary> Player pointed to some point in space. </summary>
     Point,
-    /// <summary> Client sprayed something. </summary>
+
+    /// <summary> Player sprayed something. </summary>
     Spray,
     /// <summary> Image chunk from the sprayer. </summary>
     ImageChunk,
+    /// <summary> Player asked the host to give him someone's spray data. </summary>
+    RequestImage,
 
     /// <summary> Need to activate a certain object. It can be anything, because there are a lot of different stuff in the game. </summary>
     ActivateObject,

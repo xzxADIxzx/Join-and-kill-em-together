@@ -1,14 +1,16 @@
 namespace Jaket.UI;
 
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using BepInEx;
 
-using System.Collections.Generic;
+using Jaket.Sprays;
 
 /// <summary> Controls the sprays settings menu. </summary>
 public class SpraySettings : CanvasSingleton<SpraySettings>
 {
-    /// <summary> Reference to preference manager. </summary>
     private static PrefsManager prefs => PrefsManager.Instance;
 
     #region Spray settings
@@ -23,6 +25,7 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
     public List<Button> SprayButtons = new();
     public Image SprayImage;
 
+    /// <summary> Updates settings from preferences. </summary>
     public void UpdateSettings()
     {
         DisableSprays = prefs.GetBool("jaket.disable-sprays", false);
@@ -31,8 +34,6 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
 
     private void Start()
     {
-        UpdateSettings();
-
         UI.Shadow("Shadow", transform);
         UI.TableAT("Sprays", transform, 0f, 352f, 826f, table =>
         {
@@ -58,33 +59,40 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
         });
 
         WidescreenFix.MoveDown(transform);
-        Rebuild();
+        ChangeSpray(SelectedSpray);
     }
 
-    public void ChangeSpray(string name)
+    // <summary> Changes the selected spray and updates the UI. </summary>
+    public void ChangeSpray(string name, bool updateUi = true)
     {
-        SprayManager.ChangeFileSpray(name);
-        prefs.SetString("jaket.selected-spray", name);
-        SelectedSpray = name;
-        Rebuild();
+        if (!name.IsNullOrWhiteSpace() && SprayManager.SetSpray(name) != null)
+        {
+            SelectedSpray = name;
+            prefs.SetString("jaket.selected-spray", name);
+        }
+
+        if (updateUi) Rebuild();
     }
 
     // <summary> Toggles visibility of settings. </summary>
     public void Toggle(bool toggle = false)
     {
-        // if another menu is open, then nothing needs to be done
-        if (UI.AnyJaket() && !Shown) return;
-
         gameObject.SetActive(Shown = toggle);
     }
 
     public string GetSprayCurrentString(string spray) => $"<size=20><color=white>Current spray is:\n{spray}</color></size>";
-    public string GetSprayInfoString(string spray) => $"{GetSprayCurrentString(spray)}\nYour spray applies when scene is changed or player is joined\n<size=16>Max size is {SprayFile.ImageMaxSize / 1024f:0.##}kb</size>";
+    public string GetSprayInfoString(string spray) => 
+        $"{GetSprayCurrentString(spray)}\nYour spray applies when scene is changed or player is joined\n<size=16>Max size is {GetSizeString(SprayFile.ImageMaxSize)}</size>";
+
+    // <summary> Gets a string with the given size in bytes in KB or MB in format: "123KB" or "123MB". </summary>
+    public string GetSizeString(double size)
+    {
+        if (size < 1024 * 1024) return $"{size / 1024:0.##}KB";
+        else return $"{size / 1024 / 1024:0.##}MB";
+    }
 
     public void Rebuild()
     {
-        if (!SprayManager.ChangeFileSpray(SelectedSpray)) SelectedSpray = "";
-
         // destroy all buttons and clear the list
         SprayButtons.ForEach(b => Destroy(b.gameObject));
         SprayButtons.Clear();
@@ -94,12 +102,17 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
         {
             if (i < SprayManager.FileSprays.Count)
             {
-                var spray = SprayManager.FileSprays[i];
+                var spray = SprayManager.FileSprays.Values.ElementAt(i);
                 SprayButtons.Add(UI.IconTextureButton(spray.GetShortName(), spray.Texture, SprayTable, 0f, 325f - i * 54f, clicked: () =>
                 {
                     if (spray.CheckSize()) // check if the spray is too big 
                     {
-                        UI.SendMsg($"<color=red>Spray is too large. Please, choose another one.</color>\nMax size is {SprayFile.ImageMaxSize / 1024f:0.##}kb.");
+                        UI.SendMsg
+                        (
+                            $"<color=red>Spray is too large</color> ({GetSizeString(spray.ImageData.Length)})" + 
+                            "\n<color=red>Please, choose another one</color>" + 
+                            $"\nMax size is {GetSizeString(SprayFile.ImageMaxSize)}"
+                        );
                         return;
                     }
                     ChangeSpray(spray.Name);
@@ -107,6 +120,7 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
             }
             else
             {
+                // create empty buttons if there are no sprays
                 var t = new Texture2D(1, 1);
                 t.SetPixel(0, 0, Color.gray);
                 t.Apply();
@@ -120,10 +134,11 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
         static string GetNameString() => SprayManager.CurrentSpray != null ? SprayManager.CurrentSpray.GetShortName(18) : "<color=gray>None</color>";
 
         if (SprayManager.FileSprays.Count == 0)
-            SprayInfoText = UI.Text($"No sprays found. Add one to the folder.\n{GetSprayCurrentString(GetNameString())}", SprayTable, 0f, 40f, height: 72f, color: Color.gray, size: 17);
+            SprayInfoText = UI.Text($"No sprays found. Add one to the folder.\n{GetSprayCurrentString(GetNameString())}",
+                SprayTable, 0f, 40f, height: 72f, color: Color.gray, size: 17);
         else
             SprayInfoText = UI.Text(GetSprayInfoString(GetNameString()), // show current spray info
-                    SprayTable, 0f, 32f, height: 88f, color: Color.gray, size: 17);
+                SprayTable, 0f, 32f, height: 88f, color: Color.gray, size: 17);
 
         if (SprayManager.CurrentSpray != null)
         {
