@@ -8,7 +8,7 @@ using Jaket.UI;
 public class Spray : MonoBehaviour
 {
     /// <summary> Spray's position in space. </summary>
-    private Vector3 Position, Direction;
+    private Vector3 position, direction;
     
     public Texture2D Texture;
     private Transform Canvas;
@@ -21,18 +21,9 @@ public class Spray : MonoBehaviour
     public static Spray Spawn(Vector3 position, Vector3 direction) =>
         UI.Component<Spray>(UI.Object("Spray"), spray =>
         {
-            spray.Position = position;
-            spray.Direction = direction;
+            spray.position = position;
+            spray.direction = direction;
         });
-
-    public void Start()
-    {
-        transform.position = Position + Direction.normalized * .01f; // adding some offset to prevent z-fighting
-        transform.rotation = Quaternion.LookRotation(Direction);
-        transform.rotation *= Quaternion.Euler(0, 180, 0); // rotates the spray so that it always faces the player
-
-        SpawnDust();
-    }
 
     public void AssignImage(Texture2D texture)
     {
@@ -68,7 +59,16 @@ public class Spray : MonoBehaviour
 
     #endregion
 
-    public void Update()
+    private void Start()
+    {
+        transform.position = position + direction.normalized * .01f; // adding some offset to prevent z-fighting
+        transform.rotation = Quaternion.LookRotation(direction);
+        transform.rotation *= Quaternion.Euler(0, 180, 0); // rotates the spray so that it always faces the player
+
+        SpawnDust();
+    }
+
+    private void Update()
     {
         // destroy the spray if it's too old
         if ((ProcessTime += Time.deltaTime) > Lifetime) 

@@ -13,12 +13,10 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
 {
     private static PrefsManager prefs => PrefsManager.Instance;
 
-    #region Spray settings
     // <summary> Toggles sprays visibility on client side. </summary>
     public bool DisableSprays;
     /// <summary> Selected spray name. </summary>
     public string SelectedSpray;
-    #endregion
 
     public Text SprayInfoText;
     public Transform SprayTable;
@@ -60,18 +58,17 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
 
         WidescreenFix.MoveDown(transform);
         ChangeSpray(SelectedSpray);
+        Rebuild();
     }
 
     // <summary> Changes the selected spray and updates the UI. </summary>
-    public void ChangeSpray(string name, bool updateUi = true)
+    public void ChangeSpray(string name)
     {
         if (!name.IsNullOrWhiteSpace() && SprayManager.SetSpray(name) != null)
         {
             SelectedSpray = name;
             prefs.SetString("jaket.selected-spray", name);
         }
-
-        if (updateUi) Rebuild();
     }
 
     // <summary> Toggles visibility of settings. </summary>
@@ -82,7 +79,7 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
 
     public string GetSprayCurrentString(string spray) => $"<size=20><color=white>Current spray is:\n{spray}</color></size>";
     public string GetSprayInfoString(string spray) => 
-        $"{GetSprayCurrentString(spray)}\nYour spray applies when scene is changed or player is joined\n<size=16>Max size is {GetSizeString(SprayFile.ImageMaxSize)}</size>";
+        $"{GetSprayCurrentString(spray)}\nYour spray applies when scene is changed or player is joined\n<size=16>Max size is {GetSizeString(SprayFile.IMAGE_MAX_SIZE)}</size>";
 
     // <summary> Gets a string with the given size in bytes in KB or MB in format: "123KB" or "123MB". </summary>
     public string GetSizeString(double size)
@@ -111,11 +108,12 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
                         (
                             $"<color=red>Spray is too large</color> ({GetSizeString(spray.ImageData.Length)})" + 
                             "\n<color=red>Please, choose another one</color>" + 
-                            $"\nMax size is {GetSizeString(SprayFile.ImageMaxSize)}"
+                            $"\nMax size is {GetSizeString(SprayFile.IMAGE_MAX_SIZE)}"
                         );
                         return;
                     }
                     ChangeSpray(spray.Name);
+                    Rebuild();
                 }, color: spray.CheckSize() ? Color.red : Color.white)); // set color based if spray is too big
             }
             else

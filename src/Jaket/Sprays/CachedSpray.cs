@@ -14,6 +14,7 @@ public class CachedSpray
     public Texture2D Texture;
     /// <summary> The spray in the world. </summary>
     public Spray Spray;
+    /// <summary> The cached image data bytes. </summary>
     public byte[] ImageData;
 
     public CachedSpray(SteamId owner) => Owner = owner;

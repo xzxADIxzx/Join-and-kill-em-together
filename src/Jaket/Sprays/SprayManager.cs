@@ -41,7 +41,7 @@ public class SprayManager
         // update settings and change the current spray if specified in prefs
         var ss = SpraySettings.Instance;
         ss.UpdateSettings();
-        ss.ChangeSpray(ss.SelectedSpray, false);
+        ss.ChangeSpray(ss.SelectedSpray);
 
         // process requests every second
         Events.EverySecond += SprayDistributor.ProcessRequests;
@@ -181,7 +181,7 @@ public class SprayManager
         return cachedSpray;
     }
 
-    /// <summary> Checks if the given owner has a cached spray. Returns CachedSpray if found, so no need to load it. </summary>
+    /// <summary> Returns the cached spray of the owner. Returns null if not cached. </summary>
     public static CachedSpray CheckForCachedSpray(SteamId owner) => CachedSprays.TryGetValue(owner, out var cachedSpray) ? cachedSpray : null;
 
     /// <summary> Removes all cached sprays. Sprays need to be loaded again. </summary>

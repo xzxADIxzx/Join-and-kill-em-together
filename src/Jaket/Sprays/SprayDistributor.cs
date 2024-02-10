@@ -29,20 +29,13 @@ public static class SprayDistributor
     {
         foreach (var owner in Requests.Keys)
         {
-            Log.Debug($"PROCESSING REQUEST {owner} {Requests[owner].Count}");
             if (SprayManager.CachedSprays.TryGetValue(owner, out var spray))
-            {
-                Upload(owner, spray.ImageData, (data, size) =>
-                {
-                    Log.Debug($"Spray {owner} was sent to all cons");
-                    Requests[owner].ForEach(con => con.SendMessage(data, size));
-                });
-            }
+                Upload(owner, spray.ImageData, (data, size) => Requests[owner].ForEach(con => con.SendMessage(data, size)));
             else
                 Log.Error($"Couldn't find the requested spray. Spray id is {owner}");
         }
 
-        Requests.Clear();
+        Requests.Clear(); // clear all requests, because they are processed
     }
 
     /// <summary> Handles the loaded spray and decides where to send it next. </summary>
@@ -85,7 +78,13 @@ public static class SprayDistributor
     {
         // there is no point in sending the spray to the distributor, because the host is the distributor
         if (!LobbyController.IsOwner)
+        {
+            // caching the current spray, because we already uploaded it to the host
+            var cs = SprayManager.CacheSpray(Networking.LocalPlayer.Id);
+            cs.AssignData(SprayManager.CurrentSpray.ImageData);
+
             Upload(Networking.LocalPlayer.Id, SprayManager.CurrentSpray.ImageData);
+        }
     }
 
     /// <summary> Loads a spray from the client or server. </summary>
