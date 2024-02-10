@@ -35,7 +35,7 @@ public class Plugin : BaseUnityPlugin
         // save an instance for later use
         Instance = this;
         // rename the game object for a more presentable look
-        gameObject.name = "Jaket";
+        name = "Jaket";
 
         // create output points for logs
         Log.Load();
