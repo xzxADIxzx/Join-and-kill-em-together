@@ -60,9 +60,11 @@ public class Items
         if (LobbyController.Lobby == null || itemId == null || itemId.gameObject == null) return;
 
         // the item was created remotely, the item is a book or the item is a prefab
-        if (itemId.gameObject.name == "Net" || itemId.gameObject.name.Contains("Book") || itemId.gameObject.scene.name == null) return;
+        if (itemId.name == "Net" || itemId.name.Contains("Book") || itemId.gameObject.scene.name == null) return;
         // sometimes the developer just deactivates the skulls instead of removing them
         if (!itemId.gameObject.activeSelf) return;
+        // what did I do to deserve this?
+        if (itemId.name == "Minotaur" || itemId.name == "Tram (3)") return;
 
         if (LobbyController.IsOwner)
             itemId.gameObject.AddComponent<Item>();

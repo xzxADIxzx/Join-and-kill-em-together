@@ -1,7 +1,9 @@
 namespace Jaket.World;
 
+using HarmonyLib;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 using Jaket.Content;
 using Jaket.IO;
@@ -64,6 +66,11 @@ public class World : MonoSingleton<World>
             }),
             // fix the red altar at the very beggining of the level
             StaticAction.Find("Level 7-1", "Cube", new(0f, 3.4f, 582.5f), obj => obj.transform.position = new(0f, 7.4f, 582.5f)),
+            // disable the roomba panel for clients
+            StaticAction.Find("Level 7-1", "ScreenActivator", new(-242.5f, -112f, 311f), obj =>
+            {
+                if (!LobbyController.IsOwner) obj.SetActive(false);
+            }),
             // disable door blocker
             StaticAction.Find("Level P-1", "Trigger", new(360f, -568.5f, 110f), obj =>
             {
@@ -71,6 +78,10 @@ public class World : MonoSingleton<World>
             }),
             // move the death zone, because entities spawn at the origin
             StaticAction.Find("Endless", "Cube", new(-40f, 0.5f, 102.5f), obj => obj.transform.position = new(-40f, -10f, 102.5f)),
+
+            // crutches everywhere, crutches all the time
+            StaticAction.Patch("Level 7-1", "Blockers", new(-242.5f, -115f, 314f)),
+            StaticAction.Patch("Level 7-1", "Wave 2", new(-242.5f, 0f, 0f)),
 
             // enable arenas that are disabled by default
             StaticAction.Enable("Level 4-2", "6A - Indoor Garden", new(-19f, 35f, 953.9481f)),
@@ -118,6 +129,25 @@ public class World : MonoSingleton<World>
             NetAction.Sync("Level 5-1", "CheckPointsUndisabler", new(0f, -50f, 350f)),
             NetAction.Sync("Level 5-1", "DelayedActivator", new(-15f, 36f, 698f)),
             NetAction.Sync("Level 5-1", "DelayedActivator", new(-15f, 38f, 778f)),
+
+            // boss fight roomba logic
+            NetAction.Sync("Level 7-1", "Blockers", new(-242.5f, -115f, 314f), obj =>
+            {
+                var btn = obj.transform.parent.Find("Screen").GetChild(0).GetChild(0).GetChild(0).GetChild(0);
+                var pointer = btn.GetComponents<MonoBehaviour>()[2];
+
+                var pressed = AccessTools.Property(pointer.GetType(),"OnPressed").GetValue(pointer) as UnityEvent;
+                pressed.Invoke(); // so much pain over a private class
+
+                // teleport the player to the roomba so that they are not left behind
+                NewMovement.Instance.transform.position = obj.transform.position with { y = -112.5f };
+            }),
+            NetAction.Sync("Level 7-1", "Wave 2", new(-242.5f, 0f, 0f)),
+            NetAction.Sync("Level 7-1", "Wave 3", new(-242.5f, 0f, 0f)),
+            NetAction.Sync("Level 7-1", "PlayerTeleportActivator", new(-242.5f, 0f, 0f)),
+
+            // cutscene of the falling tower
+            NetAction.Sync("Level 7-2", "TowerDestruction", new(-119.75f, 34f, 552.25f)),
 
             // Minos & Sisyphus have unique cutscenes and non-functional level exits
             NetAction.Sync("Level P-1", "MinosPrimeIntro", new(405f, -598.5f, 110f)),

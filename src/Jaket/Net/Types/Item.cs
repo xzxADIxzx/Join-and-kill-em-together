@@ -42,8 +42,8 @@ public class Item : OwnableEntity
         // turn off object physics so that it does not interfere with synchronization
         if (rb != null) rb.isKinematic = true;
 
-        transform.position = holding && this.player != null
-            ? this.player.HoldPosition
+        transform.position = holding && player != null
+            ? player.HoldPosition
             : new(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
         transform.eulerAngles = new(rx.GetAngel(LastUpdate), ry.GetAngel(LastUpdate), rz.GetAngel(LastUpdate));
 
@@ -62,10 +62,10 @@ public class Item : OwnableEntity
             {
                 if (col.gameObject.layer != 22) continue;
 
-                if (placed && ItemId.ipz == null && col.TryGetComponent<ItemPlaceZone>(out var zone))
+                if (placed && ItemId.ipz == null && col.TryGetComponent<ItemPlaceZone>(out var _))
                 {
                     transform.SetParent(col.transform);
-                    zone.CheckItem();
+                    foreach (var zone in col.GetComponents<ItemPlaceZone>()) zone.CheckItem();
                 }
 
                 if (torch && col.TryGetComponent<Flammable>(out var flammable)) flammable.Burn(4f);

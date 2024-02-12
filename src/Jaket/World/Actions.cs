@@ -47,6 +47,8 @@ public class StaticAction : WorldAction
         foreach (var obj in Resources.FindObjectsOfTypeAll<GameObject>())
             if (obj.gameObject.scene != null && obj.transform.position == position && obj.name == name) action(obj);
     });
+    /// <summary> Creates a static action that adds an object activation component to an object in the world. </summary>
+    public static StaticAction Patch(string level, string name, Vector3 position) => Find(level, name, position, obj => obj.AddComponent<ObjectActivator>());
     /// <summary> Creates a static action that enables an object in the world. </summary>
     public static StaticAction Enable(string level, string name, Vector3 position) => Find(level, name, position, obj => obj.SetActive(true));
     /// <summary> Creates a static action that destroys an object in the world. </summary>

@@ -35,6 +35,7 @@ public class Enemies
             case "DroneSkull Variant": return EntityType.FleshPanopticon_Face;
             case "Mandalore": return EntityType.Mandalore;
             case "Big Johninator": return EntityType.Johninator;
+            case "Big Johnator": return EntityType.Johninator;
         }
 
         // the remaining enemies can be found by their type
