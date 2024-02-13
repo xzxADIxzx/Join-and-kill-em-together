@@ -17,6 +17,7 @@ public class Movement : MonoSingleton<Movement>
 {
     private static NewMovement nm => NewMovement.Instance;
     private static FistControl fc => FistControl.Instance;
+    private static GunControl gc => GunControl.Instance;
     private static CameraController cc => CameraController.Instance;
 
     /// <summary> Current emotion preview, can be null. </summary>
@@ -294,18 +295,17 @@ public class Movement : MonoSingleton<Movement>
 
         // block pause
         OptionsManager.Instance.frozen = Instance.Emoji != 0xFF || InteractiveGuide.Shown;
-
         // block camera rotation & weapon fire
-        cc.enabled = cc.activated = GunControl.Instance.activated = !UI.AnyJaket() && Instance.Emoji == 0xFF;
+        cc.activated = gc.activated = !UI.AnyJaket() && Instance.Emoji == 0xFF;
     }
 
     /// <summary> Toggles the ability to move, used in the chat and etc. </summary>
     public static void ToggleMovement(bool enable)
     {
-        nm.enabled = fc.enabled = fc.activated = HookArm.Instance.enabled = enable;
+        nm.activated = HookArm.Instance.enabled = enable;
 
-        // put the hook back in place
-        if (!enable) HookArm.Instance.Cancel();
+        if (enable) fc.YesFist();
+        else HookArm.Instance.Cancel();
     }
 
     /// <summary> Toggles cursor visibility. </summary>
@@ -320,8 +320,8 @@ public class Movement : MonoSingleton<Movement>
     {
         // hide hud, weapons and arms
         StyleHUD.Instance.transform.parent.gameObject.SetActive(enable);
-        GunControl.Instance.gameObject.SetActive(enable);
         fc.gameObject.SetActive(enable);
+        gc.gameObject.SetActive(enable);
 
         // preventing some ultra stupid bug
         Console.Instance.enabled = enable;
