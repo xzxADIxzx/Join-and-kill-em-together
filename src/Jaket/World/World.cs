@@ -19,7 +19,7 @@ public class World : MonoSingleton<World>
     /// <summary> List of activated actions, cleared only when the host loads a new level. </summary>
     public List<byte> Activated = new();
 
-    /// <summary> There is no prefab for the mini-boss at levels 2-4. </summary>
+    /// <summary> There is no prefab for the mini-boss at level 2-4. </summary>
     public Hand Hand;
     /// <summary> Level 5-4 contains a unique boss that needs to be dealt with separately. </summary>
     public Leviathan Leviathan;
@@ -105,6 +105,9 @@ public class World : MonoSingleton<World>
             StaticAction.Destroy("Level 7-1", "Walkway Arena -> Stairway Up", new(80f, -25f, 590f)),
             StaticAction.Destroy("Level 7-4", "ArenaWalls", new(-26.5f, 470f, 763.75f)),
 
+            // there is a door within the Very Cancerous Rodent
+            NetAction.Sync("Level 1-2", "Cube (1)", new(-61f, -21.5f, 400.5f)),
+
             // there are just a couple of little things that need to be synchronized
             NetAction.Sync("Level 4-2", "DoorOpeners", new(-1.5f, -18f, 774.5f)),
             NetAction.Sync("Level 4-2", "DoorsOpener", new(40f, 5f, 813.5f)),
@@ -133,6 +136,9 @@ public class World : MonoSingleton<World>
             // boss fight roomba logic
             NetAction.Sync("Level 7-1", "Blockers", new(-242.5f, -115f, 314f), obj =>
             {
+                // enable the level in case the player is somewhere else
+                obj.transform.parent.parent.parent.parent.gameObject.SetActive(true);
+
                 var btn = obj.transform.parent.Find("Screen").GetChild(0).GetChild(0).GetChild(0).GetChild(0);
                 var pointer = btn.GetComponents<MonoBehaviour>()[2];
 
