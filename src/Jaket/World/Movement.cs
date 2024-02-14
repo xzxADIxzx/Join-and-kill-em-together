@@ -275,6 +275,8 @@ public class Movement : MonoSingleton<Movement>
         nm.GetHealth(0, true);
         cc.StopShake();
         nm.ActivatePlayer();
+
+        if (World.Instance.TunnelFight) nm.transform.position = World.Instance.TunnelRoomba.position with { y = -112.5f };
     }
 
     /// <summary> Respawns Cyber Grind players. </summary>
