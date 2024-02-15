@@ -97,6 +97,18 @@ public class RoomPatch
     }
 }
 
+[HarmonyPatch(typeof(TramControl))]
+public class TramPatch
+{
+    [HarmonyPrefix]
+    [HarmonyPatch(nameof(TramControl.SpeedUp), typeof(int))]
+    static void Up(TramControl __instance)
+    {
+        // find the cart in which the player will appear after respawn
+        if (LobbyController.Lobby != null && SceneHelper.CurrentScene == "Level 7-1") World.Instance.TunnelRoomba = __instance.transform.parent;
+    }
+}
+
 [HarmonyPatch]
 public class ActionPatch
 {

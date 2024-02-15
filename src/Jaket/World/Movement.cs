@@ -276,7 +276,8 @@ public class Movement : MonoSingleton<Movement>
         cc.StopShake();
         nm.ActivatePlayer();
 
-        if (World.Instance.TunnelFight) nm.transform.position = World.Instance.TunnelRoomba.position with { y = -112.5f };
+        // the player is currently fighting the Minotaur in the tunnel
+        if (World.Instance.TunnelRoomba) nm.transform.position = World.Instance.TunnelRoomba.position with { y = -112.5f };
     }
 
     /// <summary> Respawns Cyber Grind players. </summary>

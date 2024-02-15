@@ -25,8 +25,6 @@ public class World : MonoSingleton<World>
     /// <summary> Level 5-4 contains a unique boss that needs to be dealt with separately. </summary>
     public Leviathan Leviathan;
 
-    /// <summary> Whether the player is currently fighting the Minotaur in the tunnel. </summary>
-    public bool TunnelFight => TunnelRoomba && (TunnelRoomba.Find("Blockers")?.gameObject.activeSelf ?? false);
     /// <summary> Trolley with a teleport from the tunnel at level 7-1. </summary>
     public Transform TunnelRoomba;
 
@@ -55,9 +53,6 @@ public class World : MonoSingleton<World>
         // create world actions to synchronize different things in the level
         Actions.AddRange(new WorldAction[]
         {
-            // find the cart in which the player will appear after respawn
-            new StaticAction("Level 7-1", () => Instance.TunnelRoomba = Resources.FindObjectsOfTypeAll<Tram>()[0].transform),
-
             // duplicate torches at levels 4-3 and P-1
             StaticAction.PlaceTorches("Level 4-3", new(0f, -10f, 310f), 3f),
             StaticAction.PlaceTorches("Level P-1", new(-0.84f, -10f, 16.4f), 2f),
@@ -79,6 +74,11 @@ public class World : MonoSingleton<World>
             StaticAction.Find("Level 7-1", "ScreenActivator", new(-242.5f, -112f, 311f), obj =>
             {
                 if (!LobbyController.IsOwner) obj.SetActive(false);
+            }),
+            // boss fight unloads the previous location
+            StaticAction.Find("Level 7-1", "FightStart", new(-242.5f, 120f, -399.75f), obj =>
+            {
+                obj.GetComponent<ObjectActivator>().events.toDisActivateObjects[2] = null;
             }),
             // disable door blocker
             StaticAction.Find("Level P-1", "Trigger", new(360f, -568.5f, 110f), obj =>
@@ -247,7 +247,7 @@ public class World : MonoSingleton<World>
         Activated.ForEach(index => Actions[index].Run());
 
         // raise the activation trigger so that the player doesn't get stuck on the sides
-        FindObjectOfType<PlayerActivator>().transform.position -= Vector3.up * 6f;
+        FindObjectOfType<PlayerActivator>().transform.position += Vector3.up * 6f;
     }
 
     /// <summary> Iterates each static world action. </summary>
