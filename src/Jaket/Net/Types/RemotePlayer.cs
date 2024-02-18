@@ -151,22 +151,7 @@ public class RemotePlayer : Entity
             {
                 Weapons.Instantiate(Weapon, hand);
                 WeaponsOffsets.Apply(Weapon, hand);
-
-                foreach (var getter in hand.GetComponentsInChildren<GunColorGetter>())
-                {
-                    var renderer = getter.GetComponent<Renderer>();
-                    if (customColors)
-                    {
-                        renderer.materials = getter.coloredMaterials;
-                        UI.Properties(renderer, block =>
-                        {
-                            block.SetColor("_CustomColor1", color1);
-                            block.SetColor("_CustomColor2", color2);
-                            block.SetColor("_CustomColor3", color3);
-                        }, true);
-                    }
-                    else renderer.materials = getter.defaultMaterials;
-                }
+                UpdateStyle();
             }
         }
         if (LastEmoji != Emoji)
@@ -241,13 +226,40 @@ public class RemotePlayer : Entity
         hookWinch.SetPosition(1, hook.position);
     }
 
+    private void UpdateStyle()
+    {
+        foreach (var getter in hand.GetComponentsInChildren<GunColorGetter>())
+        {
+            var renderer = getter.GetComponent<Renderer>();
+            if (customColors)
+            {
+                renderer.materials = getter.coloredMaterials;
+                UI.Properties(renderer, block =>
+                {
+                    block.SetColor("_CustomColor1", color1);
+                    block.SetColor("_CustomColor2", color2);
+                    block.SetColor("_CustomColor3", color3);
+                }, true);
+            }
+            else renderer.materials = getter.defaultMaterials;
+        }
+    }
+
     #region special
+
+    /// <summary> Changes the style of the player. </summary>
+    public void Style(Reader r)
+    {
+        customColors = r.Bool();
+        color1 = r.Color(); color2 = r.Color(); color3 = r.Color();
+        UpdateStyle();
+    }
 
     /// <summary> Plays the punching animation and creates a shockwave as needed. </summary>
     public void Punch(Reader r)
     {
         var field = AccessTools.Field(typeof(Harpoon), "target");
-        foreach (var harpoon in Object.FindObjectsOfType<Harpoon>())
+        foreach (var harpoon in FindObjectsOfType<Harpoon>())
             if ((field.GetValue(harpoon) as EnemyIdentifierIdentifier)?.eid == EnemyId)
             {
                 Bullets.Punch(harpoon);
@@ -297,9 +309,6 @@ public class RemotePlayer : Entity
 
         w.Bool(usingHook);
         w.Float(hookX.target); w.Float(hookY.target); w.Float(hookZ.target);
-
-        w.Bool(customColors);
-        w.Color(color1); w.Color(color2); w.Color(color3);
     }
 
     public override void Read(Reader r)
@@ -321,9 +330,6 @@ public class RemotePlayer : Entity
 
         usingHook = r.Bool();
         hookX.Read(r); hookY.Read(r); hookZ.Read(r);
-
-        customColors = r.Bool();
-        color1 = r.Color(); color2 = r.Color(); color3 = r.Color();
     }
 
     public override void Damage(Reader r) => Bullets.DealDamage(EnemyId, r);

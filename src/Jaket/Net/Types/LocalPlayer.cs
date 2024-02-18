@@ -29,6 +29,8 @@ public class LocalPlayer : Entity
     public Vector3 Hook;
     /// <summary> The entity of the item the player is currently holding in their hands. </summary>
     public Item HeldItem;
+    /// <summary> Entity that the player pulls to himself with a hook. </summary>
+    public Entity Pulled;
 
     /// <summary> Index of the current weapon in the global list. </summary>
     private byte weapon;
@@ -55,11 +57,34 @@ public class LocalPlayer : Entity
         if (fc.currentPunch.holding) fc.currentPunch.PlaceHeldObject(new ItemPlaceZone[0], null);
     }
 
+    #region special
+
+    /// <summary> Synchronizes the style of the local player. </summary>
+    public void SyncStyle() => Networking.Send(PacketType.Style, w =>
+    {
+        w.Id(Id);
+        if (renderer)
+        {
+            bool custom = renderer.material.name.Contains("Custom");
+            w.Bool(custom);
+
+            if (custom) UI.Properties(renderer, block =>
+            {
+                w.Color(block.GetColor("_CustomColor1"));
+                w.Color(block.GetColor("_CustomColor2"));
+                w.Color(block.GetColor("_CustomColor3"));
+            });
+            else w.Inc(12);
+        }
+        else w.Inc(13);
+    }, size: 21);
+
     /// <summary> Caches different things related to weapons and paints hands. </summary>
     public void UpdateWeapons()
     {
         weapon = Weapons.Type();
         renderer = GunControl.Instance.currentWeapon?.GetComponentInChildren<GunColorGetter>()?.GetComponent<Renderer>();
+        SyncStyle();
 
         // according to the lore, the player plays for V3, so we need to paint the hand
         var punch = fc.transform.Find("Arm Blue(Clone)");
@@ -72,6 +97,7 @@ public class LocalPlayer : Entity
         // if (knuckle) punch.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture(punch: false);
     }
 
+    #endregion
     #region entity
 
     public override void Write(Writer w)
@@ -92,21 +118,6 @@ public class LocalPlayer : Entity
 
         w.Bool(Hook != Vector3.zero && HookArm.Instance.enabled);
         w.Vector(Hook);
-
-        if (renderer != null)
-        {
-            bool custom = renderer.material.name.Contains("Custom");
-            w.Bool(custom);
-
-            if (custom) UI.Properties(renderer, block =>
-            {
-                w.Color(block.GetColor("_CustomColor1"));
-                w.Color(block.GetColor("_CustomColor2"));
-                w.Color(block.GetColor("_CustomColor3"));
-            });
-            else w.Inc(12);
-        }
-        else w.Inc(13);
     }
 
     // there is no point in reading anything, because it is a local player

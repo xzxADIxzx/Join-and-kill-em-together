@@ -19,6 +19,8 @@ public enum PacketType
     /// <summary> Request from a host to kill an entity or from a client to destroy a bullet. </summary>
     KillEntity,
 
+    /// <summary> Player changed their style: the color of weapons or clothes. </summary>
+    Style,
     /// <summary> Player punched, this needs to be visually displayed. </summary>
     Punch,
     /// <summary> Player pointed to some point in space. </summary>

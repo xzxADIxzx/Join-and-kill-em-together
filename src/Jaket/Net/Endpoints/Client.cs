@@ -42,11 +42,14 @@ public class Client : Endpoint, IConnectionManager
 
         Listen(PacketType.KillEntity, r => entities[r.Id()]?.Kill());
 
+        Listen(PacketType.Style, r =>
+        {
+            if (entities[r.Id()] is RemotePlayer player) player?.Style(r);
+        });
         Listen(PacketType.Punch, r =>
         {
             if (entities[r.Id()] is RemotePlayer player) player?.Punch(r);
         });
-
         Listen(PacketType.Point, r =>
         {
             if (entities[r.Id()] is RemotePlayer player) player?.Point(r);
