@@ -86,6 +86,16 @@ public abstract class Entity : MonoBehaviour
         /// <summary> Returns the intermediate value of the angle. </summary>
         public float GetAngel(float lastUpdate) => Mathf.LerpAngle(last, target, (Time.time - lastUpdate) / Networking.SNAPSHOTS_SPACING);
     }
+
+    /// <summary> Class for finding entities according to their ID. </summary>
+    public class EntityProv<T> where T : Entity
+    {
+        /// <summary> Id of the entity that needs to be found. </summary>
+        public ulong Id;
+
+        private T value;
+        public T Value => value?.Id == Id ? value : Networking.Entities.TryGetValue(Id, out var e) && e is T t ? value = t : null;
+    }
 }
 
 /// <summary> Entity that has an owner and can be passed from client to client. </summary>

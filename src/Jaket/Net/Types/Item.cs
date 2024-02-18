@@ -12,7 +12,7 @@ public class Item : OwnableEntity
     private FloatLerp x, y, z, rx, ry, rz;
 
     /// <summary> Player holding an item in their hands. </summary>
-    private RemotePlayer player;
+    private EntityProv<RemotePlayer> player;
     /// <summary> Whether the player is holding an item. </summary>
     private bool holding;
     /// <summary> Whether the item is placed on an altar. </summary>
@@ -23,7 +23,7 @@ public class Item : OwnableEntity
     private void Awake()
     {
         Init(Items.Type);
-        OnTransferred += () => this.player = Networking.Entities.TryGetValue(Owner, out var entity) && entity is RemotePlayer player ? player : null;
+        OnTransferred += () => player.Id = Owner;
 
         x = new(); y = new(); z = new();
         rx = new(); ry = new(); rz = new();
@@ -39,8 +39,8 @@ public class Item : OwnableEntity
         // turn off object physics so that it does not interfere with synchronization
         if (Rb != null) Rb.isKinematic = true;
 
-        transform.position = holding && player != null
-            ? player.HoldPosition
+        transform.position = holding && player.Value != null
+            ? player.Value.HoldPosition
             : new(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
         transform.eulerAngles = new(rx.GetAngel(LastUpdate), ry.GetAngel(LastUpdate), rz.GetAngel(LastUpdate));
 
