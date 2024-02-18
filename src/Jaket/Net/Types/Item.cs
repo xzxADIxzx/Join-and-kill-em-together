@@ -10,8 +10,6 @@ public class Item : OwnableEntity
 {
     /// <summary> Item position and rotation. </summary>
     private FloatLerp x, y, z, rx, ry, rz;
-    /// <summary> Reference to the component needed to change the kinematics. </summary>
-    private Rigidbody rb;
 
     /// <summary> Player holding an item in their hands. </summary>
     private RemotePlayer player;
@@ -30,7 +28,6 @@ public class Item : OwnableEntity
         x = new(); y = new(); z = new();
         rx = new(); ry = new(); rz = new();
 
-        rb = GetComponent<Rigidbody>();
         torch = GetComponent<Torch>() != null;
     }
 
@@ -40,7 +37,7 @@ public class Item : OwnableEntity
         if (IsOwner) return;
 
         // turn off object physics so that it does not interfere with synchronization
-        if (rb != null) rb.isKinematic = true;
+        if (Rb != null) Rb.isKinematic = true;
 
         transform.position = holding && player != null
             ? player.HoldPosition

@@ -11,8 +11,6 @@ public class Bullet : OwnableEntity
 {
     /// <summary> Bullet position and rotation. </summary>
     private FloatLerp x, y, z, rx, ry, rz;
-    /// <summary> Reference to the component needed to change the kinematics. </summary>
-    private Rigidbody rb;
 
     /// <summary> Grenade component. Null if the bullet is a cannonball. </summary>
     private Grenade grenade;
@@ -31,7 +29,7 @@ public class Bullet : OwnableEntity
         Init(_ => Bullets.EType(name));
         OnTransferred += () =>
         {
-            if (rb) rb.isKinematic = !IsOwner;
+            if (Rb) Rb.isKinematic = !IsOwner;
             if (ball) ball.ghostCollider = !IsOwner;
             if (grenade) Exploded(!IsOwner);
 
@@ -40,14 +38,13 @@ public class Bullet : OwnableEntity
             {
                 transform.position = new(x.target, y.target, z.target);
                 transform.eulerAngles = new(rx.target, ry.target, rz.target);
-                rb.velocity = transform.forward * InitSpeed;
+                Rb.velocity = transform.forward * InitSpeed;
             });
         };
 
         x = new(); y = new(); z = new();
         rx = new(); ry = new(); rz = new();
 
-        rb = GetComponent<Rigidbody>();
         grenade = GetComponent<Grenade>();
         ball = GetComponent<Cannonball>();
     }
