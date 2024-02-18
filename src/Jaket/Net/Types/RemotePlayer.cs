@@ -26,6 +26,8 @@ public class RemotePlayer : Entity
     public bool Invincible => dashing || Health == 0;
     /// <summary> Position in which the player holds an item. </summary>
     public Vector3 HoldPosition => usingHook ? hook.position : hookRoot.position;
+    /// <summary> Entity that the player pulls to himself with a hook. </summary>
+    public EntityProv<Entity> Pulled = new();
 
     /// <summary> Materials of the wings and skateboard. </summary>
     private Material wingMaterial, skateMaterial;
@@ -224,6 +226,16 @@ public class RemotePlayer : Entity
 
         hookWinch.SetPosition(0, hookRoot.position);
         hookWinch.SetPosition(1, hook.position);
+
+        // pull the entity caught by the hook
+        if (!LobbyController.IsOwner) return;
+
+        var pl = Pulled.Value;
+        if (pl && pl.EnemyId && pl.Rb)
+        {
+            if (pl.Rb.isKinematic) pl.EnemyId.gce.ForceOff();
+            pl.Rb.velocity = (transform.position - pl.transform.position).normalized * 60f;
+        }
     }
 
     private void UpdateStyle()
@@ -309,6 +321,7 @@ public class RemotePlayer : Entity
 
         w.Bool(usingHook);
         w.Float(hookX.target); w.Float(hookY.target); w.Float(hookZ.target);
+        w.Id(Pulled.Id);
     }
 
     public override void Read(Reader r)
@@ -330,6 +343,11 @@ public class RemotePlayer : Entity
 
         usingHook = r.Bool();
         hookX.Read(r); hookY.Read(r); hookZ.Read(r);
+
+        var id = r.Id();
+        if (id == 0L) Pulled.Value?.EnemyId?.gce.StopForceOff(); // player released the hook
+
+        Pulled.Id = id;
     }
 
     public override void Damage(Reader r) => Bullets.DealDamage(EnemyId, r);

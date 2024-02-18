@@ -12,7 +12,7 @@ public class Item : OwnableEntity
     private FloatLerp x, y, z, rx, ry, rz;
 
     /// <summary> Player holding an item in their hands. </summary>
-    private EntityProv<RemotePlayer> player;
+    private EntityProv<RemotePlayer> player = new();
     /// <summary> Whether the player is holding an item. </summary>
     private bool holding;
     /// <summary> Whether the item is placed on an altar. </summary>
