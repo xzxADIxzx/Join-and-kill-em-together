@@ -257,7 +257,8 @@ public class World : MonoSingleton<World>
         Activated.ForEach(index => Actions[index].Run());
 
         // raise the activation trigger so that the player doesn't get stuck on the sides
-        FindObjectOfType<PlayerActivator>().transform.position += Vector3.up * 6f;
+        var act = FindObjectOfType<PlayerActivator>();
+        if (act) act.transform.position += Vector3.up * 6f;
     }
 
     /// <summary> Iterates each static world action. </summary>
@@ -287,6 +288,7 @@ public class World : MonoSingleton<World>
                 byte index = r.Byte();
                 if (Actions[index] is NetAction na)
                 {
+                    Log.Debug($"[World] Read the activation of the object {na.Name} in {na.Level}");
                     Activated.Add(index);
                     na.Run();
                 }
@@ -303,6 +305,7 @@ public class World : MonoSingleton<World>
         byte index = (byte)Actions.IndexOf(action);
         if (index != 0xFF)
         {
+            Log.Debug($"[World] Send the activation of the object {action.Name} in {action.Level}");
             Instance.Activated.Add(index);
             w.Byte(0);
             w.Byte(index);
