@@ -66,7 +66,7 @@ public class ArmsPatch
         if (LobbyController.Lobby == null) return;
         lp.Hook = ___forcingFistControl ? ___hookPoint : Vector3.zero;
 
-        if (__instance.state == HookState.Pulling && ___lightTarget && lp.Pulled == null) lp.Pulled = ___caughtEid.GetComponent<Entity>();
+        if (__instance.state == HookState.Pulling && ___lightTarget && lp.Pulled == null) lp.Pulled = ___caughtEid.GetComponent<Enemy>();
         if (__instance.state != HookState.Pulling || !___lightTarget) lp.Pulled = null;
     }
 }

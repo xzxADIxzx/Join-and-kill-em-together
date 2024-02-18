@@ -108,7 +108,7 @@ public class Bullets
     /// <summary> Synchronizes the bullet between host and clients. </summary>
     public static void Sync(GameObject bullet, bool hasRigidbody, bool applyOffset)
     {
-        if (LobbyController.Lobby == null || bullet.name.Contains("Net")) return;
+        if (LobbyController.Lobby == null || bullet == null || bullet.name.Contains("Net")) return;
 
         if (bullet.name != "RL PRI(Clone)" && bullet.name != "RL ALT(Clone)")
         {

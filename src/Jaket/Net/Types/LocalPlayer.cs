@@ -84,7 +84,7 @@ public class LocalPlayer : Entity
     {
         weapon = Weapons.Type();
         renderer = GunControl.Instance.currentWeapon?.GetComponentInChildren<GunColorGetter>()?.GetComponent<Renderer>();
-        SyncStyle();
+        if (LobbyController.Lobby != null) SyncStyle();
 
         // according to the lore, the player plays for V3, so we need to paint the hand
         var punch = fc.transform.Find("Arm Blue(Clone)");
