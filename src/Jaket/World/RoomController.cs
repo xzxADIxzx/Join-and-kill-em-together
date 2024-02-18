@@ -96,6 +96,7 @@ public class RoomController : MonoBehaviour
 
     private void OnDisable()
     {
+        if (LobbyController.Lobby == null) return;
         if (exception || PlayersIn > 0 || Doors.Exists(door => door != null && door.open)) Events.Post(() => transform.parent.gameObject.SetActive(true));
     }
 }

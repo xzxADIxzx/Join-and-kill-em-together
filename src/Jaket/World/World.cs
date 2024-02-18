@@ -103,6 +103,7 @@ public class World : MonoSingleton<World>
             StaticAction.Destroy("Level 2-4", "MetroBlockDoor (2)", new(425f, 27f, 525f)),
             StaticAction.Destroy("Level 4-2", "6A Activator", new(-79f, 45f, 954f)),
             StaticAction.Destroy("Level 4-2", "6B Activator", new(116f, 19.5f, 954f)),
+            StaticAction.Destroy("Level 4-3", "Doorblocker", new(-59.5f, -35f, 676f)),
             StaticAction.Destroy("Level 5-1", "HudMessage", new(0f, -100f, 295.5f)),
             StaticAction.Destroy("Level 5-1", "Door", new(218.5f, -41f, 234.5f)),
             StaticAction.Destroy("Level 5-2", "Arena 1", new(87.5f, -53f, 1240f)),
@@ -120,6 +121,15 @@ public class World : MonoSingleton<World>
             // there are just a couple of little things that need to be synchronized
             NetAction.Sync("Level 4-2", "DoorOpeners", new(-1.5f, -18f, 774.5f)),
             NetAction.Sync("Level 4-2", "DoorsOpener", new(40f, 5f, 813.5f)),
+
+            // there is a secret boss - Mandalore and a single weird door
+            NetAction.Sync("Level 4-3", "DoorActivator", new(2.5f, -40f, 628f)),
+            NetAction.Sync("Level 4-3", "Trigger (Intro)", new(-104f, -20f, 676f)),
+            NetAction.Sync("Level 4-3", "Secret Tablet", new(-116.425f, -39.593f, 675.9866f), obj =>
+            {
+                obj.SetActive(true);
+                MusicManager.Instance.StopMusic();
+            }),
 
             // there is a door in the arena through which V2 escapes and you also need to synchronize the outro and the exit building
             NetAction.Sync("Level 4-4", "Checkpoint Activator", new(177.5f, 663.5f, 243f), obj =>

@@ -61,7 +61,7 @@ public class Enemy : Entity
         health.target = EnemyId.health;
 
         // run a loop that will update the target id of the idol every second
-        if (TryGetComponent<Idol>(out idol) && LobbyController.IsOwner) InvokeRepeating("UpdateTarget", 0f, 1f);
+        if (TryGetComponent(out idol) && LobbyController.IsOwner) InvokeRepeating("UpdateTarget", 0f, 1f);
     }
 
     private void Start()
