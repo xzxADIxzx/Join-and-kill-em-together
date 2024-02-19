@@ -46,7 +46,7 @@ public class DoorPatch
             __instance.enemyIn = true;
 
             // unload rooms without players for optimization
-            ___dc.Optimize();
+            ___dc?.Optimize();
         }
     }
 

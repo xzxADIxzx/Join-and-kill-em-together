@@ -28,6 +28,14 @@ public class EnemyPatch
 public class OtherPatch
 {
     [HarmonyPrefix]
+    [HarmonyPatch(typeof(V2), "Start")]
+    static void Intro(V2 __instance)
+    {
+        if (LobbyController.Lobby != null && SceneHelper.CurrentScene == "Level 1-4" && !__instance.secondEncounter)
+            __instance.intro = __instance.longIntro = true;
+    }
+
+    [HarmonyPrefix]
     [HarmonyPatch(typeof(Idol), "SlowUpdate")]
     static bool IdolsLogic() => LobbyController.Lobby == null || LobbyController.IsOwner;
 

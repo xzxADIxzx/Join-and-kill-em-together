@@ -57,6 +57,16 @@ public class World : MonoSingleton<World>
             StaticAction.PlaceTorches("Level 4-3", new(0f, -10f, 310f), 3f),
             StaticAction.PlaceTorches("Level P-1", new(-0.84f, -10f, 16.4f), 2f),
 
+            // disable boss fight launch trigger for clients in order to sync cutscene
+            StaticAction.Find("Level 1-4", "Cube", new(0f, 11f, 612f), obj =>
+            {
+                obj.SetActive(LobbyController.IsOwner);
+                Destroy(obj.GetComponent<DoorController>());
+            }),
+            StaticAction.Find("Level 1-4", "V2", new(0f, 6f, 648.5f), obj =>
+            {
+                if (!LobbyController.IsOwner) Destroy(obj);
+            }),
             // launching the Minos boss fight unloads some of the locations, which is undesirable
             StaticAction.Find("Level 2-4", "DoorsActivator", new(425f, -10f, 650f), obj =>
             {
@@ -118,6 +128,12 @@ public class World : MonoSingleton<World>
             // there is a door within the Very Cancerous Rodent
             NetAction.Sync("Level 1-2", "Cube (1)", new(-61f, -21.5f, 400.5f)),
 
+            // different things related to the boss
+            NetAction.Sync("Level 1-4", "Cube", new(0f, -19f, 612f), obj =>
+            {
+                obj.SetActive(true);
+                obj.GetComponent<ObjectActivator>().Activate();
+            }),
             // there are just a couple of little things that need to be synchronized
             NetAction.Sync("Level 4-2", "DoorOpeners", new(-1.5f, -18f, 774.5f)),
             NetAction.Sync("Level 4-2", "DoorsOpener", new(40f, 5f, 813.5f)),
