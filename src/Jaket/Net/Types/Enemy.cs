@@ -188,8 +188,18 @@ public class Enemy : Entity
 
     public override void Kill()
     {
+        // animate V2's death
+        if (!LobbyController.IsOwner && TryGetComponent<V2>(out var v2) && v2.intro && TryGetComponent<Machine>(out var machine))
+        {
+            v2.active = false;
+            v2.escapeTarget = GameObject.Find("EscapeTarget")?.transform;
+            v2.spawnOnDeath = v2.escapeTarget?.Find("RedArmPickup").gameObject;
+
+            machine.GetHurt(gameObject, Vector3.zero, 1000f, 0f);
+            GameObject.Find("Music - Versus").GetComponent<Crossfade>().StartFade();
+        }
         // it looks funny
-        if (!fake) EnemyId.InstaKill();
+        else if (!fake) EnemyId.InstaKill();
 
         // destroy the boss bar, because it looks just awful
         healthBar?.Invoke("DestroyBar", 3f);

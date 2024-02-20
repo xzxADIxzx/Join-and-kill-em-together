@@ -35,6 +35,10 @@ public class OtherPatch
             __instance.intro = __instance.longIntro = true;
     }
 
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(V2), "Start")]
+    static void Outro(V2 __instance, ref bool ___bossVersion) => ___bossVersion = __instance.intro;
+
     [HarmonyPrefix]
     [HarmonyPatch(typeof(Idol), "SlowUpdate")]
     static bool IdolsLogic() => LobbyController.Lobby == null || LobbyController.IsOwner;

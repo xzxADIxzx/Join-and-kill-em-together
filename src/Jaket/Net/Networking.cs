@@ -153,7 +153,7 @@ public class Networking
     /// <summary> Iterates each connection. </summary>
     public static void EachConnection(Action<Connection> cons)
     {
-        foreach (var con in Server.Manager.Connected) cons(con);
+        foreach (var con in Server.Manager?.Connected) cons(con);
     }
 
     /// <summary> Iterates through each player observing the world. </summary>
