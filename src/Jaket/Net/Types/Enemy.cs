@@ -113,7 +113,7 @@ public class Enemy : Entity
             Destroy(GetComponent<Ferryman>());
 
             // replace the animation controller so that the ferryman sits and does not spin
-            GetComponent<Animator>().runtimeAnimatorController = Array.Find(Resources.FindObjectsOfTypeAll<RuntimeAnimatorController>(), c => c.name == "FerrymanIntro2");
+            GetComponent<Animator>().runtimeAnimatorController = Array.Find(Tools.ResFind<RuntimeAnimatorController>(), c => c.name == "FerrymanIntro2");
 
             // add components that will trigger an animation when the ferryman touches a coin
             var trigger = UI.Object("Coin Trigger", transform);

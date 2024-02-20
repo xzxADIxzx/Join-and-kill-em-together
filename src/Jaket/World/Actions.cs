@@ -31,7 +31,7 @@ public class StaticAction : WorldAction
     public static StaticAction PlaceTorches(string level, Vector3 pos, float radius) => new(level, () =>
     {
         // there are already 8 torches on the map, no more needed
-        if (Resources.FindObjectsOfTypeAll<Torch>().Length >= 8) return;
+        if (Tools.ResFind<Torch>().Length >= 8) return;
 
         var obj = GameAssets.Torch();
         for (float angle = 360f * 6f / 7f; angle >= 0f; angle -= 360f / 7f)
@@ -44,15 +44,14 @@ public class StaticAction : WorldAction
     /// <summary> Creates a static action that finds an object in the world. </summary>
     public static StaticAction Find(string level, string name, Vector3 position, Action<GameObject> action) => new(level, () =>
     {
-        foreach (var obj in Resources.FindObjectsOfTypeAll<GameObject>())
-            if (obj.gameObject.scene != null && obj.transform.position == position && obj.name == name) action(obj);
+        Tools.ResFind(obj => obj.gameObject.scene != null && obj.transform.position == position && obj.name == name, action);
     });
     /// <summary> Creates a static action that adds an object activation component to an object in the world. </summary>
     public static StaticAction Patch(string level, string name, Vector3 position) => Find(level, name, position, obj => obj.AddComponent<ObjectActivator>().events = new());
     /// <summary> Creates a static action that enables an object in the world. </summary>
     public static StaticAction Enable(string level, string name, Vector3 position) => Find(level, name, position, obj => obj.SetActive(true));
     /// <summary> Creates a static action that destroys an object in the world. </summary>
-    public static StaticAction Destroy(string level, string name, Vector3 position) => Find(level, name, position, GameObject.Destroy);
+    public static StaticAction Destroy(string level, string name, Vector3 position) => Find(level, name, position, Tools.Destroy);
 }
 
 /// <summary> Action that can be launched remotely. </summary>
@@ -69,7 +68,6 @@ public class NetAction : WorldAction
     public static NetAction Sync(string level, string name, Vector3 position, Action<GameObject> action = null) => new(level, () =>
     {
         action ??= obj => obj.SetActive(true);
-        foreach (var obj in Resources.FindObjectsOfTypeAll<ObjectActivator>())
-            if (obj.gameObject.scene != null && obj.transform.position == position && obj.name == name) action(obj.gameObject);
+        Tools.ResFind(obj => obj.gameObject.scene != null && obj.transform.position == position && obj.name == name, action);
     }, name, position);
 }

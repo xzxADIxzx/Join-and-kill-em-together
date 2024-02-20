@@ -36,6 +36,6 @@ public class DiscordPatch
         foreach (Transform child in button.transform) child.localPosition = Vector3.zero;
 
         // add ControllerPointer so that the button can be clicked
-        Object.Destroy(button.gameObject.AddComponent<ShopButton>()); // hacky
+        Tools.Destroy(button.gameObject.AddComponent<ShopButton>()); // hacky
     }
 }

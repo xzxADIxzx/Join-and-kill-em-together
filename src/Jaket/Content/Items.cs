@@ -69,17 +69,17 @@ public class Items
         if (LobbyController.IsOwner)
             itemId.gameObject.AddComponent<Item>();
         else
-            Object.DestroyImmediate(itemId.gameObject);
+            Tools.DestroyImmediate(itemId.gameObject);
     }
 
     /// <summary> Synchronizes all items in the level. </summary>
     public static void SyncAll()
     {
-        List<ItemPlaceZone> altars = new(Resources.FindObjectsOfTypeAll<ItemPlaceZone>());
+        List<ItemPlaceZone> altars = new(Tools.ResFind<ItemPlaceZone>());
         altars.RemoveAll(altar => altar.gameObject.scene.name == null);
 
         foreach (var zone in altars) zone.transform.SetParent(null);
-        foreach (var item in Resources.FindObjectsOfTypeAll<ItemIdentifier>()) Sync(item);
+        foreach (var item in Tools.ResFind<ItemIdentifier>()) Sync(item);
         foreach (var zone in altars)
         {
             // at level 5-3 there are altars that activate skulls in the mirror part of the level, but the client has these skulls destroyed

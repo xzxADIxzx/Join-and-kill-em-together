@@ -36,15 +36,13 @@ public class World : MonoSingleton<World>
 
         Events.OnLoaded += () =>
         {
-            foreach (var door in Resources.FindObjectsOfTypeAll<Door>())
+            Tools.ResFind<Door>(door => door.gameObject.scene != null, door =>
             {
-                if (door.gameObject.scene == null) return;
                 foreach (var room in door.deactivatedRooms) RoomController.Build(room.transform);
-            }
+            });
 
             // change the layer from PlayerOnly to Invisible so that other players can also launch a wave
-            foreach (var trigger in Resources.FindObjectsOfTypeAll<ActivateArena>())
-                trigger.gameObject.layer = 16;
+            foreach (var trigger in Tools.ResFind<ActivateArena>()) trigger.gameObject.layer = 16;
 
             if (LobbyController.Lobby != null) Instance.Restore();
         };
@@ -296,8 +294,7 @@ public class World : MonoSingleton<World>
     /// <summary> Reads the world action and activates it. </summary>
     public void ReadAction(Reader r)
     {
-        void Find<T>(Vector3 pos, System.Action<T> cons) where T : Component
-        { foreach (var door in Resources.FindObjectsOfTypeAll<T>()) if (door.transform.position == pos) cons(door); }
+        void Find<T>(Vector3 pos, System.Action<T> cons) where T : Component => Tools.ResFind(door => door.transform.position == pos, cons);
 
         switch (r.Byte())
         {

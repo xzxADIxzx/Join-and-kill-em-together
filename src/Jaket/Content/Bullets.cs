@@ -142,7 +142,7 @@ public class Bullets
                     w.Float(bullet.GetComponent<Rigidbody>().velocity.magnitude);
                 }, size: hasRigidbody ? 57 : 45);
 
-                Object.DestroyImmediate(bullet);
+                Tools.DestroyImmediate(bullet);
             }
         }
     }

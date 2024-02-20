@@ -25,7 +25,7 @@ public class UI
     public static void Load()
     {
         // find all sprites
-        var all = Resources.FindObjectsOfTypeAll<Sprite>();
+        var all = Tools.ResFind<Sprite>();
         Func<string, Sprite> find = name => Array.Find(all, s => s.name == name);
 
         background = find("UISprite");

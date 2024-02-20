@@ -131,7 +131,7 @@ public class Networking
     /// <summary> Destroys all players and clears lists. </summary>
     public static void Clear()
     {
-        EachPlayer(player => GameObject.Destroy(player.gameObject));
+        EachPlayer(player => Tools.Destroy(player.gameObject));
         Entities.Clear();
     }
 

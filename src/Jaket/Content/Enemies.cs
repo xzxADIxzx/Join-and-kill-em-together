@@ -101,9 +101,9 @@ public class Enemies
 
             // the enemy is no longer needed, so destroy it
             if (enemyId.enemyType == EnemyType.MaliciousFace && enemyId.gameObject.name == "Body")
-                Object.DestroyImmediate(enemyId.transform.parent.gameObject); // avoid a huge number of errors in the console
+                Tools.DestroyImmediate(enemyId.transform.parent.gameObject); // avoid a huge number of errors in the console
             else
-                Object.DestroyImmediate(enemyId.gameObject);
+                Tools.DestroyImmediate(enemyId.gameObject);
 
             return false;
         }
@@ -132,7 +132,7 @@ public class Enemies
         if (enemyId.TryGetComponent<Enemy>(out var enemy))
         {
             Networking.Send(PacketType.KillEntity, w => w.Id(enemy.Id), size: 8);
-            Object.Destroy(enemy);
+            Tools.Destroy(enemy);
         }
     }
 }

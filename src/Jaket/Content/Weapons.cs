@@ -51,15 +51,15 @@ public class Weapons
         FixLayer(obj.transform);
 
         // destroy revolver's and shotgun's hand
-        Object.Destroy(obj.transform.GetChild(0).Find("RightArm")?.gameObject);
-        if (obj.transform.childCount == 3) Object.Destroy(obj.transform.GetChild(2).Find("RightArm")?.gameObject);
+        Tools.Destroy(obj.transform.GetChild(0).Find("RightArm")?.gameObject);
+        if (obj.transform.childCount == 3) Tools.Destroy(obj.transform.GetChild(2).Find("RightArm")?.gameObject);
 
         // destroy weapon's components
-        Object.Destroy(obj.GetComponent<Revolver>());
-        Object.Destroy(obj.GetComponent<Shotgun>());
-        Object.Destroy(obj.GetComponent<Nailgun>());
-        Object.Destroy(obj.GetComponent<Railcannon>());
-        Object.Destroy(obj.GetComponent<RocketLauncher>());
+        Tools.Destroy(obj.GetComponent<Revolver>());
+        Tools.Destroy(obj.GetComponent<Shotgun>());
+        Tools.Destroy(obj.GetComponent<Nailgun>());
+        Tools.Destroy(obj.GetComponent<Railcannon>());
+        Tools.Destroy(obj.GetComponent<RocketLauncher>());
 
         return obj;
     }

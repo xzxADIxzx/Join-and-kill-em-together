@@ -55,7 +55,7 @@ public class CommonBulletsPatch
         // if the grenade is a rocket or local, then explode it, otherwise skip the explosion because it will be synced
         if (__instance.rocket || __instance.name != "Net") return true;
 
-        Object.Destroy(__instance.gameObject);
+        Tools.Destroy(__instance.gameObject);
         return false;
     }
 
