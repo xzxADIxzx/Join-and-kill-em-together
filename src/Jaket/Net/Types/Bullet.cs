@@ -1,8 +1,5 @@
 namespace Jaket.Net.Types;
 
-using HarmonyLib;
-using UnityEngine;
-
 using Jaket.Content;
 using Jaket.IO;
 
@@ -70,7 +67,7 @@ public class Bullet : OwnableEntity
         transform.eulerAngles = new(rx.GetAngel(LastUpdate), ry.GetAngel(LastUpdate), rz.GetAngel(LastUpdate));
     }
 
-    private void Exploded(bool value) => AccessTools.Field(typeof(Grenade), "exploded").SetValue(grenade, value);
+    private void Exploded(bool value) => Tools.Field<Grenade>("exploded").SetValue(grenade, value);
 
     #region entity
 

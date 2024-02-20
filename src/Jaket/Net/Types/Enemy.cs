@@ -79,7 +79,7 @@ public class Enemy : Entity
 
         if (EnemyId.enemyType == EnemyType.Swordsmachine)
         {
-            var original = GameObject.Find("S - Secret Fight").transform.GetChild(0).GetChild(0).GetChild(subtype == 1 ? 2 : 1);
+            var original = Tools.ObjFind("S - Secret Fight").transform.GetChild(0).GetChild(0).GetChild(subtype == 1 ? 2 : 1);
 
             transform.GetChild(0).GetChild(1).GetComponent<Renderer>().material = original.transform.GetChild(0).GetChild(1).GetComponent<Renderer>().material;
             transform.GetChild(0).GetChild(2).GetComponent<Renderer>().material = original.transform.GetChild(0).GetChild(2).GetComponent<Renderer>().material;
@@ -192,11 +192,11 @@ public class Enemy : Entity
         if (!LobbyController.IsOwner && TryGetComponent<V2>(out var v2) && v2.intro && TryGetComponent<Machine>(out var machine))
         {
             v2.active = false;
-            v2.escapeTarget = GameObject.Find("EscapeTarget")?.transform;
+            v2.escapeTarget = Tools.ObjFind("EscapeTarget")?.transform;
             v2.spawnOnDeath = v2.escapeTarget?.Find("RedArmPickup").gameObject;
 
             machine.GetHurt(gameObject, Vector3.zero, 1000f, 0f);
-            GameObject.Find("Music - Versus").GetComponent<Crossfade>().StartFade();
+            Tools.ObjFind("Music - Versus").GetComponent<Crossfade>().StartFade();
         }
         // it looks funny
         else if (!fake) EnemyId.InstaKill();

@@ -1,6 +1,5 @@
 namespace Jaket.Content;
 
-using HarmonyLib;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -198,7 +197,7 @@ public class Bullets
     public static void Punch(Harpoon harpoon)
     {
         // null pointer fix
-        AccessTools.Field(typeof(Harpoon), "aud").SetValue(harpoon, harpoon.GetComponent<AudioSource>());
+        Tools.Field<Harpoon>("aud").SetValue(harpoon, harpoon.GetComponent<AudioSource>());
 
         harpoon.transform.Rotate(new(0f, 180f, 0f), Space.Self);
         harpoon.transform.position += harpoon.transform.forward;

@@ -1,8 +1,6 @@
 namespace Jaket.World;
 
-using HarmonyLib;
 using System.Collections.Generic;
-using Train;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -176,7 +174,7 @@ public class World : MonoSingleton<World>
                 var btn = obj.transform.parent.Find("Screen").GetChild(0).GetChild(0).GetChild(0).GetChild(0);
                 var pointer = btn.GetComponents<MonoBehaviour>()[2];
 
-                var pressed = AccessTools.Property(pointer.GetType(),"OnPressed").GetValue(pointer) as UnityEvent;
+                var pressed = Tools.Property("OnPressed", pointer).GetValue(pointer) as UnityEvent;
                 pressed.Invoke(); // so much pain over a private class
 
                 // teleport the player to the roomba so that they are not left behind
@@ -196,7 +194,7 @@ public class World : MonoSingleton<World>
                 obj.SetActive(true);
                 obj.transform.parent.Find("Cube (2)").gameObject.SetActive(false);
 
-                GameObject.Find("Music 3").SetActive(false);
+                Tools.ObjFind("Music 3").SetActive(false);
                 obj.transform.parent.Find("Lights").gameObject.SetActive(false);
 
                 StatsManager.Instance.StopTimer();
@@ -207,9 +205,9 @@ public class World : MonoSingleton<World>
                 obj.SetActive(true);
                 obj.transform.parent.Find("Backwall").gameObject.SetActive(false);
 
-                GameObject.Find("BossMusics/Sisyphus").SetActive(false);
-                GameObject.Find("IntroObjects/Decorations").SetActive(false);
-                GameObject.Find("Rain").SetActive(false);
+                Tools.ObjFind("BossMusics/Sisyphus").SetActive(false);
+                Tools.ObjFind("IntroObjects/Decorations").SetActive(false);
+                Tools.ObjFind("Rain").SetActive(false);
 
                 StatsManager.Instance.StopTimer();
             }),

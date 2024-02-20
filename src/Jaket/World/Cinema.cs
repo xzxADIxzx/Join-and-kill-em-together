@@ -17,7 +17,7 @@ public class Cinema
     public const string FORMATS = "\"formats\":[{\"itag\":18,\"url\":\"";
 
     /// <summary> Returns the cinema video player component. </summary>
-    public static VideoPlayer Player() => UnityEngine.Object.FindObjectOfType<VideoPlayer>();
+    public static VideoPlayer Player() => Tools.ObjFind<VideoPlayer>();
 
     /// <summary> Starts a video received from the given link. </summary>
     public static void Play(string url) => Player().url = url;

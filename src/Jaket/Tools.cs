@@ -1,5 +1,7 @@
 namespace Jaket;
 
+using HarmonyLib;
+using System.Reflection;
 using UnityEngine;
 
 /// <summary> Set of different tools for simplifying life and systematization of code. </summary>
@@ -19,6 +21,24 @@ public class Tools
     {
         foreach (var item in ResFind<T>()) if (pred(item)) cons(item);
     }
+
+    /// <summary> Just shortcut. </summary>
+    public static T ObjFind<T>() where T : Object => Object.FindObjectOfType<T>();
+    public static GameObject ObjFind(string name) => GameObject.Find(name);
+
+    #endregion
+    #region harmony
+
+    /// <summary> Returns information about the class field. </summary>
+    public static FieldInfo Field<T>(string name) => AccessTools.Field(typeof(T), name);
+    public static FieldInfo Field(string name, object obj) => AccessTools.Field(obj.GetType(), name);
+
+    /// <summary> Returns information about the class property. </summary>
+    public static PropertyInfo Property<T>(string name) => AccessTools.Property(typeof(T), name);
+    public static PropertyInfo Property(string name, object obj) => AccessTools.Property(obj.GetType(), name);
+
+    /// <summary> Calls the class method with the given arguments. </summary>
+    public static void Invoke<T>(string name, T obj, params object[] args) => AccessTools.Method(typeof(T), name).Invoke(obj, args);
 
     #endregion
 }

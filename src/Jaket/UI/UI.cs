@@ -26,13 +26,13 @@ public class UI
     {
         // find all sprites
         var all = Tools.ResFind<Sprite>();
-        Func<string, Sprite> find = name => Array.Find(all, s => s.name == name);
+        Sprite Find(string name) => Array.Find(all, s => s.name == name);
 
-        background = find("UISprite");
-        shadow = find("horizontalgradientslowfalloff");
-        circleShadow = find("weaponwheelbackground");
-        circle = find("circle");
-        checkmark = find("pixelx");
+        background = Find("UISprite");
+        shadow = Find("horizontalgradientslowfalloff");
+        circleShadow = Find("weaponwheelbackground");
+        circle = Find("circle");
+        checkmark = Find("pixelx");
 
         // create a color scheme for buttons
         colors = ColorBlock.defaultColorBlock;

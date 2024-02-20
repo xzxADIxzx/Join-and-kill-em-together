@@ -218,7 +218,7 @@ public class Movement : MonoSingleton<Movement>
             CheatsController.Instance.cheatsEnabled = false;
             CheatsManager.Instance.transform.GetChild(0).GetChild(0).gameObject.SetActive(false);
 
-            var cheats = AccessTools.DeclaredField(typeof(CheatsManager), "idToCheat").GetValue(CheatsManager.Instance) as Dictionary<string, ICheat>;
+            var cheats = Tools.Field<CheatsManager>("idToCheat").GetValue(CheatsManager.Instance) as Dictionary<string, ICheat>;
             cheats.Values.Do(CheatsManager.Instance.DisableCheat);
 
             UI.SendMsg("Cheats are prohibited in this lobby!");
