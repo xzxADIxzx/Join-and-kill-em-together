@@ -188,6 +188,9 @@ public class Enemy : Entity
 
     public override void Kill()
     {
+        // spawn shotgun
+        if (TryGetComponent<SwordsMachine>(out var sm) && boss) Instantiate(sm.shotgunPickUp, transform.position, transform.rotation);
+
         // animate V2's death
         if (!LobbyController.IsOwner && TryGetComponent<V2>(out var v2) && v2.intro && TryGetComponent<Machine>(out var machine))
         {

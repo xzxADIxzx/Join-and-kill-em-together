@@ -137,4 +137,11 @@ public class ActionPatch
         if (LobbyController.Lobby != null && LobbyController.IsOwner &&
            (name.Contains("Case") || name.Contains("Glass") || name.Contains("Cover") || name.Contains("Skull"))) World.SyncOpening(__instance, false);
     }
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(WeaponPickUp), "Awake")]
+    static void DropShotgun()
+    {
+        if (LobbyController.Lobby != null && LobbyController.IsOwner && SceneHelper.CurrentScene == "Level 0-3") World.SyncDrop();
+    }
 }

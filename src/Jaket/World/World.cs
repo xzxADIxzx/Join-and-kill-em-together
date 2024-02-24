@@ -121,6 +121,9 @@ public class World : MonoSingleton<World>
             StaticAction.Destroy("Level 7-1", "Walkway Arena -> Stairway Up", new(80f, -25f, 590f)),
             StaticAction.Destroy("Level 7-4", "ArenaWalls", new(-26.5f, 470f, 763.75f)),
 
+            // there is a special very big door
+            NetAction.Sync("Level 0-5", "DelayedDoorActivation", new(175f, -6f, 382f)),
+
             // there is a door within the Very Cancerous Rodent
             NetAction.Sync("Level 1-2", "Cube (1)", new(-61f, -21.5f, 400.5f)),
 
@@ -308,6 +311,13 @@ public class World : MonoSingleton<World>
 
             case 1: Find<FinalDoor>(r.Vector(), d => d.transform.Find("FinalDoorOpener").gameObject.SetActive(true)); break;
             case 2: Find<Door>(r.Vector(), d => d.Open()); break;
+
+            case 3:
+                Networking.EachEntity(entity =>
+                {
+                    if (entity.Type == EntityType.Swordsmachine) entity.Kill();
+                });
+                break;
         }
     }
 
@@ -331,6 +341,9 @@ public class World : MonoSingleton<World>
         w.Byte((byte)(final ? 1 : 2));
         w.Vector(door.transform.position);
     }, size: 13);
+
+    /// <summary> Synchronizes the drop of a shotgun from Swordsmachine. </summary>
+    public static void SyncDrop() => Networking.Send(PacketType.ActivateObject, w => w.Byte(3), size: 1);
 
     #endregion
 }
