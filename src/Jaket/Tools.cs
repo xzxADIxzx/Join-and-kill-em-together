@@ -7,6 +7,9 @@ using UnityEngine;
 /// <summary> Set of different tools for simplifying life and systematization of code. </summary>
 public class Tools
 {
+    /// <summary> Name of the current scene. </summary>
+    public static string Scene => SceneHelper.CurrentScene;
+
     /// <summary> System namespace also has Object class, so I added this to avoid conflicts. </summary>
     public static void Destroy(Object obj) => Object.Destroy(obj);
     public static void DestroyImmediate(Object obj) => Object.DestroyImmediate(obj);

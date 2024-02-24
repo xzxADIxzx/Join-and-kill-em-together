@@ -18,7 +18,7 @@ public class WorldAction
     /// <summary> Runs the action if the scene matches the desired one. </summary>
     public void Run()
     {
-        if (SceneHelper.CurrentScene == Level) Action();
+        if (Tools.Scene == Level) Action();
     }
 }
 

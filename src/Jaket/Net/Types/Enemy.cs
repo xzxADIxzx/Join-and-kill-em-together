@@ -49,7 +49,7 @@ public class Enemy : Entity
             else if (EnemyId.statue) LobbyController.ScaleHealth(ref EnemyId.statue.health);
 
             // in the second phase the same object is used as in the anticipatory one
-            if (SceneHelper.CurrentScene == "Level 4-4" && EnemyId.enemyType == EnemyType.V2 && TryGetComponent<V2>(out var V2) && !V2.firstPhase)
+            if (Tools.Scene == "Level 4-4" && EnemyId.enemyType == EnemyType.V2 && TryGetComponent<V2>(out var V2) && !V2.firstPhase)
             {
                 Networking.Entities[Id] = this;
                 DestroyImmediate(healthBar);

@@ -53,7 +53,7 @@ public class LobbyController
         };
 
         // put the level name in the lobby data so that it can be seen in the public lobbies list
-        Events.OnLoaded += () => Lobby?.SetData("level", MapMap(SceneHelper.CurrentScene));
+        Events.OnLoaded += () => Lobby?.SetData("level", MapMap(Tools.Scene));
 
         // if the player exits to the main menu, then this is equivalent to leaving the lobby
         Events.OnMainMenuLoaded += LeaveLobby;
@@ -77,7 +77,7 @@ public class LobbyController
             Lobby?.SetJoinable(true);
             Lobby?.SetPrivate();
             Lobby?.SetData("name", $"{SteamClient.Name}'s Lobby");
-            Lobby?.SetData("level", MapMap(SceneHelper.CurrentScene));
+            Lobby?.SetData("level", MapMap(Tools.Scene));
             Lobby?.SetData("pvp", "True"); Lobby?.SetData("cheats", "True");
 
             CreatingLobby = false;
@@ -99,7 +99,7 @@ public class LobbyController
         Lobby = null;
 
         // if the client has left the lobby, then load the main menu
-        if (!IsOwner && SceneHelper.CurrentScene != "Main Menu") SceneHelper.LoadScene("Main Menu");
+        if (!IsOwner && Tools.Scene != "Main Menu") SceneHelper.LoadScene("Main Menu");
 
         Networking.Clear(); // destroy all network objects
         Events.OnLobbyAction.Fire();

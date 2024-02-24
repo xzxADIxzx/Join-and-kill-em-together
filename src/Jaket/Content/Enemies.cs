@@ -65,14 +65,14 @@ public class Enemies
         if (LobbyController.Lobby == null || enemyId.dead) return true;
 
         // level 0-2 contains several cutscenes that don't need to be removed
-        if (SceneHelper.CurrentScene == "Level 0-2" && enemyId.enemyType == EnemyType.Swordsmachine && enemyId.GetComponent<BossHealthBar>() == null) return true;
+        if (Tools.Scene == "Level 0-2" && enemyId.enemyType == EnemyType.Swordsmachine && enemyId.GetComponent<BossHealthBar>() == null) return true;
         // levels 2-4 and 5-4 contain unique bosses that needs to be dealt with separately
-        if (SceneHelper.CurrentScene == "Level 2-4" && enemyId.gameObject.name == "MinosArm")
+        if (Tools.Scene == "Level 2-4" && enemyId.gameObject.name == "MinosArm")
         {
             enemyId.gameObject.AddComponent<Hand>();
             return true;
         }
-        if (SceneHelper.CurrentScene == "Level 5-4" && enemyId.enemyType == EnemyType.Leviathan)
+        if (Tools.Scene == "Level 5-4" && enemyId.enemyType == EnemyType.Leviathan)
         {
             enemyId.gameObject.AddComponent<Leviathan>();
             return true;

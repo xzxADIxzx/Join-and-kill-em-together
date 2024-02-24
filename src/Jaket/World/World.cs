@@ -222,7 +222,7 @@ public class World : MonoSingleton<World>
     /// <summary> Writes data about the world such as level, difficulty and, in the future, triggers fired. </summary>
     public void WriteData(Writer w)
     {
-        w.String(SceneHelper.CurrentScene);
+        w.String(Tools.Scene);
 
         // the version is needed for a warning about incompatibility, and the difficulty is mainly needed for ultrapain
         w.String(Version.CURRENT);

@@ -67,7 +67,7 @@ public class InteractiveGuide : CanvasSingleton<InteractiveGuide>
     /// <summary> Offers the player to go through the guide or closes it if the main menu has been loaded. </summary>
     public void OfferAssistance()
     {
-        if (SceneHelper.CurrentScene == "Main Menu")
+        if (Tools.Scene == "Main Menu")
         {
             foreach (Transform child in transform) child.gameObject.SetActive(false);
             index = 0; Shown = false;

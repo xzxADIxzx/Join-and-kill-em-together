@@ -41,7 +41,7 @@ public class Events : MonoSingleton<Events>
             OnLoaded.Fire();
 
             // the main menu has loaded, this is much less often used, but it is used
-            if (SceneHelper.CurrentScene == "Main Menu") OnMainMenuLoaded.Fire();
+            if (Tools.Scene == "Main Menu") OnMainMenuLoaded.Fire();
         };
 
         SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) => Post(OnTeamChanged.Fire);
@@ -53,9 +53,9 @@ public class Events : MonoSingleton<Events>
         OnLobbyAction += OnWeaponChanged.Fire;
 
         // update the discord activity so everyone can know I've been working hard
-        OnLobbyAction += () => DiscordController.Instance.FetchSceneActivity(SceneHelper.CurrentScene);
+        OnLobbyAction += () => DiscordController.Instance.FetchSceneActivity(Tools.Scene);
         // same as the line above
-        OnLobbyAction += () => SteamController.Instance.FetchSceneActivity(SceneHelper.CurrentScene);
+        OnLobbyAction += () => SteamController.Instance.FetchSceneActivity(Tools.Scene);
         // toggle the ability of the game to run in the background, because multiplayer requires it
         OnLobbyAction += () => Application.runInBackground = LobbyController.Lobby != null;
     }

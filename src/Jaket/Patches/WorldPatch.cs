@@ -105,7 +105,7 @@ public class TramPatch
     static void Up(TramControl __instance)
     {
         // find the cart in which the player will appear after respawn
-        if (LobbyController.Lobby != null && SceneHelper.CurrentScene == "Level 7-1") World.Instance.TunnelRoomba = __instance.transform.parent;
+        if (LobbyController.Lobby != null && Tools.Scene == "Level 7-1") World.Instance.TunnelRoomba = __instance.transform.parent;
     }
 }
 
@@ -142,6 +142,6 @@ public class ActionPatch
     [HarmonyPatch(typeof(WeaponPickUp), "Awake")]
     static void DropShotgun()
     {
-        if (LobbyController.Lobby != null && LobbyController.IsOwner && SceneHelper.CurrentScene == "Level 0-3") World.SyncDrop();
+        if (LobbyController.Lobby != null && LobbyController.IsOwner && Tools.Scene == "Level 0-3") World.SyncDrop();
     }
 }

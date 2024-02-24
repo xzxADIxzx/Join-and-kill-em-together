@@ -192,7 +192,7 @@ public class Movement : MonoSingleton<Movement>
         }
 
         // ultrasoap
-        if (SceneHelper.CurrentScene != "Main Menu" && !nm.dead)
+        if (Tools.Scene != "Main Menu" && !nm.dead)
         {
             nm.rb.constraints = UI.AnyMovementBlocking()
                 ? RigidbodyConstraints.FreezeAll
