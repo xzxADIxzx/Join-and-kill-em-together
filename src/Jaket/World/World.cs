@@ -138,6 +138,14 @@ public class World : MonoSingleton<World>
                 obj.GetComponent<ObjectActivator>().Activate();
             }),
 
+            // there is an epic boss fight with The Corpse of King Minos
+            NetAction.Sync("Level 2-4", "DeadMinos", new(279.5f, -599f, 575f), obj =>
+            {
+                obj.SetActive(true);
+                obj.transform.parent.Find("GlobalLights (2)").Find("MetroWall (10)").gameObject.SetActive(false);
+                obj.transform.parent.Find("BossMusic").gameObject.SetActive(false);
+            }),
+
             // there are just a couple of little things that need to be synchronized
             NetAction.Sync("Level 4-2", "DoorOpeners", new(-1.5f, -18f, 774.5f)),
             NetAction.Sync("Level 4-2", "DoorsOpener", new(40f, 5f, 813.5f)),
