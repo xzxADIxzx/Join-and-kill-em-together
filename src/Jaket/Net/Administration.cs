@@ -70,7 +70,11 @@ public class Administration
     /// <summary> Adds a new plushy to the list and destroys the old one. </summary>
     public static void PlushySpawned(SteamId id, Entity entity)
     {
-        if (Count(id, Plushies) >= MAX_PLUSHIES_PP) Plushies[id][0].Kill();
+        if (Count(id, Plushies) >= MAX_PLUSHIES_PP)
+        {
+            Networking.Send(PacketType.KillEntity, w => w.Id(Plushies[id][0].Id), size: 8);
+            Plushies[id][0].Kill();
+        }
         Plushies[id].Add(entity);
     }
 

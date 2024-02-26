@@ -8,6 +8,10 @@ using Jaket.World;
 [HarmonyPatch(typeof(MinosArm))]
 public class HandPatch
 {
+    [HarmonyPrefix]
+    [HarmonyPatch("Update")]
+    static bool Update() => LobbyController.Lobby == null || LobbyController.IsOwner;
+
     [HarmonyPostfix]
     [HarmonyPatch("SlamDown")]
     static void SlamDown() { if (LobbyController.Lobby != null && LobbyController.IsOwner && World.Instance.Hand != null) World.Instance.Hand.HandPos = 0; }
