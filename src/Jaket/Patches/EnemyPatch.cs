@@ -54,6 +54,12 @@ public class OtherPatch
         if (LobbyController.IsOwner && __instance.TryGetComponent<Enemy>(out var enemy)) Networking.Send(PacketType.KillEntity, w => w.Id(enemy.Id), size: 8);
     }
 
+
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(EventOnDestroy), "OnDestroy")]
+    static bool Destroy() => LobbyController.Lobby == null || LobbyController.IsOwner;
+
     [HarmonyPrefix]
     [HarmonyPatch(typeof(BossHealthBar), "Awake")]
     static void BossBar(BossHealthBar __instance)
