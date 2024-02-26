@@ -69,6 +69,10 @@ public class World : MonoSingleton<World>
                 var objs = obj.GetComponent<ObjectActivator>().events.toDisActivateObjects;
                 objs[1] = objs[2] = null;
             }),
+            StaticAction.Find("Level 2-4", "3 - First Encounter", new(0f, -12f, 650f), obj => Events.Post2(() =>
+            {
+                foreach (Transform child in obj.transform) Destroy(child.Find("Blockers")?.Find("Cube")?.gameObject);
+            })),
             // for some reason this object cannot be found located
             StaticAction.Find("Level 5-2", "6 (Secret)", new(-3.5f, -3f, 940.5f), obj =>
             {
