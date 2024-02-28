@@ -34,6 +34,7 @@ public class InteractiveGuide : CanvasSingleton<InteractiveGuide>
         Add("And send a message to your friend", 0f, -444f, () => !Chat.Shown);
 
         Add($"Open settings using {Settings.Settingz} key", 0f, 0f, () => Settings.Shown);
+        Add("Here is the most interesting option - Emoji Wheel", -227f, -114f, () => false);
         Add("Now you are ready to play, good luck :D", 0f, 0f, () => !Settings.Shown);
     }
 
