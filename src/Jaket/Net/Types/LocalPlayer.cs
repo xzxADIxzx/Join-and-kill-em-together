@@ -17,6 +17,7 @@ public class LocalPlayer : Entity
 {
     private NewMovement nm => NewMovement.Instance;
     private FistControl fc => FistControl.Instance;
+    private GameObject cw => GunControl.Instance.currentWeapon;
 
     /// <summary> Local player's team, changes through the players list. </summary>
     public Team Team;
@@ -34,8 +35,6 @@ public class LocalPlayer : Entity
 
     /// <summary> Index of the current weapon in the global list. </summary>
     private byte weapon;
-    /// <summary> Weapon rendering component, needed to get weapon colors. </summary>
-    private Renderer renderer;
 
     private void Awake()
     {
@@ -45,7 +44,7 @@ public class LocalPlayer : Entity
         Voice = gameObject.AddComponent<AudioSource>(); // add a 2D audio source that will be heard from everywhere
 
         Events.OnLoaded += () => Events.Post(UpdateWeapons);
-        Events.OnWeaponChanged += UpdateWeapons;
+        Events.OnWeaponChanged += () => Events.Post(UpdateWeapons);
     }
 
     private void Update()
@@ -63,7 +62,7 @@ public class LocalPlayer : Entity
     public void SyncStyle() => Networking.Send(PacketType.Style, w =>
     {
         w.Id(Id);
-        if (renderer)
+        if (cw?.GetComponentInChildren<GunColorGetter>()?.TryGetComponent<Renderer>(out var renderer) ?? false)
         {
             bool custom = renderer.material.name.Contains("Custom");
             w.Bool(custom);
@@ -83,14 +82,13 @@ public class LocalPlayer : Entity
     public void UpdateWeapons()
     {
         weapon = Weapons.Type();
-        renderer = GunControl.Instance.currentWeapon?.GetComponentInChildren<GunColorGetter>()?.GetComponent<Renderer>();
         if (LobbyController.Lobby != null) SyncStyle();
 
         // according to the lore, the player plays for V3, so we need to paint the hand
         var punch = fc.transform.Find("Arm Blue(Clone)");
         if (punch) punch.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture();
 
-        var right = GunControl.Instance.currentWeapon?.transform.GetChild(0).Find("RightArm");
+        var right = cw?.transform.GetChild(0).Find("RightArm");
         if (right) right.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture();
 
         // var knuckle = fc.transform.Find("Arm Red(Clone)");
