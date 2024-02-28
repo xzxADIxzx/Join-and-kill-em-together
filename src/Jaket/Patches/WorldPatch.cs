@@ -144,4 +144,11 @@ public class ActionPatch
     {
         if (LobbyController.Lobby != null && LobbyController.IsOwner && Tools.Scene == "Level 0-3") World.SyncDrop();
     }
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(BloodFiller), "FullyFilled")]
+    static void FillBlood(BloodFiller __instance)
+    {
+        if (LobbyController.Lobby != null && LobbyController.IsOwner) World.SyncTree(__instance);
+    }
 }
