@@ -18,6 +18,11 @@ public class World : MonoSingleton<World>
     /// <summary> List of activated actions, cleared only when the host loads a new level. </summary>
     public List<byte> Activated = new();
 
+    /// <summary> List of all hook points on the level. </summary>
+    public List<HookPoint> HookPoints = new();
+    /// <summary> Last hook point, whose state was synchronized. </summary>
+    public HookPoint LastSyncedPoint;
+
     /// <summary> There is no prefab for the mini-boss at level 2-4. </summary>
     public Hand Hand;
     /// <summary> Level 5-4 contains a unique boss that needs to be dealt with separately. </summary>
@@ -321,6 +326,35 @@ public class World : MonoSingleton<World>
         // raise the activation trigger so that the player doesn't get stuck on the sides
         var act = FindObjectOfType<PlayerActivator>();
         if (act) act.transform.position += Vector3.up * 6f;
+
+        #region hook points
+
+        void Sync(HookPoint point, bool hooked)
+        {
+            byte index = (byte)HookPoints.IndexOf(point);
+            if (Vector3.Distance(point.transform.position, HookArm.Instance.hook.position) < 9f && index != 255 && point != LastSyncedPoint)
+                Networking.Send(PacketType.ActivateObject, w =>
+                {
+                    w.Byte(5);
+                    w.Byte(index);
+                    w.Bool(hooked);
+
+                    Log.Debug($"[World] Sent new hook state: point#{index} is {hooked}");
+                });
+        }
+
+        HookPoints.Clear();
+        Tools.ResFind<HookPoint>(p => p.gameObject.scene != null, HookPoints.Add);
+
+        // sort the hook points by the distance so that their order will be the same for all clients
+        HookPoints.Sort((p1, p2) => p1.transform.position.sqrMagnitude.CompareTo(p2.transform.position.sqrMagnitude));
+        HookPoints.ForEach(p =>
+        {
+            p.onHook.onActivate.AddListener(() => Sync(p, true));
+            p.onUnhook.onActivate.AddListener(() => Sync(p, false));
+        });
+
+        #endregion
     }
 
     /// <summary> Iterates each static world action. </summary>
@@ -352,6 +386,21 @@ public class World : MonoSingleton<World>
                     Log.Debug($"[World] Read the activation of the object {na.Name} in {na.Level}");
                     Activated.Add(index);
                     na.Run();
+                }
+                break;
+
+            case 5:
+                byte indexp = r.Byte();
+                bool hooked = r.Bool();
+                Log.Debug($"[World] Read a new state of point#{indexp}: {hooked}");
+
+                LastSyncedPoint = HookPoints[indexp];
+                if (hooked)
+                    LastSyncedPoint.Hooked();
+                else
+                {
+                    LastSyncedPoint.Unhooked();
+                    if (LastSyncedPoint.type == hookPointType.Switch) LastSyncedPoint.SwitchPulled();
                 }
                 break;
 
