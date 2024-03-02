@@ -130,7 +130,7 @@ public class Commands
             SendMsg("* <color=#00E666>Kekson1a</color> - Steam Rich Presence support</size>");
 /*
             SendMsg("Translators:");
-            SendMsg("<color=#cccccc>NotPhobos - Spanish, sSAR - Italian, Theoyeah - French, Sowler - Polish, Ukrainian</color>");
+            SendMsg("<color=#cccccc>NotPhobos - Spanish, sSAR - Italian, Theoyeah - French, Sowler - Polish, Ukrainian, Poyozit - Portuguese</color>");
 */
             SendMsg("Testers:");
             SendMsg("<color=#cccccc>Fenicemaster, AndruGhost, Subjune, FruitCircuit</color>");
