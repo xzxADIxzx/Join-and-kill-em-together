@@ -26,7 +26,7 @@ public class Client : Endpoint, IConnectionManager
 
             // after respawn, Leviathan or hand may be absent, so it must be returned if possible
             // sometimes players disappear for some unknown reason, and sometimes I destroy them myself
-            if (entities[id] == null && (type == EntityType.Hand || type == EntityType.Leviathan || type == EntityType.Player))
+            if (entities[id] == null && (type == EntityType.Hand || type == EntityType.Leviathan || type == EntityType.Minotaur_Chase || type == EntityType.Player))
                 entities[id] = Entities.Get(id, type);
 
             entities[id]?.Read(r);

@@ -66,7 +66,7 @@ public class Enemies
 
         // level 0-2 contains several cutscenes that don't need to be removed
         if (Tools.Scene == "Level 0-2" && enemyId.enemyType == EnemyType.Swordsmachine && enemyId.GetComponent<BossHealthBar>() == null) return true;
-        // levels 2-4 and 5-4 contain unique bosses that needs to be dealt with separately
+        // levels 2-4, 5-4 and 7-1 contain unique bosses that needs to be dealt with separately
         if (Tools.Scene == "Level 2-4" && enemyId.gameObject.name == "MinosArm")
         {
             enemyId.gameObject.AddComponent<Hand>();
@@ -75,6 +75,11 @@ public class Enemies
         if (Tools.Scene == "Level 5-4" && enemyId.enemyType == EnemyType.Leviathan)
         {
             enemyId.gameObject.AddComponent<Leviathan>();
+            return true;
+        }
+        if (Tools.Scene == "Level 7-1" && enemyId.gameObject.name == "MinotaurChase")
+        {
+            enemyId.gameObject.AddComponent<Minotaur>();
             return true;
         }
 

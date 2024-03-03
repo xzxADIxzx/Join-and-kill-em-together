@@ -27,6 +27,8 @@ public class World : MonoSingleton<World>
     public Hand Hand;
     /// <summary> Level 5-4 contains a unique boss that needs to be dealt with separately. </summary>
     public Leviathan Leviathan;
+    /// <summary> The same situation with the Minotaur in the tunnel at level 7-3. </summary>
+    public Minotaur Minotaur;
 
     /// <summary> Trolley with a teleport from the tunnel at level 7-1. </summary>
     public Transform TunnelRoomba;

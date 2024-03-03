@@ -27,6 +27,7 @@ public class Entities
 
         Providers.Add(EntityType.Hand, () => World.Instance.Hand);
         Providers.Add(EntityType.Leviathan, () => World.Instance.Leviathan);
+        Providers.Add(EntityType.Minotaur_Chase, () => World.Instance.Minotaur);
 
         for (var type = EntityType.AppleBait; type <= EntityType.V1; type++)
         {
