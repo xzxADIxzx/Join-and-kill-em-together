@@ -41,7 +41,7 @@ public class World : MonoSingleton<World>
 
         Events.OnLoaded += () =>
         {
-            Tools.ResFind<Door>(door => door.gameObject.scene != null, door =>
+            Tools.ResFind<Door>(door => door.gameObject.scene.name != null, door =>
             {
                 foreach (var room in door.deactivatedRooms) RoomController.Build(room.transform);
             });
