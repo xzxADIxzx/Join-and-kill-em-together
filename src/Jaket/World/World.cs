@@ -405,6 +405,18 @@ public class World : MonoSingleton<World>
                     if (LastSyncedPoint.type == hookPointType.Switch) LastSyncedPoint.SwitchPulled();
                 }
                 break;
+            case 6:
+                // TODO: for some reason, this doesn't work on 7-2 please fix it!
+
+                var speed = r.Int();
+                var tramControl = Tools.ObjFind<TramControl>();
+
+                if (tramControl != null)
+                {
+                    tramControl.currentSpeedStep = speed;
+                }
+
+                break;
 
             case 1: Find<FinalDoor>(r.Vector(), d => d.transform.Find("FinalDoorOpener").gameObject.SetActive(true)); break;
             case 2: Find<Door>(r.Vector(), d => d.Open()); break;
@@ -455,6 +467,20 @@ public class World : MonoSingleton<World>
         w.Byte(4);
         w.Vector(filler.transform.position);
     }, size: 13);
+
+    // Synchronizes the tram with the provided current speed step.
+    public void SyncTram(int currentSpeedStep)
+    {
+        if (LobbyController.Lobby != null)
+        {
+            Networking.Send(PacketType.ActivateObject, w =>
+            {
+                w.Byte(6);
+                w.Int(currentSpeedStep);
+            }, size: 5);
+            Log.Debug($"[World] Send the new tram speed: {currentSpeedStep}");
+        }
+    }
 
     #endregion
 }
