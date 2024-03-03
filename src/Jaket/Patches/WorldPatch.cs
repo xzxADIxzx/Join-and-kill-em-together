@@ -111,7 +111,7 @@ public class TramPatch
 {
     [HarmonyPrefix]
     [HarmonyPatch(nameof(TramControl.SpeedUp), typeof(int))]
-    static void Up(TramControl __instance)
+    static void FightStart(TramControl __instance)
     {
         // find the cart in which the player will appear after respawn
         if (LobbyController.Lobby != null && Tools.Scene == "Level 7-1") World.Instance.TunnelRoomba = __instance.transform.parent;
@@ -119,16 +119,15 @@ public class TramPatch
 
     [HarmonyPostfix]
     [HarmonyPatch(nameof(TramControl.SpeedUp), typeof(int))]
-    static void SpeedUpPatch(int ___currentSpeedStep) => World.Instance.SyncTram(___currentSpeedStep);
+    static void Up(TramControl __instance) => World.SyncTram(__instance);
 
     [HarmonyPostfix]
     [HarmonyPatch(nameof(TramControl.SpeedDown), typeof(int))]
-    static void SpeedDownPatch(int ___currentSpeedStep) => World.Instance.SyncTram(___currentSpeedStep);
+    static void Down(TramControl __instance) => World.SyncTram(__instance);
 
     [HarmonyPrefix]
     [HarmonyPatch("FixedUpdate")]
-    // Disabling check for player distance
-    static bool FixedPatch() => LobbyController.Lobby == null;
+    static bool Update() => LobbyController.Lobby == null; // disable check for player distance
 }
 
 [HarmonyPatch]

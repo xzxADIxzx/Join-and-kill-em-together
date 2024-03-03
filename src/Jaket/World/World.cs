@@ -23,15 +23,17 @@ public class World : MonoSingleton<World>
     /// <summary> Last hook point, whose state was synchronized. </summary>
     public HookPoint LastSyncedPoint;
 
+    /// <summary> List of all tram controllers on the level. </summary>
+    public List<TramControl> Trams = new();
+    /// <summary> Trolley with a teleport from the tunnel at level 7-1. </summary>
+    public Transform TunnelRoomba;
+
     /// <summary> There is no prefab for the mini-boss at level 2-4. </summary>
     public Hand Hand;
     /// <summary> Level 5-4 contains a unique boss that needs to be dealt with separately. </summary>
     public Leviathan Leviathan;
     /// <summary> The same situation with the Minotaur in the tunnel at level 7-3. </summary>
     public Minotaur Minotaur;
-
-    /// <summary> Trolley with a teleport from the tunnel at level 7-1. </summary>
-    public Transform TunnelRoomba;
 
     /// <summary> Creates a singleton of world & listener needed to keep track of objects at the level. </summary>
     public static void Load()
@@ -329,6 +331,17 @@ public class World : MonoSingleton<World>
         var act = FindObjectOfType<PlayerActivator>();
         if (act) act.transform.position += Vector3.up * 6f;
 
+        // finds all objects of the given type on the level, store and sort them in the list
+        void Find<T>(List<T> list) where T : MonoBehaviour
+        {
+            list.Clear();
+            Tools.ResFind<T>(t => t.gameObject.scene.name != null, list.Add);
+
+            // sort the objects by the distance so that their order will be the same for all clients
+            HookPoints.Sort((t1, t2) => t1.transform.position.sqrMagnitude.CompareTo(t2.transform.position.sqrMagnitude));
+        }
+        Find(Trams);
+
         #region hook points
 
         void Sync(HookPoint point, bool hooked)
@@ -345,11 +358,7 @@ public class World : MonoSingleton<World>
                 });
         }
 
-        HookPoints.Clear();
-        Tools.ResFind<HookPoint>(p => p.gameObject.scene != null, HookPoints.Add);
-
-        // sort the hook points by the distance so that their order will be the same for all clients
-        HookPoints.Sort((p1, p2) => p1.transform.position.sqrMagnitude.CompareTo(p2.transform.position.sqrMagnitude));
+        Find(HookPoints);
         HookPoints.ForEach(p =>
         {
             p.onHook.onActivate.AddListener(() => Sync(p, true));
@@ -405,17 +414,13 @@ public class World : MonoSingleton<World>
                     if (LastSyncedPoint.type == hookPointType.Switch) LastSyncedPoint.SwitchPulled();
                 }
                 break;
+
             case 6:
-                // TODO: for some reason, this doesn't work on 7-2 please fix it!
+                byte indext = r.Byte();
+                int speed = r.Int();
+                Log.Debug($"[World] Read a new speed of tram#{indext}: {speed}");
 
-                var speed = r.Int();
-                var tramControl = Tools.ObjFind<TramControl>();
-
-                if (tramControl != null)
-                {
-                    tramControl.currentSpeedStep = speed;
-                }
-
+                Trams[indext].currentSpeedStep = speed;
                 break;
 
             case 1: Find<FinalDoor>(r.Vector(), d => d.transform.Find("FinalDoorOpener").gameObject.SetActive(true)); break;
@@ -444,7 +449,7 @@ public class World : MonoSingleton<World>
         byte index = (byte)Actions.IndexOf(action);
         if (index != 0xFF)
         {
-            Log.Debug($"[World] Send the activation of the object {action.Name} in {action.Level}");
+            Log.Debug($"[World] Sent the activation of the object {action.Name} in {action.Level}");
             Instance.Activated.Add(index);
             w.Byte(0);
             w.Byte(index);
@@ -468,18 +473,20 @@ public class World : MonoSingleton<World>
         w.Vector(filler.transform.position);
     }, size: 13);
 
-    // Synchronizes the tram with the provided current speed step.
-    public void SyncTram(int currentSpeedStep)
+    /// <summary> Synchronizes the tram speed. </summary>
+    public static void SyncTram(TramControl tram)
     {
-        if (LobbyController.Lobby != null)
+        if (LobbyController.Lobby == null || Tools.Scene == "Level 7-1") return;
+
+        byte index = (byte)Instance.Trams.IndexOf(tram);
+        if (index != 255) Networking.Send(PacketType.ActivateObject, w =>
         {
-            Networking.Send(PacketType.ActivateObject, w =>
-            {
-                w.Byte(6);
-                w.Int(currentSpeedStep);
-            }, size: 5);
-            Log.Debug($"[World] Send the new tram speed: {currentSpeedStep}");
-        }
+            w.Byte(6);
+            w.Byte(index);
+            w.Int(tram.currentSpeedStep);
+
+            Log.Debug($"[World] Sent the tram speed: tram#{index} {tram.currentSpeedStep}");
+        }, size: 8);
     }
 
     #endregion
