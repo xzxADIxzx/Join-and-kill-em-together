@@ -71,19 +71,25 @@ public class LobbyList : CanvasSingleton<LobbyList>
 
         float y = height / 2f - 48f / 2f + (64f);
         foreach (var lobby in lobbies)
-        {
-            var name = " " + lobby.GetData("name");
-            if (search != "")
+            if (LobbyController.IsMultikillLobby(lobby))
             {
-                int index = name.ToLower().IndexOf(search);
-                name = name.Insert(index, "<color=#FFB31A>");
-                name = name.Insert(index + "<color=#FFB31A>".Length + search.Length, "</color>");
+                var msg = " <color=red>MULTIKILL Lobby</color>";
+                UI.Button(msg, content, 0f, y -= 64f, 608f, size: 28, align: TextAnchor.MiddleLeft, clicked: () => UI.SendMsg("This lobby was created via MULTIKILL"));
             }
+            else
+            {
+                var name = " " + lobby.GetData("name");
+                if (search != "")
+                {
+                    int index = name.ToLower().IndexOf(search);
+                    name = name.Insert(index, "<color=#FFB31A>");
+                    name = name.Insert(index + "<color=#FFB31A>".Length + search.Length, "</color>");
+                }
 
-            var button = UI.Button(name, content, 0f, y -= 64f, 608f, size: 28, align: TextAnchor.MiddleLeft, clicked: () => LobbyController.JoinLobby(lobby));
+                var button = UI.Button(name, content, 0f, y -= 64f, 608f, size: 28, align: TextAnchor.MiddleLeft, clicked: () => LobbyController.JoinLobby(lobby));
 
-            UI.Text($"{lobby.GetData("level")} {lobby.MemberCount}/8 ", button.transform, 0f, 0f, 608f, 48f, UnityEngine.Color.grey, 28, TextAnchor.MiddleRight);
-        }
+                UI.Text($"{lobby.GetData("level")} {lobby.MemberCount}/8 ", button.transform, 0f, 0f, 608f, 48f, UnityEngine.Color.grey, 28, TextAnchor.MiddleRight);
+            }
     }
 
     /// <summary> Updates the list of public lobbies and rebuilds the menu. </summary>
@@ -91,7 +97,7 @@ public class LobbyList : CanvasSingleton<LobbyList>
     {
         LobbyController.FetchLobbies(lobbies =>
         {
-            this.Lobbies = lobbies;
+            Lobbies = lobbies;
             Rebuild();
         });
         Rebuild();

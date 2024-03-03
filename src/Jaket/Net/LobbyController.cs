@@ -4,6 +4,7 @@ using Steamworks;
 using Steamworks.Data;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 using Jaket.UI;
@@ -37,6 +38,9 @@ public class LobbyController
     /// <summary> Scales health to increase difficulty. </summary>
     public static void ScaleHealth(ref float health) => health *= 1f + (Lobby == null ? 0f : Lobby.Value.MemberCount - 1f) * PPP;
 
+    /// <summary> Whether the given lobby is created via Multikill. </summary>
+    public static bool IsMultikillLobby(Lobby lobby) => lobby.Data.Any(pair => pair.Key == "mk_lobby");
+
     /// <summary> Creates the necessary listeners for proper work with a lobby. </summary>
     public static void Load()
     {
@@ -44,6 +48,11 @@ public class LobbyController
         SteamMatchmaking.OnLobbyEntered += lobby =>
         {
             if (lobby.Owner.Id != 0L) LastOwner = lobby.Owner.Id;
+            if (IsMultikillLobby(lobby))
+            {
+                LeaveLobby();
+                UI.SendMsg("This lobby was created via MULTIKILL");
+            }
         };
 
         // and leave the lobby if the owner has left it
@@ -76,6 +85,7 @@ public class LobbyController
 
             Lobby?.SetJoinable(true);
             Lobby?.SetPrivate();
+            Lobby?.SetData("jaket", "true");
             Lobby?.SetData("name", $"{SteamClient.Name}'s Lobby");
             Lobby?.SetData("level", MapMap(Tools.Scene));
             Lobby?.SetData("pvp", "True"); Lobby?.SetData("cheats", "True");
