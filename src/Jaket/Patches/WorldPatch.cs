@@ -68,6 +68,15 @@ public class RoomPatch
 {
     /// <summary> Copy of the list of the rooms to reset. </summary>
     private static List<GameObject> rooms;
+    /// <summary> Fake class needed so that the checkpoint does not recreates the rooms at the first activation. </summary>
+    private class FakeList : List<GameObject> { public new int Count => 0; }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(nameof(CheckPoint.ActivateCheckPoint))]
+    static void Activate(CheckPoint __instance)
+    {
+        if (LobbyController.Lobby != null) __instance.roomsToInherit = new FakeList();
+    }
 
     [HarmonyPrefix]
     [HarmonyPatch(nameof(CheckPoint.OnRespawn))]
