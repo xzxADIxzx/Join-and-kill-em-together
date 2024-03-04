@@ -57,8 +57,11 @@ public class Bundle
 
     #region parsing
 
+    // <summary> Returns a string without Unity formatting. </summary>
+    public static string CutColors(string original) => Regex.Replace(original, "<.*?>", string.Empty);
+
     // <summary> Returns the length of the string without Unity formatting. </summary>
-    public static int RawLength(string message) => Regex.Replace(message, "<.*?>", string.Empty).Length;
+    public static int RawLength(string original) => CutColors(original).Length;
 
     /// <summary> Parses the colors in the given string so that Unity could understand them. </summary>
     public static string ParseColors(string original)
