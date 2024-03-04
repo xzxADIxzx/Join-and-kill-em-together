@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
 
+using Jaket.Assets;
 using Jaket.Commands;
 using Jaket.Net;
 using Jaket.Sam;
@@ -193,7 +194,7 @@ public class Chat : CanvasSingleton<Chat>
         // if the message is not empty, then send it to other players and remember it
         if (message != "")
         {
-            if (!Commands.Handler.Handle(message)) LobbyController.Lobby?.SendChatString(AutoTTS ? "/tts " + message : message);
+            if (!Commands.Handler.Handle(message)) LobbyController.Lobby?.SendChatString(Bundle.ParseColors(AutoTTS ? "/tts " + message : message));
             messages.Insert(0, message);
         }
 

@@ -116,6 +116,9 @@ public class Bundle
             }
         }
 
+        // just in case
+        foreach (var size in types) builder.Append(size ? "</size>" : "</color>");
+
         return builder.ToString().Substring(1);
     }
 
