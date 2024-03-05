@@ -12,7 +12,7 @@ public class Bundle
     /// <summary> Language codes used in settings. </summary>
     public static readonly string[] Codes = { "pt", "en", "fl", "fr", "it", "pl", "ru", "es", "uk" };
     /// <summary> Displayed language name so that everyone can find out their own even without knowledge of English. </summary>
-    public static readonly string[] Locales = { "Português brasileiro", "English", "fl", "Français", "Italiano", "pl", "Русский", "es", "uk" };
+    public static readonly string[] Locales = { "Português brasileiro", "English", "Filipino", "Français", "Italiano", "Polski", "Русский", "Español", "Українська" };
     /// <summary> File names containing localization. </summary>
     public static readonly string[] Files = { "brazilianportuguese", "english", "filipino", "french", "italian", "polish", "russian", "spanish", "ukrainian" };
 
@@ -124,6 +124,27 @@ public class Bundle
 
         return builder.ToString().Substring(1);
     }
+
+    #endregion
+    #region usage
+
+    /// <summary> Returns a localized line by the key. </summary>
+    public static string Get(string key, string fallback = "OH NO") => props.TryGetValue(key, out var line) ? line : fallback;
+
+    /// <summary> Returns a localized & formatted line by the key. </summary>
+    public static string Format(string key, params string[] args)
+    {
+        for (int i = 0; i < args.Length; i++)
+            if (args[i].StartsWith("#")) args[i] = Get(args[i].Substring(1), args[i]);
+
+        return string.Format(Get(key), args);
+    }
+
+    /// <summary> Sends a localized message to the HUD. </summary>
+    public static void Hud(string key, bool silent = false) => HudMessageReceiver.Instance?.SendHudMessage(Get(key), silent: silent);
+
+    /// <summary> Sends a localized & formatted message to the HUD. </summary>
+    public static void Hud(string key, bool silent, params string[] args) => HudMessageReceiver.Instance?.SendHudMessage(Format(key, args), silent: silent);
 
     #endregion
 }
