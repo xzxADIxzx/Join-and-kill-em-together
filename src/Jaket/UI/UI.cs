@@ -52,6 +52,13 @@ public class UI
             if (!PlayerIndicators.Shown) PlayerIndicators.Instance?.Toggle();
             if (!PlayerInfo.Shown) PlayerInfo.Instance?.Toggle();
         };
+        Events.OnMainMenuLoaded += () =>
+        {
+            var mainMenuRect = GameObject.Find("Canvas/Main Menu (1)").GetComponent<RectTransform>();
+            Text("-- JAKET --", mainMenuRect, 420f, 56f);
+            Button("Lobby", mainMenuRect, 420f, 0f, 213f, clicked: LobbyTab.Instance.Toggle);
+            Button("Settings", mainMenuRect, 420f, -56f, 213f, clicked: Settings.Instance.Toggle);
+        };
         Events.OnTeamChanged += () => PlayerInfo.Instance?.Rebuild();
 
         LobbyList.Build("Lobby List");

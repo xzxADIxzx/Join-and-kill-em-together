@@ -116,7 +116,8 @@ public class Settings : CanvasSingleton<Settings>
         if (UI.AnyJaket() && !Shown) return;
 
         gameObject.SetActive(Shown = !Shown);
-        Movement.UpdateState();
+        // no need to update state if main menu, because it can capture mouse
+        if (Tools.Scene != "Main Menu") Movement.UpdateState();
     }
 
     // <summary> Returns the name of the given key. </summary>
