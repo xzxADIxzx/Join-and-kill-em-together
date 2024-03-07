@@ -27,6 +27,10 @@ public class GameAssets
         /* 6-1 */ "1 - Entryway",
     };
 
+    /// <summary> List of items that mustn't be synchronized, because they are not items at all. </summary>
+    public static readonly string[] ItemExceptions = new[]
+    { "Minotaur", "Tram (3)", "BombTrigger", "BombStationTramTeleporterKey", "Checker" };
+
     /// <summary> List of internal names of all enemies. </summary>
     public static readonly string[] Enemies = new[]
     {

@@ -1,5 +1,6 @@
 namespace Jaket.Content;
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -52,7 +53,7 @@ public class Items
     public static EntityType Type(Entity entity) => entity.ItemId == null ? EntityType.None : Type(entity.ItemId);
 
     /// <summary> Spawns an item with the given type. </summary>
-    public static Item Instantiate(EntityType type) => Object.Instantiate(Prefabs[type - EntityType.ItemOffset].gameObject).AddComponent<Item>();
+    public static Item Instantiate(EntityType type) => GameObject.Instantiate(Prefabs[type - EntityType.ItemOffset].gameObject).AddComponent<Item>();
 
     /// <summary> Synchronizes the item between host and clients. </summary>
     public static void Sync(ItemIdentifier itemId)
@@ -64,7 +65,7 @@ public class Items
         // sometimes the developer just deactivates the skulls instead of removing them
         if (!itemId.gameObject.activeSelf) return;
         // what did I do to deserve this?
-        if (itemId.name == "Minotaur" || itemId.name == "Tram (3)") return;
+        if (Array.Exists(GameAssets.ItemExceptions, ex => ex == itemId.name)) return;
 
         if (LobbyController.IsOwner)
             itemId.gameObject.AddComponent<Item>();
