@@ -23,8 +23,8 @@ public class Enemy : Entity
     /// <summary> Enemy subtype. 0 - standard, 1 - Agony or Angry, 2 - Tundra or Rude. </summary>
     private byte subtype;
 
-    /// <summary> Enemy health, position and rotation. </summary>
-    private FloatLerp health, x, y, z, rotation;
+    /// <summary> Enemy health and position. </summary>
+    private FloatLerp health, x, y, z;
     /// <summary> Whether the enemy is a boss and should have a health bar. </summary>
     private bool boss, haveSecondPhase;
     /// <summary> Whether the enemy is a fake ferryman. </summary>
@@ -36,7 +36,6 @@ public class Enemy : Entity
 
         health = new();
         x = new(); y = new(); z = new();
-        rotation = new();
 
         healthBar = GetComponent<BossHealthBar>();
         fakeFerryman = GetComponent<FerrymanFake>();
@@ -96,7 +95,6 @@ public class Enemy : Entity
 
         EnemyId.health = health.Get(LastUpdate);
         transform.position = new(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
-        transform.eulerAngles = new(0f, rotation.GetAngel(LastUpdate), 0f);
 
         // this is necessary so that the health of the bosses is the same for all clients
         if (EnemyId.machine != null) EnemyId.machine.health = EnemyId.health;
@@ -164,7 +162,6 @@ public class Enemy : Entity
     {
         w.Float(EnemyId.health);
         w.Vector(transform.position);
-        w.Float(transform.eulerAngles.y);
 
         w.Bool(healthBar != null); w.Bool(healthBar == null ? false : healthBar.healthLayers.Length > 1);
         w.Bool(fakeFerryman != null);
@@ -178,7 +175,6 @@ public class Enemy : Entity
 
         health.Read(r);
         x.Read(r); y.Read(r); z.Read(r);
-        rotation.Read(r);
 
         boss = r.Bool(); haveSecondPhase = r.Bool();
         fake = r.Bool();

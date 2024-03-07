@@ -22,6 +22,35 @@ public class EnemyPatch
     [HarmonyPrefix]
     [HarmonyPatch(nameof(EnemyIdentifier.Death))]
     static void Death(EnemyIdentifier __instance) => Enemies.SyncDeath(__instance);
+
+    [HarmonyPostfix]
+    [HarmonyPatch("UpdateTarget")]
+    static void Target(EnemyIdentifier __instance)
+    {
+        if (LobbyController.Lobby == null) return;
+
+        // update target only if the current target is the local player
+        if (__instance.target == null || !__instance.target.isPlayer) return;
+
+        // micro optimization
+        float SqrDst(Vector3 v1, Vector3 v2) => (v1 - v2).sqrMagnitude;
+
+        var target = NewMovement.Instance.transform;
+        float dst = SqrDst(target.position, __instance.transform.position);
+
+        Networking.EachPlayer(player =>
+        {
+            var newDst = SqrDst(target.position, player.transform.position);
+            if (newDst < dst)
+            {
+                target = player.transform;
+                dst = newDst;
+            }
+        });
+
+        // update the target if there is a remote player that is closer to the enemy than you
+        if (target != NewMovement.Instance.transform) __instance.target = new(target);
+    }
 }
 
 [HarmonyPatch]

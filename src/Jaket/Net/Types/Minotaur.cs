@@ -12,8 +12,8 @@ public class Minotaur : Entity
     /// <summary> Boss controller containing methods for attacks. </summary>
     private MinotaurChase minotaur;
 
-    /// <summary> Minotaur health, position and rotation. </summary>
-    private FloatLerp health, x, y, z, rotation;
+    /// <summary> Minotaur health and position. </summary>
+    private FloatLerp health, x, y, z;
     /// <summary> Id of the attack. </summary>
     public byte Attack = 0xFF, LastAttack = 0xFF;
 
@@ -23,7 +23,6 @@ public class Minotaur : Entity
 
         health = new();
         x = new(); y = new(); z = new();
-        rotation = new();
 
         minotaur = GetComponent<MinotaurChase>();
 
@@ -41,7 +40,6 @@ public class Minotaur : Entity
         EnemyId.dead = EnemyId.machine.health <= 0f;
 
         transform.position = new(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
-        transform.eulerAngles = new(0f, rotation.GetAngel(LastUpdate), 0f);
 
         if (LastAttack != Attack) switch (LastAttack = Attack)
             {
@@ -57,7 +55,6 @@ public class Minotaur : Entity
     {
         w.Float(EnemyId.health);
         w.Vector(transform.position);
-        w.Float(transform.eulerAngles.y);
         w.Byte(Attack);
     }
 
@@ -67,7 +64,6 @@ public class Minotaur : Entity
 
         health.Read(r);
         x.Read(r); y.Read(r); z.Read(r);
-        rotation.Read(r);
         Attack = r.Byte();
     }
 
