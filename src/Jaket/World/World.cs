@@ -113,6 +113,12 @@ public class World : MonoSingleton<World>
             }),
             // don't block the path of the roomba once the fight starts
             StaticAction.Find("Level 7-2", "Trigger", new(-218.5f, 65f, 836.5f), obj => Destroy(obj.GetComponent<ObjectActivator>())),
+            StaticAction.Find("Level 7-2", "PuzzleScreen (1)", new(-230.5f, 31.75f, 813.5f), obj => Destroy(obj.transform.GetChild(0).gameObject)),
+            // disable the terminal that lowers the bomb for clients
+            StaticAction.Find("Level 7-2", "PuzzleScreen (1)", new(-317.75f, 55.25f, 605.25f), obj =>
+            {
+                if (!LobbyController.IsOwner) obj.transform.GetChild(0).gameObject.SetActive(false);
+            }),
             // wtf?! why is there a torch???
             StaticAction.Find("Level 7-3", "1 - Dark Path", new(0f, -10f, 300f), obj =>
             {
@@ -250,6 +256,12 @@ public class World : MonoSingleton<World>
 
             // cutscene of the falling tower
             NetAction.Sync("Level 7-2", "TowerDestruction", new(-119.75f, 34f, 552.25f)),
+            // the claw with the bomb
+            NetAction.Sync("Level 7-2", "DelayToClaw", new(-305.75f, 30f, 620.5f), obj =>
+            {
+                obj.SetActive(true);
+                obj.transform.parent.Find("BayDoor").GetComponent<Door>().SimpleOpenOverride();
+            }),
 
             // door lockers
             NetAction.Sync("Level 7-3", "Opener", new(-170.5f, 0.5f, 480.75f)),
