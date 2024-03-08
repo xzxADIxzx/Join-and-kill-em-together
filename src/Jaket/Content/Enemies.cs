@@ -132,11 +132,13 @@ public class Enemies
     /// <summary> Synchronizes the death of the enemy. </summary>
     public static void SyncDeath(EnemyIdentifier enemyId)
     {
-        if (LobbyController.Lobby == null || enemyId.dead || !LobbyController.IsOwner) return;
+        if (LobbyController.Lobby == null || enemyId.dead) return;
 
         if (enemyId.TryGetComponent<Enemy>(out var enemy))
         {
-            Networking.Send(PacketType.KillEntity, w => w.Id(enemy.Id), size: 8);
+            if (LobbyController.IsOwner)
+                Networking.Send(PacketType.KillEntity, w => w.Id(enemy.Id), (data, size) => Events.Post2(() => Networking.Redirect(data, size)), 8);
+
             Tools.Destroy(enemy);
         }
     }
