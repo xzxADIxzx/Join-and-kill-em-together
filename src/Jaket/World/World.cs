@@ -9,6 +9,7 @@ using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net;
 using Jaket.Net.Types;
+using Jaket.Sam;
 using Jaket.UI;
 
 /// <summary> Class that manages objects in the level, such as skull cases, rooms and etc. </summary>
@@ -100,6 +101,18 @@ public class World : MonoSingleton<World>
             StaticAction.Find("Level 7-1", "FightStart", new(-242.5f, 120f, -399.75f), obj =>
             {
                 obj.GetComponent<ObjectActivator>().events.toDisActivateObjects[2] = null;
+            }),
+            // :D
+            StaticAction.Find("Level 7-2", "Intro -> Outdoors", new(-115f, 55f, 419.5f), obj =>
+            {
+                var door = obj.GetComponent<Door>();
+                door?.onFullyOpened.AddListener(() =>
+                {
+                    door.onFullyOpened=new(); // clear listeners
+
+                    UI.SendMsg("What?", true);
+                    SamAPI.TryPlay("What?", Networking.LocalPlayer.Voice);
+                });
             }),
             // open all of the doors and disable the Gate Control Terminal™
             StaticAction.Find("Level 7-2", "9A", new(-23.5f, 37.75f, 806.25f), obj =>
