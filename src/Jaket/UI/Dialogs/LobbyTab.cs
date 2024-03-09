@@ -1,10 +1,13 @@
-namespace Jaket.UI;
+namespace Jaket.UI.Dialogs;
 
 using UnityEngine;
 using UnityEngine.UI;
 
+using Jaket.Assets;
 using Jaket.Net;
 using Jaket.World;
+
+using static Rect;
 
 /// <summary> Tab responsible for lobby management. </summary>
 public class LobbyTab : CanvasSingleton<LobbyTab>
@@ -22,11 +25,11 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
     {
         Events.OnLobbyAction += Rebuild;
 
-        UI.Shadow("Shadow", transform);
-        UI.TableAT("Lobby Control", transform, 0f, 352f, 192f, table =>
+        UIB.Shadow(transform);
+        UIB.Table("Lobby Control", transform, Tlw(16f + 144f / 2f, 144f), table =>
         {
-            UI.Text("--LOBBY--", table, 0f, 64f);
-            create = UI.Button("CREATE LOBBY", table, 0f, 8f, clicked: () =>
+            UIB.Text("#lobby-tab.lobby", table, Btn(0f, 24f), size: 32);
+            create = UIB.Button("#lobby-tab.create", table, Btn(0f, 68f), clicked: () =>
             {
                 if (LobbyController.Lobby == null)
                     // create a new lobby if not already created
@@ -37,23 +40,23 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
 
                 Rebuild();
             });
-            invite = UI.Button("INVITE FRIEND", table, 0f, -56f, clicked: LobbyController.InviteFriend);
+            invite = UIB.Button("#lobby-tab.invite", table, Btn(0f, 116f), clicked: LobbyController.InviteFriend);
         });
-        UI.TableAT("Lobby Codes", transform, 208f, 352f, 256f, table =>
+        UIB.Table("Lobby Codes", transform, Tlw(176f + 192f / 2f, 192f), table =>
         {
-            UI.Text("--CONNECTION--", table, 0f, 96f);
-            copy = UI.Button("COPY LOBBY CODE", table, 0f, 40f, clicked: LobbyController.CopyCode);
-            UI.Button("JOIN BY CODE", table, 0f, -24f, clicked: LobbyController.JoinByCode);
-            UI.Button("BROWSE PUBLIC LOBBIES", table, 0f, -88f, size: 24, clicked: LobbyList.Instance.Toggle);
+            UIB.Text("#lobby-tab.codes", table, Btn(0f, 24f));
+            copy = UIB.Button("#lobby-tab.copy", table, Btn(0f, 68f), clicked: LobbyController.CopyCode);
+            UIB.Button("#lobby-tab.join", table, Btn(0f, 116f), clicked: LobbyController.JoinByCode);
+            UIB.Button("#lobby-tab.list", table, Btn(0f, 164f), clicked: UIOLD.LobbyList.Instance.Toggle);
         });
-        UI.TableAT("Lobby Config", transform, 480f, 352f, 430f, table =>
+        UIB.Table("Lobby Config", transform, Tlw(384f + 342f / 2f, 342f), table =>
         {
-            UI.Text("--CONFIG--", table, 0f, 183f);
+            UIB.Text("#lobby-tab.config", table, Btn(0f, 24f));
 
-            field = UI.Field("Lobby name", table, 0f, 135f, 320f, enter: name => LobbyController.Lobby?.SetData("name", name));
+            field = UIB.Field("#lobby-tab.name", table, Tgl(0f, 64f), cons: name => LobbyController.Lobby?.SetData("name", name));
             field.characterLimit = 24;
 
-            accessibility = UI.Button("PRIVATE", table, 0f, 79f, clicked: () =>
+            accessibility = UIB.Button("#lobby-tab.private", table, Btn(0f, 108f), clicked: () =>
             {
                 switch (lobbyAccessLevel = ++lobbyAccessLevel % 3)
                 {
@@ -64,16 +67,15 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
                 Rebuild();
             });
 
-            pvp = UI.Toggle("ALLOW PvP", table, 0f, 23f, clicked: allow => LobbyController.Lobby?.SetData("pvp", allow.ToString()));
-            cheats = UI.Toggle("ALLOW CHEATS", table, 0f, -25f, clicked: allow => LobbyController.Lobby?.SetData("cheats", allow.ToString()));
+            pvp = UIB.Toggle("#lobby-tab.allow-pvp", table, Tgl(0f, 152f), clicked: allow => LobbyController.Lobby?.SetData("pvp", allow.ToString()));
+            cheats = UIB.Toggle("#lobby-tab.allow-cheats", table, Tgl(0f, 192f), clicked: allow => LobbyController.Lobby?.SetData("cheats", allow.ToString()));
 
-            UI.Text("Percentage per player is the number of percentages that will be added to the boss's health for each player starting from the second",
-                    table, 0f, -88f, height: 62f, color: Color.gray, size: 16);
+            UIB.Text("#lobby-tab.ppp-desc", table, Btn(0f, 247f) with { Height = 62f }, Color.gray, 16);
 
-            UI.Text("BOSS HP:", table, 0f, -151f, align: TextAnchor.MiddleLeft);
-            var PPP = UI.Text("0PPP", table, 0f, -151f, align: TextAnchor.MiddleRight);
+            UIB.Text("#lobby-tab.ppp-name", table, Btn(0f, 298f), align: TextAnchor.MiddleLeft);
+            var PPP = UIB.Text("0PPP", table, Btn(0f, 298f), align: TextAnchor.MiddleRight);
 
-            UI.Slider("Health Multiplier", table, 0f, -191f, 320f, 16f, 16, value =>
+            UIB.Slider("Health Multiplier", table, Btn(0f, 326f) with { Height = 16f }, 16, value =>
             {
                 PPP.text = $"{(int)((LobbyController.PPP = value / 8f) * 100)}PPP";
                 LobbyController.Lobby?.SetData("ppp", LobbyController.PPP.ToString());
@@ -82,15 +84,11 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
 
         Rebuild();
         Version.Label(transform);
-        WidescreenFix.MoveDown(transform);
     }
 
     /// <summary> Toggles visibility of lobby tab. </summary>
     public void Toggle()
     {
-        // if another menu is open, then nothing needs to be done
-        if (UI.AnyJaket() && !Shown && !LobbyList.Shown) return;
-
         gameObject.SetActive(Shown = !Shown);
         Movement.UpdateState();
 
@@ -109,21 +107,21 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
         }
         else field.text = LobbyController.Lobby?.GetData("name");
 
-        create.GetComponentInChildren<Text>().text = LobbyController.CreatingLobby
-            ? "CREATING..."
+        create.GetComponentInChildren<Text>().text = Bundle.Get(LobbyController.CreatingLobby
+            ? "lobby-tab.creating"
             : LobbyController.Lobby == null
-                ? "CREATE LOBBY"
-                : LobbyController.IsOwner ? "CLOSE LOBBY" : "LEAVE LOBBY";
+                ? "lobby-tab.create"
+                : LobbyController.IsOwner ? "lobby-tab.close" : "lobby-tab.leave");
 
         invite.interactable = copy.interactable = LobbyController.Lobby != null;
 
-        accessibility.GetComponentInChildren<Text>().text = lobbyAccessLevel switch
+        accessibility.GetComponentInChildren<Text>().text = Bundle.Get(lobbyAccessLevel switch
         {
-            0 => "PRIVATE",
-            1 => "FRIENDS ONLY",
-            2 => "PUBLIC",
-            _ => "UNKNOWN"
-        };
+            0 => "lobby-tab.private",
+            1 => "lobby-tab.fr-only",
+            2 => "lobby-tab.public",
+            _ => "lobby-tab.default"
+        });
 
         transform.GetChild(3).gameObject.SetActive(LobbyController.Lobby.HasValue && LobbyController.IsOwner);
     }
