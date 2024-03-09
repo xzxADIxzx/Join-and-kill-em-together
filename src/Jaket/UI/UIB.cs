@@ -25,7 +25,7 @@ public class UIB
     private static MaterialPropertyBlock block = new();
 
     /// <summary> Loads the resources needed for interface. </summary>
-    public void Load()
+    public static void Load()
     {
         // find all sprites
         var all = Tools.ResFind<Sprite>();
@@ -241,8 +241,8 @@ public class UIB
         {
             toggle.onValueChanged.AddListener(_ => clicked(_));
 
-            var br = new Rect(-32f, 0f, 32f, 32f, new(1f, .5f), new(1f, .5f));
-            Table("Button", toggle.transform, r, table =>
+            var br = new Rect(-16f, 0f, 32f, 32f, new(1f, .5f), new(1f, .5f));
+            Table("Button", toggle.transform, br, table =>
             {
                 toggle.graphic = Image("Checkmark", table, new(0f, 0f, 32f, 32f), sprite: Checkmark);
             });
