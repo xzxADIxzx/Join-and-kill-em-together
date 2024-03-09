@@ -41,7 +41,7 @@ public class World : MonoSingleton<World>
     public static void Load()
     {
         // initialize the singleton
-        UI.Object("World").AddComponent<World>();
+        Tools.Create<World>("World");
 
         Events.OnLoaded += () =>
         {
@@ -341,7 +341,7 @@ public class World : MonoSingleton<World>
         // reset all of the activated actions
         Activated.Clear();
         // load the host level, it is the main function of this packet
-        SceneHelper.LoadScene(r.String());
+        Tools.Load(r.String());
 
         // if the mod version doesn't match the host's one, then reading the packet is complete, as this may lead to bigger bugs
         if (r.String() != Version.CURRENT)

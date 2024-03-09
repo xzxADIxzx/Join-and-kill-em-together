@@ -45,7 +45,7 @@ public class Networking
         Client.Load();
 
         // create a local player to sync player data
-        LocalPlayer = UI.Object("Local Player").AddComponent<LocalPlayer>();
+        LocalPlayer = Tools.Create<LocalPlayer>("Local Player");
         // update network logic every tick
         Events.EveryTick += NetworkUpdate;
 

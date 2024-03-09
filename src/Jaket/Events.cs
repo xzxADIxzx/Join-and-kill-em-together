@@ -33,7 +33,7 @@ public class Events : MonoSingleton<Events>
     public static void Load()
     {
         // initialize the singleton
-        UI.UI.Object("Events").AddComponent<Events>();
+        Tools.Create<Events>("Events");
 
         SceneManager.sceneLoaded += (scene, mode) =>
         {

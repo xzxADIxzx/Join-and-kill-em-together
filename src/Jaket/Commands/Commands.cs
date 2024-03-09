@@ -98,17 +98,17 @@ public class Commands
                 (level == 5 ? layer == 0 : true) && (layer == 3 || layer == 6 ? level <= 2 : true)
             )
             {
-                SceneHelper.LoadScene($"Level {layer}-{level}");
+                Tools.Load($"Level {layer}-{level}");
                 chat.ReceiveChatMessage($"<color=#00FF00>Level {layer}-{level} is loading.</color>");
             }
             else if (args[1].ToUpper() == "S" && int.TryParse(args[0], out level) && level >= 0 && level <= 6 && level != 3 && level != 6)
             {
-                SceneHelper.LoadScene($"Level {level}-S");
+                Tools.Load($"Level {level}-S");
                 chat.ReceiveChatMessage($"<color=#00FF00>Secret level {level}-S is loading.</color>");
             }
             else if (args[0].ToUpper() == "P" && int.TryParse(args[1], out level) && level >= 1 && level <= 2)
             {
-                SceneHelper.LoadScene($"Level P-{level}");
+                Tools.Load($"Level P-{level}");
                 chat.ReceiveChatMessage($"<color=#00FF00>Prime level P-{level} is loading.</color>");
             }
             else

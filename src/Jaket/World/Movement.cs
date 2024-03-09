@@ -52,7 +52,7 @@ public class Movement : MonoSingleton<Movement>
     public static void Load()
     {
         // initialize the singleton
-        UI.Object("Movement").AddComponent<Movement>();
+        Tools.Create<Movement>("Movement");
 
         // interrupt emoji to prevent some bugs
         Events.OnLoaded += () => Instance.StartEmoji(0xFF, false);

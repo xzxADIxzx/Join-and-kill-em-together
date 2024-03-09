@@ -109,7 +109,7 @@ public class LobbyController
         Lobby = null;
 
         // if the client has left the lobby, then load the main menu
-        if (!IsOwner && Tools.Scene != "Main Menu") SceneHelper.LoadScene("Main Menu");
+        if (!IsOwner && Tools.Scene != "Main Menu") Tools.Load("Main Menu");
 
         Networking.Clear(); // destroy all network objects
         Events.OnLobbyAction.Fire();
