@@ -31,10 +31,20 @@ This modification made by [me](https://github.com/xzxADIxzx) and my team adds su
    * All projectiles in the game and chargeback damage
    * All sorts of items such as torches, skulls and developer plushies
    * Synchronization of position and health of enemies
-   * Synchronization of special bosses such as Leviathan and Minos' hand
+   * Synchronization of special bosses such as Leviathan, Minos' hand and Minotaur
    * Synchronization of different triggers at levels
    * Synchronization of the Cyber Grind
 * Ultrapain difficulty support
+* Translation into many languages
+   * Portuguese
+   * English
+   * Filipino
+   * French
+   * Italian
+   * Polish
+   * Russian
+   * Spanish
+   * Ukrainian
 
 ## Installation
 Before installing, it's important to know that the mod requires **BepInEx** to work.  
