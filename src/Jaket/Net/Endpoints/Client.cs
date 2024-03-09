@@ -56,8 +56,6 @@ public class Client : Endpoint, IConnectionManager
 
         Listen(PacketType.ActivateObject, r => World.Instance.ReadAction(r));
 
-        Listen(PacketType.CinemaAction, r => Cinema.Play(r.String()));
-
         Listen(PacketType.CyberGrindAction, CyberGrind.LoadPattern);
     }
 
