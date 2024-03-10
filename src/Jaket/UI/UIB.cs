@@ -85,7 +85,7 @@ public class UIB
     public static Image Table(string name, string title, Transform parent, Rect r, Action<Transform> build = null) =>
         Table(name, parent, r, table =>
         {
-            Text(title, table, Btn(0f, 24f), size: 32);
+            Text(title, table, Btn(0f, 24f) with { Width = 640f }, size: 32);
             build?.Invoke(table);
         });
 
@@ -193,7 +193,7 @@ public class UIB
     public static Button IconButton(string icon, Transform parent, Rect r, Color? color = null, Vector3? offset = null, Action clicked = null)
     {
         var btn = Button(icon, parent, r, color, 40, clicked: clicked);
-        btn.transform.GetChild(0).localPosition = offset ?? new(.5f, 2.5f);
+        btn.transform.GetChild(0).localPosition = offset ?? new(.5f, 2f);
         return btn;
     }
 

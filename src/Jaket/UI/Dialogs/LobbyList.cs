@@ -1,12 +1,17 @@
-namespace Jaket.UI;
+namespace Jaket.UI.Dialogs;
 
 using Steamworks.Data;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
 
+using Color = UnityEngine.Color;
+
+using Jaket.Assets;
 using Jaket.Net;
 using Jaket.World;
+
+using static Rect;
 
 /// <summary> Browser for public lobbies that receives the list via Steam API and displays it in the scrollbar. </summary>
 public class LobbyList : CanvasSingleton<LobbyList>
@@ -22,73 +27,69 @@ public class LobbyList : CanvasSingleton<LobbyList>
 
     private void Start()
     {
-        UI.Table("List", transform, 0f, 0f, 640f, 640f, table =>
+        UIB.Table("List", "#lobby-list.name", transform, Size(640f, 640f), table =>
         {
-            UI.Text("--LOBBY BROWSER--", table, 0f, 288f, 640f);
-
-            refresh = UI.Button("REFRESH", table, -227f, 232f, 154f, clicked: Refresh);
-            UI.Field("Search", table, 53f, 232f, 374f, 48f, enter: text =>
+            refresh = UIB.Button("", table, Tlw(68f, 40f) with { x = 100f, Width = 184f }, clicked: Refresh);
+            UIB.Field("#lobby-list.search", table, Tlw(68f, 40f) with { x = 392f, Width = 384f }, cons: text =>
             {
                 search = text.Trim().ToLower();
                 Rebuild();
             });
 
-            // add close menu button to the top right corner
-            UI.IconButton("X", table, 280f, 232f, new(1f, .2f, .1f), clicked: Toggle);
-
-            // add scroll rect and get the content transform from it
-            content = UI.Scroll("List", table, 0f, -56f, 608f, 496f).content;
+            UIB.IconButton("X", table, Icon(292f, 68f), new(1f, .2f, .1f), clicked: Toggle);
+            content = UIB.Scroll("List", table, new(0f, 272f, 624f, 544f, new(.5f, 0f), new(.5f, 0f))).content;
         });
         Refresh();
     }
 
-    // <summary> Toggles visibility of lobby list. </summary>
+    // <summary> Toggles visibility of the lobby list. </summary>
     public void Toggle()
     {
         gameObject.SetActive(Shown = !Shown);
         Movement.UpdateState();
 
-        // no need to refresh list if we hide it
         if (Shown && transform.childCount > 0) Refresh();
     }
 
-    /// <summary> Rebuilds lobby list to match the list on Steam servers. </summary>
+    /// <summary> Rebuilds the lobby list to match the list on Steam servers. </summary>
     public void Rebuild()
     {
-        refresh.GetComponentInChildren<Text>().text = LobbyController.FetchingLobbies ? "WAIT..." : "REFRESH";
+        refresh.GetComponentInChildren<Text>().text = Bundle.Get(LobbyController.FetchingLobbies ? "lobby-list.wait" : "lobby-list.refresh");
 
         // destroy old lobby entries if the search is completed
         if (!LobbyController.FetchingLobbies) foreach (Transform child in content) Destroy(child.gameObject);
-
-        // if no lobby is found, then there is no point in adding an empty list
         if (Lobbies == null) return;
 
         // look for the lobby using the search string
         var lobbies = search == "" ? Lobbies : Array.FindAll(Lobbies, lobby => lobby.GetData("name").ToLower().Contains(search));
 
-        float height = lobbies.Length * 64f;
-        content.sizeDelta = new(608f, height);
+        float height = lobbies.Length * 48;
+        content.sizeDelta = new(624f, height);
 
-        float y = height / 2f - 48f / 2f + (64f);
+        float y = -24f;
         foreach (var lobby in lobbies)
             if (LobbyController.IsMultikillLobby(lobby))
             {
-                var msg = " <color=red>MULTIKILL Lobby</color>";
-                UI.Button(msg, content, 0f, y -= 64f, 608f, size: 28, align: TextAnchor.MiddleLeft, clicked: () => UI.SendMsg("This lobby was created via MULTIKILL"));
+                var name = " [MULTIKILL] " + lobby.GetData("lobbyName");
+                var r = Btn(0f, y += 48f) with { Width = 624f };
+
+                UIB.Button(name, content, r, new(1f, .2f, .1f), 24, TextAnchor.MiddleLeft, () => Bundle.Hud("lobby.mk"));
             }
             else
             {
                 var name = " " + lobby.GetData("name");
+                var r = Btn(0f, y += 48f) with { Width = 624f };
+
                 if (search != "")
                 {
                     int index = name.ToLower().IndexOf(search);
-                    name = name.Insert(index, "<color=#FFB31A>");
-                    name = name.Insert(index + "<color=#FFB31A>".Length + search.Length, "</color>");
+                    name = name.Insert(index, "<color=#FFA500>");
+                    name = name.Insert(index + "<color=#FFA500>".Length + search.Length, "</color>");
                 }
 
-                var button = UI.Button(name, content, 0f, y -= 64f, 608f, size: 28, align: TextAnchor.MiddleLeft, clicked: () => LobbyController.JoinLobby(lobby));
+                var b = UIB.Button(name, content, r, align: TextAnchor.MiddleLeft, clicked: () => LobbyController.JoinLobby(lobby));
 
-                UI.Text($"{lobby.GetData("level")} {lobby.MemberCount}/8 ", button.transform, 0f, 0f, 608f, 48f, UnityEngine.Color.grey, 28, TextAnchor.MiddleRight);
+                UIB.Text($"{lobby.GetData("level")} {lobby.MemberCount}/8 ", b.transform, r.ToText(), Color.grey, align: TextAnchor.MiddleRight);
             }
     }
 
