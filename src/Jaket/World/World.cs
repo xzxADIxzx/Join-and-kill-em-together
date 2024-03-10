@@ -346,7 +346,7 @@ public class World : MonoSingleton<World>
         // if the mod version doesn't match the host's one, then reading the packet is complete, as this may lead to bigger bugs
         if (r.String() != Version.CURRENT)
         {
-            Version.NotifyHost();
+            Version.Notify();
             return;
         }
         PrefsManager.Instance.SetInt("difficulty", r.Byte());
