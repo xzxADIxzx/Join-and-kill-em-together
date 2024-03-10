@@ -126,11 +126,24 @@ public class World : MonoSingleton<World>
             }),
             // don't block the path of the roomba once the fight starts
             StaticAction.Find("Level 7-2", "Trigger", new(-218.5f, 65f, 836.5f), obj => Destroy(obj.GetComponent<ObjectActivator>())),
-            StaticAction.Find("Level 7-2", "PuzzleScreen (1)", new(-230.5f, 31.75f, 813.5f), obj => Destroy(obj.transform.GetChild(0).gameObject)),
+            StaticAction.Find("Level 7-2", "PuzzleScreen (1)", new(-230.5f, 31.75f, 813.5f), obj =>
+            {
+                var root = obj.transform.GetChild(0);
+                root.Find("Text (TMP)").gameObject.SetActive(false);
+                root.Find("Button (Closed)").gameObject.SetActive(false);
+
+                UI.Text("UwU", root, 0f, 0f, 512f, 512f, size: 256).transform.localScale = Vector3.one / 8f;
+            }),
             // disable the terminal that lowers the bomb for clients
             StaticAction.Find("Level 7-2", "PuzzleScreen (1)", new(-317.75f, 55.25f, 605.25f), obj =>
             {
-                if (!LobbyController.IsOwner) obj.transform.GetChild(0).gameObject.SetActive(false);
+                if (LobbyController.IsOwner) return;
+
+                var root = obj.transform.GetChild(0);
+                root.Find("Text (TMP)").gameObject.SetActive(false);
+                root.Find("UsableButtons").gameObject.SetActive(false);
+
+                UI.Text("Only the host can do this!", root, 0f, 0f, 1024f, 512f, size: 120).transform.localScale = Vector3.one / 8f;
             }),
             // wtf?! why is there a torch???
             StaticAction.Find("Level 7-3", "1 - Dark Path", new(0f, -10f, 300f), obj =>
