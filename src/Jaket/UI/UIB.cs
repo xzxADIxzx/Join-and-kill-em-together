@@ -13,6 +13,8 @@ using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net;
 
+using static Rect;
+
 /// <summary> Class that builds the entire interface of the mod. </summary>
 public class UIB
 {
@@ -78,6 +80,14 @@ public class UIB
         build?.Invoke(image.transform);
         return image;
     }
+
+    /// <summary> Adds a table with a title. </summary>
+    public static Image Table(string name, string title, Transform parent, Rect r, Action<Transform> build = null) =>
+        Table(name, parent, r, table =>
+        {
+            Text(title, table, Btn(0f, 24f), size: 32);
+            build?.Invoke(table);
+        });
 
     #endregion
     #region canvas
@@ -212,7 +222,7 @@ public class UIB
         var br = new Rect(-64f, 0f, 128f, 40f, new(1f, .5f), new(1f, .5f));
         var img = Table("Button", bind.transform, br, table =>
         {
-            key = Text(UIOLD.Settings.KeyName(current), table, new(0f, 0f, 128f, 40f), size: 16);
+            key = Text(UIOLD.Settings.KeyName(current), table, Size(128f, 40f), size: 16);
         });
         return Component<Button>(img.gameObject, button =>
         {
@@ -244,7 +254,7 @@ public class UIB
             var br = new Rect(-16f, 0f, 32f, 32f, new(1f, .5f), new(1f, .5f));
             Table("Button", toggle.transform, br, table =>
             {
-                toggle.graphic = Image("Checkmark", table, new(0f, 0f, 32f, 32f), sprite: Checkmark);
+                toggle.graphic = Image("Checkmark", table, Size(32f, 32f), sprite: Checkmark);
             });
         });
 
@@ -262,8 +272,8 @@ public class UIB
             rect.horizontal = horizontal;
             rect.vertical = vertical;
 
-            rect.viewport = Mask("Viewport", rect.transform, new(0f, 0f, r.Width, r.Height)).rectTransform;
-            rect.content = Rect("Content", rect.viewport, new(0f, 0f, contentWidth, contentHeight));
+            rect.viewport = Mask("Viewport", rect.transform, Size(r.Width, r.Height)).rectTransform;
+            rect.content = Rect("Content", rect.viewport, Size(contentWidth, contentHeight));
             rect.content.pivot = new(.5f, 1f);
         });
 
@@ -308,7 +318,7 @@ public class UIB
 
     /// <summary> Adds a circular shadow located in the center. </summary>
     public static UICircle CircleShadow(Transform parent) =>
-        Component<UICircle>(Rect("Shadow", parent, new Rect(0f, 0f, 640f, 640f)).gameObject, circle =>
+        Component<UICircle>(Rect("Shadow", parent, Size(640f, 640f)).gameObject, circle =>
         {
             circle.sprite = CircleShadows;
             circle.color = Color.black;

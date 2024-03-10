@@ -26,9 +26,8 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
         Events.OnLobbyAction += Rebuild;
 
         UIB.Shadow(transform);
-        UIB.Table("Lobby Control", transform, Tlw(16f + 144f / 2f, 144f), table =>
+        UIB.Table("Lobby Control", "#lobby-tab.lobby", transform, Tlw(16f + 144f / 2f, 144f), table =>
         {
-            UIB.Text("#lobby-tab.lobby", table, Btn(0f, 24f), size: 32);
             create = UIB.Button("#lobby-tab.create", table, Btn(0f, 68f), clicked: () =>
             {
                 if (LobbyController.Lobby == null)
@@ -42,17 +41,14 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
             });
             invite = UIB.Button("#lobby-tab.invite", table, Btn(0f, 116f), clicked: LobbyController.InviteFriend);
         });
-        UIB.Table("Lobby Codes", transform, Tlw(176f + 192f / 2f, 192f), table =>
+        UIB.Table("Lobby Codes", "#lobby-tab.codes", transform, Tlw(176f + 192f / 2f, 192f), table =>
         {
-            UIB.Text("#lobby-tab.codes", table, Btn(0f, 24f));
             copy = UIB.Button("#lobby-tab.copy", table, Btn(0f, 68f), clicked: LobbyController.CopyCode);
             UIB.Button("#lobby-tab.join", table, Btn(0f, 116f), clicked: LobbyController.JoinByCode);
-            UIB.Button("#lobby-tab.list", table, Btn(0f, 164f), clicked: UIOLD.LobbyList.Instance.Toggle);
+            UIB.Button("#lobby-tab.list", table, Btn(0f, 164f), clicked: LobbyList.Instance.Toggle);
         });
-        UIB.Table("Lobby Config", transform, Tlw(384f + 342f / 2f, 342f), table =>
+        UIB.Table("Lobby Config", "#lobby-tab.config", transform, Tlw(384f + 342f / 2f, 342f), table =>
         {
-            UIB.Text("#lobby-tab.config", table, Btn(0f, 24f));
-
             field = UIB.Field("#lobby-tab.name", table, Tgl(0f, 64f), cons: name => LobbyController.Lobby?.SetData("name", name));
             field.characterLimit = 24;
 
@@ -86,7 +82,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
         Version.Label(transform);
     }
 
-    /// <summary> Toggles visibility of lobby tab. </summary>
+    /// <summary> Toggles visibility of the lobby tab. </summary>
     public void Toggle()
     {
         gameObject.SetActive(Shown = !Shown);
@@ -96,7 +92,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
         if (Shown && transform.childCount > 0) Rebuild();
     }
 
-    /// <summary> Rebuilds lobby tab to update control buttons. </summary>
+    /// <summary> Rebuilds the lobby tab to update control buttons. </summary>
     public void Rebuild()
     {
         // reset config
