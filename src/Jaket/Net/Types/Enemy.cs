@@ -65,6 +65,9 @@ public class Enemy : Entity
 
     private void Start()
     {
+        // fix the rotation of the Corpse of King Minos
+        if (!LobbyController.IsOwner && Tools.Scene == "Level 2-4" && Type == EntityType.TheCorpseOfKingMinos) transform.localEulerAngles = new(0f, 90f, 0f);
+
         // find the enemy subtype
         subtype = healthBar?.bossName switch
         {

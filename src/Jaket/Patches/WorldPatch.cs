@@ -156,7 +156,8 @@ public class ActionPatch
     {
         var name = __instance.name;
         if (LobbyController.Lobby != null && LobbyController.IsOwner &&
-           (name.Contains("Case") || name.Contains("Glass") || name.Contains("Cover") || name.Contains("Skull"))) World.SyncOpening(__instance, false);
+           (name.Contains("Case") || name.Contains("Glass") || name.Contains("Cover") || name.Contains("Skull") || Tools.Scene == "Level 3-1"))
+            World.SyncOpening(__instance, false);
     }
 
     [HarmonyPostfix]

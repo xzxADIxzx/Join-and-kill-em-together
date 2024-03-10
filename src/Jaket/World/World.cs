@@ -160,6 +160,7 @@ public class World : MonoSingleton<World>
             StaticAction.Find("Endless", "Cube", new(-40f, 0.5f, 102.5f), obj => obj.transform.position = new(-40f, -10f, 102.5f)),
 
             // crutches everywhere, crutches all the time
+            StaticAction.Patch("Level 3-2", "OutroLightSound", new(-5f, -161f, 875f)),
             StaticAction.Patch("Level 7-1", "Blockers", new(-242.5f, -115f, 314f)),
             StaticAction.Patch("Level 7-1", "Wave 2", new(-242.5f, 0f, 0f)),
 
@@ -177,6 +178,7 @@ public class World : MonoSingleton<World>
             StaticAction.Destroy("Level 2-4", "Doorway Blockers", new(425f, -10f, 650f)),
             StaticAction.Destroy("Level 2-4", "MetroBlockDoor (1)", new(425f, 27f, 615f)),
             StaticAction.Destroy("Level 2-4", "MetroBlockDoor (2)", new(425f, 27f, 525f)),
+            StaticAction.Destroy("Level 3-2", "Door", new(-10f, -161f, 955f)),
             StaticAction.Destroy("Level 4-2", "6A Activator", new(-79f, 45f, 954f)),
             StaticAction.Destroy("Level 4-2", "6B Activator", new(116f, 19.5f, 954f)),
             StaticAction.Destroy("Level 4-3", "Doorblocker", new(-59.5f, -35f, 676f)),
@@ -186,6 +188,7 @@ public class World : MonoSingleton<World>
             StaticAction.Destroy("Level 5-2", "Arena 2", new(87.5f, -53f, 1240f)),
             StaticAction.Destroy("Level 6-1", "Cage", new(168.5f, -130f, 140f)),
             StaticAction.Destroy("Level 6-1", "Cube", new(102f, -165f, -503f)),
+            StaticAction.Destroy("Level 6-2", "Door", new(-179.5f, 20f, 350f)),
             StaticAction.Destroy("Level 7-1", "SkullRed", new(-66.25f, 9.8f, 485f)),
             StaticAction.Destroy("Level 7-1", "ViolenceArenaDoor", new(-120f, 0f, 530.5f)),
             StaticAction.Destroy("Level 7-1", "Walkway Arena -> Stairway Up", new(80f, -25f, 590f)),
@@ -212,6 +215,17 @@ public class World : MonoSingleton<World>
                 obj.SetActive(true);
                 obj.transform.parent.Find("GlobalLights (2)").Find("MetroWall (10)").gameObject.SetActive(false);
                 obj.transform.parent.Find("BossMusic").gameObject.SetActive(false);
+            }),
+
+            // sync outro
+            NetAction.Sync("Level 3-2", "OutroLightSound", new(-5f, -161f, 875f), obj =>
+            {
+                obj.SetActive(true);
+                obj.transform.GetChild(0).gameObject.SetActive(true);
+                obj.transform.parent.Find("EyeWithSocket").gameObject.SetActive(false);
+
+                Tools.ObjFind("Music 3").SetActive(false);
+                StatsManager.Instance.StopTimer();
             }),
 
             // there are just a couple of little things that need to be synchronized
