@@ -78,8 +78,8 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
             });
         });
 
-        Rebuild();
         Version.Label(transform);
+        Rebuild();
     }
 
     /// <summary> Toggles visibility of the lobby tab. </summary>
