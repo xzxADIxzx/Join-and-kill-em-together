@@ -14,8 +14,6 @@ public class LobbyController
 {
     /// <summary> The current lobby the player is connected to. Null if the player is not connected to a lobby. </summary>
     public static Lobby? Lobby;
-    /// <summary> Lobby owner or the player's SteamID if the lobby is null. </summary>
-    public static SteamId Owner => Lobby == null ? SteamClient.SteamId : Lobby.Value.Owner.Id;
     /// <summary> Id of the last lobby owner, needed to track the exit of the host. </summary>
     public static SteamId LastOwner;
     /// <summary> Id of the last kicked player. </summary>
@@ -176,26 +174,6 @@ Maybe it was closed or you were blocked ,_,");
     public static void EachMember(Action<Friend> cons)
     {
         foreach (var member in Lobby.Value.Members) cons(member);
-    }
-
-    /// <summary> Iterates each lobby member except its owner. </summary>
-    public static void EachMemberExceptOwner(Action<Friend> cons)
-    {
-        foreach (var member in Lobby.Value.Members)
-        {
-            // usually this method is used by the server to send packets, because it doesn't make sense to send packets to itself
-            if (member.Id != Lobby.Value.Owner.Id) cons(member);
-        }
-    }
-
-    /// <summary> Iterates each lobby member, except for its owner and one more SteamID. </summary>
-    public static void EachMemberExceptOwnerAnd(SteamId id, Action<Friend> cons)
-    {
-        foreach (var member in Lobby.Value.Members)
-        {
-            // usually this method is used by the server to forward packets from one of the clients
-            if (member.Id != Lobby.Value.Owner.Id && member.Id != id) cons(member);
-        }
     }
 
     #endregion
