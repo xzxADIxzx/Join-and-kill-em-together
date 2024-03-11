@@ -134,7 +134,7 @@ public class Settings : CanvasSingleton<Settings>
                 Rebuild();
             });
 
-            UIB.Toggle("#settings.freeze", table, Tgl(0f, 256f), clicked: _ =>
+            UIB.Toggle("#settings.freeze", table, Tgl(0f, 256f), 20, _ =>
             {
                 pm.SetBool("jaket.disable-freeze", DisableFreezeFrames = _);
             }).isOn = DisableFreezeFrames;
@@ -159,7 +159,7 @@ public class Settings : CanvasSingleton<Settings>
         if (!current.isKey && !current.isMouse && !current.shift) return;
 
         background.color = new(0f, 0f, 0f, .5f);
-        Events.Post(() => Rebinding = false);
+        Rebinding = false;
 
         // cancel key binding remapping
         if (current.keyCode == KeyCode.Escape || (current.isMouse && current.button == 0)) return;

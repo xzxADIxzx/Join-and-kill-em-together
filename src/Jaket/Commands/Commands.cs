@@ -7,6 +7,7 @@ using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net;
 using Jaket.UI;
+using Jaket.UI.Dialogs;
 
 /// <summary> List of chat commands used by the mod. </summary>
 public class Commands
@@ -32,11 +33,11 @@ public class Commands
         Handler.Register("tts-volume", "[0-100]", "Sets Sam's volume to keep ur ears comfortable", args =>
         {
             if (args.Length == 0)
-                chat.ReceiveChatMessage($"<color=orange>TTS volume is {Settings.GetTTSVolume()}.</color>");
+                chat.ReceiveChatMessage($"<color=orange>TTS volume is {Settings.TTSVolume}.</color>");
             else if (int.TryParse(args[0], out int value))
             {
                 int clamped = Mathf.Clamp(value, 0, 100);
-                Settings.SetTTSVolume(clamped);
+                Settings.TTSVolume = clamped;
 
                 chat.ReceiveChatMessage($"<color=#00FF00>TTS volume is set to {clamped}.</color>");
             }
@@ -48,12 +49,12 @@ public class Commands
             bool enable = args.Length == 0 ? !chat.AutoTTS : (args[0] == "on" ? true : args[0] == "off" ? false : !chat.AutoTTS);
             if (enable)
             {
-                Settings.SetAutoTTS(chat.AutoTTS = true);
+                Settings.AutoTTS = chat.AutoTTS = true;
                 chat.ReceiveChatMessage("<color=#00FF00>Auto TTS enabled.</color>");
             }
             else
             {
-                Settings.SetAutoTTS(chat.AutoTTS = false);
+                Settings.AutoTTS = chat.AutoTTS = false;
                 chat.ReceiveChatMessage("<color=red>Auto TTS disabled.</color>");
             }
         });
