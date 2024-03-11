@@ -61,6 +61,7 @@ public class Plugin : BaseUnityPlugin
         UltrapainLoaded = Chainloader.PluginInfos.ContainsKey("com.eternalUnion.ultraPain");
 
         Commands.Commands.Load();
+        Bundle.Load();
         DollAssets.Load();
         Enemies.Load();
         Weapons.Load();

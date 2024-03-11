@@ -217,17 +217,17 @@ public class UIB
     public static Button KeyButton(string name, KeyCode current, Transform parent, Rect r)
     {
         // key is the current keycode, bind is the name of the keybind
-        Text key = null, bind = Text('#' + name, parent, r, size: 16, align: TextAnchor.MiddleLeft);
+        Text key = null, bind = Text("#keybind." + name, parent, r, size: 16, align: TextAnchor.MiddleLeft);
 
         var br = new Rect(-64f, 0f, 128f, 40f, new(1f, .5f), new(1f, .5f));
         var img = Table("Button", bind.transform, br, table =>
         {
-            key = Text(UIOLD.Settings.KeyName(current), table, Size(128f, 40f), size: 16);
+            key = Text(Dialogs.Settings.KeyName(current), table, Size(128f, 40f), size: 16);
         });
         return Component<Button>(img.gameObject, button =>
         {
             button.targetGraphic = img;
-            button.onClick.AddListener(() => UIOLD.Settings.Instance.Rebind(name, key, img));
+            button.onClick.AddListener(() => Dialogs.Settings.Instance.Rebind(name, key, img));
         });
     }
 

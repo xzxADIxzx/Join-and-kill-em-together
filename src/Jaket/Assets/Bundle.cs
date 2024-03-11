@@ -16,6 +16,8 @@ public class Bundle
     /// <summary> File names containing localization. </summary>
     public static readonly string[] Files = { "brazilianportuguese", "english", "filipino", "french", "italian", "polish", "russian", "spanish", "ukrainian" };
 
+    /// <summary> Id of loaded localization. -1 if the localization is not loaded yet. </summary>
+    public static int LoadedLocale = -1;
     /// <summary> Dictionary with all lines of loaded localization. </summary>
     private static Dictionary<string, string> props = new();
 
@@ -52,6 +54,7 @@ public class Bundle
             props.Add(pair[0].Trim(), ParseColors(pair[1].Trim()));
         }
 
+        LoadedLocale = localeId;
         Log.Info($"Loaded {props.Count} lines of {Locales[localeId]} ({locale}) locale");
     }
 

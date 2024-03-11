@@ -1,6 +1,7 @@
 namespace Jaket.UI;
 
 using System;
+using UnityEngine.UI;
 
 /// <summary> Singleton based on canvas. Used for interface construction. </summary>
 public class CanvasSingleton<T> : MonoSingleton<T> where T : CanvasSingleton<T>
@@ -17,7 +18,7 @@ public class CanvasSingleton<T> : MonoSingleton<T> where T : CanvasSingleton<T>
     {
         // initialize the singleton and create a canvas
         UIB.Canvas(name, UI.Root, woh: woh ? 0f : 1f).gameObject.AddComponent<T>();
-        Dialog = dialog;
+        Instance.GetComponent<GraphicRaycaster>().enabled = Dialog = dialog;
 
         hideCond ??= _ => true;
         hide ??= () => Instance.gameObject.SetActive(Shown = false);
