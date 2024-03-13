@@ -169,6 +169,14 @@ public class World : MonoSingleton<World>
             {
                 obj.GetComponent<ObjectActivator>().events.toActivateObjects[4] = null;
             }),
+            StaticAction.Find("Level P-2", "FightActivator", new(-102f, -61.25f, -450f), obj =>
+            {
+                var act = obj.GetComponent<ObjectActivator>();
+                act.events.onActivate = new(); // gothic door
+                act.events.toActivateObjects[2] = null; // wall collider
+                act.events.toDisActivateObjects[1] = null; // entry collider
+                act.events.toDisActivateObjects[2] = null; // elevator
+            }),
             // move the death zone, because entities spawn at the origin
             StaticAction.Find("Endless", "Cube", new(-40f, 0.5f, 102.5f), obj => obj.transform.position = new(-40f, -10f, 102.5f)),
 
