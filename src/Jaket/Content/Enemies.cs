@@ -125,7 +125,7 @@ public class Enemies
         if (enemyId.TryGetComponent<Entity>(out var entity) && (entity is not RemotePlayer player || !player.Invincible))
             Bullets.SyncDamage(entity.Id, enemyId.hitter, damage, explode, critDamage);
 
-        if (!LobbyController.IsOwner) damage = 0f;
+        if (!LobbyController.IsOwner && damage + damage * critDamage >= enemyId.health - 1f) damage = 0.0001f;
         return true;
     }
 
@@ -137,8 +137,10 @@ public class Enemies
         if (enemyId.TryGetComponent<Enemy>(out var enemy))
         {
             if (LobbyController.IsOwner)
-                Networking.Send(PacketType.KillEntity, w => w.Id(enemy.Id), (data, size) => Events.Post2(() => Networking.Redirect(data, size)), 8);
-
+            {
+                Networking.Send(PacketType.KillEntity, w => w.Id(enemy.Id), size: 8);
+                Networking.Entities[enemy.Id] = null;
+            }
             Tools.Destroy(enemy);
         }
     }
