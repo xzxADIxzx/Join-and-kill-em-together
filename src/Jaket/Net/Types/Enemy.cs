@@ -206,8 +206,14 @@ public class Enemy : Entity
         // destroy the boss bar, because it looks just awful
         healthBar?.Invoke("DestroyBar", 3f);
         // destroy the component to allow enemies like Malicious Face and Drone to fall
-        DestroyImmediate(fake ? gameObject : this);
+        if (fake || Type == EntityType.MaliciousFace || Type == EntityType.Drone)
+            DestroyImmediate(fake ? gameObject : this);
+        else
+            Invoke("DestroyComponent", 1f);
     }
+
+    // ultracrutch that will be here until I remake the net code again in 1.2
+    private void DestroyComponent() => Destroy(this);
 
     #endregion
 }
