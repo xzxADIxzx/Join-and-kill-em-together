@@ -10,11 +10,11 @@ using System.Text.RegularExpressions;
 public class Bundle
 {
     /// <summary> Language codes used in settings. </summary>
-    public static readonly string[] Codes = { "pt", "en", "fl", "fr", "it", "pl", "ru", "es", "uk" };
+    public static readonly string[] Codes = { "ar", "pt", "en", "fl", "fr", "it", "pl", "ru", "es", "uk" };
     /// <summary> Displayed language name so that everyone can find out their own even without knowledge of English. </summary>
-    public static readonly string[] Locales = { "Português brasileiro", "English", "Filipino", "Français", "Italiano", "Polski", "Русский", "Español", "Українська" };
+    public static readonly string[] Locales = { "عربي", "Português brasileiro", "English", "Filipino", "Français", "Italiano", "Polski", "Русский", "Español", "Українська" };
     /// <summary> File names containing localization. </summary>
-    public static readonly string[] Files = { "brazilianportuguese", "english", "filipino", "french", "italian", "polish", "russian", "spanish", "ukrainian" };
+    public static readonly string[] Files = { "arabic", "brazilianportuguese", "english", "filipino", "french", "italian", "polish", "russian", "spanish", "ukrainian" };
 
     /// <summary> Id of loaded localization. -1 if the localization is not loaded yet. </summary>
     public static int LoadedLocale = -1;
