@@ -58,6 +58,7 @@ public class UI
         LobbyTab.Build("Lobby Tab");
         PlayerList.Build("Player List");
         Settings.Build("Settings");
+        SpraySettings.Build("Spray Settings");
         PlayerIndicators.Build("Player Indicators", hideEvent: Events.OnMainMenuLoaded);
         PlayerInfo.Build<StyleHUD>();
 
@@ -73,7 +74,7 @@ public class UI
     #region shown
 
     /// <summary> Returns true if at least one element of Jaket interface except indicators is currently visible. </summary>
-    public static bool AnyJaket() => LobbyList.Shown || LobbyTab.Shown || PlayerList.Shown || Settings.Shown || Chat.Shown || EmojiWheel.Shown;
+    public static bool AnyJaket() => LobbyList.Shown || LobbyTab.Shown || PlayerList.Shown || Settings.Shown || Chat.Shown || EmojiWheel.Shown || SpraySettings.Shown;
 
     /// <summary> Returns true if at least one built-in menu is currently visible. Cheat menu and console pause the game, so there's no need to add them. </summary>
     public static bool AnyBuiltIn() => (OptionsManager.Instance != null && OptionsManager.Instance.paused)
@@ -189,6 +190,14 @@ public class UI
             image.type = circle ? UnityEngine.UI.Image.Type.Filled : UnityEngine.UI.Image.Type.Sliced;
         });
 
+    /// <summary> Adds an image with the given texture to the canvas. </summary>
+    public static Image ImageFromTexture(string name, Transform parent, float x, float y, Texture2D texture, float width = 320f, float height = 48f, bool preserveAspect = true) =>
+        Component<Image>(Rect(name, parent, x, y, width, height).gameObject, image =>
+        {
+            image.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+            image.preserveAspect = preserveAspect;
+        });
+
     /// <summary> Adds a circular image with the standard sprite to the canvas. </summary>
     public static UICircle CircleImage(string name, Transform parent, float width, float height, float arc, int rotation, float thickness, bool outline = false)
     {
@@ -237,6 +246,13 @@ public class UI
     {
         var btn = Button(icon, parent, x, y, 48f, 48f, color, 40, clicked: clicked);
         btn.transform.GetChild(0).localPosition = offset ?? new(.5f, 2.5f, 0f);
+        return btn;
+    }
+
+    public static Button IconTextureButton(string name, Texture2D icon, Transform parent, float x, float y, UnityAction clicked = null, Color? color = null)
+    {
+        var btn = Button(name, parent, x + 32, y, width: 248f, color: color, clicked: clicked);
+        ImageFromTexture("Icon", btn.transform, -248f / 2 - 44f, 0f, icon, 48f, 48f);
         return btn;
     }
 

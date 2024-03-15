@@ -8,6 +8,7 @@ using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net;
+using Jaket.Sprays;
 using Jaket.UI;
 using Jaket.World;
 
@@ -78,6 +79,8 @@ public class Plugin : BaseUnityPlugin
         WidescreenFix.Load();
         UI.UI.Load();
         UI.UI.Build();
+
+        SprayManager.Load();
 
         // initialize harmony and patch all the necessary classes
         new Harmony("Should I write something here?").PatchAll();

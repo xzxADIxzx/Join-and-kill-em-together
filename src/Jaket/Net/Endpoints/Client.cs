@@ -6,6 +6,7 @@ using Steamworks.Data;
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net.Types;
+using Jaket.Sprays;
 using Jaket.World;
 
 /// <summary> Client endpoint processing socket events and host packets. </summary>
@@ -54,6 +55,10 @@ public class Client : Endpoint, IConnectionManager
             if (entities[r.Id()] is RemotePlayer player) player?.Point(r);
         });
 
+        Listen(PacketType.Spray, r => SprayManager.CreateSpray(r.Id(), r.Vector(), r.Vector()));
+
+        Listen(PacketType.ImageChunk, SprayDistributor.Download);
+
         Listen(PacketType.ActivateObject, r => World.Instance.ReadAction(r));
 
         Listen(PacketType.CinemaAction, r => Cinema.Play(r.String()));
@@ -90,7 +95,11 @@ public class Client : Endpoint, IConnectionManager
 
     public void OnConnecting(ConnectionInfo info) => Log.Info("[Client] Connecting...");
 
-    public void OnConnected(ConnectionInfo info) => Log.Info("[Client] Connected");
+    public void OnConnected(ConnectionInfo info)
+    {
+        Log.Info("[Client] Connected");
+        SprayDistributor.UploadLocal();
+    }
 
     public void OnDisconnected(ConnectionInfo info) => Log.Info("[Client] Disconnected");
 

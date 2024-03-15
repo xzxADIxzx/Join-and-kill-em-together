@@ -54,6 +54,8 @@ public class Writer
 
     public void Bytes(byte[] value) => Marshal.Copy(value, 0, mem + Inc(value.Length), value.Length);
 
+    public void Bytes(byte[] value, int start, int length) => Marshal.Copy(value, start, mem + Inc(length), length);
+
     public void Int(int value) => Marshal.WriteInt32(mem, Inc(4), value);
 
     public void Float(float value) => Marshal.WriteInt32(mem, Inc(4), Float2Int(value));

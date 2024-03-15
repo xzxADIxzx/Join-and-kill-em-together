@@ -33,21 +33,21 @@ public class Administration
     }
 
     /// <summary> Kicks the member from the lobby, or rather asks him to leave, because Valve has not added such functionality to its API. </summary>
-    public static void Ban(Friend member)
+    public static void Ban(SteamId id)
     {
         // who does the client think he is?!
         if (!LobbyController.IsOwner) return;
 
         Networking.Send(PacketType.Kick, null, (data, size) =>
         {
-            var con = Networking.FindCon(member.Id);
+            var con = Networking.FindCon(id);
             con?.SendMessage(data, size);
             con?.Flush();
             con?.Close();
         });
 
-        LobbyController.Lobby?.SendChatString("#/k" + member.Id);
-        Banned.Add(member.Id);
+        LobbyController.Lobby?.SendChatString("#/k" + id);
+        Banned.Add(id);
     }
 
     /// <summary> Whether the player can spawn another common bullet. </summary>

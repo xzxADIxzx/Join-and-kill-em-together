@@ -15,10 +15,10 @@ public class Settings : CanvasSingleton<Settings>
     /// <summary> List of internal names of all key bindings. </summary>
     public static readonly string[] Keybinds =
     { "lobby-tab", "player-list", "settings", "player-indicators", "player-information", "pointer",
-      "chat", "scroll-messages-up", "scroll-messages-down", "emoji-wheel", "self-destruction" };
+      "chat", "scroll-messages-up", "scroll-messages-down", "emoji-wheel", "self-destruction", "spray" };
 
     /// <summary> List of all key bindings in the mod. </summary>
-    public static KeyCode LobbyTab, PlayerList, Settingz, PlayerIndicators, PlayerInfo, Pointer, Chat, ScrollUp, ScrollDown, EmojiWheel, SelfDestruction;
+    public static KeyCode LobbyTab, PlayerList, Settingz, PlayerIndicators, PlayerInfo, Pointer, Chat, ScrollUp, ScrollDown, EmojiWheel, SelfDestruction, Spray;
     /// <summary> Gets the key binding value from its path. </summary>
     public static KeyCode GetKey(string path, KeyCode def) => (KeyCode)prefs.GetInt($"jaket.binds.{path}", (int)def);
 
@@ -46,6 +46,7 @@ public class Settings : CanvasSingleton<Settings>
         ScrollDown = GetKey("scroll-messages-down", KeyCode.DownArrow);
         EmojiWheel = GetKey("emoji-wheel", KeyCode.B);
         SelfDestruction = GetKey("self-destruction", KeyCode.K);
+        Spray = GetKey("spray", KeyCode.C);
 
         ForceGreenArm = prefs.GetBool("jaket.force-arm", false);
         DisableFreezeFrames = prefs.GetBool("jaket.disable-freeze", true);
@@ -61,9 +62,11 @@ public class Settings : CanvasSingleton<Settings>
             UI.Text("--CONTROLS--", table, 0f, 333f);
             UI.Button("RESET", table, 0f, 277f, clicked: ResetKeybinds);
 
-            var list = new[] { LobbyTab, PlayerList, Settingz, PlayerIndicators, PlayerInfo, Pointer, Chat, ScrollUp, ScrollDown, EmojiWheel, SelfDestruction };
+            var list = new[] { LobbyTab, PlayerList, Settingz, PlayerIndicators, PlayerInfo, Pointer, Chat, ScrollUp, ScrollDown, EmojiWheel, SelfDestruction, Spray };
             for (int i = 0; i < list.Length; i++)
                 UI.KeyButton(Keybinds[i], list[i], table, 0f, 213f - i * 54f);
+
+            UI.Button("SPRAYS SETTINGS", table, 0f, -620f, clicked: ShowSpraysSettings);
         });
         UI.TableAT("Other", transform, 746f, 352f, 224f, table =>
         {
@@ -81,6 +84,13 @@ public class Settings : CanvasSingleton<Settings>
 
         Version.Label(transform);
         WidescreenFix.MoveDown(transform);
+    }
+
+    /// <summary> Shows the Sprays settings menu. </summary>
+    public void ShowSpraysSettings()
+    {
+        Toggle(false);
+        SpraySettings.Instance.Toggle(true);
     }
 
     private void OnGUI()
@@ -110,13 +120,15 @@ public class Settings : CanvasSingleton<Settings>
     }
 
     // <summary> Toggles visibility of settings. </summary>
-    public void Toggle()
+    public void Toggle(bool updateState = true)
     {
         // if another menu is open, then nothing needs to be done
-        if (UI.AnyJaket() && !Shown) return;
+        if (UI.AnyJaket() && !Shown && !SpraySettings.Shown) return;
+
+        SpraySettings.Instance.Toggle(false);
 
         gameObject.SetActive(Shown = !Shown);
-        Movement.UpdateState();
+        if (updateState) Movement.UpdateState();
     }
 
     // <summary> Returns the name of the given key. </summary>

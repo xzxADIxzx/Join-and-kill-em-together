@@ -11,6 +11,7 @@ using Jaket.Content;
 using Jaket.Net;
 using Jaket.UI;
 using Jaket.UI.Elements;
+using Jaket.Sprays;
 
 /// <summary> Class responsible for additions to control and local display of emotions. </summary>
 public class Movement : MonoSingleton<Movement>
@@ -47,6 +48,8 @@ public class Movement : MonoSingleton<Movement>
 
     /// <summary> Last pointer created by the player. </summary>
     public Pointer Pointer;
+    /// <summary> Last spray created by the player. </summary>
+    public Spray Spray;
 
     /// <summary> Creates a singleton of movement. </summary>
     public static void Load()
@@ -77,17 +80,23 @@ public class Movement : MonoSingleton<Movement>
         if (Input.GetKeyDown(Settings.ScrollUp)) Chat.Instance.ScrollMessages(true);
         if (Input.GetKeyDown(Settings.ScrollDown)) Chat.Instance.ScrollMessages(false);
 
-        if (Input.GetKeyDown(Settings.Pointer) && Physics.Raycast(cc.transform.position, cc.transform.forward, out var hit, float.MaxValue, mask))
+        if ((Input.GetKeyDown(Settings.Spray) || Input.GetKeyDown(Settings.Pointer)) // just for optimization reason
+            && Physics.Raycast(cc.transform.position, cc.transform.forward, out var hit, float.MaxValue, mask))
         {
-            if (Pointer != null) Pointer.Lifetime = 4.5f;
-            Pointer = Pointer.Spawn(Networking.LocalPlayer.Team, hit.point, hit.normal);
-
-            if (LobbyController.Lobby != null) Networking.Send(PacketType.Point, w =>
+            if (Input.GetKeyDown(Settings.Pointer))
             {
-                w.Id(Networking.LocalPlayer.Id);
-                w.Vector(hit.point);
-                w.Vector(hit.normal);
-            }, size: 32);
+                if (Pointer != null) Pointer.Lifetime = 4.5f;
+                Pointer = Pointer.Spawn(Networking.LocalPlayer.Team, hit.point, hit.normal);
+
+                if (LobbyController.Lobby != null) Networking.Send(PacketType.Point, w =>
+                {
+                    w.Id(Networking.LocalPlayer.Id);
+                    w.Vector(hit.point);
+                    w.Vector(hit.normal);
+                }, size: 32);
+            }
+
+            if (Input.GetKeyDown(Settings.Spray)) SprayManager.CreateClientSpray(hit.point, hit.normal);
         }
 
         if (Input.GetKey(Settings.EmojiWheel))
