@@ -13,7 +13,7 @@ public class Tools
     public static string Scene => SceneHelper.CurrentScene;
 
     /// <summary> Loads the given scene. </summary>
-    public static void Load(string scene) => Tools.Load(scene);
+    public static void Load(string scene) => SceneHelper.LoadScene(scene);
 
     #endregion
     #region create & destroy
