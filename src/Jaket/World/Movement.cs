@@ -63,12 +63,15 @@ public class Movement : MonoSingleton<Movement>
 
     private void Update()
     {
+        if (Tools.Scene != "Main Menu" && UI.AnyBuiltIn()) return;
+
+        if (Input.GetKeyDown(Settings.LobbyTab)) LobbyTab.Instance.Toggle();
+        if (Input.GetKeyDown(Settings.Settingz)) Settings.Instance.Toggle();
+
         // mod and game menus may conflict
         if (UI.AnyBuiltIn() || Settings.Instance.Rebinding) return;
 
-        if (Input.GetKeyDown(Settings.LobbyTab)) LobbyTab.Instance.Toggle();
         if (Input.GetKeyDown(Settings.PlayerList)) PlayerList.Instance.Toggle();
-        if (Input.GetKeyDown(Settings.Settingz)) Settings.Instance.Toggle();
 
         if (Input.GetKeyDown(Settings.PlayerIndicators)) PlayerIndicators.Instance.Toggle();
         if (Input.GetKeyDown(Settings.PlayerInfo)) PlayerInfo.Instance?.Toggle();

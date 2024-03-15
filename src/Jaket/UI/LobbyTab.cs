@@ -11,6 +11,8 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
 {
     /// <summary> Lobby control buttons. </summary>
     private Button create, invite, copy, accessibility;
+    private Text inLobbyNotice;
+    private Image lobbyControlTable;
     /// <summary> Input field with lobby name. </summary>
     private InputField field;
     /// <summary> Current lobby access level: 0 - private, 1 - friends only, 2 - public. I was too lazy to create an enum. </summary>
@@ -23,7 +25,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
         Events.OnLobbyAction += Rebuild;
 
         UI.Shadow("Shadow", transform);
-        UI.TableAT("Lobby Control", transform, 0f, 352f, 192f, table =>
+        lobbyControlTable = UI.TableAT("Lobby Control", transform, 0f, 352f, 192f, table =>
         {
             UI.Text("--LOBBY--", table, 0f, 64f);
             create = UI.Button("CREATE LOBBY", table, 0f, 8f, clicked: () =>
@@ -39,6 +41,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
             });
             invite = UI.Button("INVITE FRIEND", table, 0f, -56f, clicked: LobbyController.InviteFriend);
         });
+        inLobbyNotice = UI.Text("You can't create lobbies in the main menu.\nPlease, enter any mission to able to create a lobby.", transform, -768f, 480f, 320f, 64f, Color.gray, 16);
         UI.TableAT("Lobby Codes", transform, 208f, 352f, 256f, table =>
         {
             UI.Text("--CONNECTION--", table, 0f, 96f);
@@ -92,7 +95,8 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
         if (UI.AnyJaket() && !Shown && !LobbyList.Shown) return;
 
         gameObject.SetActive(Shown = !Shown);
-        Movement.UpdateState();
+        // no need to update state if main menu, because it can capture mouse
+        if (Tools.Scene != "Main Menu") Movement.UpdateState();
 
         // no need to update tab if we hide it
         if (Shown && transform.childCount > 0) Rebuild();
@@ -116,6 +120,11 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
                 : LobbyController.IsOwner ? "CLOSE LOBBY" : "LEAVE LOBBY";
 
         invite.interactable = copy.interactable = LobbyController.Lobby != null;
+        
+        var IsMainMenu = Tools.Scene == "Main Menu";
+        // hide lobby controls if main menu is shown
+        lobbyControlTable.gameObject.SetActive(!IsMainMenu);
+        inLobbyNotice.gameObject.SetActive(IsMainMenu);
 
         accessibility.GetComponentInChildren<Text>().text = lobbyAccessLevel switch
         {
@@ -125,6 +134,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
             _ => "UNKNOWN"
         };
 
-        transform.GetChild(3).gameObject.SetActive(LobbyController.Lobby.HasValue && LobbyController.IsOwner);
+        // disabling lobby config controls if lobby is not created
+        transform.GetChild(4).gameObject.SetActive(LobbyController.Lobby.HasValue && LobbyController.IsOwner);
     }
 }
