@@ -28,6 +28,12 @@ public class PlayerInfo : CanvasSingleton<PlayerInfo>
         if (root) root.color = new(0f, 0f, 0f, PrefsManager.Instance.GetFloat("hudBackgroundOpacity") / 100f);
     }
 
+    private void UpdateMaterials()
+    {
+        foreach (var img in root.GetComponentsInChildren<Image>()) img.material = HUDOptions.Instance.hudMaterial;
+        foreach (var txt in root.GetComponentsInChildren<Text>()) txt.material = HUDOptions.Instance.hudMaterial;
+    }
+
     /// <summary> Toggles visibility of the information table. </summary>
     public void Toggle()
     {
@@ -60,5 +66,7 @@ public class PlayerInfo : CanvasSingleton<PlayerInfo>
             float y = -20f;
             teammates.ForEach(p => PlayerInfoEntry.Build(p, UIB.Rect(p.Header.Name, root.transform, Btn(0f, y += 48f) with { Width = 540f })));
         }
+
+        UpdateMaterials();
     }
 }
