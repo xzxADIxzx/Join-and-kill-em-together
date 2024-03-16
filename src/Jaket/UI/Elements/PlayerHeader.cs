@@ -4,10 +4,12 @@ using Steamworks;
 using UnityEngine;
 using UnityEngine.UI;
 
+using static Rect;
+
 /// <summary> Header containing nickname and health. </summary>
 public class PlayerHeader
 {
-    /// <summary> Player name taken from steam. </summary>
+    /// <summary> Player name taken from Steam. </summary>
     public string Name;
     /// <summary> Component containing the name. </summary>
     public Text Text;
@@ -21,19 +23,23 @@ public class PlayerHeader
 
     public PlayerHeader(SteamId id, Transform parent)
     {
-        // workaround for getting nickname
+        // workaround for getting the nickname
         Name = new Friend(id).Name;
 
         float width = Name.Length * 14f + 16f;
-        canvas = UI.WorldCanvas("Header", parent, new(0f, 5f, 0f), action: canvas =>
+        canvas = UIB.WorldCanvas("Header", parent, new(0f, 5f, 0f), build: canvas =>
         {
-            UI.Table("Name", canvas, 0f, 0f, width, 40f, table => Text = UI.Text(Name, table, 0f, 0f, width, size: 24));
+            var n = Size(width, 40f);
+            UIB.Table("Name", canvas, n, table => Text = UIB.Text(Name, table, n));
 
-            UI.Table("Health Background", canvas, 0f, -30f, 160f, 4f);
-            health = UI.Image("Health", canvas, 0f, -30f, 160f, 4f, Color.red).rectTransform;
-            overhealth = UI.Image("Overhealth", canvas, 0f, -30f, 160f, 4f, Color.green).rectTransform;
+            var h = Size(160f, 4f) with { y = -30f };
+            UIB.Image("Background", canvas, h, Color.black);
 
-            UI.Table("Ellipsis", canvas, 0f, -30f, 48f, 18f, table => ellipsis = UI.Text("...", table, 0f, 8f, size: 24));
+            health = UIB.Image("Health", canvas, h, Color.red).rectTransform;
+            overhealth = UIB.Image("Overhealth", canvas, h, Color.green).rectTransform;
+
+            var e = Size(48f, 18f) with { y = -30f };
+            UIB.Table("Ellipsis", canvas, e, table => ellipsis = UIB.Text("...", table, e with { y = 8f }));
         });
     }
 
@@ -46,7 +52,7 @@ public class PlayerHeader
         overhealth.localScale = new(Mathf.Max((hp - 100f) / 100f, 0f), 1f, 1f);
 
         canvas.LookAt(Camera.main?.transform);
-        canvas.Rotate(new(0f, 180f, 0f), Space.Self);
+        canvas.Rotate(Vector3.up * 180f, Space.Self);
 
         ellipsis.transform.parent.gameObject.SetActive(typing);
         if (typing)

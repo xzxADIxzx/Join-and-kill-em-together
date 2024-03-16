@@ -67,7 +67,7 @@ public class LocalPlayer : Entity
             bool custom = renderer.material.name.Contains("Custom");
             w.Bool(custom);
 
-            if (custom) UI.Properties(renderer, block =>
+            if (custom) UIB.Properties(renderer, block =>
             {
                 w.Color(block.GetColor("_CustomColor1"));
                 w.Color(block.GetColor("_CustomColor2"));
@@ -105,7 +105,7 @@ public class LocalPlayer : Entity
         w.Float(135f - Mathf.Clamp(CameraController.Instance.rotationX, -40f, 80f));
 
         w.Byte((byte)nm.hp);
-        w.Byte((byte)Mathf.Floor(WeaponCharges.Instance.raicharge * 2f));
+        w.Byte((byte)Mathf.Floor(WeaponCharges.Instance.raicharge * 2.5f));
         w.Enum(Team);
         w.Byte(weapon);
         w.Byte(Movement.Instance.Emoji);

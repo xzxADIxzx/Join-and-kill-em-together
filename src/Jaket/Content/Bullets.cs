@@ -198,7 +198,7 @@ public class Bullets
         // null pointer fix
         Tools.Field<Harpoon>("aud").SetValue(harpoon, harpoon.GetComponent<AudioSource>());
 
-        harpoon.transform.Rotate(new(0f, 180f, 0f), Space.Self);
+        harpoon.transform.Rotate(Vector3.up * 180f, Space.Self);
         harpoon.transform.position += harpoon.transform.forward;
         harpoon.Punched();
     }
