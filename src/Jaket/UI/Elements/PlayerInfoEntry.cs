@@ -39,9 +39,10 @@ public class PlayerInfoEntry : MonoBehaviour
     private void Update()
     {
         float hp = player.Health;
+        int charge = Mathf.Min(10, player.RailCharge);
 
         pname.color = hp > 0f ? Color.white : Color.red;
-        railc.text = $"[<color=#0080FF>{new string('I', player.RailCharge)}</color><color=#003060>{new string('-', 10 - player.RailCharge)}</color>]";
+        railc.text = $"[<color=#0080FF>{new string('I', charge)}</color><color=#003060>{new string('-', 10 - charge)}</color>]";
 
         health.localScale = new(Mathf.Min(hp / 100f, 1f), 1f, 1f);
         health.localPosition = new(-(1f - health.localScale.x) * 262f, -16f, 0f);

@@ -67,6 +67,6 @@ public class PlayerInfo : CanvasSingleton<PlayerInfo>
             teammates.ForEach(p => PlayerInfoEntry.Build(p, UIB.Rect(p.Header.Name, root.transform, Btn(0f, y += 48f) with { Width = 540f })));
         }
 
-        UpdateMaterials();
+        Events.Post2(UpdateMaterials);
     }
 }
