@@ -29,7 +29,7 @@ public class PlayerInfoEntry : MonoBehaviour
         pname = UIB.Text($"<b>{player.Header.Name}</b>", transform, t, size: 32, align: TextAnchor.UpperLeft);
         railc = UIB.Text("", transform, t, size: 32, align: TextAnchor.UpperRight);
 
-        var h = Size(540f - 16f, 8f) with { y = 16f };
+        var h = Size(540f - 16f, 8f) with { y = -16f };
         UIB.Image("Background", transform, h, Color.black);
 
         health = UIB.Image("Health", transform, h, Color.red).rectTransform;
@@ -44,9 +44,9 @@ public class PlayerInfoEntry : MonoBehaviour
         railc.text = $"[<color=#0080FF>{new string('I', player.RailCharge)}</color><color=#003060>{new string('-', 10 - player.RailCharge)}</color>]";
 
         health.localScale = new(Mathf.Min(hp / 100f, 1f), 1f, 1f);
-        health.localPosition = new(-(1f - health.localScale.x) * 262f, -20f, 0f);
+        health.localPosition = new(-(1f - health.localScale.x) * 262f, -16f, 0f);
 
         overhealth.localScale = new(Mathf.Max((hp - 100f) / 100f, 0f), 1f, 1f);
-        overhealth.localPosition = new(-(1f - overhealth.localScale.x) * 262f, -20f, 0f);
+        overhealth.localPosition = new(-(1f - overhealth.localScale.x) * 262f, -16f, 0f);
     }
 }
