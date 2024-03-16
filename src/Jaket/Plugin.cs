@@ -8,7 +8,6 @@ using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net;
-using Jaket.UI;
 using Jaket.World;
 
 /// <summary> Plugin main class. Essentially only initializes all other components. </summary>
@@ -76,9 +75,8 @@ public class Plugin : BaseUnityPlugin
         World.World.Load();
         Movement.Load();
 
-        WidescreenFix.Load();
+        UI.UIB.Load();
         UI.UI.Load();
-        UI.UI.Build();
 
         // initialize harmony and patch all the necessary classes
         new Harmony("Should I write something here?").PatchAll();
