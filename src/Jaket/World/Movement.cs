@@ -257,9 +257,6 @@ public class Movement : MonoSingleton<Movement>
         }
     }
 
-    /// <summary> Returns the rounded speed of the skateboard. </summary>
-    public int SkateboardSpeed() => (int)skateboardSpeed;
-
     /// <summary> Repeats a part of the checkpoint logic, needed in order to avoid resetting rooms. </summary>
     public void Respawn(Vector3 position, float rotation)
     {
@@ -282,11 +279,7 @@ public class Movement : MonoSingleton<Movement>
     }
 
     /// <summary> Respawns Cyber Grind players. </summary>
-    public void CyberRespawn()
-    {
-        nm.Respawn();
-        nm.transform.position = new(0f, 80f, 62.5f);
-    }
+    public void CyberRespawn() => Respawn(new(0f, 80f, 62.5f), 0f);
 
     #region toggling
 
