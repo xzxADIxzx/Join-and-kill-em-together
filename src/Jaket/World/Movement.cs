@@ -20,6 +20,9 @@ public class Movement : MonoSingleton<Movement>
     private static GunControl gc => GunControl.Instance;
     private static CameraController cc => CameraController.Instance;
 
+    /// <summary> Environmental mask needed to prevent the skateboard from riding on water and camera from falling trough the ground. </summary>
+    private readonly int mask = LayerMaskDefaults.Get(LMD.Environment);
+
     /// <summary> Current emotion preview, can be null. </summary>
     public GameObject EmojiPreview;
     /// <summary> An array containing the length of all emotions in seconds. </summary>
@@ -36,10 +39,8 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Third person camera rotation. </summary>
     private Vector2 rotation;
 
-    /// <summary> Environmental mask needed to prevent the skateboard from riding on water. </summary>
-    private readonly int mask = LayerMaskDefaults.Get(LMD.Environment);
     /// <summary> Speed at which the skateboard moves. </summary>
-    private float skateboardSpeed;
+    public float SkateboardSpeed;
     /// <summary> When the maximum skateboard speed is exceeded, deceleration is activated. </summary>
     private bool slowsDown;
     /// <summary> Current falling particle object. </summary>
@@ -112,14 +113,14 @@ public class Movement : MonoSingleton<Movement>
         if (Emoji == 0x0B)
         {
             // speed & dash logic
-            skateboardSpeed = Mathf.MoveTowards(skateboardSpeed, 20f, (slowsDown ? 24f : 12f) * Time.deltaTime);
+            SkateboardSpeed = Mathf.MoveTowards(SkateboardSpeed, 20f, (slowsDown ? 28f : 12f) * Time.deltaTime);
             nm.boostCharge = Mathf.MoveTowards(nm.boostCharge, 300f, 70f * Time.deltaTime);
 
             if (InputManager.Instance.InputSource.Dodge.WasPerformedThisFrame)
             {
                 if (nm.boostCharge >= 100f || (AssistController.Instance.majorEnabled && AssistController.Instance.infiniteStamina))
                 {
-                    skateboardSpeed += 20f;
+                    SkateboardSpeed += 20f;
                     nm.boostCharge -= 100f;
 
                     // major assists make it possible to dash endlessly so we need to clamp boost charge
@@ -131,12 +132,12 @@ public class Movement : MonoSingleton<Movement>
                 else Instantiate(nm.staminaFailSound);
             }
 
-            if (skateboardSpeed >= 70f && !slowsDown)
+            if (SkateboardSpeed >= 70f && !slowsDown)
             {
                 slowsDown = true;
                 fallParticle = Instantiate(nm.fallParticle, nm.transform);
             }
-            if (skateboardSpeed <= 40f && slowsDown)
+            if (SkateboardSpeed <= 40f && slowsDown)
             {
                 slowsDown = false;
                 Destroy(fallParticle);
@@ -144,7 +145,7 @@ public class Movement : MonoSingleton<Movement>
 
             // move the skateboard forward
             var player = nm.transform;
-            nm.rb.velocity = (player.forward * skateboardSpeed) with { y = nm.rb.velocity.y };
+            nm.rb.velocity = (player.forward * SkateboardSpeed) with { y = nm.rb.velocity.y };
 
             // don’t let the front and rear wheels fall into the ground
             if (Physics.Raycast(player.position + player.forward * 1.2f, Vector3.down, out var hit, 1.5f, mask) && hit.distance > .8f)
@@ -385,7 +386,7 @@ public class Movement : MonoSingleton<Movement>
         // rotate the third person camera in the same direction as the first person camera
         rotation = new(cc.rotationY, cc.rotationX + 90f);
         position = new();
-        skateboardSpeed = 0f;
+        SkateboardSpeed = 0f;
 
         StopCoroutine("ClearEmoji");
         if (EmojiLegnth[id] != -1f) StartCoroutine("ClearEmoji");
