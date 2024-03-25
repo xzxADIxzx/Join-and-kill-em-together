@@ -34,7 +34,6 @@ This modification made by [me](https://github.com/xzxADIxzx) and my team adds su
    * Synchronization of special bosses such as Leviathan, Minos' hand and Minotaur
    * Synchronization of different triggers at levels
    * Synchronization of the Cyber Grind
-* Ultrapain difficulty support
 * Translation into many languages
    * Portuguese
    * English
