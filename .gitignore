@@ -11,4 +11,3 @@ build/*
 *.bat
 *.xml
 *.directory
-*.csproj
