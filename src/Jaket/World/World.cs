@@ -364,7 +364,6 @@ public class World : MonoSingleton<World>
 
         // synchronize the Ultrapain difficulty
         w.Bool(Plugin.UltrapainLoaded);
-        if (Plugin.UltrapainLoaded) Plugin.WritePain(w);
 
         // synchronize activated actions
         w.Bytes(Activated.ToArray());
@@ -385,14 +384,6 @@ public class World : MonoSingleton<World>
             return;
         }
         PrefsManager.Instance.SetInt("difficulty", r.Byte());
-
-        if (r.Bool())
-        {
-            // synchronize different values needed for Ultrapain to work
-            if (Plugin.UltrapainLoaded) Plugin.TogglePain(r.Bool(), r.Bool());
-            // or skip the values if the mod isn't installed locally
-            else r.Inc(2);
-        }
 
         Activated.AddRange(r.Bytes(r.Length - r.Position));
     }

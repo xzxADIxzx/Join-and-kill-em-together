@@ -18,24 +18,39 @@
 
   <ItemGroup>
 	  <PackageReference Include="UnityEngine.Modules" Version="2019.4.40" IncludeAssets="compile" />
-
-    <Reference Include="lib\BepInEx.dll" />
-    <Reference Include="lib\0Harmony.dll" />
-
-    <Reference Include="lib\Assembly-CSharp.dll" />
-    <Reference Include="lib\Facepunch.Steamworks.Win64.dll" />
-    <Reference Include="lib\plog.dll" />
-
-    <Reference Include="lib\Unity.TextMeshPro.dll" />
-    <Reference Include="lib\Unity.Addressables.dll" />
-    <Reference Include="lib\UnityEngine.UI.dll" />
-    <Reference Include="lib\UnityUIExtensions.dll" />
-    <Reference Include="lib\UnityEditor.dll" />
-
-    <Reference Include="lib\Ultrapain.dll" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>C:\Users\Gabriele Urban\AppData\Roaming\r2modmanPlus-local\ULTRAKILL\profiles\Default\BepInEx\core\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>A:\steam\steamapps\common\ULTRAKILL\ULTRAKILL_Data\Managed\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="BepInEx">
+      <HintPath>..\CyberMultiplier\CyberMultiplier\bin\Debug\BepInEx.dll</HintPath>
+    </Reference>
+    <Reference Include="Facepunch.Steamworks.Win64">
+      <HintPath>A:\steam\steamapps\common\ULTRAKILL\ULTRAKILL_Data\Managed\Facepunch.Steamworks.Win64.dll</HintPath>
+    </Reference>
+    <Reference Include="plog">
+      <HintPath>A:\steam\steamapps\common\ULTRAKILL\ULTRAKILL_Data\Managed\plog.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Addressables">
+      <HintPath>A:\steam\steamapps\common\ULTRAKILL\ULTRAKILL_Data\Managed\Unity.Addressables.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>A:\steam\steamapps\common\ULTRAKILL\ULTRAKILL_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>A:\steam\steamapps\common\ULTRAKILL\ULTRAKILL_Data\Managed\UnityEngine.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityUIExtensions">
+      <HintPath>A:\steam\steamapps\common\ULTRAKILL\ULTRAKILL_Data\Managed\UnityUIExtensions.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>
