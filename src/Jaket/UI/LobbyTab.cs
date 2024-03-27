@@ -16,7 +16,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
     /// <summary> Current lobby access level: 0 - private, 1 - friends only, 2 - public. I was too lazy to create an enum. </summary>
     private int lobbyAccessLevel;
     /// <summary> Checkboxes with lobby settings. </summary>
-    private Toggle pvp, cheats;
+    private Toggle pvp, cheats, mods;
 
     private void Start()
     {
@@ -66,6 +66,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
 
             pvp = UI.Toggle("ALLOW PvP", table, 0f, 23f, clicked: allow => LobbyController.Lobby?.SetData("pvp", allow.ToString()));
             cheats = UI.Toggle("ALLOW CHEATS", table, 0f, -25f, clicked: allow => LobbyController.Lobby?.SetData("cheats", allow.ToString()));
+            mods = UI.Toggle("ALLOW MODS", table, 0f, -73f, clicked: allow => LobbyController.Lobby?.SetData("mods", allow.ToString()));
 
             UI.Text("Percentage per player is the number of percentages that will be added to the boss's health for each player starting from the second",
                     table, 0f, -88f, height: 62f, color: Color.gray, size: 16);
@@ -105,7 +106,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
         if (LobbyController.Lobby == null)
         {
             lobbyAccessLevel = 0;
-            pvp.isOn = cheats.isOn = true;
+            pvp.isOn = cheats.isOn = mods.isOn = true;
         }
         else field.text = LobbyController.Lobby?.GetData("name");
 
