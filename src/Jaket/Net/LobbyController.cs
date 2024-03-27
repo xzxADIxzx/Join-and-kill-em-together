@@ -32,6 +32,8 @@ public class LobbyController
     public static bool PvPAllowed => Lobby?.GetData("pvp") == "True";
     /// <summary> Whether cheats are allowed in this lobby. </summary>
     public static bool CheatsAllowed => Lobby?.GetData("cheats") == "True";
+    /// <summary> Whether mods are allowed in this lobby. </summary>
+    public static bool ModsAllowed => Lobby?.GetData("mods") == "True";
     /// <summary> Number of percentages that will be added to the boss's health for each player. </summary>
     public static float PPP;
 
@@ -88,7 +90,9 @@ public class LobbyController
             Lobby?.SetData("jaket", "true");
             Lobby?.SetData("name", $"{SteamClient.Name}'s Lobby");
             Lobby?.SetData("level", MapMap(Tools.Scene));
-            Lobby?.SetData("pvp", "True"); Lobby?.SetData("cheats", "True");
+            Lobby?.SetData("pvp", "True");
+            Lobby?.SetData("cheats", "True");
+            Lobby?.SetData("mods", "True");
 
             CreatingLobby = false;
             Events.OnLobbyAction.Fire();
