@@ -224,8 +224,15 @@ public class Movement : MonoSingleton<Movement>
             UI.SendMsg("Cheats are prohibited in this lobby!");
         }
 
-        // fake Cyber Grind death
-        if (nm.dead && nm.endlessMode)
+        // leave lobby if you have more than one mod
+        if (!LobbyController.IsOwner && !LobbyController.ModsAllowed && BepInEx.Bootstrap.Chainloader.PluginInfos.Count > 1)
+        {
+            LobbyController.LeaveLobby();
+            UI.SendMsg("The owner of the lobby requests the use of only JAKET!\nOther mods are not allowed.");
+        }
+
+            // fake Cyber Grind death
+            if (nm.dead && nm.endlessMode)
         {
             nm.blackScreen.gameObject.SetActive(true);
             nm.screenHud.SetActive(false);
