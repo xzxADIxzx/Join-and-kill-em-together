@@ -17,6 +17,12 @@ public struct Rect
 
     public Rect(float x, float y, float width, float height) : this(x, y, width, height, new(.5f, .5f), new(.5f, .5f)) { }
 
+    /// <summary> Creates a rect with the default anchor of the chat message. </summary>
+    public static Rect Msg(float width) => new(0f, 0f, width, 32f, new(.5f, 0f), new(.5f, 0f));
+
+    /// <summary> Creates a rect with the default anchor of the chat table. </summary>
+    public static Rect Blh(float width) => new(0f, 0f, width, 32f, new(0f, 0f), new(0f, 0f));
+
     /// <summary> Creates a rect with the default width and anchor of the table. </summary>
     public static Rect Tlw(float y, float height) => new(16f + 168f, -y, 336f, height, new(0f, 1f), new(0f, 1f));
 

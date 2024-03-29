@@ -12,6 +12,7 @@ This modification made by [me](https://github.com/xzxADIxzx) and my team adds su
    * Public, friends only and private lobbies
    * Invitations via Steam or lobby code
    * Rich Presence
+   * Lobby settings
 * Automatic check for updates
    * Please stop playing on version 0.3.0
 * User interface
