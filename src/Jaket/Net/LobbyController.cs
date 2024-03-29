@@ -101,15 +101,15 @@ public class LobbyController
         {
             Networking.Server.Close();
             Networking.Client.Close();
-        }
 
-        Lobby?.Leave();
-        Lobby = null;
+            Lobby?.Leave();
+            Lobby = null;
+        }
 
         // if the client has left the lobby, then load the main menu
         if (!IsOwner && Tools.Scene != "Main Menu") Tools.Load("Main Menu");
 
-        Networking.Clear(); // destroy all network objects
+        Networking.Clear();
         Events.OnLobbyAction.Fire();
     }
 
