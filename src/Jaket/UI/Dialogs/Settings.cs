@@ -27,14 +27,14 @@ public class Settings : CanvasSingleton<Settings>
 
     /// <summary> List of internal names of all key bindings. </summary>
     public static readonly string[] Keybinds =
-    { "lobby-tab", "player-list", "settings", "player-indicators", "player-information", "pointer", "spray", "chat", "scroll-messages-up", "scroll-messages-down", "emoji-wheel", "self-destruction" };
+    { "chat", "scroll-messages-up", "scroll-messages-down", "lobby-tab", "player-list", "settings", "player-indicators", "player-information", "emoji-wheel", "pointer", "spray", "self-destruction" };
 
     /// <summary> Array with current control settings. </summary>
     public static KeyCode[] CurrentKeys => new[]
-    { LobbyTab, PlayerList, Settingz, PlayerIndicators, PlayerInfo, Pointer, Spray, Chat, ScrollUp, ScrollDown, EmojiWheel, SelfDestruction };
+    { Chat, ScrollUp, ScrollDown, LobbyTab, PlayerList, Settingz, PlayerIndicators, PlayerInfo, EmojiWheel, Pointer, Spray, SelfDestruction };
 
     /// <summary> List of all key bindings in the mod. </summary>
-    public static KeyCode LobbyTab, PlayerList, Settingz, PlayerIndicators, PlayerInfo, Pointer, Spray, Chat, ScrollUp, ScrollDown, EmojiWheel, SelfDestruction;
+    public static KeyCode Chat, ScrollUp, ScrollDown, LobbyTab, PlayerList, Settingz, PlayerIndicators, PlayerInfo, EmojiWheel, Pointer, Spray, SelfDestruction;
 
     /// <summary> Gets the key binding value from its path. </summary>
     public static KeyCode GetKey(string path, KeyCode def) => (KeyCode)pm.GetInt($"jaket.binds.{path}", (int)def);
@@ -91,17 +91,17 @@ public class Settings : CanvasSingleton<Settings>
         KnuckleColor = pm.GetInt("jaket.knkl-color");
         DisableFreezeFrames = pm.GetBool("jaket.disable-freeze", true);
 
+        Chat = GetKey("chat", KeyCode.Return);
+        ScrollUp = GetKey("scroll-messages-up", KeyCode.UpArrow);
+        ScrollDown = GetKey("scroll-messages-down", KeyCode.DownArrow);
         LobbyTab = GetKey("lobby-tab", KeyCode.F1);
         PlayerList = GetKey("player-list", KeyCode.F2);
         Settingz = GetKey("settings", KeyCode.F3);
         PlayerIndicators = GetKey("player-indicators", KeyCode.Z);
         PlayerInfo = GetKey("player-information", KeyCode.X);
+        EmojiWheel = GetKey("emoji-wheel", KeyCode.B);
         Pointer = GetKey("pointer", KeyCode.Mouse2);
         Spray = GetKey("spray", KeyCode.T);
-        Chat = GetKey("chat", KeyCode.Return);
-        ScrollUp = GetKey("scroll-messages-up", KeyCode.UpArrow);
-        ScrollDown = GetKey("scroll-messages-down", KeyCode.DownArrow);
-        EmojiWheel = GetKey("emoji-wheel", KeyCode.B);
         SelfDestruction = GetKey("self-destruction", KeyCode.K);
 
         DollAssets.Mixer?.SetFloat("Volume", TTSVolume / 2f - 30f);

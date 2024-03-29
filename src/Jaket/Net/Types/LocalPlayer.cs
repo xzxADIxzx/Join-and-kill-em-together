@@ -7,6 +7,7 @@ using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.UI;
+using Jaket.UI.Dialogs;
 using Jaket.World;
 
 /// <summary>
