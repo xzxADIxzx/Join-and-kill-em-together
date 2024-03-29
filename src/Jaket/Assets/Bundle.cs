@@ -6,6 +6,8 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
+using Jaket.UI.Dialogs;
+
 /// <summary> Class that loads translations from files in the bundles folder and returns translated lines by keys. </summary>
 public class Bundle
 {
@@ -145,6 +147,12 @@ public class Bundle
 
     /// <summary> Sends a localized & formatted message to the HUD. </summary>
     public static void Hud(string key, bool silent, params string[] args) => HudMessageReceiver.Instance?.SendHudMessage(Format(key, args), silent: silent);
+
+    /// <summary> Sends a localized message to the chat. </summary>
+    public static void Msg(string key) => Chat.Instance.Receive(Get(key), format: false);
+
+    /// <summary> Sends a localized & formatted message to the chat. </summary>
+    public static void Msg(string key, params string[] args) => Chat.Instance.Receive(Format(key, args), format: false);
 
     #endregion
 }
