@@ -112,13 +112,13 @@ public class Movement : MonoSingleton<Movement>
     {
         // skateboard logic
         Skateboard.Instance.gameObject.SetActive(Emoji == 0x0B);
-        if (Emoji == 0x0B)
+        if (Emoji == 0x0B && !UI.AnyDialog)
         {
             // speed & dash logic
             SkateboardSpeed = Mathf.MoveTowards(SkateboardSpeed, 20f, (SlowsDown ? 28f : 12f) * Time.deltaTime);
             nm.boostCharge = Mathf.MoveTowards(nm.boostCharge, 300f, 70f * Time.deltaTime);
 
-            if (pi.Dodge.WasPerformedThisFrame && !UI.AnyDialog)
+            if (pi.Dodge.WasPerformedThisFrame)
             {
                 if (nm.boostCharge >= 100f || (AssistController.Instance.majorEnabled && AssistController.Instance.infiniteStamina))
                 {
@@ -158,7 +158,7 @@ public class Movement : MonoSingleton<Movement>
             Check(player.position - player.forward * 1.2f);
 
             // turn to the sides
-            if (!UI.AnyDialog) player.Rotate(Vector3.up * pi.Move.ReadValue<Vector2>().x * 120f * Time.deltaTime);
+            player.Rotate(Vector3.up * pi.Move.ReadValue<Vector2>().x * 120f * Time.deltaTime);
         }
 
         // third person camera
@@ -289,42 +289,32 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Updates the state machine: toggles movement, cursor and third-person camera. </summary>
     public static void UpdateState()
     {
-        ToggleMovement(!UI.AnyMovementBlocking() && Instance.Emoji == 0xFF);
-        ToggleCursor(UI.AnyJaket());
+        bool dialog = UI.AnyDialog, blocking = UI.AnyMovementBlocking;
+
+        ToggleCursor(dialog);
         ToggleHud(Instance.Emoji == 0xFF);
 
-        // block pause
-        OptionsManager.Instance.frozen = Instance.Emoji != 0xFF || InteractiveGuide.Shown;
-        // block camera rotation & weapon fire
-        cc.activated = gc.activated = !UI.AnyJaket() && Instance.Emoji == 0xFF;
+        nm.activated = fc.activated = gc.activated = !blocking;
+        cc.activated = !blocking && !EmojiWheel.Shown;
+
+        if (blocking) fc.NoFist();
+        else fc.YesFist();
+
+        OptionsManager.Instance.frozen = Instance.Emoji != 0xFF || UIOLD.InteractiveGuide.Shown;
+        Console.Instance.enabled = Instance.Emoji == 0xFF;
     }
 
-    /// <summary> Toggles the ability to move, used in the chat and etc. </summary>
-    public static void ToggleMovement(bool enable)
-    {
-        nm.activated = HookArm.Instance.enabled = enable;
-
-        if (enable) fc.YesFist();
-        else HookArm.Instance.Cancel();
-    }
-
-    /// <summary> Toggles cursor visibility. </summary>
-    public static void ToggleCursor(bool enable)
+    private static void ToggleCursor(bool enable)
     {
         Cursor.visible = enable;
         Cursor.lockState = enable ? CursorLockMode.None : CursorLockMode.Locked;
     }
 
-    /// <summary> Toggles hud visibility. </summary>
-    public static void ToggleHud(bool enable)
+    private static void ToggleHud(bool enable)
     {
-        // hide hud, weapons and arms
         StyleHUD.Instance.transform.parent.gameObject.SetActive(enable);
         fc.gameObject.SetActive(enable);
         gc.gameObject.SetActive(enable);
-
-        // preventing some ultra stupid bug
-        Console.Instance.enabled = enable;
     }
 
     #endregion
