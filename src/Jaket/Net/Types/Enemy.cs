@@ -118,13 +118,13 @@ public class Enemy : Entity
             trigger.transform.localPosition = new();
             trigger.transform.localScale = new(3f, 3f, 3f);
 
-            UI.Component<CapsuleCollider>(trigger, collider =>
+            UIB.Component<CapsuleCollider>(trigger, collider =>
             {
                 collider.height = 2f;
                 collider.isTrigger = true;
             });
 
-            UI.Component<CoinActivated>(trigger, coin =>
+            UIB.Component<CoinActivated>(trigger, coin =>
             {
                 coin.disableCoin = true;
                 coin.events = new UltrakillEvent() { onActivate = new UnityEvent() };
