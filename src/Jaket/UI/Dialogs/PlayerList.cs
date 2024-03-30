@@ -36,6 +36,8 @@ public class PlayerList : CanvasSingleton<PlayerList>
     // <summary> Toggles visibility of the player list. </summary>
     public void Toggle()
     {
+        if (!Shown) UI.HideLeftGroup();
+
         gameObject.SetActive(Shown = !Shown);
         Movement.UpdateState();
 

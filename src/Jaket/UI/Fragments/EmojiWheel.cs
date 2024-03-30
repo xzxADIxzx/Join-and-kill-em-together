@@ -107,6 +107,8 @@ public class EmojiWheel : CanvasSingleton<EmojiWheel>
     /// <summary> Shows the emoji wheel and resets the selected segment. </summary>
     public void Show()
     {
+        if (!Shown) UI.HideCentralGroup();
+
         gameObject.SetActive(Shown = true);
         Movement.UpdateState();
 

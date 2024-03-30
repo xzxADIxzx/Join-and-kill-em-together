@@ -180,6 +180,8 @@ public class Settings : CanvasSingleton<Settings>
     // <summary> Toggles visibility of the settings. </summary>
     public void Toggle()
     {
+        if (!Shown) UI.HideLeftGroup();
+
         gameObject.SetActive(Shown = !Shown);
         Movement.UpdateState();
     }

@@ -45,6 +45,8 @@ public class LobbyList : CanvasSingleton<LobbyList>
     // <summary> Toggles visibility of the lobby list. </summary>
     public void Toggle()
     {
+        if (!Shown) UI.HideCentralGroup();
+
         gameObject.SetActive(Shown = !Shown);
         Movement.UpdateState();
 

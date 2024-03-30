@@ -85,6 +85,8 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
     /// <summary> Toggles visibility of the lobby tab. </summary>
     public void Toggle()
     {
+        if (!Shown) UI.HideLeftGroup();
+
         gameObject.SetActive(Shown = !Shown);
         Movement.UpdateState();
 

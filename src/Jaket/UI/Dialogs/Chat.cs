@@ -151,6 +151,8 @@ public class Chat : CanvasSingleton<Chat>
     /// <summary> Toggles visibility of the chat. </summary>
     public void Toggle()
     {
+        if (!Shown && LobbyController.Lobby != null) UI.HideLeftGroup();
+
         Field.gameObject.SetActive(Shown = !Shown && LobbyController.Lobby != null);
         Movement.UpdateState();
 
