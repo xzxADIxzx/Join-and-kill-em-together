@@ -10,7 +10,6 @@ using Jaket.IO;
 using Jaket.Net;
 using Jaket.Net.Types;
 using Jaket.Sam;
-using Jaket.UI;
 
 /// <summary> Class that manages objects in the level, such as skull cases, rooms and etc. </summary>
 public class World : MonoSingleton<World>
@@ -108,9 +107,9 @@ public class World : MonoSingleton<World>
                 var door = obj.GetComponent<Door>();
                 door?.onFullyOpened.AddListener(() =>
                 {
-                    door.onFullyOpened=new(); // clear listeners
+                    door.onFullyOpened = new(); // clear listeners
 
-                    UI.SendMsg("What?", true);
+                    HudMessageReceiver.Instance?.SendHudMessage("What?", silent: true);
                     SamAPI.TryPlay("What?", Networking.LocalPlayer.Voice);
                 });
             }),

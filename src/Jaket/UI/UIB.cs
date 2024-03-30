@@ -232,10 +232,10 @@ public class UIB
     }
 
     /// <summary> Adds a button corresponding to the Discord style and opening a link to our server. </summary>
-    public static Button DiscordButton(string name, Transform parent, Rect r)
+    public static Button DiscordButton(string name, Transform parent)
     {
-        var img = Image(name, parent, r, new(.345f, .396f, .949f));
-        Text(name, img.transform, r.ToText(), size: 32);
+        var img = Image(name, parent, Btn(0f, 0f), new(.345f, .396f, .949f));
+        Text(name, img.transform, Size(10000f, 10000f), size: 240).transform.localScale /= 10f;
         return Component<Button>(img.gameObject, button =>
         {
             button.targetGraphic = img;
