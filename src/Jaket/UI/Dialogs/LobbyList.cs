@@ -91,7 +91,9 @@ public class LobbyList : CanvasSingleton<LobbyList>
 
                 var b = UIB.Button(name, content, r, align: TextAnchor.MiddleLeft, clicked: () => LobbyController.JoinLobby(lobby));
 
-                UIB.Text($"{lobby.GetData("level")} {lobby.MemberCount}/8 ", b.transform, r.ToText(), Color.grey, align: TextAnchor.MiddleRight);
+                var full = lobby.MemberCount <= 2 ? "#32CD32" : lobby.MemberCount <= 4 ? "#FFA500" : "#FF341C";
+                var info = $"<color=#BBBBBB>{lobby.GetData("level")}</color> <color={full}>{lobby.MemberCount}/{lobby.MaxMembers}</color> ";
+                UIB.Text(info, b.transform, r.ToText(), align: TextAnchor.MiddleRight);
             }
     }
 
