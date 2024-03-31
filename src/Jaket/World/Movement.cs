@@ -224,8 +224,7 @@ public class Movement : MonoSingleton<Movement>
 
             var cheats = Tools.Field<CheatsManager>("idToCheat").GetValue(CheatsManager.Instance) as Dictionary<string, ICheat>;
             cheats.Values.Do(CheatsManager.Instance.DisableCheat);
-
-            UI.SendMsg("Cheats are prohibited in this lobby!");
+            Bundle.Hud("lobby.cheats");
         }
 
         // fake Cyber Grind death
@@ -249,7 +248,7 @@ public class Movement : MonoSingleton<Movement>
         if (nm.endlessMode)
         {
             int alive = CyberGrind.PlayersAlive();
-            nm.youDiedText.text = $"[YOUR UNIT IS DISABLED]\n\n\n\n\n\nWait until the next wave\nPlayers alive: [{alive}]";
+            nm.youDiedText.text = Bundle.Format("cg", alive.ToString());
 
             var final = nm.GetComponentInChildren<FinalCyberRank>();
             if (alive == 0 && final.savedTime == 0f)
@@ -362,9 +361,6 @@ public class Movement : MonoSingleton<Movement>
         if (id == 0xFF) return;
         else PreviewEmoji(id);
 
-        // telling how to interrupt an emotion
-        UI.SendMsg("Press <color=orange>Space</color> to interrupt the emotion", true);
-
         // stop sliding so that the preview is not underground
         nm.playerCollider.height = 3.5f;
         nm.gc.transform.localPosition = new(0f, -1.256f, 0f);
@@ -374,6 +370,7 @@ public class Movement : MonoSingleton<Movement>
         position = new();
         SkateboardSpeed = 0f;
 
+        Bundle.Hud("emoji"); // telling how to interrupt an emotion
         StopCoroutine("ClearEmoji");
         if (emojiLength[id] != -1f) StartCoroutine("ClearEmoji");
     }
