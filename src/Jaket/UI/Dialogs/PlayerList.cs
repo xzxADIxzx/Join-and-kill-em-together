@@ -1,7 +1,5 @@
 namespace Jaket.UI.Dialogs;
 
-using UnityEngine;
-
 using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net;
@@ -17,7 +15,7 @@ public class PlayerList : CanvasSingleton<PlayerList>
         UIB.Shadow(transform);
         UIB.Table("Teams", "#player-list.team", transform, Tlw(16f + 170f / 2f, 170f), table =>
         {
-            UIB.Text("#player-list.info", table, Btn(0f, 73f) with { Height = 50f }, Color.gray, 17);
+            UIB.Text("#player-list.info", table, Btn(0f, 73f) with { Height = 50f }, size: 17);
 
             float x = -24f;
             foreach (Team team in System.Enum.GetValues(typeof(Team))) UIB.TeamButton(team, table, Tlw(134f, 56f) with { x = x += 64f, Width = 56f }, () =>

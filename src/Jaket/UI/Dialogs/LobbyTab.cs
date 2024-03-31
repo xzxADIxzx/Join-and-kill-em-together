@@ -66,7 +66,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
             pvp = UIB.Toggle("#lobby-tab.allow-pvp", table, Tgl(0f, 152f), clicked: allow => LobbyController.Lobby?.SetData("pvp", allow.ToString()));
             cheats = UIB.Toggle("#lobby-tab.allow-cheats", table, Tgl(0f, 192f), clicked: allow => LobbyController.Lobby?.SetData("cheats", allow.ToString()));
 
-            UIB.Text("#lobby-tab.ppp-desc", table, Btn(0f, 247f) with { Height = 62f }, Color.gray, 16);
+            UIB.Text("#lobby-tab.ppp-desc", table, Btn(0f, 247f) with { Height = 62f }, size: 16);
 
             UIB.Text("#lobby-tab.ppp-name", table, Btn(0f, 298f), align: TextAnchor.MiddleLeft);
             var PPP = UIB.Text("0PPP", table, Btn(0f, 298f), align: TextAnchor.MiddleRight);

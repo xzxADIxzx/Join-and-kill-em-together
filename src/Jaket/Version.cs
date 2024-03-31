@@ -55,7 +55,7 @@ public class Version
         UI.Rect r = new(16f + 168f, 36f, 336f, 40f, Vector2.zero, Vector2.zero);
         UI.UIB.Table("Version", parent, r, table =>
         {
-            UI.UIB.Text($"Jaket version is {CURRENT}", table, r.ToText(), Color.gray, 24);
+            UI.UIB.Text($"Jaket version is {CURRENT}", table, r.ToText(), Color.grey);
         });
     }
 }
