@@ -104,8 +104,8 @@ public class Movement : MonoSingleton<Movement>
             }, size: 32);
         }
 
-        if (Input.GetKeyDown(KeyCode.F11)) InteractiveGuide.Instance.Launch();
         if (Input.GetKeyDown(Settings.SelfDestruction) && !UI.AnyDialog) nm.GetHurt(1000, false, 0f);
+        if (Input.GetKeyDown(KeyCode.F11)) InteractiveGuide.Instance.Launch();
     }
 
     private void LateUpdate() // late update is needed to overwrite the time scale value and camera rotation
@@ -299,7 +299,7 @@ public class Movement : MonoSingleton<Movement>
         if (blocking) fc.NoFist();
         else fc.YesFist();
 
-        OptionsManager.Instance.frozen = Instance.Emoji != 0xFF || UIOLD.InteractiveGuide.Shown;
+        OptionsManager.Instance.frozen = Instance.Emoji != 0xFF || InteractiveGuide.Shown;
         Console.Instance.enabled = Instance.Emoji == 0xFF;
     }
 
