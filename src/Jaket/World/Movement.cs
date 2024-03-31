@@ -370,7 +370,7 @@ public class Movement : MonoSingleton<Movement>
         position = new();
         SkateboardSpeed = 0f;
 
-        Bundle.Hud("emoji"); // telling how to interrupt an emotion
+        Bundle.Hud("emoji", true); // telling how to interrupt an emotion
         StopCoroutine("ClearEmoji");
         if (emojiLength[id] != -1f) StartCoroutine("ClearEmoji");
     }
