@@ -29,7 +29,7 @@ public class UI
         Root = Tools.Create("UI").transform;
         Settings.Load(); // settings must be loaded before building the interface
 
-        Chat.Build("Chat", false, true, hide: () => Chat.Instance.Field?.gameObject.SetActive(Chat.Shown = false));
+        Chat.Build("Chat", true, true, hide: () => Chat.Instance.Field?.gameObject.SetActive(Chat.Shown = false));
         LobbyTab.Build("Lobby Tab", false, true);
         LobbyList.Build("Lobby List", false, true);
         PlayerList.Build("Player List", false, true);
