@@ -4,12 +4,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net;
 using Jaket.Net.Types;
 using Jaket.Sam;
+using Jaket.UI;
+
+using static Jaket.UI.Rect;
 
 /// <summary> Class that manages objects in the level, such as skull cases, rooms and etc. </summary>
 public class World : MonoSingleton<World>
@@ -131,7 +133,7 @@ public class World : MonoSingleton<World>
                 root.Find("Text (TMP)").gameObject.SetActive(false);
                 root.Find("Button (Closed)").gameObject.SetActive(false);
 
-                UI.Text("UwU", root, 0f, 0f, 512f, 512f, size: 256).transform.localScale = Vector3.one / 8f;
+                UIB.Text("UwU", root, Size(512f, 512f), size: 256).transform.localScale = Vector3.one / 8f;
             }),
             // disable the terminal that lowers the bomb for clients
             StaticAction.Find("Level 7-2", "PuzzleScreen (1)", new(-317.75f, 55.25f, 605.25f), obj =>
@@ -142,7 +144,7 @@ public class World : MonoSingleton<World>
                 root.Find("Text (TMP)").gameObject.SetActive(false);
                 root.Find("UsableButtons").gameObject.SetActive(false);
 
-                UI.Text("Only the host can do this!", root, 0f, 0f, 1024f, 512f, size: 120).transform.localScale = Vector3.one / 8f;
+                UIB.Text("Only the host can do this!", root, Size(1024f, 512f), size: 120).transform.localScale = Vector3.one / 8f;
             }),
             // wtf?! why is there a torch???
             StaticAction.Find("Level 7-3", "1 - Dark Path", new(0f, -10f, 300f), obj =>
