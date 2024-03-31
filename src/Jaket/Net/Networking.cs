@@ -6,18 +6,17 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net.Endpoints;
 using Jaket.Net.Types;
-using Jaket.UI;
+using Jaket.UI.Dialogs;
 using Jaket.World;
 
 /// <summary> Class responsible for updating endpoints, transmitting packets and managing entities. </summary>
 public class Networking
 {
-    private static Chat chat => Chat.Instance;
-
     /// <summary> Number of snapshots to be sent per second. </summary>
     public const int SNAPSHOTS_PER_SECOND = 16;
     /// <summary> Number of seconds between snapshots. </summary>
@@ -45,7 +44,7 @@ public class Networking
         Client.Load();
 
         // create a local player to sync player data
-        LocalPlayer = UI.Object("Local Player").AddComponent<LocalPlayer>();
+        LocalPlayer = Tools.Create<LocalPlayer>("Local Player");
         // update network logic every tick
         Events.EveryTick += NetworkUpdate;
 
@@ -89,11 +88,11 @@ public class Networking
             }
         };
 
-        SteamMatchmaking.OnLobbyMemberJoined += (lobby, member) => chat.ReceiveChatMessage($"<color=#00FF00>Player {member.Name} joined!</color>");
+        SteamMatchmaking.OnLobbyMemberJoined += (lobby, member) => Bundle.Msg("player.joined", member.Name);
 
         SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) =>
         {
-            chat.ReceiveChatMessage($"<color=red>Player {member.Name} left!</color>");
+            Bundle.Msg("player.left", member.Name);
 
             // kill the player doll and hide the nickname above
             if (Entities.TryGetValue(member.Id, out var entity) && entity != null && entity is RemotePlayer player) player.Kill();
@@ -111,10 +110,10 @@ public class Networking
         SteamMatchmaking.OnChatMessage += (lobby, member, message) =>
         {
             if (message == "#/d")
-                chat.ReceiveChatMessage($"<color=orange>Player {member.Name} died.</color>");
+                Bundle.Msg("player.died", member.Name);
 
             else if (message.StartsWith("#/k") && ulong.TryParse(message.Substring(3), out ulong id))
-                chat.ReceiveChatMessage($"<color=red>Player {new Friend(id).Name} was banned!</color>");
+                Bundle.Msg("player.banned", new Friend(id).Name);
 
             else if (message.StartsWith("#/s") && byte.TryParse(message.Substring(3), out byte team))
             {
@@ -122,9 +121,9 @@ public class Networking
             }
 
             else if (message.StartsWith("/tts "))
-                chat.ReceiveTTSMessage(member, message.Substring("/tts ".Length));
+                Chat.Instance.ReceiveTTS(member, message.Substring(5));
             else
-                chat.ReceiveChatMessage(GetTeamColor(member), member.Name, message);
+                Chat.Instance.Receive(GetTeamColor(member), member.Name, message);
         };
     }
 

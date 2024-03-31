@@ -4,13 +4,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net;
 using Jaket.Net.Types;
 using Jaket.Sam;
 using Jaket.UI;
+
+using static Jaket.UI.Rect;
 
 /// <summary> Class that manages objects in the level, such as skull cases, rooms and etc. </summary>
 public class World : MonoSingleton<World>
@@ -41,7 +42,7 @@ public class World : MonoSingleton<World>
     public static void Load()
     {
         // initialize the singleton
-        UI.Object("World").AddComponent<World>();
+        Tools.Create<World>("World");
 
         Events.OnLoaded += () =>
         {
@@ -108,9 +109,9 @@ public class World : MonoSingleton<World>
                 var door = obj.GetComponent<Door>();
                 door?.onFullyOpened.AddListener(() =>
                 {
-                    door.onFullyOpened=new(); // clear listeners
+                    door.onFullyOpened = new(); // clear listeners
 
-                    UI.SendMsg("What?", true);
+                    HudMessageReceiver.Instance?.SendHudMessage("What?", silent: true);
                     SamAPI.TryPlay("What?", Networking.LocalPlayer.Voice);
                 });
             }),
@@ -132,7 +133,7 @@ public class World : MonoSingleton<World>
                 root.Find("Text (TMP)").gameObject.SetActive(false);
                 root.Find("Button (Closed)").gameObject.SetActive(false);
 
-                UI.Text("UwU", root, 0f, 0f, 512f, 512f, size: 256).transform.localScale = Vector3.one / 8f;
+                UIB.Text("UwU", root, Size(512f, 512f), size: 256).transform.localScale = Vector3.one / 8f;
             }),
             // disable the terminal that lowers the bomb for clients
             StaticAction.Find("Level 7-2", "PuzzleScreen (1)", new(-317.75f, 55.25f, 605.25f), obj =>
@@ -143,7 +144,7 @@ public class World : MonoSingleton<World>
                 root.Find("Text (TMP)").gameObject.SetActive(false);
                 root.Find("UsableButtons").gameObject.SetActive(false);
 
-                UI.Text("Only the host can do this!", root, 0f, 0f, 1024f, 512f, size: 120).transform.localScale = Vector3.one / 8f;
+                UIB.Text("Only the host can do this!", root, Size(1024f, 512f), size: 120).transform.localScale = Vector3.one / 8f;
             }),
             // wtf?! why is there a torch???
             StaticAction.Find("Level 7-3", "1 - Dark Path", new(0f, -10f, 300f), obj =>
@@ -362,10 +363,6 @@ public class World : MonoSingleton<World>
         w.String(Version.CURRENT);
         w.Byte((byte)PrefsManager.Instance.GetInt("difficulty"));
 
-        // synchronize the Ultrapain difficulty
-        w.Bool(Plugin.UltrapainLoaded);
-        if (Plugin.UltrapainLoaded) Plugin.WritePain(w);
-
         // synchronize activated actions
         w.Bytes(Activated.ToArray());
     }
@@ -376,23 +373,15 @@ public class World : MonoSingleton<World>
         // reset all of the activated actions
         Activated.Clear();
         // load the host level, it is the main function of this packet
-        SceneHelper.LoadScene(r.String());
+        Tools.Load(r.String());
 
         // if the mod version doesn't match the host's one, then reading the packet is complete, as this may lead to bigger bugs
         if (r.String() != Version.CURRENT)
         {
-            Version.NotifyHost();
+            Version.Notify();
             return;
         }
         PrefsManager.Instance.SetInt("difficulty", r.Byte());
-
-        if (r.Bool())
-        {
-            // synchronize different values needed for Ultrapain to work
-            if (Plugin.UltrapainLoaded) Plugin.TogglePain(r.Bool(), r.Bool());
-            // or skip the values if the mod isn't installed locally
-            else r.Inc(2);
-        }
 
         Activated.AddRange(r.Bytes(r.Length - r.Position));
     }

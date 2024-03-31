@@ -43,8 +43,8 @@ public class RankPatch
     {
         if (Networking.WasMultiplayerUsed)
         {
-            __instance.totalRank.transform.parent.GetComponent<Image>().color = new(1f, .3f, .7f);
-            __instance.extraInfo.text += "- <color=#FF4BD3>MULTIPLAYER USED</color>\n";
+            __instance.totalRank.transform.parent.GetComponent<Image>().color = new(1f, .4f, .8f);
+            __instance.extraInfo.text += "- <color=#FF66CC>MULTIPLAYER USED</color>\n";
         }
     }
 

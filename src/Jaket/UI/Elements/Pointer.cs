@@ -6,6 +6,8 @@ using Jaket.Assets;
 using Jaket.Content;
 using Jaket.UI;
 
+using static Rect;
+
 /// <summary> Player-created pointer, disappears in a few seconds after appearing. </summary>
 public class Pointer : MonoBehaviour
 {
@@ -26,7 +28,7 @@ public class Pointer : MonoBehaviour
 
     /// <summary> Spawns a pointer at the given position. </summary>
     public static Pointer Spawn(Team team, Vector3 position, Vector3 direction, Transform player = null) =>
-        UI.Component<Pointer>(UI.Object("Pointer"), pointer =>
+        UIB.Component<Pointer>(Tools.Create("Pointer"), pointer =>
         {
             pointer.color = team.Color();
             pointer.color.a = .85f;
@@ -38,28 +40,28 @@ public class Pointer : MonoBehaviour
 
     private void Start()
     {
-        if (player != null) line = UI.Component<LineRenderer>(gameObject, line =>
+        if (player != null) line = UIB.Component<LineRenderer>(gameObject, line =>
         {
             line.material.shader = DollAssets.Shader;
             line.startColor = line.endColor = color;
             line.widthMultiplier = 0f;
         });
 
-        UI.WorldCanvas("First Circle", transform, new(), action: canvas =>
+        UIB.WorldCanvas("First Circle", transform, new(), build: canvas =>
         {
-            circle1 = UI.Image("Circle", canvas, 0f, 0f, 128f, 128f, color, true, true).rectTransform;
+            circle1 = UIB.Image("Circle", canvas, Size(128f, 128f), color, UIB.Circle).rectTransform;
             circle1.localScale = Vector3.zero;
         });
 
-        UI.WorldCanvas("Second Circle", transform, new(0f, 0f, .2f), action: canvas =>
+        UIB.WorldCanvas("Second Circle", transform, new(0f, 0f, .2f), build: canvas =>
         {
-            circle2 = UI.Image("Circle", canvas, 0f, 0f, 96f, 96f, color, true, true).rectTransform;
+            circle2 = UIB.Image("Circle", canvas, Size(96f, 96f), color, UIB.Circle).rectTransform;
             circle2.localScale = Vector3.zero;
         });
 
-        UI.WorldCanvas("Diamond", transform, new(0f, 0f, 1.4f), action: canvas =>
+        UIB.WorldCanvas("Diamond", transform, new(0f, 0f, 1.4f), build: canvas =>
         {
-            pointer = UI.DiamondImage("Diamond", canvas, 100f, 100f, 1f, .4f, .4f, .4f, color).rectTransform;
+            pointer = UIB.DiamondImage("Diamond", canvas, Size(100f, 100f), 1f, .4f, .4f, .4f, color).rectTransform;
             pointer.localScale = Vector3.zero;
         });
 

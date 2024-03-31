@@ -6,9 +6,7 @@ using HarmonyLib;
 
 using Jaket.Assets;
 using Jaket.Content;
-using Jaket.IO;
 using Jaket.Net;
-using Jaket.UI;
 using Jaket.World;
 
 /// <summary> Plugin main class. Essentially only initializes all other components. </summary>
@@ -19,16 +17,6 @@ public class Plugin : BaseUnityPlugin
     public static Plugin Instance;
     /// <summary> Whether the plugin has been initialized. </summary>
     public static bool Initialized;
-    /// <summary> Whether the Ultrapain mod is loaded. Needed to synchronize difficulty. </summary>
-    public static bool UltrapainLoaded;
-
-    /// <summary> Toggles Ultrapain difficulty. Placing it in a separate function is necessary to avoid errors. </summary>
-    public static void TogglePain(bool unreal, bool real)
-    { Ultrapain.Plugin.ultrapainDifficulty = unreal; Ultrapain.Plugin.realUltrapainDifficulty = real; }
-
-    /// <summary> Writes Ultrapain difficulty data. </summary>
-    public static void WritePain(Writer w)
-    { w.Bool(Ultrapain.Plugin.ultrapainDifficulty); w.Bool(Ultrapain.Plugin.realUltrapainDifficulty); }
 
     private void Awake()
     {
@@ -57,10 +45,9 @@ public class Plugin : BaseUnityPlugin
 
         // notify players about the availability of an update so that they no longer whine to me about something not working
         Version.Check4Update();
-        // check if Ultrapain is installed
-        UltrapainLoaded = Chainloader.PluginInfos.ContainsKey("com.eternalUnion.ultraPain");
 
         Commands.Commands.Load();
+        Bundle.Load();
         DollAssets.Load();
         Enemies.Load();
         Weapons.Load();
@@ -75,9 +62,9 @@ public class Plugin : BaseUnityPlugin
         World.World.Load();
         Movement.Load();
 
-        WidescreenFix.Load();
+        UI.UIB.Load();
         UI.UI.Load();
-        UI.UI.Build();
+        UIOLD.UI.Build();
 
         // initialize harmony and patch all the necessary classes
         new Harmony("Should I write something here?").PatchAll();

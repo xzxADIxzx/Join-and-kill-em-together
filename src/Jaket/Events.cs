@@ -33,7 +33,7 @@ public class Events : MonoSingleton<Events>
     public static void Load()
     {
         // initialize the singleton
-        UI.UI.Object("Events").AddComponent<Events>();
+        Tools.Create<Events>("Events");
 
         SceneManager.sceneLoaded += (scene, mode) =>
         {
@@ -52,12 +52,15 @@ public class Events : MonoSingleton<Events>
         OnLobbyAction += OnTeamChanged.Fire;
         OnLobbyAction += OnWeaponChanged.Fire;
 
-        // update the discord activity so everyone can know I've been working hard
-        OnLobbyAction += () => DiscordController.Instance.FetchSceneActivity(Tools.Scene);
-        // same as the line above
-        OnLobbyAction += () => SteamController.Instance.FetchSceneActivity(Tools.Scene);
-        // toggle the ability of the game to run in the background, because multiplayer requires it
-        OnLobbyAction += () => Application.runInBackground = LobbyController.Lobby != null;
+        OnLobbyAction += () =>
+        {
+            // update the discord & steam activity so everyone can know I've been working hard
+            DiscordController.Instance.FetchSceneActivity(Tools.Scene);
+            SteamController.Instance.FetchSceneActivity(Tools.Scene);
+
+            // enable the ability of the game to run in the background, because multiplayer requires it
+            Application.runInBackground = LobbyController.Lobby != null;
+        };
     }
 
     /// <summary> Posts the task for execution in the late update. </summary>

@@ -3,19 +3,16 @@ namespace Jaket.Net;
 using Steamworks;
 using Steamworks.Data;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-using Jaket.UI;
+using Jaket.Assets;
 
 /// <summary> Lobby controller with several useful methods. </summary>
 public class LobbyController
 {
     /// <summary> The current lobby the player is connected to. Null if the player is not connected to a lobby. </summary>
     public static Lobby? Lobby;
-    /// <summary> Lobby owner or the player's SteamID if the lobby is null. </summary>
-    public static SteamId Owner => Lobby == null ? SteamClient.SteamId : Lobby.Value.Owner.Id;
     /// <summary> Id of the last lobby owner, needed to track the exit of the host. </summary>
     public static SteamId LastOwner;
     /// <summary> Id of the last kicked player. </summary>
@@ -51,7 +48,7 @@ public class LobbyController
             if (IsMultikillLobby(lobby))
             {
                 LeaveLobby();
-                UI.SendMsg("This lobby was created via MULTIKILL");
+                Bundle.Hud("lobby.mk");
             }
         };
 
@@ -103,15 +100,15 @@ public class LobbyController
         {
             Networking.Server.Close();
             Networking.Client.Close();
+
+            Lobby?.Leave();
+            Lobby = null;
         }
 
-        Lobby?.Leave();
-        Lobby = null;
-
         // if the client has left the lobby, then load the main menu
-        if (!IsOwner && Tools.Scene != "Main Menu") SceneHelper.LoadScene("Main Menu");
+        if (!IsOwner && Tools.Scene != "Main Menu") Tools.Load("Main Menu");
 
-        Networking.Clear(); // destroy all network objects
+        Networking.Clear();
         Events.OnLobbyAction.Fire();
     }
 
@@ -121,13 +118,7 @@ public class LobbyController
     /// <summary> Asynchronously connects the player to the given lobby. </summary>
     public static async void JoinLobby(Lobby lobby)
     {
-        if (Lobby?.Id == lobby.Id)
-        {
-            UI.SendMsg(
-@"""Why would you want to join yourself?!""
-<size=20><color=grey>(c) xzxADIxzx</color></size>");
-            return;
-        }
+        if (Lobby?.Id == lobby.Id) { Bundle.Hud("lobby.join-yourself"); return; }
 
         if (Lobby != null) LeaveLobby();
         Debug.Log("Joining to the lobby...");
@@ -138,29 +129,13 @@ public class LobbyController
             Lobby = lobby;
             IsOwner = false;
         }
-        else UI.SendMsg(
-@"<size=20><color=red>Couldn't connect to the lobby, it's a shame.</color></size>
-Maybe it was closed or you were blocked ,_,");
+        else Bundle.Hud("lobby.closed");
 
         Events.OnLobbyAction.Fire();
     }
 
     #endregion
     #region members
-
-    /// <summary> Returns a list of nicknames of players currently typing. </summary>
-    public static List<string> TypingPlayers()
-    {
-        List<string> list = new();
-
-        if (Chat.Shown) list.Add("You");
-        Networking.EachPlayer(player =>
-        {
-            if (player.Typing) list.Add(player.Header.Name);
-        });
-
-        return list;
-    }
 
     public static bool Contains(SteamId id)
     {
@@ -178,26 +153,6 @@ Maybe it was closed or you were blocked ,_,");
         foreach (var member in Lobby.Value.Members) cons(member);
     }
 
-    /// <summary> Iterates each lobby member except its owner. </summary>
-    public static void EachMemberExceptOwner(Action<Friend> cons)
-    {
-        foreach (var member in Lobby.Value.Members)
-        {
-            // usually this method is used by the server to send packets, because it doesn't make sense to send packets to itself
-            if (member.Id != Lobby.Value.Owner.Id) cons(member);
-        }
-    }
-
-    /// <summary> Iterates each lobby member, except for its owner and one more SteamID. </summary>
-    public static void EachMemberExceptOwnerAnd(SteamId id, Action<Friend> cons)
-    {
-        foreach (var member in Lobby.Value.Members)
-        {
-            // usually this method is used by the server to forward packets from one of the clients
-            if (member.Id != Lobby.Value.Owner.Id && member.Id != id) cons(member);
-        }
-    }
-
     #endregion
     #region codes
 
@@ -205,18 +160,14 @@ Maybe it was closed or you were blocked ,_,");
     public static void CopyCode()
     {
         GUIUtility.systemCopyBuffer = Lobby?.Id.ToString();
-        if (Lobby != null) UI.SendMsg(
-@"<size=20><color=#00FF00>The lobby code has been successfully copied to the clipboard!</color></size>
-Send it to your friends so they can join you :D");
+        if (Lobby != null) Bundle.Hud("lobby.copied");
     }
 
     /// <summary> Joins by the lobby code from the clipboard. </summary>
     public static void JoinByCode()
     {
         if (ulong.TryParse(GUIUtility.systemCopyBuffer, out var code)) JoinLobby(new(code));
-        else UI.SendMsg(
-@"<size=20><color=red>Could not find the lobby code on your clipboard!</color></size>
-Make sure it is copied without spaces :(");
+        else Bundle.Hud("lobby.failed");
     }
 
     #endregion

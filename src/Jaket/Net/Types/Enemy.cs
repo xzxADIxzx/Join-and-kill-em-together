@@ -117,17 +117,17 @@ public class Enemy : Entity
             GetComponent<Animator>().runtimeAnimatorController = Array.Find(Tools.ResFind<RuntimeAnimatorController>(), c => c.name == "FerrymanIntro2");
 
             // add components that will trigger an animation when the ferryman touches a coin
-            var trigger = UI.Object("Coin Trigger", transform);
+            var trigger = Tools.Create("Coin Trigger", transform);
             trigger.transform.localPosition = new();
             trigger.transform.localScale = new(3f, 3f, 3f);
 
-            UI.Component<CapsuleCollider>(trigger, collider =>
+            UIB.Component<CapsuleCollider>(trigger, collider =>
             {
                 collider.height = 2f;
                 collider.isTrigger = true;
             });
 
-            UI.Component<CoinActivated>(trigger, coin =>
+            UIB.Component<CoinActivated>(trigger, coin =>
             {
                 coin.disableCoin = true;
                 coin.events = new UltrakillEvent() { onActivate = new UnityEvent() };

@@ -7,13 +7,31 @@ using UnityEngine;
 /// <summary> Set of different tools for simplifying life and systematization of code. </summary>
 public class Tools
 {
+    #region scene
+
     /// <summary> Name of the current scene. </summary>
     public static string Scene => SceneHelper.CurrentScene;
+
+    /// <summary> Loads the given scene. </summary>
+    public static void Load(string scene) => SceneHelper.LoadScene(scene);
+
+    #endregion
+    #region create & destroy
+
+    /// <summary> Creates a new game object and assigns it to the given transform. </summary>
+    public static GameObject Create(string name, Transform parent = null)
+    {
+        GameObject obj = new(name);
+        obj.transform.SetParent(parent ?? Plugin.Instance.transform, false);
+        return obj;
+    }
+    public static T Create<T>(string name, Transform parent = null) where T : Component => Create(name, parent).AddComponent<T>();
 
     /// <summary> System namespace also has Object class, so I added this to avoid conflicts. </summary>
     public static void Destroy(Object obj) => Object.Destroy(obj);
     public static void DestroyImmediate(Object obj) => Object.DestroyImmediate(obj);
 
+    #endregion
     #region resources
 
     /// <summary> Just shortcut. </summary>

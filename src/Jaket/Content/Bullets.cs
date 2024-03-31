@@ -6,7 +6,6 @@ using UnityEngine;
 using Jaket.IO;
 using Jaket.Net;
 using Jaket.Net.Types;
-using Jaket.UI;
 
 /// <summary> List of all bullets in the game and some useful methods. </summary>
 public class Bullets
@@ -70,8 +69,8 @@ public class Bullets
             }
         }
 
-        Fake = UI.Object("Fake");
-        NetDmg = UI.Object("Network Damage");
+        Fake = Tools.Create("Fake");
+        NetDmg = Tools.Create("Network Damage");
     }
 
     /// <summary> Finds the bullet type by the name. </summary>
@@ -199,7 +198,7 @@ public class Bullets
         // null pointer fix
         Tools.Field<Harpoon>("aud").SetValue(harpoon, harpoon.GetComponent<AudioSource>());
 
-        harpoon.transform.Rotate(new(0f, 180f, 0f), Space.Self);
+        harpoon.transform.Rotate(Vector3.up * 180f, Space.Self);
         harpoon.transform.position += harpoon.transform.forward;
         harpoon.Punched();
     }
