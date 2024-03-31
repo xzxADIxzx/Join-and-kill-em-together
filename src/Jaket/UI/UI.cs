@@ -39,6 +39,7 @@ public class UI
         PlayerInfo.Build("Player Information", false, false, scene => scene == "Main Menu", () => { if (PlayerInfo.Shown) PlayerInfo.Instance.Toggle(); });
         EmojiWheel.Build("Emoji Wheel", false, false);
         Skateboard.Build("Skateboard", false, false);
+        InteractiveGuide.Build("Interactive Guide", false, false, hide: () => InteractiveGuide.Instance.OfferAssistance());
     }
 
     /// <summary> Hides the interface of the left group. </summary>
