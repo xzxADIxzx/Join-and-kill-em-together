@@ -16,8 +16,8 @@ public class EnemyPatch
 
     [HarmonyPrefix]
     [HarmonyPatch(nameof(EnemyIdentifier.DeliverDamage))]
-    static bool Damage(EnemyIdentifier __instance, float multiplier, bool tryForExplode, float critMultiplier, GameObject sourceWeapon) =>
-        Enemies.SyncDamage(__instance, multiplier, tryForExplode, critMultiplier, sourceWeapon);
+    static bool Damage(EnemyIdentifier __instance, ref float multiplier, bool tryForExplode, float critMultiplier, GameObject sourceWeapon) =>
+        Enemies.SyncDamage(__instance, ref multiplier, tryForExplode, critMultiplier, sourceWeapon);
 
     [HarmonyPrefix]
     [HarmonyPatch(nameof(EnemyIdentifier.Death))]

@@ -182,7 +182,7 @@ public class LobbyController
         task.GetAwaiter().OnCompleted(() =>
         {
             FetchingLobbies = false;
-            done(task.Result);
+            done(task.Result.Where(l => l.Data.Any(pair => pair.Key == "jaket" || pair.Key == "mk_lobby")).ToArray());
         });
     }
 
@@ -191,7 +191,7 @@ public class LobbyController
     {
         "Tutorial" => "Tutorial",
         "uk_construct" => "Sandbox",
-        "Endless" => "Myth",
+        "Endless" => "Cyber Grind",
         "CreditsMuseum2" => "Museum",
         _ => map.Substring("Level ".Length)
     };

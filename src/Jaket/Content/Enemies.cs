@@ -115,7 +115,7 @@ public class Enemies
     }
 
     /// <summary> Synchronizes damage dealt to the enemy. </summary>
-    public static bool SyncDamage(EnemyIdentifier enemyId, float damage, bool explode, float critDamage, GameObject source)
+    public static bool SyncDamage(EnemyIdentifier enemyId, ref float damage, bool explode, float critDamage, GameObject source)
     {
         if (LobbyController.Lobby == null || enemyId.dead) return true;
 
@@ -125,7 +125,7 @@ public class Enemies
         if (enemyId.TryGetComponent<Entity>(out var entity) && (entity is not RemotePlayer player || !player.Invincible))
             Bullets.SyncDamage(entity.Id, enemyId.hitter, damage, explode, critDamage);
 
-        // the entity was created before the lobby
+        if (!LobbyController.IsOwner && damage + damage * critDamage >= enemyId.health - 1f) damage = 0.0001f;
         return true;
     }
 
@@ -137,8 +137,10 @@ public class Enemies
         if (enemyId.TryGetComponent<Enemy>(out var enemy))
         {
             if (LobbyController.IsOwner)
-                Networking.Send(PacketType.KillEntity, w => w.Id(enemy.Id), (data, size) => Events.Post2(() => Networking.Redirect(data, size)), 8);
-
+            {
+                Networking.Send(PacketType.KillEntity, w => w.Id(enemy.Id), size: 8);
+                Networking.Entities[enemy.Id] = null;
+            }
             Tools.Destroy(enemy);
         }
     }

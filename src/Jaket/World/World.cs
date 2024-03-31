@@ -125,11 +125,24 @@ public class World : MonoSingleton<World>
             }),
             // don't block the path of the roomba once the fight starts
             StaticAction.Find("Level 7-2", "Trigger", new(-218.5f, 65f, 836.5f), obj => Destroy(obj.GetComponent<ObjectActivator>())),
-            StaticAction.Find("Level 7-2", "PuzzleScreen (1)", new(-230.5f, 31.75f, 813.5f), obj => Destroy(obj.transform.GetChild(0).gameObject)),
+            StaticAction.Find("Level 7-2", "PuzzleScreen (1)", new(-230.5f, 31.75f, 813.5f), obj =>
+            {
+                var root = obj.transform.GetChild(0);
+                root.Find("Text (TMP)").gameObject.SetActive(false);
+                root.Find("Button (Closed)").gameObject.SetActive(false);
+
+                UI.Text("UwU", root, 0f, 0f, 512f, 512f, size: 256).transform.localScale = Vector3.one / 8f;
+            }),
             // disable the terminal that lowers the bomb for clients
             StaticAction.Find("Level 7-2", "PuzzleScreen (1)", new(-317.75f, 55.25f, 605.25f), obj =>
             {
-                if (!LobbyController.IsOwner) obj.transform.GetChild(0).gameObject.SetActive(false);
+                if (LobbyController.IsOwner) return;
+
+                var root = obj.transform.GetChild(0);
+                root.Find("Text (TMP)").gameObject.SetActive(false);
+                root.Find("UsableButtons").gameObject.SetActive(false);
+
+                UI.Text("Only the host can do this!", root, 0f, 0f, 1024f, 512f, size: 120).transform.localScale = Vector3.one / 8f;
             }),
             // wtf?! why is there a torch???
             StaticAction.Find("Level 7-3", "1 - Dark Path", new(0f, -10f, 300f), obj =>
@@ -155,10 +168,19 @@ public class World : MonoSingleton<World>
             {
                 obj.GetComponent<ObjectActivator>().events.toActivateObjects[4] = null;
             }),
+            StaticAction.Find("Level P-2", "FightActivator", new(-102f, -61.25f, -450f), obj =>
+            {
+                var act = obj.GetComponent<ObjectActivator>();
+                act.events.onActivate = new(); // gothic door
+                act.events.toActivateObjects[2] = null; // wall collider
+                act.events.toDisActivateObjects[1] = null; // entry collider
+                act.events.toDisActivateObjects[2] = null; // elevator
+            }),
             // move the death zone, because entities spawn at the origin
             StaticAction.Find("Endless", "Cube", new(-40f, 0.5f, 102.5f), obj => obj.transform.position = new(-40f, -10f, 102.5f)),
 
             // crutches everywhere, crutches all the time
+            StaticAction.Patch("Level 3-2", "OutroLightSound", new(-5f, -161f, 875f)),
             StaticAction.Patch("Level 7-1", "Blockers", new(-242.5f, -115f, 314f)),
             StaticAction.Patch("Level 7-1", "Wave 2", new(-242.5f, 0f, 0f)),
 
@@ -176,6 +198,7 @@ public class World : MonoSingleton<World>
             StaticAction.Destroy("Level 2-4", "Doorway Blockers", new(425f, -10f, 650f)),
             StaticAction.Destroy("Level 2-4", "MetroBlockDoor (1)", new(425f, 27f, 615f)),
             StaticAction.Destroy("Level 2-4", "MetroBlockDoor (2)", new(425f, 27f, 525f)),
+            StaticAction.Destroy("Level 3-2", "Door", new(-10f, -161f, 955f)),
             StaticAction.Destroy("Level 4-2", "6A Activator", new(-79f, 45f, 954f)),
             StaticAction.Destroy("Level 4-2", "6B Activator", new(116f, 19.5f, 954f)),
             StaticAction.Destroy("Level 4-3", "Doorblocker", new(-59.5f, -35f, 676f)),
@@ -185,6 +208,7 @@ public class World : MonoSingleton<World>
             StaticAction.Destroy("Level 5-2", "Arena 2", new(87.5f, -53f, 1240f)),
             StaticAction.Destroy("Level 6-1", "Cage", new(168.5f, -130f, 140f)),
             StaticAction.Destroy("Level 6-1", "Cube", new(102f, -165f, -503f)),
+            StaticAction.Destroy("Level 6-2", "Door", new(-179.5f, 20f, 350f)),
             StaticAction.Destroy("Level 7-1", "SkullRed", new(-66.25f, 9.8f, 485f)),
             StaticAction.Destroy("Level 7-1", "ViolenceArenaDoor", new(-120f, 0f, 530.5f)),
             StaticAction.Destroy("Level 7-1", "Walkway Arena -> Stairway Up", new(80f, -25f, 590f)),
@@ -211,6 +235,17 @@ public class World : MonoSingleton<World>
                 obj.SetActive(true);
                 obj.transform.parent.Find("GlobalLights (2)").Find("MetroWall (10)").gameObject.SetActive(false);
                 obj.transform.parent.Find("BossMusic").gameObject.SetActive(false);
+            }),
+
+            // sync outro
+            NetAction.Sync("Level 3-2", "OutroLightSound", new(-5f, -161f, 875f), obj =>
+            {
+                obj.SetActive(true);
+                obj.transform.GetChild(0).gameObject.SetActive(true);
+                obj.transform.parent.Find("EyeWithSocket").gameObject.SetActive(false);
+
+                Tools.ObjFind("Music 3").SetActive(false);
+                StatsManager.Instance.StopTimer();
             }),
 
             // there are just a couple of little things that need to be synchronized
