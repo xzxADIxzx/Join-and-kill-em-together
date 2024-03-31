@@ -1,7 +1,6 @@
 ﻿namespace Jaket;
 
 using BepInEx;
-using BepInEx.Bootstrap;
 using HarmonyLib;
 
 using Jaket.Assets;
@@ -64,7 +63,6 @@ public class Plugin : BaseUnityPlugin
 
         UI.UIB.Load();
         UI.UI.Load();
-        UIOLD.UI.Build();
 
         // initialize harmony and patch all the necessary classes
         new Harmony("Should I write something here?").PatchAll();

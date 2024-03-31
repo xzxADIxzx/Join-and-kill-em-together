@@ -141,7 +141,7 @@ public class Commands
             Msg("* [#00E666]Kekson1a[] - Steam Rich Presence support");
 
             Msg("Translators:");
-            Msg("[#cccccc]NotPhobos - Spanish, sSAR - Italian, Theoyeah - French, Sowler - Polish, Ukrainian, Poyozit - Portuguese, Iyad - Arabic");
+            Msg("[#cccccc]NotPhobos - Spanish, sSAR - Italian, Theoyeah - French, Sowler - Polish, Ukrainian, Poyozit - Portuguese, Fraku - Filipino, Iyad - Arabic");
 
             Msg("Testers:");
             Msg("[#cccccc]Fenicemaster, AndruGhost, Subjune, FruitCircuit");

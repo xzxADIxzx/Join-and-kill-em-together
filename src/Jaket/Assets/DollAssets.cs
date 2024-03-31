@@ -8,7 +8,7 @@ using UnityEngine.Events;
 using Jaket.Content;
 using Jaket.Net;
 using Jaket.Net.Types;
-using Jaket.UI;
+using Jaket.UI.Dialogs;
 
 /// <summary> Class that works with the assets bundle for the player doll. </summary>
 public class DollAssets
@@ -48,7 +48,7 @@ public class DollAssets
         // cache the shader and the wing textures for future use
         Shader = AssetHelper.LoadPrefab("cb3828ada2cbefe479fed3b51739edf6").GetComponent<V2>().smr.material.shader;
         WingTextures = new Texture[5];
-        HandTextures = new Texture[2];
+        HandTextures = new Texture[4];
 
         // loading wing textures from the bundle
         for (int i = 0; i < 5; i++)
@@ -58,7 +58,9 @@ public class DollAssets
         }
 
         LoadAsync<Texture>("V3-hand", tex => HandTextures[1] = tex);
+        LoadAsync<Texture>("V3-blast", tex => HandTextures[3] = tex);
         HandTextures[0] = FistControl.Instance.blueArm.ToAsset().GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture;
+        HandTextures[2] = FistControl.Instance.redArm.ToAsset().GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture;
 
         // load icons for emoji wheel
         EmojiIcons = new Sprite[12];
@@ -175,5 +177,9 @@ public class DollAssets
     }
 
     /// <summary> Returns the hand texture currently in use. Depends on whether the player is in the lobby or not. </summary>
-    public static Texture HandTexture() => HandTextures[LobbyController.Lobby != null || Settings.ForceGreenArm ? 1 : 0];
+    public static Texture HandTexture(bool feedbacker = true)
+    {
+        var s = feedbacker ? Settings.FeedColor : Settings.KnuckleColor;
+        return HandTextures[(feedbacker ? 0 : 2) + (s == 0 ? (LobbyController.Lobby == null ? 0 : 1) : s == 1 ? 1 : 0)];
+    }
 }

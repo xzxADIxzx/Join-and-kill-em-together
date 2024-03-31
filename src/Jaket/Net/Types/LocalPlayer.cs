@@ -92,8 +92,8 @@ public class LocalPlayer : Entity
         var right = cw?.transform.GetChild(0).Find("RightArm");
         if (right) right.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture();
 
-        // var knuckle = fc.transform.Find("Arm Red(Clone)");
-        // if (knuckle) punch.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture(punch: false);
+        var knuckle = fc.transform.Find("Arm Red(Clone)");
+        if (knuckle) knuckle.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture(false);
     }
 
     #endregion
