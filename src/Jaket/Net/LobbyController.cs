@@ -93,8 +93,6 @@ public class LobbyController
             Lobby?.SetData("name", $"{SteamClient.Name}'s Lobby");
             Lobby?.SetData("level", MapMap(Tools.Scene));
             Lobby?.SetData("pvp", "True"); Lobby?.SetData("cheats", "True");
-
-            Events.OnLobbyAction.Fire();
         });
     }
 
@@ -140,8 +138,6 @@ public class LobbyController
                 Lobby = lobby;
             }
             else Log.Warning($"Couldn't join a lobby. Result is {task.Result}");
-
-            Events.OnLobbyAction.Fire();
         });
     }
 

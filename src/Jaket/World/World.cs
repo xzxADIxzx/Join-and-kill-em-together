@@ -392,10 +392,6 @@ public class World : MonoSingleton<World>
     /// <summary> Iterates each world action and restores it as needed. </summary>
     public void Restore()
     {
-        if (Tools.Scene == "Level 7-4") UI.SendMsg(Bundle.ParseColors(
-@"I am sorry, but this level isn't synchronized yet. Wait for [#FFA500]1.2.0[] pleawse :3
-[20][grey](c) xzxADIxzx[][]"));
-
         EachStatic(sa => sa.Run());
         Activated.ForEach(index => Actions[index].Run());
 
