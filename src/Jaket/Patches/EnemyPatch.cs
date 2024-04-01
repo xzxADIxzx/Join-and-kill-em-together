@@ -36,11 +36,11 @@ public class EnemyPatch
         float SqrDst(Vector3 v1, Vector3 v2) => (v1 - v2).sqrMagnitude;
 
         var target = NewMovement.Instance.transform;
-        float dst = SqrDst(target.position, __instance.transform.position);
+        float dst = SqrDst(__instance.transform.position, target.position);
 
         Networking.EachPlayer(player =>
         {
-            var newDst = SqrDst(target.position, player.transform.position);
+            var newDst = SqrDst(__instance.transform.position, player.transform.position);
             if (newDst < dst)
             {
                 target = player.transform;
