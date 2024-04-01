@@ -53,7 +53,7 @@ public class PlayerList : CanvasSingleton<PlayerList>
         UIB.Table("List", "#player-list.list", transform, Tlw(200f + height / 2f, height), table =>
         {
             float y = 20f;
-            LobbyController.EachMember(member =>
+            foreach (var member in LobbyController.Lobby?.Members)
             {
                 if (LobbyController.LastOwner == member.Id)
                 {
@@ -69,7 +69,7 @@ public class PlayerList : CanvasSingleton<PlayerList>
                     }
                     else UIB.ProfileButton(member, table, Btn(0f, y += 48f));
                 }
-            });
+            }
         });
     }
 }

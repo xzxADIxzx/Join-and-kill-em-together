@@ -46,8 +46,9 @@ public class Administration
             con?.Close();
         });
 
-        LobbyController.Lobby?.SendChatString("#/k" + member.Id);
         Banned.Add(member.Id);
+        LobbyController.Lobby?.SendChatString("#/k" + member.Id);
+        LobbyController.Lobby?.SetData("banned", string.Join(" ", Banned));
     }
 
     /// <summary> Whether the player can spawn another common bullet. </summary>
