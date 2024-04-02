@@ -15,7 +15,7 @@ public class DiscordPatch
     static void Activity(ref Activity ___cachedActivity)
     {
         // update the discord activity so everyone can know I've been working hard
-        if (LobbyController.Lobby != null) ___cachedActivity.State = "Playing multiplayer via Jaket";
+        if (LobbyController.Online) ___cachedActivity.State = "Playing multiplayer via Jaket";
     }
 
     [HarmonyPrefix]

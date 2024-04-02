@@ -96,7 +96,7 @@ public class Movement : MonoSingleton<Movement>
             if (Pointer != null) Pointer.Lifetime = 4.5f;
             Pointer = Pointer.Spawn(Networking.LocalPlayer.Team, hit.point, hit.normal);
 
-            if (LobbyController.Lobby != null) Networking.Send(PacketType.Point, w =>
+            if (LobbyController.Online) Networking.Send(PacketType.Point, w =>
             {
                 w.Id(Networking.LocalPlayer.Id);
                 w.Vector(hit.point);
@@ -208,7 +208,7 @@ public class Movement : MonoSingleton<Movement>
 
 
         // all the following changes are related to the network part of the game and shouldn't affect the local
-        if (LobbyController.Lobby == null) return;
+        if (LobbyController.Offline) return;
 
         // pause stops time and weapon wheel slows it down, but in multiplayer everything should be real-time
         if (Settings.DisableFreezeFrames || UI.AnyDialog) Time.timeScale = 1f;

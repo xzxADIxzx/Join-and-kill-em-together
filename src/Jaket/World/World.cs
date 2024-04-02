@@ -55,7 +55,7 @@ public class World : MonoSingleton<World>
             // change the layer from PlayerOnly to Invisible so that other players can also launch a wave
             foreach (var trigger in Tools.ResFind<ActivateArena>()) trigger.gameObject.layer = 16;
 
-            if (LobbyController.Lobby != null) Instance.Restore();
+            if (LobbyController.Online) Instance.Restore();
         };
         Events.OnLobbyEntered += Instance.Restore;
 
@@ -544,7 +544,7 @@ public class World : MonoSingleton<World>
     /// <summary> Synchronizes the tram speed. </summary>
     public static void SyncTram(TramControl tram)
     {
-        if (LobbyController.Lobby == null || Tools.Scene == "Level 7-1") return;
+        if (LobbyController.Offline || Tools.Scene == "Level 7-1") return;
 
         byte index = (byte)Instance.Trams.IndexOf(tram);
         if (index != 255) Networking.Send(PacketType.ActivateObject, w =>

@@ -30,7 +30,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
         {
             create = UIB.Button("#lobby-tab.create", table, Btn(0f, 68f), clicked: () =>
             {
-                if (LobbyController.Lobby == null)
+                if (LobbyController.Offline)
                     // create a new lobby if not already created
                     LobbyController.CreateLobby();
                 else
@@ -97,7 +97,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
     public void Rebuild()
     {
         // reset config
-        if (LobbyController.Lobby == null)
+        if (LobbyController.Offline)
         {
             lobbyAccessLevel = 0;
             pvp.isOn = cheats.isOn = true;
@@ -106,11 +106,11 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
 
         create.GetComponentInChildren<Text>().text = Bundle.Get(LobbyController.CreatingLobby
             ? "lobby-tab.creating"
-            : LobbyController.Lobby == null
+            : LobbyController.Offline
                 ? "lobby-tab.create"
                 : LobbyController.IsOwner ? "lobby-tab.close" : "lobby-tab.leave");
 
-        invite.interactable = copy.interactable = LobbyController.Lobby != null;
+        invite.interactable = copy.interactable = LobbyController.Online;
 
         accessibility.GetComponentInChildren<Text>().text = Bundle.Get(lobbyAccessLevel switch
         {

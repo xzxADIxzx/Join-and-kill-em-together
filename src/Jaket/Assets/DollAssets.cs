@@ -180,6 +180,6 @@ public class DollAssets
     public static Texture HandTexture(bool feedbacker = true)
     {
         var s = feedbacker ? Settings.FeedColor : Settings.KnuckleColor;
-        return HandTextures[(feedbacker ? 0 : 2) + (s == 0 ? (LobbyController.Lobby == null ? 0 : 1) : s == 1 ? 1 : 0)];
+        return HandTextures[(feedbacker ? 0 : 2) + (s == 0 ? (LobbyController.Offline ? 0 : 1) : s == 1 ? 1 : 0)];
     }
 }

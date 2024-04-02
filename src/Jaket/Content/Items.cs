@@ -19,7 +19,7 @@ public class Items
     {
         Events.OnLoaded += () =>
         {
-            if (LobbyController.Lobby != null) Events.Post(SyncAll);
+            if (LobbyController.Online) Events.Post(SyncAll);
         };
         Events.OnLobbyEntered += () => Events.Post(SyncAll);
 
@@ -58,7 +58,7 @@ public class Items
     /// <summary> Synchronizes the item between host and clients. </summary>
     public static void Sync(ItemIdentifier itemId)
     {
-        if (LobbyController.Lobby == null || itemId == null || itemId.gameObject == null) return;
+        if (LobbyController.Offline || itemId == null || itemId.gameObject == null) return;
 
         // the item was created remotely, the item is a book or the item is a prefab
         if (itemId.name == "Net" || itemId.name.Contains("Book") || itemId.gameObject.scene.name == null) return;

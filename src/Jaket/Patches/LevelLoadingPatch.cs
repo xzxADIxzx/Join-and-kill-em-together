@@ -14,7 +14,7 @@ public class LevelLoadingPatch
     static bool AfterLevel()
     {
         // if the player is the owner of the lobby, then everything is OK
-        if (LobbyController.Lobby == null || LobbyController.IsOwner) return true;
+        if (LobbyController.Offline || LobbyController.IsOwner) return true;
 
         // otherwise, notify him that he need to wait for the host and prevent the next level from loading
         HudMessageReceiver.Instance.SendHudMessage("Wait for the lobby owner to load the level...");

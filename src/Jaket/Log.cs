@@ -33,7 +33,7 @@ public class Log
 
         Events.OnLobbyAction += () =>
         {
-            var lobby = LobbyController.Lobby == null ? "null" : $"{LobbyController.Lobby?.GetData("name")} ({LobbyController.Lobby.Value.Id})";
+            var lobby = LobbyController.Offline ? "null" : $"{LobbyController.Lobby?.GetData("name")} ({LobbyController.Lobby.Value.Id})";
             var owner = LobbyController.Lobby?.Owner.ToString() ?? "null";
             Debug($"Lobby status updated: cl is {lobby}, owner is {owner}");
         };

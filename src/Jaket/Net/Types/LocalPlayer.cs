@@ -83,7 +83,7 @@ public class LocalPlayer : Entity
     public void UpdateWeapons()
     {
         weapon = Weapons.Type();
-        if (LobbyController.Lobby != null) SyncStyle();
+        if (LobbyController.Online) SyncStyle();
 
         // according to the lore, the player plays for V3, so we need to paint the hand
         var punch = fc.transform.Find("Arm Blue(Clone)");
