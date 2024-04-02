@@ -44,7 +44,7 @@ public class StaticAction : WorldAction
     /// <summary> Creates a static action that finds an object in the world. </summary>
     public static StaticAction Find(string level, string name, Vector3 position, Action<GameObject> action) => new(level, () =>
     {
-        Tools.ResFind(obj => obj.gameObject.scene.name != null && obj.transform.position == position && obj.name == name, action);
+        Tools.ResFind(obj => Tools.IsReal(obj) && obj.transform.position == position && obj.name == name, action);
     });
     /// <summary> Creates a static action that adds an object activation component to an object in the world. </summary>
     public static StaticAction Patch(string level, string name, Vector3 position) => Find(level, name, position, obj => obj.AddComponent<ObjectActivator>().events = new());

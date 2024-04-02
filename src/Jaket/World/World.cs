@@ -47,7 +47,7 @@ public class World : MonoSingleton<World>
         Events.OnLoaded += () =>
         {
             if (!Tools.Scene.StartsWith("Level 7"))
-                Tools.ResFind<Door>(door => door.gameObject.scene.name != null, door =>
+                Tools.ResFind<Door>(Tools.IsReal, door =>
                 {
                     foreach (var room in door.deactivatedRooms) RoomController.Build(room.transform);
                 });
@@ -403,7 +403,7 @@ public class World : MonoSingleton<World>
         void Find<T>(List<T> list) where T : MonoBehaviour
         {
             list.Clear();
-            Tools.ResFind<T>(t => t.gameObject.scene.name != null, list.Add);
+            Tools.ResFind<T>(Tools.IsReal, list.Add);
 
             // sort the objects by the distance so that their order will be the same for all clients
             list.Sort((t1, t2) => t1.transform.position.sqrMagnitude.CompareTo(t2.transform.position.sqrMagnitude));
