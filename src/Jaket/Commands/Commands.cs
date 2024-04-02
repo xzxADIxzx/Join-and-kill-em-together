@@ -32,16 +32,16 @@ public class Commands
         Handler.Register("tts-volume", "\\[0-100]", "Set Sam's volume to keep your ears comfortable", args =>
         {
             if (args.Length == 0)
-                chat.Receive($"<color=#FFA500>TTS volume is {Settings.TTSVolume}.</color>");
+                chat.Receive($"[#FFA500]TTS volume is {Settings.TTSVolume}.");
             else if (int.TryParse(args[0], out int value))
             {
                 int clamped = Mathf.Clamp(value, 0, 100);
                 Settings.TTSVolume = clamped;
 
-                chat.Receive($"<color=#32CD32>TTS volume is set to {clamped}.</color>");
+                chat.Receive($"[#32CD32]TTS volume is set to {clamped}.");
             }
             else
-                chat.Receive("<color=#FF341C>Failed to parse value. It must be an integer in the range from 0 to 100.</color>");
+                chat.Receive("[#FF341C]Failed to parse value. It must be an integer in the range from 0 to 100.");
         });
         Handler.Register("tts-auto", "\\[on/off]", "Turn auto reading of all messages", args =>
         {
@@ -49,12 +49,12 @@ public class Commands
             if (enable)
             {
                 Settings.AutoTTS = chat.AutoTTS = true;
-                chat.Receive("<color=#32CD32>Auto TTS enabled.</color>");
+                chat.Receive("[#32CD32]Auto TTS enabled.");
             }
             else
             {
                 Settings.AutoTTS = chat.AutoTTS = false;
-                chat.Receive("<color=#FF341C>Auto TTS disabled.</color>");
+                chat.Receive("[#FF341C]Auto TTS disabled.");
             }
         });
 
@@ -71,7 +71,7 @@ public class Commands
             int index = Array.FindIndex(GameAssets.PlushiesButReadable, plushy => plushy.ToLower() == name);
 
             if (index == -1)
-                chat.Receive($"<color=#FF341C>Plushy named {name} not found.</color>");
+                chat.Receive($"[#FF341C]Plushy named {name} not found.");
             else
             {
                 if (LobbyController.IsOwner)
@@ -88,20 +88,20 @@ public class Commands
         Handler.Register("level", "<layer> <level> / sandbox / the-cyber-grind", "Load the given level", args =>
         {
             if (!LobbyController.IsOwner)
-                chat.Receive($"<color=#FF341C>Only the lobby owner can load levels.</color>");
+                chat.Receive($"[#FF341C]Only the lobby owner can load levels.");
 
             else if (args.Length >= 1 && (args[0].ToLower() == "sandbox" || args[0].ToLower() == "sand"))
             {
                 Tools.Load("uk_construct");
-                chat.Receive("<color=#32CD32>Sandbox is loading.</color>");
+                chat.Receive("[#32CD32]Sandbox is loading.");
             }
             else if (args.Length >= 1 && (args[0].ToLower().Contains("cyber") || args[0].ToLower().Contains("grind") || args[0].ToLower() == "cg"))
             {
                 Tools.Load("Endless");
-                chat.Receive("<color=#32CD32>The Cyber Grind is loading.</color>");
+                chat.Receive("[#32CD32]The Cyber Grind is loading.");
             }
             else if (args.Length < 2)
-                chat.Receive($"<color=#FF341C>Insufficient number of arguments.</color>");
+                chat.Receive($"[#FF341C]Insufficient number of arguments.");
             else if
             (
                 int.TryParse(args[0], out int layer) && layer >= 0 && layer <= 7 &&
@@ -110,20 +110,20 @@ public class Commands
             )
             {
                 Tools.Load($"Level {layer}-{level}");
-                chat.Receive($"<color=#32CD32>Level {layer}-{level} is loading.</color>");
+                chat.Receive($"[#32CD32]Level {layer}-{level} is loading.");
             }
             else if (args[1].ToUpper() == "S" && int.TryParse(args[0], out level) && level >= 0 && level <= 6 && level != 3 && level != 6)
             {
                 Tools.Load($"Level {level}-S");
-                chat.Receive($"<color=#32CD32>Secret level {level}-S is loading.</color>");
+                chat.Receive($"[#32CD32]Secret level {level}-S is loading.");
             }
             else if (args[0].ToUpper() == "P" && int.TryParse(args[1], out level) && level >= 1 && level <= 2)
             {
                 Tools.Load($"Level P-{level}");
-                chat.Receive($"<color=#32CD32>Prime level P-{level} is loading.</color>");
+                chat.Receive($"[#32CD32]Prime level P-{level} is loading.");
             }
             else
-                chat.Receive("<color=#FF341C>Layer must be an integer from 0 to 7. Level must be an integer from 1 to 5.</color>");
+                chat.Receive("[#FF341C]Layer must be an integer from 0 to 7. Level must be an integer from 1 to 5.");
         });
 
         Handler.Register("authors", "Display the list of the mod developers", args =>
