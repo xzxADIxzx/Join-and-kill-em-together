@@ -133,15 +133,21 @@ public class TramPatch
 [HarmonyPatch]
 public class ActionPatch
 {
-    [HarmonyPostfix]
-    [HarmonyPatch(typeof(ObjectActivator), nameof(ObjectActivator.Activate))]
-    static void Activate(ObjectActivator __instance)
+    static void Activate(GameObject obj)
     {
         if (LobbyController.Online && LobbyController.IsOwner) World.EachNet(na =>
         {
-            if (na.Position == __instance.transform.position && na.Name == __instance.name) World.SyncActivation(na);
+            if (na.Position == obj.transform.position && na.Name == obj.name) World.SyncActivation(na);
         });
     }
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(ObjectActivator), nameof(ObjectActivator.Activate))]
+    static void ActivateObject(ObjectActivator __instance) => Activate(__instance.gameObject);
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(StatueActivator), "Start")]
+    static void ActivateStatue(StatueActivator __instance) => Activate(__instance.gameObject);
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(FinalDoor), nameof(FinalDoor.Open))]

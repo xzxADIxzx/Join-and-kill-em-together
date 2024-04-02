@@ -208,12 +208,6 @@ public class World : MonoSingleton<World>
             StaticAction.Destroy("Level 7-3", "ViolenceHallDoor (1)", new(-188f, 7.5f, 316.25f)),
             StaticAction.Destroy("Level 7-4", "ArenaWalls", new(-26.5f, 470f, 763.75f)),
 
-            // there is a special very big door
-            NetAction.Sync("Level 0-5", "DelayedDoorActivation", new(175f, -6f, 382f)),
-
-            // there is a door within the Very Cancerous Rodent
-            NetAction.Sync("Level 1-2", "Cube (1)", new(-61f, -21.5f, 400.5f)),
-
             // there is an epic boss fight with The Corpse of King Minos
             NetAction.Sync("Level 2-4", "DeadMinos", new(279.5f, -599f, 575f), obj =>
             {

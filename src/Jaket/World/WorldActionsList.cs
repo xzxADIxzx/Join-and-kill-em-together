@@ -17,6 +17,24 @@ public class WorldActionsList
     public static void Load()
     {
         string l; // just for focusing attention
+        #region 0-5
+        l = "Level 0-5";
+
+        StaticAction.Find(l, "Cube", new(182f, 4f, 382f), obj => obj.SetActive(LobbyController.IsOwner));
+
+        NetAction.Sync(l, "Cube", new(182f, 4f, 382f));
+        NetAction.Sync(l, "StatueActivator", new(212.5f, -6.5f, 394.5f));
+        NetAction.Sync(l, "StatueActivator", new(212.5f, -6.5f, 369.5f));
+        NetAction.Sync(l, "DelayedDoorActivation", new(175f, -6f, 382f));
+
+        #endregion
+        #region 1-2
+        l = "Level 1-2";
+
+        // there is a door within the Very Cancerous Rodent
+        NetAction.Sync(l, "Cube (1)", new(-61f, -21.5f, 400.5f));
+
+        #endregion
         #region 1-4
         l = "Level 1-4";
 
