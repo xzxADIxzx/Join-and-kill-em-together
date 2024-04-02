@@ -59,6 +59,7 @@ public class Plugin : BaseUnityPlugin
         Entities.Load();
 
         World.World.Load();
+        WorldActionsList.Load();
         Movement.Load();
 
         UI.UIB.Load();
