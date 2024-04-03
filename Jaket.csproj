@@ -31,8 +31,6 @@
     <Reference Include="lib\UnityEngine.UI.dll" />
     <Reference Include="lib\UnityUIExtensions.dll" />
     <Reference Include="lib\UnityEditor.dll" />
-
-    <Reference Include="lib\Ultrapain.dll" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">

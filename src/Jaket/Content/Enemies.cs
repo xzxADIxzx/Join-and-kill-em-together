@@ -62,7 +62,7 @@ public class Enemies
     /// <summary> Synchronizes the enemy between host and clients. </summary>
     public static bool Sync(EnemyIdentifier enemyId)
     {
-        if (LobbyController.Lobby == null || enemyId.dead) return true;
+        if (LobbyController.Offline || enemyId.dead) return true;
 
         // level 0-2 contains several cutscenes that don't need to be removed
         if (Tools.Scene == "Level 0-2" && enemyId.enemyType == EnemyType.Swordsmachine && enemyId.GetComponent<BossHealthBar>() == null) return true;
@@ -117,7 +117,7 @@ public class Enemies
     /// <summary> Synchronizes damage dealt to the enemy. </summary>
     public static bool SyncDamage(EnemyIdentifier enemyId, ref float damage, bool explode, float critDamage, GameObject source)
     {
-        if (LobbyController.Lobby == null || enemyId.dead) return true;
+        if (LobbyController.Offline || enemyId.dead) return true;
 
         if (source == Bullets.NetDmg) return true; // the damage was received over the network
         if (source == Bullets.Fake) return false; // bullets are only needed for visual purposes and mustn't cause damage
@@ -132,7 +132,7 @@ public class Enemies
     /// <summary> Synchronizes the death of the enemy. </summary>
     public static void SyncDeath(EnemyIdentifier enemyId)
     {
-        if (LobbyController.Lobby == null || enemyId.dead) return;
+        if (LobbyController.Offline || enemyId.dead) return;
 
         if (enemyId.TryGetComponent<Enemy>(out var enemy))
         {

@@ -1,20 +1,17 @@
-namespace Jaket.UI;
+namespace Jaket.UI.Fragments;
 
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+using Jaket.Assets;
 using Jaket.Net;
+using Jaket.UI.Dialogs;
 using Jaket.World;
 
 /// <summary> Small interactive guide for new players. </summary>
 public class InteractiveGuide : CanvasSingleton<InteractiveGuide>
 {
-    /// <summary> Offer to help the player. </summary>
-    public const string OFFER = "Press <color=orange>F11</color> to launch Jaket's interactive guide";
-    /// <summary> Guide on how to skip the guide. </summary>
-    public const string SKIP = "<color=#cccccccc>Press <color=orange>Esc</color> to skip</color>";
-
     /// <summary> List with the conditions for completing each of the stages of the guide. </summary>
     public List<Func<bool>> Conditions = new();
 
@@ -25,17 +22,17 @@ public class InteractiveGuide : CanvasSingleton<InteractiveGuide>
 
     private void Start()
     {
-        Add($"Hi! Press {Settings.LobbyTab} to open the lobby tab", 0f, 0f, () => LobbyTab.Shown);
-        Add("Create a lobby using the button on the left", -267f, 436f, () => LobbyController.Lobby != null);
-        Add("Now invite a friend and wait for him to connect", -239f, 372f, () => LobbyController.Lobby?.MemberCount > 1);
-        Add($"Press {Settings.LobbyTab} to close the lobby tab", 0f, 0f, () => !LobbyTab.Shown);
+        Add(0f, 0f, () => LobbyTab.Shown, Settings.LobbyTab);
+        Add(-256f, 456f, () => LobbyController.Online);
+        Add(-256f, 408f, () => LobbyController.Lobby?.MemberCount > 1);
+        Add(0f, 0f, () => !LobbyTab.Shown, Settings.LobbyTab);
 
-        Add($"Open chat by pressing {Settings.Chat}", 0f, 0f, () => Chat.Shown);
-        Add("And send a message to your friend", 0f, -444f, () => !Chat.Shown);
+        Add(0f, 0f, () => Chat.Shown, Settings.Chat);
+        Add(0f, -444f, () => !Chat.Shown);
 
-        Add($"Open settings using {Settings.Settingz} key", 0f, 0f, () => Settings.Shown);
-        Add("Here is the most interesting option - Emoji Wheel", -227f, -114f, () => false);
-        Add("Now you are ready to play, good luck :D", 0f, 0f, () => !Settings.Shown);
+        Add(0f, 0f, () => Settings.Shown, Settings.Settingz);
+        Add(-256f, -272f, () => false);
+        Add(0f, 0f, () => !Settings.Shown);
     }
 
     private void Update()
@@ -53,13 +50,15 @@ public class InteractiveGuide : CanvasSingleton<InteractiveGuide>
     }
 
     /// <summary> Adds a new part to the guide. </summary>
-    public void Add(string text, float x, float y, Func<bool> completed)
+    public void Add(float x, float y, Func<bool> completed, KeyCode arg = KeyCode.None)
     {
-        float width = Chat.RawMessageLength(text) * 14f + 16f;
-        UI.Table("Guide " + Conditions.Count, transform, x, y, width, 60f, table =>
+        var guide = Bundle.Format("guide." + Conditions.Count, Settings.KeyName(arg));
+        var width = Bundle.CutColors(guide).Length * 14f + 16f;
+
+        UIB.Table("Guide " + Conditions.Count, transform, new(x, y, width, 60f), table =>
         {
-            UI.Text(text, table, 0f, 10f, width, size: 24);
-            UI.Text(SKIP, table, 0f, -14f, width, size: 16);
+            UIB.Text(guide, table, new(0f, 10f, width, 60f));
+            UIB.Text("#guide.skip", table, new(0f, -14f, width, 60f), size: 16);
         }).gameObject.SetActive(false);
 
         Conditions.Add(completed);
@@ -73,7 +72,7 @@ public class InteractiveGuide : CanvasSingleton<InteractiveGuide>
             foreach (Transform child in transform) child.gameObject.SetActive(false);
             index = 0; Shown = false;
         }
-        else if (!offered) UI.SendMsg(OFFER, offered = true);
+        else if (!offered) Bundle.Hud("guide.offer", offered = true);
     }
 
     /// <summary> Launches the guide. </summary>

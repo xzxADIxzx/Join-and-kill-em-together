@@ -6,7 +6,7 @@ using UnityEngine;
 using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net;
-using Jaket.UI;
+using Jaket.UI.Dialogs;
 
 /// <summary> List of chat commands used by the mod. </summary>
 public class Commands
@@ -19,59 +19,59 @@ public class Commands
     /// <summary> Registers all default mod commands. </summary>
     public static void Load()
     {
-        Handler.Register("help", "Displays the list of all commands and their descriptions", args =>
+        Handler.Register("help", "Display the list of all commands and their descriptions", args =>
         {
             Handler.Commands.ForEach(command =>
             {
-                string args = command.Args == null ? "" : $" <color=#cccccccc>{command.Args}</color>";
-                chat.ReceiveChatMessage($"<size=14>* /{command.Name}{args} - {command.Desc}</size>", true);
+                string args = command.Args == null ? "" : $" [#cccccccc]{command.Args}[]";
+                chat.Receive($"[14]* /{command.Name}{args} - {command.Desc}[]", true);
             });
         });
-        Handler.Register("hello", "Resends tips for new players", args => chat.Hello(true));
+        Handler.Register("hello", "Resend tips for new players", args => chat.Hello(true));
 
-        Handler.Register("tts-volume", "[0-100]", "Sets Sam's volume to keep ur ears comfortable", args =>
+        Handler.Register("tts-volume", "\\[0-100]", "Set Sam's volume to keep your ears comfortable", args =>
         {
             if (args.Length == 0)
-                chat.ReceiveChatMessage($"<color=orange>TTS volume is {Settings.GetTTSVolume()}.</color>");
+                chat.Receive($"[#FFA500]TTS volume is {Settings.TTSVolume}.");
             else if (int.TryParse(args[0], out int value))
             {
                 int clamped = Mathf.Clamp(value, 0, 100);
-                Settings.SetTTSVolume(clamped);
+                Settings.TTSVolume = clamped;
 
-                chat.ReceiveChatMessage($"<color=#00FF00>TTS volume is set to {clamped}.</color>");
+                chat.Receive($"[#32CD32]TTS volume is set to {clamped}.");
             }
             else
-                chat.ReceiveChatMessage("<color=red>Failed to parse value. It must be an integer in the range from 0 to 100.</color>");
+                chat.Receive("[#FF341C]Failed to parse value. It must be an integer in the range from 0 to 100.");
         });
-        Handler.Register("tts-auto", "[on/off]", "Turns auto reading of all messages", args =>
+        Handler.Register("tts-auto", "\\[on/off]", "Turn auto reading of all messages", args =>
         {
-            bool enable = args.Length == 0 ? !chat.AutoTTS : (args[0] == "on" ? true : args[0] == "off" ? false : !chat.AutoTTS);
+            bool enable = args.Length == 0 ? !chat.AutoTTS : (args[0] == "on" || (args[0] == "off" ? false : !chat.AutoTTS));
             if (enable)
             {
-                Settings.SetAutoTTS(chat.AutoTTS = true);
-                chat.ReceiveChatMessage("<color=#00FF00>Auto TTS enabled.</color>");
+                Settings.AutoTTS = chat.AutoTTS = true;
+                chat.Receive("[#32CD32]Auto TTS enabled.");
             }
             else
             {
-                Settings.SetAutoTTS(chat.AutoTTS = false);
-                chat.ReceiveChatMessage("<color=red>Auto TTS disabled.</color>");
+                Settings.AutoTTS = chat.AutoTTS = false;
+                chat.Receive("[#FF341C]Auto TTS disabled.");
             }
         });
 
-        Handler.Register("plushies", "Displays the list of all dev plushies", args =>
+        Handler.Register("plushies", "Display the list of all dev plushies", args =>
         {
             string[] plushies = (string[])GameAssets.PlushiesButReadable.Clone();
             Array.Sort(plushies); // sort alphabetically for a more presentable look
 
-            chat.ReceiveChatMessage(string.Join(", ", plushies));
+            chat.Receive(string.Join(", ", plushies));
         });
-        Handler.Register("plushy", "<name>", "Spawns a plushy by name", args =>
+        Handler.Register("plushy", "<name>", "Spawn a plushy by name", args =>
         {
             string name = args.Length == 0 ? null : args[0].ToLower();
             int index = Array.FindIndex(GameAssets.PlushiesButReadable, plushy => plushy.ToLower() == name);
 
             if (index == -1)
-                chat.ReceiveChatMessage($"<color=red>Plushy named {name} not found.</color>");
+                chat.Receive($"[#FF341C]Plushy named {name} not found.");
             else
             {
                 if (LobbyController.IsOwner)
@@ -85,12 +85,23 @@ public class Commands
             }
         });
 
-        Handler.Register("level", "<layer> <level>", "Loads the given level", args =>
+        Handler.Register("level", "<layer> <level> / sandbox / the-cyber-grind", "Load the given level", args =>
         {
             if (!LobbyController.IsOwner)
-                chat.ReceiveChatMessage($"<color=red>Only the lobby owner can load levels.</color>");
+                chat.Receive($"[#FF341C]Only the lobby owner can load levels.");
+
+            else if (args.Length >= 1 && (args[0].ToLower() == "sandbox" || args[0].ToLower() == "sand"))
+            {
+                Tools.Load("uk_construct");
+                chat.Receive("[#32CD32]Sandbox is loading.");
+            }
+            else if (args.Length >= 1 && (args[0].ToLower().Contains("cyber") || args[0].ToLower().Contains("grind") || args[0].ToLower() == "cg"))
+            {
+                Tools.Load("Endless");
+                chat.Receive("[#32CD32]The Cyber Grind is loading.");
+            }
             else if (args.Length < 2)
-                chat.ReceiveChatMessage($"<color=red>Insufficient number of arguments.</color>");
+                chat.Receive($"[#FF341C]Insufficient number of arguments.");
             else if
             (
                 int.TryParse(args[0], out int layer) && layer >= 0 && layer <= 7 &&
@@ -98,44 +109,44 @@ public class Commands
                 (level == 5 ? layer == 0 : true) && (layer == 3 || layer == 6 ? level <= 2 : true)
             )
             {
-                SceneHelper.LoadScene($"Level {layer}-{level}");
-                chat.ReceiveChatMessage($"<color=#00FF00>Level {layer}-{level} is loading.</color>");
+                Tools.Load($"Level {layer}-{level}");
+                chat.Receive($"[#32CD32]Level {layer}-{level} is loading.");
             }
             else if (args[1].ToUpper() == "S" && int.TryParse(args[0], out level) && level >= 0 && level <= 6 && level != 3 && level != 6)
             {
-                SceneHelper.LoadScene($"Level {level}-S");
-                chat.ReceiveChatMessage($"<color=#00FF00>Secret level {level}-S is loading.</color>");
+                Tools.Load($"Level {level}-S");
+                chat.Receive($"[#32CD32]Secret level {level}-S is loading.");
             }
             else if (args[0].ToUpper() == "P" && int.TryParse(args[1], out level) && level >= 1 && level <= 2)
             {
-                SceneHelper.LoadScene($"Level P-{level}");
-                chat.ReceiveChatMessage($"<color=#00FF00>Prime level P-{level} is loading.</color>");
+                Tools.Load($"Level P-{level}");
+                chat.Receive($"[#32CD32]Prime level P-{level} is loading.");
             }
             else
-                chat.ReceiveChatMessage("<color=red>Layer must be an integer from 0 to 7. Level must be an integer from 1 to 5.</color>");
+                chat.Receive("[#FF341C]Layer must be an integer from 0 to 7. Level must be an integer from 1 to 5.");
         });
 
-        Handler.Register("authors", "Displays the list of all mod developers", args =>
+        Handler.Register("authors", "Display the list of the mod developers", args =>
         {
-            void SendMsg(string msg) => chat.ReceiveChatMessage($"<size=14>{msg}</size>", true);
+            void Msg(string msg) => chat.Receive($"[14]{msg}[]", true);
 
-            SendMsg("Leading developers:");
-            SendMsg("* <color=#0096FF>xzxADIxzx</color> - the main developer of this mod");
-            SendMsg("* <color=#8A2BE2>Sowler</color> - owner of the Discord server and just a good friend");
-            SendMsg("* <color=#FFA000>Fumboy</color> - textures and a part of animations");
+            Msg("Leading developers:");
+            Msg("* [#0096FF]xzxADIxzx[] - the main developer of this mod");
+            Msg("* [#8A2BE2]Sowler[] - owner of the Discord server and just a good friend");
+            Msg("* [#FFA000]Fumboy[] - textures and a part of animations");
 
-            SendMsg("Contributors:");
-            SendMsg("* <color=#00E666>Rey Hunter</color> - really cool icons for emotions");
-            SendMsg("* <color=#00E666>Ardub</color> - invaluable help with The Cyber Grind <size=12><color=#cccccc>(he did 90% of the work)</color></size>");
-            SendMsg("* <color=#00E666>Kekson1a</color> - Steam Rich Presence support</size>");
-/*
-            SendMsg("Translators:");
-            SendMsg("<color=#cccccc>NotPhobos - Spanish, sSAR - Italian, Theoyeah - French, Sowler - Polish, Ukrainian, Poyozit - Portuguese</color>");
-*/
-            SendMsg("Testers:");
-            SendMsg("<color=#cccccc>Fenicemaster, AndruGhost, Subjune, FruitCircuit</color>");
+            Msg("Contributors:");
+            Msg("* [#00E666]Rey Hunter[] - really cool icons for emotions");
+            Msg("* [#00E666]Ardub[] - invaluable help with The Cyber Grind [12][#cccccc](he did 90% of the work)");
+            Msg("* [#00E666]Kekson1a[] - Steam Rich Presence support");
 
-            chat.ReceiveChatMessage("0096FF", Chat.BOT_PREFIX + "xzxADIxzx", "Thank you all, I couldn't have done it alone ♡", true);
+            Msg("Translators:");
+            Msg("[#cccccc]NotPhobos - Spanish, sSAR - Italian, Theoyeah - French, Sowler - Polish, Ukrainian, Poyozit - Portuguese, Fraku - Filipino, Iyad - Arabic");
+
+            Msg("Testers:");
+            Msg("[#cccccc]Fenicemaster, AndruGhost, Subjune, FruitCircuit");
+
+            chat.Receive("0096FF", Chat.BOT_PREFIX + "xzxADIxzx", "Thank you all, I couldn't have done it alone ♡", true);
         });
         Handler.Register("support", "Support the author by buying him a coffee", args => Application.OpenURL("https://www.buymeacoffee.com/adidev"));
     }

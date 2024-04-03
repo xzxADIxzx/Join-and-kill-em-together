@@ -79,7 +79,7 @@ public class RemotePlayer : Entity
         var rig = v3.GetChild(1);
 
         head = rig.GetChild(6).GetChild(10).GetChild(0);
-        hand = UI.Object("Weapons", rig.GetChild(6).GetChild(5).GetChild(0).GetChild(0)).transform;
+        hand = Tools.Create("Weapons", rig.GetChild(6).GetChild(5).GetChild(0).GetChild(0)).transform;
         hook = rig.GetChild(1);
         hookRoot = rig.GetChild(6).GetChild(0).GetChild(0).GetChild(0).GetChild(0);
         rocket = rig.GetChild(4).GetChild(1);
@@ -221,7 +221,7 @@ public class RemotePlayer : Entity
         // everything related to the hook is in LateUpdate, because it is a child of the player's doll and moves with it
         hook.position = new(hookX.Get(LastUpdate), hookY.Get(LastUpdate), hookZ.Get(LastUpdate));
         hook.LookAt(transform);
-        hook.Rotate(new(0f, 180f, 0f), Space.Self);
+        hook.Rotate(Vector3.up * 180f, Space.Self);
 
         hookWinch.SetPosition(0, hookRoot.position);
         hookWinch.SetPosition(1, hook.position);
@@ -245,7 +245,7 @@ public class RemotePlayer : Entity
             if (customColors)
             {
                 renderer.materials = getter.coloredMaterials;
-                UI.Properties(renderer, block =>
+                UIB.Properties(renderer, block =>
                 {
                     block.SetColor("_CustomColor1", color1);
                     block.SetColor("_CustomColor2", color2);

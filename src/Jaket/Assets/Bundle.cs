@@ -6,16 +6,20 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
+using Jaket.UI.Dialogs;
+
 /// <summary> Class that loads translations from files in the bundles folder and returns translated lines by keys. </summary>
 public class Bundle
 {
     /// <summary> Language codes used in settings. </summary>
-    public static readonly string[] Codes = { "pt", "en", "fl", "fr", "it", "pl", "ru", "es", "uk" };
+    public static readonly string[] Codes = { "ar", "pt", "en", "fl", "fr", "it", "pl", "ru", "es", "uk" };
     /// <summary> Displayed language name so that everyone can find out their own even without knowledge of English. </summary>
-    public static readonly string[] Locales = { "Português brasileiro", "English", "Filipino", "Français", "Italiano", "Polski", "Русский", "Español", "Українська" };
+    public static readonly string[] Locales = { "عربي", "Português brasileiro", "English", "Filipino", "Français", "Italiano", "Polski", "Русский", "Español", "Українська" };
     /// <summary> File names containing localization. </summary>
-    public static readonly string[] Files = { "brazilianportuguese", "english", "filipino", "french", "italian", "polish", "russian", "spanish", "ukrainian" };
+    public static readonly string[] Files = { "arabic", "brazilianportuguese", "english", "filipino", "french", "italian", "polish", "russian", "spanish", "ukrainian" };
 
+    /// <summary> Id of loaded localization. -1 if the localization is not loaded yet. </summary>
+    public static int LoadedLocale = -1;
     /// <summary> Dictionary with all lines of loaded localization. </summary>
     private static Dictionary<string, string> props = new();
 
@@ -52,16 +56,14 @@ public class Bundle
             props.Add(pair[0].Trim(), ParseColors(pair[1].Trim()));
         }
 
+        LoadedLocale = localeId;
         Log.Info($"Loaded {props.Count} lines of {Locales[localeId]} ({locale}) locale");
     }
 
     #region parsing
 
-    // <summary> Returns a string without Unity formatting. </summary>
-    public static string CutColors(string original) => Regex.Replace(original, "<.*?>", string.Empty);
-
-    // <summary> Returns the length of the string without Unity formatting. </summary>
-    public static int RawLength(string original) => CutColors(original).Length;
+    // <summary> Returns a string without Unity and Jaket formatting. </summary>
+    public static string CutColors(string original) => Regex.Replace(original, "<.*?>|\\[.*?\\]", string.Empty);
 
     /// <summary> Parses the colors in the given string so that Unity could understand them. </summary>
     public static string ParseColors(string original)
@@ -145,6 +147,12 @@ public class Bundle
 
     /// <summary> Sends a localized & formatted message to the HUD. </summary>
     public static void Hud(string key, bool silent, params string[] args) => HudMessageReceiver.Instance?.SendHudMessage(Format(key, args), silent: silent);
+
+    /// <summary> Sends a localized message to the chat. </summary>
+    public static void Msg(string key) => Chat.Instance.Receive(Get(key), format: false);
+
+    /// <summary> Sends a localized & formatted message to the chat. </summary>
+    public static void Msg(string key, params string[] args) => Chat.Instance.Receive(Format(key, args), format: false);
 
     #endregion
 }

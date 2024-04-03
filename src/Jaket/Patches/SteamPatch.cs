@@ -17,7 +17,7 @@ public class SteamPatch
     [HarmonyPatch(typeof(SteamFriends), "SetRichPresence")]
     static void SetRichPresence(string key, ref string value)
     {
-        if (LobbyController.Lobby == null) return;
+        if (LobbyController.Offline) return;
 
         // the steam_display value is used to configure the rich presence's localization string
         // it is predefined in the developer's Steamworks settings (https://partner.steamgames.com/doc/api/ISteamFriends#richpresencelocalization)

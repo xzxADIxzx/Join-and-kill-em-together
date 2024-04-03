@@ -13,7 +13,7 @@ public class WorldAction
     /// <summary> The action itself. </summary>
     public readonly Action Action;
 
-    public WorldAction(string level, Action action) { this.Level = level; this.Action = action; }
+    public WorldAction(string level, Action action) { this.Level = level; this.Action = action; World.Actions.Add(this); }
 
     /// <summary> Runs the action if the scene matches the desired one. </summary>
     public void Run()
@@ -44,7 +44,7 @@ public class StaticAction : WorldAction
     /// <summary> Creates a static action that finds an object in the world. </summary>
     public static StaticAction Find(string level, string name, Vector3 position, Action<GameObject> action) => new(level, () =>
     {
-        Tools.ResFind(obj => obj.gameObject.scene.name != null && obj.transform.position == position && obj.name == name, action);
+        Tools.ResFind(obj => Tools.IsReal(obj) && obj.transform.position == position && obj.name == name, action);
     });
     /// <summary> Creates a static action that adds an object activation component to an object in the world. </summary>
     public static StaticAction Patch(string level, string name, Vector3 position) => Find(level, name, position, obj => obj.AddComponent<ObjectActivator>().events = new());
@@ -62,12 +62,12 @@ public class NetAction : WorldAction
     /// <summary> Position of the object used to find it. </summary>
     public Vector3 Position;
 
-    public NetAction(string level, Action action, string name, Vector3 position) : base(level, action) { this.Name = name; this.Position = position; }
+    public NetAction(string level, string name, Vector3 position, Action action) : base(level, action) { this.Name = name; this.Position = position; }
 
     /// <summary> Creates a net action that enables an object that has an ObjectActivator component. </summary>
-    public static NetAction Sync(string level, string name, Vector3 position, Action<GameObject> action = null) => new(level, () =>
-    {
-        action ??= obj => obj.SetActive(true);
-        Tools.ResFind(obj => obj.gameObject.scene.name != null && obj.transform.position == position && obj.name == name, action);
-    }, name, position);
+    public static NetAction Sync(string level, string name, Vector3 position, Action<GameObject> action = null) => new(level, name, position, () =>
+        Tools.ResFind<GameObject>(
+            obj => Tools.IsReal(obj) && obj.transform.position == position && obj.name == name,
+            obj => { obj.SetActive(true); action?.Invoke(obj); }
+        ));
 }

@@ -6,7 +6,6 @@ using UnityEngine;
 
 using Jaket.Assets;
 using Jaket.Net;
-using Jaket.UI;
 
 /// <summary>
 /// Component responsible for loading and unloading rooms.
@@ -40,7 +39,7 @@ public class RoomController : MonoBehaviour
     public static void Build(Transform room)
     {
         // there must only be one controller in the room
-        if (room.Find("Net") == null) UI.Component<RoomController>(UI.Object("Net", room), c => c.Build());
+        if (room.Find("Net") == null) Tools.Create<RoomController>("Net", room).Build();
     }
 
     private void Build()
@@ -96,7 +95,7 @@ public class RoomController : MonoBehaviour
 
     private void OnDisable()
     {
-        if (LobbyController.Lobby == null) return;
+        if (LobbyController.Offline) return;
         if (exception || PlayersIn > 0 || Doors.Exists(door => door != null && door.open)) Events.Post(() => transform.parent.gameObject.SetActive(true));
     }
 }

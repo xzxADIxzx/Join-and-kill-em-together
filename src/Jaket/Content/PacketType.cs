@@ -28,8 +28,6 @@ public enum PacketType
 
     /// <summary> Need to activate a certain object. It can be anything, because there are a lot of different stuff in the game. </summary>
     ActivateObject,
-    /// <summary> Any action with the cinema, like starting a video, pausing or rewinding. </summary>
-    CinemaAction,
     /// <summary> Any action with CyberGrind, like pattern and wave. </summary>
     CyberGrindAction
 }

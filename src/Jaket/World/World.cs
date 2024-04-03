@@ -4,13 +4,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net;
 using Jaket.Net.Types;
 using Jaket.Sam;
 using Jaket.UI;
+
+using static Jaket.UI.Rect;
 
 /// <summary> Class that manages objects in the level, such as skull cases, rooms and etc. </summary>
 public class World : MonoSingleton<World>
@@ -41,12 +42,12 @@ public class World : MonoSingleton<World>
     public static void Load()
     {
         // initialize the singleton
-        UI.Object("World").AddComponent<World>();
+        Tools.Create<World>("World");
 
         Events.OnLoaded += () =>
         {
             if (!Tools.Scene.StartsWith("Level 7"))
-                Tools.ResFind<Door>(door => door.gameObject.scene.name != null, door =>
+                Tools.ResFind<Door>(Tools.IsReal, door =>
                 {
                     foreach (var room in door.deactivatedRooms) RoomController.Build(room.transform);
                 });
@@ -54,7 +55,7 @@ public class World : MonoSingleton<World>
             // change the layer from PlayerOnly to Invisible so that other players can also launch a wave
             foreach (var trigger in Tools.ResFind<ActivateArena>()) trigger.gameObject.layer = 16;
 
-            if (LobbyController.Lobby != null) Instance.Restore();
+            if (LobbyController.Online) Instance.Restore();
         };
         Events.OnLobbyEntered += Instance.Restore;
 
@@ -65,16 +66,6 @@ public class World : MonoSingleton<World>
             StaticAction.PlaceTorches("Level 4-3", new(0f, -10f, 310f), 3f),
             StaticAction.PlaceTorches("Level P-1", new(-0.84f, -10f, 16.4f), 2f),
 
-            // disable boss fight launch trigger for clients in order to sync cutscene
-            StaticAction.Find("Level 1-4", "Cube", new(0f, 11f, 612f), obj =>
-            {
-                obj.SetActive(LobbyController.IsOwner);
-                Destroy(obj.GetComponent<DoorController>());
-            }),
-            StaticAction.Find("Level 1-4", "V2 - Arena", new(0f, -17f, 563f), obj => Events.Post2(() =>
-            {
-                if (!LobbyController.IsOwner) foreach (Transform child in obj.transform) Destroy(child.Find("V2")?.gameObject);
-            })),
             // launching the Minos boss fight unloads some of the locations, which is undesirable
             StaticAction.Find("Level 2-4", "DoorsActivator", new(425f, -10f, 650f), obj =>
             {
@@ -108,9 +99,9 @@ public class World : MonoSingleton<World>
                 var door = obj.GetComponent<Door>();
                 door?.onFullyOpened.AddListener(() =>
                 {
-                    door.onFullyOpened=new(); // clear listeners
+                    door.onFullyOpened = new(); // clear listeners
 
-                    UI.SendMsg("What?", true);
+                    HudMessageReceiver.Instance?.SendHudMessage("What?", silent: true);
                     SamAPI.TryPlay("What?", Networking.LocalPlayer.Voice);
                 });
             }),
@@ -132,7 +123,7 @@ public class World : MonoSingleton<World>
                 root.Find("Text (TMP)").gameObject.SetActive(false);
                 root.Find("Button (Closed)").gameObject.SetActive(false);
 
-                UI.Text("UwU", root, 0f, 0f, 512f, 512f, size: 256).transform.localScale = Vector3.one / 8f;
+                UIB.Text("UwU", root, Size(512f, 512f), size: 256).transform.localScale = Vector3.one / 8f;
             }),
             // disable the terminal that lowers the bomb for clients
             StaticAction.Find("Level 7-2", "PuzzleScreen (1)", new(-317.75f, 55.25f, 605.25f), obj =>
@@ -143,7 +134,7 @@ public class World : MonoSingleton<World>
                 root.Find("Text (TMP)").gameObject.SetActive(false);
                 root.Find("UsableButtons").gameObject.SetActive(false);
 
-                UI.Text("Only the host can do this!", root, 0f, 0f, 1024f, 512f, size: 120).transform.localScale = Vector3.one / 8f;
+                UIB.Text("Only the host can do this!", root, Size(1024f, 512f), size: 120).transform.localScale = Vector3.one / 8f;
             }),
             // wtf?! why is there a torch???
             StaticAction.Find("Level 7-3", "1 - Dark Path", new(0f, -10f, 300f), obj =>
@@ -216,19 +207,6 @@ public class World : MonoSingleton<World>
             StaticAction.Destroy("Level 7-3", "Door 2", new(-95.5f, 7.5f, 298.75f)),
             StaticAction.Destroy("Level 7-3", "ViolenceHallDoor (1)", new(-188f, 7.5f, 316.25f)),
             StaticAction.Destroy("Level 7-4", "ArenaWalls", new(-26.5f, 470f, 763.75f)),
-
-            // there is a special very big door
-            NetAction.Sync("Level 0-5", "DelayedDoorActivation", new(175f, -6f, 382f)),
-
-            // there is a door within the Very Cancerous Rodent
-            NetAction.Sync("Level 1-2", "Cube (1)", new(-61f, -21.5f, 400.5f)),
-
-            // different things related to the boss
-            NetAction.Sync("Level 1-4", "Cube", new(0f, -19f, 612f), obj =>
-            {
-                obj.SetActive(true);
-                obj.GetComponent<ObjectActivator>().Activate();
-            }),
 
             // there is an epic boss fight with The Corpse of King Minos
             NetAction.Sync("Level 2-4", "DeadMinos", new(279.5f, -599f, 575f), obj =>
@@ -362,10 +340,6 @@ public class World : MonoSingleton<World>
         w.String(Version.CURRENT);
         w.Byte((byte)PrefsManager.Instance.GetInt("difficulty"));
 
-        // synchronize the Ultrapain difficulty
-        w.Bool(Plugin.UltrapainLoaded);
-        if (Plugin.UltrapainLoaded) Plugin.WritePain(w);
-
         // synchronize activated actions
         w.Bytes(Activated.ToArray());
     }
@@ -376,23 +350,15 @@ public class World : MonoSingleton<World>
         // reset all of the activated actions
         Activated.Clear();
         // load the host level, it is the main function of this packet
-        SceneHelper.LoadScene(r.String());
+        Tools.Load(r.String());
 
         // if the mod version doesn't match the host's one, then reading the packet is complete, as this may lead to bigger bugs
         if (r.String() != Version.CURRENT)
         {
-            Version.NotifyHost();
+            Version.Notify();
             return;
         }
         PrefsManager.Instance.SetInt("difficulty", r.Byte());
-
-        if (r.Bool())
-        {
-            // synchronize different values needed for Ultrapain to work
-            if (Plugin.UltrapainLoaded) Plugin.TogglePain(r.Bool(), r.Bool());
-            // or skip the values if the mod isn't installed locally
-            else r.Inc(2);
-        }
 
         Activated.AddRange(r.Bytes(r.Length - r.Position));
     }
@@ -403,10 +369,6 @@ public class World : MonoSingleton<World>
     /// <summary> Iterates each world action and restores it as needed. </summary>
     public void Restore()
     {
-        if (Tools.Scene == "Level 7-4") UI.SendMsg(Bundle.ParseColors(
-@"I am sorry, but this level isn't synchronized yet. Wait for [#FFA500]1.2.0[] pleawse :3
-[20][grey](c) xzxADIxzx[][]"));
-
         EachStatic(sa => sa.Run());
         Activated.ForEach(index => Actions[index].Run());
 
@@ -418,7 +380,7 @@ public class World : MonoSingleton<World>
         void Find<T>(List<T> list) where T : MonoBehaviour
         {
             list.Clear();
-            Tools.ResFind<T>(t => t.gameObject.scene.name != null, list.Add);
+            Tools.ResFind<T>(Tools.IsReal, list.Add);
 
             // sort the objects by the distance so that their order will be the same for all clients
             list.Sort((t1, t2) => t1.transform.position.sqrMagnitude.CompareTo(t2.transform.position.sqrMagnitude));
@@ -559,7 +521,7 @@ public class World : MonoSingleton<World>
     /// <summary> Synchronizes the tram speed. </summary>
     public static void SyncTram(TramControl tram)
     {
-        if (LobbyController.Lobby == null || Tools.Scene == "Level 7-1") return;
+        if (LobbyController.Offline || Tools.Scene == "Level 7-1") return;
 
         byte index = (byte)Instance.Trams.IndexOf(tram);
         if (index != 255) Networking.Send(PacketType.ActivateObject, w =>

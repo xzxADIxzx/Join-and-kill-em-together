@@ -11,13 +11,13 @@ public class CyberGrindPatch
 {
     [HarmonyPrefix]
     [HarmonyPatch("OnTriggerEnter")]
-    static bool Enter() => LobbyController.Lobby == null || LobbyController.IsOwner;
+    static bool Enter() => LobbyController.Offline || LobbyController.IsOwner;
 
     [HarmonyPrefix]
     [HarmonyPatch("LoadPattern")]
     static void Load(ref ArenaPattern pattern)
     {
-        if (LobbyController.Lobby == null) return;
+        if (LobbyController.Offline) return;
         if (LobbyController.IsOwner)
             CyberGrind.SyncPattern(pattern);
         else
@@ -31,7 +31,7 @@ public class CyberGrindPatch
     [HarmonyPatch("Update")]
     static void Update(EndlessGrid __instance, ref ActivateNextWave ___anw)
     {
-        if (LobbyController.Lobby != null && !LobbyController.IsOwner)
+        if (LobbyController.Online && !LobbyController.IsOwner)
         {
             // set the current wave number to the synced one
             __instance.currentWave = CyberGrind.CurrentWave;
@@ -44,7 +44,7 @@ public class CyberGrindPatch
     [HarmonyPatch("Update")]
     static void Counter(ref Text ___enemiesLeftText)
     {
-        if (LobbyController.Lobby != null && !LobbyController.IsOwner)
+        if (LobbyController.Online && !LobbyController.IsOwner)
         {
             var list = EnemyTracker.Instance.enemies;
             list.RemoveAll(e => e == null || e.dead);
@@ -60,5 +60,5 @@ public class CyberDeathPatch
 {
     [HarmonyPrefix]
     [HarmonyPatch(nameof(FinalCyberRank.GameOver))]
-    static bool GameOver() => LobbyController.Lobby == null || CyberGrind.PlayersAlive() == 0;
+    static bool GameOver() => LobbyController.Offline || CyberGrind.PlayersAlive() == 0;
 }

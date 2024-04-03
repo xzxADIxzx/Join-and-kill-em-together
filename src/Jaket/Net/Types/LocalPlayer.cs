@@ -7,6 +7,7 @@ using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.UI;
+using Jaket.UI.Dialogs;
 using Jaket.World;
 
 /// <summary>
@@ -67,7 +68,7 @@ public class LocalPlayer : Entity
             bool custom = renderer.material.name.Contains("Custom");
             w.Bool(custom);
 
-            if (custom) UI.Properties(renderer, block =>
+            if (custom) UIB.Properties(renderer, block =>
             {
                 w.Color(block.GetColor("_CustomColor1"));
                 w.Color(block.GetColor("_CustomColor2"));
@@ -82,7 +83,7 @@ public class LocalPlayer : Entity
     public void UpdateWeapons()
     {
         weapon = Weapons.Type();
-        if (LobbyController.Lobby != null) SyncStyle();
+        if (LobbyController.Online) SyncStyle();
 
         // according to the lore, the player plays for V3, so we need to paint the hand
         var punch = fc.transform.Find("Arm Blue(Clone)");
@@ -91,8 +92,8 @@ public class LocalPlayer : Entity
         var right = cw?.transform.GetChild(0).Find("RightArm");
         if (right) right.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture();
 
-        // var knuckle = fc.transform.Find("Arm Red(Clone)");
-        // if (knuckle) punch.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture(punch: false);
+        var knuckle = fc.transform.Find("Arm Red(Clone)");
+        if (knuckle) knuckle.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture(false);
     }
 
     #endregion
@@ -105,7 +106,7 @@ public class LocalPlayer : Entity
         w.Float(135f - Mathf.Clamp(CameraController.Instance.rotationX, -40f, 80f));
 
         w.Byte((byte)nm.hp);
-        w.Byte((byte)Mathf.Floor(WeaponCharges.Instance.raicharge * 2f));
+        w.Byte((byte)Mathf.Floor(WeaponCharges.Instance.raicharge * 2.5f));
         w.Enum(Team);
         w.Byte(weapon);
         w.Byte(Movement.Instance.Emoji);
