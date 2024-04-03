@@ -231,11 +231,11 @@ public class Movement : MonoSingleton<Movement>
         if (!LobbyController.IsOwner && !LobbyController.ModsAllowed && BepInEx.Bootstrap.Chainloader.PluginInfos.Count > 1)
         {
             LobbyController.LeaveLobby();
-            UI.SendMsg("The owner of the lobby requests the use of only JAKET!\nOther mods are not allowed.");
+            Bundle.Hud("lobby.mods");
         }
 
-            // fake Cyber Grind death
-            if (nm.dead && nm.endlessMode)
+        // fake Cyber Grind death
+        if (nm.dead && nm.endlessMode)
         {
             nm.blackScreen.gameObject.SetActive(true);
             nm.screenHud.SetActive(false);
