@@ -65,8 +65,11 @@ public class Bundle
     // <summary> Returns a string without Unity and Jaket formatting. </summary>
     public static string CutColors(string original) => Regex.Replace(original, "<.*?>|\\[.*?\\]", string.Empty);
 
+    // <summary> Returns a string without the tags that can cause lags. </summary>
+    public static string CutDangerous(string original) => Regex.Replace(original, "</?size.*?>|</?quad.*?>|</?material.*?>", string.Empty);
+
     /// <summary> Parses the colors in the given string so that Unity could understand them. </summary>
-    public static string ParseColors(string original)
+    public static string ParseColors(string original, int maxSize = 64)
     {
         Stack<bool> types = new(); // true - font size, false - color
         StringBuilder builder = new(original.Length);
@@ -107,10 +110,10 @@ public class Bundle
                     pointer = original.IndexOf(']', pointer);
 
                     var content = original.Substring(old, pointer - old);
-                    bool isSize = int.TryParse(content, out _);
+                    bool isSize = int.TryParse(content, out var size);
 
                     types.Push(isSize);
-                    builder.Append(isSize ? "<size=" : "<color=").Append(content).Append('>');
+                    builder.Append(isSize ? "<size=" : "<color=").Append(isSize ? Math.Min(size, maxSize) : content).Append('>');
                     pointer++;
                 }
             }

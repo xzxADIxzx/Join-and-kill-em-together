@@ -218,7 +218,7 @@ public class Chat : CanvasSingleton<Chat>
     }
 
     /// <summary> Writes a message to the chat, formatting it beforehand. </summary>
-    public void Receive(string color, string author, string message, bool oneline = false) => Receive($"<b>[#{color}]{author}[][#FF7F50]:[]</b> {message}", oneline);
+    public void Receive(string color, string author, string msg, bool oneline = false) => Receive($"<b>[#{color}]{author}[][#FF7F50]:[]</b> {Bundle.CutDangerous(msg)}", oneline);
 
     /// <summary> Speaks the message before writing it. </summary>
     public void ReceiveTTS(Friend author, string message)
