@@ -67,6 +67,8 @@ public class Movement : MonoSingleton<Movement>
 
     private void Update()
     {
+        if (Tools.Scene == "Main Menu") return;
+
         if (Input.GetKeyDown(Settings.ScrollUp)) Chat.Instance.ScrollMessages(true);
         if (Input.GetKeyDown(Settings.ScrollDown)) Chat.Instance.ScrollMessages(false);
 
