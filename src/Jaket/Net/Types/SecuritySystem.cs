@@ -13,7 +13,7 @@ public class SecuritySystem : Entity
 
     private void Awake()
     {
-        Init(_ => EntityType.None);
+        Init(_ => EntityType.SecuritySystemOffset);
         LobbyController.ScaleHealth(ref EnemyId.machine.health);
     }
 
