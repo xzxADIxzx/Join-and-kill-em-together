@@ -82,6 +82,8 @@ public class Enemies
             enemyId.gameObject.AddComponent<Minotaur>();
             return true;
         }
+        // the security system is a complex enemy consisting of several subenemies
+        if (Tools.Scene == "Level 7-4" && (enemyId.name == "Mainframe (Hurtable)" || enemyId.transform.parent?.name == "SecuritySystem")) return true;
 
         // the enemy was created remotely
         if (enemyId.name == "Net")

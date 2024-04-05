@@ -117,6 +117,31 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         NetAction.Sync(l, "DelayToClaw", new(-305.75f, 30f, 620.5f), obj => obj.transform.parent.Find("BayDoor").GetComponent<Door>().SimpleOpenOverride());
 
         #endregion
+        #region 7-4
+        l = "Level 7-4";
+
+        StaticAction.Find(l, "Trigger", new(0f, 495.25f, 713.25f), obj => obj.SetActive(LobbyController.IsOwner));
+        StaticAction.Find(l, "SecuritySystem", new(0f, 0f, 8.25f), obj =>
+        {
+            var e = obj.AddComponent<ObjectActivator>().events = new();
+            (e.onActivate = new()).AddListener(() =>
+            {
+                var b = obj.GetComponent<CombinedBossBar>();
+                for (int i = 0; i < b.enemies.Length; i++)
+                {
+                    var s = World.Instance.SecuritySystem[i] = b.enemies[i].gameObject.AddComponent<SecuritySystem>();
+                    s.Type = EntityType.SecuritySystemOffset + i;
+                }
+            });
+        });
+
+        StaticAction.Destroy(l, "ArenaWalls", new(-26.5f, 470f, 763.75f));
+
+        NetAction.Sync(l, "Trigger", new(0f, 495.25f, 713.25f), obj => obj.GetComponent<ObjectActivator>().Activate());
+        NetAction.Sync(l, "ShieldDeactivator", new(0f, 477.5f, 724.25f));
+        NetAction.Sync(l, "DeathSequence", new(-2.5f, 472.5f, 724.25f));
+
+        #endregion
         #region cyber grind
         l = "Endless";
 

@@ -29,6 +29,12 @@ public class Entities
         Providers.Add(EntityType.Leviathan, () => World.Instance.Leviathan);
         Providers.Add(EntityType.Minotaur_Chase, () => World.Instance.Minotaur);
 
+        for (var type = EntityType.SecuritySystem_Main; type <= EntityType.SecuritySystem_Tower_; type++)
+        {
+            var sucks = type;
+            Providers.Add(sucks, () => World.Instance.SecuritySystem[sucks - EntityType.SecuritySystemOffset]);
+        }
+
         for (var type = EntityType.AppleBait; type <= EntityType.V1; type++)
         {
             var sucks = type;

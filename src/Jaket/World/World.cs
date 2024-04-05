@@ -35,8 +35,10 @@ public class World : MonoSingleton<World>
     public Hand Hand;
     /// <summary> Level 5-4 contains a unique boss that needs to be dealt with separately. </summary>
     public Leviathan Leviathan;
-    /// <summary> The same situation with the Minotaur in the tunnel at level 7-3. </summary>
+    /// <summary> The same situation with the Minotaur in the tunnel at level 7-1. </summary>
     public Minotaur Minotaur;
+    /// <summary> The security system at level 7-4 consists of several subenemies. </summary>
+    public SecuritySystem[] SecuritySystem = new SecuritySystem[7];
 
     /// <summary> Creates a singleton of world & listener needed to keep track of objects at the level. </summary>
     public static void Load()
