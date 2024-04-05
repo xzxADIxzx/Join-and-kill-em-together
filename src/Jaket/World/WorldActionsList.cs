@@ -117,5 +117,12 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         NetAction.Sync(l, "DelayToClaw", new(-305.75f, 30f, 620.5f), obj => obj.transform.parent.Find("BayDoor").GetComponent<Door>().SimpleOpenOverride());
 
         #endregion
+        #region cyber grind
+        l = "Endless";
+
+        // move the death zone, because entities spawn at the origin
+        StaticAction.Find(l, "Cube", new(-40f, 0.5f, 102.5f), obj => obj.transform.position = new(-40f, -10f, 102.5f));
+
+        #endregion
     }
 }

@@ -93,49 +93,6 @@ public class World : MonoSingleton<World>
             {
                 obj.GetComponent<ObjectActivator>().events.toDisActivateObjects[2] = null;
             }),
-            // :D
-            StaticAction.Find("Level 7-2", "Intro -> Outdoors", new(-115f, 55f, 419.5f), obj =>
-            {
-                var door = obj.GetComponent<Door>();
-                door?.onFullyOpened.AddListener(() =>
-                {
-                    door.onFullyOpened = new(); // clear listeners
-
-                    HudMessageReceiver.Instance?.SendHudMessage("What?", silent: true);
-                    SamAPI.TryPlay("What?", Networking.LocalPlayer.Voice);
-                });
-            }),
-            // open all of the doors and disable the Gate Control Terminal™
-            StaticAction.Find("Level 7-2", "9A", new(-23.5f, 37.75f, 806.25f), obj =>
-            {
-                // well, actions aren't perfect
-                if (obj.transform.parent.name == "9 Nonstuff") return;
-
-                obj.transform.Find("PuzzleScreen").Find("Canvas").gameObject.SetActive(false);
-                for (int i = 1; i < obj.transform.childCount; i++)
-                    Destroy(obj.transform.GetChild(i).gameObject);
-            }),
-            // don't block the path of the roomba once the fight starts
-            StaticAction.Find("Level 7-2", "Trigger", new(-218.5f, 65f, 836.5f), obj => Destroy(obj.GetComponent<ObjectActivator>())),
-            StaticAction.Find("Level 7-2", "PuzzleScreen (1)", new(-230.5f, 31.75f, 813.5f), obj =>
-            {
-                var root = obj.transform.GetChild(0);
-                root.Find("Text (TMP)").gameObject.SetActive(false);
-                root.Find("Button (Closed)").gameObject.SetActive(false);
-
-                UIB.Text("UwU", root, Size(512f, 512f), size: 256).transform.localScale = Vector3.one / 8f;
-            }),
-            // disable the terminal that lowers the bomb for clients
-            StaticAction.Find("Level 7-2", "PuzzleScreen (1)", new(-317.75f, 55.25f, 605.25f), obj =>
-            {
-                if (LobbyController.IsOwner) return;
-
-                var root = obj.transform.GetChild(0);
-                root.Find("Text (TMP)").gameObject.SetActive(false);
-                root.Find("UsableButtons").gameObject.SetActive(false);
-
-                UIB.Text("Only the host can do this!", root, Size(1024f, 512f), size: 120).transform.localScale = Vector3.one / 8f;
-            }),
             // wtf?! why is there a torch???
             StaticAction.Find("Level 7-3", "1 - Dark Path", new(0f, -10f, 300f), obj =>
             {
@@ -168,8 +125,6 @@ public class World : MonoSingleton<World>
                 act.events.toDisActivateObjects[1] = null; // entry collider
                 act.events.toDisActivateObjects[2] = null; // elevator
             }),
-            // move the death zone, because entities spawn at the origin
-            StaticAction.Find("Endless", "Cube", new(-40f, 0.5f, 102.5f), obj => obj.transform.position = new(-40f, -10f, 102.5f)),
 
             // crutches everywhere, crutches all the time
             StaticAction.Patch("Level 3-2", "OutroLightSound", new(-5f, -161f, 875f)),
@@ -179,11 +134,6 @@ public class World : MonoSingleton<World>
             // enable arenas that are disabled by default
             StaticAction.Enable("Level 4-2", "6A - Indoor Garden", new(-19f, 35f, 953.9481f)),
             StaticAction.Enable("Level 4-2", "6B - Outdoor Arena", new(35f, 35f, 954f)),
-            // enable the track points at the level
-            StaticAction.Enable("Level 7-2", "0 - Door 1",    new(46.5f, 26.75f, 753.75f)),
-            StaticAction.Enable("Level 7-2", "1.25 - Door 2", new(46.5f, 26.75f, 788.75f)),
-            StaticAction.Enable("Level 7-2", "2.25 - Door 3", new(46.5f, 26.75f, 823.75f)),
-            StaticAction.Enable("Level 7-2", "3.5 - Door 4",  new(46.5f, 26.75f, 858.75f)),
 
             // destroy objects in any way interfering with multiplayer
             StaticAction.Destroy("Level 2-3", "4 & 5 Fake", new(-26f, 12.5f, 375f)),
@@ -279,15 +229,6 @@ public class World : MonoSingleton<World>
             NetAction.Sync("Level 7-1", "Wave 2", new(-242.5f, 0f, 0f)),
             NetAction.Sync("Level 7-1", "Wave 3", new(-242.5f, 0f, 0f)),
             NetAction.Sync("Level 7-1", "PlayerTeleportActivator", new(-242.5f, 0f, 0f)),
-
-            // cutscene of the falling tower
-            NetAction.Sync("Level 7-2", "TowerDestruction", new(-119.75f, 34f, 552.25f)),
-            // the claw with the bomb
-            NetAction.Sync("Level 7-2", "DelayToClaw", new(-305.75f, 30f, 620.5f), obj =>
-            {
-                obj.SetActive(true);
-                obj.transform.parent.Find("BayDoor").GetComponent<Door>().SimpleOpenOverride();
-            }),
 
             // door lockers
             NetAction.Sync("Level 7-3", "Opener", new(-170.5f, 0.5f, 480.75f)),
