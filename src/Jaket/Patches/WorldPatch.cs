@@ -28,7 +28,7 @@ public class ArenaPatch
         if (DisableEnemySpawns.DisableArenaTriggers || (status > 0 && (___astat == null || ___astat.currentStatus < status))) return;
 
         // launch the arena even when a remote player has entered it
-        if (!__instance.activated && other.gameObject.name == "Net" && other.GetComponent<RemotePlayer>() != null) __instance.Activate();
+        if (!__instance.activated && other.name == "Net" && other.GetComponent<RemotePlayer>() != null) __instance.Activate();
     }
 }
 
@@ -40,7 +40,7 @@ public class DoorPatch
     static void Enter(DoorController __instance, Collider other, Door ___dc)
     {
         // teammates do not have the Enemy tag, which is why the doors do not open
-        if (other.gameObject.name == "Net" && other.TryGetComponent<RemotePlayer>(out var player) && !__instance.doorUsers.Contains(player.EnemyId))
+        if (other.name == "Net" && other.TryGetComponent<RemotePlayer>(out var player) && !__instance.doorUsers.Contains(player.EnemyId))
         {
             __instance.doorUsers.Add(player.EnemyId);
             __instance.enemyIn = true;
@@ -55,7 +55,7 @@ public class DoorPatch
     static void Exit(DoorController __instance, Collider other)
     {
         // you should close the doors behind you
-        if (other.gameObject.name == "Net" && other.TryGetComponent<RemotePlayer>(out var player) && __instance.doorUsers.Contains(player.EnemyId))
+        if (other.name == "Net" && other.TryGetComponent<RemotePlayer>(out var player) && __instance.doorUsers.Contains(player.EnemyId))
         {
             __instance.doorUsers.Remove(player.EnemyId);
             __instance.enemyIn = __instance.doorUsers.Count > 0;
