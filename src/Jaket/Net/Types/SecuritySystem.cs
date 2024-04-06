@@ -2,7 +2,6 @@ namespace Jaket.Net.Types;
 
 using UnityEngine;
 
-using Jaket.Content;
 using Jaket.IO;
 
 /// <summary> Representation of one of the seven parts of EarthMover security systems. </summary>
@@ -13,8 +12,10 @@ public class SecuritySystem : Entity
 
     private void Awake()
     {
-        Init(_ => EntityType.SecuritySystemOffset);
+        Init(_ => Type);
+
         LobbyController.ScaleHealth(ref EnemyId.machine.health);
+        health.target = EnemyId.machine.health;
     }
 
     private void Update()

@@ -145,5 +145,10 @@ public class Enemies
             }
             Tools.Destroy(enemy);
         }
+        else if (enemyId.TryGetComponent<SecuritySystem>(out var sys) && LobbyController.IsOwner)
+        {
+            Networking.Send(PacketType.KillEntity, w => w.Id(sys.Id), size: 8);
+            Networking.Entities[sys.Id] = null;
+        }
     }
 }

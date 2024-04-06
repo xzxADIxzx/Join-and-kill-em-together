@@ -3,7 +3,9 @@ namespace Jaket.World;
 using UnityEngine;
 using UnityEngine.Events;
 
+using Jaket.Content;
 using Jaket.Net;
+using Jaket.Net.Types;
 using Jaket.Sam;
 using Jaket.UI;
 
