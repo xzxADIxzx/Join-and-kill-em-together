@@ -162,7 +162,7 @@ public class ActionPatch
     {
         var name = __instance.name;
         if (LobbyController.Online && LobbyController.IsOwner &&
-           (name.Contains("Case") || name.Contains("Glass") || name.Contains("Cover") || name.Contains("Skull") || Tools.Scene == "Level 3-1"))
+           (name.Contains("Case") || name.Contains("Glass") || name.Contains("Cover") || name.Contains("Skull") || name.Contains("Quake") || Tools.Scene == "Level 3-1"))
             World.SyncOpening(__instance, false);
     }
 

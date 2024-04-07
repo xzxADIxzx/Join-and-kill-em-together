@@ -122,6 +122,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         #region 7-4
         l = "Level 7-4";
 
+        // security system fight
         StaticAction.Find(l, "Trigger", new(0f, 495.25f, 713.25f), obj => obj.SetActive(LobbyController.IsOwner));
         StaticAction.Find(l, "SecuritySystem", new(0f, 0f, 8.25f), obj =>
         {
@@ -142,6 +143,22 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         NetAction.Sync(l, "Trigger", new(0f, 495.25f, 713.25f), obj => obj.GetComponent<ObjectActivator>().Activate());
         NetAction.Sync(l, "ShieldDeactivator", new(0f, 477.5f, 724.25f));
         NetAction.Sync(l, "DeathSequence", new(-2.5f, 472.5f, 724.25f));
+        NetAction.SyncButton(l, "Button", new(0f, 476.5f, 717.15f));
+
+        // insides
+        StaticAction.Find(l, "EntryTrigger", new(0f, 458.5f, 649.75f), obj => obj.SetActive(LobbyController.IsOwner));
+        StaticAction.Find(l, "BrainFightTrigger", new(6.9999f, 841.5f, 610.7503f), obj => obj.SetActive(LobbyController.IsOwner));
+
+        NetAction.Sync(l, "EntryTrigger", new(0f, 458.5f, 649.75f), obj =>
+        {
+            obj.GetComponent<ObjectActivator>().Activate();
+            NewMovement.Instance.transform.position = new(0f, 460f, 650f);
+        });
+        NetAction.Sync(l, "Deactivator", new(0.75f, 550.5f, 622.75f));
+        NetAction.Sync(l, "BrainFightTrigger", new(6.999941f, 841.5f, 610.7503f), obj =>
+        {
+            NewMovement.Instance.transform.position = new(0f, 826.5f, 610f);
+        });
 
         #endregion
         #region cyber grind

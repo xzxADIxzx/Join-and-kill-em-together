@@ -4,6 +4,7 @@ using System;
 using UnityEngine;
 
 using Jaket.Assets;
+using Jaket.Net;
 
 /// <summary> Abstract action performed on the world. </summary>
 public class WorldAction
@@ -70,4 +71,20 @@ public class NetAction : WorldAction
             obj => Tools.IsReal(obj) && obj.transform.position == position && obj.name == name,
             obj => { obj.SetActive(true); action?.Invoke(obj); }
         ));
+
+    /// <summary> Creates a net action that synchronizes clicks on a button. </summary>
+    public static NetAction SyncButton(string level, string name, Vector3 position, Action<GameObject> action = null)
+    {
+        NetAction net = new(level, name, position, () => Tools.ResFind<GameObject>(
+            obj => Tools.IsReal(obj) && obj.transform.position == position && obj.name == name,
+            obj => { Tools.GetClick(obj).Invoke(); action?.Invoke(obj); }
+        ));
+
+        // patch the button to sync press on it if it was not already pressed by anyone
+        StaticAction.Find(level, name, position, obj => Tools.GetClick(obj).AddListener(() =>
+        {
+            if (LobbyController.IsOwner || !World.Instance.Activated.Contains((byte)World.Actions.IndexOf(net))) World.SyncActivation(net);
+        }));
+        return net;
+    }
 }
