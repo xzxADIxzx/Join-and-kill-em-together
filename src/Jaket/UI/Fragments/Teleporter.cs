@@ -8,6 +8,8 @@ public class Teleporter : CanvasSingleton<Teleporter>
 {
     /// <summary> Flash of light covering the entire screen. </summary>
     private Image flash, decor;
+    /// <summary> Sound that plays after teleportation. </summary>
+    private AudioClip click;
 
     private void Start()
     {
@@ -15,6 +17,8 @@ public class Teleporter : CanvasSingleton<Teleporter>
         decor = UIB.Image("Decoration", transform, new(2000f, 0f, 64f, 2000f), Color.white);
         decor.sprite = null;
         decor.transform.localEulerAngles = new(0f, 0f, -25f);
+
+        Tools.ResFind<AudioClip>(clip => clip.name == "Click1", clip => click = clip);
     }
 
     private void Update()
@@ -37,7 +41,9 @@ public class Teleporter : CanvasSingleton<Teleporter>
     /// <summary> Teleports the player to the given coordinates. </summary>
     public void Teleport(Vector3 pos)
     {
-        Flash();
         NewMovement.Instance.transform.position = pos;
+        Events.Post2(() => AudioSource.PlayClipAtPoint(click, pos));
+
+        Flash();
     }
 }
