@@ -130,7 +130,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         StaticAction.Find(l, "12 - Grand Hall", new(-212.5f, -35f, 483.75f), obj =>
         {
             // teleport players to the final room once the door is opened
-            obj.GetComponent<ObjectActivator>().events.onActivate.AddListener(() => Teleporter.Instance.Teleport(new(-189f, -33.5f, 483.75f)));
+            obj.GetComponent<ObjectActivator>().events.onActivate.AddListener(() => Teleporter.Teleport(new(-189f, -33.5f, 483.75f)));
         });
         StaticAction.Find(l, "ViolenceHallDoor", new(-148f, 7.5f, 276.25f), obj => Tools.Destroy(obj.GetComponent<Collider>()));
 
@@ -175,13 +175,13 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         NetAction.Sync(l, "EntryTrigger", new(0f, 458.5f, 649.75f), obj =>
         {
             obj.GetComponent<ObjectActivator>().Activate();
-            Teleporter.Instance.Teleport(new(0f, 460f, 650f));
+            Teleporter.Teleport(new(0f, 460f, 650f));
         });
         NetAction.Sync(l, "Deactivator", new(0.75f, 550.5f, 622.75f));
         NetAction.Sync(l, "BrainFightTrigger", new(6.999941f, 841.5f, 610.7503f), obj =>
         {
             obj.GetComponent<ObjectActivator>().Activate();
-            Teleporter.Instance.Teleport(new(0f, 826.5f, 610f));
+            Teleporter.Teleport(new(0f, 826.5f, 610f));
         });
 
         #endregion

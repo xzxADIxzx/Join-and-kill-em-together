@@ -39,11 +39,11 @@ public class Teleporter : CanvasSingleton<Teleporter>
     }
 
     /// <summary> Teleports the player to the given coordinates. </summary>
-    public void Teleport(Vector3 pos)
+    public static void Teleport(Vector3 pos)
     {
         NewMovement.Instance.transform.position = pos;
-        Events.Post2(() => AudioSource.PlayClipAtPoint(click, pos));
+        Events.Post2(() => AudioSource.PlayClipAtPoint(Instance.click, pos));
 
-        Flash();
+        Instance.Flash();
     }
 }
