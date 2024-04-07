@@ -1,13 +1,13 @@
 namespace Jaket.World;
 
 using UnityEngine;
-using UnityEngine.Events;
 
 using Jaket.Content;
 using Jaket.Net;
 using Jaket.Net.Types;
 using Jaket.Sam;
 using Jaket.UI;
+using Jaket.UI.Fragments;
 
 using static Jaket.UI.Rect;
 
@@ -152,12 +152,13 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         NetAction.Sync(l, "EntryTrigger", new(0f, 458.5f, 649.75f), obj =>
         {
             obj.GetComponent<ObjectActivator>().Activate();
-            NewMovement.Instance.transform.position = new(0f, 460f, 650f);
+            Teleporter.Instance.Teleport(new(0f, 460f, 650f));
         });
         NetAction.Sync(l, "Deactivator", new(0.75f, 550.5f, 622.75f));
         NetAction.Sync(l, "BrainFightTrigger", new(6.999941f, 841.5f, 610.7503f), obj =>
         {
-            NewMovement.Instance.transform.position = new(0f, 826.5f, 610f);
+            obj.GetComponent<ObjectActivator>().Activate();
+            Teleporter.Instance.Teleport(new(0f, 826.5f, 610f));
         });
 
         #endregion

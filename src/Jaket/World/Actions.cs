@@ -75,10 +75,8 @@ public class NetAction : WorldAction
     /// <summary> Creates a net action that synchronizes clicks on a button. </summary>
     public static NetAction SyncButton(string level, string name, Vector3 position, Action<GameObject> action = null)
     {
-        NetAction net = new(level, name, position, () => Tools.ResFind<GameObject>(
-            obj => Tools.IsReal(obj) && obj.transform.position == position && obj.name == name,
-            obj => { Tools.GetClick(obj).Invoke(); action?.Invoke(obj); }
-        ));
+        // synchronize clicks on the given button
+        var net = Sync(level, name, position, obj => { Tools.GetClick(obj).Invoke(); action?.Invoke(obj); });
 
         // patch the button to sync press on it if it was not already pressed by anyone
         StaticAction.Find(level, name, position, obj => Tools.GetClick(obj).AddListener(() =>

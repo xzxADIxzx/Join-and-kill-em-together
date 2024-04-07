@@ -41,6 +41,7 @@ public class UI
         Skateboard.Build("Skateboard", false, false);
         MainMenuAccess.Build("Main Menu Access", false, true, hide: () => MainMenuAccess.Instance.Toggle());
         InteractiveGuide.Build("Interactive Guide", false, false, hide: () => InteractiveGuide.Instance.OfferAssistance());
+        Teleporter.Build("Teleporter", false, false, hide: () => { });
     }
 
     /// <summary> Hides the interface of the left group. </summary>
