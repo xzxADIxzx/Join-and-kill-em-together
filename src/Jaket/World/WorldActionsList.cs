@@ -119,6 +119,29 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         NetAction.Sync(l, "DelayToClaw", new(-305.75f, 30f, 620.5f), obj => obj.transform.parent.Find("BayDoor").GetComponent<Door>().SimpleOpenOverride());
 
         #endregion
+        #region 7-3
+        l = "Level 7-3";
+
+        // wtf?! why is there a torch???
+        StaticAction.Find(l, "1 - Dark Path", new(0f, -10f, 300f), obj => Tools.Destroy(obj.transform.Find("Altar (Torch) Variant").GetChild(0).gameObject));
+        StaticAction.Find(l, "Door 1", new(-55.5f, -2.5f, 618.5f), obj => obj.GetComponent<Door>().Unlock());
+        StaticAction.Find(l, "Door 2", new(-75.5f, -12.5f, 568.5f), obj => obj.GetComponent<Door>().Unlock());
+        StaticAction.Find(l, "Door 1", new(-75.5f, -12.5f, 578.5f), obj => obj.GetComponent<Door>().Unlock());
+        StaticAction.Find(l, "12 - Grand Hall", new(-212.5f, -35f, 483.75f), obj =>
+        {
+            // teleport players to the final room once the door is opened
+            obj.GetComponent<ObjectActivator>().events.onActivate.AddListener(() => Teleporter.Instance.Teleport(new(-189f, -33.5f, 483.75f)));
+        });
+        StaticAction.Find(l, "ViolenceHallDoor", new(-148f, 7.5f, 276.25f), obj => Tools.Destroy(obj.GetComponent<Collider>()));
+
+        StaticAction.Destroy(l, "Door 2", new(-95.5f, 7.5f, 298.75f));
+        StaticAction.Destroy(l, "ViolenceHallDoor (1)", new(-188f, 7.5f, 316.25f));
+
+        NetAction.Sync(l, "Opener", new(-170.5f, 0.5f, 480.75f));
+        NetAction.Sync(l, "Opener", new(-170.5f, 0.5f, 490.75f), obj => Tools.ObjFind("Outdoors Areas/6 - Interior Garden/NightSkyActivator").SetActive(true));
+        NetAction.Sync(l, "BigDoorOpener", new(-145.5f, -10f, 483.75f), obj => obj.transform.parent.gameObject.SetActive(true));
+
+        #endregion
         #region 7-4
         l = "Level 7-4";
 

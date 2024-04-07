@@ -2,16 +2,11 @@ namespace Jaket.World;
 
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net;
 using Jaket.Net.Types;
-using Jaket.Sam;
-using Jaket.UI;
-
-using static Jaket.UI.Rect;
 
 /// <summary> Class that manages objects in the level, such as skull cases, rooms and etc. </summary>
 public class World : MonoSingleton<World>
@@ -95,25 +90,6 @@ public class World : MonoSingleton<World>
             {
                 obj.GetComponent<ObjectActivator>().events.toDisActivateObjects[2] = null;
             }),
-            // wtf?! why is there a torch???
-            StaticAction.Find("Level 7-3", "1 - Dark Path", new(0f, -10f, 300f), obj =>
-            {
-                Destroy(obj.transform.Find("Altar (Torch) Variant").GetChild(0).gameObject);
-            }),
-            // some doors don't want to be opened
-            StaticAction.Find("Level 7-3", "Door 1", new(-55.5f, -2.5f, 618.5f), obj => obj.GetComponent<Door>().Unlock()),
-            StaticAction.Find("Level 7-3", "Door 2", new(-75.5f, -12.5f, 568.5f), obj => obj.GetComponent<Door>().Unlock()),
-            StaticAction.Find("Level 7-3", "Door 1", new(-75.5f, -12.5f, 578.5f), obj => obj.GetComponent<Door>().Unlock()),
-            // teleport players to the final room once the door is opened
-            StaticAction.Find("Level 7-3", "12 - Grand Hall", new(-212.5f, -35f, 483.75f), obj =>
-            {
-                obj.GetComponent<ObjectActivator>().events.onActivate.AddListener(() =>
-                {
-                    NewMovement.Instance.transform.position = new(-189f, -33.5f, 483.75f); // the position of the closest checkpoint
-                });
-            }),
-            // strange door blocker
-            StaticAction.Find("Level 7-3", "ViolenceHallDoor", new(-148f, 7.5f, 276.25f), obj => Destroy(obj.GetComponent<Collider>())),
             // disable door blocker
             StaticAction.Find("Level P-1", "Trigger", new(360f, -568.5f, 110f), obj =>
             {
@@ -156,8 +132,6 @@ public class World : MonoSingleton<World>
             StaticAction.Destroy("Level 7-1", "SkullRed", new(-66.25f, 9.8f, 485f)),
             StaticAction.Destroy("Level 7-1", "ViolenceArenaDoor", new(-120f, 0f, 530.5f)),
             StaticAction.Destroy("Level 7-1", "Walkway Arena -> Stairway Up", new(80f, -25f, 590f)),
-            StaticAction.Destroy("Level 7-3", "Door 2", new(-95.5f, 7.5f, 298.75f)),
-            StaticAction.Destroy("Level 7-3", "ViolenceHallDoor (1)", new(-188f, 7.5f, 316.25f)),
             StaticAction.Destroy("Level 7-4", "ArenaWalls", new(-26.5f, 470f, 763.75f)),
 
             // there is an epic boss fight with The Corpse of King Minos
@@ -231,19 +205,6 @@ public class World : MonoSingleton<World>
             NetAction.Sync("Level 7-1", "Wave 2", new(-242.5f, 0f, 0f)),
             NetAction.Sync("Level 7-1", "Wave 3", new(-242.5f, 0f, 0f)),
             NetAction.Sync("Level 7-1", "PlayerTeleportActivator", new(-242.5f, 0f, 0f)),
-
-            // door lockers
-            NetAction.Sync("Level 7-3", "Opener", new(-170.5f, 0.5f, 480.75f)),
-            NetAction.Sync("Level 7-3", "Opener", new(-170.5f, 0.5f, 490.75f), obj =>
-            {
-                obj.SetActive(true);
-                Tools.ObjFind("Outdoors Areas/6 - Interior Garden/NightSkyActivator").SetActive(true);
-            }),
-            NetAction.Sync("Level 7-3", "BigDoorOpener", new(-145.5f, -10f, 483.75f), obj =>
-            {
-                obj.SetActive(true);
-                obj.transform.parent.gameObject.SetActive(true);
-            }),
 
             // Minos & Sisyphus have unique cutscenes and non-functional level exits
             NetAction.Sync("Level P-1", "MinosPrimeIntro", new(405f, -598.5f, 110f)),
