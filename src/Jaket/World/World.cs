@@ -122,8 +122,6 @@ public class World : MonoSingleton<World>
             StaticAction.Destroy("Level 4-2", "6A Activator", new(-79f, 45f, 954f)),
             StaticAction.Destroy("Level 4-2", "6B Activator", new(116f, 19.5f, 954f)),
             StaticAction.Destroy("Level 4-3", "Doorblocker", new(-59.5f, -35f, 676f)),
-            StaticAction.Destroy("Level 5-1", "HudMessage", new(0f, -100f, 295.5f)),
-            StaticAction.Destroy("Level 5-1", "Door", new(218.5f, -41f, 234.5f)),
             StaticAction.Destroy("Level 5-2", "Arena 1", new(87.5f, -53f, 1240f)),
             StaticAction.Destroy("Level 5-2", "Arena 2", new(87.5f, -53f, 1240f)),
             StaticAction.Destroy("Level 6-1", "Cage", new(168.5f, -130f, 140f)),
@@ -132,7 +130,6 @@ public class World : MonoSingleton<World>
             StaticAction.Destroy("Level 7-1", "SkullRed", new(-66.25f, 9.8f, 485f)),
             StaticAction.Destroy("Level 7-1", "ViolenceArenaDoor", new(-120f, 0f, 530.5f)),
             StaticAction.Destroy("Level 7-1", "Walkway Arena -> Stairway Up", new(80f, -25f, 590f)),
-            StaticAction.Destroy("Level 7-4", "ArenaWalls", new(-26.5f, 470f, 763.75f)),
 
             // there is an epic boss fight with The Corpse of King Minos
             NetAction.Sync("Level 2-4", "DeadMinos", new(279.5f, -599f, 575f), obj =>
@@ -181,11 +178,6 @@ public class World : MonoSingleton<World>
                 exit.GetComponent<Door>().Close();
                 exit.Find("GrapplePoint (2)").gameObject.SetActive(true);
             }),
-
-            // there is a checkpoint deactivator, the deactivation of which needs to be synchronized, and some metro doors
-            NetAction.Sync("Level 5-1", "CheckPointsUndisabler", new(0f, -50f, 350f)),
-            NetAction.Sync("Level 5-1", "DelayedActivator", new(-15f, 36f, 698f)),
-            NetAction.Sync("Level 5-1", "DelayedActivator", new(-15f, 38f, 778f)),
 
             // boss fight roomba logic
             NetAction.Sync("Level 7-1", "Blockers", new(-242.5f, -115f, 314f), obj =>
