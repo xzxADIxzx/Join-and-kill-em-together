@@ -64,6 +64,18 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         NetAction.Sync(l, "Cube", new(0f, -19f, 612f), obj => obj.GetComponent<ObjectActivator>().Activate());
 
         #endregion
+        #region 5-1
+        l = "Level 5-1";
+
+        StaticAction.Destroy(l, "HudMessage", new(0f, -100f, 295.5f));
+        StaticAction.Destroy(l, "Door", new(218.5f, -41f, 234.5f));
+
+        // there is a checkpoint deactivator, the deactivation of which needs to be synchronized, and some metro doors
+        NetAction.Sync(l, "CheckPointsUndisabler", new(0f, -50f, 350f));
+        NetAction.Sync(l, "DelayedActivator", new(-15f, 36f, 698f));
+        NetAction.Sync(l, "DelayedActivator", new(-15f, 38f, 778f));
+
+        #endregion
         #region 7-2
         l = "Level 7-2";
 
@@ -170,7 +182,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
 
         // insides
         StaticAction.Find(l, "EntryTrigger", new(0f, 458.5f, 649.75f), obj => obj.SetActive(LobbyController.IsOwner));
-        StaticAction.Find(l, "BrainFightTrigger", new(6.9999f, 841.5f, 610.7503f), obj => obj.SetActive(LobbyController.IsOwner));
+        StaticAction.Find(l, "BrainFightTrigger", new(6.999941f, 841.5f, 610.7503f), obj => obj.SetActive(LobbyController.IsOwner));
 
         NetAction.Sync(l, "EntryTrigger", new(0f, 458.5f, 649.75f), obj =>
         {
@@ -182,6 +194,11 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         {
             obj.GetComponent<ObjectActivator>().Activate();
             Teleporter.Teleport(new(0f, 826.5f, 610f));
+        });
+        NetAction.Sync(l, "DelayedIdolSpawner", new(14.49993f, 914.25f, 639.7503f), obj =>
+        {
+            obj.transform.parent.gameObject.SetActive(true);
+            obj.transform.parent.parent.gameObject.SetActive(true);
         });
 
         #endregion

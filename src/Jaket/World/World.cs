@@ -34,6 +34,8 @@ public class World : MonoSingleton<World>
     public Minotaur Minotaur;
     /// <summary> The security system at level 7-4 consists of several subenemies. </summary>
     public SecuritySystem[] SecuritySystem = new SecuritySystem[7];
+    /// <summary> The fight with this boss is special because of the idols. </summary>
+    public Brain Brain;
 
     /// <summary> Creates a singleton of world & listener needed to keep track of objects at the level. </summary>
     public static void Load()

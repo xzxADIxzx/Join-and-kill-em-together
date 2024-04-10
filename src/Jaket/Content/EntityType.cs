@@ -23,7 +23,6 @@ public enum EntityType
     Sentry,
     Gutterman,
     Guttertank,
-    Earthmover,
     MaliciousFace,
     Cerberus,
     HideousMass,
@@ -53,6 +52,7 @@ public enum EntityType
     SecuritySystem_RocketLauncher, SecuritySystem_RocketLauncher_,
     SecuritySystem_Mortar, SecuritySystem_Mortar_,
     SecuritySystem_Tower, SecuritySystem_Tower_,
+    Brain,
 
     AppleBait,
     SkullBait,

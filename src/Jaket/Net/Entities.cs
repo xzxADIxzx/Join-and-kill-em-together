@@ -35,6 +35,8 @@ public class Entities
             Providers.Add(sucks, () => World.Instance.SecuritySystem[sucks - EntityType.SecuritySystemOffset]);
         }
 
+        Providers.Add(EntityType.Brain, () => World.Instance.Brain);
+
         for (var type = EntityType.AppleBait; type <= EntityType.V1; type++)
         {
             var sucks = type;

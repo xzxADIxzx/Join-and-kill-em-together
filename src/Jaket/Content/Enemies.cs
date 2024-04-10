@@ -84,6 +84,11 @@ public class Enemies
         }
         // the security system is a complex enemy consisting of several subenemies
         if (Tools.Scene == "Level 7-4" && (enemyId.name == "Mainframe (Hurtable)" || enemyId.transform.parent?.name == "SecuritySystem")) return true;
+        if (Tools.Scene == "Level 7-4" && enemyId.name == "Brain")
+        {
+            enemyId.gameObject.AddComponent<Brain>();
+            return true;
+        }
 
         // the enemy was created remotely
         if (enemyId.name == "Net")
@@ -136,6 +141,7 @@ public class Enemies
     {
         if (LobbyController.Offline || enemyId.dead) return;
 
+        // TODO remake in 1.3
         if (enemyId.TryGetComponent<Enemy>(out var enemy))
         {
             if (LobbyController.IsOwner)
@@ -149,6 +155,11 @@ public class Enemies
         {
             Networking.Send(PacketType.KillEntity, w => w.Id(sys.Id), size: 8);
             Networking.Entities[sys.Id] = null;
+        }
+        else if (enemyId.TryGetComponent<Brain>(out var brain) && LobbyController.IsOwner)
+        {
+            Networking.Send(PacketType.KillEntity, w => w.Id(brain.Id), size: 8);
+            Networking.Entities[brain.Id] = null;
         }
     }
 }
