@@ -3,6 +3,7 @@ namespace Jaket.Assets;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -53,7 +54,7 @@ public class Bundle
             if (line == "" || line.StartsWith("#")) continue;
 
             var pair = line.Split('=');
-            props.Add(pair[0].Trim(), ParseColors(pair[1].Trim()));
+            props.Add(pair[0].Trim(), locale == "ar" ? ParseArabic(pair[1].Trim()) : ParseColors(pair[1].Trim()));
         }
 
         LoadedLocale = localeId;
@@ -129,6 +130,9 @@ public class Bundle
 
         return builder.ToString().Substring(1);
     }
+
+    /// <summary> Reverses the string because Arabic is right-to-left language. </summary>
+    public static string ParseArabic(string original) => new(CutColors(original).Replace("\\n", "\n").Replace('{', '#').Replace('}', '{').Replace('#', '}').Reverse().ToArray());
 
     #endregion
     #region usage
