@@ -39,11 +39,14 @@ public class Teleporter : CanvasSingleton<Teleporter>
     }
 
     /// <summary> Teleports the player to the given coordinates. </summary>
-    public static void Teleport(Vector3 pos)
+    public static void Teleport(Vector3 pos, bool insideTunnel = true, bool insideEarthmover = true)
     {
         NewMovement.Instance.transform.position = pos;
         Events.Post2(() => AudioSource.PlayClipAtPoint(Instance.click, pos));
 
         Instance.Flash();
+
+        // load the necessary locations so that the player doesn't get into the out of bounds
+        if (Tools.Scene == "Level 7-4") Tools.ObjFind(insideEarthmover ? "InsideActivator" : "OutsideActivator").GetComponent<ObjectActivator>().Activate();
     }
 }
