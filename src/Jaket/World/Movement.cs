@@ -9,6 +9,7 @@ using UnityEngine;
 using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net;
+using Jaket.Sprays;
 using Jaket.UI;
 using Jaket.UI.Dialogs;
 using Jaket.UI.Elements;
@@ -95,12 +96,17 @@ public class Movement : MonoSingleton<Movement>
             if (EmojiWheel.Shown) EmojiWheel.Instance.Hide();
         }
 
-        if (Input.GetKeyDown(Settings.Pointer) && Physics.Raycast(cc.transform.position, cc.transform.forward, out var hit, float.MaxValue, mask))
+        bool p = Input.GetKeyDown(Settings.Pointer), s = Input.GetKeyDown(Settings.Spray);
+        if ((p || s) && Physics.Raycast(cc.transform.position, cc.transform.forward, out var hit, float.MaxValue, mask))
         {
-            if (Pointer != null) Pointer.Lifetime = 4.5f;
-            Pointer = Pointer.Spawn(Networking.LocalPlayer.Team, hit.point, hit.normal);
+            if (p)
+            {
+                if (Pointer != null) Pointer.Lifetime = 4.5f;
+                Pointer = Pointer.Spawn(Networking.LocalPlayer.Team, hit.point, hit.normal);
+            }
+            if (s) Spray = SprayManager.Spawn(hit.point, hit.normal);
 
-            if (LobbyController.Online) Networking.Send(PacketType.Point, w =>
+            if (LobbyController.Online) Networking.Send(p ? PacketType.Point : PacketType.Spray, w =>
             {
                 w.Id(Networking.LocalPlayer.Id);
                 w.Vector(hit.point);
