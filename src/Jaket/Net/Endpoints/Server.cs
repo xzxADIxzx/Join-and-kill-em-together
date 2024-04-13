@@ -127,7 +127,7 @@ public class Server : Endpoint, ISocketManager
                 SprayDistributor.Requests.Add(owner, list);
             }
 
-            Log.Debug($"[Server] Get image request for Spray {owner}. Count: {list.Count}");
+            Log.Debug($"[Server] Got an image request for spray#{owner}. Count: {list.Count}");
         });
 
         Listen(PacketType.ActivateObject, r => World.Instance.ReadAction(r));

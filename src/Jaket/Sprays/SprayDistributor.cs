@@ -20,11 +20,11 @@ public static class SprayDistributor
     /// <summary> List of all streams for spray loading. </summary>
     public static Dictionary<ulong, Writer> Streams = new();
     /// <summary> List of requests for spray by id. </summary>
-    public static Dictionary<SteamId, List<Connection>> Requests = new();
+    public static Dictionary<ulong, List<Connection>> Requests = new();
 
     #region distribution logic
 
-    /// <summary>Processes all spray requests. </summary>
+    /// <summary> Processes all spray requests. </summary>
     public static void ProcessRequests()
     {
         foreach (var owner in Requests.Keys)
@@ -38,15 +38,13 @@ public static class SprayDistributor
         Requests.Clear(); // clear all requests, because they are processed
     }
 
-    /// <summary> Handles the loaded spray and decides where to send it next. </summary>
+    /// <summary> Handles the downloaded spray and decides where to send it next. </summary>
     public static void HandleSpray(SteamId owner, byte[] data)
     {
-        // the client wants to rewrite the spray
-        if (LobbyController.IsOwner && SprayManager.CachedSprays.ContainsKey(owner)) Upload(owner, data);
-
-        // create a new spray or rewrite the existing one
-        if (SprayManager.CachedSprays.TryGetValue(owner, out var spray)) spray.AssignDataAndUpdate(data);
-        else SprayManager.CacheSpray(owner).AssignDataAndUpdate(data);
+        if (SprayManager.CachedSprays.TryGetValue(owner, out var spray))
+            spray.AssignDataAndUpdate(data);
+        else
+            SprayManager.CacheSpray(owner).AssignDataAndUpdate(data);
     }
 
     /// <summary> Requests someone's spray from the host. </summary>
@@ -76,15 +74,14 @@ public static class SprayDistributor
     /// <summary> Uploads the current spray to the server. </summary>
     public static void UploadLocal()
     {
-        // there is no point in sending the spray to the distributor, because the host is the distributor
-        if (!LobbyController.IsOwner)
-        {
-            // caching the current spray, because we already uploaded it to the host
-            var cs = SprayManager.CacheSpray(Networking.LocalPlayer.Id);
-            cs.AssignData(SprayManager.CurrentSpray.ImageData);
+        // there is no point in sending the spray to the distributor if you are the distributor
+        if (LobbyController.IsOwner) return;
 
-            Upload(Networking.LocalPlayer.Id, SprayManager.CurrentSpray.ImageData);
-        }
+        // caching the current spray, because we already uploaded it to the host
+        var cs = SprayManager.CacheSpray(Networking.LocalPlayer.Id);
+        cs.AssignData(SprayManager.CurrentSpray.ImageData);
+
+        Upload(Networking.LocalPlayer.Id, SprayManager.CurrentSpray.ImageData);
     }
 
     /// <summary> Loads a spray from the client or server. </summary>
