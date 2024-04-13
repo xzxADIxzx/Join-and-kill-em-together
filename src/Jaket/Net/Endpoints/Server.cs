@@ -6,6 +6,7 @@ using Steamworks.Data;
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net.Types;
+using Jaket.Sprays;
 using Jaket.World;
 
 /// <summary> Host endpoint processing socket events and client packets. </summary>
@@ -94,6 +95,39 @@ public class Server : Endpoint, ISocketManager
         ListenAndRedirect(PacketType.Point, r =>
         {
             if (entities[r.Id()] is RemotePlayer player) player?.Point(r);
+        });
+
+        ListenAndRedirect(PacketType.Spray, r => SprayManager.CreateSpray(r.Id(), r.Vector(), r.Vector()));
+
+        Listen(PacketType.ImageChunk, (con, sender, r) =>
+        {
+            var owner = r.Id(); r.Position = 1; // extract the spray owner
+
+            // stop an attempt to overwrite someone else's spray, because this can lead to tragic consequences
+            if (sender != owner)
+            {
+                Administration.Ban(sender);
+                Log.Warning($"{sender} was blocked due to an attempt to overwrite someone else's spray");
+            }
+            else
+            {
+                SprayDistributor.Download(r);
+                Redirect(r, con);
+            }
+        });
+
+        Listen(PacketType.RequestImage, (con, sender, r) =>
+        {
+            var owner = r.Id();
+            if (SprayDistributor.Requests.TryGetValue(owner, out var list)) list.Add(con);
+            else
+            {
+                list = new();
+                list.Add(con);
+                SprayDistributor.Requests.Add(owner, list);
+            }
+
+            Log.Debug($"[Server] Get image request for Spray {owner}. Count: {list.Count}");
         });
 
         Listen(PacketType.ActivateObject, r => World.Instance.ReadAction(r));

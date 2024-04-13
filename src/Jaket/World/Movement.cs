@@ -51,6 +51,8 @@ public class Movement : MonoSingleton<Movement>
 
     /// <summary> Last pointer created by the player. </summary>
     public Pointer Pointer;
+    /// <summary> Last spray created by the player. </summary>
+    public Spray Spray;
 
     /// <summary> Creates a singleton of movement. </summary>
     public static void Load()
