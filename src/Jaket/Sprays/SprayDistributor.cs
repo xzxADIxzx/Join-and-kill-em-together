@@ -29,8 +29,8 @@ public static class SprayDistributor
     {
         foreach (var owner in Requests.Keys)
         {
-            if (SprayManager.CachedSprays.TryGetValue(owner, out var spray))
-                Upload(owner, spray.ImageData, (data, size) => Requests[owner].ForEach(con => con.SendMessage(data, size)));
+            if (SprayManager.Cache.TryGetValue(owner, out var spray))
+                Upload(owner, spray.Data, (data, size) => Requests[owner].ForEach(con => con.SendMessage(data, size)));
             else
                 Log.Error($"Couldn't find the requested spray. Spray id is {owner}");
         }
@@ -39,12 +39,13 @@ public static class SprayDistributor
     }
 
     /// <summary> Handles the downloaded spray and decides where to send it next. </summary>
-    public static void HandleSpray(SteamId owner, byte[] data)
+    public static void HandleSpray(ulong owner, byte[] data)
     {
-        if (SprayManager.CachedSprays.TryGetValue(owner, out var spray))
-            spray.AssignDataAndUpdate(data);
-        else
-            SprayManager.CacheSpray(owner).AssignDataAndUpdate(data);
+        SprayManager.Cache.Remove(owner);
+        SprayManager.Cache.Add(owner, new(data));
+
+        // update the existing spray if there is one
+        if (SprayManager.Sprays.TryGetValue(owner, out var spray)) spray.UpdateSprite();
     }
 
     /// <summary> Requests someone's spray from the host. </summary>
@@ -74,14 +75,12 @@ public static class SprayDistributor
     /// <summary> Uploads the current spray to the server. </summary>
     public static void UploadLocal()
     {
-        // there is no point in sending the spray to the distributor if you are the distributor
-        if (LobbyController.IsOwner) return;
+        // there is no point in sending the spray to the distributor if you haven't changed it
+        if (SprayManager.Uploaded || SprayManager.CurrentSpray == null) return;
+        Log.Info("Uploading the current spray...");
 
-        // caching the current spray, because we already uploaded it to the host
-        var cs = SprayManager.CacheSpray(Networking.LocalPlayer.Id);
-        cs.AssignData(SprayManager.CurrentSpray.ImageData);
-
-        Upload(Networking.LocalPlayer.Id, SprayManager.CurrentSpray.ImageData);
+        Upload(Networking.LocalPlayer.Id, SprayManager.CurrentSpray.Data);
+        SprayManager.Uploaded = true;
     }
 
     /// <summary> Loads a spray from the client or server. </summary>
