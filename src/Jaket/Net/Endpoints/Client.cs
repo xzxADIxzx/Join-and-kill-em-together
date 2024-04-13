@@ -55,7 +55,7 @@ public class Client : Endpoint, IConnectionManager
             if (entities[r.Id()] is RemotePlayer player) player?.Point(r);
         });
 
-        Listen(PacketType.Spray, r => SprayManager.CreateSpray(r.Id(), r.Vector(), r.Vector()));
+        Listen(PacketType.Spray, r => SprayManager.Spawn(r.Id(), r.Vector(), r.Vector()));
 
         Listen(PacketType.ImageChunk, SprayDistributor.Download);
 
@@ -96,7 +96,7 @@ public class Client : Endpoint, IConnectionManager
     public void OnConnected(ConnectionInfo info)
     {
         Log.Info("[Client] Connected");
-        SprayDistributor.UploadLocal();
+        SprayDistributor.UploadLocal(); // start uploading the spray even before loading the level to win a some time
     }
 
     public void OnDisconnected(ConnectionInfo info) => Log.Info("[Client] Disconnected");

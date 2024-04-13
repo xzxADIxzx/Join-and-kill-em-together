@@ -113,7 +113,7 @@ public class UIB
     /// <summary> Creates a canvas that is drawn in world space. </summary>
     public static Transform WorldCanvas(string name, Transform parent, Vector3 position, float scale = .02f, Action<Transform> build = null)
     {
-        var canvas = Canvas(name, parent, 0, 0f, RenderMode.WorldSpace, ScaleMode.ConstantPixelSize);
+        var canvas = Canvas(name, parent, -1, 0f, RenderMode.WorldSpace, ScaleMode.ConstantPixelSize);
         canvas.localPosition = position;
         canvas.localScale = Vector3.one * scale;
 

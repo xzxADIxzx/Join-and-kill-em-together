@@ -97,7 +97,7 @@ public class Server : Endpoint, ISocketManager
             if (entities[r.Id()] is RemotePlayer player) player?.Point(r);
         });
 
-        ListenAndRedirect(PacketType.Spray, r => SprayManager.CreateSpray(r.Id(), r.Vector(), r.Vector()));
+        ListenAndRedirect(PacketType.Spray, r => SprayManager.Spawn(r.Id(), r.Vector(), r.Vector()));
 
         Listen(PacketType.ImageChunk, (con, sender, r) =>
         {
