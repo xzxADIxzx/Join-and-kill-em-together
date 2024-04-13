@@ -1,94 +1,75 @@
 namespace Jaket.UI.Elements;
 
 using UnityEngine;
+using UnityEngine.UI;
 
-using Jaket.UI;
+using Jaket.Sprays;
 
-/// <summary> Represents a player created spray that contains a image. </summary>
+/// <summary> Player-created spray containing an image, disappears in a few seconds after appearing. </summary>
 public class Spray : MonoBehaviour
 {
-    /// <summary> Spray's position in space. </summary>
+    /// <summary> Owner of the spray. </summary>
+    private ulong owner;
+    /// <summary> Spray position in space. </summary>
     private Vector3 position, direction;
-    
-    public Texture2D Texture;
-    private Transform Canvas;
 
-    /// <summary> How long the spray will last in seconds. </summary>
-    public float Lifetime = 20f;
-    private float ProcessTime = 0f;
+    /// <summary> Image component of the spray. </summary>
+    private Image image;
+    /// <summary> How many seconds has the spray existed. </summary>
+    public float Lifetime;
 
-    /// <summary> Creates a new spray at the given position with the given direction. </summary> 
-    public static Spray Spawn(Vector3 position, Vector3 direction) =>
-        UI.Component<Spray>(UI.Object("Spray"), spray =>
+    /// <summary> Spawns a spray at the given position. </summary>
+    public static Spray Spawn(ulong owner, Vector3 position, Vector3 direction) =>
+        UIB.Component<Spray>(Tools.Create("Spray"), spray =>
         {
+            spray.owner = owner;
             spray.position = position;
             spray.direction = direction;
         });
 
-    public void AssignImage(Texture2D texture)
-    {
-        Texture = texture;
- 
-        // creates the image in the world
-        Canvas = UI.WorldCanvas("Spray image", transform, new(), action: canvas => UI.ImageFromTexture("Image", canvas, 0f, 0f, Texture, 128f, 128f));
-        // ADI's implementation is set sorting order to 1000, so we need to set it to -1, because it causes rendering issues
-        Canvas.GetComponent<Canvas>().sortingOrder = -1; 
-    }
-
-    /// <summary> Spawns a white dust particles. </summary>
-    public void SpawnDust(int amount = 3, float scale = 1f)
-    {
-        var particlePrefab = AssetHelper.LoadPrefab("Assets/Particles/ImpactParticle.prefab");
-        for (var i = 0; i < amount; i++) // make it look more cloudy
-        {
-            var particle = Instantiate(particlePrefab, transform.position, Quaternion.identity);
-            particle.transform.localScale = Vector3.one * scale;
-            // don't play the sound, because we need only particle
-            particle.GetComponent<AudioSource>().Stop();
-        }
-    }
-
-    #region cubic interpolation
-
-    public static float InCubic(float t) => t * t * t;
-    public static float InOutCubic(float t)
-    {
-        if (t < 0.5) return InCubic(t * 2) / 2;
-        return 1 - InCubic((1 - t) * 2) / 2;
-    }
-
-    #endregion
-
     private void Start()
     {
-        transform.position = position + direction.normalized * .01f; // adding some offset to prevent z-fighting
-        transform.rotation = Quaternion.LookRotation(direction);
-        transform.rotation *= Quaternion.Euler(0, 180, 0); // rotates the spray so that it always faces the player
+        UIB.WorldCanvas("Canvas", transform, Vector3.zero, build: canvas => image = UIB.Image("Image", canvas, new(0f, 0f, 256f, 256f)));
+        UpdateSprite();
+
+        image.preserveAspect = true;
+        transform.position = position + direction.normalized * .01f;
+        transform.rotation = Quaternion.LookRotation(direction) * Quaternion.Euler(0, 180, 0);
 
         SpawnDust();
     }
 
     private void Update()
     {
-        // destroy the spray if it's too old
-        if ((ProcessTime += Time.deltaTime) > Lifetime) 
+        if (Lifetime > 18f)
+        {
+            var t = InOutCubic((Lifetime - 18f) / 2f); // cubic interpolation looks better 
+            image.transform.localScale = Vector3.one * (1f - t);
+        }
+
+        if ((Lifetime += Time.deltaTime) > 20f)
         {
             SpawnDust(1, .3f);
             Destroy(gameObject);
             return;
         }
+    }
 
-        if (Canvas == null) return;
+    /// <summary> Updates the image's sprite. </summary>
+    public void UpdateSprite() => image.sprite = SprayManager.Cache.TryGetValue(owner, out var spray) ? spray.Sprite : UIB.Checkmark;
 
-        // Shrink the spray as it gets older
-        var shrinkTime = Lifetime * 0.2f;
-        var remaining = Lifetime - shrinkTime;
-        if (ProcessTime >= remaining)
+    /// <summary> Spawns white dust particles. </summary>
+    public void SpawnDust(int amount = 3, float scale = 1f)
+    {
+        var prefab = AssetHelper.LoadPrefab("Assets/Particles/ImpactParticle.prefab");
+        for (var i = 0; i < amount; i++) // make it look more cloudy
         {
-            var t = (ProcessTime - remaining) / shrinkTime;
-            t = InOutCubic(t); // cubic interpolation looks better
-            var scale = (1f - t) * .02f; // initial scale is 0.02 
-            Canvas.localScale = Vector3.one * scale;
+            var particle = Instantiate(prefab, transform.position, Quaternion.identity);
+            particle.transform.localScale = Vector3.one * scale;
+            particle.GetComponent<AudioSource>().Stop(); // don't play the sound, we need only the particles
         }
     }
+
+    public static float InCubic(float t) => t * t * t;
+    public static float InOutCubic(float t) => t < 0.5 ? (InCubic(t * 2) / 2) : (1 - InCubic((1 - t) * 2) / 2);
 }
