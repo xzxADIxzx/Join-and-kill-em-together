@@ -37,7 +37,7 @@ public class ArmsPatch
     [HarmonyPatch(typeof(Punch), "ActiveStart")]
     static void Puncn()
     {
-        if (LobbyController.Lobby == null) return;
+        if (LobbyController.Offline) return;
 
         foreach (var harpoon in NewMovement.Instance.GetComponentsInChildren<Harpoon>())
         {
@@ -63,7 +63,7 @@ public class ArmsPatch
     [HarmonyPatch(typeof(HookArm), "Update")]
     static void Hook(HookArm __instance, bool ___forcingFistControl, Vector3 ___hookPoint, bool ___lightTarget, EnemyIdentifier ___caughtEid)
     {
-        if (LobbyController.Lobby == null) return;
+        if (LobbyController.Offline) return;
         lp.Hook = ___forcingFistControl ? ___hookPoint : Vector3.zero;
 
         if (__instance.state == HookState.Pulling && ___lightTarget && lp.Pulled == null) lp.Pulled = ___caughtEid.GetComponent<Enemy>();

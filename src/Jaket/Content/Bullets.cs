@@ -106,7 +106,7 @@ public class Bullets
     /// <summary> Synchronizes the bullet between host and clients. </summary>
     public static void Sync(GameObject bullet, bool hasRigidbody, bool applyOffset)
     {
-        if (LobbyController.Lobby == null || bullet == null || bullet.name.Contains("Net")) return;
+        if (LobbyController.Offline || bullet == null || bullet.name.Contains("Net")) return;
 
         if (bullet.name != "RL PRI(Clone)" && bullet.name != "RL ALT(Clone)")
         {
@@ -167,7 +167,7 @@ public class Bullets
         if (blast.name == "Net") sourceWeapon = Fake;
 
         // checking if this is really knuckleblaster explosion
-        if (LobbyController.Lobby == null || blast?.name != "Explosion Wave(Clone)") return;
+        if (LobbyController.Offline || blast?.name != "Explosion Wave(Clone)") return;
         Networking.Send(PacketType.Punch, w =>
         {
             w.Id(Networking.LocalPlayer.Id);
@@ -182,7 +182,7 @@ public class Bullets
     public static void SyncShock(GameObject shock, float force)
     {
         // checking if this is really a player's shockwave
-        if (LobbyController.Lobby == null || shock?.name != "PhysicalShockwavePlayer(Clone)") return;
+        if (LobbyController.Offline || shock?.name != "PhysicalShockwavePlayer(Clone)") return;
         Networking.Send(PacketType.Punch, w =>
         {
             w.Id(Networking.LocalPlayer.Id);

@@ -59,7 +59,7 @@ public class Events : MonoSingleton<Events>
             SteamController.Instance.FetchSceneActivity(Tools.Scene);
 
             // enable the ability of the game to run in the background, because multiplayer requires it
-            Application.runInBackground = LobbyController.Lobby != null;
+            Application.runInBackground = LobbyController.Online;
         };
     }
 

@@ -36,6 +36,7 @@ This modification made by [me](https://github.com/xzxADIxzx) and my team adds su
    * Synchronization of different triggers at levels
    * Synchronization of the Cyber Grind
 * Translation into many languages
+   * Arabic
    * Portuguese
    * English
    * Filipino
@@ -73,7 +74,8 @@ To compile you will need .NET SDK 6.0 and Git.
 4. Compile the mod with `dotnet build`
 5. At the output you will get the **Jaket.dll** file, which will be located in the `bin\Debug\netstandard2.0` folder.
    1. Copy this file to the mods folder.
-   2. Copy the **jaket-player-doll.bundle** file from the assets folder to the mods folder.
+   2. Copy the **jaket-player-doll.bundle** file and bundles folder from the assets folder to the mods folder.
+   3. Copy the **manifest.json** file from the root folder.
 
 ## Afterword
 I fix bugs all the time, but some of them are hidden from me.  

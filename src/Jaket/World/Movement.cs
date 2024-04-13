@@ -67,6 +67,8 @@ public class Movement : MonoSingleton<Movement>
 
     private void Update()
     {
+        if (Tools.Scene == "Main Menu") return;
+
         if (Input.GetKeyDown(Settings.ScrollUp)) Chat.Instance.ScrollMessages(true);
         if (Input.GetKeyDown(Settings.ScrollDown)) Chat.Instance.ScrollMessages(false);
 
@@ -96,7 +98,7 @@ public class Movement : MonoSingleton<Movement>
             if (Pointer != null) Pointer.Lifetime = 4.5f;
             Pointer = Pointer.Spawn(Networking.LocalPlayer.Team, hit.point, hit.normal);
 
-            if (LobbyController.Lobby != null) Networking.Send(PacketType.Point, w =>
+            if (LobbyController.Online) Networking.Send(PacketType.Point, w =>
             {
                 w.Id(Networking.LocalPlayer.Id);
                 w.Vector(hit.point);
@@ -208,7 +210,7 @@ public class Movement : MonoSingleton<Movement>
 
 
         // all the following changes are related to the network part of the game and shouldn't affect the local
-        if (LobbyController.Lobby == null) return;
+        if (LobbyController.Offline) return;
 
         // pause stops time and weapon wheel slows it down, but in multiplayer everything should be real-time
         if (Settings.DisableFreezeFrames || UI.AnyDialog) Time.timeScale = 1f;
@@ -370,7 +372,7 @@ public class Movement : MonoSingleton<Movement>
         position = new();
         SkateboardSpeed = 0f;
 
-        Bundle.Hud("emoji"); // telling how to interrupt an emotion
+        Bundle.Hud("emoji", true); // telling how to interrupt an emotion
         StopCoroutine("ClearEmoji");
         if (emojiLength[id] != -1f) StartCoroutine("ClearEmoji");
     }

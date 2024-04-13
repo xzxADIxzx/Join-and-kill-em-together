@@ -23,10 +23,6 @@ public enum EntityType
     Sentry,
     Gutterman,
     Guttertank,
-    Earthmover_Brain,
-    Earthmover_RocketLauncher,
-    Earthmover_Mortar,
-    Earthmover_Tower,
     MaliciousFace,
     Cerberus,
     HideousMass,
@@ -52,6 +48,11 @@ public enum EntityType
     Hand,
     Leviathan,
     Minotaur_Chase,
+    SecuritySystem_Main,
+    SecuritySystem_RocketLauncher, SecuritySystem_RocketLauncher_,
+    SecuritySystem_Mortar, SecuritySystem_Mortar_,
+    SecuritySystem_Tower, SecuritySystem_Tower_,
+    Brain,
 
     AppleBait,
     SkullBait,
@@ -96,6 +97,7 @@ public enum EntityType
     Ball,
 
     EnemyOffset = Filth,
+    SecuritySystemOffset = SecuritySystem_Main,
     ItemOffset = AppleBait,
     PlushyOffset = Jacob,
     BulletOffset = Rocket

@@ -3,6 +3,7 @@ namespace Jaket;
 using HarmonyLib;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.Events;
 
 /// <summary> Set of different tools for simplifying life and systematization of code. </summary>
 public class Tools
@@ -14,6 +15,10 @@ public class Tools
 
     /// <summary> Loads the given scene. </summary>
     public static void Load(string scene) => SceneHelper.LoadScene(scene);
+
+    /// <summary> Whether the given object is on a scene or is it just an asset. </summary>
+    public static bool IsReal(GameObject obj) => obj.scene.name != null;
+    public static bool IsReal(Component comp) => IsReal(comp.gameObject);
 
     #endregion
     #region create & destroy
@@ -46,6 +51,13 @@ public class Tools
     /// <summary> Just shortcut. </summary>
     public static T ObjFind<T>() where T : Object => Object.FindObjectOfType<T>();
     public static GameObject ObjFind(string name) => GameObject.Find(name);
+
+    /// <summary> Returns the event of pressing the button. </summary>
+    public static UnityEvent GetClick(GameObject btn)
+    {
+        var pointer = btn.GetComponents<MonoBehaviour>()[2]; // so much pain over the private class ControllerPointer
+        return Property("OnPressed", pointer).GetValue(pointer) as UnityEvent;
+    }
 
     #endregion
     #region harmony

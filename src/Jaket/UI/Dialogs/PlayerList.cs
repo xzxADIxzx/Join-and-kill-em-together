@@ -47,13 +47,13 @@ public class PlayerList : CanvasSingleton<PlayerList>
     {
         // destroy old player list
         if (transform.childCount > 3) Destroy(transform.GetChild(3).gameObject);
-        if (LobbyController.Lobby == null) return;
+        if (LobbyController.Offline) return;
 
         float height = LobbyController.Lobby.Value.MemberCount * 48f + 48f;
         UIB.Table("List", "#player-list.list", transform, Tlw(200f + height / 2f, height), table =>
         {
             float y = 20f;
-            LobbyController.EachMember(member =>
+            foreach (var member in LobbyController.Lobby?.Members)
             {
                 if (LobbyController.LastOwner == member.Id)
                 {
@@ -69,7 +69,7 @@ public class PlayerList : CanvasSingleton<PlayerList>
                     }
                     else UIB.ProfileButton(member, table, Btn(0f, y += 48f));
                 }
-            });
+            }
         });
     }
 }

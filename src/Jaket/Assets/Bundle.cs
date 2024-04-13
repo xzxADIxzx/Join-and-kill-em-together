@@ -3,6 +3,7 @@ namespace Jaket.Assets;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -53,7 +54,7 @@ public class Bundle
             if (line == "" || line.StartsWith("#")) continue;
 
             var pair = line.Split('=');
-            props.Add(pair[0].Trim(), ParseColors(pair[1].Trim()));
+            props.Add(pair[0].Trim(), locale == "ar" ? ParseArabic(pair[1].Trim()) : ParseColors(pair[1].Trim()));
         }
 
         LoadedLocale = localeId;
@@ -65,8 +66,11 @@ public class Bundle
     // <summary> Returns a string without Unity and Jaket formatting. </summary>
     public static string CutColors(string original) => Regex.Replace(original, "<.*?>|\\[.*?\\]", string.Empty);
 
+    // <summary> Returns a string without the tags that can cause lags. </summary>
+    public static string CutDangerous(string original) => Regex.Replace(original, "</?size.*?>|</?quad.*?>|</?material.*?>", string.Empty);
+
     /// <summary> Parses the colors in the given string so that Unity could understand them. </summary>
-    public static string ParseColors(string original)
+    public static string ParseColors(string original, int maxSize = 64)
     {
         Stack<bool> types = new(); // true - font size, false - color
         StringBuilder builder = new(original.Length);
@@ -107,10 +111,10 @@ public class Bundle
                     pointer = original.IndexOf(']', pointer);
 
                     var content = original.Substring(old, pointer - old);
-                    bool isSize = int.TryParse(content, out _);
+                    bool isSize = int.TryParse(content, out var size);
 
                     types.Push(isSize);
-                    builder.Append(isSize ? "<size=" : "<color=").Append(content).Append('>');
+                    builder.Append(isSize ? "<size=" : "<color=").Append(isSize ? Math.Min(size, maxSize) : content).Append('>');
                     pointer++;
                 }
             }
@@ -126,6 +130,9 @@ public class Bundle
 
         return builder.ToString().Substring(1);
     }
+
+    /// <summary> Reverses the string because Arabic is right-to-left language. </summary>
+    public static string ParseArabic(string original) => new(CutColors(original).Replace("\\n", "\n").Replace('{', '#').Replace('}', '{').Replace('#', '}').Reverse().ToArray());
 
     #endregion
     #region usage

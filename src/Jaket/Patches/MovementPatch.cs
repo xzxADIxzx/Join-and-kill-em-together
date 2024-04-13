@@ -20,7 +20,7 @@ public class MovementPatch
     static void Spawn(NewMovement __instance)
     {
         // add some randomness to the spawn position so players don't stack on top of each other at the start of the level
-        if (LobbyController.Lobby != null) __instance.transform.position += new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f));
+        if (LobbyController.Online) __instance.transform.position += new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f));
     }
 
     [HarmonyPrefix]

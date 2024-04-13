@@ -27,7 +27,7 @@ public class EnemyPatch
     [HarmonyPatch("UpdateTarget")]
     static void Target(EnemyIdentifier __instance)
     {
-        if (LobbyController.Lobby == null) return;
+        if (LobbyController.Offline) return;
 
         // update target only if the current target is the local player
         if (__instance.target == null || !__instance.target.isPlayer) return;
@@ -36,11 +36,11 @@ public class EnemyPatch
         float SqrDst(Vector3 v1, Vector3 v2) => (v1 - v2).sqrMagnitude;
 
         var target = NewMovement.Instance.transform;
-        float dst = SqrDst(target.position, __instance.transform.position);
+        float dst = SqrDst(__instance.transform.position, target.position);
 
         Networking.EachPlayer(player =>
         {
-            var newDst = SqrDst(target.position, player.transform.position);
+            var newDst = SqrDst(__instance.transform.position, player.transform.position);
             if (newDst < dst)
             {
                 target = player.transform;
@@ -60,7 +60,7 @@ public class OtherPatch
     [HarmonyPatch(typeof(V2), "Start")]
     static void Intro(V2 __instance)
     {
-        if (LobbyController.Lobby != null && Tools.Scene == "Level 1-4" && !__instance.secondEncounter)
+        if (LobbyController.Online && Tools.Scene == "Level 1-4" && !__instance.secondEncounter)
             __instance.intro = __instance.longIntro = true;
     }
 
@@ -70,11 +70,11 @@ public class OtherPatch
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(Idol), "SlowUpdate")]
-    static bool IdolsLogic() => LobbyController.Lobby == null || LobbyController.IsOwner;
+    static bool IdolsLogic() => LobbyController.Offline || LobbyController.IsOwner;
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(FerrymanFake), "Update")]
-    static bool FerryLogic() => LobbyController.Lobby == null || LobbyController.IsOwner;
+    static bool FerryLogic() => LobbyController.Offline || LobbyController.IsOwner;
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(FerrymanFake), nameof(FerrymanFake.OnLand))]
@@ -87,13 +87,13 @@ public class OtherPatch
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(EventOnDestroy), "OnDestroy")]
-    static bool Destroy() => LobbyController.Lobby == null || LobbyController.IsOwner;
+    static bool Destroy() => LobbyController.Offline || LobbyController.IsOwner;
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(BossHealthBar), "Awake")]
     static void BossBar(BossHealthBar __instance)
     {
-        if (LobbyController.Lobby == null || !__instance.TryGetComponent<EnemyIdentifier>(out var enemyId)) return;
+        if (LobbyController.Offline || !__instance.TryGetComponent<EnemyIdentifier>(out var enemyId)) return;
 
         if (LobbyController.IsOwner || enemyId.enemyType == EnemyType.Minos || enemyId.enemyType == EnemyType.Leviathan)
         {

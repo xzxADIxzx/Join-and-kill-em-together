@@ -23,7 +23,7 @@ public class InteractiveGuide : CanvasSingleton<InteractiveGuide>
     private void Start()
     {
         Add(0f, 0f, () => LobbyTab.Shown, Settings.LobbyTab);
-        Add(-256f, 456f, () => LobbyController.Lobby != null);
+        Add(-256f, 456f, () => LobbyController.Online);
         Add(-256f, 408f, () => LobbyController.Lobby?.MemberCount > 1);
         Add(0f, 0f, () => !LobbyTab.Shown, Settings.LobbyTab);
 

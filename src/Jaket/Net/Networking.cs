@@ -48,8 +48,8 @@ public class Networking
         // update network logic every tick
         Events.EveryTick += NetworkUpdate;
 
-        Events.OnLoaded += () => WasMultiplayerUsed = LobbyController.Lobby.HasValue;
-        Events.OnLobbyAction += () => WasMultiplayerUsed |= LobbyController.Lobby.HasValue;
+        Events.OnLoaded += () => WasMultiplayerUsed = LobbyController.Online;
+        Events.OnLobbyAction += () => WasMultiplayerUsed |= LobbyController.Online;
 
         Events.OnLoaded += () =>
         {
@@ -138,7 +138,7 @@ public class Networking
     private static void NetworkUpdate()
     {
         // the player isn't connected to the lobby and the logic doesn't need to be updated
-        if (LobbyController.Lobby == null) return;
+        if (LobbyController.Offline) return;
 
         // update the server or client depending on the role of the player
         if (LobbyController.IsOwner)
