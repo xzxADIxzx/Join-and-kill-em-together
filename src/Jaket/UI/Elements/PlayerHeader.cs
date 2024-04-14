@@ -4,6 +4,7 @@ using Steamworks;
 using UnityEngine;
 using UnityEngine.UI;
 
+using static Pal;
 using static Rect;
 
 /// <summary> Header containing nickname and health. </summary>
@@ -33,10 +34,10 @@ public class PlayerHeader
             UIB.Table("Name", canvas, n, table => Text = UIB.Text(Name, table, n));
 
             var h = Size(160f, 4f) with { y = -30f };
-            UIB.Image("Background", canvas, h, Color.black);
+            UIB.Image("Background", canvas, h, black);
 
-            health = UIB.Image("Health", canvas, h, Color.red).rectTransform;
-            overhealth = UIB.Image("Overhealth", canvas, h, Color.green).rectTransform;
+            health = UIB.Image("Health", canvas, h, red).rectTransform;
+            overhealth = UIB.Image("Overhealth", canvas, h, green).rectTransform;
 
             var e = Size(48f, 24f) with { y = -30f };
             UIB.Table("Ellipsis", canvas, e with { Height = 18f }, table => ellipsis = UIB.Text("...", table, e with { y = 8f }));
@@ -46,7 +47,7 @@ public class PlayerHeader
     /// <summary> Updates the health and rotates the canvas towards the camera. </summary>
     public void Update(float hp, bool typing)
     {
-        Text.color = hp > 0f ? Color.white : Color.red;
+        Text.color = hp > 0f ? white : red;
 
         health.localScale = new(Mathf.Min(hp / 100f, 1f), 1f, 1f);
         overhealth.localScale = new(Mathf.Max((hp - 100f) / 100f, 0f), 1f, 1f);

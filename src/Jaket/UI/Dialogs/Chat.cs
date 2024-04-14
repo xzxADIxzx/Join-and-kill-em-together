@@ -12,6 +12,7 @@ using Jaket.Net;
 using Jaket.Sam;
 using Jaket.World;
 
+using static Pal;
 using static Rect;
 
 /// <summary> Front end of the chat, back end implemented via Steamworks. </summary>
@@ -186,7 +187,7 @@ public class Chat : CanvasSingleton<Chat>
         float start = Time.time;
         while (Time.time - start < .4f)
         {
-            Field.textComponent.color = Color.Lerp(Color.green, Color.white, (Time.time - start) * 2.5f);
+            Field.textComponent.color = Color.Lerp(green, white, (Time.time - start) * 2.5f);
             yield return null;
         }
     }

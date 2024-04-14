@@ -6,6 +6,7 @@ using HarmonyLib;
 using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net;
+using Jaket.Sprays;
 using Jaket.World;
 
 /// <summary> Plugin main class. Essentially only initializes all other components. </summary>
@@ -61,6 +62,7 @@ public class Plugin : BaseUnityPlugin
         World.World.Load();
         WorldActionsList.Load();
         Movement.Load();
+        SprayManager.Load();
 
         UI.UIB.Load();
         UI.UI.Load();
