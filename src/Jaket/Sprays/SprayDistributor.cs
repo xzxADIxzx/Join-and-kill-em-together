@@ -10,6 +10,7 @@ using UnityEngine;
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net;
+using Jaket.UI.Dialogs;
 
 /// <summary> Class responsible for distributing sprays between clients. </summary>
 public static class SprayDistributor
@@ -86,6 +87,8 @@ public static class SprayDistributor
     /// <summary> Loads a spray from the client or server. </summary>
     public static void Download(Reader r)
     {
+        if (!SpraySettings.Enabled) return;
+
         var id = r.Id(); // id of the spray owner
         if (Streams.TryGetValue(id, out var stream)) // data packet
         {
