@@ -43,7 +43,7 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
 
     private void Start()
     {
-        UIB.Table("Settings", "sprays.name", transform, Size(664f, 760f), table =>
+        UIB.Table("Settings", "#sprays.name", transform, Size(664f, 760f), table =>
         {
             UIB.IconButton("X", table, Icon(304f, 28f), red, clicked: Toggle);
 
@@ -52,8 +52,8 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
 
             preview = UIB.Image("Preview", sprays, Btn(0f, 456f) with { Height = 320f }, type: Image.Type.Filled);
 
-            UIB.Button("sprays.refresh", sprays, Btn(0f, 644f), clicked: Refresh);
-            UIB.Button("sprays.open", sprays, Btn(0f, 692f), clicked: OpenFolder);
+            UIB.Button("#sprays.refresh", sprays, Btn(0f, 644f), clicked: Refresh);
+            UIB.Button("#sprays.open", sprays, Btn(0f, 692f), clicked: OpenFolder);
         });
         Rebuild();
     }

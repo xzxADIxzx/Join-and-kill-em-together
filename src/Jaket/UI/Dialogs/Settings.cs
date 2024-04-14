@@ -111,7 +111,7 @@ public class Settings : CanvasSingleton<Settings>
     private void Start()
     {
         UIB.Shadow(transform);
-        UIB.Table("General", "#settings.general", transform, Tlw(16f + 280f / 2f, 280f), table =>
+        UIB.Table("General", "#settings.general", transform, Tlw(16f + 328f / 2f, 328f), table =>
         {
             UIB.Button("#settings.reset", table, Btn(0f, 68f), clicked: ResetGeneral);
 
@@ -139,8 +139,10 @@ public class Settings : CanvasSingleton<Settings>
             {
                 pm.SetBool("jaket.disable-freeze", DisableFreezeFrames = _);
             }).isOn = DisableFreezeFrames;
+
+            UIB.Button("#settings.sprays", table, Btn(0f, 300f), clicked: SpraySettings.Instance.Toggle);
         });
-        UIB.Table("Controls", "#settings.controls", transform, Tlw(312f + 576f / 2f, 576f), table =>
+        UIB.Table("Controls", "#settings.controls", transform, Tlw(360f + 576f / 2f, 576f), table =>
         {
             UIB.Button("#settings.reset", table, Btn(0f, 68f), clicked: ResetControls);
 

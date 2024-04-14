@@ -73,6 +73,9 @@ public class SprayManager
         CurrentSpray = spray;
         Uploaded = false;
 
+        Cache.Remove(Networking.LocalPlayer.Id);
+        Cache.Add(Networking.LocalPlayer.Id, CurrentSpray);
+
         if (LobbyController.Online) Bundle.Hud("sprays.info");
     }
 
