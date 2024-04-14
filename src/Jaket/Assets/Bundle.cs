@@ -27,6 +27,22 @@ public class Bundle
     /// <summary> Loads the translation specified in the settings. </summary>
     public static void Load()
     {
+        var root = Path.GetDirectoryName(Plugin.Instance.Info.Location);
+        #region r2mm fix
+
+        var bundles = Path.Combine(root, "bundles");
+        if (!Directory.Exists(bundles)) Directory.CreateDirectory(bundles);
+
+        foreach (var prop in Directory.EnumerateFiles(root, "*.properties"))
+        {
+            var dest = Path.Combine(bundles, Path.GetFileName(prop));
+
+            File.Delete(dest);
+            File.Move(prop, dest);
+        }
+
+        #endregion
+
         var locale = PrefsManager.Instance.GetString("jaket.locale", "en");
         int localeId = Array.IndexOf(Codes, locale);
 
@@ -36,7 +52,7 @@ public class Bundle
             return;
         }
 
-        var file = Path.Combine(Path.GetDirectoryName(Plugin.Instance.Info.Location), "bundles", $"{Files[localeId]}.properties");
+        var file = Path.Combine(root, "bundles", $"{Files[localeId]}.properties");
         string[] lines;
         try
         {

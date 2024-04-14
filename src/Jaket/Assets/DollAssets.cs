@@ -1,6 +1,7 @@
 namespace Jaket.Assets;
 
 using System.IO;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.Events;
@@ -27,6 +28,7 @@ public class DollAssets
 
     /// <summary> Font used by the mod. Differs from the original in support of Cyrillic alphabet. </summary>
     public static Font Font;
+    public static TMP_FontAsset FontTMP;
 
     /// <summary> Shader used by the game for materials. </summary>
     public static Shader Shader;
@@ -103,6 +105,7 @@ public class DollAssets
 
         // but the font must be loaded immediately, because it is needed to build the interface
         Font = Bundle.LoadAsset<Font>("font.ttf");
+        FontTMP = TMP_FontAsset.CreateFontAsset(Font);
     }
 
     /// <summary> Finds and loads an assets bundle. </summary>

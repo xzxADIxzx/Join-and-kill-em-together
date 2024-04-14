@@ -30,6 +30,13 @@ public class UIB
     /// <summary> Loads the resources needed for interface. </summary>
     public static void Load()
     {
+        // replace the font in a few in-game fragments
+        Events.OnLoaded += () => Events.Post(() =>
+        {
+            HudMessageReceiver.Instance.text.font = DollAssets.FontTMP;
+            NewMovement.Instance.youDiedText.font = DollAssets.Font;
+        });
+
         // find all sprites
         var all = Tools.ResFind<Sprite>();
         Sprite Find(string name) => Array.Find(all, s => s.name == name);
