@@ -35,6 +35,7 @@ public class Spray : MonoBehaviour
         transform.position = position + direction.normalized * .01f;
         transform.rotation = Quaternion.LookRotation(direction) * Quaternion.Euler(0, 180, 0);
 
+        AudioSource.PlayClipAtPoint(SprayManager.puh, position);
         SpawnDust();
     }
 
