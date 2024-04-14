@@ -1,9 +1,13 @@
 namespace Jaket.UI.Dialogs;
 
+using Steamworks;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 using Jaket.Assets;
+using Jaket.Net;
 using Jaket.Sprays;
 using Jaket.World;
 
@@ -54,6 +58,11 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
 
             UIB.Button("#sprays.refresh", sprays, Btn(0f, 644f), clicked: Refresh);
             UIB.Button("#sprays.open", sprays, Btn(0f, 692f), clicked: OpenFolder);
+
+            UIB.Toggle("#sprays.enabled", players, Tgl(0f, 696f), 16, _ =>
+            {
+                pm.SetBool("jaket.sprays.enabled", Enabled = _);
+            }).isOn = Enabled;
         });
         Rebuild();
     }
@@ -74,6 +83,8 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
     /// <summary> Rebuilds the spray settings to update the list of sprays and players. </summary>
     public void Rebuild()
     {
+        #region left side
+
         for (int i = 3; i < sprays.childCount; i++) Destroy(sprays.GetChild(i).gameObject);
         for (int i = 0; i < Mathf.Min(6, SprayManager.Loaded.Count); i++)
         {
@@ -98,6 +109,46 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
 
         preview.sprite = SprayManager.CurrentSpray != null ? SprayManager.CurrentSpray.Sprite : UIB.Checkmark;
         preview.preserveAspect = true;
+
+        #endregion
+        #region right side
+
+        for (int i = 1; i < players.childCount; i++) Destroy(players.GetChild(i).gameObject);
+        if ((LobbyController.Lobby?.MemberCount ?? 0) <= 1)
+        {
+            UIB.Text("#sprays.alone", players, Size(320f, 48f), grey);
+            return;
+        }
+
+        List<Friend> whitelist = new(), blacklist = new();
+        foreach (var member in LobbyController.Lobby?.Members) (Administration.BannedSprays.Contains(member.Id) ? blacklist : whitelist).Add(member);
+
+        float y = -20f;
+        void BuildList(string name, List<Friend> list, Color color, Action<Friend> clicked)
+        {
+            if (list.Count == 0) return;
+            UIB.Text(name, players, Btn(0f, y += 48f), align: TextAnchor.MiddleLeft);
+
+            foreach (var member in list)
+            {
+                var sucks = member;
+                UIB.Button(member.Name, players, Btn(0f, y += 48f), color, clicked: () => clicked(sucks));
+            }
+        }
+        BuildList("WHITELIST:", whitelist, green, member =>
+        {
+            Administration.BannedSprays.Add(member.Id);
+            Rebuild();
+            if (member.IsMe) Bundle.Hud("sprays.blacklist-yourself");
+        });
+        BuildList("BLACKLIST:", blacklist, red, member =>
+        {
+            Administration.BannedSprays.Remove(member.Id);
+            Rebuild();
+            if (member.IsMe) Bundle.Hud("sprays.whitelist-yourself");
+        });
+
+        #endregion
     }
 
     /// <summary> Updates the list of the loaded sprays and rebuilds the menu. </summary>

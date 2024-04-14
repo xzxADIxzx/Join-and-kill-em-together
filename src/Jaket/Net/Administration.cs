@@ -19,6 +19,8 @@ public class Administration
 
     /// <summary> List of banned player ids. </summary>
     public static List<SteamId> Banned = new();
+    /// <summary> List of banned player sprays. </summary>
+    public static List<SteamId> BannedSprays = new();
 
     public static Dictionary<ulong, int> CommonBullets = new();
     public static Tree EntityBullets = new();

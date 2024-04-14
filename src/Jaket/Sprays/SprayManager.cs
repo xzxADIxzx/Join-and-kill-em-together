@@ -42,6 +42,9 @@ public class SprayManager
         {
             if (LobbyController.Offline) Cache.Clear();
             else SprayDistributor.UploadLocal();
+
+            foreach (var spray in Sprays.Values)
+                if (spray != null) spray.Lifetime = 20f;
         };
         Events.OnLobbyEntered += () =>
         {
