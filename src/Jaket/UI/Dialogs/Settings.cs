@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using Jaket.Assets;
 using Jaket.World;
 
+using static Pal;
 using static Rect;
 
 /// <summary> Global mod settings not related to the lobby. </summary>
@@ -212,7 +213,7 @@ public class Settings : CanvasSingleton<Settings>
         this.text = text;
         this.background = background;
 
-        background.color = new(1f, .7f, .1f);
+        background.color = orange;
         Rebinding = true;
     }
 

@@ -82,7 +82,7 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
             var r = Btn(0f, 28f + 48f * i);
 
             if (spray.Name == SprayManager.CurrentSpray?.Name)
-                UIB.Button(n, sprays, r, new(.2f, .8f, .2f), align: TextAnchor.MiddleLeft);
+                UIB.Button(n, sprays, r, green, align: TextAnchor.MiddleLeft);
             else if (spray.IsValid())
                 UIB.Button(n, sprays, r, align: TextAnchor.MiddleLeft, clicked: () =>
                 {
@@ -92,9 +92,9 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
                     Current = spray.Name;
                 });
             else
-                UIB.Button(n, sprays, r, new(1f, .2f, .1f), align: TextAnchor.MiddleLeft, clicked: () => Bundle.Hud("sprays.invalid"));
+                UIB.Button(n, sprays, r, red, align: TextAnchor.MiddleLeft, clicked: () => Bundle.Hud("sprays.invalid"));
         }
-        if (SprayManager.Loaded.Count < 6) UIB.Button("+", sprays, Btn(0f, 28f + 48f * SprayManager.Loaded.Count), new(.8f, .8f, .8f), clicked: OpenFolder);
+        if (SprayManager.Loaded.Count < 6) UIB.Button("+", sprays, Btn(0f, 28f + 48f * SprayManager.Loaded.Count), grey, clicked: OpenFolder);
 
         preview.sprite = SprayManager.CurrentSpray != null ? SprayManager.CurrentSpray.Sprite : UIB.Checkmark;
         preview.preserveAspect = true;

@@ -74,7 +74,7 @@ public class LobbyList : CanvasSingleton<LobbyList>
                 var name = " [MULTIKILL] " + lobby.GetData("lobbyName");
                 var r = Btn(0f, y += 48f) with { Width = 624f };
 
-                UIB.Button(name, content, r, new(1f, .2f, .1f), 24, TextAnchor.MiddleLeft, () => Bundle.Hud("lobby.mk"));
+                UIB.Button(name, content, r, red, 24, TextAnchor.MiddleLeft, () => Bundle.Hud("lobby.mk"));
             }
             else
             {
