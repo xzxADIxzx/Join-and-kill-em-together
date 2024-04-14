@@ -29,9 +29,10 @@ public class Spray : MonoBehaviour
 
     private void Start()
     {
-        UIB.WorldCanvas("Canvas", transform, Vector3.zero, build: canvas => image = UIB.Image("Image", canvas, new(0f, 0f, 256f, 256f)));
+        UIB.WorldCanvas("Canvas", transform, Vector3.zero, build: canvas => image = UIB.Image("Image", canvas, new(0f, 0f, 256f, 256f), type: Image.Type.Filled));
         UpdateSprite();
 
+        image.preserveAspect = true;
         transform.position = position + direction.normalized * .01f;
         transform.rotation = Quaternion.LookRotation(direction) * Quaternion.Euler(0, 180, 0);
 

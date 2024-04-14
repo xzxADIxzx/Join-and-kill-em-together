@@ -49,7 +49,7 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
             sprays = UIB.Rect("Sprays", table, new(-164f, -20f, 320f, 720f));
             players = UIB.Rect("Players", table, new(164f, -20f, 320f, 720f));
 
-            preview = UIB.Image("Preview", sprays, Btn(0f, 456f) with { Height = 320f });
+            preview = UIB.Image("Preview", sprays, Btn(0f, 456f) with { Height = 320f }, type: Image.Type.Filled);
 
             UIB.Button("sprays.refresh", sprays, Btn(0f, 644f), clicked: Refresh);
             UIB.Button("sprays.open", sprays, Btn(0f, 692f), clicked: OpenFolder);
@@ -96,6 +96,7 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
         if (SprayManager.Loaded.Count < 6) UIB.Button("+", sprays, Btn(0f, 28f + 48f * SprayManager.Loaded.Count), new(.8f, .8f, .8f), clicked: OpenFolder);
 
         preview.sprite = SprayManager.CurrentSpray != null ? SprayManager.CurrentSpray.Sprite : UIB.Checkmark;
+        preview.preserveAspect = true;
     }
 
     /// <summary> Updates the list of the loaded sprays and rebuilds the menu. </summary>
