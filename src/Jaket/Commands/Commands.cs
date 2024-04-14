@@ -23,7 +23,7 @@ public class Commands
         {
             Handler.Commands.ForEach(command =>
             {
-                string args = command.Args == null ? "" : $" [#CCCCCC]{command.Args}[]";
+                string args = command.Args == null ? "" : $" [#BBBBBB]{command.Args}[]";
                 chat.Receive($"[14]* /{command.Name}{args} - {command.Desc}[]", true);
             });
         });

@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using Jaket.Net.Types;
 using Jaket.UI;
 
+using static Pal;
 using static Rect;
 
 /// <summary> Interface element displaying information about the player such as name, health and railgun charge. </summary>
@@ -30,10 +31,10 @@ public class PlayerInfoEntry : MonoBehaviour
         railc = UIB.Text("", transform, t, size: 32, align: TextAnchor.UpperRight);
 
         var h = Size(540f - 16f, 8f) with { y = -16f };
-        UIB.Image("Background", transform, h, Color.black);
+        UIB.Image("Background", transform, h, black);
 
-        health = UIB.Image("Health", transform, h, Color.red).rectTransform;
-        overhealth = UIB.Image("Overhealth", transform, h, Color.green).rectTransform;
+        health = UIB.Image("Health", transform, h, red).rectTransform;
+        overhealth = UIB.Image("Overhealth", transform, h, green).rectTransform;
     }
 
     private void Update()
@@ -41,7 +42,7 @@ public class PlayerInfoEntry : MonoBehaviour
         float hp = player.Health;
         int charge = Mathf.Min(10, player.RailCharge);
 
-        pname.color = hp > 0f ? Color.white : Color.red;
+        pname.color = hp > 0f ? white : red;
         railc.text = $"<b><color=#0080FF>ϟ</color></b>[<color=#0080FF>{new string('I', charge)}</color><color=#003060>{new string('-', 10 - charge)}</color>]";
 
         health.localScale = new(Mathf.Min(hp / 100f, 1f), 1f, 1f);

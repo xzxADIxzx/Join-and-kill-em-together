@@ -7,6 +7,7 @@ using Jaket.Assets;
 using Jaket.Sprays;
 using Jaket.World;
 
+using static Pal;
 using static Rect;
 
 /// <summary> Global spray settings not related to the lobby. </summary>
@@ -44,7 +45,7 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
     {
         UIB.Table("Settings", "sprays.name", transform, Size(664f, 760f), table =>
         {
-            UIB.IconButton("X", table, Icon(304f, 28f), new(1f, .2f, .1f), clicked: Toggle);
+            UIB.IconButton("X", table, Icon(304f, 28f), red, clicked: Toggle);
 
             sprays = UIB.Rect("Sprays", table, new(-164f, -20f, 320f, 720f));
             players = UIB.Rect("Players", table, new(164f, -20f, 320f, 720f));

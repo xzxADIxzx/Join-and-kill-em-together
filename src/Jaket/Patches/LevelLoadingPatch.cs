@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 using Jaket.Net;
 
+using static Jaket.UI.Pal;
+
 [HarmonyPatch]
 public class LevelLoadingPatch
 {
@@ -43,7 +45,7 @@ public class RankPatch
     {
         if (Networking.WasMultiplayerUsed)
         {
-            __instance.totalRank.transform.parent.GetComponent<Image>().color = new(1f, .4f, .8f);
+            __instance.totalRank.transform.parent.GetComponent<Image>().color = pink;
             __instance.extraInfo.text += "- <color=#FF66CC>MULTIPLAYER USED</color>\n";
         }
     }
