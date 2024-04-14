@@ -109,6 +109,7 @@ public static class SprayDistributor
                 Log.Error("Stream's initial packet was lost!");
                 return;
             }
+            Log.Info("Downloading spray#" + id);
 
             int length = r.Int();
             Streams.Add(id, new(Marshal.AllocHGlobal(length), length));

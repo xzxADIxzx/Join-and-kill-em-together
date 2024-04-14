@@ -3,7 +3,9 @@ namespace Jaket.UI.Elements;
 using UnityEngine;
 using UnityEngine.UI;
 
+using Jaket.Net;
 using Jaket.Sprays;
+using Jaket.UI.Dialogs;
 
 /// <summary> Player-created spray containing an image, disappears in a few seconds after appearing. </summary>
 public class Spray : MonoBehaviour
@@ -57,7 +59,9 @@ public class Spray : MonoBehaviour
     }
 
     /// <summary> Updates the image's sprite. </summary>
-    public void UpdateSprite() => image.sprite = SprayManager.Cache.TryGetValue(owner, out var spray) ? spray.Sprite : UIB.Checkmark;
+    public void UpdateSprite() => image.sprite =
+        SprayManager.Cache.TryGetValue(owner, out var spray) && SpraySettings.Enabled && !Administration.BannedSprays.Contains(owner)
+        ? spray.Sprite : UIB.Checkmark;
 
     /// <summary> Spawns white dust particles. </summary>
     public void SpawnDust(int amount = 3, float scale = 1f)

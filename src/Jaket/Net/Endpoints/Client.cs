@@ -93,11 +93,7 @@ public class Client : Endpoint, IConnectionManager
 
     public void OnConnecting(ConnectionInfo info) => Log.Info("[Client] Connecting...");
 
-    public void OnConnected(ConnectionInfo info)
-    {
-        Log.Info("[Client] Connected");
-        SprayDistributor.UploadLocal(); // start uploading the spray even before loading the level to win a some time
-    }
+    public void OnConnected(ConnectionInfo info) => Log.Info("[Client] Connected");
 
     public void OnDisconnected(ConnectionInfo info) => Log.Info("[Client] Disconnected");
 
