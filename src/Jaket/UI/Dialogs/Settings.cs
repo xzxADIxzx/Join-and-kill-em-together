@@ -140,12 +140,12 @@ public class Settings : CanvasSingleton<Settings>
                 pm.SetBool("jaket.disable-freeze", DisableFreezeFrames = _);
             }).isOn = DisableFreezeFrames;
         });
-        UIB.Table("Controls", "#settings.controls", transform, Tlw(312f + 672f / 2f, 672f), table =>
+        UIB.Table("Controls", "#settings.controls", transform, Tlw(312f + 576f / 2f, 576f), table =>
         {
             UIB.Button("#settings.reset", table, Btn(0f, 68f), clicked: ResetControls);
 
             for (int i = 0; i < Keybinds.Length; i++)
-                UIB.KeyButton(Keybinds[i], CurrentKeys[i], table, Btn(0f, 116f + i * 48f));
+                UIB.KeyButton(Keybinds[i], CurrentKeys[i], table, Tgl(0f, 112f + i * 40f));
         });
 
         Version.Label(transform);
