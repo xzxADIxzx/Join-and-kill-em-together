@@ -42,8 +42,8 @@ public class SprayFile
     }
 
     /// <summary> Whether the image fits the max size. </summary>
-    public bool CheckSize() => new FileInfo(Path).Length <= MAX_IMAGE_SIZE;
+    public bool IsValid() => File.Exists(Path) ? new FileInfo(Path).Length <= MAX_IMAGE_SIZE : false;
 
     /// <summary> Shortens the name of the file. </summary>
-    public string ShortName(int max = 16) => Name.Length > max ? Name.Substring(0, max - 3) + "..." : Name;
+    public string ShortName(int max = 21) => Name.Length > max ? Name.Substring(0, max - 3) + "..." : Name;
 }

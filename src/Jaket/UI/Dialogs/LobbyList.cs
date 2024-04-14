@@ -5,8 +5,6 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-using Color = UnityEngine.Color;
-
 using Jaket.Assets;
 using Jaket.Net;
 using Jaket.World;

@@ -6,6 +6,7 @@ using UnityEngine;
 
 using Jaket.Assets;
 using Jaket.Net;
+using Jaket.UI.Dialogs;
 using Jaket.UI.Elements;
 
 /// <summary> Saves sprays of players and loads sprays of the local player. </summary>
@@ -15,6 +16,8 @@ public class SprayManager
     public static SprayFile CurrentSpray;
     /// <summary> Other sprays located in the sprays folder. </summary>
     public static List<SprayFile> Loaded = new();
+    /// <summary> Folder containing the local sprays. </summary>
+    public static string Folder => Path.Combine(Path.GetDirectoryName(Plugin.Instance.Info.Location), "sprays");
     /// <summary> Whether the current spray has been uploaded. </summary>
     public static bool Uploaded;
 
@@ -26,7 +29,8 @@ public class SprayManager
     /// <summary> Subscribes to various events to synchronize sprays or clear cache. </summary>
     public static void Load()
     {
-        LoadFileSprays();
+        LoadSprayFiles();
+        SpraySettings.Load();
 
         // clear the cache in offline game & upload the current spray if it was changed
         Events.OnLoaded += () =>
@@ -45,18 +49,17 @@ public class SprayManager
     }
 
     /// <summary> Loads sprays from the sprays folder. </summary>
-    public static void LoadFileSprays()
+    public static void LoadSprayFiles()
     {
         Loaded.Clear();
 
-        var folder = Path.Combine(Path.GetDirectoryName(Plugin.Instance.Info.Location), "sprays");
+        var folder = Folder;
         if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
 
         else foreach (var file in Directory.EnumerateFiles(folder))
                 if (SprayFile.SUPPORTED.Contains(Path.GetExtension(file))) Loaded.Add(new(file));
 
-        Log.Debug($"Loaded {Loaded.Count} sprays: {string.Join(", ", Loaded)}");
-
+        Log.Debug($"Loaded {Loaded.Count} sprays: {string.Join(", ", Loaded.ConvertAll(s => s.Name))}");
     }
 
     /// <summary> Sets the current spray. </summary>
@@ -64,6 +67,8 @@ public class SprayManager
     {
         CurrentSpray = spray;
         Uploaded = false;
+
+        if (LobbyController.Online) Bundle.Hud("sprays.info");
     }
 
     /// <summary> Spawns someone's spray in the given position. </summary>
@@ -71,7 +76,7 @@ public class SprayManager
     {
         if (Sprays.TryGetValue(owner, out var spray))
         {
-            spray.Lifetime = 19.5f;
+            spray.Lifetime = 18f;
             Sprays.Remove(owner);
         }
         if (!Cache.ContainsKey(owner))
