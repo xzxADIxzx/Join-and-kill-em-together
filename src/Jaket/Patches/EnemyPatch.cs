@@ -21,7 +21,7 @@ public class EnemyPatch
 
     [HarmonyPrefix]
     [HarmonyPatch(nameof(EnemyIdentifier.Death), typeof(bool))]
-    static void Death(EnemyIdentifier __instance) => Enemies.SyncDeath(__instance);
+    static void Death(EnemyIdentifier __instance, bool fromExplosion) => Enemies.SyncDeath(__instance);
 
     [HarmonyPostfix]
     [HarmonyPatch("UpdateTarget")]
