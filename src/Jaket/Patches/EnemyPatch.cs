@@ -20,7 +20,7 @@ public class EnemyPatch
         Enemies.SyncDamage(__instance, ref multiplier, tryForExplode, critMultiplier, sourceWeapon);
 
     [HarmonyPrefix]
-    [HarmonyPatch(nameof(EnemyIdentifier.Death))]
+    [HarmonyPatch(nameof(EnemyIdentifier.Death), typeof(bool))]
     static void Death(EnemyIdentifier __instance) => Enemies.SyncDeath(__instance);
 
     [HarmonyPostfix]

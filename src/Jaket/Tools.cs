@@ -27,7 +27,7 @@ public class Tools
     public static GameObject Create(string name, Transform parent = null)
     {
         GameObject obj = new(name);
-        obj.transform.SetParent(parent ?? Plugin.Instance.transform, false);
+        obj.transform.SetParent(parent ?? Plugin.Instance?.transform, false);
         return obj;
     }
     public static T Create<T>(string name, Transform parent = null) where T : Component => Create(name, parent).AddComponent<T>();

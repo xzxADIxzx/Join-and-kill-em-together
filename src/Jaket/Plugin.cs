@@ -2,6 +2,8 @@
 
 using BepInEx;
 using HarmonyLib;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 using Jaket.Assets;
 using Jaket.Content;
@@ -9,22 +11,30 @@ using Jaket.Net;
 using Jaket.Sprays;
 using Jaket.World;
 
-/// <summary> Plugin main class. Essentially only initializes all other components. </summary>
+/// <summary> Bootloader class needed to avoid destroying the mod by the game. </summary>
 [BepInPlugin("xzxADIxzx.Jaket", "Jaket", Version.CURRENT)]
-public class Plugin : BaseUnityPlugin
+public class PluginLoader : BaseUnityPlugin
+{
+    private void Awake() => SceneManager.sceneLoaded += (_, _) =>
+    {
+        if (Plugin.Instance == null) Tools.Create<Plugin>("Jaket").Location = Info.Location;
+    };
+}
+
+/// <summary> Plugin main class. Essentially only initializes all other components. </summary>
+public class Plugin : MonoBehaviour
 {
     /// <summary> Plugin instance available everywhere. </summary>
     public static Plugin Instance;
     /// <summary> Whether the plugin has been initialized. </summary>
-    public static bool Initialized;
+    public bool Initialized;
+    /// <summary> Path to the dll file of the mod. </summary>
+    public string Location;
 
-    private void Awake()
+    private void Awake() => DontDestroyOnLoad(Instance = this); // save the instance of the mod for later use and prevent it from being destroyed by the game
+
+    private void Start()
     {
-        // save an instance for later use
-        Instance = this;
-        // rename the game object for a more presentable look
-        name = "Jaket";
-
         // create output points for logs
         Log.Load();
         // note the fact that the mod is loading
@@ -38,8 +48,7 @@ public class Plugin : BaseUnityPlugin
 
     private void OnApplicationQuit() => Log.Flush();
 
-    /// <summary> Initializes the plugin if it has not already been initialized. </summary>
-    public void Init()
+    private void Init()
     {
         if (Initialized) return;
 

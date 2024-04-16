@@ -27,7 +27,7 @@ public class Bundle
     /// <summary> Loads the translation specified in the settings. </summary>
     public static void Load()
     {
-        var root = Path.GetDirectoryName(Plugin.Instance.Info.Location);
+        var root = Path.GetDirectoryName(Plugin.Instance.Location);
         #region r2mm fix
 
         var bundles = Path.Combine(root, "bundles");
