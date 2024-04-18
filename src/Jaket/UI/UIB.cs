@@ -35,6 +35,13 @@ public class UIB
         {
             HudMessageReceiver.Instance.text.font = DollAssets.FontTMP;
             NewMovement.Instance.youDiedText.font = DollAssets.Font;
+
+            // fix the sorting order to display hud messages on top of other interface fragments
+            if (!HudMessageReceiver.Instance.TryGetComponent<Canvas>(out _)) Component<Canvas>(HudMessageReceiver.Instance.gameObject, canvas =>
+            {
+                canvas.overrideSorting = true;
+                canvas.sortingOrder = 2000;
+            });
         });
 
         // find all sprites
@@ -121,7 +128,7 @@ public class UIB
     /// <summary> Creates a canvas that is drawn in world space. </summary>
     public static Transform WorldCanvas(string name, Transform parent, Vector3 position, float scale = .02f, Action<Transform> build = null)
     {
-        var canvas = Canvas(name, parent, -1, 0f, RenderMode.WorldSpace, ScaleMode.ConstantPixelSize);
+        var canvas = Canvas(name, parent, 0, 0f, RenderMode.WorldSpace, ScaleMode.ConstantPixelSize);
         canvas.localPosition = position;
         canvas.localScale = Vector3.one * scale;
 
