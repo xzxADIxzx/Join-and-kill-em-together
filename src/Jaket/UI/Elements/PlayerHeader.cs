@@ -31,7 +31,7 @@ public class PlayerHeader
         canvas = UIB.WorldCanvas("Header", parent, new(0f, 5f, 0f), build: canvas =>
         {
             var n = Size(width, 40f);
-            UIB.Table("Name", canvas, n, table => Text = UIB.Text(Name, table, n));
+            UIB.Table("Name", canvas, n, table => Text = UIB.Text(Name, table, n.ToText() * 10f, size: 240));
 
             var h = Size(160f, 4f) with { y = -30f };
             UIB.Image("Background", canvas, h, black);

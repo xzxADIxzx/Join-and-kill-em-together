@@ -67,7 +67,7 @@ public class SprayManager
         else foreach (var file in Directory.EnumerateFiles(folder))
                 if (SprayFile.SUPPORTED.Contains(Path.GetExtension(file))) Loaded.Add(new(file));
 
-        Log.Debug($"Loaded {Loaded.Count} sprays: {string.Join(", ", Loaded.ConvertAll(s => s.Name))}");
+        Log.Info($"Loaded {Loaded.Count} sprays: {string.Join(", ", Loaded.ConvertAll(s => s.Name))}");
     }
 
     /// <summary> Sets the current spray. </summary>

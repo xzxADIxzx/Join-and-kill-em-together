@@ -40,4 +40,7 @@ public struct Rect
 
     /// <summary> Creates a new rect at the center of the current with the same size. </summary>
     public readonly Rect ToText() => new(0f, 1f, Width, Height);
+
+    public static Rect operator *(Rect rect, float mul) => rect with { Width = rect.Width * mul, Height = rect.Height * mul };
+    public static Rect operator /(Rect rect, float div) => rect with { Width = rect.Width / div, Height = rect.Height / div };
 }
