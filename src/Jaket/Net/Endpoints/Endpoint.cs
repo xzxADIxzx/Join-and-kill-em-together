@@ -39,7 +39,7 @@ public abstract class Endpoint
     /// <summary> Forwards data to clients. </summary>
     public void Redirect(Reader data, Connection ignore) => Networking.EachConnection(con =>
     {
-        if (con != ignore) con.SendMessage(data.mem, data.Length);
+        if (con != ignore) Tools.Send(con, data.mem, data.Length);
     });
 
     /// <summary> Handles the packet and calls the corresponding listener. </summary>
@@ -50,6 +50,7 @@ public abstract class Endpoint
 
         // find the required listener and transfer control to it, all it has to do is read the payload
         if (listeners.TryGetValue(type, out var listener)) listener(con, sender, r);
+        Stats.Read += r.Length;
     }
     /// <summary> Handles the packet from unmanaged memory. </summary>
     public void Handle(Connection con, SteamId sender, IntPtr data, int size) => Reader.Read(data, size, r => Handle(con, sender, r));

@@ -214,9 +214,9 @@ public class Networking
     public static void Redirect(IntPtr data, int size)
     {
         if (LobbyController.IsOwner)
-            EachConnection(con => con.SendMessage(data, size));
+            EachConnection(con => Tools.Send(con, data, size));
         else
-            Client.Manager.Connection.SendMessage(data, size);
+            Tools.Send(Client.Manager.Connection, data, size);
     }
 
     /// <summary> Allocates memory, writes the packet there and sends it. </summary>

@@ -1,13 +1,29 @@
 namespace Jaket;
 
 using HarmonyLib;
+using Steamworks.Data;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.Events;
 
+using Jaket.IO;
+
 /// <summary> Set of different tools for simplifying life and systematization of code. </summary>
 public class Tools
 {
+    /// <summary> Just a shortcut needed in order to track statistics and errors. </summary>
+    public static void Send(Connection? con, System.IntPtr data, int size)
+    {
+        if (con == null)
+        {
+            Log.Warning("An attempt to send data to the connection equal to null.");
+            return;
+        }
+
+        con.Value.SendMessage(data, size);
+        Stats.Write += size;
+    }
+
     #region scene
 
     /// <summary> Name of the current scene. </summary>
@@ -39,7 +55,7 @@ public class Tools
     #endregion
     #region resources
 
-    /// <summary> Just shortcut. </summary>
+    /// <summary> Just a shortcut. </summary>
     public static T[] ResFind<T>() where T : Object => Resources.FindObjectsOfTypeAll<T>();
 
     /// <summary> Iterates all objects of the type that predicate for the criterion. </summary>
@@ -48,7 +64,7 @@ public class Tools
         foreach (var item in ResFind<T>()) if (pred(item)) cons(item);
     }
 
-    /// <summary> Just shortcut. </summary>
+    /// <summary> Just a shortcut. </summary>
     public static T ObjFind<T>() where T : Object => Object.FindObjectOfType<T>();
     public static GameObject ObjFind(string name) => GameObject.Find(name);
 

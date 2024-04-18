@@ -43,7 +43,7 @@ public class Administration
         Networking.Send(PacketType.Kick, null, (data, size) =>
         {
             var con = Networking.FindCon(id);
-            con?.SendMessage(data, size);
+            Tools.Send(con, data, size);
             con?.Flush();
             con?.Close();
         });

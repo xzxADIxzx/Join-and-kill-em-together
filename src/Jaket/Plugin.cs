@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 
 using Jaket.Assets;
 using Jaket.Content;
+using Jaket.IO;
 using Jaket.Net;
 using Jaket.Sprays;
 using Jaket.World;
@@ -54,6 +55,7 @@ public class Plugin : MonoBehaviour
 
         // notify players about the availability of an update so that they no longer whine to me about something not working
         Version.Check4Update();
+        Stats.StartRecord();
 
         Commands.Commands.Load();
         Bundle.Load();

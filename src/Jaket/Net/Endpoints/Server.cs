@@ -198,7 +198,7 @@ public class Server : Endpoint, ISocketManager
     public void OnConnected(Connection con, ConnectionInfo info)
     {
         Log.Info($"[Server] {info.Identity.SteamId} connected");
-        Networking.Send(PacketType.LoadLevel, World.Instance.WriteData, (data, size) => con.SendMessage(data, size));
+        Networking.Send(PacketType.LoadLevel, World.Instance.WriteData, (data, size) => Tools.Send(con, data, size));
     }
 
     public void OnDisconnected(Connection con, ConnectionInfo info) => Log.Info($"[Server] {info.Identity.SteamId} disconnected");
