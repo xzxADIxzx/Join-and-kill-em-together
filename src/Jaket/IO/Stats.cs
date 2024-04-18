@@ -14,6 +14,7 @@ public class Stats
     public static void StartRecord() => Events.EverySecond += () =>
     {
         LastWrite = Write; LastRead = Read;
+        Write = Read = 0;
 
         if (Write > PeakWrite) PeakWrite = Write;
         if (Read > PeakRead) PeakRead = Read;
