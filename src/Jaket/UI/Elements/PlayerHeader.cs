@@ -32,6 +32,7 @@ public class PlayerHeader
         {
             var n = Size(width, 40f);
             UIB.Table("Name", canvas, n, table => Text = UIB.Text(Name, table, n.ToText() * 10f, size: 240));
+            Text.transform.localScale /= 10f;
 
             var h = Size(160f, 4f) with { y = -30f };
             UIB.Image("Background", canvas, h, black);

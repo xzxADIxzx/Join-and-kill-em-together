@@ -84,8 +84,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
             var canvas = screen.GetChild(0);
             foreach (var name in toDestroy) Tools.Destroy(canvas.Find(name)?.gameObject);
 
-            UIB.Text(text, canvas, Size(964f, 964f), size: size, align: def ? TextAnchor.MiddleCenter : TextAnchor.UpperLeft)
-               .transform.localScale = Vector3.one / 8f;
+            UIB.Text(text, canvas, Size(964f, 964f), size: size, align: def ? TextAnchor.MiddleCenter : TextAnchor.UpperLeft).transform.localScale /= 8f;
         }
 
         StaticAction.Find(l, "Intro -> Outdoors", new(-115f, 55f, 419.5f), obj =>
