@@ -81,6 +81,7 @@ public class Movement : MonoSingleton<Movement>
         if (Input.GetKeyDown(Settings.LobbyTab)) LobbyTab.Instance.Toggle();
         if (Input.GetKeyDown(Settings.PlayerList)) PlayerList.Instance.Toggle();
         if (Input.GetKeyDown(Settings.Settingz)) Settings.Instance.Toggle();
+        if (Input.GetKeyDown(KeyCode.F4)) Debugging.Instance.Toggle();
 
         if (Input.GetKeyDown(Settings.PlayerIndicators)) PlayerIndicators.Instance.Toggle();
         if (Input.GetKeyDown(Settings.PlayerInfo)) PlayerInfo.Instance.Toggle();

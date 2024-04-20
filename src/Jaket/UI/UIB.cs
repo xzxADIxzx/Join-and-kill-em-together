@@ -342,4 +342,11 @@ public class UIB
         });
 
     #endregion
+    #region line
+
+    /// <summary> Adds a line renderer, the size of which will always be equals to the screen. </summary>
+    public static UILineRenderer Line(string name, Transform parent, Color? color) =>
+        Component<UILineRenderer>(Rect(name, parent, new(8f, 8f, 0f, 0f, Vector2.zero, Vector2.zero)).gameObject, line => line.color = color ?? white);
+
+    #endregion
 }
