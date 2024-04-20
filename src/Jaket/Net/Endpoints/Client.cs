@@ -66,15 +66,17 @@ public class Client : Endpoint, IConnectionManager
 
     public override void Update()
     {
-        // read incoming data
-        Manager.Receive(256); Manager.Receive(256); Manager.Receive(256); Manager.Receive(256); // WHY
-
-        // write data
-        Networking.EachOwned(entity => Networking.Send(PacketType.Snapshot, w =>
+        Stats.MeasureTime(() =>
         {
-            w.Id(entity.Id);
-            entity.Write(w);
-        }));
+            Manager.Receive(256); Manager.Receive(256); Manager.Receive(256); Manager.Receive(256); // WHY
+        }, () =>
+        {
+            Networking.EachOwned(entity => Networking.Send(PacketType.Snapshot, w =>
+            {
+                w.Id(entity.Id);
+                entity.Write(w);
+            }));
+        });
 
         // flush data
         Manager.Connection.Flush();

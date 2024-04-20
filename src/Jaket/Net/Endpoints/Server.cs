@@ -135,16 +135,15 @@ public class Server : Endpoint, ISocketManager
 
     public override void Update()
     {
-        // read incoming data
-        Manager.Receive(1024);
-
-        // write data
-        Networking.EachEntity(entity => Networking.Send(PacketType.Snapshot, w =>
+        Stats.MeasureTime(() => Manager.Receive(1024), () =>
         {
-            w.Id(entity.Id);
-            w.Enum(entity.Type);
-            entity.Write(w);
-        }));
+            Networking.EachEntity(entity => Networking.Send(PacketType.Snapshot, w =>
+            {
+                w.Id(entity.Id);
+                w.Enum(entity.Type);
+                entity.Write(w);
+            }));
+        });
 
         // flush data
         foreach (var con in Manager.Connected) con.Flush();
