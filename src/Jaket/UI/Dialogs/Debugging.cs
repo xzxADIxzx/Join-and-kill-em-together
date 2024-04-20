@@ -24,12 +24,16 @@ public class Debugging : CanvasSingleton<Debugging>
 
     private void Start()
     {
+        Events.OnLobbyAction += () =>
+        {
+            if (LobbyController.Offline) readText.text = writeText.text = readTimeText.text = writeTimeText.text = entities.text = owner.text = impact.text = "-";
+        };
         Events.EverySecond += UpdateGraph;
 
         Text DoubleText(Transform table, string name, float y, Color? color = null)
         {
             UIB.Text(name, table, Btn(0f, y), color, align: TextAnchor.MiddleLeft);
-            return UIB.Text("", table, Btn(0f, y), color, align: TextAnchor.MiddleRight);
+            return UIB.Text("-", table, Btn(0f, y), color, align: TextAnchor.MiddleRight);
         }
 
         // write colors are darker
@@ -75,6 +79,9 @@ public class Debugging : CanvasSingleton<Debugging>
         writeTimeGraph.Points = writeTime.Project(peak);
 
         #endregion
+
+        if (LobbyController.Offline) return;
+
         #region stats
 
         readText.text = $"{Stats.LastRead}b/s";
