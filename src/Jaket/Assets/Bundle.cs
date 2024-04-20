@@ -100,7 +100,7 @@ public class Bundle
         {
             // find the index of the next special char
             int old = pointer;
-            pointer = original.IndexOfAny(new[] { '\\', '[', ']' }, pointer);
+            pointer = original.IndexOfAny(new[] { '\\', '[' }, pointer);
 
             // save a piece of the original line without special characters
             builder.Append(original.Substring(old, pointer - old));
@@ -133,11 +133,6 @@ public class Bundle
                     builder.Append(isSize ? "<size=" : "<color=").Append(isSize ? Math.Min(size, maxSize) : content).Append('>');
                     pointer++;
                 }
-            }
-            else if (c == ']')
-            {
-                builder.Append(']');
-                pointer++;
             }
         }
 

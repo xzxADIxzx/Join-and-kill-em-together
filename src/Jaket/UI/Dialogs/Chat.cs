@@ -234,7 +234,7 @@ public class Chat : CanvasSingleton<Chat>
                 if (player.Id == author.Id) SamAPI.TryPlay(message, player.Voice);
             });
 
-        Receive(Networking.GetTeamColor(author), TTS_PREFIX + author.Name, message);
+        Receive(Networking.GetTeamColor(author), TTS_PREFIX + author.Name.Replace("[", "\\["), message);
     }
 
     /// <summary> Sends some useful information to the chat. </summary>

@@ -112,7 +112,7 @@ public class Commands
                 Tools.Load($"Level {layer}-{level}");
                 chat.Receive($"[#32CD32]Level {layer}-{level} is loading.");
             }
-            else if (args[1].ToUpper() == "S" && int.TryParse(args[0], out level) && level >= 0 && level <= 6 && level != 3 && level != 6)
+            else if (args[1].ToUpper() == "S" && int.TryParse(args[0], out level) && level >= 0 && level <= 7 && level != 3 && level != 6)
             {
                 Tools.Load($"Level {level}-S");
                 chat.Receive($"[#32CD32]Secret level {level}-S is loading.");
