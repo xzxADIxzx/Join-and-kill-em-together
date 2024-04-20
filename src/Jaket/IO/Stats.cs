@@ -2,6 +2,7 @@ namespace Jaket.IO;
 
 using System;
 using System.Diagnostics;
+using UnityEngine;
 
 /// <summary> Class that collects reading/writting data statistics for subsequent analysis and optimization of traffic. </summary>
 public class Stats
@@ -12,7 +13,7 @@ public class Stats
     public static int Write, Read;
 
     /// <summary> Time that has gone to read and write in milliseconds. </summary>
-    public static float WriteTime, ReadTime;
+    public static float WriteTime, ReadTime, DeltaTimeOnRecord;
 
     /// <summary> Begins to record statistics. </summary>
     public static void StartRecord() => Events.EverySecond += () =>
@@ -31,5 +32,7 @@ public class Stats
         sw.Restart();
         write();
         WriteTime = sw.ElapsedTicks / 10000f;
+
+        DeltaTimeOnRecord = Time.deltaTime;
     }
 }

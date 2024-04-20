@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
 
 using Jaket.IO;
+using Jaket.Net;
 
 using static Pal;
 using static Rect;
@@ -19,13 +20,13 @@ public class Debugging : CanvasSingleton<Debugging>
     /// <summary> Data array in the last 157 seconds. </summary>
     private Data read = new(), write = new(), readTime = new(), writeTime = new();
     /// <summary> Text fields containing diverse info about the network state. </summary>
-    private Text readText, writeText, readTimeText, writeTimeText;
+    private Text readText, writeText, readTimeText, writeTimeText, entities, owner, impact;
 
     private void Start()
     {
         Events.EverySecond += UpdateGraph;
 
-        Text DoubleText(Transform table, string name, float y, Color? color)
+        Text DoubleText(Transform table, string name, float y, Color? color = null)
         {
             UIB.Text(name, table, Btn(0f, y), color, align: TextAnchor.MiddleLeft);
             return UIB.Text("", table, Btn(0f, y), color, align: TextAnchor.MiddleRight);
@@ -47,6 +48,12 @@ public class Debugging : CanvasSingleton<Debugging>
             writeText = DoubleText(table, "WRITE:", 52f, dark_green);
             readTimeText = DoubleText(table, "READ TIME:", 84f, orange);
             writeTimeText = DoubleText(table, "WRITE TIME:", 116f, dark_orange);
+        });
+        UIB.Table("Networking", transform, Deb(1), table =>
+        {
+            entities = DoubleText(table, "ENTITIES:", 20f);
+            owner = DoubleText(table, "IS OWNER:", 52f);
+            impact = DoubleText(table, "IMPACT ON FPS:", 84f, red);
         });
     }
 
@@ -76,10 +83,21 @@ public class Debugging : CanvasSingleton<Debugging>
         writeTimeText.text = $"{Stats.WriteTime:0.0000}ms";
 
         #endregion
+        #region networking
+
+        entities.text = Networking.Entities.Count(p => p.Value != null).ToString();
+        owner.text = LobbyController.IsOwner.ToString().ToUpper();
+        owner.color = LobbyController.IsOwner ? green : red;
+        impact.text = $"{(Stats.ReadTime + Stats.WriteTime) / 10f / Stats.DeltaTimeOnRecord:0.00}%";
+
+        #endregion
     }
 
     /// <summary> Toggles visibility of the graph. </summary>
     public void Toggle() => gameObject.SetActive(Shown = !Shown);
+
+    /// <summary> Clears the graph. </summary>
+    public void Clear() { read.Clear(); write.Clear(); readTime.Clear(); writeTime.Clear(); }
 
     /// <summary> Constatnt size queue. </summary>
     private class Data : Queue<float>
