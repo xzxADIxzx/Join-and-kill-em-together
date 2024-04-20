@@ -27,8 +27,8 @@ public class Debugging : CanvasSingleton<Debugging>
 
         Text DoubleText(Transform table, string name, float y, Color? color)
         {
-            UIB.Text(name, table, Btn(8f, y), color, align: TextAnchor.MiddleLeft);
-            return UIB.Text("", table, Btn(-8f, y), color, align: TextAnchor.MiddleRight);
+            UIB.Text(name, table, Btn(0f, y), color, align: TextAnchor.MiddleLeft);
+            return UIB.Text("", table, Btn(0f, y), color, align: TextAnchor.MiddleRight);
         }
 
         // write colors are darker
@@ -73,7 +73,7 @@ public class Debugging : CanvasSingleton<Debugging>
         readText.text = $"{Stats.LastRead}b/s";
         writeText.text = $"{Stats.LastWrite}b/s";
         readTimeText.text = $"{Stats.ReadTime:0.0000}ms";
-        writeTimeText.text = $"{Stats.LastWrite:0.0000}ms";
+        writeTimeText.text = $"{Stats.WriteTime:0.0000}ms";
 
         #endregion
     }
