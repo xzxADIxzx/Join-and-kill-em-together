@@ -35,7 +35,7 @@ public class UI
         PlayerList.Build("Player List", false, true);
         Settings.Build("Settings", false, true);
         SpraySettings.Build("Spray Settings", false, true);
-        Debugging.Build("Graph", false, true, scene => false);
+        Debugging.Build("Debugging Menu", false, true);
 
         PlayerIndicators.Build("Player Indicators", false, false, scene => scene == "Main Menu");
         PlayerInfo.Build("Player Information", false, false, scene => scene == "Main Menu", () => { if (PlayerInfo.Shown) PlayerInfo.Instance.Toggle(); });

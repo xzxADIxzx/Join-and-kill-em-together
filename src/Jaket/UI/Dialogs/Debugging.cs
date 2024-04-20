@@ -15,7 +15,7 @@ public class Debugging : CanvasSingleton<Debugging>
 {
     /// <summary> Graphs displaying different values related to the load on the network. </summary>
     private UILineRenderer readGraph, writeGraph, readTimeGraph, writeTimeGraph;
-    /// <summary> Store values in the last 156 seconds. </summary>
+    /// <summary> Store values in the last 157 seconds. </summary>
     private Data read = new(), write = new(), readTime = new(), writeTime = new();
 
     private void Start()
@@ -56,7 +56,7 @@ public class Debugging : CanvasSingleton<Debugging>
         public new void Enqueue(float value)
         {
             base.Enqueue(value);
-            if (Count > 156) Dequeue();
+            if (Count > 157) Dequeue();
         }
 
         public Vector2[] Project(float peak)
