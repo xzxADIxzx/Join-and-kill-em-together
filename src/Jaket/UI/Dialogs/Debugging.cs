@@ -95,7 +95,7 @@ public class Debugging : CanvasSingleton<Debugging>
         entities.text = Networking.Entities.Count(p => p.Value != null).ToString();
         owner.text = LobbyController.IsOwner.ToString().ToUpper();
         owner.color = LobbyController.IsOwner ? green : red;
-        impact.text = $"{(Stats.ReadTime + Stats.WriteTime) / 10f / Stats.DeltaTimeOnRecord:0.00}%";
+        impact.text = $"{(Stats.ReadTime + Stats.WriteTime) / Stats.DeltaTimeOnRecord * 100f:0.00}%";
 
         #endregion
     }

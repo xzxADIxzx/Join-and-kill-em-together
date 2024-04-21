@@ -4,7 +4,7 @@ using System;
 using System.Diagnostics;
 using UnityEngine;
 
-/// <summary> Class that collects reading/writting data statistics for subsequent analysis and optimization of traffic. </summary>
+/// <summary> Class that collects reading/writing data statistics for subsequent analysis and optimization of traffic. </summary>
 public class Stats
 {
     /// <summary> Values of the last second aka bytes per second. </summary>
@@ -33,6 +33,7 @@ public class Stats
         write();
         WriteTime = sw.ElapsedTicks / 10000f;
 
-        DeltaTimeOnRecord = Time.deltaTime;
+        // delta time is taken from the previous frame, so you need to add the reading/writing time from the current frame
+        DeltaTimeOnRecord = Time.deltaTime * 1000f + ReadTime + WriteTime;
     }
 }
