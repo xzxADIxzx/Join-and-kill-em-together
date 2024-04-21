@@ -68,7 +68,7 @@ public class RemotePlayer : Entity
 
     private void Awake()
     {
-        Init(null, () => true);
+        Init(null);
 
         x = new(); y = new(); z = new();
         bodyRotation = new();

@@ -110,7 +110,7 @@ public class Movement : MonoSingleton<Movement>
 
             if (LobbyController.Online) Networking.Send(p ? PacketType.Point : PacketType.Spray, w =>
             {
-                w.Id(Tools.Id);
+                w.Id(Tools.AccId);
                 w.Vector(hit.point);
                 w.Vector(hit.normal);
             }, size: 32);

@@ -19,7 +19,7 @@ public class Client : Endpoint, IConnectionManager
     {
         Listen(PacketType.Snapshot, r =>
         {
-            ulong id = r.Id();
+            uint id = r.Id();
             var type = r.Enum<EntityType>();
 
             // if the entity is not in the list, add a new one with the given type or local if available

@@ -117,7 +117,7 @@ public class LocalPlayer : Entity
 
         w.Bool(Hook != Vector3.zero && HookArm.Instance.enabled);
         w.Vector(Hook);
-        w.Id(Pulled?.Id ?? 0L);
+        w.Id(Pulled?.Id ?? 0);
     }
 
     // there is no point in reading anything, because it is a local player

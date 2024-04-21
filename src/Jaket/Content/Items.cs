@@ -76,7 +76,7 @@ public class Items
     /// <summary> Synchronizes all items in the level. </summary>
     public static void SyncAll()
     {
-        foreach (var item in Tools.ResFind<ItemIdentifier>()) Sync(item);
+        foreach (var item in Tools.ResFind<ItemIdentifier>()) Sync(item, false);
         foreach (var zone in Tools.ResFind<ItemPlaceZone>())
         {
             if (!Tools.IsReal(zone)) return;

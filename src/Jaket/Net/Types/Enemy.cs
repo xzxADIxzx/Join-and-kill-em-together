@@ -19,7 +19,7 @@ public class Enemy : Entity
     /// <summary> Whether the enemy is an idol or not. </summary>
     private Idol idol;
     /// <summary> Idol target id in global entity list. Will be equal to the maximum value if there is no target. </summary>
-    private ulong targetId, lastTargetId = ulong.MaxValue;
+    private uint targetId, lastTargetId = uint.MaxValue;
     /// <summary> Enemy subtype. 0 - standard, 1 - Agony or Angry, 2 - Tundra or Rude. </summary>
     private byte subtype;
 
@@ -148,7 +148,7 @@ public class Enemy : Entity
     }
 
     /// <summary> Updates the target id of the idol for transmission to clients. </summary>
-    public void UpdateTarget() => targetId = idol.target != null && idol.target.TryGetComponent<Enemy>(out var target) ? target.Id : ulong.MaxValue;
+    public void UpdateTarget() => targetId = idol.target != null && idol.target.TryGetComponent<Enemy>(out var target) ? target.Id : uint.MaxValue;
 
     /// <summary> Turns on the spawn effect and moves the object so that the effect does not appear at the origin. </summary>
     public void SpawnEffect()

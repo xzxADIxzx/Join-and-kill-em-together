@@ -33,8 +33,8 @@ public class Bullet : OwnableEntity
             // the client must teleport the bullet, because all entities spawn at the origin
             if (!LobbyController.IsOwner) Events.Post(() =>
             {
-                transform.position = new(x.target, y.target, z.target);
-                transform.eulerAngles = new(rx.target, ry.target, rz.target);
+                transform.position = new(x.Target, y.Target, z.Target);
+                transform.eulerAngles = new(rx.Target, ry.Target, rz.Target);
                 Rb.velocity = transform.forward * InitSpeed;
             });
         };
@@ -50,12 +50,12 @@ public class Bullet : OwnableEntity
     {
         if (LobbyController.IsOwner && !IsOwner) // bruh
         {
-            x.target = transform.position.x;
-            y.target = transform.position.y;
-            z.target = transform.position.z;
-            rx.target = transform.eulerAngles.x;
-            ry.target = transform.eulerAngles.y;
-            rz.target = transform.eulerAngles.z;
+            x.Target = transform.position.x;
+            y.Target = transform.position.y;
+            z.Target = transform.position.z;
+            rx.Target = transform.eulerAngles.x;
+            ry.Target = transform.eulerAngles.y;
+            rz.Target = transform.eulerAngles.z;
         }
     }
 

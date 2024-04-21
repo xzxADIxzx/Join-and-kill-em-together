@@ -19,7 +19,7 @@ public class Server : Endpoint, ISocketManager
     {
         Listen(PacketType.Snapshot, (con, sender, r) =>
         {
-            ulong id = r.Id();
+            uint id = r.Id();
             if (id == sender)
             {
                 // sometimes I destroy players, sometimes they disappear for no reason
@@ -40,7 +40,7 @@ public class Server : Endpoint, ISocketManager
                 bullet.transform.eulerAngles = r.Vector();
                 bullet.InitSpeed = r.Float();
 
-                bullet.Owner = sender;
+                bullet.Owner = sender.AccountId;
                 bullet.OnTransferred();
                 Administration.EntityBullets[sender].Add(bullet);
             }

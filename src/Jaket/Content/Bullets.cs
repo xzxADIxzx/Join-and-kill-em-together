@@ -170,7 +170,7 @@ public class Bullets
         if (LobbyController.Offline || blast?.name != "Explosion Wave(Clone)") return;
         Networking.Send(PacketType.Punch, w =>
         {
-            w.Id(Tools.Id);
+            w.Id(Tools.AccId);
             w.Byte(1);
 
             w.Vector(blast.transform.position);
@@ -185,7 +185,7 @@ public class Bullets
         if (LobbyController.Offline || shock?.name != "PhysicalShockwavePlayer(Clone)") return;
         Networking.Send(PacketType.Punch, w =>
         {
-            w.Id(Tools.Id);
+            w.Id(Tools.AccId);
             w.Byte(2);
 
             w.Float(force);
@@ -207,7 +207,7 @@ public class Bullets
     #region damage
 
     /// <summary> Synchronizes damage dealt to the enemy. </summary>
-    public static void SyncDamage(ulong enemyId, string hitter, float damage, bool explode, float critDamage)
+    public static void SyncDamage(uint enemyId, string hitter, float damage, bool explode, float critDamage)
     {
         byte type = (byte)System.Array.IndexOf(Types, hitter);
         if (type != 0xFF) Networking.Send(PacketType.DamageEntity, w =>
