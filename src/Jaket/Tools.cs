@@ -1,6 +1,7 @@
 namespace Jaket;
 
 using HarmonyLib;
+using Steamworks;
 using Steamworks.Data;
 using System.Reflection;
 using UnityEngine;
@@ -11,6 +12,13 @@ using Jaket.IO;
 /// <summary> Set of different tools for simplifying life and systematization of code. </summary>
 public class Tools
 {
+    #region networking
+
+    /// <summary> Steam id of the local player. </summary>
+    public static SteamId Id => SteamClient.SteamId;
+    /// <summary> Account id of the local player. </summary>
+    public static uint AccId => SteamClient.SteamId.AccountId;
+
     /// <summary> Just a shortcut needed in order to track statistics and errors. </summary>
     public static void Send(Connection? con, System.IntPtr data, int size)
     {
@@ -24,6 +32,7 @@ public class Tools
         Stats.Write += size;
     }
 
+    #endregion
     #region scene
 
     /// <summary> Name of the current scene. </summary>
@@ -88,6 +97,7 @@ public class Tools
 
     /// <summary> Calls the class method with the given arguments. </summary>
     public static void Invoke<T>(string name, T obj, params object[] args) => AccessTools.Method(typeof(T), name).Invoke(obj, args);
+    public static void Invoke(string name, object obj, params object[] args) => AccessTools.Method(obj.GetType(), name).Invoke(obj, args);
 
     #endregion
 }

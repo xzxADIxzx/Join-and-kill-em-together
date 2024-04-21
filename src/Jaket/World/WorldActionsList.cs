@@ -106,7 +106,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
             // open all of the doors and disable the Gate Control Terminal™
             for (int i = 1; i < obj.transform.childCount; i++) Tools.Destroy(obj.transform.GetChild(i).gameObject);
 
-            var text = string.Format(BASEMENT_TERMILA_TEXT, Networking.LocalPlayer.Id.ToString().Substring(0, 3));
+            var text = string.Format(BASEMENT_TERMILA_TEXT, Tools.AccId.ToString().Substring(0, 3));
             Fill(text, 64, false, obj.transform.Find("PuzzleScreen"), "Text (TMP) (1)", "Button A", "Button B", "Button C", "Button D");
         });
         // don't block the path of the roomba once the fight starts

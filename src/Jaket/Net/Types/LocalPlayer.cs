@@ -39,7 +39,7 @@ public class LocalPlayer : Entity
 
     private void Awake()
     {
-        Id = SteamClient.SteamId;
+        Id = Tools.AccId;
         Type = EntityType.Player;
 
         Voice = gameObject.AddComponent<AudioSource>(); // add a 2D audio source that will be heard from everywhere

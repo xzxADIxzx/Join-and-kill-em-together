@@ -170,7 +170,7 @@ public class Bullets
         if (LobbyController.Offline || blast?.name != "Explosion Wave(Clone)") return;
         Networking.Send(PacketType.Punch, w =>
         {
-            w.Id(Networking.LocalPlayer.Id);
+            w.Id(Tools.Id);
             w.Byte(1);
 
             w.Vector(blast.transform.position);
@@ -185,7 +185,7 @@ public class Bullets
         if (LobbyController.Offline || shock?.name != "PhysicalShockwavePlayer(Clone)") return;
         Networking.Send(PacketType.Punch, w =>
         {
-            w.Id(Networking.LocalPlayer.Id);
+            w.Id(Tools.Id);
             w.Byte(2);
 
             w.Float(force);

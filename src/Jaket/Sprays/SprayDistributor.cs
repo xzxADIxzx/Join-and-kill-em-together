@@ -80,7 +80,7 @@ public static class SprayDistributor
         if (SprayManager.Uploaded || SprayManager.CurrentSpray == null) return;
         Log.Info("Uploading the current spray...");
 
-        Upload(Networking.LocalPlayer.Id, SprayManager.CurrentSpray.Data);
+        Upload(Tools.Id, SprayManager.CurrentSpray.Data);
         SprayManager.Uploaded = true;
     }
 
