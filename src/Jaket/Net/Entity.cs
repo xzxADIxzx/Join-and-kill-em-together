@@ -10,48 +10,85 @@ using Jaket.IO;
 public abstract class Entity : MonoBehaviour
 {
     /// <summary> Entity id in the global list. This is usually a small number, but for players, their account ids are used. </summary>
-    public ulong Id;
-    /// <summary> Type of entity, like a player or some kind of enemy. </summary>
+    public uint Id;
+    /// <summary> Type of the entity, like a player or some kind of enemy. </summary>
     public EntityType Type;
 
-    /// <summary> Enemy component, not inherent in all entities. </summary>
-    public EnemyIdentifier EnemyId;
-    /// <summary> Item component, not inherent in all entities. </summary>
-    public ItemIdentifier ItemId;
-    /// <summary> Animator component, not inherent in all entities. </summary>
-    public Animator Animator;
-    /// <summary> Rigidbody component, not inherent in all entities. </summary>
-    public Rigidbody Rb;
+    /// <summary> Id of the entity owner. </summary>
+    public uint Owner;
+    /// <summary> Whether the local player owns the entity. </summary>
+    public bool IsOwner => Owner == Tools.AccId;
 
     /// <summary> Last update time via snapshots. </summary>
     public float LastUpdate;
+    /// <summary> The number of updates read. </summary>
+    public uint UpdatesCount;
+    /// <summary> Whether the entity is dead. Dead entities will not be sync. </summary>
+    public bool Dead;
 
-    /// <summary> Adds itself to the entities list if the player is the host, and finds different components specific to different entities. </summary>
-    protected virtual void Init(Func<Entity, EntityType> prov, Func<bool> remote = null)
+    /// <summary> Different components, not inherent in all entities. </summary>
+    public EnemyIdentifier EnemyId;
+    public ItemIdentifier ItemId;
+    public Animator Animator;
+    public Rigidbody Rb;
+    public Grenade Grenade;
+    public Cannonball Ball;
+    public LeviathanController Leviathan;
+    public MinotaurChase Minotaur;
+
+    /// <summary> Adds itself to the entities list if the player is the owner, and finds different components specific to different entities. </summary>
+    protected void Init(Func<Entity, EntityType> prov, bool general = false, bool bullet = false, bool boss = false)
     {
-        EnemyId = GetComponent<EnemyIdentifier>();
-        ItemId = GetComponent<ItemIdentifier>();
-        Animator = GetComponentInChildren<Animator>();
-        Rb = GetComponent<Rigidbody>();
+        Log.Debug($"Initializing an entity with name {name}");
 
-        if (remote == null ? LobbyController.IsOwner : !remote())
+        // if an entity is marked with this tag, then it was downloaded over the network,
+        // otherwise the entity is local and must be added to the global list
+        if (name != "Net")
         {
             var provided = prov(this);
             if (provided == EntityType.None)
             {
-                Log.Warning($"Couldn't find entity type of the object {name}");
+                Log.Warning($"Couldn't find the entity type of the object {name}");
                 Destroy(this);
                 return;
             }
 
-            this.Id = Entities.NextId();
-            this.Type = provided;
+            Id = Entities.NextId();
+            Type = provided;
+            Owner = Tools.AccId;
 
+            name = "Local";
             Networking.Entities[Id] = this;
         }
 
-        // rename the object to prevent object looping
-        gameObject.name = "Net";
+        #region components
+
+        if (general)
+        {
+            EnemyId = GetComponent<EnemyIdentifier>();
+            ItemId = GetComponent<ItemIdentifier>();
+            Animator = GetComponentInChildren<Animator>();
+            Rb = GetComponent<Rigidbody>();
+        }
+        if (bullet)
+        {
+            Grenade = GetComponent<Grenade>();
+            Ball = GetComponent<Cannonball>();
+        }
+        if (boss)
+        {
+            Leviathan = GetComponent<LeviathanController>();
+            Minotaur = GetComponent<MinotaurChase>();
+        }
+
+        #endregion
+    }
+
+    /// <summary> Updates the time of the last update and the number of updates. </summary>
+    protected void Count()
+    {
+        LastUpdate = Time.time;
+        UpdatesCount++;
     }
 
     /// <summary> Writes the entity data to the writer. </summary>
@@ -68,30 +105,30 @@ public abstract class Entity : MonoBehaviour
     public class FloatLerp
     {
         /// <summary> Interpolation values. </summary>
-        public float last, target;
+        public float Last, Target;
 
         /// <summary> Updates interpolation values. </summary>
         public void Set(float value)
         {
-            last = target;
-            target = value;
+            Last = Target;
+            Target = value;
         }
 
         /// <summary> Reads values to be interpolated from the reader. </summary>
         public void Read(Reader r) => Set(r.Float());
 
         /// <summary> Returns an intermediate value. </summary>
-        public float Get(float lastUpdate) => Mathf.Lerp(last, target, (Time.time - lastUpdate) / Networking.SNAPSHOTS_SPACING);
+        public float Get(float lastUpdate) => Mathf.Lerp(Last, Target, (Time.time - lastUpdate) / Networking.SNAPSHOTS_SPACING);
 
         /// <summary> Returns the intermediate value of the angle. </summary>
-        public float GetAngel(float lastUpdate) => Mathf.LerpAngle(last, target, (Time.time - lastUpdate) / Networking.SNAPSHOTS_SPACING);
+        public float GetAngel(float lastUpdate) => Mathf.LerpAngle(Last, Target, (Time.time - lastUpdate) / Networking.SNAPSHOTS_SPACING);
     }
 
     /// <summary> Class for finding entities according to their ID. </summary>
     public class EntityProv<T> where T : Entity
     {
         /// <summary> Id of the entity that needs to be found. </summary>
-        public ulong Id;
+        public uint Id;
 
         private T value;
         public T Value => value?.Id == Id ? value : Networking.Entities.TryGetValue(Id, out var e) && e is T t ? value = t : null;
