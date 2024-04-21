@@ -12,7 +12,7 @@ using Jaket.Net.Types;
 /// <summary> Network connection endpoint that contains listeners for different packet types. </summary>
 public abstract class Endpoint
 {
-    protected Dictionary<ulong, Entity> entities => Networking.Entities;
+    protected Dictionary<uint, Entity> entities => Networking.Entities;
     protected LocalPlayer localPlayer => Networking.LocalPlayer;
 
     /// <summary> List of packet listeners by packet types. </summary>

@@ -57,7 +57,7 @@ public class Enemy : Entity
         }
 
         // prevent bosses from going into the second phase instantly
-        health.target = EnemyId.health;
+        health.Target = EnemyId.health;
 
         // run a loop that will update the target id of the idol every second
         if (TryGetComponent(out idol) && LobbyController.IsOwner) InvokeRepeating("UpdateTarget", 0f, 1f);
@@ -154,13 +154,13 @@ public class Enemy : Entity
     public void SpawnEffect()
     {
         EnemyId.spawnIn = true;
-        transform.position = new(x.target, y.target, z.target);
+        transform.position = new(x.Target, y.Target, z.Target);
     }
 
     /// <summary> Returns boss bar layers created based on maximum health and number of phases. </summary>
     public HealthLayer[] Layers() => haveSecondPhase
-            ? new HealthLayer[] { new() { health = health.target / 2f }, new() { health = health.target / 2f } }
-            : new HealthLayer[] { new() { health = health.target } };
+            ? new HealthLayer[] { new() { health = health.Target / 2f }, new() { health = health.Target / 2f } }
+            : new HealthLayer[] { new() { health = health.Target } };
 
     #region entity
 

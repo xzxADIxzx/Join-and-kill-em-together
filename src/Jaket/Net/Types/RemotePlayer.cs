@@ -184,7 +184,7 @@ public class RemotePlayer : Entity
             if (wasUsingHook = usingHook) Animator.SetTrigger("Throw Hook");
 
             hook.gameObject.SetActive(usingHook);
-            hook.position = new(hookX.target, hookY.target, hookZ.target);
+            hook.position = new(hookX.Target, hookY.Target, hookZ.Target);
         }
 
         #endregion
@@ -305,9 +305,9 @@ public class RemotePlayer : Entity
 
     public override void Write(Writer w)
     {
-        w.Float(x.target); w.Float(y.target); w.Float(z.target);
-        w.Float(bodyRotation.target);
-        w.Float(headRotation.target);
+        w.Float(x.Target); w.Float(y.Target); w.Float(z.Target);
+        w.Float(bodyRotation.Target);
+        w.Float(headRotation.Target);
 
         w.Byte(Health);
         w.Byte(RailCharge);
@@ -319,7 +319,7 @@ public class RemotePlayer : Entity
         w.Bools(walking, sliding, falling, dashing, riding, inAir, shopping, Typing);
 
         w.Bool(usingHook);
-        w.Float(hookX.target); w.Float(hookY.target); w.Float(hookZ.target);
+        w.Float(hookX.Target); w.Float(hookY.Target); w.Float(hookZ.Target);
         w.Id(Pulled.Id);
     }
 

@@ -36,7 +36,7 @@ public class Leviathan : Entity
         else
         {
             levi.active = levi.head.active = false;
-            health.target = levi.eid.health;
+            health.Target = levi.eid.health;
         }
 
         World.Instance.Leviathan = this;

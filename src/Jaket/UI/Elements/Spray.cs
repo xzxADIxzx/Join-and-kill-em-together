@@ -11,7 +11,7 @@ using Jaket.UI.Dialogs;
 public class Spray : MonoBehaviour
 {
     /// <summary> Owner of the spray. </summary>
-    private ulong owner;
+    private uint owner;
     /// <summary> Spray position in space. </summary>
     private Vector3 position, direction;
 
@@ -21,7 +21,7 @@ public class Spray : MonoBehaviour
     public float Lifetime;
 
     /// <summary> Spawns a spray at the given position. </summary>
-    public static Spray Spawn(ulong owner, Vector3 position, Vector3 direction) =>
+    public static Spray Spawn(uint owner, Vector3 position, Vector3 direction) =>
         UIB.Component<Spray>(Tools.Create("Spray"), spray =>
         {
             spray.owner = owner;

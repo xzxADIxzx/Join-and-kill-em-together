@@ -28,7 +28,7 @@ public class Networking
     public static Client Client = new();
 
     /// <summary> List of all entities by their id. May contain null. </summary>
-    public static Dictionary<ulong, Entity> Entities = new();
+    public static Dictionary<uint, Entity> Entities = new();
     /// <summary> Local player singleton. </summary>
     public static LocalPlayer LocalPlayer;
 

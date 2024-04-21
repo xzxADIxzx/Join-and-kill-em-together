@@ -1,6 +1,5 @@
 namespace Jaket.Sprays;
 
-using Steamworks;
 using Steamworks.Data;
 using System;
 using System.Collections.Generic;
@@ -19,9 +18,9 @@ public static class SprayDistributor
     public const int CHUNK_SIZE = 240;
 
     /// <summary> List of all streams for spray loading. </summary>
-    public static Dictionary<ulong, Writer> Streams = new();
+    public static Dictionary<uint, Writer> Streams = new();
     /// <summary> List of requests for spray by id. </summary>
-    public static Dictionary<ulong, List<Connection>> Requests = new();
+    public static Dictionary<uint, List<Connection>> Requests = new();
 
     #region distribution logic
 
@@ -40,7 +39,7 @@ public static class SprayDistributor
     }
 
     /// <summary> Handles the downloaded spray and decides where to send it next. </summary>
-    public static void HandleSpray(ulong owner, byte[] data)
+    public static void HandleSpray(uint owner, byte[] data)
     {
         SprayManager.Cache.Remove(owner);
         SprayManager.Cache.Add(owner, new(data));
@@ -50,13 +49,13 @@ public static class SprayDistributor
     }
 
     /// <summary> Requests someone's spray from the host. </summary>
-    public static void Request(SteamId owner) => Networking.Send(PacketType.RequestImage, w => w.Id(owner), size: 8);
+    public static void Request(uint owner) => Networking.Send(PacketType.RequestImage, w => w.Id(owner), size: 8);
 
     #endregion
     #region networking
 
     /// <summary> Uploads the given spray to the clients or server. </summary>
-    public static void Upload(SteamId owner, byte[] data, Action<IntPtr, int> result = null)
+    public static void Upload(uint owner, byte[] data, Action<IntPtr, int> result = null)
     {
         // initialize a new stream
         Networking.Send(PacketType.ImageChunk, w =>
@@ -80,7 +79,7 @@ public static class SprayDistributor
         if (SprayManager.Uploaded || SprayManager.CurrentSpray == null) return;
         Log.Info("Uploading the current spray...");
 
-        Upload(Tools.Id, SprayManager.CurrentSpray.Data);
+        Upload(Tools.AccId, SprayManager.CurrentSpray.Data);
         SprayManager.Uploaded = true;
     }
 

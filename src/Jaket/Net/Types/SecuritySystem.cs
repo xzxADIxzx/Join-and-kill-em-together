@@ -15,7 +15,7 @@ public class SecuritySystem : Entity
         Init(_ => Type);
 
         LobbyController.ScaleHealth(ref EnemyId.machine.health);
-        health.target = EnemyId.machine.health;
+        health.Target = EnemyId.machine.health;
     }
 
     private void Update()

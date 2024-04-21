@@ -22,9 +22,9 @@ public class SprayManager
     public static bool Uploaded;
 
     /// <summary> Sprays spawned by players. </summary>
-    public static Dictionary<ulong, Spray> Sprays = new();
+    public static Dictionary<uint, Spray> Sprays = new();
     /// <summary> Cached sprays of other players. </summary>
-    public static Dictionary<ulong, SprayFile> Cache = new();
+    public static Dictionary<uint, SprayFile> Cache = new();
 
     /// <summary> Sound that is played when creating a spray. </summary>
     public static AudioClip puh;
@@ -50,7 +50,7 @@ public class SprayManager
         {
             Uploaded = LobbyController.IsOwner;
             Cache.Clear();
-            Cache.Add(Tools.Id, CurrentSpray);
+            Cache.Add(Tools.AccId, CurrentSpray);
         };
         // process requests every second
         Events.EverySecond += SprayDistributor.ProcessRequests;
@@ -76,14 +76,14 @@ public class SprayManager
         CurrentSpray = spray;
         Uploaded = false;
 
-        Cache.Remove(Tools.Id);
-        Cache.Add(Tools.Id, CurrentSpray);
+        Cache.Remove(Tools.AccId);
+        Cache.Add(Tools.AccId, CurrentSpray);
 
         if (LobbyController.Online) Bundle.Hud("sprays.info");
     }
 
     /// <summary> Spawns someone's spray in the given position. </summary>
-    public static Spray Spawn(ulong owner, Vector3 position, Vector3 direction)
+    public static Spray Spawn(uint owner, Vector3 position, Vector3 direction)
     {
         if (Sprays.TryGetValue(owner, out var spray))
         {
@@ -112,6 +112,6 @@ public class SprayManager
             Bundle.Hud("sprays.empty"); // You haven't chosen a spray. Please, choose on in settings.
             return null;
         }
-        return Spawn(Tools.Id, position, direction);
+        return Spawn(Tools.AccId, position, direction);
     }
 }
