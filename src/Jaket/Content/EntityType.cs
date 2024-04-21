@@ -23,10 +23,6 @@ public enum EntityType
     Sentry,
     Gutterman,
     Guttertank,
-    Earthmover_Brain,
-    Earthmover_RocketLauncher,
-    Earthmover_Mortar,
-    Earthmover_Tower,
     MaliciousFace,
     Cerberus,
     HideousMass,
@@ -52,6 +48,11 @@ public enum EntityType
     Hand,
     Leviathan,
     Minotaur_Chase,
+    SecuritySystem_Main,
+    SecuritySystem_RocketLauncher, SecuritySystem_RocketLauncher_,
+    SecuritySystem_Mortar, SecuritySystem_Mortar_,
+    SecuritySystem_Tower, SecuritySystem_Tower_,
+    Brain,
 
     AppleBait,
     SkullBait,
@@ -96,6 +97,7 @@ public enum EntityType
     Ball,
 
     EnemyOffset = Filth,
+    SecuritySystemOffset = SecuritySystem_Main,
     ItemOffset = AppleBait,
     PlushyOffset = Jacob,
     BulletOffset = Rocket
@@ -110,6 +112,10 @@ public static class TypeExtensions
     /// <summary> Whether the type is a common enemy that can be spawned by the sandbox arm. </summary>
     public static bool IsCommonEnemy(this EntityType type) =>
         IsEnemy(type) && type < EntityType.Hand && type != EntityType.TheCorpseOfKingMinos && type != EntityType.SomethingWicked;
+
+    /// <summary> Whether the type is a BIG enemy that can only be spawned in a limited number. </summary>
+    public static bool IsBigEnemy(this EntityType type) =>
+        IsEnemy(type) && type >= EntityType.FleshPrison && type <= EntityType.SisyphusPrime;
 
     /// <summary> Whether the type is an item. </summary>
     public static bool IsItem(this EntityType type) => type >= EntityType.ItemOffset && type < EntityType.PlushyOffset;

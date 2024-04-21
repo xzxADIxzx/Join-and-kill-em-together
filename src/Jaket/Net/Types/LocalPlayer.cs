@@ -7,6 +7,7 @@ using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.UI;
+using Jaket.UI.Dialogs;
 using Jaket.World;
 
 /// <summary>
@@ -17,6 +18,7 @@ public class LocalPlayer : Entity
 {
     private NewMovement nm => NewMovement.Instance;
     private FistControl fc => FistControl.Instance;
+    private GameObject cw => GunControl.Instance.currentWeapon;
 
     /// <summary> Local player's team, changes through the players list. </summary>
     public Team Team;
@@ -29,11 +31,11 @@ public class LocalPlayer : Entity
     public Vector3 Hook;
     /// <summary> The entity of the item the player is currently holding in their hands. </summary>
     public Item HeldItem;
+    /// <summary> Entity that the player pulls to himself with a hook. </summary>
+    public Entity Pulled;
 
     /// <summary> Index of the current weapon in the global list. </summary>
     private byte weapon;
-    /// <summary> Weapon rendering component, needed to get weapon colors. </summary>
-    private Renderer renderer;
 
     private void Awake()
     {
@@ -43,7 +45,7 @@ public class LocalPlayer : Entity
         Voice = gameObject.AddComponent<AudioSource>(); // add a 2D audio source that will be heard from everywhere
 
         Events.OnLoaded += () => Events.Post(UpdateWeapons);
-        Events.OnWeaponChanged += UpdateWeapons;
+        Events.OnWeaponChanged += () => Events.Post(UpdateWeapons);
     }
 
     private void Update()
@@ -55,23 +57,46 @@ public class LocalPlayer : Entity
         if (fc.currentPunch.holding) fc.currentPunch.PlaceHeldObject(new ItemPlaceZone[0], null);
     }
 
+    #region special
+
+    /// <summary> Synchronizes the style of the local player. </summary>
+    public void SyncStyle() => Networking.Send(PacketType.Style, w =>
+    {
+        w.Id(Id);
+        if (cw?.GetComponentInChildren<GunColorGetter>()?.TryGetComponent<Renderer>(out var renderer) ?? false)
+        {
+            bool custom = renderer.material.name.Contains("Custom");
+            w.Bool(custom);
+
+            if (custom) UIB.Properties(renderer, block =>
+            {
+                w.Color(block.GetColor("_CustomColor1"));
+                w.Color(block.GetColor("_CustomColor2"));
+                w.Color(block.GetColor("_CustomColor3"));
+            });
+            else w.Inc(12);
+        }
+        else w.Inc(13);
+    }, size: 21);
+
     /// <summary> Caches different things related to weapons and paints hands. </summary>
     public void UpdateWeapons()
     {
         weapon = Weapons.Type();
-        renderer = GunControl.Instance.currentWeapon?.GetComponentInChildren<GunColorGetter>()?.GetComponent<Renderer>();
+        if (LobbyController.Online) SyncStyle();
 
         // according to the lore, the player plays for V3, so we need to paint the hand
         var punch = fc.transform.Find("Arm Blue(Clone)");
         if (punch) punch.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture();
 
-        var right = GunControl.Instance.currentWeapon?.transform.GetChild(0).Find("RightArm");
+        var right = cw?.transform.GetChild(0).Find("RightArm");
         if (right) right.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture();
 
-        // var knuckle = fc.transform.Find("Arm Red(Clone)");
-        // if (knuckle) punch.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture(punch: false);
+        var knuckle = fc.transform.Find("Arm Red(Clone)");
+        if (knuckle) knuckle.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture(false);
     }
 
+    #endregion
     #region entity
 
     public override void Write(Writer w)
@@ -81,7 +106,7 @@ public class LocalPlayer : Entity
         w.Float(135f - Mathf.Clamp(CameraController.Instance.rotationX, -40f, 80f));
 
         w.Byte((byte)nm.hp);
-        w.Byte((byte)Mathf.Floor(WeaponCharges.Instance.raicharge * 2f));
+        w.Byte((byte)Mathf.Floor(WeaponCharges.Instance.raicharge * 2.5f));
         w.Enum(Team);
         w.Byte(weapon);
         w.Byte(Movement.Instance.Emoji);
@@ -92,21 +117,7 @@ public class LocalPlayer : Entity
 
         w.Bool(Hook != Vector3.zero && HookArm.Instance.enabled);
         w.Vector(Hook);
-
-        if (renderer != null)
-        {
-            bool custom = renderer.material.name.Contains("Custom");
-            w.Bool(custom);
-
-            if (custom) UI.Properties(renderer, block =>
-            {
-                w.Color(block.GetColor("_CustomColor1"));
-                w.Color(block.GetColor("_CustomColor2"));
-                w.Color(block.GetColor("_CustomColor3"));
-            });
-            else w.Inc(12);
-        }
-        else w.Inc(13);
+        w.Id(Pulled?.Id ?? 0L);
     }
 
     // there is no point in reading anything, because it is a local player
@@ -114,10 +125,13 @@ public class LocalPlayer : Entity
 
     public override void Damage(Reader r)
     {
-        if (!r.Enum<Team>().Ally()) // no need to deal damage if an ally hits you
+        var team = r.Enum<Team>();
+        if (!nm.dead && !team.Ally()) // no need to deal damage if an ally hits you
         {
             byte type = r.Byte();
-            NewMovement.Instance.GetHurt(Mathf.CeilToInt(r.Float() * (Bullets.Types[type] == "drill" ? 2f : 5f)), false, 0f, r.Bool());
+            nm.GetHurt(Mathf.CeilToInt(r.Float() * (Bullets.Types[type] == "drill" ? 1f : 5f)), false, 0f, r.Bool());
+
+            if (nm.dead) LobbyController.Lobby?.SendChatString("#/s" + (byte)team);
         }
     }
 

@@ -1,42 +1,41 @@
 ﻿namespace Jaket;
 
 using BepInEx;
-using BepInEx.Bootstrap;
 using HarmonyLib;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net;
-using Jaket.UI;
+using Jaket.Sprays;
 using Jaket.World;
 
-/// <summary> Plugin main class. Essentially only initializes all other components. </summary>
+/// <summary> Bootloader class needed to avoid destroying the mod by the game. </summary>
 [BepInPlugin("xzxADIxzx.Jaket", "Jaket", Version.CURRENT)]
-public class Plugin : BaseUnityPlugin
+public class PluginLoader : BaseUnityPlugin
+{
+    private void Awake() => SceneManager.sceneLoaded += (_, _) =>
+    {
+        if (Plugin.Instance == null) Tools.Create<Plugin>("Jaket").Location = Info.Location;
+    };
+}
+
+/// <summary> Plugin main class. Essentially only initializes all other components. </summary>
+public class Plugin : MonoBehaviour
 {
     /// <summary> Plugin instance available everywhere. </summary>
     public static Plugin Instance;
     /// <summary> Whether the plugin has been initialized. </summary>
-    public static bool Initialized;
-    /// <summary> Whether the Ultrapain mod is loaded. Needed to synchronize difficulty. </summary>
-    public static bool UltrapainLoaded;
+    public bool Initialized;
+    /// <summary> Path to the dll file of the mod. </summary>
+    public string Location;
 
-    /// <summary> Toggles Ultrapain difficulty. Placing it in a separate function is necessary to avoid errors. </summary>
-    public static void TogglePain(bool unreal, bool real)
-    { Ultrapain.Plugin.ultrapainDifficulty = unreal; Ultrapain.Plugin.realUltrapainDifficulty = real; }
+    private void Awake() => DontDestroyOnLoad(Instance = this); // save the instance of the mod for later use and prevent it from being destroyed by the game
 
-    /// <summary> Writes Ultrapain difficulty data. </summary>
-    public static void WritePain(Writer w)
-    { w.Bool(Ultrapain.Plugin.ultrapainDifficulty); w.Bool(Ultrapain.Plugin.realUltrapainDifficulty); }
-
-    private void Awake()
+    private void Start()
     {
-        // save an instance for later use
-        Instance = this;
-        // rename the game object for a more presentable look
-        gameObject.name = "Jaket";
-
         // create output points for logs
         Log.Load();
         // note the fact that the mod is loading
@@ -50,38 +49,34 @@ public class Plugin : BaseUnityPlugin
 
     private void OnApplicationQuit() => Log.Flush();
 
-    /// <summary> Initializes the plugin if it has not already been initialized. </summary>
-    public void Init()
+    private void Init()
     {
         if (Initialized) return;
 
         // notify players about the availability of an update so that they no longer whine to me about something not working
         Version.Check4Update();
-        // check if Ultrapain is installed
-        UltrapainLoaded = Chainloader.PluginInfos.ContainsKey("com.eternalUnion.ultraPain");
+        Stats.StartRecord();
 
-        // initialize networking components
-        Networking.Load();
-        Entities.Load();
-        LobbyController.Load();
-
-        // initialize content components
         Commands.Commands.Load();
+        Bundle.Load();
         DollAssets.Load();
         Enemies.Load();
         Weapons.Load();
-        Bullets.Load(); // load it after weapons & networking
+        Bullets.Load();
         Items.Load();
 
-        // initialize world components
-        World.World.Load();
-        Movement.Load();
-        CyberGrind.Load();
+        Administration.Load();
+        LobbyController.Load();
+        Networking.Load();
+        Entities.Load();
 
-        // initialize ui components
-        WidescreenFix.Load();
+        World.World.Load();
+        WorldActionsList.Load();
+        Movement.Load();
+        SprayManager.Load();
+
+        UI.UIB.Load();
         UI.UI.Load();
-        UI.UI.Build();
 
         // initialize harmony and patch all the necessary classes
         new Harmony("Should I write something here?").PatchAll();

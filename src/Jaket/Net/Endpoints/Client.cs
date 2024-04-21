@@ -2,11 +2,11 @@ namespace Jaket.Net.Endpoints;
 
 using Steamworks;
 using Steamworks.Data;
-using UnityEngine;
 
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net.Types;
+using Jaket.Sprays;
 using Jaket.World;
 
 /// <summary> Client endpoint processing socket events and host packets. </summary>
@@ -27,62 +27,56 @@ public class Client : Endpoint, IConnectionManager
 
             // after respawn, Leviathan or hand may be absent, so it must be returned if possible
             // sometimes players disappear for some unknown reason, and sometimes I destroy them myself
-            if (entities[id] == null && (type == EntityType.Hand || type == EntityType.Leviathan || type == EntityType.Player))
-                entities[id] = Entities.Get(id, type);
+            if (entities[id] == null) entities[id] = Entities.Get(id, type);
 
             entities[id]?.Read(r);
         });
 
-        Listen(PacketType.LevelLoading, r => World.Instance.ReadData(r)); // instance is null at client load time so arrow function is required
+        Listen(PacketType.LoadLevel, r => World.Instance.ReadData(r));
 
         Listen(PacketType.Kick, r => LobbyController.LeaveLobby());
-
-        Listen(PacketType.HostDied, r =>
-        {
-            // in the sandbox after death, enemies are not destroyed
-            if (SceneHelper.CurrentScene == "uk_construct") return;
-
-            Networking.EachEntity(entity =>
-            {
-                // destroy all enemies, because the host died and was thrown back to the checkpoint
-                if (entity is Enemy) Object.Destroy(entity.gameObject);
-            });
-        });
-
-        Listen(PacketType.EnemyDied, r => entities[r.Id()]?.Kill());
 
         Listen(PacketType.SpawnBullet, Bullets.CInstantiate);
 
         Listen(PacketType.DamageEntity, r => entities[r.Id()]?.Damage(r));
 
+        Listen(PacketType.KillEntity, r => entities[r.Id()]?.Kill());
+
+        Listen(PacketType.Style, r =>
+        {
+            if (entities[r.Id()] is RemotePlayer player) player?.Style(r);
+        });
         Listen(PacketType.Punch, r =>
         {
             if (entities[r.Id()] is RemotePlayer player) player?.Punch(r);
         });
-
         Listen(PacketType.Point, r =>
         {
             if (entities[r.Id()] is RemotePlayer player) player?.Point(r);
         });
 
+        Listen(PacketType.Spray, r => SprayManager.Spawn(r.Id(), r.Vector(), r.Vector()));
+
+        Listen(PacketType.ImageChunk, SprayDistributor.Download);
+
         Listen(PacketType.ActivateObject, r => World.Instance.ReadAction(r));
 
-        Listen(PacketType.CinemaAction, r => Cinema.Play(r.String()));
-
-        Listen(PacketType.CybergrindAction, r => CyberGrind.Instance.LoadPattern(r));
+        Listen(PacketType.CyberGrindAction, CyberGrind.LoadPattern);
     }
 
     public override void Update()
     {
-        // read incoming data
-        Manager.Receive(256); Manager.Receive(256); Manager.Receive(256); Manager.Receive(256); // WHY
-
-        // write data
-        Networking.EachOwned(entity => Networking.Send(PacketType.Snapshot, w =>
+        Stats.MeasureTime(() =>
         {
-            w.Id(entity.Id);
-            entity.Write(w);
-        }));
+            Manager.Receive(256); Manager.Receive(256); Manager.Receive(256); Manager.Receive(256); // WHY
+        }, () =>
+        {
+            Networking.EachOwned(entity => Networking.Send(PacketType.Snapshot, w =>
+            {
+                w.Id(entity.Id);
+                entity.Write(w);
+            }));
+        });
 
         // flush data
         Manager.Connection.Flush();

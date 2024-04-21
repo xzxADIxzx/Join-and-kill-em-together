@@ -24,12 +24,16 @@ public class Events : MonoSingleton<Events>
 
     /// <summary> List of tasks that will need to be completed in the late update. </summary>
     public static Queue<Action> Tasks = new();
+    /// <summary> Event that fires every second. </summary>
+    public static SafeEvent EverySecond = new();
+    /// <summary> Event that fires every net tick. </summary>
+    public static SafeEvent EveryTick = new();
 
     /// <summary> Subscribes to some events to fire some safe events. </summary>
     public static void Load()
     {
         // initialize the singleton
-        UI.UI.Object("Events").AddComponent<Events>();
+        Tools.Create<Events>("Events");
 
         SceneManager.sceneLoaded += (scene, mode) =>
         {
@@ -37,7 +41,7 @@ public class Events : MonoSingleton<Events>
             OnLoaded.Fire();
 
             // the main menu has loaded, this is much less often used, but it is used
-            if (SceneHelper.CurrentScene == "Main Menu") OnMainMenuLoaded.Fire();
+            if (Tools.Scene == "Main Menu") OnMainMenuLoaded.Fire();
         };
 
         SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) => Post(OnTeamChanged.Fire);
@@ -48,16 +52,30 @@ public class Events : MonoSingleton<Events>
         OnLobbyAction += OnTeamChanged.Fire;
         OnLobbyAction += OnWeaponChanged.Fire;
 
-        // update the discord activity so everyone can know I've been working hard
-        OnLobbyAction += () => DiscordController.Instance.FetchSceneActivity(SceneHelper.CurrentScene);
-        // toggle the ability of the game to run in the background, because multiplayer requires it
-        OnLobbyAction += () => Application.runInBackground = LobbyController.Lobby != null;
+        OnLobbyAction += () =>
+        {
+            // update the discord & steam activity so everyone can know I've been working hard
+            DiscordController.Instance.FetchSceneActivity(Tools.Scene);
+            SteamController.Instance.FetchSceneActivity(Tools.Scene);
+
+            // enable the ability of the game to run in the background, because multiplayer requires it
+            Application.runInBackground = LobbyController.Online;
+        };
     }
 
     /// <summary> Posts the task for execution in the late update. </summary>
     public static void Post(Action task) => Tasks.Enqueue(task);
     /// <summary> Posts the task for execution in the next frame. </summary>
     public static void Post2(Action task) => Post(() => Post(task));
+
+    private void Second() => EverySecond.Fire();
+    private void Tick() => EveryTick.Fire();
+
+    private void Start()
+    {
+        InvokeRepeating("Second", 1f, 1f);
+        InvokeRepeating("Tick", 1f, Networking.SNAPSHOTS_SPACING);
+    }
 
     private void LateUpdate()
     {
@@ -78,7 +96,7 @@ public class SafeEvent
         for (int i = 0; i < listeners.Count; i++)
         {
             try { listeners[i](); }
-            catch (Exception ex) { Debug.LogException(ex); }
+            catch (Exception ex) { Log.Error(ex); }
         }
     }
 

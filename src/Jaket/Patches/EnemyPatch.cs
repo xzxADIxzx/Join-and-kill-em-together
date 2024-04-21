@@ -16,37 +16,84 @@ public class EnemyPatch
 
     [HarmonyPrefix]
     [HarmonyPatch(nameof(EnemyIdentifier.DeliverDamage))]
-    static bool Damage(EnemyIdentifier __instance, float multiplier, bool tryForExplode, float critMultiplier, GameObject sourceWeapon) =>
-        Enemies.SyncDamage(__instance, multiplier, tryForExplode, critMultiplier, sourceWeapon);
+    static bool Damage(EnemyIdentifier __instance, ref float multiplier, bool tryForExplode, float critMultiplier, GameObject sourceWeapon) =>
+        Enemies.SyncDamage(__instance, ref multiplier, tryForExplode, critMultiplier, sourceWeapon);
 
     [HarmonyPrefix]
-    [HarmonyPatch(nameof(EnemyIdentifier.Death))]
+    [HarmonyPatch(nameof(EnemyIdentifier.Death), typeof(bool))]
     static void Death(EnemyIdentifier __instance) => Enemies.SyncDeath(__instance);
+
+    [HarmonyPostfix]
+    [HarmonyPatch("UpdateTarget")]
+    static void Target(EnemyIdentifier __instance)
+    {
+        if (LobbyController.Offline) return;
+
+        // update target only if the current target is the local player
+        if (__instance.target == null || !__instance.target.isPlayer) return;
+
+        // micro optimization
+        float SqrDst(Vector3 v1, Vector3 v2) => (v1 - v2).sqrMagnitude;
+
+        var target = NewMovement.Instance.transform;
+        float dst = SqrDst(__instance.transform.position, target.position);
+
+        Networking.EachPlayer(player =>
+        {
+            var newDst = SqrDst(__instance.transform.position, player.transform.position);
+            if (newDst < dst)
+            {
+                target = player.transform;
+                dst = newDst;
+            }
+        });
+
+        // update the target if there is a remote player that is closer to the enemy than you
+        if (target != NewMovement.Instance.transform) __instance.target = new(target);
+    }
 }
 
 [HarmonyPatch]
 public class OtherPatch
 {
     [HarmonyPrefix]
+    [HarmonyPatch(typeof(V2), "Start")]
+    static void Intro(V2 __instance)
+    {
+        if (LobbyController.Online && Tools.Scene == "Level 1-4" && !__instance.secondEncounter)
+            __instance.intro = __instance.longIntro = true;
+    }
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(V2), "Start")]
+    static void Outro(V2 __instance, ref bool ___bossVersion) => ___bossVersion = __instance.intro;
+
+    [HarmonyPrefix]
     [HarmonyPatch(typeof(Idol), "SlowUpdate")]
-    static bool IdolsLogic() => LobbyController.Lobby == null || LobbyController.IsOwner;
+    static bool IdolsLogic() => LobbyController.Offline || LobbyController.IsOwner;
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(FerrymanFake), "Update")]
-    static bool FerryLogic() => LobbyController.Lobby == null || LobbyController.IsOwner;
+    static bool FerryLogic() => LobbyController.Offline || LobbyController.IsOwner;
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(FerrymanFake), nameof(FerrymanFake.OnLand))]
     static void FerryDeath(FerrymanFake __instance)
     {
-        if (LobbyController.IsOwner && __instance.TryGetComponent<Enemy>(out var enemy)) Networking.Send(PacketType.EnemyDied, w => w.Id(enemy.Id), size: 8);
+        if (LobbyController.IsOwner && __instance.TryGetComponent<Enemy>(out var enemy)) Networking.Send(PacketType.KillEntity, w => w.Id(enemy.Id), size: 8);
     }
+
+
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(EventOnDestroy), "OnDestroy")]
+    static bool Destroy() => LobbyController.Offline || LobbyController.IsOwner;
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(BossHealthBar), "Awake")]
     static void BossBar(BossHealthBar __instance)
     {
-        if (LobbyController.Lobby == null || !__instance.TryGetComponent<EnemyIdentifier>(out var enemyId)) return;
+        if (LobbyController.Offline || !__instance.TryGetComponent<EnemyIdentifier>(out var enemyId)) return;
 
         if (LobbyController.IsOwner || enemyId.enemyType == EnemyType.Minos || enemyId.enemyType == EnemyType.Leviathan)
         {

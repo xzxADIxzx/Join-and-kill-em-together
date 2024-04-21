@@ -27,15 +27,18 @@ public class GameAssets
         /* 6-1 */ "1 - Entryway",
     };
 
+    /// <summary> List of items that mustn't be synchronized, because they are not items at all. </summary>
+    public static readonly string[] ItemExceptions = new[]
+    { "Minotaur", "Tram (3)", "BombTrigger", "BombStationTramTeleporterKey", "Checker" };
+
     /// <summary> List of internal names of all enemies. </summary>
     public static readonly string[] Enemies = new[]
     {
         "Zombie", "Projectile Zombie", "Super Projectile Zombie", "ShotgunHusk", "MinosBoss", "Stalker", "Sisyphus", "Ferryman",
         "SwordsMachineNonboss", "Drone", "Streetcleaner", "Mindflayer", "V2", "V2 Green Arm Variant", "Turret", "Gutterman",
-        "Guttertank", "Brain", "CentaurRocketLauncher", "CentaurMortar", "CentaurTower", "Spider", "StatueEnemy", "Mass",
-        "Idol", "Mannequin", "Minotaur", "Virtue", "Gabriel", "Gabriel 2nd Variant", "Wicked", "Flesh Prison",
-        "DroneFlesh", "Flesh Prison 2", "DroneFleshCamera Variant", "DroneSkull Variant", "MinosPrime", "SisyphusPrime", "Cancerous Rodent", "Very Cancerous Rodent",
-        "Mandalore", "Big Johninator", "Puppet"
+        "Guttertank", "Spider", "StatueEnemy", "Mass", "Idol", "Mannequin", "Minotaur", "Virtue",
+        "Gabriel", "Gabriel 2nd Variant", "Wicked", "Flesh Prison", "DroneFlesh", "Flesh Prison 2", "DroneFleshCamera Variant", "DroneSkull Variant",
+        "MinosPrime", "SisyphusPrime", "Cancerous Rodent", "Very Cancerous Rodent", "Mandalore", "Big Johninator", "Puppet"
     };
 
     /// <summary> List of internal names of all items. </summary>

@@ -1,5 +1,6 @@
 namespace Jaket.Content;
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,7 +19,7 @@ public class Items
     {
         Events.OnLoaded += () =>
         {
-            if (LobbyController.Lobby != null) Events.Post(SyncAll);
+            if (LobbyController.Online) Events.Post(SyncAll);
         };
         Events.OnLobbyEntered += () => Events.Post(SyncAll);
 
@@ -52,32 +53,34 @@ public class Items
     public static EntityType Type(Entity entity) => entity.ItemId == null ? EntityType.None : Type(entity.ItemId);
 
     /// <summary> Spawns an item with the given type. </summary>
-    public static Item Instantiate(EntityType type) => Object.Instantiate(Prefabs[type - EntityType.ItemOffset].gameObject).AddComponent<Item>();
+    public static Item Instantiate(EntityType type) => GameObject.Instantiate(Prefabs[type - EntityType.ItemOffset].gameObject).AddComponent<Item>();
 
     /// <summary> Synchronizes the item between host and clients. </summary>
     public static void Sync(ItemIdentifier itemId)
     {
-        if (LobbyController.Lobby == null || itemId == null || itemId.gameObject == null) return;
+        if (LobbyController.Offline || itemId == null || itemId.gameObject == null) return;
 
         // the item was created remotely, the item is a book or the item is a prefab
-        if (itemId.gameObject.name == "Net" || itemId.gameObject.name.Contains("Book") || itemId.gameObject.scene.name == null) return;
+        if (itemId.name == "Net" || itemId.name.Contains("Book") || !Tools.IsReal(itemId)) return;
         // sometimes the developer just deactivates the skulls instead of removing them
         if (!itemId.gameObject.activeSelf) return;
+        // what did I do to deserve this?
+        if (Array.Exists(GameAssets.ItemExceptions, ex => ex == itemId.name)) return;
 
         if (LobbyController.IsOwner)
             itemId.gameObject.AddComponent<Item>();
         else
-            Object.DestroyImmediate(itemId.gameObject);
+            Tools.DestroyImmediate(itemId.gameObject);
     }
 
     /// <summary> Synchronizes all items in the level. </summary>
     public static void SyncAll()
     {
-        List<ItemPlaceZone> altars = new(Resources.FindObjectsOfTypeAll<ItemPlaceZone>());
-        altars.RemoveAll(altar => altar.gameObject.scene.name == null);
+        List<ItemPlaceZone> altars = new(Tools.ResFind<ItemPlaceZone>());
+        altars.RemoveAll(altar => !Tools.IsReal(altar));
 
         foreach (var zone in altars) zone.transform.SetParent(null);
-        foreach (var item in Resources.FindObjectsOfTypeAll<ItemIdentifier>()) Sync(item);
+        foreach (var item in Tools.ResFind<ItemIdentifier>()) Sync(item);
         foreach (var zone in altars)
         {
             // at level 5-3 there are altars that activate skulls in the mirror part of the level, but the client has these skulls destroyed

@@ -1,22 +1,30 @@
-namespace Jaket.UI;
+namespace Jaket.UI.Fragments;
 
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+using ImageType = UnityEngine.UI.Image.Type;
+
 using Jaket.Content;
 using Jaket.Net;
 using Jaket.Net.Types;
+
+using static Rect;
 
 /// <summary> Indicators showing the location of teammates near the cursor. </summary>
 public class PlayerIndicators : CanvasSingleton<PlayerIndicators>
 {
     /// <summary> List of all indicator targets. </summary>
-    public List<Transform> targets = new();
+    private List<Transform> targets = new();
     /// <summary> List of indicators themselves. </summary>
-    public List<Image> indicators = new();
+    private List<Image> indicators = new();
 
-    private void Start() => Events.OnTeamChanged += Rebuild;
+    protected override void Awake()
+    {
+        Events.OnLobbyEntered += () => { if (!Shown) Toggle(); };
+        Events.OnTeamChanged += Rebuild;
+    }
 
     private void Update()
     {
@@ -27,25 +35,20 @@ public class PlayerIndicators : CanvasSingleton<PlayerIndicators>
     /// <summary> Toggles visibility of indicators. </summary>
     public void Toggle()
     {
-        // if the player is typing, then nothing needs to be done
-        if (Chat.Shown) return;
-
         gameObject.SetActive(Shown = !Shown);
-
-        // no need to update indicators if we hide them
         if (Shown) Rebuild();
     }
 
     /// <summary> Rebuilds player indicators to match a new state. </summary>
     public void Rebuild()
     {
-        // destroy all indicators and clear the lists
         indicators.ForEach(ind => Destroy(ind.gameObject));
         indicators.Clear();
         targets.Clear();
 
         // create new indicators for each player
         Networking.EachPlayer(AddIndicator);
+        Update();
     }
 
     /// <summary> Adds a new indicator pointing to the player. </summary>
@@ -54,11 +57,8 @@ public class PlayerIndicators : CanvasSingleton<PlayerIndicators>
         // indicators should only point to teammates, so you can even play hide and seek
         if (!player.Team.Ally()) return;
 
-        // save the player's transform in order to rotate an indicator towards it in the future
         targets.Add(player.transform);
-
-        // create a new team color indicator and add it to the list
-        indicators.Add(UI.Image("Indicator", transform, 0f, 0f, 88f, 88f, player.Team.Color(), circle: true));
+        indicators.Add(UIB.Image(player.Header.Name, transform, Size(88f, 88f), player.Team.Color(), UIB.Circle, type: ImageType.Filled));
     }
 
     /// <summary> Updates the size and rotation of the indicator. </summary>

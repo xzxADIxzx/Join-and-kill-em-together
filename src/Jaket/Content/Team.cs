@@ -20,7 +20,7 @@ public static class TeamExtensions
         Team.Red    => new(1f, .2f, .1f),
         Team.Green  => new(0f, .9f, .4f),
         Team.Blue   => new(0f, .5f,  1f),
-        Team.Pink   => new(1f, .3f, .7f),
+        Team.Pink   => new(1f, .4f, .8f),
         _ => new(1f, 1f, 1f)
     };
 

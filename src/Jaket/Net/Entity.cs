@@ -20,6 +20,8 @@ public abstract class Entity : MonoBehaviour
     public ItemIdentifier ItemId;
     /// <summary> Animator component, not inherent in all entities. </summary>
     public Animator Animator;
+    /// <summary> Rigidbody component, not inherent in all entities. </summary>
+    public Rigidbody Rb;
 
     /// <summary> Last update time via snapshots. </summary>
     public float LastUpdate;
@@ -30,6 +32,7 @@ public abstract class Entity : MonoBehaviour
         EnemyId = GetComponent<EnemyIdentifier>();
         ItemId = GetComponent<ItemIdentifier>();
         Animator = GetComponentInChildren<Animator>();
+        Rb = GetComponent<Rigidbody>();
 
         if (remote == null ? LobbyController.IsOwner : !remote())
         {
@@ -82,6 +85,16 @@ public abstract class Entity : MonoBehaviour
 
         /// <summary> Returns the intermediate value of the angle. </summary>
         public float GetAngel(float lastUpdate) => Mathf.LerpAngle(last, target, (Time.time - lastUpdate) / Networking.SNAPSHOTS_SPACING);
+    }
+
+    /// <summary> Class for finding entities according to their ID. </summary>
+    public class EntityProv<T> where T : Entity
+    {
+        /// <summary> Id of the entity that needs to be found. </summary>
+        public ulong Id;
+
+        private T value;
+        public T Value => value?.Id == Id ? value : Networking.Entities.TryGetValue(Id, out var e) && e is T t ? value = t : null;
     }
 }
 

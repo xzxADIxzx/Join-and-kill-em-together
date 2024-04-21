@@ -25,6 +25,8 @@ public class RemotePlayer : Entity
     public bool Invincible => dashing || Health == 0;
     /// <summary> Position in which the player holds an item. </summary>
     public Vector3 HoldPosition => usingHook ? hook.position : hookRoot.position;
+    /// <summary> Entity that the player pulls to himself with a hook. </summary>
+    public EntityProv<Entity> Pulled = new();
 
     /// <summary> Materials of the wings and skateboard. </summary>
     private Material wingMaterial, skateMaterial;
@@ -77,7 +79,7 @@ public class RemotePlayer : Entity
         var rig = v3.GetChild(1);
 
         head = rig.GetChild(6).GetChild(10).GetChild(0);
-        hand = UI.Object("Weapons", rig.GetChild(6).GetChild(5).GetChild(0).GetChild(0)).transform;
+        hand = Tools.Create("Weapons", rig.GetChild(6).GetChild(5).GetChild(0).GetChild(0)).transform;
         hook = rig.GetChild(1);
         hookRoot = rig.GetChild(6).GetChild(0).GetChild(0).GetChild(0).GetChild(0);
         rocket = rig.GetChild(4).GetChild(1);
@@ -118,7 +120,7 @@ public class RemotePlayer : Entity
 
     private void Update()
     {
-        Header.Update(Health);
+        Header.Update(Health, Typing);
         if (Animator == null) // the player is dead
         {
             if (Health != 0) Destroy(gameObject); // the player has respawned, the doll needs to be recreated
@@ -150,22 +152,7 @@ public class RemotePlayer : Entity
             {
                 Weapons.Instantiate(Weapon, hand);
                 WeaponsOffsets.Apply(Weapon, hand);
-
-                foreach (var getter in hand.GetComponentsInChildren<GunColorGetter>())
-                {
-                    var renderer = getter.GetComponent<Renderer>();
-                    if (customColors)
-                    {
-                        renderer.materials = getter.coloredMaterials;
-                        UI.Properties(renderer, block =>
-                        {
-                            block.SetColor("_CustomColor1", color1);
-                            block.SetColor("_CustomColor2", color2);
-                            block.SetColor("_CustomColor3", color3);
-                        }, true);
-                    }
-                    else renderer.materials = getter.defaultMaterials;
-                }
+                UpdateStyle();
             }
         }
         if (LastEmoji != Emoji)
@@ -234,17 +221,62 @@ public class RemotePlayer : Entity
         // everything related to the hook is in LateUpdate, because it is a child of the player's doll and moves with it
         hook.position = new(hookX.Get(LastUpdate), hookY.Get(LastUpdate), hookZ.Get(LastUpdate));
         hook.LookAt(transform);
-        hook.Rotate(new(0f, 180f, 0f), Space.Self);
+        hook.Rotate(Vector3.up * 180f, Space.Self);
 
         hookWinch.SetPosition(0, hookRoot.position);
         hookWinch.SetPosition(1, hook.position);
+
+        // pull the entity caught by the hook
+        if (!LobbyController.IsOwner) return;
+
+        var pl = Pulled.Value;
+        if (pl && pl.EnemyId && pl.Rb)
+        {
+            if (pl.Rb.isKinematic) pl.EnemyId.gce.ForceOff();
+            pl.Rb.velocity = (transform.position - pl.transform.position).normalized * 60f;
+        }
+    }
+
+    private void UpdateStyle()
+    {
+        foreach (var getter in hand.GetComponentsInChildren<GunColorGetter>())
+        {
+            var renderer = getter.GetComponent<Renderer>();
+            if (customColors)
+            {
+                renderer.materials = getter.coloredMaterials;
+                UIB.Properties(renderer, block =>
+                {
+                    block.SetColor("_CustomColor1", color1);
+                    block.SetColor("_CustomColor2", color2);
+                    block.SetColor("_CustomColor3", color3);
+                }, true);
+            }
+            else renderer.materials = getter.defaultMaterials;
+        }
     }
 
     #region special
 
+    /// <summary> Changes the style of the player. </summary>
+    public void Style(Reader r)
+    {
+        customColors = r.Bool();
+        color1 = r.Color(); color2 = r.Color(); color3 = r.Color();
+        UpdateStyle();
+    }
+
     /// <summary> Plays the punching animation and creates a shockwave as needed. </summary>
     public void Punch(Reader r)
     {
+        var field = Tools.Field<Harpoon>("target");
+        foreach (var harpoon in FindObjectsOfType<Harpoon>())
+            if ((field.GetValue(harpoon) as EnemyIdentifierIdentifier)?.eid == EnemyId)
+            {
+                Bullets.Punch(harpoon);
+                harpoon.name = "Net";
+            }
+
         switch (r.Byte())
         {
             case 0:
@@ -288,9 +320,7 @@ public class RemotePlayer : Entity
 
         w.Bool(usingHook);
         w.Float(hookX.target); w.Float(hookY.target); w.Float(hookZ.target);
-
-        w.Bool(customColors);
-        w.Color(color1); w.Color(color2); w.Color(color3);
+        w.Id(Pulled.Id);
     }
 
     public override void Read(Reader r)
@@ -313,8 +343,10 @@ public class RemotePlayer : Entity
         usingHook = r.Bool();
         hookX.Read(r); hookY.Read(r); hookZ.Read(r);
 
-        customColors = r.Bool();
-        color1 = r.Color(); color2 = r.Color(); color3 = r.Color();
+        var id = r.Id();
+        if (id == 0L) Pulled.Value?.EnemyId?.gce.StopForceOff(); // player released the hook
+
+        Pulled.Id = id;
     }
 
     public override void Damage(Reader r) => Bullets.DealDamage(EnemyId, r);

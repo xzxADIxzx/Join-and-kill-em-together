@@ -6,7 +6,6 @@ using UnityEngine;
 using Jaket.IO;
 using Jaket.Net;
 using Jaket.Net.Types;
-using Jaket.UI;
 
 /// <summary> List of all bullets in the game and some useful methods. </summary>
 public class Bullets
@@ -70,8 +69,8 @@ public class Bullets
             }
         }
 
-        Fake = UI.Object("Fake", Networking.Instance.transform);
-        NetDmg = UI.Object("Network Damage", Networking.Instance.transform);
+        Fake = Tools.Create("Fake");
+        NetDmg = Tools.Create("Network Damage");
     }
 
     /// <summary> Finds the bullet type by the name. </summary>
@@ -107,7 +106,7 @@ public class Bullets
     /// <summary> Synchronizes the bullet between host and clients. </summary>
     public static void Sync(GameObject bullet, bool hasRigidbody, bool applyOffset)
     {
-        if (LobbyController.Lobby == null || bullet.name.Contains("Net")) return;
+        if (LobbyController.Offline || bullet == null || bullet.name.Contains("Net")) return;
 
         if (bullet.name != "RL PRI(Clone)" && bullet.name != "RL ALT(Clone)")
         {
@@ -141,7 +140,7 @@ public class Bullets
                     w.Float(bullet.GetComponent<Rigidbody>().velocity.magnitude);
                 }, size: hasRigidbody ? 57 : 45);
 
-                Object.DestroyImmediate(bullet);
+                Tools.DestroyImmediate(bullet);
             }
         }
     }
@@ -156,7 +155,7 @@ public class Bullets
     /// <summary> Synchronizes the "death" of the bullet. </summary>
     public static void SyncDeath(GameObject bullet)
     {
-        if (bullet.TryGetComponent<Bullet>(out var comp) && comp.IsOwner) Networking.Send(PacketType.EnemyDied, w => w.Id(comp.Id), size: 8);
+        if (bullet.TryGetComponent<Bullet>(out var comp) && comp.IsOwner) Networking.Send(PacketType.KillEntity, w => w.Id(comp.Id), size: 8);
     }
 
     #region special
@@ -168,7 +167,7 @@ public class Bullets
         if (blast.name == "Net") sourceWeapon = Fake;
 
         // checking if this is really knuckleblaster explosion
-        if (LobbyController.Lobby == null || blast?.name != "Explosion Wave(Clone)") return;
+        if (LobbyController.Offline || blast?.name != "Explosion Wave(Clone)") return;
         Networking.Send(PacketType.Punch, w =>
         {
             w.Id(Networking.LocalPlayer.Id);
@@ -183,7 +182,7 @@ public class Bullets
     public static void SyncShock(GameObject shock, float force)
     {
         // checking if this is really a player's shockwave
-        if (LobbyController.Lobby == null || shock?.name != "PhysicalShockwavePlayer(Clone)") return;
+        if (LobbyController.Offline || shock?.name != "PhysicalShockwavePlayer(Clone)") return;
         Networking.Send(PacketType.Punch, w =>
         {
             w.Id(Networking.LocalPlayer.Id);
@@ -191,6 +190,17 @@ public class Bullets
 
             w.Float(force);
         }, size: 13);
+    }
+
+    /// <summary> Turns the harpoon 180 degrees and then punches it. </summary>
+    public static void Punch(Harpoon harpoon)
+    {
+        // null pointer fix
+        Tools.Field<Harpoon>("aud").SetValue(harpoon, harpoon.GetComponent<AudioSource>());
+
+        harpoon.transform.Rotate(Vector3.up * 180f, Space.Self);
+        harpoon.transform.position += harpoon.transform.forward;
+        harpoon.Punched();
     }
 
     #endregion

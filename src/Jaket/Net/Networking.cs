@@ -6,18 +6,17 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net.Endpoints;
 using Jaket.Net.Types;
-using Jaket.UI;
+using Jaket.UI.Dialogs;
 using Jaket.World;
 
 /// <summary> Class responsible for updating endpoints, transmitting packets and managing entities. </summary>
-public class Networking : MonoSingleton<Networking>
+public class Networking
 {
-    private static Chat chat => Chat.Instance;
-
     /// <summary> Number of snapshots to be sent per second. </summary>
     public const int SNAPSHOTS_PER_SECOND = 16;
     /// <summary> Number of seconds between snapshots. </summary>
@@ -44,13 +43,13 @@ public class Networking : MonoSingleton<Networking>
         Server.Load();
         Client.Load();
 
-        // create an object to update the network logic
-        UI.Object("Networking").AddComponent<Networking>();
         // create a local player to sync player data
-        LocalPlayer = UI.Object("Local Player", Instance.transform).AddComponent<LocalPlayer>();
+        LocalPlayer = Tools.Create<LocalPlayer>("Local Player");
+        // update network logic every tick
+        Events.EveryTick += NetworkUpdate;
 
-        Events.OnLoaded += () => WasMultiplayerUsed = LobbyController.Lobby.HasValue;
-        Events.OnLobbyAction += () => WasMultiplayerUsed |= LobbyController.Lobby.HasValue;
+        Events.OnLoaded += () => WasMultiplayerUsed = LobbyController.Online;
+        Events.OnLobbyAction += () => WasMultiplayerUsed |= LobbyController.Online;
 
         Events.OnLoaded += () =>
         {
@@ -63,7 +62,7 @@ public class Networking : MonoSingleton<Networking>
             if (LobbyController.IsOwner)
             {
                 World.Instance.Activated.Clear();
-                Send(PacketType.LevelLoading, World.Instance.WriteData);
+                Send(PacketType.LoadLevel, World.Instance.WriteData);
             }
         };
 
@@ -89,11 +88,11 @@ public class Networking : MonoSingleton<Networking>
             }
         };
 
-        SteamMatchmaking.OnLobbyMemberJoined += (lobby, member) => chat.ReceiveChatMessage($"<color=#00FF00>Player {member.Name} joined!</color>");
+        SteamMatchmaking.OnLobbyMemberJoined += (lobby, member) => Bundle.Msg("player.joined", member.Name);
 
         SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) =>
         {
-            chat.ReceiveChatMessage($"<color=red>Player {member.Name} left!</color>");
+            Bundle.Msg("player.left", member.Name);
 
             // kill the player doll and hide the nickname above
             if (Entities.TryGetValue(member.Id, out var entity) && entity != null && entity is RemotePlayer player) player.Kill();
@@ -111,32 +110,35 @@ public class Networking : MonoSingleton<Networking>
         SteamMatchmaking.OnChatMessage += (lobby, member, message) =>
         {
             if (message == "#/d")
-                chat.ReceiveChatMessage($"<color=orange>Player {member.Name} died.</color>");
+                Bundle.Msg("player.died", member.Name);
+
             else if (message.StartsWith("#/k") && ulong.TryParse(message.Substring(3), out ulong id))
-                chat.ReceiveChatMessage($"<color=red>Player {new Friend(id).Name} was kicked!</color>");
+                Bundle.Msg("player.banned", new Friend(id).Name);
+
+            else if (message.StartsWith("#/s") && byte.TryParse(message.Substring(3), out byte team))
+            {
+                if (LocalPlayer.Team == (Team)team) StyleHUD.Instance.AddPoints(Mathf.RoundToInt(250f * StyleCalculator.Instance.airTime), "<color=#32CD32>FRATRICIDE</color>");
+            }
+
             else if (message.StartsWith("/tts "))
-                chat.ReceiveTTSMessage(member, message.Substring("/tts ".Length));
+                Chat.Instance.ReceiveTTS(member, message.Substring(5));
             else
-                chat.ReceiveChatMessage(GetTeamColor(member), member.Name, message);
+                Chat.Instance.Receive(GetTeamColor(member), member.Name.Replace("[", "\\["), message);
         };
     }
 
     /// <summary> Destroys all players and clears lists. </summary>
     public static void Clear()
     {
-        EachPlayer(player => Destroy(player.gameObject));
+        EachPlayer(player => Tools.Destroy(player.gameObject));
         Entities.Clear();
     }
 
-    #region cycle
-
-    private void Start() => InvokeRepeating("NetworkUpdate", 0f, SNAPSHOTS_SPACING);
-
     /// <summary> Core network logic should have been here, but in fact it is located in the server and client classes. </summary>
-    private void NetworkUpdate()
+    private static void NetworkUpdate()
     {
         // the player isn't connected to the lobby and the logic doesn't need to be updated
-        if (LobbyController.Lobby == null) return;
+        if (LobbyController.Offline) return;
 
         // update the server or client depending on the role of the player
         if (LobbyController.IsOwner)
@@ -145,13 +147,12 @@ public class Networking : MonoSingleton<Networking>
             Client.Update();
     }
 
-    #endregion
     #region iteration
 
     /// <summary> Iterates each connection. </summary>
     public static void EachConnection(Action<Connection> cons)
     {
-        foreach (var con in Server.Manager.Connected) cons(con);
+        foreach (var con in Server.Manager?.Connected) cons(con);
     }
 
     /// <summary> Iterates through each player observing the world. </summary>
@@ -213,9 +214,9 @@ public class Networking : MonoSingleton<Networking>
     public static void Redirect(IntPtr data, int size)
     {
         if (LobbyController.IsOwner)
-            EachConnection(con => con.SendMessage(data, size));
+            EachConnection(con => Tools.Send(con, data, size));
         else
-            Client.Manager.Connection.SendMessage(data, size);
+            Tools.Send(Client.Manager.Connection, data, size);
     }
 
     /// <summary> Allocates memory, writes the packet there and sends it. </summary>

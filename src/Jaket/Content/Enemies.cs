@@ -23,7 +23,7 @@ public class Enemies
     public static EntityType Type(EnemyIdentifier enemyId)
     {
         // find object name without clone ending
-        string name = enemyId.gameObject.name;
+        string name = enemyId.name;
         name = name.Contains("(") ? name.Substring(0, name.IndexOf("(")).Trim() : name;
 
         // there are the necessary crutches, because the developer incorrectly set the types of some opponents
@@ -35,6 +35,7 @@ public class Enemies
             case "DroneSkull Variant": return EntityType.FleshPanopticon_Face;
             case "Mandalore": return EntityType.Mandalore;
             case "Big Johninator": return EntityType.Johninator;
+            case "Big Johnator": return EntityType.Johninator;
         }
 
         // the remaining enemies can be found by their type
@@ -61,24 +62,36 @@ public class Enemies
     /// <summary> Synchronizes the enemy between host and clients. </summary>
     public static bool Sync(EnemyIdentifier enemyId)
     {
-        if (LobbyController.Lobby == null || enemyId.dead) return true;
+        if (LobbyController.Offline || enemyId.dead) return true;
 
         // level 0-2 contains several cutscenes that don't need to be removed
-        if (SceneHelper.CurrentScene == "Level 0-2" && enemyId.enemyType == EnemyType.Swordsmachine && enemyId.GetComponent<BossHealthBar>() == null) return true;
-        // levels 2-4 and 5-4 contain unique bosses that needs to be dealt with separately
-        if (SceneHelper.CurrentScene == "Level 2-4" && enemyId.gameObject.name == "MinosArm")
+        if (Tools.Scene == "Level 0-2" && enemyId.enemyType == EnemyType.Swordsmachine && enemyId.GetComponent<BossHealthBar>() == null) return true;
+        // levels 2-4, 5-4 and 7-1 contain unique bosses that needs to be dealt with separately
+        if (Tools.Scene == "Level 2-4" && enemyId.name == "MinosArm")
         {
             enemyId.gameObject.AddComponent<Hand>();
             return true;
         }
-        if (SceneHelper.CurrentScene == "Level 5-4" && enemyId.enemyType == EnemyType.Leviathan)
+        if (Tools.Scene == "Level 5-4" && enemyId.enemyType == EnemyType.Leviathan)
         {
             enemyId.gameObject.AddComponent<Leviathan>();
             return true;
         }
+        if (Tools.Scene == "Level 7-1" && enemyId.name == "MinotaurChase")
+        {
+            enemyId.gameObject.AddComponent<Minotaur>();
+            return true;
+        }
+        // the security system is a complex enemy consisting of several subenemies
+        if (Tools.Scene == "Level 7-4" && (enemyId.name == "Mainframe (Hurtable)" || enemyId.transform.parent?.name == "SecuritySystem")) return true;
+        if (Tools.Scene == "Level 7-4" && enemyId.name == "Brain")
+        {
+            enemyId.gameObject.AddComponent<Brain>();
+            return true;
+        }
 
         // the enemy was created remotely
-        if (enemyId.gameObject.name == "Net")
+        if (enemyId.name == "Net")
         {
             if (!LobbyController.IsOwner) enemyId.GetComponent<Enemy>()?.SpawnEffect();
             return true;
@@ -94,24 +107,24 @@ public class Enemies
             if (enemyId.GetComponent<Sandbox.SandboxEnemy>() != null)
                 Networking.Send(PacketType.SpawnEntity, w =>
                 {
-                    w.Enum(Enemies.Type(enemyId));
+                    w.Enum(Type(enemyId));
                     w.Vector(enemyId.transform.position);
                 }, size: 13);
 
             // the enemy is no longer needed, so destroy it
-            if (enemyId.enemyType == EnemyType.MaliciousFace && enemyId.gameObject.name == "Body")
-                Object.DestroyImmediate(enemyId.transform.parent.gameObject); // avoid a huge number of errors in the console
+            if (enemyId.enemyType == EnemyType.MaliciousFace && enemyId.name == "Body")
+                Tools.DestroyImmediate(enemyId.transform.parent.gameObject); // avoid a huge number of errors in the console
             else
-                Object.DestroyImmediate(enemyId.gameObject);
+                Tools.DestroyImmediate(enemyId.gameObject);
 
             return false;
         }
     }
 
     /// <summary> Synchronizes damage dealt to the enemy. </summary>
-    public static bool SyncDamage(EnemyIdentifier enemyId, float damage, bool explode, float critDamage, GameObject source)
+    public static bool SyncDamage(EnemyIdentifier enemyId, ref float damage, bool explode, float critDamage, GameObject source)
     {
-        if (LobbyController.Lobby == null || enemyId.dead) return true;
+        if (LobbyController.Offline || enemyId.dead) return true;
 
         if (source == Bullets.NetDmg) return true; // the damage was received over the network
         if (source == Bullets.Fake) return false; // bullets are only needed for visual purposes and mustn't cause damage
@@ -119,19 +132,34 @@ public class Enemies
         if (enemyId.TryGetComponent<Entity>(out var entity) && (entity is not RemotePlayer player || !player.Invincible))
             Bullets.SyncDamage(entity.Id, enemyId.hitter, damage, explode, critDamage);
 
-        // the entity was created before the lobby
+        if (!LobbyController.IsOwner && damage + damage * critDamage >= enemyId.health - 1f) damage = 0.0001f;
         return true;
     }
 
     /// <summary> Synchronizes the death of the enemy. </summary>
     public static void SyncDeath(EnemyIdentifier enemyId)
     {
-        if (LobbyController.Lobby == null || enemyId.dead || !LobbyController.IsOwner) return;
+        if (LobbyController.Offline || enemyId.dead) return;
 
+        // TODO remake in 1.3
         if (enemyId.TryGetComponent<Enemy>(out var enemy))
         {
-            Networking.Send(PacketType.EnemyDied, w => w.Id(enemy.Id), size: 8);
-            Object.Destroy(enemy);
+            if (LobbyController.IsOwner)
+            {
+                Networking.Send(PacketType.KillEntity, w => w.Id(enemy.Id), size: 8);
+                Networking.Entities[enemy.Id] = null;
+            }
+            Tools.Destroy(enemy);
+        }
+        else if (enemyId.TryGetComponent<SecuritySystem>(out var sys) && LobbyController.IsOwner)
+        {
+            Networking.Send(PacketType.KillEntity, w => w.Id(sys.Id), size: 8);
+            Networking.Entities[sys.Id] = null;
+        }
+        else if (enemyId.TryGetComponent<Brain>(out var brain) && LobbyController.IsOwner)
+        {
+            Networking.Send(PacketType.KillEntity, w => w.Id(brain.Id), size: 8);
+            Networking.Entities[brain.Id] = null;
         }
     }
 }

@@ -20,8 +20,6 @@ public class Hand : Entity
 
         if (LobbyController.IsOwner)
             LobbyController.ScaleHealth(ref EnemyId.statue.health);
-        else
-            GetComponent<MinosArm>().enabled = false; // artificial intelligence of the hand is not needed by clients
 
         World.Instance.Hand = this;
     }
@@ -30,8 +28,8 @@ public class Hand : Entity
     {
         if (LobbyController.IsOwner) return;
 
-        EnemyId.health = EnemyId.statue.health = health.Get(LastUpdate);
-        EnemyId.dead = EnemyId.health <= 0f;
+        EnemyId.statue.health = health.Get(LastUpdate);
+        EnemyId.dead = EnemyId.statue.health <= 0f;
 
         if (LastHandPos != HandPos) Animator.SetTrigger((LastHandPos = HandPos) switch
         {

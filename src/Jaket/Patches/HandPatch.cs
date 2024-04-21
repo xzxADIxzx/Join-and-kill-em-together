@@ -8,15 +8,19 @@ using Jaket.World;
 [HarmonyPatch(typeof(MinosArm))]
 public class HandPatch
 {
+    [HarmonyPrefix]
+    [HarmonyPatch("Update")]
+    static bool Update() => LobbyController.Offline || LobbyController.IsOwner;
+
     [HarmonyPostfix]
     [HarmonyPatch("SlamDown")]
-    static void SlamDown() { if (LobbyController.Lobby != null && LobbyController.IsOwner && World.Instance.Hand != null) World.Instance.Hand.HandPos = 0; }
+    static void SlamDown() { if (LobbyController.Online && LobbyController.IsOwner && World.Instance.Hand != null) World.Instance.Hand.HandPos = 0; }
 
     [HarmonyPostfix]
     [HarmonyPatch("SlamLeft")]
-    static void SlamLeft() { if (LobbyController.Lobby != null && LobbyController.IsOwner && World.Instance.Hand != null) World.Instance.Hand.HandPos = 1; }
+    static void SlamLeft() { if (LobbyController.Online && LobbyController.IsOwner && World.Instance.Hand != null) World.Instance.Hand.HandPos = 1; }
 
     [HarmonyPostfix]
     [HarmonyPatch("SlamRight")]
-    static void SlamRight() { if (LobbyController.Lobby != null && LobbyController.IsOwner && World.Instance.Hand != null) World.Instance.Hand.HandPos = 2; }
+    static void SlamRight() { if (LobbyController.Online && LobbyController.IsOwner && World.Instance.Hand != null) World.Instance.Hand.HandPos = 2; }
 }

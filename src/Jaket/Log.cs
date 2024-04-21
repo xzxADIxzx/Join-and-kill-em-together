@@ -29,11 +29,11 @@ public class Log
     public static void Load()
     {
         Logger = new("Jaket");
-        LogPath = Path.Combine(Path.GetDirectoryName(Plugin.Instance.Info.Location), "logs", $"Log {Time.Replace(':', '.')}.txt");
+        LogPath = Path.Combine(Path.GetDirectoryName(Plugin.Instance.Location), "logs", $"Log {Time.Replace(':', '.')}.txt");
 
         Events.OnLobbyAction += () =>
         {
-            var lobby = LobbyController.Lobby == null ? "null" : $"{LobbyController.Lobby?.GetData("name")} ({LobbyController.Lobby.Value.Id})";
+            var lobby = LobbyController.Offline ? "null" : $"{LobbyController.Lobby?.GetData("name")} ({LobbyController.Lobby.Value.Id})";
             var owner = LobbyController.Lobby?.Owner.ToString() ?? "null";
             Debug($"Lobby status updated: cl is {lobby}, owner is {owner}");
         };
@@ -43,7 +43,7 @@ public class Log
     /// <summary> Formats and writes the msg to all output points. </summary>
     public static void LogLevel(Level level, string msg)
     {
-        Logger.Log(level == Level.Debug ? $"<color=#CCCCCC>{msg}</color>" : msg, level switch
+        Logger.Log(level == Level.Debug ? $"<color=#BBBBBB>{msg}</color>" : msg, level switch
         {
             Level.Debug or Level.Info => plog.Models.Level.Info,
             Level.Warning => plog.Models.Level.Warning,
@@ -72,6 +72,8 @@ public class Log
     public static void Warning(string msg) => LogLevel(Level.Warning, msg);
 
     public static void Error(string msg) => LogLevel(Level.Error, msg);
+
+    public static void Error(Exception ex) => LogLevel(Level.Error, $"{ex.ToString()}\nOuter:\n{UnityEngine.StackTraceUtility.ExtractStackTrace()}");
 
     /// <summary> Log importance levels. </summary>
     public enum Level

@@ -23,8 +23,8 @@ public class Enemy : Entity
     /// <summary> Enemy subtype. 0 - standard, 1 - Agony or Angry, 2 - Tundra or Rude. </summary>
     private byte subtype;
 
-    /// <summary> Enemy health, position and rotation. </summary>
-    private FloatLerp health, x, y, z, rotation;
+    /// <summary> Enemy health and position. </summary>
+    private FloatLerp health, x, y, z;
     /// <summary> Whether the enemy is a boss and should have a health bar. </summary>
     private bool boss, haveSecondPhase;
     /// <summary> Whether the enemy is a fake ferryman. </summary>
@@ -36,7 +36,6 @@ public class Enemy : Entity
 
         health = new();
         x = new(); y = new(); z = new();
-        rotation = new();
 
         healthBar = GetComponent<BossHealthBar>();
         fakeFerryman = GetComponent<FerrymanFake>();
@@ -49,7 +48,7 @@ public class Enemy : Entity
             else if (EnemyId.statue) LobbyController.ScaleHealth(ref EnemyId.statue.health);
 
             // in the second phase the same object is used as in the anticipatory one
-            if (SceneHelper.CurrentScene == "Level 4-4" && EnemyId.enemyType == EnemyType.V2 && TryGetComponent<V2>(out var V2) && !V2.firstPhase)
+            if (Tools.Scene == "Level 4-4" && EnemyId.enemyType == EnemyType.V2 && TryGetComponent<V2>(out var V2) && !V2.firstPhase)
             {
                 Networking.Entities[Id] = this;
                 DestroyImmediate(healthBar);
@@ -61,11 +60,17 @@ public class Enemy : Entity
         health.target = EnemyId.health;
 
         // run a loop that will update the target id of the idol every second
-        if (TryGetComponent<Idol>(out idol) && LobbyController.IsOwner) InvokeRepeating("UpdateTarget", 0f, 1f);
+        if (TryGetComponent(out idol) && LobbyController.IsOwner) InvokeRepeating("UpdateTarget", 0f, 1f);
     }
 
     private void Start()
     {
+        // fix the rotation of the Corpse of King Minos
+        if (!LobbyController.IsOwner && Tools.Scene == "Level 2-4" && Type == EntityType.TheCorpseOfKingMinos) transform.localEulerAngles = new(0f, 90f, 0f);
+
+        // disable fake Something Wicked
+        if (!LobbyController.IsOwner && Tools.Scene == "Level 7-4" && Type == EntityType.SomethingWicked) gameObject.SetActive(false);
+
         // find the enemy subtype
         subtype = healthBar?.bossName switch
         {
@@ -79,7 +84,7 @@ public class Enemy : Entity
 
         if (EnemyId.enemyType == EnemyType.Swordsmachine)
         {
-            var original = GameObject.Find("S - Secret Fight").transform.GetChild(0).GetChild(0).GetChild(subtype == 1 ? 2 : 1);
+            var original = Tools.ObjFind("S - Secret Fight").transform.GetChild(0).GetChild(0).GetChild(subtype == 1 ? 2 : 1);
 
             transform.GetChild(0).GetChild(1).GetComponent<Renderer>().material = original.transform.GetChild(0).GetChild(1).GetComponent<Renderer>().material;
             transform.GetChild(0).GetChild(2).GetComponent<Renderer>().material = original.transform.GetChild(0).GetChild(2).GetComponent<Renderer>().material;
@@ -96,7 +101,6 @@ public class Enemy : Entity
 
         EnemyId.health = health.Get(LastUpdate);
         transform.position = new(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
-        transform.eulerAngles = new(0f, rotation.GetAngel(LastUpdate), 0f);
 
         // this is necessary so that the health of the bosses is the same for all clients
         if (EnemyId.machine != null) EnemyId.machine.health = EnemyId.health;
@@ -113,20 +117,20 @@ public class Enemy : Entity
             Destroy(GetComponent<Ferryman>());
 
             // replace the animation controller so that the ferryman sits and does not spin
-            GetComponent<Animator>().runtimeAnimatorController = Array.Find(Resources.FindObjectsOfTypeAll<RuntimeAnimatorController>(), c => c.name == "FerrymanIntro2");
+            GetComponent<Animator>().runtimeAnimatorController = Array.Find(Tools.ResFind<RuntimeAnimatorController>(), c => c.name == "FerrymanIntro2");
 
             // add components that will trigger an animation when the ferryman touches a coin
-            var trigger = UI.Object("Coin Trigger", transform);
+            var trigger = Tools.Create("Coin Trigger", transform);
             trigger.transform.localPosition = new();
             trigger.transform.localScale = new(3f, 3f, 3f);
 
-            UI.Component<CapsuleCollider>(trigger, collider =>
+            UIB.Component<CapsuleCollider>(trigger, collider =>
             {
                 collider.height = 2f;
                 collider.isTrigger = true;
             });
 
-            UI.Component<CoinActivated>(trigger, coin =>
+            UIB.Component<CoinActivated>(trigger, coin =>
             {
                 coin.disableCoin = true;
                 coin.events = new UltrakillEvent() { onActivate = new UnityEvent() };
@@ -164,7 +168,6 @@ public class Enemy : Entity
     {
         w.Float(EnemyId.health);
         w.Vector(transform.position);
-        w.Float(transform.eulerAngles.y);
 
         w.Bool(healthBar != null); w.Bool(healthBar == null ? false : healthBar.healthLayers.Length > 1);
         w.Bool(fakeFerryman != null);
@@ -178,7 +181,6 @@ public class Enemy : Entity
 
         health.Read(r);
         x.Read(r); y.Read(r); z.Read(r);
-        rotation.Read(r);
 
         boss = r.Bool(); haveSecondPhase = r.Bool();
         fake = r.Bool();
@@ -188,16 +190,33 @@ public class Enemy : Entity
 
     public override void Kill()
     {
+        // spawn shotgun
+        if (TryGetComponent<SwordsMachine>(out var sm) && boss) Instantiate(sm.shotgunPickUp, transform.position, transform.rotation);
+
+        // animate V2's death
+        if (!LobbyController.IsOwner && TryGetComponent<V2>(out var v2) && v2.intro && TryGetComponent<Machine>(out var machine))
+        {
+            v2.active = false;
+            v2.escapeTarget = Tools.ObjFind("EscapeTarget")?.transform;
+            v2.spawnOnDeath = v2.escapeTarget?.Find("RedArmPickup").gameObject;
+
+            machine.GetHurt(gameObject, Vector3.zero, 1000f, 0f);
+            Tools.ObjFind("Music - Versus").GetComponent<Crossfade>().StartFade();
+        }
         // it looks funny
-        if (!fake) EnemyId.InstaKill();
-        // reduce health to zero because the host destroyed enemy
-        EnemyId.health = 0f;
+        else if (!fake) EnemyId.InstaKill();
 
         // destroy the boss bar, because it looks just awful
         healthBar?.Invoke("DestroyBar", 3f);
         // destroy the component to allow enemies like Malicious Face and Drone to fall
-        Destroy(fake ? gameObject : this);
+        if (fake || Type == EntityType.MaliciousFace || Type == EntityType.Drone)
+            DestroyImmediate(fake ? gameObject : this);
+        else
+            Invoke("DestroyComponent", 1f);
     }
+
+    // ultracrutch that will be here until I remake the net code again in 1.2
+    private void DestroyComponent() => Destroy(this);
 
     #endregion
 }

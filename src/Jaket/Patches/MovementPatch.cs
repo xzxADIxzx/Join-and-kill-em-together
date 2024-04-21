@@ -8,6 +8,8 @@ using Jaket.Content;
 using Jaket.Net;
 using Jaket.Net.Types;
 using Jaket.UI;
+using Jaket.UI.Dialogs;
+using Jaket.UI.Fragments;
 using Jaket.World;
 
 [HarmonyPatch(typeof(NewMovement))]
@@ -18,7 +20,7 @@ public class MovementPatch
     static void Spawn(NewMovement __instance)
     {
         // add some randomness to the spawn position so players don't stack on top of each other at the start of the level
-        if (LobbyController.Lobby != null) __instance.transform.position += new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f));
+        if (LobbyController.Online) __instance.transform.position += new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f));
     }
 
     [HarmonyPrefix]
@@ -35,7 +37,7 @@ public class MovementPatch
             LobbyController.Lobby?.SendChatString("#/d");
 
             // close the chat & interrupt the emoji to avoid bugs
-            Chat.Instance.field.gameObject.SetActive(false);
+            Chat.Instance.Field.gameObject.SetActive(false);
             Movement.Instance.StartEmoji(0xFF);
         }
     }
@@ -46,7 +48,7 @@ public class CommonPatch
 {
     [HarmonyPrefix]
     [HarmonyPatch(typeof(CheatsManager), nameof(CheatsManager.HandleCheatBind))]
-    static bool Cheats() => !UI.AnyMovementBlocking() && Movement.Instance.Emoji == 0xFF;
+    static bool Cheats() => !UI.AnyMovementBlocking;
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(CheatsController), nameof(CheatsController.Update))]
@@ -65,5 +67,12 @@ public class CommonPatch
     static void AutoAim(ref Collider value)
     {
         if (value != null && value.TryGetComponent<RemotePlayer>(out var player) && player.Team.Ally()) value = null;
+    }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(WeaponWheel), "OnEnable")]
+    static void Wheel(WeaponWheel __instance)
+    {
+        if (EmojiWheel.Shown) __instance.gameObject.SetActive(false);
     }
 }

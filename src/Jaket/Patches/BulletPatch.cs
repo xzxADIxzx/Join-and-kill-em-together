@@ -36,7 +36,7 @@ public class CommonBulletsPatch
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(Harpoon), "Start")]
-    static void Harpoon(Harpoon __instance, Rigidbody ___rb) => Events.Post2(() => Bullets.Sync(__instance.gameObject, true, true));
+    static void Harpoon(Harpoon __instance) => Events.Post2(() => Bullets.Sync(__instance.gameObject, true, true));
 
 
 
@@ -55,7 +55,7 @@ public class CommonBulletsPatch
         // if the grenade is a rocket or local, then explode it, otherwise skip the explosion because it will be synced
         if (__instance.rocket || __instance.name != "Net") return true;
 
-        Object.Destroy(__instance.gameObject);
+        Tools.Destroy(__instance.gameObject);
         return false;
     }
 
@@ -66,14 +66,37 @@ public class CommonBulletsPatch
         eid.eid != null && eid.eid.TryGetComponent<RemotePlayer>(out var player)
             ? !player.Team.Ally()
             : true;
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(Harpoon), "FixedUpdate")]
+    static void HarpoonDamage(Harpoon __instance, ref float ___drillCooldown)
+    {
+        // this is necessary so that only the one who created the harpoon causes the damage
+        if (__instance.name == "Net") ___drillCooldown = 1f;
+    }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(Harpoon), "OnTriggerEnter")]
+    static bool HarpoonLogic(Harpoon __instance, Collider other, ref bool ___hit, ref Rigidbody ___rb)
+    {
+        if (__instance.name == "Net" && !___hit && other.gameObject == NewMovement.Instance.gameObject)
+        {
+            ___hit = true;
+            ___rb.constraints = RigidbodyConstraints.FreezeAll;
+            __instance.transform.SetParent(other.transform, true);
+
+            return false;
+        }
+        else return true;
+    }
 }
 
 [HarmonyPatch]
 public class EntityBulletsPatch
 {
     [HarmonyPostfix]
-    [HarmonyPatch(typeof(Grenade), "Start")] // DO NOT USE AWAKE
-    static void GrenadeSpawn(Grenade __instance) => Events.Post2(() => Bullets.Sync(__instance.gameObject, true, false));
+    [HarmonyPatch(typeof(Grenade), "Start")] // DO NOT USE AWAKE                    __instance?.gameObject doesn't work ._.
+    static void GrenadeSpawn(Grenade __instance) => Events.Post2(() => Bullets.Sync(__instance ? __instance.gameObject : null, true, false));
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(Grenade), nameof(Grenade.Explode))]
