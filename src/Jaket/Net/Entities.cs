@@ -1,6 +1,7 @@
 namespace Jaket.Net;
 
 using System.Collections.Generic;
+using UnityEngine;
 
 using Jaket.Assets;
 using Jaket.Content;
@@ -47,6 +48,16 @@ public class Entities
         Providers.Add(EntityType.Ball, () => Bullets.EInstantiate(EntityType.Ball));
     }
 
+    /// <summary> Instantiates the given prefab and marks it with the Net tag. </summary>
+    public static GameObject Mark(GameObject prefab)
+    {
+        // the instance is created on these coordinates so as not to collide with anything after the spawn
+        var instance = Object.Instantiate(prefab, Vector2.down * 10000f, Quaternion.identity);
+
+        instance.name = "Net";
+        return instance;
+    }
+
     /// <summary> Returns an entity of the given type. </summary>
     public static Entity Get(uint id, EntityType type)
     {
@@ -59,9 +70,6 @@ public class Entities
         return entity;
     }
 
-    /// <summary> Entity provider. </summary>
-    public delegate Entity Prov();
-
     /// <summary> Returns the next available id, skips ids of all existing entities. </summary>
     public static uint NextId()
     {
@@ -72,4 +80,7 @@ public class Entities
 
         return LastId;
     }
+
+    /// <summary> Entity provider. </summary>
+    public delegate Entity Prov();
 }
