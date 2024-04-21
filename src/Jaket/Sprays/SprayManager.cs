@@ -92,7 +92,7 @@ public class SprayManager
         }
         if (!Cache.ContainsKey(owner))
         {
-            if (owner == Tools.Id) // seems like the player is in offline game
+            if (owner == Tools.AccId) // seems like the player is in offline game
                 Cache.Add(owner, CurrentSpray);
             else
                 SprayDistributor.Request(owner);

@@ -220,7 +220,7 @@ public class Networking
     }
 
     /// <summary> Allocates memory, writes the packet there and sends it. </summary>
-    public static void Send(PacketType packetType, Action<Writer> cons = null, Action<IntPtr, int> result = null, int size = 64) =>
+    public static void Send(PacketType packetType, Action<Writer> cons = null, Action<IntPtr, int> result = null, int size = 63) =>
         Writer.Write(w => { w.Enum(packetType); cons?.Invoke(w); }, result ?? Redirect, cons == null ? 1 : size + 1);
 
     #endregion

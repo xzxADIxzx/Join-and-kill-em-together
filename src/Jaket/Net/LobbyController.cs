@@ -47,7 +47,7 @@ public class LobbyController
         {
             if (lobby.Owner.Id != 0L) LastOwner = lobby.Owner.Id;
 
-            if (lobby.GetData("banned").Contains(Tools.Id.ToString())) LeaveLobby();
+            if (lobby.GetData("banned").Contains(Tools.AccId.ToString())) LeaveLobby();
             if (IsMultikillLobby(lobby))
             {
                 LeaveLobby();

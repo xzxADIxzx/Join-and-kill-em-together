@@ -17,7 +17,10 @@ public class Tools
     /// <summary> Steam id of the local player. </summary>
     public static SteamId Id => SteamClient.SteamId;
     /// <summary> Account id of the local player. </summary>
-    public static uint AccId => SteamClient.SteamId.AccountId;
+    public static uint AccId;
+
+    /// <summary> How could I know that Steamworks do not cache this value? </summary>
+    public static void CacheAccId() => AccId = Id.AccountId;
 
     /// <summary> Just a shortcut needed in order to track statistics and errors. </summary>
     public static void Send(Connection? con, System.IntPtr data, int size)

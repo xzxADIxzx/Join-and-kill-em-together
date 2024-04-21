@@ -19,7 +19,7 @@ public class Writer
     public Writer(IntPtr memory, int length) { mem = memory; Length = length; }
 
     /// <summary> Allocates memory and writes data there. </summary>
-    public static void Write(Action<Writer> cons, Action<IntPtr, int> result, int memoryAmount = 64)
+    public static void Write(Action<Writer> cons, Action<IntPtr, int> result, int memoryAmount)
     {
         Writer instance = new(Marshal.AllocHGlobal(memoryAmount), memoryAmount);
         Pointers.Add(instance.mem);
