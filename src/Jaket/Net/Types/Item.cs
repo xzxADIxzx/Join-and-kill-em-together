@@ -5,15 +5,15 @@ using UnityEngine;
 using Jaket.Content;
 using Jaket.IO;
 
-/// <summary> Representation of all items in the game, except glasses. </summary>
+/// <summary> Representation of all items in the game, except glasses and books. </summary>
 public class Item : OwnableEntity
 {
     /// <summary> Item position and rotation. </summary>
     private FloatLerp x, y, z, rx, ry, rz;
 
-    /// <summary> Player holding an item in their hands. </summary>
+    /// <summary> Player holding the item in their hands. </summary>
     private EntityProv<RemotePlayer> player = new();
-    /// <summary> Whether the player is holding an item. </summary>
+    /// <summary> Whether the player is holding the item. </summary>
     private bool holding;
     /// <summary> Whether the item is placed on an altar. </summary>
     private bool placed;
@@ -22,8 +22,8 @@ public class Item : OwnableEntity
 
     private void Awake()
     {
-        Init(Items.Type);
-        OnTransferred += () => player.Id = Owner;
+        Init(Items.Type, true);
+        InitTransfer(() => player.Id = Owner);
 
         x = new(); y = new(); z = new();
         rx = new(); ry = new(); rz = new();
@@ -54,7 +54,7 @@ public class Item : OwnableEntity
         // put on the altar or light the torches
         if ((placed && ItemId.ipz == null) || torch)
         {
-            var colliders = Physics.OverlapSphere(transform.position, 0.5f, 20971776, QueryTriggerInteraction.Collide);
+            var colliders = Physics.OverlapSphere(transform.position, .5f, 20971776, QueryTriggerInteraction.Collide);
             foreach (var col in colliders)
             {
                 if (col.gameObject.layer != 22) continue;
@@ -95,6 +95,8 @@ public class Item : OwnableEntity
         holding = r.Bool();
         placed = r.Bool();
     }
+
+    public override void Kill() => Destroy(gameObject);
 
     #endregion
 }
