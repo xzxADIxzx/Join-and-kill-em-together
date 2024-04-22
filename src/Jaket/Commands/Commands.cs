@@ -73,16 +73,8 @@ public class Commands
             if (index == -1)
                 chat.Receive($"[#FF341C]Plushy named {name} not found.");
             else
-            {
-                if (LobbyController.IsOwner)
-                    Items.Instantiate(EntityType.PlushyOffset + index).transform.position = NewMovement.Instance.transform.position;
-                else
-                    Networking.Send(PacketType.SpawnEntity, w =>
-                    {
-                        w.Enum(EntityType.PlushyOffset + index);
-                        w.Vector(NewMovement.Instance.transform.position);
-                    }, size: 13);
-            }
+                GameObject.Instantiate(Items.Prefabs[EntityType.PlushyOffset + index - EntityType.ItemOffset].gameObject)
+                    .transform.position = NewMovement.Instance.transform.position;
         });
 
         Handler.Register("level", "<layer> <level> / sandbox / the-cyber-grind", "Load the given lvl", args =>

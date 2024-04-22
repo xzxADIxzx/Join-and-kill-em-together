@@ -271,13 +271,22 @@ public class Movement : MonoSingleton<Movement>
         }
     }
 
-    /// <summary> Repeats a part of the checkpoint logic, needed in order to avoid resetting rooms. </summary>
-    public void Respawn(Vector3 position, float rotation)
+    /// <summary> Teleports the local player to the given position and activates movement if it is disabled. </summary>
+    public void Teleport(Vector3 position)
     {
-        cc.activated = nm.enabled = true;
+        UpdateState();
         nm.transform.position = position;
         nm.rb.velocity = Vector3.zero;
 
+        PlayerActivatorRelay.Instance?.Activate();
+        if (GameStateManager.Instance.IsStateActive("pit-falling"))
+            GameStateManager.Instance.PopState("pit-falling");
+    }
+
+    /// <summary> Repeats a part of the checkpoint logic, needed in order to avoid resetting rooms. </summary>
+    public void Respawn(Vector3 position, float rotation)
+    {
+        Teleport(position);
         if (PlayerTracker.Instance.playerType == PlayerType.FPS)
             cc.ResetCamera(rotation);
         else

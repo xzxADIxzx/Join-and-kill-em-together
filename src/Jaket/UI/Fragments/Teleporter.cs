@@ -3,6 +3,8 @@ namespace Jaket.UI.Fragments;
 using UnityEngine;
 using UnityEngine.UI;
 
+using Jaket.World;
+
 using static Pal;
 
 /// <summary> In fact, it's just a flash needed to make the teleportation look better. </summary>
@@ -43,7 +45,7 @@ public class Teleporter : CanvasSingleton<Teleporter>
     /// <summary> Teleports the player to the given coordinates. </summary>
     public static void Teleport(Vector3 pos, bool insideTunnel = true, bool insideEarthmover = true)
     {
-        NewMovement.Instance.transform.position = pos;
+        Movement.Instance.Teleport(pos);
         Events.Post2(() => AudioSource.PlayClipAtPoint(Instance.click, pos));
 
         Instance.Flash();

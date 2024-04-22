@@ -1,9 +1,9 @@
 namespace Jaket.Patches;
 
 using HarmonyLib;
-using System.Text.RegularExpressions;
 using UnityEngine.UI;
 
+using Jaket.Assets;
 using Jaket.Net;
 
 using static Jaket.UI.Pal;
@@ -54,6 +54,6 @@ public class RankPatch
     [HarmonyPatch(typeof(FinalRank), nameof(FinalRank.SetRank))]
     static void RankColor(FinalRank __instance)
     {
-        if (Networking.WasMultiplayerUsed) __instance.totalRank.text = Regex.Replace(__instance.totalRank.text, "<.*?>", "");
+        if (Networking.WasMultiplayerUsed) __instance.totalRank.text = Bundle.CutColors(__instance.totalRank.text);
     }
 }
