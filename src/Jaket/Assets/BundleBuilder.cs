@@ -1,7 +1,5 @@
 #if UNITY_EDITOR
 
-namespace Jaket.Assets;
-
 using System.IO;
 using UnityEditor;
 
