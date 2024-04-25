@@ -11,6 +11,11 @@ Notes-instructions on how to correctly import assets into Unity will be listed h
 * Copy to the root folder
 * Add to the assets bundle (via the bottom menu)
 
+## Prefabs and sam-audio
+
+* Move prefabs to a separate folder (optional)
+* Add to the assets bundle (via the bottom menu)
+
 ## Icons
 
 * Texture Type: Sprite
