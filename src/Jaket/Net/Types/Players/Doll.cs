@@ -43,6 +43,21 @@ public class Doll : MonoBehaviour
     /// <summary> Winch of the hook. </summary>
     public LineRenderer HookWinch;
 
+    /// <summary> Spawns a preview of the given emoji. </summary>
+    public static Doll Spawn(Transform parent, Team team, byte emoji, byte rps) =>
+        UIB.Component<Doll>(Instantiate(DollAssets.Preview, parent), doll =>
+        {
+            doll.transform.localPosition = new(0f, -1.5f);
+            doll.transform.localScale = Vector3.one * 2.18f;
+            doll.Head.localEulerAngles = new(-20f, 0f);
+
+            doll.ApplyTeam(team);
+            // TODO load local players' suit + ApplySuit
+
+            doll.Emoji = emoji;
+            doll.Rps = rps;
+        });
+
     private void Awake()
     {
         Transform V3 = transform.Find("V3"), rig = transform.Find("Metarig");
@@ -122,7 +137,7 @@ public class Doll : MonoBehaviour
     {
         WingMat.mainTexture = SkateMat.mainTexture = DollAssets.WingTextures[(int)team];
         CoinMat.color = team.Color();
-        WingTrail.startColor = team.Color() with { a = .5f };
+        if (WingTrail != null) WingTrail.startColor = team.Color() with { a = .5f };
 
         // TODO make it part of customization
         Suits.GetChild(0).gameObject.SetActive(team == Team.Pink);

@@ -9,6 +9,7 @@ using UnityEngine;
 using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net;
+using Jaket.Net.Types.Players;
 using Jaket.Sprays;
 using Jaket.UI;
 using Jaket.UI.Dialogs;
@@ -341,31 +342,6 @@ public class Movement : MonoSingleton<Movement>
     #endregion
     #region emoji
 
-    /// <summary> Creates a preview of the given emoji in player coordinates. </summary>
-    public void PreviewEmoji(byte id)
-    {
-        EmojiPreview = Instantiate(DollAssets.Preview, nm.transform);
-        EmojiPreview.transform.localPosition = new(0f, -1.5f, 0f);
-        EmojiPreview.transform.localScale = new(2.18f, 2.18f, 2.18f); // preview created for terminal and too small
-
-        var anim = EmojiPreview.transform.GetChild(0).GetComponent<Animator>();
-
-        anim.SetTrigger("Show Emoji");
-        anim.SetInteger("Emoji", id);
-        anim.SetInteger("Rps", Rps);
-
-        // apply team to emotion preview
-        var team = Networking.LocalPlayer.Team;
-        var mat1 = EmojiPreview.transform.GetChild(0).GetChild(4).GetComponent<Renderer>().materials[1];
-        var mat2 = EmojiPreview.transform.GetChild(0).GetChild(3).GetComponent<Renderer>().materials[0];
-
-        mat1.mainTexture = mat2.mainTexture = DollAssets.WingTextures[(int)team];
-        if (team == Team.Pink) EmojiPreview.transform.GetChild(0).GetChild(0).gameObject.SetActive(true);
-
-        if (id == 6) EmojiPreview.transform.GetChild(0).GetChild(1).GetChild(7).gameObject.SetActive(true); // throne
-        if (id == 8) EmojiPreview.transform.GetChild(0).GetChild(1).GetChild(6).GetChild(10).GetChild(0).localEulerAngles = new(-20f, 0f, 0f); // neck
-    }
-
     /// <summary> Triggers an emoji with the given id. </summary>
     public void StartEmoji(byte id, bool updateState = true)
     {
@@ -374,14 +350,12 @@ public class Movement : MonoSingleton<Movement>
 
         // toggle movement and third-person camera
         if (updateState) UpdateState();
-
-        // destroy the old preview so they don't stack
         Destroy(EmojiPreview);
         Destroy(FallParticle);
 
         // if id is -1, then the emotion was not selected
         if (id == 0xFF) return;
-        else PreviewEmoji(id);
+        else EmojiPreview = Doll.Spawn(nm.transform, Networking.LocalPlayer.Team, id, Rps).gameObject;
 
         // stop sliding so that the preview is not underground
         nm.playerCollider.height = 3.5f;
@@ -400,10 +374,7 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Returns the emoji id to -1 after the end of an animation. </summary>
     public IEnumerator ClearEmoji()
     {
-        // wait for the end of an animation
         yield return new WaitForSeconds(emojiLength[Emoji] + .5f);
-
-        // return the emoji id to -1
         StartEmoji(0xFF);
     }
 
