@@ -49,9 +49,9 @@ public class Doll : MonoBehaviour
         {
             doll.transform.localPosition = new(0f, -1.5f);
             doll.transform.localScale = Vector3.one * 2.18f;
-            doll.Head.localEulerAngles = new(-20f, 0f);
 
             doll.ApplyTeam(team);
+            doll.Suits.gameObject.SetActive(true);
             // TODO load local players' suit + ApplySuit
 
             doll.Emoji = emoji;
@@ -60,7 +60,8 @@ public class Doll : MonoBehaviour
 
     private void Awake()
     {
-        Transform V3 = transform.Find("V3"), rig = transform.Find("Metarig");
+        Animator = GetComponentInChildren<Animator>();
+        Transform V3 = transform.Find("V3"), rig = V3.Find("Metarig");
 
         Head = rig.Find("Spine 0/Spine 1/Spine 2");
         Hand = rig.Find("Spine 0/Right Shoulder/Right Elbow/Right Wrist");
@@ -108,6 +109,7 @@ public class Doll : MonoBehaviour
             Throne.gameObject.SetActive(Emoji == 6);
             Coin.gameObject.SetActive(Emoji == 7);
             Skateboard.gameObject.SetActive(Emoji == 11);
+            if (Emoji == 8) Head.localEulerAngles = new(-20f, 0f);
 
             OnEmojiStart();
         }

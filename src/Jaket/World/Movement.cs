@@ -28,7 +28,7 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Environmental mask needed to prevent the skateboard from riding on water and camera from falling trough the ground. </summary>
     private readonly int mask = LayerMaskDefaults.Get(LMD.Environment);
     /// <summary> An array containing the length of all emotions in seconds. </summary>
-    private readonly float[] emojiLength = { 2.458f, 4.708f, 1.833f, 2.875f, 0f, 9.083f, -1f, 12.125f, -1f, 3.292f, 0f, -1f };
+    private readonly float[] emojiLength = { 2.458f, 4.708f, 1.833f, 2.875f, 0f, 9.083f, -1f, 11.022f, -1f, 3.292f, 0f, -1f };
 
     /// <summary> Current emotion preview, can be null. </summary>
     public GameObject EmojiPreview;
