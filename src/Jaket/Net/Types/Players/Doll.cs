@@ -96,6 +96,8 @@ public class Doll : MonoBehaviour
         if (WasHooking != Hooking)
         {
             if (WasHooking = Hooking) Animator.SetTrigger("hook");
+
+            Hook.position = HookRoot.position;
             Hook.gameObject.SetActive(Hooking);
         }
         if (WasShopping != Shopping && (WasShopping = Shopping)) Animator.SetTrigger("open-shop");

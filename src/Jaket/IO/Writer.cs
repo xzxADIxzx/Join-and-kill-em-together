@@ -5,6 +5,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using UnityEngine;
 
+using Jaket.Content;
+
 /// <summary> Wrapper over Marshal for convenience and the ability to write floating point numbers. </summary>
 public class Writer
 {
@@ -78,6 +80,12 @@ public class Writer
     public void Color(Color32 value) => Int(value.rgba);
 
     public void Enum<T>(T value) where T : Enum => Byte(Convert.ToByte(value));
+
+    public void Player(Team team, byte weapon, byte emoji, byte rps, bool typing)
+    {
+        if (emoji == 0xFF) emoji = 0b1111; // null emoji is recorded as 255, but only 4 bits stand out under emoji
+        Marshal.WriteInt16(mem, Inc(8), (short)((weapon << 10) | (Convert.ToByte(team) << 7) | (emoji << 3) | (rps << 1) | (typing ? 1 : 0)));
+    }
 
     #endregion
 }

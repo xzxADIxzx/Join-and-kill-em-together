@@ -5,6 +5,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using UnityEngine;
 
+using Jaket.Content;
+
 /// <summary> Wrapper over Marshal for convenience and the ability to read floating point numbers. </summary>
 public class Reader
 {
@@ -71,6 +73,19 @@ public class Reader
     public Color32 Color() => new(Byte(), Byte(), Byte(), Byte());
 
     public T Enum<T>() where T : Enum => (T)System.Enum.ToObject(typeof(T), Byte());
+
+    public void Player(out Team team, out byte weapon, out byte emoji, out byte rps, out bool typing)
+    {
+        short value = Marshal.ReadInt16(mem, Inc(8));
+
+        weapon = (byte)(value >>> 10);
+        team = (Team)(value & 0b1110000000 >>> 7);
+        emoji = (byte)(value & 0b1111000 >>> 3);
+        rps = (byte)(value & 0b110 >>> 1);
+        typing = (value & 1) != 0;
+
+        if (emoji == 0b1111) emoji = 0xFF;
+    }
 
     #endregion
 }
