@@ -12,9 +12,9 @@ public enum PacketType
 
     /// <summary> Client requests enemy spawn. </summary>
     SpawnEntity,
-    /// <summary> Server or client requests bullet spawn. </summary>
+    /// <summary> Data of the bullet spawned by a player. </summary>
     SpawnBullet,
-    /// <summary> Data on the damage dealt to an entity. </summary>
+    /// <summary> Data of the damage dealt to an entity. </summary>
     DamageEntity,
     /// <summary> Request from a host to kill an entity or from a client to destroy a bullet. </summary>
     KillEntity,

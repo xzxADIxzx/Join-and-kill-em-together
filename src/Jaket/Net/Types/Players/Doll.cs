@@ -3,7 +3,10 @@ namespace Jaket.Net.Types.Players;
 using System;
 using UnityEngine;
 
+using Jaket.Assets;
+using Jaket.Content;
 using Jaket.IO;
+using Jaket.UI;
 
 /// <summary>
 /// Doll of a player, remote from network or local from emoji.
@@ -21,11 +24,15 @@ public class Doll : MonoBehaviour
     /// <summary> Event triggered after the start of emoji. </summary>
     public Action OnEmojiStart = () => { };
 
+    /// <summary> Whether the player uses custom weapon colors. </summary>
+    public bool CustomColors;
+    /// <summary> Custom weapon colors themselves. </summary>
+    public Color32 Color1, Color2, Color3;
+
     /// <summary> Transforms of different parts of the body. </summary>
     public Transform Head, Hand, Hook, HookRoot, Throne, Coin, Skateboard, Suits;
     /// <summary> Slide and fall particles transforms. </summary>
     public Transform SlideParticle, FallParticle;
-
     /// <summary> Position in which the doll holds an item. </summary>
     public Vector3 HoldPosition => Hooking ? Hook.position : HookRoot.position;
 
@@ -109,11 +116,49 @@ public class Doll : MonoBehaviour
         else if (!Falling && FallParticle != null) Destroy(FallParticle.gameObject);
     }
 
+    #region apply
+
+    public void ApplyTeam(Team team)
+    {
+        WingMat.mainTexture = SkateMat.mainTexture = DollAssets.WingTextures[(int)team];
+        CoinMat.color = team.Color();
+        WingTrail.startColor = team.Color() with { a = .5f };
+
+        // TODO make it part of customization
+        Suits.GetChild(0).gameObject.SetActive(team == Team.Pink);
+    }
+
+    public void ApplySuit()
+    {
+        foreach (var getter in Hand.GetComponentsInChildren<GunColorGetter>())
+        {
+            var renderer = getter.GetComponent<Renderer>();
+            if (CustomColors)
+            {
+                renderer.materials = getter.coloredMaterials;
+                UIB.Properties(renderer, block =>
+                {
+                    block.SetColor("_CustomColor1", Color1);
+                    block.SetColor("_CustomColor2", Color2);
+                    block.SetColor("_CustomColor3", Color3);
+                }, true);
+            }
+            else renderer.materials = getter.defaultMaterials;
+        }
+    }
+
+    #endregion
     #region entity
 
     public void WriteAnim(Writer w) => w.Bools(Walking, Sliding, Falling, InAir, Dashing, Riding, Hooking, Shopping);
 
     public void ReadAnim(Reader r) => r.Bools(out Walking, out Sliding, out Falling, out InAir, out Dashing, out Riding, out Hooking, out Shopping);
+
+    public void ReadSuit(Reader r)
+    {
+        CustomColors = r.Bool();
+        if (CustomColors) { Color1 = r.Color(); Color2 = r.Color(); Color3 = r.Color(); }
+    }
 
     #endregion
 }

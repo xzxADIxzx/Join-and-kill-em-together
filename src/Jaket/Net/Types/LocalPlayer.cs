@@ -74,10 +74,9 @@ public class LocalPlayer : Entity
                 w.Color(block.GetColor("_CustomColor2"));
                 w.Color(block.GetColor("_CustomColor3"));
             });
-            else w.Inc(12);
         }
-        else w.Inc(13);
-    }, size: 21);
+        else w.Bool(false);
+    }, size: 17);
 
     /// <summary> Caches different things related to weapons and paints hands. </summary>
     public void UpdateWeapons()

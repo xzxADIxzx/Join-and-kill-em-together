@@ -60,11 +60,11 @@ public class Plugin : MonoBehaviour
 
         Commands.Commands.Load();
         Bundle.Load();
-        DollAssets.Load();
         Enemies.Load();
         Weapons.Load();
         Bullets.Load();
         Items.Load();
+        DollAssets.Load();
 
         Administration.Load();
         LobbyController.Load();

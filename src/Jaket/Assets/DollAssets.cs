@@ -11,7 +11,7 @@ using Jaket.Net;
 using Jaket.Net.Types;
 using Jaket.UI.Dialogs;
 
-/// <summary> Class that works with the assets bundle for the player doll. </summary>
+/// <summary> Class that works with the assets bundle of the mod. </summary>
 public class DollAssets
 {
     /// <summary> Bundle containing assets for player doll. </summary>
@@ -113,7 +113,7 @@ public class DollAssets
     {
         string assembly = Plugin.Instance.Location;
         string directory = Path.GetDirectoryName(assembly);
-        string bundle = Path.Combine(directory, "jaket-player-doll.bundle");
+        string bundle = Path.Combine(directory, "jaket-assets.bundle");
 
         return AssetBundle.LoadFromFile(bundle);
     }
