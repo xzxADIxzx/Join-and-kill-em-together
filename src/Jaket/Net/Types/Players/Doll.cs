@@ -29,6 +29,13 @@ public class Doll : MonoBehaviour
     /// <summary> Position in which the doll holds an item. </summary>
     public Vector3 HoldPosition => Hooking ? Hook.position : HookRoot.position;
 
+    /// <summary> Materials of the wings, coin and skateboard. </summary>
+    public Material WingMat, CoinMat, SkateMat;
+    /// <summary> Trail of the wings. </summary>
+    public TrailRenderer WingTrail;
+    /// <summary> Winch of the hook. </summary>
+    public LineRenderer HookWinch;
+
     private void Awake()
     {
         Transform V3 = transform.Find("V3"), rig = transform.Find("Metarig");
@@ -42,6 +49,12 @@ public class Doll : MonoBehaviour
         Coin = V3.Find("Coin");
         Skateboard = V3.Find("Skateboard");
         Suits = V3.Find("Suits");
+
+        WingMat = V3.Find("V3").GetComponent<Renderer>().materials[1];
+        CoinMat = Coin.GetComponent<Renderer>().material;
+        SkateMat = Skateboard.GetComponent<Renderer>().material;
+        WingTrail = GetComponentInChildren<TrailRenderer>();
+        HookWinch = GetComponentInChildren<LineRenderer>(true);
     }
 
     private void Update()
