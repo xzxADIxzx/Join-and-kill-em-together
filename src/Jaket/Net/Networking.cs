@@ -112,8 +112,8 @@ public class Networking
             if (message == "#/d")
                 Bundle.Msg("player.died", member.Name);
 
-            else if (message.StartsWith("#/k") && ulong.TryParse(message.Substring(3), out ulong id))
-                Bundle.Msg("player.banned", new Friend(id).Name);
+            else if (message.StartsWith("#/k") && uint.TryParse(message.Substring(3), out uint id))
+                Bundle.Msg("player.banned", Tools.Name(id));
 
             else if (message.StartsWith("#/s") && byte.TryParse(message.Substring(3), out byte team))
             {

@@ -1,6 +1,5 @@
 namespace Jaket.UI.Elements;
 
-using Steamworks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,10 +21,9 @@ public class PlayerHeader
     /// <summary> Ellipsis indicating that the player is typing a message. </summary>
     private Text ellipsis;
 
-    public PlayerHeader(SteamId id, Transform parent)
+    public PlayerHeader(uint id, Transform parent)
     {
-        // workaround for getting the nickname
-        Name = new Friend(id).Name;
+        Name = Tools.Name(id);
 
         float width = Name.Length * 14f + 16f;
         canvas = UIB.WorldCanvas("Header", parent, new(0f, 5f, 0f), build: canvas =>

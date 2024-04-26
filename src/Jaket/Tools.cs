@@ -21,6 +21,8 @@ public class Tools
 
     /// <summary> How could I know that Steamworks do not cache this value? </summary>
     public static void CacheAccId() => AccId = Id.AccountId;
+    /// <summary> Returns the name of the player with the given AccountId. </summary>
+    public static string Name(uint id) => new Friend(id | 76561197960265728u).Name;
 
     /// <summary> Just a shortcut needed in order to track statistics and errors. </summary>
     public static void Send(Connection? con, System.IntPtr data, int size)
