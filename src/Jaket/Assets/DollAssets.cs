@@ -163,8 +163,10 @@ public class DollAssets
 
         enemyId.enemyClass = EnemyClass.Machine;
         enemyId.enemyType = EnemyType.V2;
+        enemyId.dontCountAsKills = true;
         enemyId.weaknesses = new string[0];
         enemyId.burners = new();
+        enemyId.activateOnDeath = new GameObject[0];
         machine.destroyOnDeath = new GameObject[0];
         machine.hurtSounds = new AudioClip[0];
 
@@ -172,7 +174,7 @@ public class DollAssets
         foreach (var rigidbody in obj.transform.GetChild(0).GetComponentsInChildren<Rigidbody>())
         {
             rigidbody.gameObject.AddComponent<EnemyIdentifierIdentifier>();
-            rigidbody.gameObject.tag = MapTag(rigidbody.gameObject.tag);
+            rigidbody.tag = MapTag(rigidbody.gameObject.tag);
         }
 
         // add a script to further control the doll

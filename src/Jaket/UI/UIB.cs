@@ -329,7 +329,7 @@ public class UIB
 
     /// <summary> Adds a gradient shadow located on the left side. </summary>
     public static Image Shadow(Transform parent) =>
-        Image("Shadow", parent, new(160f, 0f, 320f, 2000f, new(0f, .5f), new(0f, .5f)), black, Shadows);
+        Image("Shadow", parent, new(160f, 0f, 320f, 4200f, new(0f, .5f), new(0f, .5f)), black, Shadows);
 
     /// <summary> Adds a circular shadow located in the center. </summary>
     public static UICircle CircleShadow(Transform parent) =>

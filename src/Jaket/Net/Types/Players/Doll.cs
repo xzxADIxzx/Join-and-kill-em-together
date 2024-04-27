@@ -82,6 +82,8 @@ public class Doll : MonoBehaviour
 
     private void Update()
     {
+        if (Animator == null) return;
+
         Animator.SetBool("walking", Walking);
         Animator.SetBool("sliding", Sliding);
         Animator.SetBool("in-air", InAir);

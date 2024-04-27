@@ -18,7 +18,7 @@ public class RemotePlayer : Entity
     private EntityProv<Entity> pulled = new();
 
     /// <summary> Health may not match the real one due to byte limitations. </summary>
-    public byte Health;
+    public byte Health = 100;
     /// <summary> Player's railgun charge. From 0 to 10. </summary>
     public byte RailCharge;
 
@@ -84,7 +84,7 @@ public class RemotePlayer : Entity
         transform.eulerAngles = new(0f, bodyRotation.GetAngel(LastUpdate));
         Doll.Head.localEulerAngles = new(Doll.Emoji == 8 ? -20f : headRotation.Get(LastUpdate), 0f);
 
-        EnemyId.machine.health = 1000f; // prevent the doll from dying too early
+        EnemyId.machine.health = 4200f; // prevent the doll from dying too early
         gameObject.tag = Team.Ally() ? "Untagged" : "Enemy"; // toggle friendly fire
 
         if (LastTeam != Team)

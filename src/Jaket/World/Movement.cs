@@ -117,7 +117,7 @@ public class Movement : MonoSingleton<Movement>
             }, size: 32);
         }
 
-        if (Input.GetKeyDown(Settings.SelfDestruction) && !UI.AnyDialog) nm.GetHurt(1000, false, 0f);
+        if (Input.GetKeyDown(Settings.SelfDestruction) && !UI.AnyDialog) nm.GetHurt(4200, false, 0f);
         if (Input.GetKeyDown(KeyCode.F11)) InteractiveGuide.Instance.Launch();
     }
 
