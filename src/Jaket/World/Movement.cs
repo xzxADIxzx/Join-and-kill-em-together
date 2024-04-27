@@ -226,11 +226,8 @@ public class Movement : MonoSingleton<Movement>
         // pause stops time and weapon wheel slows it down, but in multiplayer everything should be real-time
         if (Settings.DisableFreezeFrames || UI.AnyDialog) Time.timeScale = 1f;
 
-        // reset slam force if the player is riding on a rocket
-        if (nm.ridingRocket != null) nm.slamForce = 0f;
-
         // disable cheats if they are prohibited in the lobby
-        if (!LobbyController.CheatsAllowed && CheatsController.Instance.cheatsEnabled)
+        if (CheatsController.Instance.cheatsEnabled && !LobbyController.CheatsAllowed)
         {
             CheatsController.Instance.cheatsEnabled = false;
             CheatsManager.Instance.transform.GetChild(0).GetChild(0).gameObject.SetActive(false);
