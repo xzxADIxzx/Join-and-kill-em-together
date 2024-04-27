@@ -40,7 +40,7 @@ public class Item : OwnableEntity
         if (Rb != null) Rb.isKinematic = true;
 
         transform.position = holding && player.Value != null
-            ? player.Value.HoldPosition
+            ? player.Value.Doll.HoldPosition
             : new(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
         transform.eulerAngles = new(rx.GetAngel(LastUpdate), ry.GetAngel(LastUpdate), rz.GetAngel(LastUpdate));
 

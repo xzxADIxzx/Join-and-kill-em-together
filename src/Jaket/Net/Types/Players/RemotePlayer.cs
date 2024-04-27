@@ -1,4 +1,4 @@
-namespace Jaket.Net.Types.Players;
+namespace Jaket.Net.Types;
 
 using UnityEngine;
 

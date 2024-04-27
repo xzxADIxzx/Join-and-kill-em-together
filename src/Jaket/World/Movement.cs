@@ -9,7 +9,7 @@ using UnityEngine;
 using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net;
-using Jaket.Net.Types.Players;
+using Jaket.Net.Types;
 using Jaket.Sprays;
 using Jaket.UI;
 using Jaket.UI.Dialogs;
