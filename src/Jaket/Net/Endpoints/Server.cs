@@ -20,7 +20,7 @@ public class Server : Endpoint, ISocketManager
         Listen(PacketType.Snapshot, (con, sender, r) =>
         {
             uint id = r.Id();
-            if (id == sender)
+            if (id == sender.AccountId)
             {
                 // sometimes I destroy players, sometimes they disappear for no reason
                 if (!entities.ContainsKey(id) || entities[id] == null) entities[id] = Entities.Get(id, EntityType.Player);

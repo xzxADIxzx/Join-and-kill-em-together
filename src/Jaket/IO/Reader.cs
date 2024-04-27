@@ -76,12 +76,12 @@ public class Reader
 
     public void Player(out Team team, out byte weapon, out byte emoji, out byte rps, out bool typing)
     {
-        short value = Marshal.ReadInt16(mem, Inc(8));
+        short value = Marshal.ReadInt16(mem, Inc(2));
 
-        weapon = (byte)(value >>> 10);
-        team = (Team)(value & 0b1110000000 >>> 7);
-        emoji = (byte)(value & 0b1111000 >>> 3);
-        rps = (byte)(value & 0b110 >>> 1);
+        weapon = (byte)(value >> 10 & 0b111111);
+        team = (Team)(value >> 7 & 0b111);
+        emoji = (byte)(value >> 3 & 0b1111);
+        rps = (byte)(value >> 1 & 0b11);
         typing = (value & 1) != 0;
 
         if (emoji == 0b1111) emoji = 0xFF;

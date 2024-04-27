@@ -155,7 +155,7 @@ public class DollAssets
     public static RemotePlayer CreateDoll()
     {
         // create a doll from the prefab obtained from the bundle
-        var obj = Object.Instantiate(Doll, Vector3.zero, Quaternion.identity);
+        var obj = Entities.Mark(Doll);
 
         // add components
         var enemyId = obj.AddComponent<EnemyIdentifier>();
