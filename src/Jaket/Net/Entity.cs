@@ -21,7 +21,7 @@ public abstract class Entity : MonoBehaviour
 
     /// <summary> Last update time via snapshots. </summary>
     public float LastUpdate;
-    /// <summary> The number of updates read. </summary>
+    /// <summary> The number of updates written. </summary>
     public uint UpdatesCount;
     /// <summary> Whether the entity is dead. Dead entities will not be sync. </summary>
     public bool Dead;
@@ -84,13 +84,6 @@ public abstract class Entity : MonoBehaviour
         }
 
         #endregion
-    }
-
-    /// <summary> Updates the time of the last update and the number of updates. </summary>
-    protected void Count()
-    {
-        LastUpdate = Time.time;
-        UpdatesCount++;
     }
 
     /// <summary> Writes the entity data to the writer. </summary>

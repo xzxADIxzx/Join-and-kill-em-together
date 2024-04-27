@@ -30,11 +30,12 @@ public abstract class OwnableEntity : Entity
         OnTransferred();
     }
 
-    public override void Write(Writer w) => w.Id(Owner);
+    public override void Write(Writer w) { UpdatesCount++; w.Id(Owner); }
 
     public override void Read(Reader r)
     {
-        Count();
+        LastUpdate = Time.time;
+
         uint id = r.Id(); // this is necessary so that clients don't fight for ownership of the entity
         if (Owner != id && Time.time > LastTransferTime + 1f)
         {
