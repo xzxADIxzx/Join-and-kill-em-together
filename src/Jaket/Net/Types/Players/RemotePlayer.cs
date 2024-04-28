@@ -61,6 +61,9 @@ public class RemotePlayer : Entity
         };
         Header = new(Owner = Id, transform);
 
+        EnemyId.weakPoint = Doll.Head.gameObject;
+        Doll.HookWinch.material = HookArm.Instance.GetComponent<LineRenderer>().material;
+
         // idols can target players, which is undesirable
         int index = EnemyTracker.Instance.enemies.IndexOf(EnemyId);
         if (index != -1)
