@@ -96,7 +96,11 @@ public class Item : OwnableEntity
         placed = r.Bool();
     }
 
-    public override void Kill() => Destroy(gameObject);
+    public override void Kill()
+    {
+        base.Kill();
+        gameObject.SetActive(false);
+    }
 
     #endregion
 }
