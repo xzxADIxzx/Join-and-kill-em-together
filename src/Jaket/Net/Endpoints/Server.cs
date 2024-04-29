@@ -164,9 +164,10 @@ public class Server : Endpoint, ISocketManager
     {
         Log.Info("[Server] Someone is connecting...");
         var identity = info.Identity;
+        var accId = identity.SteamId.AccountId;
 
         // multiple connections are prohibited
-        if (identity.IsSteamId && Networking.FindCon(identity.SteamId).HasValue)
+        if (identity.IsSteamId && Networking.FindCon(accId).HasValue)
         {
             Log.Debug("[Server] Connection is rejected: already connected");
             con.Close();
@@ -174,7 +175,7 @@ public class Server : Endpoint, ISocketManager
         }
 
         // check if the player is banned
-        if (identity.IsSteamId && Administration.Banned.Contains(identity.SteamId))
+        if (identity.IsSteamId && Administration.Banned.Contains(accId))
         {
             Log.Debug("[Server] Connection is rejected: banned");
             con.Close();
@@ -182,10 +183,10 @@ public class Server : Endpoint, ISocketManager
         }
 
         // this will be used later to find the connection by the id
-        con.ConnectionName = identity.SteamId.ToString();
+        con.ConnectionName = accId.ToString();
 
         // only steam users in the lobby can connect to the server
-        if (identity.IsSteamId && LobbyController.Contains(identity.SteamId))
+        if (identity.IsSteamId && LobbyController.Contains(accId))
             con.Accept();
         else
         {
@@ -202,7 +203,7 @@ public class Server : Endpoint, ISocketManager
 
     public void OnDisconnected(Connection con, ConnectionInfo info) => Log.Info($"[Server] {info.Identity.SteamId} disconnected");
 
-    public void OnMessage(Connection con, NetIdentity id, System.IntPtr data, int size, long msg, long time, int channel) => Handle(con, id.SteamId, data, size);
+    public void OnMessage(Connection con, NetIdentity id, System.IntPtr data, int size, long msg, long time, int channel) => Handle(con, id.SteamId.AccountId, data, size);
 
     #endregion
 }

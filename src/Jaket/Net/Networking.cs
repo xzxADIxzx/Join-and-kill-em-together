@@ -95,7 +95,7 @@ public class Networking
             Bundle.Msg("player.left", member.Name);
 
             // kill the player doll and hide the nickname above
-            if (Entities.TryGetValue(member.Id.AccountId, out var entity) && entity != null && entity is RemotePlayer player) player.Kill();
+            if (Entities.TryGetValue(member.Id.AccountId, out var entity) && entity is RemotePlayer player) player?.Kill();
 
             if (!LobbyController.IsOwner) return;
 
@@ -149,7 +149,7 @@ public class Networking
 
     #region iteration
 
-    /// <summary> Iterates each connection. </summary>
+    /// <summary> Iterates each server connection. </summary>
     public static void EachConnection(Action<Connection> cons)
     {
         foreach (var con in Server.Manager?.Connected) cons(con);
@@ -162,20 +162,17 @@ public class Networking
         EachPlayer(player => cons(player.transform.position));
     }
 
-    /// <summary> Iterates each entity. </summary>
+    /// <summary> Iterates each non-null entity. </summary>
     public static void EachEntity(Action<Entity> cons)
     {
-        foreach (var entity in Entities.Values)
-            if (entity != null) cons(entity);
+        foreach (var entity in Entities.Values) if (entity != null) cons(entity);
     }
 
-    /// <summary> Iterates each entity the player owns. </summary>
-    public static void EachOwned(Action<Entity> cons)
+    /// <summary> Iterates each non-null entity that fits the given predicate. </summary>
+    public static void EachEntity(Predicate<Entity> pred, Action<Entity> cons) => EachEntity(entity =>
     {
-        cons(LocalPlayer);
-        foreach (var entity in Entities.Values)
-            if (entity != null && entity is OwnableEntity ownable && ownable.IsOwner) cons(entity);
-    }
+        if (pred(entity)) cons(entity);
+    });
 
     /// <summary> Iterates each player. </summary>
     public static void EachPlayer(Action<RemotePlayer> cons)
@@ -203,7 +200,7 @@ public class Networking
     public static string GetTeamColor(Friend friend) => ColorUtility.ToHtmlStringRGBA(GetTeam(friend).Color());
 
     /// <summary> Finds a connection by id or returns null if there is no such connection. </summary>
-    public static Connection? FindCon(SteamId id)
+    public static Connection? FindCon(uint id)
     {
         foreach (var con in Server.Manager.Connected)
             if (con.ConnectionName == id.ToString()) return con;

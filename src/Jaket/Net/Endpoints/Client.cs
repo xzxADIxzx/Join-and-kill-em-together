@@ -71,7 +71,7 @@ public class Client : Endpoint, IConnectionManager
             Manager.Receive(256); Manager.Receive(256); Manager.Receive(256); Manager.Receive(256); // WHY
         }, () =>
         {
-            Networking.EachOwned(entity => Networking.Send(PacketType.Snapshot, w =>
+            Networking.EachEntity(entity => entity.IsOwner, entity => Networking.Send(PacketType.Snapshot, w =>
             {
                 w.Id(entity.Id);
                 entity.Write(w);
@@ -99,7 +99,7 @@ public class Client : Endpoint, IConnectionManager
 
     public void OnDisconnected(ConnectionInfo info) => Log.Info("[Client] Disconnected");
 
-    public void OnMessage(System.IntPtr data, int size, long msg, long time, int channel) => Handle(Manager.Connection, LobbyController.LastOwner, data, size);
+    public void OnMessage(System.IntPtr data, int size, long msg, long time, int channel) => Handle(Manager.Connection, LobbyController.LastOwner.AccountId, data, size);
 
     #endregion
 }
