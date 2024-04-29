@@ -10,9 +10,9 @@ public class Item : OwnableEntity
 {
     /// <summary> Item position and rotation. </summary>
     private FloatLerp x, y, z, rx, ry, rz;
-
     /// <summary> Player holding the item in their hands. </summary>
     private EntityProv<RemotePlayer> player = new();
+
     /// <summary> Whether the player is holding the item. </summary>
     private bool holding;
     /// <summary> Whether the item is placed on an altar. </summary>
@@ -34,7 +34,7 @@ public class Item : OwnableEntity
     private void Update()
     {
         // the game itself will update everything for the owner of the item
-        if (IsOwner) return;
+        if (IsOwner || Dead) return;
 
         // turn off object physics so that it does not interfere with synchronization
         if (Rb != null) Rb.isKinematic = true;
@@ -83,7 +83,7 @@ public class Item : OwnableEntity
         base.Write(w);
         w.Vector(transform.position);
         w.Vector(transform.eulerAngles);
-        w.Bool(IsOwner ? FistControl.Instance.heldObject?.gameObject == gameObject : holding);
+        w.Bool(IsOwner ? FistControl.Instance.heldObject == ItemId : holding);
         w.Bool(IsOwner ? ItemId.ipz != null : placed);
     }
 
