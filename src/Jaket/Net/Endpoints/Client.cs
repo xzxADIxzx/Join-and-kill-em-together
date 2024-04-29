@@ -26,9 +26,9 @@ public class Client : Endpoint, IConnectionManager
             ents[id]?.Read(r);
         });
 
-        Listen(PacketType.LoadLevel, r => World.Instance.ReadData(r));
+        Listen(PacketType.Level, r => World.Instance.ReadData(r));
 
-        Listen(PacketType.Kick, r => LobbyController.LeaveLobby());
+        Listen(PacketType.Ban, r => LobbyController.LeaveLobby());
 
         Listen(PacketType.SpawnBullet, Bullets.CInstantiate);
 

@@ -60,7 +60,7 @@ public class Networking
             if (LobbyController.IsOwner)
             {
                 World.Instance.Activated.Clear();
-                Send(PacketType.LoadLevel, World.Instance.WriteData);
+                Send(PacketType.Level, World.Instance.WriteData);
             }
         };
 
