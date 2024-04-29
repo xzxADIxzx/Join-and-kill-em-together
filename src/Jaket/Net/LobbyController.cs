@@ -67,9 +67,9 @@ public class LobbyController
     }
 
     /// <summary> Is there a user with the given id among the members of the lobby. </summary>
-    public static bool Contains(SteamId id)
+    public static bool Contains(uint id)
     {
-        foreach (var member in Lobby?.Members) if (member.Id == id) return true;
+        foreach (var member in Lobby?.Members) if (member.Id.AccountId == id) return true;
         return false;
     }
 
