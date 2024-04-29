@@ -56,8 +56,6 @@ public class Networking
             Clear(); // for safety
             Loading = false;
 
-            // re-add the local player, because the list was cleared 
-            Entities[LocalPlayer.Id] = LocalPlayer;
             // inform all players about the transition to a new level
             if (LobbyController.IsOwner)
             {
@@ -76,8 +74,6 @@ public class Networking
             {
                 // open the server so people can join it
                 Server.Open();
-                // the lobby has just been created, so just add the local player to the list of entities
-                Entities[LocalPlayer.Id] = LocalPlayer;
             }
             else
             {
@@ -99,11 +95,11 @@ public class Networking
 
             if (!LobbyController.IsOwner) return;
 
-            // returning the exited player's items back to the host owner & close the connection
-            FindCon(member.Id)?.Close();
-            EachItem(item =>
+            // returning the exited player's entities back to the host owner & close the connection
+            FindCon(member.Id.AccountId)?.Close();
+            EachEntity(entity =>
             {
-                if (item.Owner == member.Id) item.TakeOwnage();
+                if (entity is OwnableEntity oe && oe.Owner == member.Id.AccountId) oe.TakeOwnage();
             });
         };
 
@@ -127,11 +123,12 @@ public class Networking
         };
     }
 
-    /// <summary> Destroys all players and clears lists. </summary>
+    /// <summary> Kills all players and clears the list of entities. </summary>
     public static void Clear()
     {
-        EachPlayer(player => Tools.Destroy(player.gameObject));
+        EachPlayer(player => player.Kill());
         Entities.Clear();
+        Entities[LocalPlayer.Id] = LocalPlayer;
     }
 
     /// <summary> Core network logic should have been here, but in fact it is located in the server and client classes. </summary>
@@ -165,7 +162,7 @@ public class Networking
     /// <summary> Iterates each non-null entity. </summary>
     public static void EachEntity(Action<Entity> cons)
     {
-        foreach (var entity in Entities.Values) if (entity != null) cons(entity);
+        foreach (var entity in Entities.Values) if (entity != null && !entity.Dead) cons(entity);
     }
 
     /// <summary> Iterates each non-null entity that fits the given predicate. </summary>
@@ -175,18 +172,10 @@ public class Networking
     });
 
     /// <summary> Iterates each player. </summary>
-    public static void EachPlayer(Action<RemotePlayer> cons)
+    public static void EachPlayer(Action<RemotePlayer> cons) => EachEntity(entity =>
     {
-        foreach (var entity in Entities.Values)
-            if (entity != null && entity is RemotePlayer player) cons(player);
-    }
-
-    /// <summary> Iterates each item. </summary>
-    public static void EachItem(Action<Item> cons)
-    {
-        foreach (var entity in Entities.Values)
-            if (entity != null && entity is Item item) cons(item);
-    }
+        if (entity is RemotePlayer player) cons(player);
+    });
 
     #endregion
     #region tools

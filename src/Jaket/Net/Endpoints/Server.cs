@@ -19,14 +19,23 @@ public class Server : Endpoint, ISocketManager
     {
         Listen(PacketType.Snapshot, (con, sender, r) =>
         {
-            uint id = r.Id();
-            if (id == sender.AccountId)
+            var id = r.Id();
+            var type = r.Enum<EntityType>();
+
+            // player can only have one doll and its id should match the player's id
+            if ((id == sender && type != EntityType.Player) || (id != sender && type == EntityType.Player)) return;
+
+            if (!ents.ContainsKey(id) || ents[id] == null)
             {
-                // sometimes I destroy players, sometimes they disappear for no reason
-                if (!entities.ContainsKey(id) || entities[id] == null) entities[id] = Entities.Get(id, EntityType.Player);
-                entities[id]?.Read(r);
+                // double-check on cheats just in case of any custom multiplayer clients existence
+                if (!LobbyController.CheatsAllowed && (type.IsEnemy() || type.IsItem())) return;
+
+                // client cannot create special enemies
+                if (type.IsEnemy() && !type.IsCommonEnemy()) return;
+
+                Administration.Handle(sender, ents[id] = Entities.Get(id, type));
             }
-            else if (entities.TryGetValue(id, out var entity) && entity != null && entity is OwnableEntity ownable) ownable.Read(r);
+            ents[id]?.Read(r);
         });
 
         Listen(PacketType.SpawnEntity, (con, sender, r) =>

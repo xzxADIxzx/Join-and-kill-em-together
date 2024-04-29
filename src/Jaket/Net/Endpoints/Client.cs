@@ -19,17 +19,11 @@ public class Client : Endpoint, IConnectionManager
     {
         Listen(PacketType.Snapshot, r =>
         {
-            uint id = r.Id();
+            var id = r.Id();
             var type = r.Enum<EntityType>();
 
-            // if the entity is not in the list, add a new one with the given type or local if available
-            if (!entities.ContainsKey(id)) entities[id] = id == SteamClient.SteamId ? Networking.LocalPlayer : Entities.Get(id, type);
-
-            // after respawn, Leviathan or hand may be absent, so it must be returned if possible
-            // sometimes players disappear for some unknown reason, and sometimes I destroy them myself
-            if (entities[id] == null) entities[id] = Entities.Get(id, type);
-
-            entities[id]?.Read(r);
+            if (!ents.ContainsKey(id) || ents[id] == null) ents[id] = Entities.Get(id, type);
+            ents[id]?.Read(r);
         });
 
         Listen(PacketType.LoadLevel, r => World.Instance.ReadData(r));
@@ -74,6 +68,7 @@ public class Client : Endpoint, IConnectionManager
             Networking.EachEntity(entity => entity.IsOwner, entity => Networking.Send(PacketType.Snapshot, w =>
             {
                 w.Id(entity.Id);
+                w.Enum(entity.Type);
                 entity.Write(w);
             }));
         });

@@ -121,7 +121,7 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
         }
 
         List<Friend> whitelist = new(), blacklist = new();
-        foreach (var member in LobbyController.Lobby?.Members) (Administration.BannedSprays.Contains(member.Id) ? blacklist : whitelist).Add(member);
+        foreach (var member in LobbyController.Lobby?.Members) (Administration.BannedSprays.Contains(member.Id.AccountId) ? blacklist : whitelist).Add(member);
 
         float y = -20f;
         void BuildList(string name, List<Friend> list, Color color, Action<Friend> clicked)
@@ -137,13 +137,13 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
         }
         BuildList("WHITELIST:", whitelist, green, member =>
         {
-            Administration.BannedSprays.Add(member.Id);
+            Administration.BannedSprays.Add(member.Id.AccountId);
             Rebuild();
             if (member.IsMe) Bundle.Hud("sprays.blacklist-yourself");
         });
         BuildList("BLACKLIST:", blacklist, red, member =>
         {
-            Administration.BannedSprays.Remove(member.Id);
+            Administration.BannedSprays.Remove(member.Id.AccountId);
             Rebuild();
             if (member.IsMe) Bundle.Hud("sprays.whitelist-yourself");
         });
