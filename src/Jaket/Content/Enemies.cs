@@ -122,7 +122,7 @@ public class Enemies
     }
 
     /// <summary> Synchronizes damage dealt to the enemy. </summary>
-    public static bool SyncDamage(EnemyIdentifier enemyId, ref float damage, bool explode, float critDamage, GameObject source)
+    public static bool SyncDamage(EnemyIdentifier enemyId, ref float damage, float critDamage, GameObject source)
     {
         if (LobbyController.Offline || enemyId.dead) return true;
 
@@ -130,7 +130,7 @@ public class Enemies
         if (source == Bullets.Fake) return false; // bullets are only needed for visual purposes and mustn't cause damage
 
         if (enemyId.TryGetComponent<Entity>(out var entity) && (entity is not RemotePlayer player || !player.Doll.Dashing))
-            Bullets.SyncDamage(entity.Id, enemyId.hitter, damage, explode, critDamage);
+            Bullets.SyncDamage(entity.Id, enemyId.hitter, damage, critDamage);
 
         if (!LobbyController.IsOwner && damage + damage * critDamage >= enemyId.health - 1f) damage = 0.0001f;
         return true;

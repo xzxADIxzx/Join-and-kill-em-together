@@ -74,4 +74,7 @@ public class GameAssets
 
     /// <summary> Loads the torch prefab. </summary>
     public static GameObject Torch() => AssetHelper.LoadPrefab("Assets/Prefabs/Levels/Interactive/Altar (Torch) Variant.prefab");
+
+    /// <summary> Loads the blast explosion prefab. </summary>
+    public static GameObject Blast() => AssetHelper.LoadPrefab("Assets/Prefabs/Attacks and Projectiles/Explosions/Explosion Wave.prefab");
 }

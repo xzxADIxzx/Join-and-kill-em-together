@@ -133,7 +133,7 @@ public class LocalPlayer : Entity
             byte type = r.Byte();
             float mul = Bullets.Types[type] == "drill" ? ((skip = !skip) ? 0f : 1f) : 4f;
 
-            nm.GetHurt(Mathf.CeilToInt(r.Float() * mul), false, 0f, r.Bool());
+            nm.GetHurt(Mathf.CeilToInt(r.Float() * mul), false, 0f);
             if (nm.dead) LobbyController.Lobby?.SendChatString("#/s" + (byte)team);
         }
     }

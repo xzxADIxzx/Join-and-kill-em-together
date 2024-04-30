@@ -1,5 +1,6 @@
 namespace Jaket.Content;
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -82,7 +83,7 @@ public class Bullets
         NetDmg = Tools.Create("Network Damage");
     }
 
-    /// <summary> Finds the bullet type by the name. </summary>
+    /// <summary> Finds the bullet type by object name. </summary>
     public static byte CType(string name)
     {
         name = name.Contains("(") ? name.Substring(0, name.IndexOf("(")) : name;
@@ -90,6 +91,7 @@ public class Bullets
     }
     public static EntityType EType(string name) => name switch
     {
+        "Coin(Clone)" => EntityType.Coin,
         "RL PRI(Clone)" => EntityType.Rocket,
         "RL ALT(Clone)" => EntityType.Ball,
         _ => EntityType.None
@@ -98,26 +100,27 @@ public class Bullets
     /// <summary> Spawns a bullet with the given type or other data. </summary>
     public static void CInstantiate(Reader r)
     {
-        var obj = Object.Instantiate(Prefabs[r.Byte()]);
-        obj.name = "Net"; // these bullets are not entities, so you need to manually change the name
+        var obj = Entities.Mark(Prefabs[r.Byte()]);
 
         obj.transform.position = r.Vector();
         obj.transform.eulerAngles = r.Vector();
 
         if (r.Position < r.Length) obj.GetComponent<Rigidbody>().velocity = r.Vector();
     }
-    public static Bullet EInstantiate(EntityType type) => Object.Instantiate(Prefabs[CType(type switch
+    public static Entity EInstantiate(EntityType type) => Entities.Mark(Prefabs[type switch
     {
-        EntityType.Rocket => "RL PRI",
-        EntityType.Ball or _ => "RL ALT"
-    })]).AddComponent<Bullet>();
+        EntityType.Coin => 4,
+        EntityType.Rocket => 21,
+        EntityType.Ball => 22,
+        _ => -1
+    }]).AddComponent(type == EntityType.Coin ? typeof(Bullet /* TODO */) : typeof(Bullet)) as Entity;
 
-    /// <summary> Synchronizes the bullet between host and clients. </summary>
+    /// <summary> Synchronizes the bullet between network members. </summary>
     public static void Sync(GameObject bullet, bool hasRigidbody, bool applyOffset)
     {
-        if (LobbyController.Offline || bullet == null || bullet.name.Contains("Net")) return;
+        if (LobbyController.Offline || bullet == null || bullet.name == "Net") return;
 
-        if (bullet.name != "RL PRI(Clone)" && bullet.name != "RL ALT(Clone)")
+        if (bullet.name != "Coin(Clone)" && bullet.name != "RL PRI(Clone)" && bullet.name != "RL ALT(Clone)")
         {
             var type = CType(bullet.name);
             if (type == 0xFF) return; // how? these are probably enemy projectiles
@@ -131,51 +134,39 @@ public class Bullets
                 if (hasRigidbody) w.Vector(bullet.GetComponent<Rigidbody>().velocity);
             }, size: hasRigidbody ? 37 : 25);
         }
-        else
-        {
-            if (LobbyController.IsOwner)
-                bullet.AddComponent<Bullet>();
-            else
-            {
-                var type = EType(bullet.name);
-                if (type == EntityType.None) return;
-
-                Networking.Send(PacketType.SpawnEntity, w =>
-                {
-                    w.Enum(type);
-                    w.Vector(bullet.transform.position);
-
-                    w.Vector(bullet.transform.eulerAngles);
-                    w.Float(bullet.GetComponent<Rigidbody>().velocity.magnitude);
-                }, size: hasRigidbody ? 57 : 45);
-
-                Tools.DestroyImmediate(bullet);
-            }
-        }
+        else bullet.AddComponent(bullet.name == "Coin(Clone)" ? typeof(Bullet /* TODO */) : typeof(Bullet));
     }
 
-    /// <summary> Synchronizes the bullet and marks it as fake if it was downloaded from the network. </summary>
+    /// <summary> Synchronizes the bullet or marks it as fake if it was downloaded from the network. </summary>
     public static void Sync(GameObject bullet, ref GameObject sourceWeapon, bool hasRigidbody, bool applyOffset)
     {
-        if (sourceWeapon == null && bullet.name == "Net") sourceWeapon = Fake; // mark synced bullets as fake
-        Sync(bullet, hasRigidbody, applyOffset);
+        if (sourceWeapon == null && bullet.name == "Net")
+            sourceWeapon = Fake;
+        else
+            Sync(bullet, hasRigidbody, applyOffset);
     }
 
     /// <summary> Synchronizes the "death" of the bullet. </summary>
     public static void SyncDeath(GameObject bullet)
     {
-        if (bullet.TryGetComponent<Bullet>(out var comp) && comp.IsOwner) Networking.Send(PacketType.KillEntity, w => w.Id(comp.Id), size: 8);
+        if (bullet.TryGetComponent<Entity>(out var comp) && comp.IsOwner) Networking.Send(PacketType.KillEntity, w => w.Id(comp.Id), size: 4);
     }
 
     #region special
 
-    /// <summary> Synchronizes the explosion of the knuckleblaster. </summary>
-    public static void SyncBlast(GameObject blast, ref GameObject sourceWeapon)
+    /// <summary> Synchronizes the punch or parry animation. </summary>
+    public static void SyncPunch() => Networking.Send(PacketType.Punch, w =>
     {
-        // if this is not done, the explosion will cause damage to its creator
-        if (blast.name == "Net") sourceWeapon = Fake;
+        w.Id(Tools.AccId);
+        w.Byte(0);
 
-        // checking if this is really knuckleblaster explosion
+        w.Bool(Networking.LocalPlayer.Parried);
+        Networking.LocalPlayer.Parried = false;
+    }, size: 6);
+
+    /// <summary> Synchronizes the explosion of the knuckleblaster. </summary>
+    public static void SyncBlast(GameObject blast)
+    {
         if (LobbyController.Offline || blast?.name != "Explosion Wave(Clone)") return;
         Networking.Send(PacketType.Punch, w =>
         {
@@ -184,13 +175,12 @@ public class Bullets
 
             w.Vector(blast.transform.position);
             w.Vector(blast.transform.localEulerAngles);
-        }, size: 33);
+        }, size: 29);
     }
 
     /// <summary> Synchronizes the shockwave of the player. </summary>
     public static void SyncShock(GameObject shock, float force)
     {
-        // checking if this is really a player's shockwave
         if (LobbyController.Offline || shock?.name != "PhysicalShockwavePlayer(Clone)") return;
         Networking.Send(PacketType.Punch, w =>
         {
@@ -198,15 +188,19 @@ public class Bullets
             w.Byte(2);
 
             w.Float(force);
-        }, size: 13);
+        }, size: 9);
     }
 
     /// <summary> Turns the harpoon 180 degrees and then punches it. </summary>
-    public static void Punch(Harpoon harpoon)
+    public static void Punch(Harpoon harpoon, bool local)
     {
         // null pointer fix
         Tools.Field<Harpoon>("aud").SetValue(harpoon, harpoon.GetComponent<AudioSource>());
 
+        // this is necessary so that only the one who created or punched the harpoon deals the damage
+        harpoon.sourceWeapon = local ? null : Fake;
+
+        harpoon.transform.SetParent(null, true);
         harpoon.transform.Rotate(Vector3.up * 180f, Space.Self);
         harpoon.transform.position += harpoon.transform.forward;
         harpoon.Punched();
@@ -216,9 +210,9 @@ public class Bullets
     #region damage
 
     /// <summary> Synchronizes damage dealt to the enemy. </summary>
-    public static void SyncDamage(uint enemyId, string hitter, float damage, bool explode, float critDamage)
+    public static void SyncDamage(uint enemyId, string hitter, float damage, float critDamage)
     {
-        byte type = (byte)System.Array.IndexOf(Types, hitter);
+        var type = (byte)Array.IndexOf(Types, hitter);
         if (type != 0xFF) Networking.Send(PacketType.DamageEntity, w =>
         {
             w.Id(enemyId);
@@ -226,9 +220,8 @@ public class Bullets
             w.Byte(type);
 
             w.Float(damage);
-            w.Bool(explode);
             w.Float(critDamage);
-        }, size: 19);
+        }, size: 14);
     }
 
     /// <summary> Deals bullet damage to the enemy. </summary>
@@ -236,7 +229,7 @@ public class Bullets
     {
         r.Inc(1); // skip team because enemies don't have a team
         enemyId.hitter = Types[r.Byte()];
-        enemyId.DeliverDamage(enemyId.gameObject, Vector3.zero, enemyId.transform.position, r.Float(), r.Bool(), r.Float(), NetDmg);
+        enemyId.DeliverDamage(enemyId.gameObject, Vector3.zero, enemyId.transform.position, r.Float(), false, r.Float(), NetDmg);
     }
 
     #endregion

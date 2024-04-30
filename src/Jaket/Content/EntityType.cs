@@ -93,6 +93,7 @@ public enum EntityType
     KGC,
     V1,
 
+    Coin,
     Rocket,
     Ball,
 
@@ -100,7 +101,7 @@ public enum EntityType
     SecuritySystemOffset = SecuritySystem_Main,
     ItemOffset = AppleBait,
     PlushyOffset = Jacob,
-    BulletOffset = Rocket
+    BulletOffset = Coin
 }
 
 /// <summary> Extension class that allows you to get entity class. </summary>

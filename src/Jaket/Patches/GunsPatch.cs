@@ -39,20 +39,8 @@ public class ArmsPatch
     {
         if (LobbyController.Offline) return;
 
-        foreach (var harpoon in NewMovement.Instance.GetComponentsInChildren<Harpoon>())
-        {
-            Bullets.Punch(harpoon);
-            harpoon.name = "Punched";
-        }
-
-        Networking.Send(PacketType.Punch, w =>
-        {
-            w.Id(lp.Id);
-            w.Byte(0);
-
-            w.Bool(lp.Parried);
-            lp.Parried = false;
-        }, size: 10);
+        foreach (var harpoon in NewMovement.Instance.GetComponentsInChildren<Harpoon>()) Bullets.Punch(harpoon, true);
+        Bullets.SyncPunch();
     }
 
     [HarmonyPrefix]

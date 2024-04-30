@@ -2,6 +2,7 @@ namespace Jaket.Net.Types;
 
 using UnityEngine;
 
+using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.UI.Elements;
@@ -135,11 +136,7 @@ public class RemotePlayer : Entity
     {
         var field = Tools.Field<Harpoon>("target");
         foreach (var harpoon in FindObjectsOfType<Harpoon>())
-            if ((field.GetValue(harpoon) as EnemyIdentifierIdentifier)?.eid == EnemyId)
-            {
-                Bullets.Punch(harpoon);
-                harpoon.name = "Net";
-            }
+            if ((field.GetValue(harpoon) as EnemyIdentifierIdentifier)?.eid == EnemyId) Bullets.Punch(harpoon, false);
 
         switch (r.Byte())
         {
@@ -147,7 +144,9 @@ public class RemotePlayer : Entity
                 Animator.SetTrigger(r.Bool() ? "Parry" : "Punch");
                 break;
             case 1:
-                Instantiate(FistControl.Instance.redArm.ToAsset().GetComponent<Punch>().blastWave, r.Vector(), Quaternion.Euler(r.Vector())).name = "Net";
+                var blast = Instantiate(GameAssets.Blast(), r.Vector(), Quaternion.Euler(r.Vector()));
+                blast.name = "Net";
+                blast.GetComponentInChildren<Explosion>().sourceWeapon = Bullets.Fake;
                 break;
             case 2:
                 var shock = Instantiate(NewMovement.Instance.gc.shockwave, transform.position, Quaternion.identity).GetComponent<PhysicalShockwave>();
