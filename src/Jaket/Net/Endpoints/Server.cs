@@ -38,43 +38,12 @@ public class Server : Endpoint, ISocketManager
             ents[id]?.Read(r);
         });
 
-        Listen(PacketType.SpawnEntity, (con, sender, r) =>
-        {
-            var type = r.Enum<EntityType>();
-            if (type.IsBullet() && Administration.CanSpawnEntityBullet(sender))
-            {
-                var bullet = Bullets.EInstantiate(type);
-
-                bullet.transform.position = r.Vector();
-                bullet.transform.eulerAngles = r.Vector();
-                bullet.InitSpeed = r.Float();
-
-                bullet.Owner = sender.AccountId;
-                bullet.OnTransferred();
-                Administration.EntityBullets[sender].Add(bullet);
-            }
-            else if (type.IsEnemy() && LobbyController.CheatsAllowed)
-            {
-                var enemy = Enemies.Instantiate(type);
-                enemy.transform.position = r.Vector();
-
-                Administration.EnemySpawned(sender, enemy, type.IsBigEnemy());
-            }
-            else if (type.IsPlushy())
-            {
-                var plushy = Items.Instantiate(type);
-                plushy.transform.position = r.Vector();
-
-                Administration.PlushySpawned(sender, plushy);
-            }
-        });
-
         Listen(PacketType.SpawnBullet, (con, sender, r) =>
         {
             var type = r.Byte(); r.Position = 1; // extract the bullet type
-            int cost = type == 4 ? 2 : type >= 17 && type <= 19 ? 8 : 1; // coin - 2, rail - 8, other - default
+            int cost = type >= 18 && type <= 20 ? 6 : 1; // rail costs more than the rest of the bullets
 
-            if (Administration.CanSpawnCommonBullet(sender, cost))
+            if (Administration.CanSpawnBullet(sender, cost))
             {
                 Bullets.CInstantiate(r);
                 Redirect(r, con);
