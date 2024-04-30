@@ -55,6 +55,7 @@ public class Plugin : MonoBehaviour
 
         // notify players about the availability of an update so that they no longer whine to me about something not working
         Version.Check4Update();
+        Pointers.Allocate();
         Stats.StartRecord();
         Tools.CacheAccId();
 

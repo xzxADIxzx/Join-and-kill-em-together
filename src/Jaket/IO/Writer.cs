@@ -23,8 +23,7 @@ public class Writer
     /// <summary> Allocates memory and writes data there. </summary>
     public static void Write(Action<Writer> cons, Action<IntPtr, int> result, int memoryAmount)
     {
-        Writer instance = new(Marshal.AllocHGlobal(memoryAmount), memoryAmount);
-        Pointers.Add(instance.mem);
+        Writer instance = new(Pointers.Allocate(memoryAmount), memoryAmount);
         cons(instance);
         result(instance.mem, instance.Position); // 64 bytes are allocated in memory by default, which is enough for each entity, but not all of this memory is used
     }
