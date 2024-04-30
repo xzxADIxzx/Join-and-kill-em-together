@@ -25,9 +25,13 @@ public class CommonBulletsPatch
     [HarmonyPatch(typeof(ExplosionController), "Start")]
     static void Explosion(ExplosionController __instance)
     {
-        var explosion = __instance.GetComponentInChildren<Explosion>();
-        if (__instance.name == "SG EXT(Clone)") // only shotgun explosions need to be synchronized
-            Bullets.Sync(__instance.gameObject, ref explosion.sourceWeapon, false, false);
+        var ex = __instance.GetComponentInChildren<Explosion>();
+        var n1 = __instance.name;
+        var n2 = ex.sourceWeapon.name;
+
+        // only shotgun and hammer explosions must be synchronized
+        if ((n1 == "SG EXT(Clone)" && n2.StartsWith("Shotgun")) || (n1 == "SH(Clone)" && n2.StartsWith("Hammer")) || n1 == "Net")
+            Bullets.Sync(__instance.gameObject, ref ex.sourceWeapon, false, false);
     }
 
     [HarmonyPrefix]

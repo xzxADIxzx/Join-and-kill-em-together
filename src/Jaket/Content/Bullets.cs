@@ -32,11 +32,9 @@ public class Bullets
     {
         void Add(GameObject bullet, string name)
         {
-            if (bullet != null && !Prefabs.Contains(bullet))
-            {
-                Prefabs.Add(bullet);
-                bullet.name = name;
-            }
+            if (bullet == null || Prefabs.Contains(bullet)) return;
+            Prefabs.Add(bullet);
+            bullet.name = name;
         }
         int rv = 0, ng = 0, rc = 0;
         foreach (var weapon in Weapons.Prefabs)
@@ -55,6 +53,11 @@ public class Bullets
                 Add(shotgun.explosion, $"SG EXT");
             }
             else
+            if (weapon.TryGetComponent<ShotgunHammer>(out var hammer))
+            {
+                Add(Tools.Field("overPumpExplosion", hammer).GetValue(hammer) as GameObject, "SH"); // thank you, developers
+            }
+            else
             if (weapon.TryGetComponent<Nailgun>(out var nailgun))
             {
                 Add(nailgun.nail, $"NG{++ng} PRI");
@@ -64,13 +67,14 @@ public class Bullets
             else
             if (weapon.TryGetComponent<Railcannon>(out var railcannon))
             {
-                Add(railcannon.beam, $"RC{++rc} PRI");
+                Add(railcannon.beam, $"RC{++rc}");
             }
             else
             if (weapon.TryGetComponent<RocketLauncher>(out var launcher))
             {
                 Add(launcher.rocket, $"RL PRI");
                 Add(launcher.cannonBall?.gameObject, $"RL ALT");
+                Add((Tools.Field("napalmProjectile", launcher).GetValue(launcher) as Rigidbody)?.gameObject, $"RL EXT");
             }
         }
 
