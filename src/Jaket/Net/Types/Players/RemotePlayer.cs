@@ -206,6 +206,7 @@ public class RemotePlayer : Entity
         EnemyId.machine.GoLimp();
         Header.Hide();
 
+        Destroy(Doll.Hand); // destroy the weapon so that the railcannon's sound doesn't play forever
         DestroyImmediate(this); // destroy the entity so that the indicators no longer point to it
         Events.OnTeamChanged.Fire();
     }
