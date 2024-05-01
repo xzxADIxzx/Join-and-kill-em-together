@@ -12,7 +12,7 @@ public class Administration
     /// <summary> Max amount of entities per player. </summary>
     public const int MAX_ENTITIES = 16;
     /// <summary> Max amount of plushies per player. </summary>
-    public const int MAX_PLUSHIES = 8;
+    public const int MAX_PLUSHIES = 6;
 
     /// <summary> List of banned player ids. </summary>
     public static List<uint> Banned = new();
