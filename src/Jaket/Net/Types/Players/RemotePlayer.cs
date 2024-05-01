@@ -143,7 +143,7 @@ public class RemotePlayer : Entity
         switch (r.Byte())
         {
             case 0:
-                Animator.SetTrigger(r.Bool() ? "Parry" : "Punch");
+                Animator.SetTrigger(r.Bool() ? "parry" : "punch");
                 break;
             case 1:
                 var blast = Instantiate(GameAssets.Blast(), r.Vector(), Quaternion.Euler(r.Vector()));
@@ -180,6 +180,9 @@ public class RemotePlayer : Entity
 
         w.Byte(Health);
         w.Byte(RailCharge);
+
+        if (!Doll) return;
+
         w.Player(Team, Weapon, Doll.Emoji, Doll.Rps, Typing);
         Doll.WriteAnim(w);
     }
@@ -199,6 +202,9 @@ public class RemotePlayer : Entity
 
         Health = r.Byte();
         RailCharge = r.Byte();
+
+        if (!Doll || r.Position >= r.Length) return;
+
         r.Player(out Team, out Weapon, out Doll.Emoji, out Doll.Rps, out Typing);
         Doll.ReadAnim(r);
     }
@@ -208,7 +214,7 @@ public class RemotePlayer : Entity
         EnemyId.machine.GoLimp();
         Header.Hide();
 
-        Destroy(Doll.Hand); // destroy the weapon so that the railcannon's sound doesn't play forever
+        Destroy(Doll.Hand.gameObject); // destroy the weapon so that the railcannon's sound doesn't play forever
         DestroyImmediate(this); // destroy the entity so that the indicators no longer point to it
         Events.OnTeamChanged.Fire();
     }
