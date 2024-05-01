@@ -33,7 +33,7 @@ public class Weapons
         Prefabs.AddRange(GunSetter.Instance.rocketRed.ToAssets());
     }
 
-    /// <summary> Finds the weapon type by the name. </summary>
+    /// <summary> Finds the weapon type by object name. </summary>
     public static byte Type(GameObject weapon)
     {
         string name = weapon.name.Substring(0, weapon.name.IndexOf("("));
@@ -46,7 +46,7 @@ public class Weapons
     {
         var obj = Object.Instantiate(Prefabs[type], parent);
 
-        // weapon prefabs are disabled and are located in the AlwaysOnTop layer
+        // weapon prefabs are disabled and located in the AlwaysOnTop layer
         obj.SetActive(true);
         FixLayer(obj.transform);
 
@@ -57,9 +57,17 @@ public class Weapons
         // destroy weapon's components
         Tools.Destroy(obj.GetComponent<Revolver>());
         Tools.Destroy(obj.GetComponent<Shotgun>());
+        Tools.Destroy(obj.GetComponent<ShotgunHammer>());
         Tools.Destroy(obj.GetComponent<Nailgun>());
         Tools.Destroy(obj.GetComponent<Railcannon>());
         Tools.Destroy(obj.GetComponent<RocketLauncher>());
+
+        // make these annoying sounds quieter
+        foreach (var source in obj.GetComponentsInChildren<AudioSource>())
+        {
+            source.spatialBlend = 1f;
+            source.rolloffMode = AudioRolloffMode.Linear;
+        }
 
         return obj;
     }
