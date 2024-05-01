@@ -42,8 +42,9 @@ public class Weapons
     public static byte Type() => GunControl.Instance.currentWeapon == null ? (byte)0xFF : Type(GunControl.Instance.currentWeapon);
 
     /// <summary> Spawns a weapon with the given type and assigns its parent transform. </summary>
-    public static GameObject Instantiate(byte type, Transform parent)
+    public static void Instantiate(byte type, Transform parent)
     {
+        if (type >= Prefabs.Count) return;
         var obj = Object.Instantiate(Prefabs[type], parent);
 
         // weapon prefabs are disabled and located in the AlwaysOnTop layer
@@ -63,13 +64,12 @@ public class Weapons
         Tools.Destroy(obj.GetComponent<RocketLauncher>());
 
         // make these annoying sounds quieter
+        Tools.Destroy(obj.transform.Find("ImpactHammer/Armature/Root/MotorSpinner/SpinSprite")?.gameObject);
         foreach (var source in obj.GetComponentsInChildren<AudioSource>())
         {
             source.spatialBlend = 1f;
-            source.rolloffMode = AudioRolloffMode.Linear;
+            source.rolloffMode = AudioRolloffMode.Logarithmic;
         }
-
-        return obj;
     }
 
     /// <summary> Recursively iterates through all children of the transform and changes their layer to Outdoors. </summary>
