@@ -23,7 +23,11 @@ public class Item : OwnableEntity
     private void Awake()
     {
         Init(Items.Type, true);
-        InitTransfer(() => player.Id = Owner);
+        InitTransfer(() =>
+        {
+            if (Rb && !IsOwner) Rb.isKinematic = true;
+            player.Id = Owner;
+        });
 
         x = new(); y = new(); z = new();
         rx = new(); ry = new(); rz = new();
@@ -33,11 +37,7 @@ public class Item : OwnableEntity
 
     private void Update()
     {
-        // the game itself will update everything for the owner of the item
         if (IsOwner || Dead) return;
-
-        // turn off object physics so that it does not interfere with synchronization
-        if (Rb != null) Rb.isKinematic = true;
 
         transform.position = holding && player.Value != null
             ? player.Value.Doll.HoldPosition
