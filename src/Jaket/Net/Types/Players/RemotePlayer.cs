@@ -48,6 +48,8 @@ public class RemotePlayer : Entity
         bodyRotation = new();
         headRotation = new();
         hookX = new(); hookY = new(); hookZ = new();
+
+        Voice = GetComponent<AudioSource>();
     }
 
     private void Start()

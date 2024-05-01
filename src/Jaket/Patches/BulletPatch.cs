@@ -23,12 +23,16 @@ public class CommonBulletsPatch
     static void Projectile(Projectile __instance) => Bullets.Sync(__instance.gameObject, ref __instance.sourceWeapon, false, true);
 
     [HarmonyPrefix]
+    [HarmonyPatch(typeof(GasolineProjectile), MethodType.Constructor)]
+    static void Gasoline(GasolineProjectile __instance) => Events.Post(() => Bullets.Sync(__instance.gameObject, true, false));
+
+    [HarmonyPrefix]
     [HarmonyPatch(typeof(ExplosionController), "Start")]
     static void Explosion(ExplosionController __instance)
     {
         var ex = __instance.GetComponentInChildren<Explosion>();
         var n1 = __instance.name;
-        var n2 = ex.sourceWeapon.name;
+        var n2 = ex.sourceWeapon?.name ?? "";
 
         // only shotgun and hammer explosions must be synchronized
         if ((n1 == "SG EXT(Clone)" && n2.StartsWith("Shotgun")) || (n1 == "SH(Clone)" && n2.StartsWith("Hammer")) || n1 == "Net")
@@ -41,7 +45,7 @@ public class CommonBulletsPatch
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(Harpoon), "Start")]
-    static void Harpoon(Harpoon __instance) => Events.Post2(() => Bullets.Sync(__instance.gameObject, true, true));
+    static void Harpoon(Harpoon __instance) => Events.Post2(() => Bullets.Sync(__instance.gameObject, ref __instance.sourceWeapon, true, true));
 
 
 

@@ -25,7 +25,7 @@ public class Server : Endpoint, ISocketManager
             // player can only have one doll and its id should match the player's id
             if ((id == sender && type != EntityType.Player) || (id != sender && type == EntityType.Player)) return;
 
-            if (!ents.ContainsKey(id) || ents[id] == null)
+            if (!ents.ContainsKey(id) || (ents[id] == null && type == EntityType.Player))
             {
                 // double-check on cheats just in case of any custom multiplayer clients existence
                 if (!LobbyController.CheatsAllowed && (type.IsEnemy() || type.IsItem())) return;
@@ -43,7 +43,7 @@ public class Server : Endpoint, ISocketManager
             var type = r.Byte(); r.Position = 1; // extract the bullet type
             int cost = type >= 18 && type <= 20 ? 6 : 1; // rail costs more than the rest of the bullets
 
-            if (Administration.CanSpawnBullet(sender, cost))
+            if (type == 23 || Administration.CanSpawnBullet(sender, cost))
             {
                 Bullets.CInstantiate(r);
                 Redirect(r, con);
