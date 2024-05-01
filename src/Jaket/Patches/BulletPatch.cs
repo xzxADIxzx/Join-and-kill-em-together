@@ -4,6 +4,7 @@ using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Content;
+using Jaket.Net;
 using Jaket.Net.Types;
 
 [HarmonyPatch]
@@ -46,7 +47,7 @@ public class CommonBulletsPatch
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(Explosion), "Start")]
-    static void Blast(Explosion __instance) => Bullets.SyncBlast(__instance.transform.parent?.gameObject, ref __instance.sourceWeapon);
+    static void Blast(Explosion __instance) => Bullets.SyncBlast(__instance.transform.parent?.gameObject);
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(PhysicalShockwave), "Start")]
@@ -57,7 +58,7 @@ public class CommonBulletsPatch
     static bool Core(Grenade __instance)
     {
         // if the grenade is a rocket or local, then explode it, otherwise skip the explosion because it will be synced
-        if (__instance.rocket || __instance.name != "Net") return true;
+        if (LobbyController.Offline || __instance.rocket || __instance.name != "Net") return true;
 
         Tools.Destroy(__instance.gameObject);
         return false;
@@ -66,24 +67,19 @@ public class CommonBulletsPatch
     [HarmonyPrefix]
     [HarmonyPatch(typeof(Nail), "TouchEnemy")]
     static bool Sawblade(Nail __instance, Transform other) =>
-        __instance.sawblade && other.TryGetComponent<EnemyIdentifierIdentifier>(out var eid) &&
-        eid.eid != null && eid.eid.TryGetComponent<RemotePlayer>(out var player)
+        LobbyController.Online
+        && __instance.sawblade
+        && other.TryGetComponent<EnemyIdentifierIdentifier>(out var eid)
+        && eid.eid != null
+        && eid.eid.TryGetComponent<RemotePlayer>(out var player)
             ? !player.Team.Ally()
             : true;
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(Harpoon), "FixedUpdate")]
-    static void HarpoonDamage(Harpoon __instance, ref float ___drillCooldown)
-    {
-        // this is necessary so that only the one who created the harpoon causes the damage
-        if (__instance.name == "Net") ___drillCooldown = 1f;
-    }
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(Harpoon), "OnTriggerEnter")]
     static bool HarpoonLogic(Harpoon __instance, Collider other, ref bool ___hit, ref Rigidbody ___rb)
     {
-        if (__instance.name == "Net" && !___hit && other.gameObject == NewMovement.Instance.gameObject)
+        if (__instance.sourceWeapon == Bullets.Fake && !___hit && other.gameObject == NewMovement.Instance.gameObject)
         {
             ___hit = true;
             ___rb.constraints = RigidbodyConstraints.FreezeAll;
@@ -99,8 +95,8 @@ public class CommonBulletsPatch
 public class EntityBulletsPatch
 {
     [HarmonyPostfix]
-    [HarmonyPatch(typeof(Grenade), "Start")] // DO NOT USE AWAKE                    __instance?.gameObject doesn't work ._.
-    static void GrenadeSpawn(Grenade __instance) => Events.Post2(() => Bullets.Sync(__instance ? __instance.gameObject : null, true, false));
+    [HarmonyPatch(typeof(Grenade), "Start")] // DO NOT USE AWAKE
+    static void GrenadeSpawn(Grenade __instance) => Bullets.Sync(__instance.gameObject, true, false);
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(Grenade), nameof(Grenade.Explode))]

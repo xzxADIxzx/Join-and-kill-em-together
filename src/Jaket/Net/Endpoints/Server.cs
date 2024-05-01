@@ -49,30 +49,30 @@ public class Server : Endpoint, ISocketManager
                 Redirect(r, con);
             }
         });
-
-        ListenAndRedirect(PacketType.DamageEntity, r => entities[r.Id()]?.Damage(r));
-
+        Listen(PacketType.DamageEntity, r =>
+        {
+            if (ents.TryGetValue(r.Id(), out var entity)) entity?.Damage(r);
+        });
         Listen(PacketType.KillEntity, (con, sender, r) =>
         {
-            var entity = entities[r.Id()];
-            if (entity && entity is Bullet bullet && bullet.Owner == sender)
+            if (ents.TryGetValue(r.Id(), out var entity) && entity && (entity is Enemy || entity is Bullet))
             {
-                bullet.Kill();
+                entity.Kill();
                 Redirect(r, con);
             }
         });
 
         ListenAndRedirect(PacketType.Style, r =>
         {
-            if (entities[r.Id()] is RemotePlayer player) player?.Doll.ReadSuit(r);
+            if (ents[r.Id()] is RemotePlayer player) player.Doll.ReadSuit(r);
         });
         ListenAndRedirect(PacketType.Punch, r =>
         {
-            if (entities[r.Id()] is RemotePlayer player) player?.Punch(r);
+            if (ents[r.Id()] is RemotePlayer player) player.Punch(r);
         });
         ListenAndRedirect(PacketType.Point, r =>
         {
-            if (entities[r.Id()] is RemotePlayer player) player?.Point(r);
+            if (ents[r.Id()] is RemotePlayer player) player.Point(r);
         });
 
         ListenAndRedirect(PacketType.Spray, r => SprayManager.Spawn(r.Id(), r.Vector(), r.Vector()));

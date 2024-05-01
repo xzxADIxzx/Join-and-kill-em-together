@@ -25,16 +25,18 @@ public class Client : Endpoint, IConnectionManager
             if (!ents.ContainsKey(id) || ents[id] == null) ents[id] = Entities.Get(id, type);
             ents[id]?.Read(r);
         });
-
         Listen(PacketType.Level, r => World.Instance.ReadData(r));
-
         Listen(PacketType.Ban, r => LobbyController.LeaveLobby());
 
         Listen(PacketType.SpawnBullet, Bullets.CInstantiate);
-
-        Listen(PacketType.DamageEntity, r => entities[r.Id()]?.Damage(r));
-
-        Listen(PacketType.KillEntity, r => entities[r.Id()]?.Kill());
+        Listen(PacketType.DamageEntity, r =>
+        {
+            if (ents.TryGetValue(r.Id(), out var entity)) entity?.Damage(r);
+        });
+        Listen(PacketType.KillEntity, r =>
+        {
+            if (ents.TryGetValue(r.Id(), out var entity)) entity?.Kill();
+        });
 
         Listen(PacketType.Style, r =>
         {
