@@ -85,6 +85,7 @@ public class Bullet : OwnableEntity
 
     public override void Kill()
     {
+        Networking.Entities[Id] = DeadBullet.Instance;
         if (Grenade) Exploded(false);
 
         Grenade?.Explode(harmless: true);

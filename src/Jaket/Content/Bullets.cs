@@ -79,7 +79,7 @@ public class Bullets
             }
         }
 
-        Fake = Tools.Create("Fake");
+        Fake = Tools.Create<DeadBullet>("Fake").gameObject;
         NetDmg = Tools.Create("Network Damage");
     }
 
