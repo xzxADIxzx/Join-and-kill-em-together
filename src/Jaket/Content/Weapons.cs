@@ -34,17 +34,18 @@ public class Weapons
     }
 
     /// <summary> Finds the weapon type by object name. </summary>
-    public static byte Type(GameObject weapon)
+    public static byte Type()
     {
-        string name = weapon.name.Substring(0, weapon.name.IndexOf("("));
+        var weap = GunControl.Instance.currentWeapon;
+        if (weap == null) return 0xFF;
+
+        var name = weap.name.Substring(0, weap.name.IndexOf("("));
         return (byte)Prefabs.FindIndex(prefab => prefab.name == name);
     }
-    public static byte Type() => GunControl.Instance.currentWeapon == null ? (byte)0xFF : Type(GunControl.Instance.currentWeapon);
 
     /// <summary> Spawns a weapon with the given type and assigns its parent transform. </summary>
     public static void Instantiate(byte type, Transform parent)
     {
-        if (type >= Prefabs.Count) return;
         var obj = Object.Instantiate(Prefabs[type], parent);
 
         // weapon prefabs are disabled and located in the AlwaysOnTop layer

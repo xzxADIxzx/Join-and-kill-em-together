@@ -84,6 +84,7 @@ public class Reader
         rps = (byte)(value >> 1 & 0b11);
         typing = (value & 1) != 0;
 
+        if (weapon == 0b111111) weapon = 0xFF;
         if (emoji == 0b1111) emoji = 0xFF;
     }
 
