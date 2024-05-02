@@ -96,6 +96,13 @@ public abstract class Entity : MonoBehaviour
     /// <summary> Kills the entity. </summary>
     public virtual void Kill(Reader r) => Dead = true;
 
+    /// <summary> Kills the entity and informs all the network members about it. </summary>
+    public void NetKill()
+    {
+        Kill(null);
+        Networking.Send(PacketType.KillEntity, w => w.Id(Id), size: 4);
+    }
+
     /// <summary> Class for interpolating floating point values. </summary>
     public class FloatLerp
     {

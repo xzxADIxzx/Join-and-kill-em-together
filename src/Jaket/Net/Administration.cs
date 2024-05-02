@@ -62,25 +62,19 @@ public class Administration
     {
         void Default(Tree tree, int max)
         {
-            if (tree.Count(owner) > max) Kill(tree[owner][0]);
+            if (tree.Count(owner) > max) tree[owner][0].NetKill();
             tree[owner].Add(entity);
         }
 
         if (entity.Type.IsEnemy() || entity.Type.IsItem())
         {
             // player can only spawn one big enemy at a time
-            if (entity.Type.IsBigEnemy() && entities.TryGetValue(owner, out var list)) list.ForEach(Kill);
+            if (entity.Type.IsBigEnemy() && entities.TryGetValue(owner, out var list)) list.ForEach(e => e.NetKill());
 
             Default(entities, MAX_ENTITIES);
         }
         else if (entity.Type.IsPlushy()) Default(plushies, MAX_PLUSHIES);
         else if (entity.Type.IsBullet()) Default(entityBullets, MAX_BULLETS);
-    }
-
-    private static void Kill(Entity entity)
-    {
-        entity.Kill(null);
-        Networking.Send(PacketType.KillEntity, w => w.Id(entity.Id), size: 4);
     }
 
     /// <summary> Tree with players ids as roots and entities created by these players as children. </summary>
