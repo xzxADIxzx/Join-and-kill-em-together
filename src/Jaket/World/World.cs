@@ -249,6 +249,7 @@ public class World : MonoSingleton<World>
         Activated.Clear();
         // load the host level, it is the main function of this packet
         Tools.Load(r.String());
+        Networking.Loading = true;
 
         // if the mod version doesn't match the host's one, then reading the packet is complete, as this may lead to bigger bugs
         if (r.String() != Version.CURRENT)
@@ -372,14 +373,14 @@ public class World : MonoSingleton<World>
             case 3:
                 Networking.EachEntity(entity =>
                 {
-                    if (entity.Type == EntityType.Swordsmachine) entity.Kill();
+                    if (entity.Type == EntityType.Swordsmachine) entity.Kill(null);
                 });
                 break;
 
             case 4:
                 Networking.EachEntity(entity =>
                 {
-                    if (entity.Type == EntityType.Puppet) entity.Kill();
+                    if (entity.Type == EntityType.Puppet) entity.Kill(null);
                 });
                 Find<BloodFiller>(r.Vector(), f => f.InstaFill());
                 break;

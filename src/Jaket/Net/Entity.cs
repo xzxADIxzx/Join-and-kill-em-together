@@ -94,7 +94,7 @@ public abstract class Entity : MonoBehaviour
     /// <summary> Deals damage to the entity. </summary>
     public virtual void Damage(Reader r) => Bullets.DealDamage(EnemyId, r);
     /// <summary> Kills the entity. </summary>
-    public virtual void Kill() => Dead = true;
+    public virtual void Kill(Reader r) => Dead = true;
 
     /// <summary> Class for interpolating floating point values. </summary>
     public class FloatLerp

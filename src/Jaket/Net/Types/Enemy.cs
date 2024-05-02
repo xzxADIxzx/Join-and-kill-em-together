@@ -188,7 +188,7 @@ public class Enemy : Entity
         subtype = r.Byte();
     }
 
-    public override void Kill()
+    public override void Kill(Reader r)
     {
         // spawn shotgun
         if (TryGetComponent<SwordsMachine>(out var sm) && boss) Instantiate(sm.shotgunPickUp, transform.position, transform.rotation);

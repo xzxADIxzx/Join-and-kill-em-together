@@ -96,9 +96,9 @@ public class Item : OwnableEntity
         placed = r.Bool();
     }
 
-    public override void Kill()
+    public override void Kill(Reader r)
     {
-        base.Kill();
+        base.Kill(r);
         gameObject.SetActive(false);
     }
 

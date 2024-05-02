@@ -57,7 +57,7 @@ public class Server : Endpoint, ISocketManager
         {
             if (ents.TryGetValue(r.Id(), out var entity) && entity && (entity is Enemy || entity is Bullet))
             {
-                entity.Kill();
+                entity.Kill(r);
                 Redirect(r, con);
             }
         });

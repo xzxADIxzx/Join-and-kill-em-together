@@ -209,7 +209,7 @@ public class RemotePlayer : Entity
         Doll.ReadAnim(r);
     }
 
-    public override void Kill()
+    public override void Kill(Reader r = null)
     {
         EnemyId.machine.GoLimp();
         Header.Hide();

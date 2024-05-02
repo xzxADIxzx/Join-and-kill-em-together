@@ -33,7 +33,7 @@ public class SecuritySystem : Entity
         health.Read(r);
     }
 
-    public override void Kill() => EnemyId.InstaKill();
+    public override void Kill(Reader r) => EnemyId.InstaKill();
 
     #endregion
 }

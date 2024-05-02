@@ -35,7 +35,7 @@ public class Client : Endpoint, IConnectionManager
         });
         Listen(PacketType.KillEntity, r =>
         {
-            if (ents.TryGetValue(r.Id(), out var entity)) entity?.Kill();
+            if (ents.TryGetValue(r.Id(), out var entity)) entity?.Kill(r);
         });
 
         Listen(PacketType.Style, r =>

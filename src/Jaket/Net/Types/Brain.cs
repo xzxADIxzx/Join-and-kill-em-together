@@ -57,7 +57,7 @@ public class Brain : Entity
         idol2 = r.Bool();
     }
 
-    public override void Kill() => EnemyId.InstaKill();
+    public override void Kill(Reader r) => EnemyId.InstaKill();
 
     #endregion
 }
