@@ -11,10 +11,6 @@ using Jaket.Net.Types;
 public class CommonBulletsPatch
 {
     [HarmonyPrefix]
-    [HarmonyPatch(typeof(Coin), "Start")]
-    static void Coin(Coin __instance) => Events.Post2(() => Bullets.Sync(__instance.gameObject, ref __instance.sourceWeapon, true, false));
-
-    [HarmonyPrefix]
     [HarmonyPatch(typeof(RevolverBeam), "Start")]
     static void Beam(RevolverBeam __instance) => Bullets.Sync(__instance.gameObject, ref __instance.sourceWeapon, false, true);
 
@@ -98,6 +94,60 @@ public class CommonBulletsPatch
 [HarmonyPatch]
 public class EntityBulletsPatch
 {
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(Coin), "Start")]
+    static bool CoinSpawn(Coin __instance)
+    {
+        if (LobbyController.Online)
+        {
+            Bullets.Sync(__instance.gameObject, ref __instance.sourceWeapon, default, default);
+            return false;
+        }
+        else return true;
+    }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(Coin), "DelayedReflectRevolver")]
+    static bool CoinReflect(Coin __instance, GameObject beam)
+    {
+        if (LobbyController.Online)
+        {
+            __instance.GetComponent<TeamCoin>()?.Reflect(beam);
+            return false;
+        }
+        else return true;
+    }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(Coin), "DelayedPunchflection")]
+    static bool CoinPunch(Coin __instance)
+    {
+        if (LobbyController.Online)
+        {
+            __instance.GetComponent<TeamCoin>()?.Punch();
+            return false;
+        }
+        else return true;
+    }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(Coin), "Bounce")]
+    static bool CoinBounce(Coin __instance)
+    {
+        if (LobbyController.Online)
+        {
+            __instance.GetComponent<TeamCoin>()?.Bounce();
+            return false;
+        }
+        else return true;
+    }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(Coin), "OnCollisionEnter")]
+    static bool CoinCollision() => LobbyController.Offline;
+
+
+
     [HarmonyPostfix]
     [HarmonyPatch(typeof(Grenade), "Start")] // DO NOT USE AWAKE
     static void GrenadeSpawn(Grenade __instance) => Bullets.Sync(__instance.gameObject, true, false);
@@ -118,9 +168,11 @@ public class EntityBulletsPatch
         if (__instance.rocketSpeed != 100f) __result = __instance.rocketSpeed == 98f;
     }
 
+
+
     [HarmonyPostfix]
     [HarmonyPatch(typeof(Cannonball), "Start")]
-    static void CannonballSpawn(Cannonball __instance) => Bullets.Sync(__instance.gameObject, true, false);
+    static void CannonballSpawn(Cannonball __instance) => Bullets.Sync(__instance.gameObject, default, default);
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(Cannonball), nameof(Cannonball.Break))]

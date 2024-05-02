@@ -113,7 +113,7 @@ public class Bullets
         EntityType.Rocket => 21,
         EntityType.Ball => 22,
         _ => -1
-    }]).AddComponent(type == EntityType.Coin ? typeof(Bullet /* TODO */) : typeof(Bullet)) as Entity;
+    }]).AddComponent(type == EntityType.Coin ? typeof(TeamCoin) : typeof(Bullet)) as Entity;
 
     /// <summary> Synchronizes the bullet between network members. </summary>
     public static void Sync(GameObject bullet, bool hasRigidbody, bool applyOffset)
@@ -134,7 +134,7 @@ public class Bullets
                 if (hasRigidbody) w.Vector(bullet.GetComponent<Rigidbody>().velocity);
             }, size: hasRigidbody ? 37 : 25);
         }
-        else bullet.AddComponent(bullet.name == "Coin(Clone)" ? typeof(Bullet /* TODO */) : typeof(Bullet));
+        else bullet.AddComponent(bullet.name == "Coin(Clone)" ? typeof(TeamCoin) : typeof(Bullet));
     }
 
     /// <summary> Synchronizes the bullet or marks it as fake if it was downloaded from the network. </summary>
