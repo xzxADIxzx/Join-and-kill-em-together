@@ -20,10 +20,12 @@ public class TeamCoin : OwnableEntity
     private Material mat;
     /// <summary> Trail of the coin highlighting the team. </summary>
     private TrailRenderer trail;
+    /// <summary> Collision of the coin. Why are there 2 colliders? </summary>
+    private Collider[] cols;
 
     private void Awake()
     {
-        Init(_ => Bullets.EType(name), true);
+        Init(_ => Bullets.EType(name), true, coin: true);
         InitTransfer(() =>
         {
             player.Id = Owner;
@@ -37,12 +39,11 @@ public class TeamCoin : OwnableEntity
                 mat.color = team.Color();
                 trail.startColor = team.Color() with { a = .5f };
             }
+            Reset();
         });
 
         x = new(); y = new(); z = new();
-
         if (IsOwner) OnTransferred();
-        foreach (var col in GetComponents<Collider>()) col.enabled = true;
     }
 
     private void Update()
@@ -51,6 +52,61 @@ public class TeamCoin : OwnableEntity
         transform.position = new(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
     }
 
+    private void OnCollisionEnter(Collision other)
+    {
+        if (IsOwner && (other.gameObject.layer == 8 || other.gameObject.layer == 24))
+        {
+            var zone = other.transform.GetComponentInParent<GoreZone>();
+            if (zone) transform.SetParent(zone.gibZone, true);
+            NetKill();
+        }
+    }
+
+    #region state
+
+    private void Activate()
+    {
+        foreach (var col in cols) col.enabled = true;
+        Coin.enabled = true;
+    }
+
+    private void Reset()
+    {
+        CancelInvoke("NetKill");
+        if (Dead) return;
+
+        foreach (var col in cols ??= GetComponents<Collider>()) col.enabled = false;
+        Coin.enabled = false;
+
+        Invoke("Activate", 0.1f);
+        if (IsOwner) Invoke("NetKill", 5f);
+    }
+
+    #endregion
+    #region interactions
+
+    public void Reflect(GameObject beam)
+    {
+
+    }
+
+    public void Punch()
+    {
+
+    }
+
+    public void Bounce()
+    {
+        if (!Coin.enabled) return;
+        TakeOwnage();
+        Reset();
+
+        Audio.Play();
+        Rb.velocity = Vector3.zero;
+        Rb.AddForce(Vector3.up * 25f, ForceMode.VelocityChange);
+    }
+
+    #endregion
     #region entity
 
     public override void Write(Writer w)
@@ -63,6 +119,17 @@ public class TeamCoin : OwnableEntity
     {
         base.Read(r);
         x.Read(r); y.Read(r); z.Read(r);
+    }
+
+    public override void Kill(Reader r)
+    {
+        base.Kill(r);
+        Coin.GetDeleted();
+        Reset();
+
+        mat = GetComponent<Renderer>().material;
+        mat.mainTexture = DollAssets.CoinTexture;
+        mat.color = team.Color();
     }
 
     #endregion

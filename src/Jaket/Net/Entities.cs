@@ -44,6 +44,7 @@ public class Entities
             Providers.Add(sucks, () => Items.Instantiate(sucks));
         }
 
+        Providers.Add(EntityType.Coin, () => Bullets.EInstantiate(EntityType.Coin));
         Providers.Add(EntityType.Rocket, () => Bullets.EInstantiate(EntityType.Rocket));
         Providers.Add(EntityType.Ball, () => Bullets.EInstantiate(EntityType.Ball));
     }

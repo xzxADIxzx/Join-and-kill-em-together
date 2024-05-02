@@ -33,11 +33,13 @@ public abstract class Entity : MonoBehaviour
     public Rigidbody Rb;
     public Grenade Grenade;
     public Cannonball Ball;
+    public Coin Coin;
+    public AudioSource Audio;
     public LeviathanController Leviathan;
     public MinotaurChase Minotaur;
 
     /// <summary> Adds itself to the entities list if the player is the owner, and finds different components specific to different entities. </summary>
-    protected void Init(Func<Entity, EntityType> prov, bool general = false, bool bullet = false, bool boss = false)
+    protected void Init(Func<Entity, EntityType> prov, bool general = false, bool bullet = false, bool coin = false, bool boss = false)
     {
         Log.Debug($"Initializing an entity with name {name}");
 
@@ -76,6 +78,11 @@ public abstract class Entity : MonoBehaviour
         {
             Grenade = GetComponent<Grenade>();
             Ball = GetComponent<Cannonball>();
+        }
+        if (coin)
+        {
+            Coin = GetComponent<Coin>();
+            Audio = GetComponent<AudioSource>();
         }
         if (boss)
         {
