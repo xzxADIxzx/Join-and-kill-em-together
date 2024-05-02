@@ -91,7 +91,6 @@ public class RemotePlayer : Entity
         Doll.Head.localEulerAngles = new(Doll.Emoji == 8 ? -20f : headRotation.Get(LastUpdate), 0f);
 
         EnemyId.machine.health = 4200f; // prevent the doll from dying too early
-        gameObject.tag = Team.Ally() ? "Untagged" : "Enemy"; // toggle friendly fire
 
         if (LastTeam != Team)
         {

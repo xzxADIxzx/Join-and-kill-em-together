@@ -39,6 +39,9 @@ public class DollAssets
     /// <summary> Hand textures used by local player. </summary>
     public static Texture[] HandTextures;
 
+    /// <summary> Coin texture used by team coins. </summary>
+    public static Texture CoinTexture;
+
     /// <summary> Icons for the emoji selection wheel. </summary>
     public static Sprite[] EmojiIcons, EmojiGlows;
 
@@ -63,6 +66,8 @@ public class DollAssets
         LoadAsync<Texture>("V3-blast", tex => HandTextures[3] = tex);
         HandTextures[0] = FistControl.Instance.blueArm.ToAsset().GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture;
         HandTextures[2] = FistControl.Instance.redArm.ToAsset().GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture;
+
+        LoadAsync<Texture>("coin", tex => CoinTexture = tex);
 
         // load icons for emoji wheel
         EmojiIcons = new Sprite[12];
