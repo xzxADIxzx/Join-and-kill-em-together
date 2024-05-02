@@ -79,7 +79,7 @@ public class Administration
 
     private static void Kill(Entity entity)
     {
-        entity.Kill();
+        entity.Kill(null);
         Networking.Send(PacketType.KillEntity, w => w.Id(entity.Id), size: 4);
     }
 

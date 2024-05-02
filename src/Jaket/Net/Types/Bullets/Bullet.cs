@@ -83,13 +83,19 @@ public class Bullet : OwnableEntity
         }
     }
 
-    public override void Kill()
+    public override void Kill(Reader r)
     {
         Networking.Entities[Id] = DeadBullet.Instance;
-        if (Grenade) Exploded(false);
+        if (Grenade)
+        {
+            Exploded(false);
 
-        Grenade?.Explode(harmless: true);
-        Ball?.Break();
+            if (r != null && r.Position < r.Length)
+                Grenade.Explode(true, sizeMultiplier: r.Bool() ? 2f : 1f);
+            else
+                Grenade.Explode(harmless: true);
+        }
+        else Ball?.Break();
     }
 
     #endregion

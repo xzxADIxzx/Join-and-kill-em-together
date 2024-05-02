@@ -104,7 +104,7 @@ public class EntityBulletsPatch
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(Grenade), nameof(Grenade.Explode))]
-    static void GrenadeDeath(Grenade __instance) => Bullets.SyncDeath(__instance.gameObject);
+    static void GrenadeDeath(Grenade __instance, bool harmless, float sizeMultiplier) => Bullets.SyncDeath(__instance.gameObject, harmless, sizeMultiplier > 1f);
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(Grenade), nameof(Grenade.PlayerRideStart))]

@@ -147,12 +147,16 @@ public class Bullets
     }
 
     /// <summary> Synchronizes the "death" of the bullet. </summary>
-    public static void SyncDeath(GameObject bullet)
+    public static void SyncDeath(GameObject bullet, bool harmless = true, bool big = false)
     {
         if (bullet.TryGetComponent<Entity>(out var entity) && entity.IsOwner)
         {
             Networking.Entities[entity.Id] = DeadBullet.Instance;
-            Networking.Send(PacketType.KillEntity, w => w.Id(entity.Id), size: 4);
+            Networking.Send(PacketType.KillEntity, w =>
+            {
+                w.Id(entity.Id);
+                if (!harmless) w.Bool(big);
+            }, size: harmless ? 4 : 5);
         }
     }
 
