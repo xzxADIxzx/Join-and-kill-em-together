@@ -17,7 +17,7 @@ public class TeamCoin : OwnableEntity
     private EntityProv<RemotePlayer> player = new();
 
     /// <summary> Coin team can be changed after a punch or hook. </summary>
-    private Team team = (Team)0xFF;
+    public Team Team = (Team)0xFF;
     /// <summary> Material displaying the team, its texture is replaced by white. </summary>
     private Material mat;
     /// <summary> Trail of the coin highlighting the team. </summary>
@@ -27,8 +27,15 @@ public class TeamCoin : OwnableEntity
 
     /// <summary> Whether the coin will reflect an incoming beam twice. </summary>
     private bool doubled;
+    /// <summary> Whether the coin is in the cooldown phase before shooting to a player. </summary>
+    private bool quadrupled;
     /// <summary> Effects indicate the current state of the coin. </summary>
     private GameObject effect;
+
+    /// <summary> Beam that the coin will reflect. </summary>
+    private GameObject beam;
+    /// <summary> Target that will be hit by reflection. </summary>
+    private Transform target;
 
     private void Awake()
     {
@@ -36,21 +43,23 @@ public class TeamCoin : OwnableEntity
         InitTransfer(() =>
         {
             player.Id = Owner;
-            if (team != player.Value?.Team)
+            if (Team != player.Value?.Team)
             {
-                team = player.Value?.Team ?? Networking.LocalPlayer.Team;
+                Team = player.Value?.Team ?? Networking.LocalPlayer.Team;
                 mat ??= GetComponent<Renderer>().material;
                 trail ??= GetComponent<TrailRenderer>();
 
                 mat.mainTexture = DollAssets.CoinTexture;
-                mat.color = team.Color();
-                trail.startColor = team.Color() with { a = .5f };
+                mat.color = Team.Color();
+                trail.startColor = Team.Color() with { a = .5f };
             }
             Reset();
         });
 
         x = new(); y = new(); z = new();
         if (IsOwner) OnTransferred();
+
+        Coins.Alive.Add(this);
     }
 
     private void Update()
@@ -69,6 +78,8 @@ public class TeamCoin : OwnableEntity
         }
     }
 
+    private void OnDestroy() => Coins.Alive.Remove(this);
+
     #region state
 
     private void Activate()
@@ -77,31 +88,45 @@ public class TeamCoin : OwnableEntity
         Coin.enabled = true;
     }
 
-    private void Double(GameObject flash)
+    private void Effect(GameObject flash, float size = 20f)
     {
-        doubled = true;
-        if (flash) effect = Instantiate(flash, transform);
+        Destroy(effect);
+        effect = Instantiate(flash, transform);
 
-        effect.transform.localScale = Vector3.one * 20f;
-        effect.GetComponentInChildren<SpriteRenderer>(true).color = team.Color();
+        effect.transform.localScale = Vector3.one * size;
+        effect.GetComponentInChildren<SpriteRenderer>(true).color = Team.Color();
     }
 
-    private void Double() => Double(Coin.flash);
+    private void Double()
+    {
+        doubled = true;
+        Effect(Coin.flash);
+    }
 
     private void DoubleEnd() => doubled = false;
 
     private void Triple()
     {
-        Double(Coin.chargeEffect);
+        doubled = true;
+        Effect(Coin.chargeEffect);
 
         effect.transform.GetChild(0).GetChild(0).GetChild(0).localScale = Vector3.one * .42f;
         effect.transform.GetChild(0).GetChild(0).gameObject.SetActive(true);
         var col = effect.GetComponentInChildren<ParticleSystem>().colorOverLifetime;
         var mat = effect.GetComponentInChildren<ParticleSystemRenderer>().material;
-
         col.color = new(black, clear);
-        mat.color = team.Color();
+        mat.color = Team.Color();
         mat.mainTexture = null; // the texture has its own color, which is extremely undesirable
+    }
+
+    private void Quadruple()
+    {
+        quadrupled = true;
+        Effect(Coin.enemyFlash, 12f);
+
+        var light = effect.GetComponent<Light>();
+        light.color = Team.Color();
+        light.intensity = 10f;
     }
 
     private void Reset()
@@ -128,14 +153,47 @@ public class TeamCoin : OwnableEntity
     #endregion
     #region interactions
 
+    public bool CanHit(TeamCoin other) => other != this && !other.quadrupled;
+
     public void Reflect(GameObject beam)
     {
+        if (beam?.name == "Net") return;
+        this.beam = beam;
 
+        target = Coins.FindTarget(this, false, out var isPlayer, out var isEnemy);
+        if (isPlayer || isEnemy)
+        {
+            TakeOwnage();
+            Quadruple();
+        }
+        Rb.isKinematic = true;
+        Invoke("Reflect", isPlayer ? 1f : isEnemy ? .3f : .1f);
     }
 
-    public void Punch()
+    public void Reflect()
     {
+        // play the hit sound before killing the coin
+        var sounds = Instantiate(Coin.coinHitSound, transform).GetComponents<AudioSource>();
+        foreach (var sound in sounds)
+        {
+            sound.Play();
+        }
+        NetKill();
 
+        beam ??= Instantiate(Bullets.Prefabs[0], transform.position, Quaternion.identity);
+        beam.SetActive(true);
+        beam.transform.position = transform.position;
+
+        if (target)
+            beam.transform.LookAt(target);
+        else
+            beam.transform.forward = Random.insideUnitSphere.normalized;
+
+        Rb.isKinematic = false;
+        Rb.AddForce(beam.transform.forward * -25f, ForceMode.VelocityChange);
+
+        beam = null;
+        target = null;
     }
 
     public void Bounce()
@@ -168,11 +226,12 @@ public class TeamCoin : OwnableEntity
     {
         base.Kill(r);
         Coin.GetDeleted();
+        Coins.Alive.Remove(this);
         Reset();
 
         mat = GetComponent<Renderer>().material;
         mat.mainTexture = DollAssets.CoinTexture;
-        mat.color = team.Color();
+        mat.color = Team.Color();
     }
 
     #endregion
