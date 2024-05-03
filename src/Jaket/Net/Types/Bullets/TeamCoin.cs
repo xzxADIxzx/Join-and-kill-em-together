@@ -6,6 +6,8 @@ using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
 
+using static Jaket.UI.Pal;
+
 /// <summary> Representation of a coin that has a team and the corresponding mechanics. </summary>
 public class TeamCoin : OwnableEntity
 {
@@ -22,6 +24,11 @@ public class TeamCoin : OwnableEntity
     private TrailRenderer trail;
     /// <summary> Collision of the coin. Why are there 2 colliders? </summary>
     private Collider[] cols;
+
+    /// <summary> Whether the coin will reflect an incoming beam twice. </summary>
+    private bool doubled;
+    /// <summary> Effects indicate the current state of the coin. </summary>
+    private GameObject effect;
 
     private void Awake()
     {
@@ -54,7 +61,7 @@ public class TeamCoin : OwnableEntity
 
     private void OnCollisionEnter(Collision other)
     {
-        if (IsOwner && (other.gameObject.layer == 8 || other.gameObject.layer == 24))
+        if (IsOwner && !Dead && (other.gameObject.layer == 8 || other.gameObject.layer == 24))
         {
             var zone = other.transform.GetComponentInParent<GoreZone>();
             if (zone) transform.SetParent(zone.gibZone, true);
@@ -70,15 +77,51 @@ public class TeamCoin : OwnableEntity
         Coin.enabled = true;
     }
 
+    private void Double(GameObject flash)
+    {
+        doubled = true;
+        if (flash) effect = Instantiate(flash, transform);
+
+        effect.transform.localScale = Vector3.one * 20f;
+        effect.GetComponentInChildren<SpriteRenderer>(true).color = team.Color();
+    }
+
+    private void Double() => Double(Coin.flash);
+
+    private void DoubleEnd() => doubled = false;
+
+    private void Triple()
+    {
+        Double(Coin.chargeEffect);
+
+        effect.transform.GetChild(0).GetChild(0).GetChild(0).localScale = Vector3.one * .42f;
+        effect.transform.GetChild(0).GetChild(0).gameObject.SetActive(true);
+        var col = effect.GetComponentInChildren<ParticleSystem>().colorOverLifetime;
+        var mat = effect.GetComponentInChildren<ParticleSystemRenderer>().material;
+
+        col.color = new(black, clear);
+        mat.color = team.Color();
+        mat.mainTexture = null; // the texture has its own color, which is extremely undesirable
+    }
+
     private void Reset()
     {
+        doubled = false;
+        Destroy(effect);
+
+        CancelInvoke("Double");
+        CancelInvoke("DoubleEnd");
+        CancelInvoke("Triple");
         CancelInvoke("NetKill");
         if (Dead) return;
 
         foreach (var col in cols ??= GetComponents<Collider>()) col.enabled = false;
         Coin.enabled = false;
 
-        Invoke("Activate", 0.1f);
+        Invoke("Activate", .1f);
+        Invoke("Double", .35f);
+        Invoke("DoubleEnd", .417f);
+        Invoke("Triple", 1f);
         if (IsOwner) Invoke("NetKill", 5f);
     }
 

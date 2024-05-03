@@ -15,6 +15,7 @@ public static class Pal
 
     public static Color white = Color.white;
     public static Color black = Color.black;
+    public static Color clear = Color.clear;
 
     public static Color green = new(.2f, .8f, .2f);
     public static Color orange = new(1f, .65f, 0f);
