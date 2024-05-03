@@ -55,7 +55,7 @@ public class Server : Endpoint, ISocketManager
         });
         Listen(PacketType.KillEntity, (con, sender, r) =>
         {
-            if (ents.TryGetValue(r.Id(), out var entity) && entity && (entity is Enemy || entity is Bullet))
+            if (ents.TryGetValue(r.Id(), out var entity) && entity && (entity is Enemy || entity is Bullet || entity is TeamCoin))
             {
                 entity.Kill(r);
                 Redirect(r, con);
