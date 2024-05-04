@@ -28,7 +28,7 @@ public class TeamCoin : OwnableEntity
     /// <summary> Whether the coin will reflect an incoming beam twice. </summary>
     private bool doubled;
     /// <summary> Whether the coin is in the cooldown phase before shooting to a player. </summary>
-    private bool quadrupled;
+    private bool quadrupled, lastQuadrupled;
     /// <summary> Effects indicate the current state of the coin. </summary>
     private GameObject effect;
 
@@ -65,7 +65,9 @@ public class TeamCoin : OwnableEntity
     private void Update()
     {
         if (IsOwner || Dead) return;
+
         transform.position = new(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
+        if (lastQuadrupled && !quadrupled) Quadruple();
     }
 
     private void OnCollisionEnter(Collision other)
@@ -212,13 +214,17 @@ public class TeamCoin : OwnableEntity
     public override void Write(Writer w)
     {
         base.Write(w);
+
         w.Vector(transform.position);
+        w.Bool(quadrupled);
     }
 
     public override void Read(Reader r)
     {
         base.Read(r);
+
         x.Read(r); y.Read(r); z.Read(r);
+        lastQuadrupled = r.Bool();
     }
 
     public override void Kill(Reader r)
