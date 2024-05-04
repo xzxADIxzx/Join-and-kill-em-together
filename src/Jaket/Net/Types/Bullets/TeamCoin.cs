@@ -168,7 +168,7 @@ public class TeamCoin : OwnableEntity
 
     public void Reflect(GameObject beam)
     {
-        if (beam?.name == "Net") return;
+        if (beam?.name == "Net(Clone)") return;
         this.beam = beam;
 
         shot = true;
@@ -177,8 +177,8 @@ public class TeamCoin : OwnableEntity
         target = Coins.FindTarget(this, false, out var isPlayer, out var isEnemy);
         if (isPlayer || isEnemy)
         {
-            Quadruple();
             TakeOwnage();
+            Quadruple();
         }
         Invoke("Reflect", isPlayer ? .9f : isEnemy ? .3f : .1f);
     }
