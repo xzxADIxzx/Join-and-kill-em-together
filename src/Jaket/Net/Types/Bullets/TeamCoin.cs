@@ -65,6 +65,12 @@ public class TeamCoin : OwnableEntity
         Coins.Alive.Add(this);
     }
 
+    private void Start()
+    {
+        transform.position = new(x.Target, y.Target, z.Target);
+        trail.Clear();
+    }
+
     private void Update()
     {
         if (IsOwner || Dead) return;
