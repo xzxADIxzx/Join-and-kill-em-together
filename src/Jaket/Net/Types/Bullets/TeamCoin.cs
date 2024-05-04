@@ -131,6 +131,7 @@ public class TeamCoin : OwnableEntity
 
     private void Reset()
     {
+        Rb.isKinematic = !Dead && (!IsOwner || quadrupled);
         doubled = false;
         Destroy(effect);
 
@@ -138,7 +139,7 @@ public class TeamCoin : OwnableEntity
         CancelInvoke("DoubleEnd");
         CancelInvoke("Triple");
         CancelInvoke("NetKill");
-        if (Dead) return;
+        if (Dead || quadrupled) return;
 
         foreach (var col in cols ??= GetComponents<Collider>()) col.enabled = false;
         Coin.enabled = false;
@@ -163,11 +164,10 @@ public class TeamCoin : OwnableEntity
         target = Coins.FindTarget(this, false, out var isPlayer, out var isEnemy);
         if (isPlayer || isEnemy)
         {
-            TakeOwnage();
             Quadruple();
+            TakeOwnage();
         }
-        Rb.isKinematic = true;
-        Invoke("Reflect", isPlayer ? 1f : isEnemy ? .3f : .1f);
+        Invoke("Reflect", isPlayer ? .9f : isEnemy ? .3f : .1f);
     }
 
     public void Reflect()
@@ -189,8 +189,7 @@ public class TeamCoin : OwnableEntity
         else
             beam.transform.forward = Random.insideUnitSphere.normalized;
 
-        Rb.isKinematic = false;
-        Rb.AddForce(beam.transform.forward * -25f, ForceMode.VelocityChange);
+        Rb.AddForce(beam.transform.forward * -42f, ForceMode.VelocityChange);
 
         beam = null;
         target = null;
