@@ -25,9 +25,11 @@ public class TeamCoin : OwnableEntity
     /// <summary> Collision of the coin. Why are there 2 colliders? </summary>
     private Collider[] cols;
 
+    /// <summary> Whether the coin is shot. </summary>
+    private bool shot;
     /// <summary> Whether the coin will reflect an incoming beam twice. </summary>
-    private bool doubled;
-    /// <summary> Whether the coin is in the cooldown phase before shooting to a player. </summary>
+    private bool doubled, lastDoubled;
+    /// <summary> Whether the coin is in the cooldown phase before shooting to a player or enemy. </summary>
     private bool quadrupled, lastQuadrupled;
     /// <summary> Effects indicate the current state of the coin. </summary>
     private GameObject effect;
@@ -59,6 +61,7 @@ public class TeamCoin : OwnableEntity
         x = new(); y = new(); z = new();
         if (IsOwner) OnTransferred();
 
+        Coin.doubled = true; // for some reason, without this, the coin cannot be punched
         Coins.Alive.Add(this);
     }
 
@@ -67,7 +70,12 @@ public class TeamCoin : OwnableEntity
         if (IsOwner || Dead) return;
 
         transform.position = new(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
-        if (lastQuadrupled && !quadrupled) Quadruple();
+        if (lastQuadrupled && !quadrupled)
+        {
+            shot = true;
+            Reset();
+            Quadruple();
+        }
     }
 
     private void OnCollisionEnter(Collision other)
@@ -133,7 +141,7 @@ public class TeamCoin : OwnableEntity
 
     private void Reset()
     {
-        Rb.isKinematic = !Dead && (!IsOwner || quadrupled);
+        Rb.isKinematic = !Dead && (!IsOwner || shot);
         doubled = false;
         Destroy(effect);
 
@@ -141,7 +149,7 @@ public class TeamCoin : OwnableEntity
         CancelInvoke("DoubleEnd");
         CancelInvoke("Triple");
         CancelInvoke("NetKill");
-        if (Dead || quadrupled) return;
+        if (Dead || shot) return;
 
         foreach (var col in cols ??= GetComponents<Collider>()) col.enabled = false;
         Coin.enabled = false;
@@ -163,6 +171,9 @@ public class TeamCoin : OwnableEntity
         if (beam?.name == "Net") return;
         this.beam = beam;
 
+        shot = true;
+        Reset();
+
         target = Coins.FindTarget(this, false, out var isPlayer, out var isEnemy);
         if (isPlayer || isEnemy)
         {
@@ -174,7 +185,10 @@ public class TeamCoin : OwnableEntity
 
     public void Reflect()
     {
-        // play the hit sound before killing the coin
+        // prevent the coin from getting hit by the reflection
+        tag = "Untagged";
+
+        // play the sound before killing the coin
         var sounds = Instantiate(Coin.coinHitSound, transform).GetComponents<AudioSource>();
         foreach (var sound in sounds)
         {
@@ -197,9 +211,25 @@ public class TeamCoin : OwnableEntity
         target = null;
     }
 
+    public void Punch()
+    {
+        if (quadrupled)
+        {
+            if (IsOwner)
+            {
+                CancelInvoke("Reflect");
+                Reflect();
+            }
+            return;
+        }
+        if (!Coin.enabled) return;
+        TakeOwnage();
+        Reset();
+    }
+
     public void Bounce()
     {
-        if (!Coin.enabled) return;
+        if (quadrupled || !Coin.enabled) return;
         TakeOwnage();
         Reset();
 
@@ -230,9 +260,10 @@ public class TeamCoin : OwnableEntity
     public override void Kill(Reader r)
     {
         base.Kill(r);
+        Reset();
+
         Coin.GetDeleted();
         Coins.Alive.Remove(this);
-        Reset();
 
         mat = GetComponent<Renderer>().material;
         mat.mainTexture = DollAssets.CoinTexture;
