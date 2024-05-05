@@ -141,7 +141,7 @@ public class TeamCoin : OwnableEntity
     private void Quadruple()
     {
         quadrupled = true;
-        Effect(Coin.enemyFlash, 12f);
+        Effect(Coin.enemyFlash, 15f);
 
         var light = effect.GetComponent<Light>();
         light.color = Team.Color();
@@ -199,7 +199,7 @@ public class TeamCoin : OwnableEntity
             TakeOwnage();
             Quadruple();
         }
-        Invoke("Reflect", (isPlayer ? .9f : isEnemy ? .3f : .1f) + offset);
+        Invoke("Reflect", (isPlayer ? 1.2f : isEnemy ? .3f : .1f) + offset);
 
         ccc.beenHit.Add(target?.gameObject);
         if ((target?.CompareTag("Coin") ?? false) && target.TryGetComponent(out TeamCoin c))
