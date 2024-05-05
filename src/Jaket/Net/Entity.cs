@@ -93,6 +93,14 @@ public abstract class Entity : MonoBehaviour
         #endregion
     }
 
+    /// <summary> Teleports the entity to the target position and clears its trail. </summary>
+    protected void ClearTrail(TrailRenderer trail, params FloatLerp[] l)
+    {
+        if (IsOwner) return;
+        transform.position = new(l[0].Last = l[0].Target, l[1].Last = l[1].Target, l[2].Last = l[2].Target);
+        trail.Clear();
+    }
+
     /// <summary> Writes the entity data to the writer. </summary>
     public abstract void Write(Writer w);
     /// <summary> Reads the entity data from the reader. </summary>

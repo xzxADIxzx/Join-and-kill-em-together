@@ -72,12 +72,7 @@ public class TeamCoin : OwnableEntity
         Coins.Alive.Add(this);
     }
 
-    private void Start()
-    {
-        if (IsOwner) return;
-        transform.position = new(x.Target, y.Target, z.Target);
-        trail.Clear();
-    }
+    private void Start() => ClearTrail(trail, x, y, z);
 
     private void Update()
     {
