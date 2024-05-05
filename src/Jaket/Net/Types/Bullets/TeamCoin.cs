@@ -290,6 +290,7 @@ public class TeamCoin : OwnableEntity
     public override void Read(Reader r)
     {
         base.Read(r);
+        if (IsOwner) return;
 
         x.Read(r); y.Read(r); z.Read(r);
         quadrupled = r.Bool();

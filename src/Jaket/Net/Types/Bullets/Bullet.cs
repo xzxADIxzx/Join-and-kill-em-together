@@ -25,7 +25,11 @@ public class Bullet : OwnableEntity
         {
             if (Rb) Rb.isKinematic = !IsOwner;
             if (Ball) Ball.ghostCollider = !IsOwner;
-            if (Grenade) Exploded(!IsOwner);
+            if (Grenade)
+            {
+                if (IsOwner) Grenade.rocketSpeed = 100f;
+                Exploded(!IsOwner);
+            }
             player.Id = Owner;
         });
 
@@ -67,6 +71,7 @@ public class Bullet : OwnableEntity
     public override void Write(Writer w)
     {
         base.Write(w);
+
         w.Vector(transform.position);
         w.Vector(transform.eulerAngles);
 
@@ -80,13 +85,15 @@ public class Bullet : OwnableEntity
     public override void Read(Reader r)
     {
         base.Read(r);
+        if (IsOwner) return;
+
         x.Read(r); y.Read(r); z.Read(r);
         rx.Read(r); ry.Read(r); rz.Read(r);
 
         if (Grenade)
         {
             riding = r.Bool();
-            Grenade.rocketSpeed = IsOwner ? 100f : (frozen = r.Bool()) ? 98f : 99f;
+            Grenade.rocketSpeed = (frozen = r.Bool()) ? 98f : 99f;
         }
     }
 

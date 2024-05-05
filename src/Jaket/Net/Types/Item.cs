@@ -81,6 +81,7 @@ public class Item : OwnableEntity
     public override void Write(Writer w)
     {
         base.Write(w);
+
         w.Vector(transform.position);
         w.Vector(transform.eulerAngles);
         w.Bool(IsOwner ? FistControl.Instance.heldObject == ItemId : holding);
@@ -90,6 +91,8 @@ public class Item : OwnableEntity
     public override void Read(Reader r)
     {
         base.Read(r);
+        if (IsOwner) return;
+
         x.Read(r); y.Read(r); z.Read(r);
         rx.Read(r); ry.Read(r); rz.Read(r);
         holding = r.Bool();
