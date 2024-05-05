@@ -172,7 +172,7 @@ public class TeamCoin : OwnableEntity
     #endregion
     #region interactions
 
-    public void Reflect(GameObject beam)
+    public void Reflect(GameObject beam, float offset = 0f)
     {
         if (beam?.name == "Net(Clone)") return;
         this.beam = beam;
@@ -199,7 +199,7 @@ public class TeamCoin : OwnableEntity
             TakeOwnage();
             Quadruple();
         }
-        Invoke("Reflect", isPlayer ? .9f : isEnemy ? .3f : .1f);
+        Invoke("Reflect", (isPlayer ? .9f : isEnemy ? .3f : .1f) + offset);
 
         ccc.beenHit.Add(target?.gameObject);
         if ((target?.CompareTag("Coin") ?? false) && target.TryGetComponent(out TeamCoin c))
@@ -220,7 +220,7 @@ public class TeamCoin : OwnableEntity
 
         // run the second shot if the player hit the coin in a short timing
         if (doubled && beam == null) // only RV0 PRI can be doubled
-            Events.Post(() => Reflect(null));
+            Invoke("DoubleReflect", .1f);
         else
             NetKill();
 
@@ -239,6 +239,8 @@ public class TeamCoin : OwnableEntity
         beam = null;
         target = null;
     }
+
+    public void DoubleReflect() => Reflect(null, -.1f);
 
     public void Punch()
     {
