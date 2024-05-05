@@ -16,7 +16,7 @@ public class Coins
     public static List<TeamCoin> Alive = new();
 
     /// <summary> Finds the most suitable target for a coin ricochet. </summary>
-    public static Transform FindTarget(TeamCoin coin, bool enemiesOnly, out bool isPlayer, out bool isEnemy)
+    public static Transform FindTarget(TeamCoin coin, bool enemiesOnly, out bool isPlayer, out bool isEnemy, CoinChainCache ccc = null)
     {
         Transform target = null;
         float dst = float.MaxValue;
@@ -25,7 +25,9 @@ public class Coins
         {
             var dif = t.position - coin.transform.position;
             var newDst = dif.sqrMagnitude;
-            if (newDst < dst && (!Physics.Raycast(coin.transform.position, dif, out var hit, Mathf.Sqrt(newDst) - .5f, mask) || hit.transform == t))
+            if (newDst < dst
+                && (!Physics.Raycast(coin.transform.position, dif, out var hit, Mathf.Sqrt(newDst) - .5f, mask) || hit.transform == t)
+                && (!ccc || !ccc.beenHit.Contains(t.gameObject)))
             {
                 target = t;
                 dst = newDst;
@@ -37,13 +39,13 @@ public class Coins
         {
             Alive.ForEach(c =>
             {
-                if (coin.CanHit(c) && coin.Team == c.Team) Check(c.transform);
+                if (!c.shot && coin.Team == c.Team) Check(c.transform);
             });
             if (target) return target;
 
             Alive.ForEach(c =>
             {
-                if (coin.CanHit(c) && coin.Team != c.Team) Check(c.transform);
+                if (!c.shot && coin.Team != c.Team) Check(c.transform);
             });
             if (target) return target;
 

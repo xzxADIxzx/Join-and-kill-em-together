@@ -95,6 +95,10 @@ public class CommonBulletsPatch
 public class EntityBulletsPatch
 {
     [HarmonyPrefix]
+    [HarmonyPatch(typeof(RevolverBeam), nameof(RevolverBeam.ExecuteHits))]
+    static bool CoinFix(RevolverBeam __instance, RaycastHit currentHit) => __instance.name != "Net" || !(currentHit.transform?.CompareTag("Coin") ?? false);
+
+    [HarmonyPrefix]
     [HarmonyPatch(typeof(Coin), "Start")]
     static bool CoinSpawn(Coin __instance)
     {

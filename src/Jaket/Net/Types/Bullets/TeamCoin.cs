@@ -26,9 +26,9 @@ public class TeamCoin : OwnableEntity
     private Collider[] cols;
 
     /// <summary> Whether the coin is shot. </summary>
-    private bool shot;
+    public bool shot;
     /// <summary> Whether the coin will reflect an incoming beam twice. </summary>
-    private bool doubled, lastDoubled;
+    private bool doubled;
     /// <summary> Whether the coin is in the cooldown phase before shooting to a player or enemy. </summary>
     private bool quadrupled, lastQuadrupled;
     /// <summary> Effects indicate the current state of the coin. </summary>
@@ -38,6 +38,13 @@ public class TeamCoin : OwnableEntity
     private GameObject beam;
     /// <summary> Target that will be hit by reflection. </summary>
     private Transform target;
+    /// <summary> List of objects hit by a chain of ricochets. </summary>
+    private CoinChainCache ccc;
+
+    /// <summary> Power of the coin increases after a punch or ricochet. </summary>
+    private int power = 2;
+    /// <summary> The amount of ricochets increases after punch, so I use only one variable. </summary>
+    private int ricochets => power - 2;
 
     private void Awake()
     {
@@ -77,7 +84,7 @@ public class TeamCoin : OwnableEntity
         if (IsOwner || Dead) return;
 
         transform.position = new(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
-        if (lastQuadrupled && !quadrupled)
+        if (lastQuadrupled != quadrupled && (lastQuadrupled = quadrupled))
         {
             shot = true;
             Reset();
@@ -149,7 +156,6 @@ public class TeamCoin : OwnableEntity
     private void Reset()
     {
         Rb.isKinematic = !Dead && (!IsOwner || shot);
-        doubled = false;
         Destroy(effect);
 
         CancelInvoke("Double");
@@ -171,23 +177,41 @@ public class TeamCoin : OwnableEntity
     #endregion
     #region interactions
 
-    public bool CanHit(TeamCoin other) => other != this && !other.quadrupled;
-
     public void Reflect(GameObject beam)
     {
         if (beam?.name == "Net(Clone)") return;
         this.beam = beam;
 
+        if (quadrupled)
+        {
+            if (!Team.Ally())
+            {
+                // achievement unlocked: return to the sender
+                target = player.Value.Doll.Head.transform;
+
+                CancelInvoke("Reflect");
+                Reflect();
+            }
+            return;
+        }
+
         shot = true;
         Reset();
 
-        target = Coins.FindTarget(this, false, out var isPlayer, out var isEnemy);
+        target = Coins.FindTarget(this, false, out var isPlayer, out var isEnemy, ccc ??= gameObject.AddComponent<CoinChainCache>());
         if (isPlayer || isEnemy)
         {
             TakeOwnage();
             Quadruple();
         }
         Invoke("Reflect", isPlayer ? .9f : isEnemy ? .3f : .1f);
+
+        ccc.beenHit.Add(target?.gameObject);
+        if ((target?.CompareTag("Coin") ?? false) && target.TryGetComponent(out TeamCoin c))
+        {
+            c.ccc = ccc; // :D
+            c.power = power + 1;
+        }
     }
 
     public void Reflect()
@@ -197,11 +221,13 @@ public class TeamCoin : OwnableEntity
 
         // play the sound before killing the coin
         var sounds = Instantiate(Coin.coinHitSound, transform).GetComponents<AudioSource>();
-        foreach (var sound in sounds)
-        {
-            sound.Play();
-        }
-        NetKill();
+        if (power > 2) foreach (var sound in sounds) sound.pitch = 1f + (power - 2f) / 5f;
+
+        // run the second shot if the player hit the coin in a short timing
+        if (doubled && beam == null) // only RV0 PRI can be doubled
+            Events.Post(() => Reflect(null));
+        else
+            NetKill();
 
         beam ??= Instantiate(Bullets.Prefabs[0], transform.position, Quaternion.identity);
         beam.SetActive(true);
@@ -214,6 +240,7 @@ public class TeamCoin : OwnableEntity
 
         Rb.AddForce(beam.transform.forward * -42f, ForceMode.VelocityChange);
 
+        doubled = quadrupled = false; // before the second shot, the coin can flash again
         beam = null;
         target = null;
     }
@@ -231,6 +258,8 @@ public class TeamCoin : OwnableEntity
         }
         if (!Coin.enabled) return;
         TakeOwnage();
+
+        doubled = false;
         Reset();
     }
 
@@ -238,6 +267,8 @@ public class TeamCoin : OwnableEntity
     {
         if (quadrupled || !Coin.enabled) return;
         TakeOwnage();
+
+        doubled = false;
         Reset();
 
         Audio.Play();
@@ -261,7 +292,7 @@ public class TeamCoin : OwnableEntity
         base.Read(r);
 
         x.Read(r); y.Read(r); z.Read(r);
-        lastQuadrupled = r.Bool();
+        quadrupled = r.Bool();
     }
 
     public override void Kill(Reader r)
