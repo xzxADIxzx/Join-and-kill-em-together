@@ -35,6 +35,7 @@ public class Bullet : OwnableEntity
 
     private void Start()
     {
+        if (IsOwner) return;
         transform.position = new(x.Target, y.Target, z.Target);
         GetComponentInChildren<TrailRenderer>().Clear();
     }
