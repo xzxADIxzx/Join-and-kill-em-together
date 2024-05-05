@@ -25,7 +25,7 @@ public class Coins
         {
             var dif = t.position - coin.transform.position;
             var newDst = dif.sqrMagnitude;
-            if (newDst < dst && !Physics.Raycast(coin.transform.position, dif, Mathf.Sqrt(newDst) - .5f, mask))
+            if (newDst < dst && (!Physics.Raycast(coin.transform.position, dif, out var hit, Mathf.Sqrt(newDst) - .5f, mask) || hit.transform == t))
             {
                 target = t;
                 dst = newDst;
@@ -72,7 +72,7 @@ public class Coins
 
         Networking.EachEntity(e => e is Enemy, e =>
         {
-            if (e.EnemyId) Check(e.EnemyId.weakPoint?.transform ?? e.transform);
+            if (e.EnemyId && !e.Dead) Check(e.EnemyId.weakPoint?.transform ?? e.transform);
         });
         if (target)
         {
@@ -80,7 +80,18 @@ public class Coins
             return target;
         }
 
-        // breakables such as glass panels
+        if (!enemiesOnly)
+        {
+            foreach (var glass in GameObject.FindGameObjectsWithTag("Glass"))
+            {
+                if (glass.TryGetComponent<Glass>(out var g) && !g.broken) Check(g.transform);
+            }
+            foreach (var floor in GameObject.FindGameObjectsWithTag("GlassFloor"))
+            {
+                if (floor.TryGetComponent<Glass>(out var g) && !g.broken) Check(g.transform);
+            }
+            if (target) return target;
+        }
 
         return target;
     }
