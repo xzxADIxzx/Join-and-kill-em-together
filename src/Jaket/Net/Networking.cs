@@ -89,11 +89,10 @@ public class Networking
         SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) =>
         {
             Bundle.Msg("player.left", member.Name);
+            if (!LobbyController.IsOwner) return;
 
             // kill the player doll and hide the nickname above
-            if (Entities.TryGetValue(member.Id.AccountId, out var entity) && entity is RemotePlayer player) player?.Kill();
-
-            if (!LobbyController.IsOwner) return;
+            if (Entities.TryGetValue(member.Id.AccountId, out var entity) && entity is RemotePlayer player) player?.NetKill();
 
             // returning the exited player's entities back to the host owner & close the connection
             FindCon(member.Id.AccountId)?.Close();
@@ -183,7 +182,7 @@ public class Networking
     /// <summary> Returns the team of the given friend. </summary>
     public static Team GetTeam(Friend friend) => friend.IsMe
         ? LocalPlayer.Team
-        : (Entities.TryGetValue(friend.Id.AccountId, out var entity) && entity != null && entity is RemotePlayer player ? player.Team : Team.Yellow);
+        : (Entities.TryGetValue(friend.Id.AccountId, out var entity) && entity && entity is RemotePlayer player ? player.Team : Team.Yellow);
 
     /// <summary> Returns the hex color of the friend's team. </summary>
     public static string GetTeamColor(Friend friend) => ColorUtility.ToHtmlStringRGBA(GetTeam(friend).Color());
