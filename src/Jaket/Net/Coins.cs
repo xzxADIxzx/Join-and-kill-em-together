@@ -9,6 +9,8 @@ using Jaket.Net.Types;
 /// <summary> List of all living coins and methods for finding targets. </summary>
 public class Coins
 {
+    private static Transform cc => CameraController.Instance.transform;
+
     /// <summary> Environmental mask needed to ray cast targets. </summary>
     private static readonly int mask = LayerMaskDefaults.Get(LMD.Environment);
 
@@ -97,4 +99,7 @@ public class Coins
 
         return target;
     }
+
+    /// <summary> Finds the position to which the player sent a coin by punching it. </summary>
+    public static bool Punchcast(out RaycastHit hit) => Physics.Raycast(cc.position, cc.forward, out hit, float.PositiveInfinity, mask);
 }

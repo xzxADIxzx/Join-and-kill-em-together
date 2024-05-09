@@ -11,6 +11,8 @@ using static Jaket.UI.Pal;
 /// <summary> Representation of a coin that has a team and the corresponding mechanics. </summary>
 public class TeamCoin : OwnableEntity
 {
+    private static Transform cc => CameraController.Instance.transform;
+
     /// <summary> Coin position. </summary>
     private FloatLerp x, y, z;
     /// <summary> Player owning the coin. </summary>
@@ -98,6 +100,11 @@ public class TeamCoin : OwnableEntity
     }
 
     private void OnDestroy() => Coins.Alive.Remove(this);
+
+    private void PlaySound(GameObject source)
+    {
+        if (power > 2) foreach (var sound in source.GetComponents<AudioSource>()) sound.pitch = 1f + (power - 2f) / 5f;
+    }
 
     #region state
 
@@ -189,6 +196,7 @@ public class TeamCoin : OwnableEntity
             }
             return;
         }
+        power++;
 
         shot = true;
         Reset();
@@ -205,7 +213,7 @@ public class TeamCoin : OwnableEntity
         if ((target?.CompareTag("Coin") ?? false) && target.TryGetComponent(out TeamCoin c))
         {
             c.ccc = ccc; // :D
-            c.power = power + 1;
+            c.power = power;
         }
     }
 
@@ -215,8 +223,7 @@ public class TeamCoin : OwnableEntity
         tag = "Untagged";
 
         // play the sound before killing the coin
-        var sounds = Instantiate(Coin.coinHitSound, transform).GetComponents<AudioSource>();
-        if (power > 2) foreach (var sound in sounds) sound.pitch = 1f + (power - 2f) / 5f;
+        PlaySound(Instantiate(Coin.coinHitSound, transform));
 
         // run the second shot if the player hit the coin in a short timing
         if (doubled && beam == null) // only RV0 PRI can be doubled
@@ -234,6 +241,12 @@ public class TeamCoin : OwnableEntity
             beam.transform.forward = Random.insideUnitSphere.normalized;
 
         Rb.AddForce(beam.transform.forward * -42f, ForceMode.VelocityChange);
+
+        if (beam.TryGetComponent<RevolverBeam>(out var rb))
+        {
+            rb.damage += power / 4f;
+            rb.addedDamage += power / 4f;
+        }
 
         doubled = quadrupled = false; // before the second shot, the coin can flash again
         beam = null;
@@ -254,10 +267,25 @@ public class TeamCoin : OwnableEntity
             return;
         }
         if (!Coin.enabled) return;
-        TakeOwnage();
+        Bounce();
 
-        doubled = false;
-        Reset();
+        target = Coins.FindTarget(this, true, out _, out _, null);
+        Vector3? pos = target
+            ? target.position
+            : Coins.Punchcast(out var hit)
+                ? hit.point - cc.forward
+                : null;
+
+        // make the coin unavailable for future use
+        if (pos == null) shot = true;
+
+        var beam = Instantiate(Coin.refBeam, transform.position, Quaternion.identity).GetComponent<LineRenderer>();
+        PlaySound(beam.gameObject);
+        trail.Clear();
+
+        beam.startColor = beam.endColor = Team.Color();
+        beam.SetPosition(0, transform.position);
+        beam.SetPosition(1, transform.position = pos ?? cc.position + cc.forward * 4200f);
     }
 
     public void Bounce()

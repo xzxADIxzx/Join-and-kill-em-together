@@ -161,6 +161,7 @@ public class Server : Endpoint, ISocketManager
         }
 
         // this will be used later to find the connection by the id
+        // this will be used later to find the connection by its id
         con.ConnectionName = accId.ToString();
 
         // only steam users in the lobby can connect to the server
@@ -175,11 +176,11 @@ public class Server : Endpoint, ISocketManager
 
     public void OnConnected(Connection con, ConnectionInfo info)
     {
-        Log.Info($"[Server] {info.Identity.SteamId} connected");
+        Log.Info($"[Server] {info.Identity.SteamId.AccountId} connected");
         Networking.Send(PacketType.Level, World.Instance.WriteData, (data, size) => Tools.Send(con, data, size));
     }
 
-    public void OnDisconnected(Connection con, ConnectionInfo info) => Log.Info($"[Server] {info.Identity.SteamId} disconnected");
+    public void OnDisconnected(Connection con, ConnectionInfo info) => Log.Info($"[Server] {info.Identity.SteamId.AccountId} disconnected");
 
     public void OnMessage(Connection con, NetIdentity id, System.IntPtr data, int size, long msg, long time, int channel) => Handle(con, id.SteamId.AccountId, data, size);
 
