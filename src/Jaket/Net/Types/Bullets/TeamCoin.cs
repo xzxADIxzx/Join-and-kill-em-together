@@ -12,6 +12,7 @@ using static Jaket.UI.Pal;
 public class TeamCoin : OwnableEntity
 {
     private static Transform cc => CameraController.Instance.transform;
+    private static StyleHUD sh => StyleHUD.Instance;
 
     /// <summary> Coin position. </summary>
     private FloatLerp x, y, z;
@@ -286,6 +287,35 @@ public class TeamCoin : OwnableEntity
         beam.startColor = beam.endColor = Team.Color();
         beam.SetPosition(0, transform.position);
         beam.SetPosition(1, transform.position = pos ?? cc.position + cc.forward * 4200f);
+
+        // deal a damage if the coin hit an enemy
+        if (target)
+        {
+            Breakable breakable = null;
+            var eid = target.GetComponentInChildren<EnemyIdentifierIdentifier>()?.eid;
+            eid ??= (breakable = target.GetComponentInChildren<Breakable>()).interruptEnemy;
+
+            if (!eid.puppet && !eid.blessed) sh.AddPoints(50, "ultrakill.fistfullofdollar", eid: eid);
+            if (breakable)
+            {
+                if (breakable.precisionOnly)
+                {
+                    sh.AddPoints(100, "ultrakill.interruption", eid: eid);
+                    TimeController.Instance.ParryFlash();
+
+                    if (!eid.blessed) eid.Explode(true);
+                }
+                breakable.Break();
+            }
+            else
+            {
+                eid.hitter = "coin";
+                if (!eid.hitterWeapons.Contains("coin")) eid.hitterWeapons.Add("coin");
+
+                eid.DeliverDamage(target.gameObject, (target.position - transform.position).normalized * 10000f, target.position, power, false, 1f);
+            }
+        }
+        if (power < 5) power++;
     }
 
     public void Bounce()
