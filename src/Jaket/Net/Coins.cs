@@ -76,7 +76,7 @@ public class Coins
 
         Networking.EachEntity(e => e is Enemy, e =>
         {
-            if (e.EnemyId && !e.Dead) Check(e.EnemyId.weakPoint?.transform ?? e.transform);
+            if (e.Type.IsTargetable() && e.EnemyId && !e.Dead) Check(e.EnemyId.weakPoint?.transform ?? e.transform);
         });
         if (target)
         {

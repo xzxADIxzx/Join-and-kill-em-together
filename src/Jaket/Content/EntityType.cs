@@ -117,6 +117,9 @@ public static class TypeExtensions
     /// <summary> Whether the type is a BIG enemy that can only be spawned in a limited number. </summary>
     public static bool IsBigEnemy(this EntityType type) => type >= EntityType.FleshPrison && type <= EntityType.SisyphusPrime;
 
+    /// <summary> Whether the type is an enemy and can be shot by a coin. </summary>
+    public static bool IsTargetable(this EntityType type) => IsEnemy(type) && type != EntityType.Idol && type != EntityType.CancerousRodent;
+
     /// <summary> Whether the type is an item. </summary>
     public static bool IsItem(this EntityType type) => type >= EntityType.ItemOffset && type < EntityType.PlushyOffset;
 
