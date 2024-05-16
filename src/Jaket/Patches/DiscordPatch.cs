@@ -2,7 +2,6 @@ namespace Jaket.Patches;
 
 using Discord;
 using HarmonyLib;
-using UnityEngine;
 
 using Jaket.Net;
 using Jaket.UI;

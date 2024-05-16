@@ -160,7 +160,6 @@ public class Server : Endpoint, ISocketManager
             return;
         }
 
-        // this will be used later to find the connection by the id
         // this will be used later to find the connection by its id
         con.ConnectionName = accId.ToString();
 
