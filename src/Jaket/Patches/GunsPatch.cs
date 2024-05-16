@@ -12,7 +12,7 @@ using Jaket.Net.Types;
 public class GunsPatch
 {
     [HarmonyPostfix]
-    [HarmonyPatch(typeof(GunControl), nameof(GunControl.SwitchWeapon), typeof(int), typeof(List<GameObject>), typeof(bool), typeof(bool), typeof(bool))]
+    [HarmonyPatch(typeof(GunControl), nameof(GunControl.SwitchWeapon), typeof(int), typeof(List<GameObject>), typeof(bool), typeof(bool), typeof(bool), typeof(bool))]
     static void GunSwitch() => Events.OnWeaponChanged.Fire();
 
     [HarmonyPostfix]
