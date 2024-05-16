@@ -138,7 +138,6 @@ public class Commands
             Msg("Contributors:");
             Msg("* [#00E666]Rey Hunter[] - really cool icons for emotions");
             Msg("* [#00E666]Ardub[] - invaluable help with The Cyber Grind [12][#cccccc](he did 90% of the work)");
-            Msg("* [#00E666]Kekson1a[] - Steam Rich Presence support");
 
             Msg("Translators:");
             Msg("[#cccccc]NotPhobos - Spanish, sSAR - Italian, Theoyeah - French, Sowler - Polish,");
