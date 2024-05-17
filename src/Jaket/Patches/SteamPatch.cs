@@ -31,9 +31,13 @@ public class SteamPatch
     [HarmonyPatch(typeof(SteamFriends), "SetRichPresence")]
     static void SetRichPresence(string key, ref string value)
     {
+        if (LobbyController.Offline) return;
+
         // #AtCyberGrind is a localization string for Cyber Grind, just "%difficulty% | Cyber Grind: Wave %wave%" without setting its values
+        if (key == "wave") value += " | Multiplayer via Jaket";
+
         // #AtStandardLevel is a localization string for other levels, just "%difficulty% | %level%" without setting its values
-        if (LobbyController.Online && key == "difficulty") value = "Multiplayer via Jaket | " + value;
+        if (key == "level") value += " | Multiplayer via Jaket";
 
         /* other steam_display values for ULTRAKILL include:
          * #AtMainMenu (displays "Main Menu" in your activity)
