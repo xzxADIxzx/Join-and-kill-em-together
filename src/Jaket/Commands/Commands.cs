@@ -11,8 +11,8 @@ using Jaket.UI.Dialogs;
 /// <summary> List of chat commands used by the mod. </summary>
 public class Commands
 {
-    /// <summary> Reference to chat. </summary>
-    private static Chat chat => Chat.Instance;
+    static Chat chat => Chat.Instance;
+
     /// <summary> Chat command handler. </summary>
     public static CommandHandler Handler = new();
 

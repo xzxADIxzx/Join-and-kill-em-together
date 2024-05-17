@@ -19,11 +19,11 @@ using Jaket.UI.Fragments;
 /// <summary> Class responsible for additions to control and local display of emotions. </summary>
 public class Movement : MonoSingleton<Movement>
 {
-    private static NewMovement nm => NewMovement.Instance;
-    private static FistControl fc => FistControl.Instance;
-    private static GunControl gc => GunControl.Instance;
-    private static CameraController cc => CameraController.Instance;
-    private static PlayerInput pi => InputManager.Instance.InputSource;
+    static NewMovement nm => NewMovement.Instance;
+    static FistControl fc => FistControl.Instance;
+    static GunControl gc => GunControl.Instance;
+    static CameraController cc => CameraController.Instance;
+    static PlayerInput pi => InputManager.Instance.InputSource;
 
     /// <summary> Environmental mask needed to prevent the skateboard from riding on water and camera from falling trough the ground. </summary>
     private readonly int mask = LayerMaskDefaults.Get(LMD.Environment);

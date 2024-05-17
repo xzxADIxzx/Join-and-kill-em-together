@@ -13,9 +13,9 @@ using static Rect;
 /// <summary> Skateboard stamina and speed. </summary>
 public class Skateboard : CanvasSingleton<Skateboard>
 {
-    private static Movement mm => Movement.Instance;
-    private static NewMovement nm => NewMovement.Instance;
-    private static ColorBlindSettings cb => ColorBlindSettings.Instance;
+    static Movement mm => Movement.Instance;
+    static NewMovement nm => NewMovement.Instance;
+    static ColorBlindSettings cb => ColorBlindSettings.Instance;
 
     /// <summary> Slider filler showing stamina. </summary>
     private Image fill;

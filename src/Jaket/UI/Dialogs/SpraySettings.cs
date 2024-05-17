@@ -17,7 +17,7 @@ using static Rect;
 /// <summary> Global spray settings not related to the lobby. </summary>
 public class SpraySettings : CanvasSingleton<SpraySettings>
 {
-    private static PrefsManager pm => PrefsManager.Instance;
+    static PrefsManager pm => PrefsManager.Instance;
 
     #region general
 

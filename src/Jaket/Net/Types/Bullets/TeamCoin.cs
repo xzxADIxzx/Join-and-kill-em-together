@@ -11,8 +11,8 @@ using static Jaket.UI.Pal;
 /// <summary> Representation of a coin that has a team and the corresponding mechanics. </summary>
 public class TeamCoin : OwnableEntity
 {
-    private static Transform cc => CameraController.Instance.transform;
-    private static StyleHUD sh => StyleHUD.Instance;
+    static Transform cc => CameraController.Instance.transform;
+    static StyleHUD sh => StyleHUD.Instance;
 
     /// <summary> Coin position. </summary>
     private FloatLerp x, y, z;

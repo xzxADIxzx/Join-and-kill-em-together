@@ -9,8 +9,8 @@ using Jaket.Net;
 /// <summary> Class responsible for Cyber Grind synchronization. </summary>
 public class CyberGrind
 {
-    private static EndlessGrid grid => EndlessGrid.Instance;
-    private static NewMovement nm => NewMovement.Instance;
+    static EndlessGrid grid => EndlessGrid.Instance;
+    static NewMovement nm => NewMovement.Instance;
 
     /// <summary> Current wave number used for display on the Huge Flying Panel™. </summary>
     public static int CurrentWave;

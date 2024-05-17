@@ -31,7 +31,7 @@ public class GunsPatch
 [HarmonyPatch]
 public class ArmsPatch
 {
-    private static LocalPlayer lp => Networking.LocalPlayer;
+    static LocalPlayer lp => Networking.LocalPlayer;
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(Punch), "ActiveStart")]

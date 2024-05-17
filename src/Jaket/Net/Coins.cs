@@ -9,7 +9,7 @@ using Jaket.Net.Types;
 /// <summary> List of all living coins and methods for finding targets. </summary>
 public class Coins
 {
-    private static Transform cc => CameraController.Instance.transform;
+    static Transform cc => CameraController.Instance.transform;
 
     /// <summary> Environmental mask needed to ray cast targets. </summary>
     private static readonly int mask = LayerMaskDefaults.Get(LMD.Environment);
