@@ -226,6 +226,7 @@ public class Movement : MonoSingleton<Movement>
         // pause stops time and weapon wheel slows it down, but in multiplayer everything should be real-time
         if (Settings.DisableFreezeFrames || UI.AnyDialog) Time.timeScale = 1f;
 
+        // TODO move to OnLobbyAction
         // disable cheats if they are prohibited in the lobby
         if (CheatsController.Instance.cheatsEnabled && !LobbyController.CheatsAllowed)
         {
@@ -269,6 +270,8 @@ public class Movement : MonoSingleton<Movement>
         }
     }
 
+    #region respawn
+
     /// <summary> Teleports the local player to the given position and activates movement if it is disabled. </summary>
     public void Teleport(Vector3 position)
     {
@@ -303,6 +306,7 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Respawns Cyber Grind players. </summary>
     public void CyberRespawn() => Respawn(new(0f, 80f, 62.5f), 0f);
 
+    #endregion
     #region toggling
 
     /// <summary> Updates the state machine: toggles movement, cursor and third-person camera. </summary>
@@ -343,9 +347,8 @@ public class Movement : MonoSingleton<Movement>
     public void StartEmoji(byte id, bool updateState = true)
     {
         EmojiStart = Time.time;
-        Emoji = id; // save id for synchronization over the network
+        Emoji = id; // save id to sync it later
 
-        // toggle movement and third-person camera
         if (updateState) UpdateState();
         Destroy(EmojiPreview);
         Destroy(FallParticle);
