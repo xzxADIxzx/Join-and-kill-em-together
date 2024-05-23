@@ -46,7 +46,7 @@ public class Weapons
     /// <summary> Spawns a weapon with the given type and assigns its parent transform. </summary>
     public static void Instantiate(byte type, Transform parent)
     {
-        var obj = Object.Instantiate(Prefabs[type], parent);
+        var obj = Tools.Instantiate(Prefabs[type], parent);
 
         // weapon prefabs are disabled and located in the AlwaysOnTop layer
         obj.SetActive(true);

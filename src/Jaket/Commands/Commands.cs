@@ -73,7 +73,7 @@ public class Commands
             if (index == -1)
                 chat.Receive($"[#FF341C]Plushy named {name} not found.");
             else
-                GameObject.Instantiate(Items.Prefabs[EntityType.PlushyOffset + index - EntityType.ItemOffset].gameObject)
+                Tools.Instantiate(Items.Prefabs[EntityType.PlushyOffset + index - EntityType.ItemOffset].gameObject)
                     .transform.position = NewMovement.Instance.transform.position;
         });
 

@@ -38,7 +38,7 @@ public class StaticAction : WorldAction
         for (float angle = 360f * 6f / 7f; angle >= 0f; angle -= 360f / 7f)
         {
             float rad = angle * Mathf.Deg2Rad;
-            GameObject.Instantiate(obj, pos + new Vector3(Mathf.Cos(rad), 0f, Mathf.Sin(rad)) * radius, Quaternion.Euler(0f, angle / 7f, 0f))
+            Tools.Instantiate(obj, pos + new Vector3(Mathf.Cos(rad), 0f, Mathf.Sin(rad)) * radius, Quaternion.Euler(0f, angle / 7f, 0f))
                 .GetComponentInChildren<Light>().intensity = 3f; // lower the brightness so that the place with torches doesn't glow like the sun
         }
     });

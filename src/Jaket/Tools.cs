@@ -51,7 +51,7 @@ public class Tools
     public static bool IsReal(Component comp) => IsReal(comp.gameObject);
 
     #endregion
-    #region create & destroy
+    #region create, instantiate & destroy
 
     /// <summary> Creates a new game object and assigns it to the given transform. </summary>
     public static GameObject Create(string name, Transform parent = null)
@@ -62,7 +62,12 @@ public class Tools
     }
     public static T Create<T>(string name, Transform parent = null) where T : Component => Create(name, parent).AddComponent<T>();
 
-    /// <summary> System namespace also has Object class, so I added this to avoid conflicts. </summary>
+    // system namespace also has Object class, so I added this to avoid conflicts
+
+    public static GameObject Instantiate(GameObject obj) => Object.Instantiate(obj);
+    public static GameObject Instantiate(GameObject obj, Transform parent) => Object.Instantiate(obj, parent);
+    public static GameObject Instantiate(GameObject obj, Vector3 position, Quaternion? rotation = null) => Object.Instantiate(obj, position, rotation ?? Quaternion.identity);
+
     public static void Destroy(Object obj) => Object.Destroy(obj);
     public static void DestroyImmediate(Object obj) => Object.DestroyImmediate(obj);
 
