@@ -10,7 +10,7 @@ public class ItemPatch
 {
     [HarmonyPrefix]
     [HarmonyPatch(MethodType.Constructor)]
-    static void Start(ItemIdentifier __instance) => Events.Post(() => Items.Sync(__instance));
+    static void Spawn(ItemIdentifier __instance) => Events.Post(() => Items.Sync(__instance));
 
     [HarmonyPrefix]
     [HarmonyPatch("PickUp")]

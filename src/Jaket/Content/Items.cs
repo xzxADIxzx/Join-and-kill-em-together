@@ -55,7 +55,7 @@ public class Items
     }
 
     /// <summary> Spawns an item with the given type. </summary>
-    public static Item Instantiate(EntityType type) => Entities.Mark(Prefabs[type - EntityType.ItemOffset].gameObject).AddComponent<Item>();
+    public static Entity Instantiate(EntityType type) => Entities.Mark(Prefabs[type - EntityType.ItemOffset].gameObject).AddComponent<Item>();
 
     /// <summary> Synchronizes the item between network members. </summary>
     public static void Sync(ItemIdentifier itemId, bool single = true)

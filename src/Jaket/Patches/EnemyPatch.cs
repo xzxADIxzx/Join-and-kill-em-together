@@ -12,12 +12,11 @@ public class EnemyPatch
 {
     [HarmonyPrefix]
     [HarmonyPatch("Start")]
-    static bool Start(EnemyIdentifier __instance) => Enemies.Sync(__instance);
+    static bool Spawn(EnemyIdentifier __instance) => Enemies.Sync(__instance);
 
     [HarmonyPrefix]
     [HarmonyPatch(nameof(EnemyIdentifier.DeliverDamage))]
-    static bool Damage(EnemyIdentifier __instance, ref float multiplier, float critMultiplier, GameObject sourceWeapon) =>
-        Enemies.SyncDamage(__instance, ref multiplier, critMultiplier, sourceWeapon);
+    static bool Damage(EnemyIdentifier __instance, float multiplier, float critMultiplier, GameObject sourceWeapon) => Enemies.SyncDamage(__instance, multiplier, critMultiplier, sourceWeapon);
 
     [HarmonyPrefix]
     [HarmonyPatch(nameof(EnemyIdentifier.Death), typeof(bool))]
@@ -25,32 +24,7 @@ public class EnemyPatch
 
     [HarmonyPostfix]
     [HarmonyPatch("UpdateTarget")]
-    static void Target(EnemyIdentifier __instance)
-    {
-        if (LobbyController.Offline) return;
-
-        // update target only if the current target is the local player
-        if (__instance.target == null || !__instance.target.isPlayer) return;
-
-        // micro optimization
-        float SqrDst(Vector3 v1, Vector3 v2) => (v1 - v2).sqrMagnitude;
-
-        var target = NewMovement.Instance.transform;
-        float dst = SqrDst(__instance.transform.position, target.position);
-
-        Networking.EachPlayer(player =>
-        {
-            var newDst = SqrDst(__instance.transform.position, player.transform.position);
-            if (newDst < dst)
-            {
-                target = player.transform;
-                dst = newDst;
-            }
-        });
-
-        // update the target if there is a remote player that is closer to the enemy than you
-        if (target != NewMovement.Instance.transform) __instance.target = new(target);
-    }
+    static void Target(EnemyIdentifier __instance) => Enemies.FindTarget(__instance);
 }
 
 [HarmonyPatch]
@@ -60,8 +34,7 @@ public class OtherPatch
     [HarmonyPatch(typeof(V2), "Start")]
     static void Intro(V2 __instance)
     {
-        if (LobbyController.Online && Tools.Scene == "Level 1-4" && !__instance.secondEncounter)
-            __instance.intro = __instance.longIntro = true;
+        if (LobbyController.Online && Tools.Scene == "Level 1-4") __instance.intro = __instance.longIntro = true;
     }
 
     [HarmonyPostfix]

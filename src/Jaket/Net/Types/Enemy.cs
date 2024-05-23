@@ -32,7 +32,7 @@ public class Enemy : Entity
 
     private void Awake()
     {
-        Init(Enemies.Type);
+        Init(_ => Enemies.Type(EnemyId));
 
         health = new();
         x = new(); y = new(); z = new();
