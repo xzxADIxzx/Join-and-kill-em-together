@@ -41,7 +41,7 @@ public class OtherPatch
     static void Outro(V2 __instance, ref bool ___bossVersion) => ___bossVersion = __instance.intro;
 
     [HarmonyPrefix]
-    [HarmonyPatch(typeof(global::Idol), "SlowUpdate")]
+    [HarmonyPatch(typeof(Idol), "SlowUpdate")]
     static bool IdolsLogic() => LobbyController.Offline || LobbyController.IsOwner;
 
     [HarmonyPrefix]
