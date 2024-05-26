@@ -79,6 +79,8 @@ public class Enemies
             enemyId.gameObject.AddComponent<Hand>();
             return true;
         }
+        // there is no need to sync the fake, since the coins are synced
+        if (Tools.Scene == "Level 7-2" && enemyId.name == "FerrymanIntro") return true;
         if (Tools.Scene == "Level 5-4" && enemyId.name == "Leviathan")
         {
             enemyId.gameObject.AddComponent<Leviathan>();

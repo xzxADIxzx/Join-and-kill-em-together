@@ -5,7 +5,6 @@ using UnityEngine;
 
 using Jaket.Content;
 using Jaket.Net;
-using Jaket.Net.Types;
 
 [HarmonyPatch(typeof(EnemyIdentifier))]
 public class EnemyPatch
@@ -44,19 +43,6 @@ public class OtherPatch
     [HarmonyPrefix]
     [HarmonyPatch(typeof(Idol), "SlowUpdate")]
     static bool IdolsLogic() => LobbyController.Offline || LobbyController.IsOwner;
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(FerrymanFake), "Update")]
-    static bool FerryLogic() => LobbyController.Offline || LobbyController.IsOwner;
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(FerrymanFake), nameof(FerrymanFake.OnLand))]
-    static void FerryDeath(FerrymanFake __instance)
-    {
-        if (LobbyController.IsOwner && __instance.TryGetComponent<Enemy>(out var enemy)) Networking.Send(PacketType.KillEntity, w => w.Id(enemy.Id), size: 8);
-    }
-
-
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(EventOnDestroy), "OnDestroy")]
