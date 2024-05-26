@@ -30,6 +30,7 @@ public class Enemies
 
         foreach (var name in GameAssets.Enemies) Prefabs.Add(GameAssets.Enemy(name).GetComponentInChildren<EnemyIdentifier>());
 
+        Types[EntityType.Sentry] = typeof(Turret);
         Types[EntityType.Idol] = typeof(Idol);
     }
 

@@ -18,6 +18,9 @@ public abstract class OwnableEntity : Entity
     {
         LastTransferTime = Time.time;
         on?.Invoke();
+
+        // this will help in the future determine who owns this entity
+        name = IsOwner ? "Local" : "Net";
     };
 
     /// <summary> Transfers ownership of the entity to the local player. </summary>

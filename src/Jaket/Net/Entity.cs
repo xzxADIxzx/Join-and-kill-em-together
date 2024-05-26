@@ -35,6 +35,7 @@ public abstract class Entity : MonoBehaviour
     public Cannonball Ball;
     public Coin Coin;
     public AudioSource Audio;
+    public Turret Turret;
     public LeviathanController Leviathan;
     public MinotaurChase Minotaur;
 

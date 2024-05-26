@@ -14,7 +14,11 @@ public class Idol : Enemy
     /// <summary> Last target id. Equals to the max value if there is no target. </summary>
     private uint lastTargetId = uint.MaxValue;
 
-    private void Awake() => Init(_ => Enemies.Type(EnemyId));
+    private void Awake()
+    {
+        Init(_ => Enemies.Type(EnemyId));
+        InitTransfer();
+    }
 
     private void Update()
     {

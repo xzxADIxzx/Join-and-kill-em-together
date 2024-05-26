@@ -27,8 +27,10 @@ public class EnemyPatch
 }
 
 [HarmonyPatch]
-public class OtherPatch
+public class LogicPatch
 {
+    static bool Update(Object obj) => LobbyController.Offline || obj.name == "Local";
+
     [HarmonyPrefix]
     [HarmonyPatch(typeof(V2), "Start")]
     static void Intro(V2 __instance)
@@ -42,8 +44,12 @@ public class OtherPatch
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(Idol), "SlowUpdate")]
-    static bool IdolsLogic() => LobbyController.Offline || LobbyController.IsOwner;
+    static bool IdolsLogic(Idol __instance) => Update(__instance);
+}
 
+[HarmonyPatch]
+public class OtherPatch
+{
     [HarmonyPrefix]
     [HarmonyPatch(typeof(EventOnDestroy), "OnDestroy")]
     static bool Destroy() => LobbyController.Offline || LobbyController.IsOwner;
