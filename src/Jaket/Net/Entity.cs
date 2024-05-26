@@ -39,7 +39,7 @@ public abstract class Entity : MonoBehaviour
     public MinotaurChase Minotaur;
 
     /// <summary> Adds itself to the entities list if the player is the owner, and finds different components specific to different entities. </summary>
-    protected void Init(Func<Entity, EntityType> prov, bool general = false, bool bullet = false, bool coin = false, bool boss = false)
+    protected void Init(Func<Entity, EntityType> prov, bool getGeneralComponents = false)
     {
         Log.Debug($"Initializing an entity with name {name}");
 
@@ -67,30 +67,11 @@ public abstract class Entity : MonoBehaviour
             Networking.Entities[Id] = this;
         }
 
-        #region components
-
-        if (general)
+        if (getGeneralComponents)
         {
             Animator = GetComponentInChildren<Animator>();
             Rb = GetComponent<Rigidbody>();
         }
-        if (bullet)
-        {
-            Grenade = GetComponent<Grenade>();
-            Ball = GetComponent<Cannonball>();
-        }
-        if (coin)
-        {
-            Coin = GetComponent<Coin>();
-            Audio = GetComponent<AudioSource>();
-        }
-        if (boss)
-        {
-            Leviathan = GetComponent<LeviathanController>();
-            Minotaur = GetComponent<MinotaurChase>();
-        }
-
-        #endregion
     }
 
     /// <summary> Teleports the entity to the target position and clears its trail. </summary>

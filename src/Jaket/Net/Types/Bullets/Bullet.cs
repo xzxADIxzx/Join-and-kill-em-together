@@ -20,7 +20,7 @@ public class Bullet : OwnableEntity
 
     private void Awake()
     {
-        Init(_ => Bullets.EType(name), true, true);
+        Init(_ => Bullets.EType(name), true);
         InitTransfer(() =>
         {
             if (Rb) Rb.isKinematic = !IsOwner;
@@ -32,6 +32,8 @@ public class Bullet : OwnableEntity
             }
             player.Id = Owner;
         });
+        Grenade = GetComponent<Grenade>();
+        Ball = GetComponent<Cannonball>();
 
         x = new(); y = new(); z = new();
         rx = new(); ry = new(); rz = new();

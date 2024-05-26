@@ -51,7 +51,7 @@ public class TeamCoin : OwnableEntity
 
     private void Awake()
     {
-        Init(_ => Bullets.EType(name), true, coin: true);
+        Init(_ => Bullets.EType(name), true);
         InitTransfer(() =>
         {
             player.Id = Owner;
@@ -67,6 +67,8 @@ public class TeamCoin : OwnableEntity
             }
             Reset();
         });
+        Coin = GetComponent<Coin>();
+        Audio = GetComponent<AudioSource>();
 
         x = new(); y = new(); z = new();
         if (IsOwner) OnTransferred();
