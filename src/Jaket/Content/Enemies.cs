@@ -29,6 +29,8 @@ public class Enemies
         };
 
         foreach (var name in GameAssets.Enemies) Prefabs.Add(GameAssets.Enemy(name).GetComponentInChildren<EnemyIdentifier>());
+
+        Types[EntityType.Idol] = typeof(Idol);
     }
 
     /// <summary> Finds the entity type by enemy class and type, taking into account the fact that some enemies have the same types. </summary>
