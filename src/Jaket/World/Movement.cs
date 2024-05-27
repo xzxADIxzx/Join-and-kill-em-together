@@ -24,6 +24,7 @@ public class Movement : MonoSingleton<Movement>
     static GunControl gc => GunControl.Instance;
     static CameraController cc => CameraController.Instance;
     static PlayerInput pi => InputManager.Instance.InputSource;
+    static CheatsManager cm => CheatsManager.Instance;
 
     /// <summary> Environmental mask needed to prevent the skateboard from riding on water and camera from falling trough the ground. </summary>
     private readonly int mask = LayerMaskDefaults.Get(LMD.Environment);
@@ -210,15 +211,11 @@ public class Movement : MonoSingleton<Movement>
 
         // ultrasoap
         if (Tools.Scene != "Main Menu" && !nm.dead)
-        {
             nm.rb.constraints = UI.AnyDialog
                 ? RigidbodyConstraints.FreezeAll
                 : Instance.Emoji == 0xFF || Instance.Emoji == 0x0B // skateboard
                     ? RigidbodyConstraints.FreezeRotation
                     : (RigidbodyConstraints)122;
-        }
-
-
 
         // all the following changes are related to the network part of the game and shouldn't affect the local
         if (LobbyController.Offline) return;
@@ -226,15 +223,13 @@ public class Movement : MonoSingleton<Movement>
         // pause stops time and weapon wheel slows it down, but in multiplayer everything should be real-time
         if (Settings.DisableFreezeFrames || UI.AnyDialog) Time.timeScale = 1f;
 
-        // TODO move to OnLobbyAction
         // disable cheats if they are prohibited in the lobby
         if (CheatsController.Instance.cheatsEnabled && !LobbyController.CheatsAllowed)
         {
             CheatsController.Instance.cheatsEnabled = false;
-            CheatsManager.Instance.transform.GetChild(0).GetChild(0).gameObject.SetActive(false);
+            cm.transform.GetChild(0).GetChild(0).gameObject.SetActive(false);
 
-            var cheats = Tools.Field<CheatsManager>("idToCheat").GetValue(CheatsManager.Instance) as Dictionary<string, ICheat>;
-            cheats.Values.Do(CheatsManager.Instance.DisableCheat);
+            (Tools.Field<CheatsManager>("idToCheat").GetValue(cm) as Dictionary<string, ICheat>).Values.Do(cm.DisableCheat);
             Bundle.Hud("lobby.cheats");
         }
 
