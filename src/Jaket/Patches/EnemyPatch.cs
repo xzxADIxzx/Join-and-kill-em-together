@@ -43,6 +43,13 @@ public class LogicPatch
     static void Outro(V2 __instance, ref bool ___bossVersion) => ___bossVersion = __instance.intro;
 
     [HarmonyPrefix]
+    [HarmonyPatch(typeof(SpiderBody), "BreakCorpse")]
+    static void BreakLogic(SpiderBody __instance)
+    {
+        if (LobbyController.Online && __instance.TryGetComponent<Entity>(out var body)) body.NetKill();
+    }
+
+    [HarmonyPrefix]
     [HarmonyPatch(typeof(Idol), "SlowUpdate")]
     static bool IdolsLogic(Idol __instance) => Update(__instance);
 }
