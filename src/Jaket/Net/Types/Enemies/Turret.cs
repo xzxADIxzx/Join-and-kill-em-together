@@ -20,6 +20,8 @@ public class Turret : Enemy
         Turret = GetComponent<global::Turret>();
     }
 
+    private void Start() => SpawnEffect();
+
     private void Update()
     {
         if (IsOwner || Dead) return;

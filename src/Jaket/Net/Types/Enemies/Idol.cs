@@ -20,6 +20,8 @@ public class Idol : Enemy
         InitTransfer();
     }
 
+    private void Start() => SpawnEffect();
+
     private void Update()
     {
         if (IsOwner || Dead) return;
