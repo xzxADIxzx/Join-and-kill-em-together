@@ -117,7 +117,7 @@ public class TeamCoin : OwnableEntity
         Coin.enabled = true;
     }
 
-    private void Effect(GameObject flash, float size = 20f)
+    private void Effect(GameObject flash, float size)
     {
         Destroy(effect);
         effect = Instantiate(flash, transform);
@@ -129,7 +129,7 @@ public class TeamCoin : OwnableEntity
     private void Double()
     {
         doubled = true;
-        Effect(Coin.flash);
+        Effect(Coin.flash, 20f);
     }
 
     private void DoubleEnd() => doubled = false;
@@ -137,7 +137,7 @@ public class TeamCoin : OwnableEntity
     private void Triple()
     {
         doubled = true;
-        Effect(Coin.chargeEffect);
+        Effect(Coin.chargeEffect, 12f);
 
         effect.transform.GetChild(0).GetChild(0).GetChild(0).localScale = Vector3.one * .42f;
         effect.transform.GetChild(0).GetChild(0).gameObject.SetActive(true);
