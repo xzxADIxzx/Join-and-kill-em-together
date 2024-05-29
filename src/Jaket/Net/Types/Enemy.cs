@@ -15,7 +15,7 @@ public class Enemy : OwnableEntity
     {
         if (IsOwner) return;
 
-        transform.position = new(x.Target, y.Target, z.Target);
+        transform.position = new(x.Last = x.Target, y.Last = y.Target, z.Last = z.Target);
         if (EnemyId.spawnEffect)
             Instantiate(EnemyId.spawnEffect, TryGetComponent(out Collider col) ? col.bounds.center : transform.position, transform.rotation);
     }

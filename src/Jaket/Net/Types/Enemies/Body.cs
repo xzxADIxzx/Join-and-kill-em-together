@@ -1,5 +1,8 @@
 namespace Jaket.Net.Types;
 
+using UnityEngine;
+using UnityEngine.AI;
+
 using Jaket.Content;
 using Jaket.IO;
 
@@ -15,6 +18,21 @@ public class Body : Enemy
     {
         Init(_ => Enemies.Type(EnemyId));
         InitTransfer(() => Cooldown(IsOwner ? 0f : -4200f));
+    }
+
+    private void Start()
+    {
+        SpawnEffect();
+
+        transform.parent.position = transform.position + Vector3.down * 10f; // teleport the spawn effect
+        Events.Post2(() =>
+        {
+            // sometimes (very rarely) navigation agent prevents the spider from teleporting to the synced position
+            GetComponent<NavMeshAgent>().Warp(transform.position);
+
+            // move the spider's legs at least somewhere
+            foreach (var leg in transform.parent.GetComponentsInChildren<SpiderLegPos>()) leg.Invoke("MoveLeg", 0f);
+        });
     }
 
     private void Update()

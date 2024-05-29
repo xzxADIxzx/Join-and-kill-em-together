@@ -34,6 +34,7 @@ public class Bullet : OwnableEntity
         });
         Grenade = GetComponent<Grenade>();
         Ball = GetComponent<Cannonball>();
+        Destroy(GetComponent<FloatingPointErrorPreventer>());
 
         x = new(); y = new(); z = new();
         rx = new(); ry = new(); rz = new();

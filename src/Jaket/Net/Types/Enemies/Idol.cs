@@ -26,7 +26,7 @@ public class Idol : Enemy
     {
         if (IsOwner || Dead) return;
 
-        transform.position = new(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
+        transform.position = new(x.Target, y.Target, z.Target);
         if (lastTargetId != target.Id)
         {
             lastTargetId = target.Id;
