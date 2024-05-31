@@ -29,7 +29,7 @@ public class Minotaur : Entity
         if (LobbyController.IsOwner)
             LobbyController.ScaleHealth(ref EnemyId.machine.health);
 
-        World.Instance.Minotaur = this;
+        World.Minotaur = this;
     }
 
     private void Update()

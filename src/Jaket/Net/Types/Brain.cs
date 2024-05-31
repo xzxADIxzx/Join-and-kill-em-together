@@ -26,7 +26,7 @@ public class Brain : Entity
         if (LobbyController.IsOwner)
             LobbyController.ScaleHealth(ref EnemyId.machine.health);
 
-        World.Instance.Brain = this;
+        World.Brain = this;
     }
 
     private void Update()

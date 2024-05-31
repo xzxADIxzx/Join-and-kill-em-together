@@ -26,17 +26,17 @@ public class Entities
             Providers.Add(sucks, () => Enemies.Instantiate(sucks));
         }
 
-        Providers.Add(EntityType.Hand, () => World.Instance.Hand);
-        Providers.Add(EntityType.Leviathan, () => World.Instance.Leviathan);
-        Providers.Add(EntityType.Minotaur_Chase, () => World.Instance.Minotaur);
+        Providers.Add(EntityType.Hand, () => World.Hand);
+        Providers.Add(EntityType.Leviathan, () => World.Leviathan);
+        Providers.Add(EntityType.Minotaur_Chase, () => World.Minotaur);
 
         for (var type = EntityType.SecuritySystem_Main; type <= EntityType.SecuritySystem_Tower_; type++)
         {
             var sucks = type;
-            Providers.Add(sucks, () => World.Instance.SecuritySystem[sucks - EntityType.SecuritySystemOffset]);
+            Providers.Add(sucks, () => World.SecuritySystem[sucks - EntityType.SecuritySystemOffset]);
         }
 
-        Providers.Add(EntityType.Brain, () => World.Instance.Brain);
+        Providers.Add(EntityType.Brain, () => World.Brain);
 
         for (var type = EntityType.AppleBait; type <= EntityType.V1; type++)
         {

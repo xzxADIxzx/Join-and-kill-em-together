@@ -21,7 +21,7 @@ public class Hand : Entity
         if (LobbyController.IsOwner)
             LobbyController.ScaleHealth(ref EnemyId.statue.health);
 
-        World.Instance.Hand = this;
+        World.Hand = this;
     }
 
     private void Update()

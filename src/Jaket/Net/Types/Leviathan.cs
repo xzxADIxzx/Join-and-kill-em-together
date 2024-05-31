@@ -39,7 +39,7 @@ public class Leviathan : Entity
             health.Target = levi.eid.health;
         }
 
-        World.Instance.Leviathan = this;
+        World.Leviathan = this;
     }
 
     private void Update()

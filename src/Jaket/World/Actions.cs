@@ -81,7 +81,7 @@ public class NetAction : WorldAction
         // patch the button to sync press on it if it was not already pressed by anyone
         StaticAction.Find(level, name, position, obj => Tools.GetClick(obj).AddListener(() =>
         {
-            if (LobbyController.IsOwner || !World.Instance.Activated.Contains((byte)World.Actions.IndexOf(net))) World.SyncActivation(net);
+            if (LobbyController.IsOwner || !World.Activated.Contains((byte)World.Actions.IndexOf(net))) World.SyncAction(obj);
         }));
         return net;
     }

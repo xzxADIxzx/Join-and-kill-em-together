@@ -166,7 +166,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
                 var b = obj.GetComponent<CombinedBossBar>();
                 for (int i = 0; i < b.enemies.Length; i++)
                 {
-                    var s = World.Instance.SecuritySystem[i] = b.enemies[i].gameObject.AddComponent<SecuritySystem>();
+                    var s = World.SecuritySystem[i] = b.enemies[i].gameObject.AddComponent<SecuritySystem>();
                     s.Type = EntityType.SecuritySystemOffset + i;
                 }
             });

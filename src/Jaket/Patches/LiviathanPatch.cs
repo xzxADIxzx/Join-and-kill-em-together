@@ -12,11 +12,11 @@ public class LeviathanPatch
     [HarmonyPatch(typeof(LeviathanHead), "Update")]
     static void Head(int ___previousAttack, ref int ___projectilesLeftInBurst, ref bool ___lookAtPlayer, ref bool ___rotateBody, ref bool ___inAction)
     {
-        if (LobbyController.Offline || World.Instance.Leviathan == null) return;
+        if (LobbyController.Offline || World.Leviathan == null) return;
         if (LobbyController.IsOwner)
         {
             // update the position of the head to synchronize its attacks
-            World.Instance.Leviathan.HeadPos = (byte)___previousAttack;
+            World.Leviathan.HeadPos = (byte)___previousAttack;
         }
         else
         {
@@ -33,6 +33,6 @@ public class LeviathanPatch
     static void Tail(int ___previousSpawnPosition)
     {
         // update the position of the tail to synchronize its attacks
-        if (LobbyController.Online && LobbyController.IsOwner) World.Instance.Leviathan.TailPos = (byte)___previousSpawnPosition;
+        if (LobbyController.Online && LobbyController.IsOwner) World.Leviathan.TailPos = (byte)___previousSpawnPosition;
     }
 }
