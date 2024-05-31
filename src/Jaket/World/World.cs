@@ -45,15 +45,8 @@ public class World : MonoSingleton<World>
 
         Events.OnLoaded += () =>
         {
-            if (!Tools.Scene.StartsWith("Level 7"))
-                Tools.ResFind<Door>(Tools.IsReal, door =>
-                {
-                    foreach (var room in door.deactivatedRooms) RoomController.Build(room.transform);
-                });
-
-            // change the layer from PlayerOnly to Invisible so that other players can also launch a wave
+            // change the layer from PlayerOnly to Invisible so that other players will be able to launch the wave
             foreach (var trigger in Tools.ResFind<ActivateArena>()) trigger.gameObject.layer = 16;
-
             if (LobbyController.Online) Instance.Restore();
         };
         Events.OnLobbyEntered += Instance.Restore;

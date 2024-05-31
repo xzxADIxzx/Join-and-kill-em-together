@@ -151,13 +151,6 @@ public class Networking
         foreach (var con in Server.Manager?.Connected) cons(con);
     }
 
-    /// <summary> Iterates through each player observing the world. </summary>
-    public static void EachObserver(Action<Vector3> cons)
-    {
-        cons(NewMovement.Instance.transform.position);
-        EachPlayer(player => cons(player.transform.position));
-    }
-
     /// <summary> Iterates each non-null entity. </summary>
     public static void EachEntity(Action<Entity> cons)
     {
