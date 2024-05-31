@@ -43,13 +43,12 @@ public class RemotePlayer : Entity
     private void Awake()
     {
         Init(null, true);
+        Voice = GetComponent<AudioSource>();
 
         x = new(); y = new(); z = new();
         bodyRotation = new();
         headRotation = new();
         hookX = new(); hookY = new(); hookZ = new();
-
-        Voice = GetComponent<AudioSource>();
     }
 
     private void Start()
@@ -63,6 +62,7 @@ public class RemotePlayer : Entity
             else foreach (Transform child in Doll.Hand) Destroy(child.gameObject);
         };
         Header = new(Owner = Id, transform);
+        tag = "Enemy";
 
         EnemyId.weakPoint = Doll.Head.gameObject;
         Doll.HookWinch.material = HookArm.Instance.GetComponent<LineRenderer>().material;

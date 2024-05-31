@@ -13,6 +13,10 @@ using Jaket.World;
 public class ArenaPatch
 {
     [HarmonyPrefix]
+    [HarmonyPatch(typeof(Door), nameof(Door.Optimize))]
+    static bool Unload() => LobbyController.Offline;
+
+    [HarmonyPrefix]
     [HarmonyPatch(nameof(ActivateArena.Activate))]
     static void Activate(ActivateArena __instance)
     {
@@ -24,42 +28,11 @@ public class ArenaPatch
     [HarmonyPatch("OnTriggerEnter")]
     static void Enter(ActivateArena __instance, Collider other, ArenaStatus ___astat)
     {
-        int status = __instance.waitForStatus; // there is quite a big check caused by complex game logic that had to be repeated
-        if (DisableEnemySpawns.DisableArenaTriggers || (status > 0 && (___astat == null || ___astat.currentStatus < status))) return;
+        // there is a large check caused by complex game logic that has to be repeated
+        if (DisableEnemySpawns.DisableArenaTriggers || (__instance.waitForStatus > 0 && (___astat == null || ___astat.currentStatus < __instance.waitForStatus))) return;
 
-        // launch the arena even when a remote player has entered it
+        // launch the arena when a remote player entered it
         if (!__instance.activated && other.name == "Net" && other.GetComponent<RemotePlayer>() != null) __instance.Activate();
-    }
-}
-
-[HarmonyPatch(typeof(DoorController))]
-public class DoorPatch
-{
-    [HarmonyPrefix]
-    [HarmonyPatch("OnTriggerEnter")]
-    static void Enter(DoorController __instance, Collider other, Door ___dc)
-    {
-        // teammates do not have the Enemy tag, which is why the doors do not open
-        if (other.name == "Net" && other.TryGetComponent<RemotePlayer>(out var player) && !__instance.doorUsers.Contains(player.EnemyId))
-        {
-            __instance.doorUsers.Add(player.EnemyId);
-            __instance.enemyIn = true;
-
-            // unload rooms without players for optimization
-            ___dc?.Optimize();
-        }
-    }
-
-    [HarmonyPrefix]
-    [HarmonyPatch("OnTriggerExit")]
-    static void Exit(DoorController __instance, Collider other)
-    {
-        // you should close the doors behind you
-        if (other.name == "Net" && other.TryGetComponent<RemotePlayer>(out var player) && __instance.doorUsers.Contains(player.EnemyId))
-        {
-            __instance.doorUsers.Remove(player.EnemyId);
-            __instance.enemyIn = __instance.doorUsers.Count > 0;
-        }
     }
 }
 
