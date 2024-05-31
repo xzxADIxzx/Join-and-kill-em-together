@@ -1,6 +1,7 @@
 namespace Jaket.World;
 
 using HarmonyLib;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,51 +10,47 @@ using Jaket.IO;
 using Jaket.Net;
 using Jaket.Net.Types;
 
-public class World : MonoSingleton<World>
+using Version = Version;
+
 /// <summary> Class that manages objects in the level, such as hook points, skull cases, triggers and etc. </summary>
+public class World
 {
     /// <summary> List of most actions with the world. </summary>
     public static List<WorldAction> Actions = new();
     /// <summary> List of activated actions. Cleared only when the host loads a new level. </summary>
-    public List<byte> Activated = new();
+    public static List<byte> Activated = new();
 
     /// <summary> List of all hook points on the level. </summary>
-    public List<HookPoint> HookPoints = new();
+    public static List<HookPoint> HookPoints = new();
     /// <summary> Last hook point, whose state was synchronized. </summary>
-    public HookPoint LastSyncedPoint;
+    public static HookPoint LastSyncedPoint;
 
     /// <summary> List of all tram controllers on the level. </summary>
-    public List<TramControl> Trams = new();
+    public static List<TramControl> Trams = new();
     /// <summary> Trolley with a teleport from the tunnel at level 7-1. </summary>
-    public Transform TunnelRoomba;
+    public static Transform TunnelRoomba;
 
-    public Hand Hand;
-    public Leviathan Leviathan;
-    public Minotaur Minotaur;
-    public SecuritySystem[] SecuritySystem = new SecuritySystem[7];
-    public Brain Brain;
+    public static Hand Hand;
+    public static Leviathan Leviathan;
+    public static Minotaur Minotaur;
+    public static SecuritySystem[] SecuritySystem = new SecuritySystem[7];
+    public static Brain Brain;
 
     /// <summary> Creates a singleton of world. </summary>
     public static void Load()
     {
-        // initialize the singleton
-        Tools.Create<World>("World");
-
         Events.OnLoaded += () =>
         {
-            // change the layer from PlayerOnly to Invisible so that other players will be able to launch the wave
-            foreach (var trigger in Tools.ResFind<ActivateArena>()) trigger.gameObject.layer = 16;
-
-            if (LobbyController.Online) Instance.Restore();
+            if (LobbyController.Offline) return;
             if (LobbyController.IsOwner)
             {
-                Instance.Activated.Clear();
-                Networking.Send(PacketType.Level, World.Instance.WriteData);
+                Activated.Clear();
+                Networking.Send(PacketType.Level, World.WriteData);
             }
+            Restore();
         };
-        Events.OnLobbyEntered += Instance.Restore;
-
-        Instance.InvokeRepeating("Optimize", 0f, 10f);
+        Events.OnLobbyEntered += Restore;
+        Events.EveryDozen += Optimize;
     }
 
     #region general
@@ -84,12 +81,12 @@ public class World : MonoSingleton<World>
     #endregion
     #region data
 
-    /// <summary> Writes data about the world such as level, difficulty and, in the future, triggers fired. </summary>
-    public void WriteData(Writer w)
+    /// <summary> Writes data about the world such as level, difficulty and triggers fired. </summary>
+    public static void WriteData(Writer w)
     {
         w.String(Tools.Scene);
 
-        // the version is needed for a warning about incompatibility, and the difficulty is mainly needed for ultrapain
+        // the version is needed for a warning about incompatibility
         w.String(Version.CURRENT);
         w.Byte((byte)PrefsManager.Instance.GetInt("difficulty"));
 
@@ -97,12 +94,9 @@ public class World : MonoSingleton<World>
         w.Bytes(Activated.ToArray());
     }
 
-    /// <summary> Reads data about the world: loads the level, sets difficulty and, in the future, fires triggers. </summary>
-    public void ReadData(Reader r)
+    /// <summary> Reads data about the world: loads the level, sets difficulty and fires triggers. </summary>
+    public static void ReadData(Reader r)
     {
-        // reset all of the activated actions
-        Activated.Clear();
-        // load the host level, it is the main function of this packet
         Tools.Load(r.String());
         Networking.Loading = true;
 
@@ -114,23 +108,43 @@ public class World : MonoSingleton<World>
         }
         PrefsManager.Instance.SetInt("difficulty", r.Byte());
 
+        Activated.Clear();
         Activated.AddRange(r.Bytes(r.Length - r.Position));
     }
 
     #endregion
     #region iteration
 
-    /// <summary> Iterates each world action and restores it as needed. </summary>
-    public void Restore()
+    /// <summary> Iterates each static world action. </summary>
+    public static void EachStatic(Action<StaticAction> cons) => Actions.ForEach(action =>
+    {
+        if (action is StaticAction sa) cons(sa);
+    });
+
+    /// <summary> Iterates each net world action. </summary>
+    public static void EachNet(Action<NetAction> cons) => Actions.ForEach(action =>
+    {
+        if (action is NetAction sa) cons(sa);
+    });
+
+    #endregion
+    #region general
+
+    /// <summary> Restores activated actions after restart of the level. </summary>
+    public static void Restore()
     {
         EachStatic(sa => sa.Run());
         Activated.ForEach(index => Actions[index].Run());
 
-        // raise the activation trigger so that the player doesn't get stuck on the sides
-        var act = FindObjectOfType<PlayerActivator>();
+        // change the layer from PlayerOnly to Invisible so that other players will be able to launch the wave
+        foreach (var trigger in Tools.ResFind<ActivateArena>()) trigger.gameObject.layer = 16;
+
+        // raise the activation trigger so that players don't get stuck on the sides
+        var act = Tools.ObjFind<PlayerActivator>();
         if (act) act.transform.position += Vector3.up * 6f;
 
-        // finds all objects of the given type on the level, store and sort them in the list
+        #region trams
+
         void Find<T>(List<T> list) where T : MonoBehaviour
         {
             list.Clear();
@@ -141,12 +155,13 @@ public class World : MonoSingleton<World>
         }
         Find(Trams);
 
+        #endregion
         #region hook points
 
         void Sync(HookPoint point, bool hooked)
         {
-            byte index = (byte)HookPoints.IndexOf(point);
-            if (Vector3.Distance(point.transform.position, HookArm.Instance.hook.position) < 9f && index != 255 && point != LastSyncedPoint)
+            var index = (byte)HookPoints.IndexOf(point);
+            if (index != 255 && point != LastSyncedPoint && (point.transform.position - HookArm.Instance.hook.position).sqrMagnitude < 81f)
                 Networking.Send(PacketType.ActivateObject, w =>
                 {
                     w.Byte(5);
@@ -167,17 +182,8 @@ public class World : MonoSingleton<World>
         #endregion
     }
 
-    /// <summary> Iterates each static world action. </summary>
-    public static void EachStatic(System.Action<StaticAction> cons) => Actions.ForEach(action =>
     {
-        if (action is StaticAction sa) cons(sa);
-    });
 
-    /// <summary> Iterates each net world action. </summary>
-    public static void EachNet(System.Action<NetAction> cons) => Actions.ForEach(action =>
-    {
-        if (action is NetAction sa) cons(sa);
-    });
 
     #endregion
     #region networking

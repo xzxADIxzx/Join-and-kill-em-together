@@ -24,10 +24,8 @@ public class Events : MonoSingleton<Events>
 
     /// <summary> List of tasks that will need to be completed in the late update. </summary>
     public static Queue<Action> Tasks = new();
-    /// <summary> Event that fires every second. </summary>
-    public static SafeEvent EverySecond = new();
-    /// <summary> Event that fires every net tick. </summary>
-    public static SafeEvent EveryTick = new();
+    /// <summary> Events that fire every net tick, second and dozen seconds. </summary>
+    public static SafeEvent EveryTick = new(), EverySecond = new(), EveryDozen = new();
 
     /// <summary> Subscribes to some events to fire some safe events. </summary>
     public static void Load()
@@ -68,11 +66,13 @@ public class Events : MonoSingleton<Events>
     /// <summary> Posts the task for execution in the next frame. </summary>
     public static void Post2(Action task) => Post(() => Post(task));
 
+    private void Dozen() => EveryDozen.Fire();
     private void Second() => EverySecond.Fire();
     private void Tick() => EveryTick.Fire();
 
     private void Start()
     {
+        InvokeRepeating("Dozen", 1f, 12f);
         InvokeRepeating("Second", 1f, 1f);
         InvokeRepeating("Tick", 1f, Networking.SNAPSHOTS_SPACING);
     }
