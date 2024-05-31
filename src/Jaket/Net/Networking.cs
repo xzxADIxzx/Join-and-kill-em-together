@@ -55,13 +55,6 @@ public class Networking
         {
             Clear(); // for safety
             Loading = false;
-
-            // inform all players about the transition to a new level
-            if (LobbyController.IsOwner)
-            {
-                World.Instance.Activated.Clear();
-                Send(PacketType.Level, World.Instance.WriteData);
-            }
         };
 
         // fires when accepting an invitation via the Steam overlay

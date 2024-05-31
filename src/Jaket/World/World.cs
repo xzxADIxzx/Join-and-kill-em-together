@@ -1,5 +1,6 @@
 namespace Jaket.World;
 
+using HarmonyLib;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,12 +9,12 @@ using Jaket.IO;
 using Jaket.Net;
 using Jaket.Net.Types;
 
-/// <summary> Class that manages objects in the level, such as skull cases, rooms and etc. </summary>
 public class World : MonoSingleton<World>
+/// <summary> Class that manages objects in the level, such as hook points, skull cases, triggers and etc. </summary>
 {
-    /// <summary> List of all possible actions with the world. </summary>
+    /// <summary> List of most actions with the world. </summary>
     public static List<WorldAction> Actions = new();
-    /// <summary> List of activated actions, cleared only when the host loads a new level. </summary>
+    /// <summary> List of activated actions. Cleared only when the host loads a new level. </summary>
     public List<byte> Activated = new();
 
     /// <summary> List of all hook points on the level. </summary>
@@ -26,18 +27,13 @@ public class World : MonoSingleton<World>
     /// <summary> Trolley with a teleport from the tunnel at level 7-1. </summary>
     public Transform TunnelRoomba;
 
-    /// <summary> There is no prefab for the mini-boss at level 2-4. </summary>
     public Hand Hand;
-    /// <summary> Level 5-4 contains a unique boss that needs to be dealt with separately. </summary>
     public Leviathan Leviathan;
-    /// <summary> The same situation with the Minotaur in the tunnel at level 7-1. </summary>
     public Minotaur Minotaur;
-    /// <summary> The security system at level 7-4 consists of several subenemies. </summary>
     public SecuritySystem[] SecuritySystem = new SecuritySystem[7];
-    /// <summary> The fight with this boss is special because of the idols. </summary>
     public Brain Brain;
 
-    /// <summary> Creates a singleton of world & listener needed to keep track of objects at the level. </summary>
+    /// <summary> Creates a singleton of world. </summary>
     public static void Load()
     {
         // initialize the singleton
@@ -47,11 +43,45 @@ public class World : MonoSingleton<World>
         {
             // change the layer from PlayerOnly to Invisible so that other players will be able to launch the wave
             foreach (var trigger in Tools.ResFind<ActivateArena>()) trigger.gameObject.layer = 16;
+
             if (LobbyController.Online) Instance.Restore();
+            if (LobbyController.IsOwner)
+            {
+                Instance.Activated.Clear();
+                Networking.Send(PacketType.Level, World.Instance.WriteData);
+            }
         };
         Events.OnLobbyEntered += Instance.Restore;
+
+        Instance.InvokeRepeating("Optimize", 0f, 10f);
     }
 
+    #region general
+
+    /// <summary> Optimizes the level by destroying the corpses of enemies. </summary>
+    public void Optimize()
+    {
+        if (LobbyController.Offline) return;
+
+        bool cg = Tools.Scene == "Endless";
+        bool FarEnough(Transform t) => (t.position - NewMovement.Instance.transform.position).sqrMagnitude > 10000f || cg;
+
+        // clear gore zones located further than 100 units from the player
+        Tools.ResFind<GoreZone>(zone => Tools.IsReal(zone) && zone.isActiveAndEnabled && FarEnough(zone.transform), zone => zone.ResetGibs());
+
+        // big pieces of corpses, such as arms or legs, are part of the entities
+        Networking.Entities.Values.DoIf(entity =>
+
+                entity && entity.Dead && entity is Enemy &&
+                entity.Type != EntityType.MaliciousFace &&
+                entity.Type != EntityType.Gutterman &&
+                entity.LastUpdate < Time.time - 1f &&
+                FarEnough(entity.transform),
+
+        entity => entity.gameObject.SetActive(false));
+    }
+
+    #endregion
     #region data
 
     /// <summary> Writes data about the world such as level, difficulty and, in the future, triggers fired. </summary>
