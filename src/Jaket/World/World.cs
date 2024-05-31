@@ -53,32 +53,6 @@ public class World
         Events.EveryDozen += Optimize;
     }
 
-    #region general
-
-    /// <summary> Optimizes the level by destroying the corpses of enemies. </summary>
-    public void Optimize()
-    {
-        if (LobbyController.Offline) return;
-
-        bool cg = Tools.Scene == "Endless";
-        bool FarEnough(Transform t) => (t.position - NewMovement.Instance.transform.position).sqrMagnitude > 10000f || cg;
-
-        // clear gore zones located further than 100 units from the player
-        Tools.ResFind<GoreZone>(zone => Tools.IsReal(zone) && zone.isActiveAndEnabled && FarEnough(zone.transform), zone => zone.ResetGibs());
-
-        // big pieces of corpses, such as arms or legs, are part of the entities
-        Networking.Entities.Values.DoIf(entity =>
-
-                entity && entity.Dead && entity is Enemy &&
-                entity.Type != EntityType.MaliciousFace &&
-                entity.Type != EntityType.Gutterman &&
-                entity.LastUpdate < Time.time - 1f &&
-                FarEnough(entity.transform),
-
-        entity => entity.gameObject.SetActive(false));
-    }
-
-    #endregion
     #region data
 
     /// <summary> Writes data about the world such as level, difficulty and triggers fired. </summary>
@@ -182,8 +156,28 @@ public class World
         #endregion
     }
 
+    /// <summary> Optimizes the level by destroying the corpses of enemies. </summary>
+    public static void Optimize()
     {
+        if (LobbyController.Offline) return;
 
+        bool cg = Tools.Scene == "Endless";
+        bool FarEnough(Transform t) => (t.position - NewMovement.Instance.transform.position).sqrMagnitude > 10000f || cg;
+
+        // clear gore zones located further than 100 units from the player
+        Tools.ResFind<GoreZone>(zone => Tools.IsReal(zone) && zone.isActiveAndEnabled && FarEnough(zone.transform), zone => zone.ResetGibs());
+
+        // big pieces of corpses, such as arms or legs, are part of the entities
+        Networking.Entities.Values.DoIf(entity =>
+
+                entity && entity.Dead && entity is Enemy &&
+                entity.Type != EntityType.MaliciousFace &&
+                entity.Type != EntityType.Gutterman &&
+                entity.LastUpdate < Time.time - 1f &&
+                FarEnough(entity.transform),
+
+        entity => entity.gameObject.SetActive(false));
+    }
 
     #endregion
     #region networking
