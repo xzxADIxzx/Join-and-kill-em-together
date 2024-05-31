@@ -6,7 +6,7 @@ using UnityEngine.AI;
 using Jaket.Content;
 using Jaket.IO;
 
-/// <summary> Representations of a spider body enemy??? Who da hell gave this thing such name?! </summary>
+/// <summary> Representation of a spider body enemy??? Who da hell gave this thing such name?! </summary>
 public class Body : Enemy
 {
     /// <summary> Whether the malicious face is charging a shot. </summary>

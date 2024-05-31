@@ -3,7 +3,7 @@ namespace Jaket.Net.Types;
 using Jaket.Content;
 using Jaket.IO;
 
-/// <summary> Representations of a turret enemy. </summary>
+/// <summary> Representation of a turret enemy. </summary>
 public class Turret : Enemy
 {
     /// <summary> Id of running animation. </summary>

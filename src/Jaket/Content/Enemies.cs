@@ -30,6 +30,7 @@ public class Enemies
 
         foreach (var name in GameAssets.Enemies) Prefabs.Add(GameAssets.Enemy(name).GetComponentInChildren<EnemyIdentifier>());
 
+        for (var type = EntityType.Filth; type <= EntityType.Puppet; type++) Types[type] = typeof(SimpleEnemy);
         Types[EntityType.Sentry] = typeof(Turret);
         Types[EntityType.MaliciousFace] = typeof(Body);
         Types[EntityType.Idol] = typeof(Idol);
