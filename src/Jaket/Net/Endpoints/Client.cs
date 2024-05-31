@@ -25,7 +25,7 @@ public class Client : Endpoint, IConnectionManager
             if (!ents.ContainsKey(id) || ents[id] == null) ents[id] = Entities.Get(id, type);
             ents[id]?.Read(r);
         });
-        Listen(PacketType.Level, r => World.Instance.ReadData(r));
+        Listen(PacketType.Level, World.ReadData);
         Listen(PacketType.Ban, r => LobbyController.LeaveLobby());
 
         Listen(PacketType.SpawnBullet, Bullets.CInstantiate);
@@ -55,7 +55,7 @@ public class Client : Endpoint, IConnectionManager
 
         Listen(PacketType.ImageChunk, SprayDistributor.Download);
 
-        Listen(PacketType.ActivateObject, r => World.Instance.ReadAction(r));
+        Listen(PacketType.ActivateObject, World.ReadAction);
 
         Listen(PacketType.CyberGrindAction, CyberGrind.LoadPattern);
     }

@@ -108,7 +108,7 @@ public class Server : Endpoint, ISocketManager
             Log.Debug($"[Server] Got an image request for spray#{owner}. Count: {list.Count}");
         });
 
-        Listen(PacketType.ActivateObject, r => World.Instance.ReadAction(r));
+        Listen(PacketType.ActivateObject, World.ReadAction);
     }
 
     public override void Update()
@@ -176,7 +176,7 @@ public class Server : Endpoint, ISocketManager
     public void OnConnected(Connection con, ConnectionInfo info)
     {
         Log.Info($"[Server] {info.Identity.SteamId.AccountId} connected");
-        Networking.Send(PacketType.Level, World.Instance.WriteData, (data, size) => Tools.Send(con, data, size));
+        Networking.Send(PacketType.Level, World.WriteData, (data, size) => Tools.Send(con, data, size));
     }
 
     public void OnDisconnected(Connection con, ConnectionInfo info) => Log.Info($"[Server] {info.Identity.SteamId.AccountId} disconnected");

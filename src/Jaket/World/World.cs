@@ -119,7 +119,7 @@ public class World
 
         #region trams
 
-        void Find<T>(List<T> list) where T : MonoBehaviour
+        void Find<T>(List<T> list) where T : Component
         {
             list.Clear();
             Tools.ResFind<T>(Tools.IsReal, list.Add);
@@ -135,15 +135,7 @@ public class World
         void Sync(HookPoint point, bool hooked)
         {
             var index = (byte)HookPoints.IndexOf(point);
-            if (index != 255 && point != LastSyncedPoint && (point.transform.position - HookArm.Instance.hook.position).sqrMagnitude < 81f)
-                Networking.Send(PacketType.ActivateObject, w =>
-                {
-                    w.Byte(5);
-                    w.Byte(index);
-                    w.Bool(hooked);
-
-                    Log.Debug($"[World] Sent new hook state: point#{index} is {hooked}");
-                });
+            if (index != 255 && point != LastSyncedPoint && (point.transform.position - HookArm.Instance.hook.position).sqrMagnitude < 81f) SyncAction(index, hooked);
         }
 
         Find(HookPoints);
@@ -182,10 +174,10 @@ public class World
     #endregion
     #region networking
 
-    /// <summary> Reads the world action and activates it. </summary>
-    public void ReadAction(Reader r)
+    /// <summary> Reads an action with the remote world and applies it to the local one. </summary>
+    public static void ReadAction(Reader r)
     {
-        void Find<T>(Vector3 pos, System.Action<T> cons) where T : Component => Tools.ResFind(door => door.transform.position == pos, cons);
+        void Find<T>(Vector3 pos, Action<T> cons) where T : Component => Tools.ResFind(t => t.transform.position == pos, cons);
 
         switch (r.Byte())
         {
@@ -199,10 +191,10 @@ public class World
                 }
                 break;
 
-            case 5:
+            case 1:
                 byte indexp = r.Byte();
                 bool hooked = r.Bool();
-                Log.Debug($"[World] Read a new state of point#{indexp}: {hooked}");
+                Log.Debug($"[World] Read the new state of point#{indexp}: {hooked}");
 
                 LastSyncedPoint = HookPoints[indexp];
                 if (hooked)
@@ -214,79 +206,80 @@ public class World
                 }
                 break;
 
-            case 6:
+            case 2:
                 byte indext = r.Byte();
                 int speed = r.Int();
-                Log.Debug($"[World] Read a new speed of tram#{indext}: {speed}");
+                Log.Debug($"[World] Read the new speed of tram#{indext}: {speed}");
 
                 Trams[indext].currentSpeedStep = speed;
                 break;
 
-            case 1: Find<FinalDoor>(r.Vector(), d => d.transform.Find("FinalDoorOpener").gameObject.SetActive(true)); break;
-            case 2: Find<Door>(r.Vector(), d => d.Open()); break;
+            case 3: Find<FinalDoor>(r.Vector(), d => d.transform.Find("FinalDoorOpener").gameObject.SetActive(true)); break;
+            case 4: Find<Door>(r.Vector(), d => d.Open()); break;
 
-            case 3:
-                Networking.EachEntity(entity =>
+            case 5:
+                Find<StatueActivator>(r.Vector(), d =>
                 {
-                    if (entity.Type == EntityType.Swordsmachine) entity.Kill(null);
+                    d.gameObject.SetActive(true);
+                    d.transform.parent.gameObject.SetActive(true);
                 });
                 break;
-
-            case 4:
-                Networking.EachEntity(entity =>
-                {
-                    if (entity.Type == EntityType.Puppet) entity.Kill(null);
-                });
+            case 6:
+                Networking.EachEntity(entity => entity.Type == EntityType.Puppet, entity => entity.Kill(null));
                 Find<BloodFiller>(r.Vector(), f => f.InstaFill());
                 break;
         }
     }
 
-    /// <summary> Synchronizes network action activation. </summary>
-    public static void SyncActivation(NetAction action) => Networking.Send(PacketType.ActivateObject, w =>
+    /// <summary> Synchronizes activations of the given game object. </summary>
+    public static void SyncAction(GameObject obj) => EachNet(na =>
     {
-        byte index = (byte)Actions.IndexOf(action);
-        if (index != 0xFF)
-        {
-            Log.Debug($"[World] Sent the activation of the object {action.Name} in {action.Level}");
-            Instance.Activated.Add(index);
-            w.Byte(0);
-            w.Byte(index);
-        }
-    }, size: 2);
+        if (na.Position != obj.transform.position || na.Name != obj.name) return;
 
-    /// <summary> Synchronizes final door or skull case state. </summary>
-    public static void SyncOpening(Component door, bool final = true) => Networking.Send(PacketType.ActivateObject, w =>
+        var index = (byte)Actions.IndexOf(na);
+        if (index != 0xFF && (LobbyController.IsOwner || !Activated.Contains(index)))
+            Networking.Send(PacketType.ActivateObject, w =>
+            {
+                Activated.Add(index);
+                w.Byte(0);
+                w.Byte(index);
+
+                Log.Debug($"[World] Sent the activation of the object {na.Name} in {na.Level}");
+            }, size: 2);
+    });
+
+    /// <summary> Synchronizes the state of a hook point. </summary>
+    public static void SyncAction(byte index, bool hooked) => Networking.Send(PacketType.ActivateObject, w =>
     {
-        w.Byte((byte)(final ? 1 : 2));
-        w.Vector(door.transform.position);
-    }, size: 13);
+        w.Byte(1);
+        w.Byte(index);
+        w.Bool(hooked);
 
-    /// <summary> Synchronizes the drop of a shotgun from Swordsmachine. </summary>
-    public static void SyncDrop() => Networking.Send(PacketType.ActivateObject, w => w.Byte(3), size: 1);
-
-    /// <summary> Synchronizes the activation of a tree??? </summary>
-    public static void SyncTree(BloodFiller filler) => Networking.Send(PacketType.ActivateObject, w =>
-    {
-        w.Byte(4);
-        w.Vector(filler.transform.position);
-    }, size: 13);
+        Log.Debug($"[World] Sent the new state of point#{index}: {hooked}");
+    }, size: 3);
 
     /// <summary> Synchronizes the tram speed. </summary>
     public static void SyncTram(TramControl tram)
     {
         if (LobbyController.Offline || Tools.Scene == "Level 7-1") return;
 
-        byte index = (byte)Instance.Trams.IndexOf(tram);
+        var index = (byte)Trams.IndexOf(tram);
         if (index != 255) Networking.Send(PacketType.ActivateObject, w =>
         {
-            w.Byte(6);
+            w.Byte(2);
             w.Byte(index);
             w.Int(tram.currentSpeedStep);
 
-            Log.Debug($"[World] Sent the tram speed: tram#{index} {tram.currentSpeedStep}");
-        }, size: 8);
+            Log.Debug($"[World] Sent the new speed of tram#{index} {tram.currentSpeedStep}");
+        }, size: 6);
     }
+
+    /// <summary> Synchronizes actions characterized only by position: opening doors, activation of a stature or tree. </summary>
+    public static void SyncAction(Component t, byte type) => Networking.Send(PacketType.ActivateObject, w =>
+    {
+        w.Byte(type);
+        w.Vector(t.transform.position);
+    }, size: 13);
 
     #endregion
 }
