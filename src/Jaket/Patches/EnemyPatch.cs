@@ -58,6 +58,10 @@ public class LogicPatch
 public class OtherPatch
 {
     [HarmonyPrefix]
+    [HarmonyPatch(typeof(StyleHUD), nameof(StyleHUD.AddPoints))]
+    static void StyleHudErrorFix(ref GameObject sourceWeapon) => sourceWeapon = sourceWeapon == Bullets.NetDmg ? null : sourceWeapon;
+
+    [HarmonyPrefix]
     [HarmonyPatch(typeof(EventOnDestroy), "OnDestroy")]
     static bool Destroy() => LobbyController.Offline || LobbyController.IsOwner;
 
