@@ -32,14 +32,37 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
     public static void Load()
     {
         string l; // just for focusing attention
+        #region 0-1
+        l = "Level 0-1";
+
+        NetAction.Sync(l, "Cube (2)", new(202f, 73f, 421f)); // boss
+
+        #endregion
+        #region 0-2
+        l = "Level 0-2";
+
+        StaticAction.Destroy(l, "Invisible Wall", new(0f, -7f, 163.5f));
+        StaticAction.Destroy(l, "Invisible Wall", new(-45f, -8f, 287.5f));
+        StaticAction.Destroy(l, "SwordMachine (1)", new(13f, -10f, 173f));
+        StaticAction.Destroy(l, "Activator", new(-44.5f, 0f, 157f));
+        StaticAction.Destroy(l, "SwordsMachine", new(-45f, -11f, 268f));
+        StaticAction.Destroy(l, "SwordsMachine", new(-55f, -11f, 293f));
+
+        NetAction.Sync(l, "Activator", new(-81f, 9f, 339.5f)); // boss
+
+        #endregion
+        #region 0-3
+        l = "Level 0-3";
+
+        NetAction.Sync(l, "Cube (1)", new(-89.5f, 9.363636f, 413f)); // boss
+
+        #endregion
         #region 0-5
         l = "Level 0-5";
 
-        StaticAction.Find(l, "Cube", new(182f, 4f, 382f), obj => obj.SetActive(LobbyController.IsOwner));
+        StaticAction.Find(l, "Cube", new(182f, 4f, 382f), obj => obj.GetComponent<ObjectActivator>().events.toDisActivateObjects[0] = null);
 
-        NetAction.Sync(l, "Cube", new(182f, 4f, 382f));
-        NetAction.Sync(l, "StatueActivator", new(212.5f, -6.5f, 394.5f));
-        NetAction.Sync(l, "StatueActivator", new(212.5f, -6.5f, 369.5f));
+        NetAction.Sync(l, "Cube", new(182f, 4f, 382f)); // boss
         NetAction.Sync(l, "DelayedDoorActivation", new(175f, -6f, 382f));
 
         #endregion

@@ -6,17 +6,17 @@ using UnityEngine;
 using Jaket.Assets;
 using Jaket.Net;
 
-/// <summary> Abstract action performed on the world. </summary>
+/// <summary> Abstract action performed in the world. </summary>
 public class WorldAction
 {
-    /// <summary> Level for which the activator is intended. </summary>
+    /// <summary> Level for which the action is intended. </summary>
     public readonly string Level;
     /// <summary> The action itself. </summary>
     public readonly Action Action;
 
-    public WorldAction(string level, Action action) { this.Level = level; this.Action = action; World.Actions.Add(this); }
+    public WorldAction(string level, Action action) { Level = level; Action = action; World.Actions.Add(this); }
 
-    /// <summary> Runs the action if the scene matches the desired one. </summary>
+    /// <summary> Runs the action if the level matches the desired one. </summary>
     public void Run()
     {
         if (Tools.Scene == Level) Action();
@@ -63,13 +63,19 @@ public class NetAction : WorldAction
     /// <summary> Position of the object used to find it. </summary>
     public Vector3 Position;
 
-    public NetAction(string level, string name, Vector3 position, Action action) : base(level, action) { this.Name = name; this.Position = position; }
+    public NetAction(string level, string name, Vector3 position, Action action) : base(level, action) { Name = name; Position = position; }
 
     /// <summary> Creates a net action that enables an object that has an ObjectActivator component. </summary>
     public static NetAction Sync(string level, string name, Vector3 position, Action<GameObject> action = null) => new(level, name, position, () =>
         Tools.ResFind<GameObject>(
             obj => Tools.IsReal(obj) && obj.transform.position == position && obj.name == name,
-            obj => { obj.SetActive(true); action?.Invoke(obj); }
+            obj =>
+            {
+                obj.SetActive(true);
+                action?.Invoke(obj);
+
+                foreach (var act in obj.GetComponents<ObjectActivator>()) act.ActivateDelayed(act.delay);
+            }
         ));
 
     /// <summary> Creates a net action that synchronizes clicks on a button. </summary>
