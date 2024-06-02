@@ -60,7 +60,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         #region 0-5
         l = "Level 0-5";
 
-        StaticAction.Find(l, "Cube", new(182f, 4f, 382f), obj => obj.GetComponent<ObjectActivator>().events.toDisActivateObjects[0] = null);
+        StaticAction.Find(l, "Cube", new(182f, 4f, 382f), obj => obj.GetComponent<ObjectActivator>().events.toDisActivateObjects[0] = null); // corridor
 
         NetAction.Sync(l, "Cube", new(182f, 4f, 382f)); // boss
         NetAction.Sync(l, "DelayedDoorActivation", new(175f, -6f, 382f));
@@ -69,22 +69,27 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         #region 1-2
         l = "Level 1-2";
 
-        // there is a door within the Very Cancerous Rodent
+        // secret statue
+        NetAction.Sync(l, "Cube", new(0f, -19f, 442f));
+        NetAction.Sync(l, "Cube", new(15f, -15f, 417f));
+
+        // Very Cancerous Rodent™
+        NetAction.Sync(l, "Cube", new(-61f, -16.5f, 388.5f));
         NetAction.Sync(l, "Cube (1)", new(-61f, -21.5f, 400.5f));
+
+        #endregion
+        #region 1-3w
+        l = "Level 1-3";
+
+        StaticAction.Find(l, "Trigger", new(0f, 9.5f, 412f), obj => obj.GetComponent<ObjectActivator>().events.toDisActivateObjects[0] = null); // corridor
 
         #endregion
         #region 1-4
         l = "Level 1-4";
 
-        // disable boss fight launch trigger for clients in order to sync the cutscene
-        StaticAction.Find(l, "Cube", new(0f, 11f, 612f), obj =>
-        {
-            obj.SetActive(LobbyController.IsOwner);
-            Tools.Destroy(obj.GetComponent<DoorController>());
-        });
-        StaticAction.Find(l, "V2", new(0f, 6f, 648.5f), obj => { if (!LobbyController.IsOwner) Tools.Destroy(obj); });
+        StaticAction.Find(l, "Cube", new(0f, 11f, 612f), obj => Tools.Destroy(obj.GetComponent<DoorController>()));
 
-        NetAction.Sync(l, "Cube", new(0f, -19f, 612f), obj => obj.GetComponent<ObjectActivator>().Activate());
+        NetAction.Sync(l, "Cube", new(0f, -19f, 612f)); // boss
 
         #endregion
         #region 5-1
