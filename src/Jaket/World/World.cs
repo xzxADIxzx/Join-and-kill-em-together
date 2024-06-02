@@ -45,7 +45,7 @@ public class World
             if (LobbyController.IsOwner)
             {
                 Activated.Clear();
-                Networking.Send(PacketType.Level, World.WriteData);
+                Networking.Send(PacketType.Level, WriteData);
             }
             Restore();
         };

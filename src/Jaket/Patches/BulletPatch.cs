@@ -27,6 +27,8 @@ public class CommonBulletsPatch
     static void Explosion(ExplosionController __instance)
     {
         var ex = __instance.GetComponentInChildren<Explosion>();
+        if (ex == null) return;
+
         var n1 = __instance.name;
         var n2 = ex.sourceWeapon?.name ?? "";
 
