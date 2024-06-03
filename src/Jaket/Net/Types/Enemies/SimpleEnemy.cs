@@ -15,6 +15,8 @@ public class SimpleEnemy : Enemy
     private void Start()
     {
         SpawnEffect();
+        Boss(() => Type == EntityType.Cerberus && Tools.Scene == "Level 0-5", 80f, 1, "CERBERUS, GUARDIAN OF HELL");
+        Boss(() => Type == EntityType.TheCorpseOfKingMinos, 160f, 2);
 
         // update the original health so that the transition to the second phase happens exactly in its half
         if (Type == EntityType.TheCorpseOfKingMinos) Tools.Field<MinosBoss>("originalHealth").SetValue(GetComponent<MinosBoss>(), EnemyId.statue.health);

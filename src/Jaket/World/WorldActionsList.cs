@@ -78,7 +78,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         NetAction.Sync(l, "Cube (1)", new(-61f, -21.5f, 400.5f));
 
         #endregion
-        #region 1-3w
+        #region 1-3
         l = "Level 1-3";
 
         StaticAction.Find(l, "Trigger", new(0f, 9.5f, 412f), obj => obj.GetComponent<ObjectActivator>().events.toDisActivateObjects[0] = null); // corridor
