@@ -51,7 +51,7 @@ public class DollAssets
         Bundle = LoadBundle();
 
         // cache the shader and the wing textures for future use
-        Shader = AssetHelper.LoadPrefab("cb3828ada2cbefe479fed3b51739edf6").GetComponent<V2>().smr.material.shader;
+        Shader = AssetHelper.LoadPrefab("cb3828ada2cbefe479fed3b51739edf6").GetComponent<global::V2>().smr.material.shader;
         WingTextures = new Texture[5];
         HandTextures = new Texture[4];
 
