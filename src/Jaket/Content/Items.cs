@@ -79,7 +79,7 @@ public class Items
         foreach (var item in Tools.ResFind<ItemIdentifier>()) Sync(item, false);
         foreach (var zone in Tools.ResFind<ItemPlaceZone>())
         {
-            if (!Tools.IsReal(zone)) return;
+            if (!Tools.IsReal(zone)) continue;
             zone.transform.SetParent(null);
             zone.CheckItem();
 
