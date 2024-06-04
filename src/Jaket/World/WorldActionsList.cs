@@ -92,6 +92,25 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         NetAction.Sync(l, "Cube", new(0f, -19f, 612f)); // boss
 
         #endregion
+        #region 2-4
+        l = "Level 2-4";
+
+        StaticAction.Find(l, "DoorsActivator", new(425f, -10f, 650f), obj =>
+        {
+            obj.GetComponent<ObjectActivator>().events.onActivate.AddListener(() =>
+            {
+                Teleporter.Teleport(new(500f, 14f, 570f));
+            });
+        });
+        StaticAction.Destroy(l, "Cube", new(130f, 13f, 702f));
+
+        NetAction.Sync(l, "DeadMinos", new(279.5f, -599f, 575f), obj =>
+        {
+            obj.transform.parent.Find("GlobalLights (2)").Find("MetroWall (10)").gameObject.SetActive(false);
+            obj.transform.parent.Find("BossMusic").gameObject.SetActive(false);
+        });
+
+        #endregion
         #region 5-1
         l = "Level 5-1";
 
