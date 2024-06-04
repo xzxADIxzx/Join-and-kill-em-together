@@ -37,6 +37,8 @@ public abstract class Entity : MonoBehaviour
     public AudioSource Audio;
     public V2 V2;
     public Turret Turret;
+    public Gabriel Gabriel1;
+    public GabrielSecond Gabriel2;
     public LeviathanController Leviathan;
     public MinotaurChase Minotaur;
 

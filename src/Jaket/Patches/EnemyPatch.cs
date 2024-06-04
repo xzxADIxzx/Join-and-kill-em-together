@@ -29,8 +29,6 @@ public class EnemyPatch
 [HarmonyPatch]
 public class LogicPatch
 {
-    static bool Update(Object obj) => LobbyController.Offline || obj.name == "Local";
-
     [HarmonyPrefix]
     [HarmonyPatch(typeof(V2), "Start")]
     static void Intro(V2 __instance)
@@ -51,7 +49,21 @@ public class LogicPatch
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(Idol), "SlowUpdate")]
-    static bool IdolsLogic(Idol __instance) => Update(__instance);
+    static bool IdolsLogic(Idol __instance) => LobbyController.Offline || __instance.name == "Local";
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(Gabriel), "Start")]
+    static void Outro1(ref bool ___bossVersion)
+    {
+        if (LobbyController.Online && Tools.Scene == "Level 3-2") ___bossVersion = true;
+    }
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(GabrielSecond), "Start")]
+    static void Outro2(ref bool ___bossVersion)
+    {
+        if (LobbyController.Online && Tools.Scene == "Level 6-2") ___bossVersion = true;
+    }
 }
 
 [HarmonyPatch]
