@@ -75,6 +75,7 @@ public class Gabriel : Enemy
     {
         base.Read(r);
         x.Read(r); y.Read(r); z.Read(r);
+        attack = r.Byte();
     }
 
     public override void OnDied()
