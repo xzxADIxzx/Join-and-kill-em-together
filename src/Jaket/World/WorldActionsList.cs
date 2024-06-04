@@ -104,11 +104,29 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         });
         StaticAction.Destroy(l, "Cube", new(130f, 13f, 702f));
 
+        NetAction.Sync(l, "BossActivator", new(142.5f, 13f, 702.5f));
         NetAction.Sync(l, "DeadMinos", new(279.5f, -599f, 575f), obj =>
         {
             obj.transform.parent.Find("GlobalLights (2)").Find("MetroWall (10)").gameObject.SetActive(false);
             obj.transform.parent.Find("BossMusic").gameObject.SetActive(false);
         });
+
+        #endregion
+        #region 3-1
+        l = "Level 3-1";
+
+        NetAction.Sync(l, "Trigger", new(-203f, -72.5f, 563f)); // lightning
+        NetAction.Sync(l, "Deactivator", new(-203f, -72.5f, 528f));
+        NetAction.Sync(l, "End Lights", new(-203f, -72.5f, 528f));
+
+        #endregion
+        #region 3-2
+        l = "Level 3-2";
+
+        StaticAction.Destroy(l, "Door", new(-10f, -161f, 955f));
+        StaticAction.Destroy(l, "Backwall", new(-65f, -205f, 934f));
+
+        NetAction.Sync(l, "Cube", new(-5f, -121f, 965f)); // boss
 
         #endregion
         #region 5-1
