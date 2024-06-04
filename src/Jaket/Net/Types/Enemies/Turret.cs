@@ -34,7 +34,7 @@ public class Turret : Enemy
             if (lastAiming = aiming)
                 Turret.Invoke("StartWindup", 0f);
             else
-                Cooldown(4200f);
+                Events.Post2(() => Cooldown(4200f));
         }
     }
 
