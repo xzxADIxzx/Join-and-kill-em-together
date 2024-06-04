@@ -107,8 +107,11 @@ public class World
     /// <summary> Restores activated actions after restart of the level. </summary>
     public static void Restore()
     {
-        EachStatic(sa => sa.Run());
-        Activated.ForEach(index => Actions[index].Run());
+        Events.Post(() =>
+        {
+            EachStatic(sa => sa.Run());
+            Activated.ForEach(index => Actions[index].Run());
+        });
 
         // change the layer from PlayerOnly to Invisible so that other players will be able to launch the wave
         foreach (var trigger in Tools.ResFind<ActivateArena>()) trigger.gameObject.layer = 16;

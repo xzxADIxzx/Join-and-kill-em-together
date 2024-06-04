@@ -51,7 +51,6 @@ public class Teleporter : CanvasSingleton<Teleporter>
         Instance.Flash();
 
         // load the necessary locations so that the player doesn't get into the out of bounds
-        if (Tools.Scene == "Level 2-4") Tools.ObjFind("4 - Second Encounter").SetActive(true);
         if (Tools.Scene == "Level 7-4") Tools.ObjFind(insideEarthmover ? "InsideActivator" : "OutsideActivator").GetComponent<ObjectActivator>().Activate();
     }
 }

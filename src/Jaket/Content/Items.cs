@@ -19,9 +19,9 @@ public class Items
     {
         Events.OnLoaded += () =>
         {
-            if (LobbyController.Online) Events.Post(SyncAll);
+            if (LobbyController.Online) Events.Post2(SyncAll);
         };
-        Events.OnLobbyEntered += () => Events.Post(SyncAll);
+        Events.OnLobbyEntered += () => Events.Post2(SyncAll);
 
         foreach (var name in GameAssets.Items) Prefabs.Add(GameAssets.Item(name).transform);
         foreach (var name in GameAssets.Plushies) Prefabs.Add(GameAssets.Plushy(name).transform);
