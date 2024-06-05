@@ -35,6 +35,7 @@ public abstract class Entity : MonoBehaviour
     public Cannonball Ball;
     public Coin Coin;
     public AudioSource Audio;
+    public SwordsMachine Swords;
     public V2 V2;
     public Turret Turret;
     public Gabriel Gabriel1;

@@ -29,6 +29,13 @@ public class EnemyPatch
 [HarmonyPatch]
 public class LogicPatch
 {
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(SwordsMachine), "Start")]
+    static void Outro(ref bool ___bossVersion)
+    {
+        if (LobbyController.Online && (Tools.Scene == "Level 0-2" || Tools.Scene == "Level 0-3" || Tools.Scene == "Level 1-3")) ___bossVersion = true;
+    }
+
     [HarmonyPrefix]
     [HarmonyPatch(typeof(V2), "Start")]
     static void Intro(V2 __instance)

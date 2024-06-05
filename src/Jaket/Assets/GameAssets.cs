@@ -55,4 +55,7 @@ public class GameAssets
 
     /// <summary> Loads the blast explosion prefab. </summary>
     public static GameObject Blast() => AssetHelper.LoadPrefab("Assets/Prefabs/Attacks and Projectiles/Explosions/Explosion Wave.prefab");
+
+    /// <summary> Loads the shotgun pickup prefab. </summary>
+    public static GameObject Shotgun() => AssetHelper.LoadPrefab("Assets/Prefabs/Weapons/Pickups/ShotgunPickUp.prefab");
 }
