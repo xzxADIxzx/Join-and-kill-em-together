@@ -3,7 +3,7 @@ namespace Jaket.Net.Types;
 using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
-using UnityEngine.AddressableAssets;
+using UnityEngine;
 
 /// <summary> Representation of a swordsmachine enemy. </summary>
 public class Swords : Enemy
@@ -43,6 +43,12 @@ public class Swords : Enemy
 
             // save the object so that when you meet the enemy again, the swordsmachine has only one hand
             firstPhase = Swords;
+        }
+
+        if (castleVein)
+        {
+            GameAssets.SwordsMaterial(agonyOrTundra ? "SwordsMachineAgony" : "SwordsMachineTundra", transform.GetChild(0).GetChild(2).GetComponent<Renderer>());
+            GameAssets.SwordsMaterial(agonyOrTundra ? "SwordsMachineAgonySword" : "SwordsMachineTundraSword", transform.GetChild(0).GetChild(1).GetComponent<Renderer>());
         }
     }
 

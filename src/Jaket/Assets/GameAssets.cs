@@ -1,6 +1,7 @@
 namespace Jaket.Assets;
 
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 /// <summary> Class that works with the assets of the game. </summary>
 public class GameAssets
@@ -58,4 +59,8 @@ public class GameAssets
 
     /// <summary> Loads the shotgun pickup prefab. </summary>
     public static GameObject Shotgun() => AssetHelper.LoadPrefab("Assets/Prefabs/Weapons/Pickups/ShotgunPickUp.prefab");
+
+    /// <summary> Loads a swordsmachine material by name. </summary>
+    public static void SwordsMaterial(string name, Renderer output) =>
+        Addressables.LoadAssetAsync<Material>($"Assets/Models/Enemies/SwordsMachine/{name}.mat").Task.ContinueWith(task => output.material = task.Result);
 }
