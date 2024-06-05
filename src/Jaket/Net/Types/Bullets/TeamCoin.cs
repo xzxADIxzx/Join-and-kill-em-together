@@ -14,6 +14,9 @@ public class TeamCoin : OwnableEntity
     static Transform cc => CameraController.Instance.transform;
     static StyleHUD sh => StyleHUD.Instance;
 
+    Coin coin;
+    AudioSource audio;
+
     /// <summary> Coin position. </summary>
     private FloatLerp x, y, z;
     /// <summary> Player owning the coin. </summary>
@@ -67,13 +70,13 @@ public class TeamCoin : OwnableEntity
             }
             Reset();
         });
-        Coin = GetComponent<Coin>();
-        Audio = GetComponent<AudioSource>();
+        coin = GetComponent<Coin>();
+        audio = GetComponent<AudioSource>();
 
         x = new(); y = new(); z = new();
         if (IsOwner) OnTransferred();
 
-        Coin.doubled = true; // for some reason, without this, the coin cannot be punched
+        coin.doubled = true; // for some reason, without this, the coin cannot be punched
         Coins.Alive.Add(this);
     }
 
@@ -114,7 +117,7 @@ public class TeamCoin : OwnableEntity
     private void Activate()
     {
         foreach (var col in cols) col.enabled = true;
-        Coin.enabled = true;
+        coin.enabled = true;
     }
 
     private void Effect(GameObject flash, float size)
@@ -129,7 +132,7 @@ public class TeamCoin : OwnableEntity
     private void Double()
     {
         doubled = true;
-        Effect(Coin.flash, 20f);
+        Effect(coin.flash, 20f);
     }
 
     private void DoubleEnd() => doubled = false;
@@ -137,7 +140,7 @@ public class TeamCoin : OwnableEntity
     private void Triple()
     {
         doubled = true;
-        Effect(Coin.chargeEffect, 12f);
+        Effect(coin.chargeEffect, 12f);
 
         effect.transform.GetChild(0).GetChild(0).GetChild(0).localScale = Vector3.one * .42f;
         effect.transform.GetChild(0).GetChild(0).gameObject.SetActive(true);
@@ -151,7 +154,7 @@ public class TeamCoin : OwnableEntity
     private void Quadruple()
     {
         quadrupled = true;
-        Effect(Coin.enemyFlash, 15f);
+        Effect(coin.enemyFlash, 15f);
 
         var light = effect.GetComponent<Light>();
         light.color = Team.Color();
@@ -170,7 +173,7 @@ public class TeamCoin : OwnableEntity
         if (Dead || shot) return;
 
         foreach (var col in cols ??= GetComponents<Collider>()) col.enabled = false;
-        Coin.enabled = false;
+        coin.enabled = false;
 
         Invoke("Activate", .1f);
         Invoke("Double", .35f);
@@ -226,7 +229,7 @@ public class TeamCoin : OwnableEntity
         tag = "Untagged";
 
         // play the sound before killing the coin
-        PlaySound(Instantiate(Coin.coinHitSound, transform));
+        PlaySound(Instantiate(coin.coinHitSound, transform));
 
         // run the second shot if the player hit the coin in a short timing
         if (doubled && beam == null) // only RV0 PRI can be doubled
@@ -269,7 +272,7 @@ public class TeamCoin : OwnableEntity
             }
             return;
         }
-        if (!Coin.enabled) return;
+        if (!coin.enabled) return;
         Bounce();
 
         target = Coins.FindTarget(this, true, out _, out _, null);
@@ -282,7 +285,7 @@ public class TeamCoin : OwnableEntity
         // make the coin unavailable for future use
         if (pos == null) shot = true;
 
-        var beam = Instantiate(Coin.refBeam, transform.position, Quaternion.identity).GetComponent<LineRenderer>();
+        var beam = Instantiate(coin.refBeam, transform.position, Quaternion.identity).GetComponent<LineRenderer>();
         PlaySound(beam.gameObject);
         trail.Clear();
 
@@ -322,13 +325,13 @@ public class TeamCoin : OwnableEntity
 
     public void Bounce()
     {
-        if (quadrupled || !Coin.enabled) return;
+        if (quadrupled || !coin.enabled) return;
         TakeOwnage();
 
         doubled = false;
         Reset();
 
-        Audio.Play();
+        audio.Play();
         Rb.velocity = Vector3.zero;
         Rb.AddForce(Vector3.up * 25f, ForceMode.VelocityChange);
     }
@@ -358,7 +361,7 @@ public class TeamCoin : OwnableEntity
         base.Kill(r);
         Reset();
 
-        Coin.GetDeleted();
+        coin.GetDeleted();
         Coins.Alive.Remove(this);
 
         mat = GetComponent<Renderer>().material;

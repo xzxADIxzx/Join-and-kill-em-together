@@ -9,6 +9,8 @@ using Jaket.IO;
 /// <summary> Representation of a swordsmachine enemy. </summary>
 public class Swords : Enemy
 {
+    SwordsMachine swords;
+
     /// <summary> The first phase of the boss at 0-3. </summary>
     private static Swords firstPhase;
     /// <summary> Whether the next swordsmachine will be an agony or tundra. </summary>
@@ -18,7 +20,7 @@ public class Swords : Enemy
     {
         Init(_ => Enemies.Type(EnemyId));
         InitTransfer();
-        Swords = GetComponent<SwordsMachine>();
+        swords = GetComponent<SwordsMachine>();
     }
 
     private void Start()
@@ -33,15 +35,15 @@ public class Swords : Enemy
                 ? "SWORDSMACHINE \"AGONY\""
                 : "SWORDSMACHINE \"TUNDRA\"");
 
-        Swords.phaseChangeHealth = EnemyId.machine.health / 2f;
-        Swords.firstPhase = !castleVein && firstPhase == null;
-        Swords.bothPhases = castleVein;
+        swords.phaseChangeHealth = EnemyId.machine.health / 2f;
+        swords.firstPhase = !castleVein && firstPhase == null;
+        swords.bothPhases = castleVein;
 
         if (prelude)
         {
-            Swords.shotgunPickUp = Instantiate(GameAssets.Shotgun());
-            Swords.shotgunPickUp.SetActive(false);
-            Destroy(Swords.shotgunPickUp.GetComponent<KeepInBounds>());
+            swords.shotgunPickUp = Instantiate(GameAssets.Shotgun());
+            swords.shotgunPickUp.SetActive(false);
+            Destroy(swords.shotgunPickUp.GetComponent<KeepInBounds>());
         }
 
         if (castleVein)
@@ -53,7 +55,7 @@ public class Swords : Enemy
         if (Tools.Scene == "Level 0-3" && transform.position.y < 0f)
         {
             firstPhase = this; // save the object so that when you meet the enemy again, the swordsmachine has only one hand
-            Swords.secondPhasePosTarget = Tools.ObjFind("EnemyTracker").transform; // no matter what to put here, this is only necessary to start animation
+            swords.secondPhasePosTarget = Tools.ObjFind("EnemyTracker").transform; // no matter what to put here, this is only necessary to start animation
         }
     }
 

@@ -31,17 +31,6 @@ public abstract class Entity : MonoBehaviour
     public ItemIdentifier ItemId;
     public Animator Animator;
     public Rigidbody Rb;
-    public Grenade Grenade;
-    public Cannonball Ball;
-    public Coin Coin;
-    public AudioSource Audio;
-    public SwordsMachine Swords;
-    public V2 V2;
-    public Turret Turret;
-    public Gabriel Gabriel1;
-    public GabrielSecond Gabriel2;
-    public LeviathanController Leviathan;
-    public MinotaurChase Minotaur;
 
     /// <summary> Adds itself to the entities list if the player is the owner, and finds different components specific to different entities. </summary>
     protected void Init(Func<Entity, EntityType> prov, bool getGeneralComponents = false)

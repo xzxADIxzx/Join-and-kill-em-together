@@ -6,6 +6,8 @@ using Jaket.IO;
 /// <summary> Representation of a turret enemy. </summary>
 public class Turret : Enemy
 {
+    global::Turret turret;
+
     /// <summary> Id of running animation. </summary>
     /// <see cref="UnityEngine.Animator.StringToHash(string)"/>
     public const int RUNNING_ID = -526601997;
@@ -17,7 +19,7 @@ public class Turret : Enemy
     {
         Init(_ => Enemies.Type(EnemyId), true);
         InitTransfer(() => Cooldown(IsOwner ? 0f : 4200f));
-        Turret = GetComponent<global::Turret>();
+        turret = GetComponent<global::Turret>();
     }
 
     private void Start() => SpawnEffect();
@@ -32,21 +34,21 @@ public class Turret : Enemy
         if (lastAiming != aiming)
         {
             if (lastAiming = aiming)
-                Turret.Invoke("StartWindup", 0f);
+                turret.Invoke("StartWindup", 0f);
             else
                 Events.Post2(() => Cooldown(4200f));
         }
     }
 
-    private void Cooldown(float time) => Tools.Field<global::Turret>("cooldown").SetValue(Turret, time);
+    private void Cooldown(float time) => Tools.Field<global::Turret>("cooldown").SetValue(turret, time);
 
     #region entity
 
     public override void Write(Writer w)
     {
         base.Write(w);
-        w.Bool(Turret.aiming);
-        if (!Turret.aiming)
+        w.Bool(turret.aiming);
+        if (!turret.aiming)
         {
             w.Bool(Animator.GetBool(RUNNING_ID));
             w.Vector(transform.position);

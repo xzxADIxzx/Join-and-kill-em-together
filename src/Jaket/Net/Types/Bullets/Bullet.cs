@@ -8,6 +8,9 @@ using Jaket.IO;
 /// <summary> Representation of a rocket or cannonball. </summary>
 public class Bullet : OwnableEntity
 {
+    Grenade grenade;
+    Cannonball ball;
+
     /// <summary> Bullet position and rotation. </summary>
     private FloatLerp x, y, z, rx, ry, rz;
     /// <summary> Player riding the rocket. </summary>
@@ -24,16 +27,16 @@ public class Bullet : OwnableEntity
         InitTransfer(() =>
         {
             if (Rb) Rb.isKinematic = !IsOwner;
-            if (Ball) Ball.ghostCollider = !IsOwner;
-            if (Grenade)
+            if (ball) ball.ghostCollider = !IsOwner;
+            if (grenade)
             {
-                if (IsOwner) Grenade.rocketSpeed = 100f;
+                if (IsOwner) grenade.rocketSpeed = 100f;
                 Exploded(!IsOwner);
             }
             player.Id = Owner;
         });
-        Grenade = GetComponent<Grenade>();
-        Ball = GetComponent<Cannonball>();
+        grenade = GetComponent<Grenade>();
+        ball = GetComponent<Cannonball>();
         Destroy(GetComponent<FloatingPointErrorPreventer>());
 
         x = new(); y = new(); z = new();
@@ -62,7 +65,7 @@ public class Bullet : OwnableEntity
         }
     }
 
-    private void Exploded(bool value) => Tools.Field<Grenade>("exploded").SetValue(Grenade, value);
+    private void Exploded(bool value) => Tools.Field<Grenade>("exploded").SetValue(grenade, value);
 
     #region entity
 
@@ -73,10 +76,10 @@ public class Bullet : OwnableEntity
         w.Vector(transform.position);
         w.Vector(transform.eulerAngles);
 
-        if (Grenade)
+        if (grenade)
         {
-            w.Bool(IsOwner ? Grenade.playerRiding : riding);
-            w.Bool(IsOwner ? Grenade.frozen : frozen);
+            w.Bool(IsOwner ? grenade.playerRiding : riding);
+            w.Bool(IsOwner ? grenade.frozen : frozen);
         }
     }
 
@@ -88,26 +91,26 @@ public class Bullet : OwnableEntity
         x.Read(r); y.Read(r); z.Read(r);
         rx.Read(r); ry.Read(r); rz.Read(r);
 
-        if (Grenade)
+        if (grenade)
         {
             riding = r.Bool();
-            Grenade.rocketSpeed = (frozen = r.Bool()) ? 98f : 99f;
+            grenade.rocketSpeed = (frozen = r.Bool()) ? 98f : 99f;
         }
     }
 
     public override void Kill(Reader r)
     {
         Networking.Entities[Id] = DeadBullet.Instance;
-        if (Grenade)
+        if (grenade)
         {
             Exploded(false);
 
             if (r != null && r.Position < r.Length)
-                Grenade.Explode(true, sizeMultiplier: r.Bool() ? 2f : 1f);
+                grenade.Explode(true, sizeMultiplier: r.Bool() ? 2f : 1f);
             else
-                Grenade.Explode(harmless: true);
+                grenade.Explode(harmless: true);
         }
-        else Ball?.Break();
+        else ball?.Break();
     }
 
     #endregion

@@ -6,17 +6,19 @@ using Jaket.IO;
 /// <summary> Representation of both encounters with V2. </summary>
 public class V2 : Enemy
 {
+    global::V2 v2;
+
     private void Awake()
     {
         Init(_ => Enemies.Type(EnemyId));
         InitTransfer();
-        V2 = GetComponent<global::V2>();
+        v2 = GetComponent<global::V2>();
     }
 
     private void Start()
     {
         SpawnEffect();
-        Boss(() => V2.intro, V2.secondEncounter ? 80f : 40f, V2.secondEncounter && V2.firstPhase ? 2 : 1);
+        Boss(() => v2.intro, v2.secondEncounter ? 80f : 40f, v2.secondEncounter && v2.firstPhase ? 2 : 1);
     }
 
     private void Update()
@@ -42,11 +44,11 @@ public class V2 : Enemy
     public override void OnDied()
     {
         base.OnDied();
-        if (V2.intro)
+        if (v2.intro)
         {
-            V2.active = false;
-            V2.escapeTarget = Tools.ObjFind("EscapeTarget")?.transform;
-            V2.spawnOnDeath = V2.escapeTarget?.Find("RedArmPickup").gameObject;
+            v2.active = false;
+            v2.escapeTarget = Tools.ObjFind("EscapeTarget")?.transform;
+            v2.spawnOnDeath = v2.escapeTarget?.Find("RedArmPickup").gameObject;
             EnemyId.InstaKill();
 
             // the second call of StartFade on the host-side can cause NullReferenceException

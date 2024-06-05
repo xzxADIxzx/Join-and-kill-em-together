@@ -6,6 +6,9 @@ using Jaket.IO;
 /// <summary> Representation of both encounters with Gabriel. </summary>
 public class Gabriel : Enemy
 {
+    global::Gabriel gabriel1;
+    GabrielSecond gabriel2;
+
     /// <summary> Id of the current attack. </summary>
     private byte attack, lastAttack;
 
@@ -13,8 +16,8 @@ public class Gabriel : Enemy
     {
         Init(_ => Enemies.Type(EnemyId), true);
         InitTransfer(() => Cooldown(IsOwner ? 0f : 4200f));
-        Gabriel1 = GetComponent<global::Gabriel>();
-        Gabriel2 = GetComponent<GabrielSecond>();
+        gabriel1 = GetComponent<global::Gabriel>();
+        gabriel2 = GetComponent<GabrielSecond>();
     }
 
     private void Start()
@@ -22,8 +25,8 @@ public class Gabriel : Enemy
         SpawnEffect();
         Boss(() => Tools.Scene == "Level 3-2" || Tools.Scene == "Level 6-2", 100f, 2);
 
-        if (Gabriel1) Gabriel1.phaseChangeHealth = EnemyId.machine.health / 2f;
-        if (Gabriel2) Gabriel2.phaseChangeHealth = EnemyId.machine.health / 2f;
+        if (gabriel1) gabriel1.phaseChangeHealth = EnemyId.machine.health / 2f;
+        if (gabriel2) gabriel2.phaseChangeHealth = EnemyId.machine.health / 2f;
     }
 
     private void Update()
@@ -33,13 +36,13 @@ public class Gabriel : Enemy
 
         if (lastAttack != attack)
         {
-            if (Gabriel1) switch (lastAttack = attack)
+            if (gabriel1) switch (lastAttack = attack)
                 {
-                    case 1: Tools.Invoke("AxeThrow", Gabriel1); break;
-                    case 2: Tools.Invoke("SpearCombo", Gabriel1); break;
-                    case 3: Tools.Invoke("StingerCombo", Gabriel1); break;
-                    case 4: Tools.Invoke("ZweiDash", Gabriel1); break;
-                    case 5: Tools.Invoke("ZweiCombo", Gabriel1); break;
+                    case 1: Tools.Invoke("AxeThrow", gabriel1); break;
+                    case 2: Tools.Invoke("SpearCombo", gabriel1); break;
+                    case 3: Tools.Invoke("StingerCombo", gabriel1); break;
+                    case 4: Tools.Invoke("ZweiDash", gabriel1); break;
+                    case 5: Tools.Invoke("ZweiCombo", gabriel1); break;
                     default: Cooldown(4200f); break;
                 }
         }
@@ -47,8 +50,8 @@ public class Gabriel : Enemy
 
     private void Cooldown(float time)
     {
-        if (Gabriel1) Tools.Field<global::Gabriel>("attackCooldown").SetValue(Gabriel1, time);
-        if (Gabriel2) Tools.Field<GabrielSecond>("attackCooldown").SetValue(Gabriel2, time);
+        if (gabriel1) Tools.Field<global::Gabriel>("attackCooldown").SetValue(gabriel1, time);
+        if (gabriel2) Tools.Field<GabrielSecond>("attackCooldown").SetValue(gabriel2, time);
     }
 
     #region entity
@@ -58,7 +61,7 @@ public class Gabriel : Enemy
         base.Write(w);
         w.Vector(transform.position);
 
-        if (Gabriel1) w.Byte(Animator.GetCurrentAnimatorClipInfo(0)[0].clip.name switch
+        if (gabriel1) w.Byte(Animator.GetCurrentAnimatorClipInfo(0)[0].clip.name switch
         {
             "AxeThrow" => 1,
             "SpearReady" or
@@ -87,7 +90,7 @@ public class Gabriel : Enemy
             var outro = parent.Find("GabrielOutro").GetComponent<GabrielOutro>();
 
             outro.SetSource(transform);
-            outro.gabe = Gabriel1;
+            outro.gabe = gabriel1;
             outro.gameObject.SetActive(true);
             gameObject.SetActive(false);
 
