@@ -1,15 +1,16 @@
 namespace Jaket.Net.Types;
 
+using UnityEngine;
+
 using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
-using UnityEngine;
 
 /// <summary> Representation of a swordsmachine enemy. </summary>
 public class Swords : Enemy
 {
     /// <summary> The first phase of the boss at 0-3. </summary>
-    private static SwordsMachine firstPhase;
+    private static Swords firstPhase;
     /// <summary> Whether the next swordsmachine will be an agony or tundra. </summary>
     private static bool agonyOrTundra;
 
@@ -40,15 +41,19 @@ public class Swords : Enemy
         {
             Swords.shotgunPickUp = Instantiate(GameAssets.Shotgun());
             Swords.shotgunPickUp.SetActive(false);
-
-            // save the object so that when you meet the enemy again, the swordsmachine has only one hand
-            firstPhase = Swords;
+            Destroy(Swords.shotgunPickUp.GetComponent<KeepInBounds>());
         }
 
         if (castleVein)
         {
             GameAssets.SwordsMaterial(agonyOrTundra ? "SwordsMachineAgony" : "SwordsMachineTundra", transform.GetChild(0).GetChild(2).GetComponent<Renderer>());
             GameAssets.SwordsMaterial(agonyOrTundra ? "SwordsMachineAgonySword" : "SwordsMachineTundraSword", transform.GetChild(0).GetChild(1).GetComponent<Renderer>());
+        }
+
+        if (Tools.Scene == "Level 0-3" && transform.position.y < 0f)
+        {
+            firstPhase = this; // save the object so that when you meet the enemy again, the swordsmachine has only one hand
+            Swords.secondPhasePosTarget = Tools.ObjFind("EnemyTracker").transform; // no matter what to put here, this is only necessary to start animation
         }
     }
 
