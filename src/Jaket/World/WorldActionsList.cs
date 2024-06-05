@@ -48,7 +48,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         StaticAction.Destroy(l, "SwordsMachine", new(-45f, -11f, 268f));
         StaticAction.Destroy(l, "SwordsMachine", new(-55f, -11f, 293f));
 
-        NetAction.Sync(l, "Activator", new(-81f, 9f, 339.5f)); // boss
+        NetAction.Sync(l, "Activator", new(-81f, 9f, 339.5f), obj => obj.transform.parent.parent.gameObject.SetActive(true)); // boss
 
         #endregion
         #region 0-3
