@@ -1,5 +1,7 @@
 namespace Jaket.Net.Types;
 
+using UnityEngine;
+
 using Jaket.Content;
 using Jaket.IO;
 
@@ -27,6 +29,17 @@ public class Gabriel : Enemy
 
         if (gabriel1) gabriel1.phaseChangeHealth = EnemyId.machine.health / 2f;
         if (gabriel2) gabriel2.phaseChangeHealth = EnemyId.machine.health / 2f;
+
+        if (gabriel2 && Tools.Scene == "Level 6-2")
+        {
+            var root = Tools.ObjFind("GabrielOutroParent").transform.parent;
+            GameObject Find(string name) => root.Find(name).gameObject;
+
+            gabriel2.onFirstPhaseEnd.toActivateObjects = new[] { Find("HatredColors/Lighting (DarkerFade)"), Find("FogDisabler") };
+            gabriel2.onFirstPhaseEnd.toDisActivateObjects = new[] { Find("HatredColors/Lighting (Darker)") };
+            gabriel2.onSecondPhaseStart.toActivateObjects = new[] { Find("EcstasyColors") };
+            gabriel2.onSecondPhaseStart.toDisActivateObjects = new[] { Find("HatredColors") };
+        }
     }
 
     private void Update()
@@ -84,18 +97,32 @@ public class Gabriel : Enemy
     public override void OnDied()
     {
         base.OnDied();
-        if (Tools.Scene == "Level 3-2")
+        bool l3 = Tools.Scene == "Level 3-2", l6 = Tools.Scene == "Level 6-2";
+
+        if (l3 || l6)
         {
             var parent = Tools.ObjFind("GabrielOutroParent").transform;
             var outro = parent.Find("GabrielOutro").GetComponent<GabrielOutro>();
 
             outro.SetSource(transform);
             outro.gabe = gabriel1;
+            outro.gabe2 = gabriel2;
             outro.gameObject.SetActive(true);
             gameObject.SetActive(false);
 
-            Tools.ObjFind("Music 3").SetActive(false);
-            Tools.ObjFind("Eyeball").GetComponent<AlwaysLookAtCamera>().ChangeOverrideTarget(parent.Find("gab_Intro4"));
+            if (l3)
+            {
+                Tools.ObjFind("Music 3").SetActive(false);
+                Tools.ObjFind("Eyeball").GetComponent<AlwaysLookAtCamera>().ChangeOverrideTarget(parent.Find("gab_Intro4"));
+            }
+            if (l6)
+            {
+                Tools.ObjFind("BossMusic").SetActive(false);
+
+                outro.GetComponent<Animator>().speed = .666f; // w-what?
+                parent.parent.Find("EcstasyColors").gameObject.SetActive(false);
+                parent.parent.Find("OutroLight").gameObject.SetActive(true);
+            }
             StatsManager.Instance.StopTimer();
         }
     }

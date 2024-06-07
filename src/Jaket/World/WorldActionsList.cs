@@ -141,6 +141,14 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         NetAction.Sync(l, "DelayedActivator", new(-15f, 38f, 778f));
 
         #endregion
+        #region 6-2
+        l = "Level 6-2";
+
+        StaticAction.Destroy(l, "Door", new(-179.5f, 20f, 350f));
+
+        NetAction.Sync(l, "Trigger", new(-290f, 40f, 350f)); // boss
+
+        #endregion
         #region 7-2
         l = "Level 7-2";
 
