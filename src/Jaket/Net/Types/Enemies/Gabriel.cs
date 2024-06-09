@@ -58,6 +58,15 @@ public class Gabriel : Enemy
                     case 5: Tools.Invoke("ZweiCombo", gabriel1); break;
                     default: Cooldown(4200f); break;
                 }
+            if (gabriel2) switch (lastAttack = attack)
+                {
+                    case 1: Tools.Invoke("CombineSwords", gabriel2); break;
+                    case 2: Tools.Invoke("FastComboDash", gabriel2); break;
+                    case 3: Tools.Invoke("BasicCombo", gabriel2); break;
+                    case 4: Tools.Invoke("ThrowCombo", gabriel2); break;
+                    case 5: Tools.Invoke("FastCombo", gabriel2); break;
+                    default: Cooldown(4200f); break;
+                }
         }
     }
 
@@ -83,6 +92,16 @@ public class Gabriel : Enemy
             "StingerCombo" => 3,
             "ZweiDash" => 4,
             "ZweiCombo" => 5,
+            _ => 255
+        });
+        if (gabriel2) w.Byte(Animator.GetCurrentAnimatorClipInfo(0)[0].clip.name switch
+        {
+            "SwordsCombine" or
+            "SwordsCombinedThrow" => 1,
+            "FastComboDash" => 2,
+            "BasicCombo" => 3,
+            "ThrowCombo" => 4,
+            "FastCombo" => 5,
             _ => 255
         });
     }
