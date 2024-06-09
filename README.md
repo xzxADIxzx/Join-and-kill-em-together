@@ -27,11 +27,12 @@ This modification made by [me](https://github.com/xzxADIxzx) and my team adds su
    * Emotions wheel to tease your friends or bosses
    * Pointers to guide your friends in the right direction
    * SAM TTS Engine for speaking messages via /tts command
+   * Sprays and moderation system for them
 * Synchronization of everything
    * Players, their weapons, weapons paint, fists, hook, animations, particles and even head rotation
    * All projectiles in the game and chargeback damage
    * All sorts of items such as torches, skulls and developer plushies
-   * Synchronization of position and health of enemies
+   * Synchronization of position and attacks of enemies
    * Synchronization of special bosses such as Leviathan, Minos' hand and Minotaur
    * Synchronization of different triggers at levels
    * Synchronization of the Cyber Grind
