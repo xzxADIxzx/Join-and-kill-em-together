@@ -150,6 +150,17 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         NetAction.Sync(l, "DoorsOpener", new(40f, 5f, 813.5f));
 
         #endregion
+        #region 4-3
+        l = "Level 4-3";
+
+        StaticAction.PlaceTorches(l, new(0f, -10f, 310f), 3f);
+        StaticAction.Destroy(l, "Doorblocker", new(-59.5f, -35f, 676f));
+
+        NetAction.Sync(l, "DoorActivator", new(2.5f, -40f, 628f));
+        NetAction.Sync(l, "Trigger (Intro)", new(-104f, -20f, 676f)); // boss
+        NetAction.Sync(l, "Secret Tablet", new(-116.425f, -39.593f, 675.9866f), obj => MusicManager.Instance.StopMusic());
+
+        #endregion
         #region 5-1
         l = "Level 5-1";
 

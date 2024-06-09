@@ -28,7 +28,7 @@ public class StaticAction : WorldAction
 {
     public StaticAction(string level, Action action) : base(level, action) { }
 
-    /// <summary> Creates a static action that duplicates an object in the world. </summary>
+    /// <summary> Creates a static action that duplicates torches. </summary>
     public static StaticAction PlaceTorches(string level, Vector3 pos, float radius) => new(level, () =>
     {
         // there are already 8 torches on the map, no more needed
@@ -38,20 +38,19 @@ public class StaticAction : WorldAction
         for (float angle = 360f * 6f / 7f; angle >= 0f; angle -= 360f / 7f)
         {
             float rad = angle * Mathf.Deg2Rad;
-            Tools.Instantiate(obj, pos + new Vector3(Mathf.Cos(rad), 0f, Mathf.Sin(rad)) * radius, Quaternion.Euler(0f, angle / 7f, 0f))
-                .GetComponentInChildren<Light>().intensity = 3f; // lower the brightness so that the place with torches doesn't glow like the sun
+            Tools.Instantiate(obj, pos + new Vector3(Mathf.Cos(rad), 0f, Mathf.Sin(rad)) * radius, Quaternion.Euler(0f, angle / 7f, 0f));
         }
     });
-    /// <summary> Creates a static action that finds an object in the world. </summary>
+    /// <summary> Creates a static action that finds an object. </summary>
     public static StaticAction Find(string level, string name, Vector3 position, Action<GameObject> action) => new(level, () =>
     {
         Tools.ResFind(obj => Tools.IsReal(obj) && obj.transform.position == position && obj.name == name, action);
     });
-    /// <summary> Creates a static action that adds an object activation component to an object in the world. </summary>
+    /// <summary> Creates a static action that adds a component to an object. </summary>
     public static StaticAction Patch(string level, string name, Vector3 position) => Find(level, name, position, obj => obj.AddComponent<ObjectActivator>().events = new());
-    /// <summary> Creates a static action that enables an object in the world. </summary>
+    /// <summary> Creates a static action that enables an object. </summary>
     public static StaticAction Enable(string level, string name, Vector3 position) => Find(level, name, position, obj => obj.SetActive(true));
-    /// <summary> Creates a static action that destroys an object in the world. </summary>
+    /// <summary> Creates a static action that destroys an object. </summary>
     public static StaticAction Destroy(string level, string name, Vector3 position) => Find(level, name, position, Tools.Destroy);
 }
 
@@ -65,7 +64,7 @@ public class NetAction : WorldAction
 
     public NetAction(string level, string name, Vector3 position, Action action) : base(level, action) { Name = name; Position = position; }
 
-    /// <summary> Creates a net action that enables an object that has an ObjectActivator component. </summary>
+    /// <summary> Creates a net action that synchronizes an object activator component. </summary>
     public static NetAction Sync(string level, string name, Vector3 position, Action<GameObject> action = null) => new(level, name, position, () =>
         Tools.ResFind<GameObject>(
             obj => Tools.IsReal(obj) && obj.transform.position == position && obj.name == name,
