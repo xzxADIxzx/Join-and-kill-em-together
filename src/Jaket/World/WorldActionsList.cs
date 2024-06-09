@@ -140,6 +140,15 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
 
         NetAction.Sync(l, "GameObject", new(-150.75f, 33f, 953.1049f), obj => obj.GetComponentInParent<LimboSwitch>().Pressed());
 
+        StaticAction.Enable(l, "6A - Indoor Garden", new(-19f, 35f, 953.9481f));
+        StaticAction.Enable(l, "6B - Outdoor Arena", new(35f, 35f, 954f));
+
+        StaticAction.Destroy(l, "6A Activator", new(-79f, 45f, 954f));
+        StaticAction.Destroy(l, "6B Activator", new(116f, 19.5f, 954f));
+
+        NetAction.Sync(l, "DoorOpeners", new(-1.5f, -18f, 774.5f));
+        NetAction.Sync(l, "DoorsOpener", new(40f, 5f, 813.5f));
+
         #endregion
         #region 5-1
         l = "Level 5-1";
