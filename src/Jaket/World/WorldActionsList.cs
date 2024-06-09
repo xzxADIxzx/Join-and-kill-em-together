@@ -129,6 +129,18 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         NetAction.Sync(l, "Cube", new(-5f, -121f, 965f)); // boss
 
         #endregion
+        #region 4-1
+        l = "Level 4-1";
+
+        NetAction.Sync(l, "GameObject", new(-290.25f, 24.5f, 814.75f), obj => obj.GetComponentInParent<LimboSwitch>().Pressed());
+
+        #endregion
+        #region 4-2
+        l = "Level 4-2";
+
+        NetAction.Sync(l, "GameObject", new(-150.75f, 33f, 953.1049f), obj => obj.GetComponentInParent<LimboSwitch>().Pressed());
+
+        #endregion
         #region 5-1
         l = "Level 5-1";
 
