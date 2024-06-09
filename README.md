@@ -14,7 +14,6 @@ This modification made by [me](https://github.com/xzxADIxzx) and my team adds su
    * Rich Presence
    * Lobby settings
 * Automatic check for updates
-   * Please stop playing on version 0.3.0
 * User interface
    * Lobby menu, player list and settings
    * Player indicators to help you find each other on the map
@@ -28,6 +27,7 @@ This modification made by [me](https://github.com/xzxADIxzx) and my team adds su
    * Pointers to guide your friends in the right direction
    * SAM TTS Engine for speaking messages via /tts command
    * Sprays and moderation system for them
+   * Extended V2 coins mechanic
 * Synchronization of everything
    * Players, their weapons, weapons paint, fists, hook, animations, particles and even head rotation
    * All projectiles in the game and chargeback damage
