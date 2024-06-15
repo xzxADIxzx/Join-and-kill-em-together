@@ -50,6 +50,7 @@ public class Enemies
         switch (id.name.Contains("(") ? id.name.Substring(0, id.name.IndexOf("(")).Trim() : id.name)
         {
             case "V2 Green Arm Variant": return EntityType.V2_GreenArm;
+            case "V2 Green Arm": return EntityType.V2_GreenArm;
             case "Very Cancerous Rodent": return EntityType.VeryCancerousRodent;
             case "DroneFlesh": return EntityType.FleshPrison_Eye;
             case "DroneSkull Variant": return EntityType.FleshPanopticon_Face;
@@ -111,8 +112,6 @@ public class Enemies
 
         if (LobbyController.IsOwner || enemyId.TryGetComponent<Sandbox.SandboxEnemy>(out _))
         {
-            Tools.DestroyImmediate(enemyId.GetComponent<Entity>()); // sometimes the game copies enemies
-
             enemyId.gameObject.AddComponent(Types[Type(enemyId)]);
             return true;
         }
