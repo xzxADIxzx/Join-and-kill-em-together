@@ -5,6 +5,7 @@ using HarmonyLib;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 using Jaket.Assets;
 using Jaket.Content;
@@ -63,11 +64,23 @@ public class Movement : MonoSingleton<Movement>
         // initialize the singleton
         Tools.Create<Movement>("Movement");
 
-        // interrupt emoji to prevent some bugs
-        Events.OnLoaded += () => Instance.StartEmoji(0xFF, false);
+        Events.OnLoaded += () =>
+        {
+            // interrupt emoji to prevent some bugs
+            Instance.StartEmoji(0xFF, false);
+
+            if (nm.endlessMode)
+            {
+                // disable restart button for clients
+                CanvasController.Instance.transform.Find("PauseMenu/Restart Mission").GetComponent<Button>().interactable = LobbyController.Offline || LobbyController.IsOwner;
+
+                // disable text override component
+                nm.youDiedText.GetComponents<MonoBehaviour>()[1].enabled = false;
+            }
+        };
 
         // update death screen text to display number of living players in the Cyber Grind
-        Instance.InvokeRepeating("DeathScreenUpdate", 0f, 1f);
+        Instance.InvokeRepeating("GridUpdate", 0f, 1f);
     }
 
     private void Update()
@@ -247,21 +260,18 @@ public class Movement : MonoSingleton<Movement>
         }
     }
 
-    private void DeathScreenUpdate()
+    private void GridUpdate()
     {
-        // disable text override component if the player is in the Cyber Grind
-        nm.youDiedText.GetComponents<MonoBehaviour>()[1].enabled = !nm.endlessMode;
-        if (nm.endlessMode)
-        {
-            int alive = CyberGrind.PlayersAlive();
-            nm.youDiedText.text = Bundle.Format("cg", alive.ToString());
+        if (LobbyController.Offline || !nm.endlessMode) return;
 
-            var final = nm.GetComponentInChildren<FinalCyberRank>();
-            if (alive == 0 && final.savedTime == 0f)
-            {
-                final.GameOver();
-                Destroy(nm.blackScreen.gameObject);
-            }
+        int alive = CyberGrind.PlayersAlive();
+        nm.youDiedText.text = Bundle.Format("cg", alive.ToString());
+
+        var final = nm.GetComponentInChildren<FinalCyberRank>();
+        if (alive == 0 && final.savedTime == 0f)
+        {
+            final.GameOver();
+            Destroy(nm.blackScreen.gameObject);
         }
     }
 
@@ -298,8 +308,12 @@ public class Movement : MonoSingleton<Movement>
         if (World.Brain) nm.transform.position = new(0f, 826.5f, 610f);
     }
 
-    /// <summary> Respawns Cyber Grind players. </summary>
-    public void CyberRespawn() => Respawn(new(0f, 80f, 62.5f), 0f);
+    /// <summary> Respawns Cyber Grind players and launches a screen flash. </summary>
+    public void CyberRespawn()
+    {
+        Respawn(new(0f, 80f, 62.5f), 0f);
+        Teleporter.Instance.Flash();
+    }
 
     #endregion
     #region toggling
