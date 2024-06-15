@@ -161,6 +161,25 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         NetAction.Sync(l, "Secret Tablet", new(-116.425f, -39.593f, 675.9866f), obj => MusicManager.Instance.StopMusic());
 
         #endregion
+        #region 4-4
+        l = "Level 4-4";
+
+        NetAction.Sync(l, "Trigger", new(117.5f, 678.5f, 273f)); // boss
+        NetAction.Sync(l, "ExitTrigger", new(172.5f, 668.5f, 263f), obj =>
+        {
+            Networking.EachEntity(e => e.Type == EntityType.V2_GreenArm && e.transform.position.z < 800f, e => e.gameObject.SetActive(false));
+        });
+        NetAction.Sync(l, "BossOutro", new(117.5f, 663.5f, 323f));
+        NetAction.Sync(l, "ExitBuilding Raise", new(1027f, 261f, 202.5f), obj =>
+        {
+            var exit = obj.transform.parent.Find("ExitBuilding");
+            exit.GetComponent<Door>().Close();
+            exit.Find("GrapplePoint (2)").gameObject.SetActive(true);
+
+            Tools.ObjFind("TutorialMessage").transform.Find("DeactivateMessage").gameObject.SetActive(true);
+        });
+
+        #endregion
         #region 5-1
         l = "Level 5-1";
 
@@ -306,6 +325,14 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         });
 
         #endregion
+        #region P-1
+        l = "Level P-1";
+
+        #endregion
+        #region P-2
+        l = "Level P-2";
+
+        #endregion
         #region cyber grind
         l = "Endless";
 
@@ -313,5 +340,101 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         StaticAction.Find(l, "Cube", new(-40f, 0.5f, 102.5f), obj => obj.transform.position = new(-40f, -10f, 102.5f));
 
         #endregion
+
+        // duplicate torches at levels 4-3 and P-1
+
+        StaticAction.PlaceTorches("Level P-1", new(-0.84f, -10f, 16.4f), 2f);
+
+        // for some reason this object cannot be found located
+        StaticAction.Find("Level 5-2", "6 (Secret)", new(-3.5f, -3f, 940.5f), obj =>
+        {
+            Tools.Destroy(obj.transform.Find("Altar (Blue Skull) Variant").GetChild(0).gameObject);
+        });
+        // fix the red altar at the very beggining of the level
+        StaticAction.Find("Level 7-1", "Cube", new(0f, 3.4f, 582.5f), obj => obj.transform.position = new(0f, 7.4f, 582.5f));
+        // disable the roomba panel for clients
+        StaticAction.Find("Level 7-1", "ScreenActivator", new(-242.5f, -112f, 311f), obj =>
+        {
+            if (!LobbyController.IsOwner) obj.SetActive(false);
+        });
+        // boss fight unloads the previous location
+        StaticAction.Find("Level 7-1", "FightStart", new(-242.5f, 120f, -399.75f), obj =>
+        {
+            obj.GetComponent<ObjectActivator>().events.toDisActivateObjects[2] = null;
+        });
+        // disable door blocker
+        StaticAction.Find("Level P-1", "Trigger", new(360f, -568.5f, 110f), obj =>
+        {
+            obj.GetComponent<ObjectActivator>().events.toActivateObjects[4] = null;
+        });
+        StaticAction.Find("Level P-2", "FightActivator", new(-102f, -61.25f, -450f), obj =>
+        {
+            var act = obj.GetComponent<ObjectActivator>();
+            act.events.onActivate = new(); // gothic door
+            act.events.toActivateObjects[2] = null; // wall collider
+            act.events.toDisActivateObjects[1] = null; // entry collider
+            act.events.toDisActivateObjects[2] = null; // elevator
+        });
+
+        // crutches everywhere, crutches all the time
+        StaticAction.Patch("Level 7-1", "Blockers", new(-242.5f, -115f, 314f));
+        StaticAction.Patch("Level 7-1", "Wave 2", new(-242.5f, 0f, 0f));
+
+
+        // destroy objects in any way interfering with multiplayer
+
+
+        StaticAction.Destroy("Level 5-2", "Arena 1", new(87.5f, -53f, 1240f));
+        StaticAction.Destroy("Level 5-2", "Arena 2", new(87.5f, -53f, 1240f));
+        StaticAction.Destroy("Level 6-1", "Cage", new(168.5f, -130f, 140f));
+        StaticAction.Destroy("Level 6-1", "Cube", new(102f, -165f, -503f));
+        StaticAction.Destroy("Level 7-1", "SkullRed", new(-66.25f, 9.8f, 485f));
+        StaticAction.Destroy("Level 7-1", "ViolenceArenaDoor", new(-120f, 0f, 530.5f));
+        StaticAction.Destroy("Level 7-1", "Walkway Arena -> Stairway Up", new(80f, -25f, 590f));
+
+
+
+        // boss fight roomba logic
+        NetAction.Sync("Level 7-1", "Blockers", new(-242.5f, -115f, 314f), obj =>
+        {
+            // enable the level in case the player is somewhere else
+            obj.transform.parent.parent.parent.parent.gameObject.SetActive(true);
+
+            var btn = obj.transform.parent.Find("Screen").GetChild(0).GetChild(0).GetChild(0).GetChild(0);
+            Tools.GetClick(btn.gameObject).Invoke();
+
+            // teleport the player to the roomba so that they are not left behind
+            Teleporter.Teleport(obj.transform.position with { y = -112.5f });
+        });
+        NetAction.Sync("Level 7-1", "Wave 2", new(-242.5f, 0f, 0f));
+        NetAction.Sync("Level 7-1", "Wave 3", new(-242.5f, 0f, 0f));
+        NetAction.Sync("Level 7-1", "PlayerTeleportActivator", new(-242.5f, 0f, 0f));
+
+        // Minos & Sisyphus have unique cutscenes and non-functional level exits
+        NetAction.Sync("Level P-1", "MinosPrimeIntro", new(405f, -598.5f, 110f));
+        NetAction.Sync("Level P-1", "End", new(405f, -598.5f, 110f), obj =>
+        {
+            // obj.SetActive(true);
+            obj.transform.parent.Find("Cube (2)").gameObject.SetActive(false);
+
+            Tools.ObjFind("Music 3").SetActive(false);
+            obj.transform.parent.Find("Lights").gameObject.SetActive(false);
+
+            StatsManager.Instance.StopTimer();
+        });
+        NetAction.Sync("Level P-2", "PrimeIntro", new(-102f, -61.25f, -450f));
+        NetAction.Sync("Level P-2", "Outro", new(-102f, -61.25f, -450f), obj =>
+        {
+            // obj.SetActive(true);
+            obj.transform.parent.Find("Backwall").gameObject.SetActive(false);
+
+            Tools.ObjFind("BossMusics/Sisyphus").SetActive(false);
+            Tools.ObjFind("IntroObjects/Decorations").SetActive(false);
+            Tools.ObjFind("Rain").SetActive(false);
+
+            StatsManager.Instance.StopTimer();
+        });
+
+        // TODO: 6-1 remove the pillar within the red skull and the wall that appears after entering the big room with a lot of pillars
     }
 }

@@ -18,7 +18,18 @@ public class V2 : Enemy
     private void Start()
     {
         SpawnEffect();
-        Boss(() => v2.intro, v2.secondEncounter ? 80f : 40f, v2.secondEncounter && v2.firstPhase ? 2 : 1);
+        Boss(() => Tools.Scene == "Level 1-4" || Tools.Scene == "Level 4-4", v2.secondEncounter ? 80f : 40f, v2.secondEncounter && v2.firstPhase ? 2 : 1);
+
+        if (Tools.Scene == "Level 4-4")
+        {
+            v2.knockOutHealth = EnemyId.machine.health / 2f;
+            v2.firstPhase = transform.position.z < 800f;
+
+            if (v2.firstPhase)
+                v2.escapeTarget = Tools.ObjFind("ExitTarget").transform;
+            else
+                v2.SlideOnly(true);
+        }
     }
 
     private void Update()
