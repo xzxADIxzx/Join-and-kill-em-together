@@ -31,21 +31,24 @@ public class LogicPatch
 {
     [HarmonyPostfix]
     [HarmonyPatch(typeof(SwordsMachine), "Start")]
-    static void Outro(ref bool ___bossVersion)
+    static void OutroSM(ref bool ___bossVersion)
     {
         if (LobbyController.Online && (Tools.Scene == "Level 0-2" || Tools.Scene == "Level 0-3" || Tools.Scene == "Level 1-3")) ___bossVersion = true;
     }
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(V2), "Start")]
-    static void Intro(V2 __instance)
+    static void IntroV2(V2 __instance)
     {
         if (LobbyController.Online && Tools.Scene == "Level 1-4") __instance.intro = __instance.longIntro = true;
     }
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(V2), "Start")]
-    static void Outro(V2 __instance, ref bool ___bossVersion) => ___bossVersion = __instance.intro;
+    static void OutroV2(ref bool ___bossVersion)
+    {
+        if (LobbyController.Online && (Tools.Scene == "Level 1-4" || Tools.Scene == "Level 4-4")) ___bossVersion = true;
+    }
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(SpiderBody), "BreakCorpse")]
@@ -60,14 +63,14 @@ public class LogicPatch
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(Gabriel), "Start")]
-    static void Outro1(ref bool ___bossVersion)
+    static void OutroG1(ref bool ___bossVersion)
     {
         if (LobbyController.Online && Tools.Scene == "Level 3-2") ___bossVersion = true;
     }
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(GabrielSecond), "Start")]
-    static void Outro2(ref bool ___bossVersion)
+    static void OutroG2(ref bool ___bossVersion)
     {
         if (LobbyController.Online && Tools.Scene == "Level 6-2") ___bossVersion = true;
     }
