@@ -37,6 +37,8 @@ public class LocalPlayer : Entity
     private byte weapon;
     /// <summary> Whether the next packet of drill damage will be skipped. </summary>
     private bool skip;
+    /// <summary> Whether the current level is 4-4. Needed to sync fake slide animation. </summary>
+    private bool is44;
 
     private void Awake()
     {
@@ -83,6 +85,8 @@ public class LocalPlayer : Entity
     public void UpdateWeapons()
     {
         weapon = Weapons.Type();
+        is44 = Tools.Scene == "Level 4-4";
+
         if (LobbyController.Online) SyncSuit();
 
         // according to the lore, the player plays for V3, so we need to paint the hands
@@ -114,7 +118,7 @@ public class LocalPlayer : Entity
         w.Player(Team, weapon, Movement.Instance.Emoji, Movement.Instance.Rps, Chat.Shown);
         w.Bools(
             nm.walking,
-            nm.sliding,
+            nm.sliding || (is44 && nm.transform.position.y > 610f && nm.transform.position.y < 611f),
             nm.gc.heavyFall,
             !nm.gc.onGround,
             nm.boost && !nm.sliding,
