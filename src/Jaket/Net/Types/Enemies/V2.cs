@@ -18,17 +18,12 @@ public class V2 : Enemy
     private void Start()
     {
         SpawnEffect();
-        Boss(() => Tools.Scene == "Level 1-4" || Tools.Scene == "Level 4-4", v2.secondEncounter ? 80f : 40f, v2.secondEncounter && v2.firstPhase ? 2 : 1);
+        Boss(() => Tools.Scene == "Level 1-4" || Tools.Scene == "Level 4-4", v2.secondEncounter ? 80f : 40f, v2.secondEncounter ? 2 : 1);
 
         if (Tools.Scene == "Level 4-4")
         {
             v2.knockOutHealth = EnemyId.machine.health / 2f;
-            v2.firstPhase = transform.position.z < 800f;
-
-            if (v2.firstPhase)
-                v2.escapeTarget = Tools.ObjFind("ExitTarget").transform;
-            else
-                v2.SlideOnly(true);
+            v2.escapeTarget = Tools.ObjFind("ExitTarget").transform;
         }
     }
 
@@ -36,6 +31,18 @@ public class V2 : Enemy
     {
         if (IsOwner || Dead) return;
         transform.position = new(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
+    }
+
+    private void OnEnable()
+    {
+        // the game teleports V2 and enables it when the player moves to the second part of the arena
+        if (v2.firstPhase) return;
+
+        v2.Undie();
+        v2.SlideOnly(true);
+
+        // v2 stuck in an endless cycle if this value is true
+        Tools.Field<global::V2>("escaping").SetValue(v2, false);
     }
 
     #region entity
