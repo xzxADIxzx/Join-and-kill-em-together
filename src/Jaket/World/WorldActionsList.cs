@@ -197,6 +197,20 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         NetAction.Sync(l, "DelayedActivator", new(-15f, 38f, 778f));
 
         #endregion
+        #region 5-2
+        l = "Level 5-2";
+
+        StaticAction.Destroy(l, "SkullBlue", new(-3.700458f, -1.589029f, 950.6616f));
+        StaticAction.Destroy(l, "Arena 1", new(87.5f, -53f, 1240f));
+        StaticAction.Destroy(l, "Arena 2", new(87.5f, -53f, 1240f));
+
+        NetAction.Sync(l, "Trigger 1", new(103.4765f, 2.614944f, 914.7463f));
+        NetAction.Sync(l, "Trigger 2", new(103.8604f, -7.848165f, 930.1208f));
+        NetAction.Sync(l, "Trigger 3", new(103.4765f, 2.614944f, 914.7463f));
+
+        NetAction.Sync(l, "FightActivator", new(-77.783f, 52.552f, 1238.98f)); // boss
+
+        #endregion
         #region 6-2
         l = "Level 6-2";
 
