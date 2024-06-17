@@ -10,9 +10,9 @@ public class Idol : Enemy
     private EntityProv<Enemy> target = new();
 
     /// <summary> Last target of the idol. </summary>
-    private EnemyIdentifier lastTarget;
+    private EnemyIdentifier lastTarget, fakeFerry;
     /// <summary> Last target id. Equals to the max value if there is no target. </summary>
-    private uint lastTargetId = uint.MaxValue;
+    private uint lastTargetId;
 
     private void Awake()
     {
@@ -20,7 +20,11 @@ public class Idol : Enemy
         InitTransfer();
     }
 
-    private void Start() => SpawnEffect();
+    private void Start()
+    {
+        SpawnEffect();
+        if (Tools.Scene == "Level 5-2") fakeFerry = Tools.ObjFind("FerrymanIntro")?.GetComponent<EnemyIdentifier>();
+    }
 
     private void Update()
     {
@@ -30,7 +34,7 @@ public class Idol : Enemy
         if (lastTargetId != target.Id)
         {
             lastTargetId = target.Id;
-            EnemyId.idol.ChangeOverrideTarget(target.Value?.EnemyId);
+            EnemyId.idol.ChangeOverrideTarget(target.Id == uint.MaxValue && fakeFerry ? fakeFerry : target.Value?.EnemyId);
         }
     }
 
@@ -46,7 +50,7 @@ public class Idol : Enemy
             if (lastTarget != EnemyId.idol.target)
             {
                 lastTarget = EnemyId.idol.target;
-                target.Id = EnemyId.idol.target?.TryGetComponent<Enemy>(out var enemy) ?? false ? enemy.Id : uint.MaxValue;
+                target.Id = lastTarget?.TryGetComponent<Enemy>(out var enemy) ?? false ? enemy.Id : uint.MaxValue;
             }
             w.Id(target.Id);
         }
