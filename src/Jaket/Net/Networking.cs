@@ -1,5 +1,6 @@
 namespace Jaket.Net;
 
+using HarmonyLib;
 using Steamworks;
 using Steamworks.Data;
 using System;
@@ -12,7 +13,6 @@ using Jaket.IO;
 using Jaket.Net.Endpoints;
 using Jaket.Net.Types;
 using Jaket.UI.Dialogs;
-using Jaket.World;
 
 /// <summary> Class responsible for updating endpoints, transmitting packets and managing entities. </summary>
 public class Networking
@@ -47,6 +47,7 @@ public class Networking
         LocalPlayer = Tools.Create<LocalPlayer>("Local Player");
         // update network logic every tick
         Events.EveryTick += NetworkUpdate;
+        Events.EveryDozen += Optimize;
 
         Events.OnLoaded += () => WasMultiplayerUsed = LobbyController.Online;
         Events.OnLobbyAction += () => WasMultiplayerUsed |= LobbyController.Online;
@@ -134,6 +135,17 @@ public class Networking
             Server.Update();
         else
             Client.Update();
+    }
+
+    /// <summary> Optimizes the network by removing the dead entities from the global list. </summary>
+    private static void Optimize()
+    {
+        // there is no need to optimize the network if no one uses it
+        if (LobbyController.Offline) return;
+
+        List<Entity> toRemove = new();
+        Entities.Values.DoIf(e => e == null || (e.Dead && e.LastUpdate < Time.time - 1f && e.Type != EntityType.MaliciousFace && e.Type != EntityType.Gutterman), toRemove.Add);
+        toRemove.ForEach(e => Entities.Remove(e.Id));
     }
 
     #region iteration
