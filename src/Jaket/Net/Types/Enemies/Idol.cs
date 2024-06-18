@@ -20,11 +20,7 @@ public class Idol : Enemy
         InitTransfer();
     }
 
-    private void Start()
-    {
-        SpawnEffect();
-        if (Tools.Scene == "Level 5-2") fakeFerry = Tools.ObjFind("FerrymanIntro")?.GetComponent<EnemyIdentifier>();
-    }
+    private void Start() => SpawnEffect();
 
     private void Update()
     {
@@ -33,8 +29,10 @@ public class Idol : Enemy
         transform.position = new(x.Target, y.Target, z.Target);
         if (lastTargetId != target.Id)
         {
+            if (Tools.Scene == "Level 5-2") fakeFerry = Tools.ObjFind("FerrymanIntro")?.GetComponent<EnemyIdentifier>();
+
             lastTargetId = target.Id;
-            EnemyId.idol.ChangeOverrideTarget(target.Id == uint.MaxValue && fakeFerry ? fakeFerry : target.Value?.EnemyId);
+            EnemyId.idol.ChangeOverrideTarget(fakeFerry && Tools.Within(fakeFerry.transform, transform, 100f) ? fakeFerry : target.Value?.EnemyId);
         }
     }
 
