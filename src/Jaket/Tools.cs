@@ -110,4 +110,14 @@ public class Tools
     public static void Invoke(string name, object obj, params object[] args) => AccessTools.Method(obj.GetType(), name).Invoke(obj, args);
 
     #endregion
+    #region within
+
+    /// <summary> Whether the vector a is within the given distance from vector b. </summary>
+    public static bool Within(Vector3 a, Vector3 b, float dst = .1f) => (a - b).sqrMagnitude < dst * dst;
+    public static bool Within(Transform a, Vector3 b, float dst = .1f) => Within(a.position, b, dst);
+    public static bool Within(Transform a, Transform b, float dst = .1f) => Within(a.position, b.position, dst);
+    public static bool Within(GameObject a, Vector3 b, float dst = .1f) => Within(a.transform.position, b, dst);
+    public static bool Within(GameObject a, GameObject b, float dst = .1f) => Within(a.transform.position, b.transform.position, dst);
+
+    #endregion
 }

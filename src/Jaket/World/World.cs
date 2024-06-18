@@ -138,7 +138,7 @@ public class World
         void Sync(HookPoint point, bool hooked)
         {
             var index = (byte)HookPoints.IndexOf(point);
-            if (index != 255 && point != LastSyncedPoint && (point.transform.position - HookArm.Instance.hook.position).sqrMagnitude < 81f) SyncAction(index, hooked);
+            if (index != 255 && point != LastSyncedPoint && Tools.Within(point.transform, HookArm.Instance.hook.position, 9f)) SyncAction(index, hooked);
         }
 
         Find(HookPoints);
@@ -157,7 +157,7 @@ public class World
         if (LobbyController.Offline) return;
 
         bool cg = Tools.Scene == "Endless";
-        bool FarEnough(Transform t) => (t.position - NewMovement.Instance.transform.position).sqrMagnitude > 10000f || cg;
+        bool FarEnough(Transform t) => !Tools.Within(t, NewMovement.Instance.transform, 100f) || cg;
 
         // clear gore zones located further than 100 units from the player
         Tools.ResFind<GoreZone>(zone => Tools.IsReal(zone) && zone.isActiveAndEnabled && FarEnough(zone.transform), zone => zone.ResetGibs());
