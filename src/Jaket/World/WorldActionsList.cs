@@ -48,13 +48,13 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         StaticAction.Destroy(l, "SwordsMachine", new(-45f, -11f, 268f));
         StaticAction.Destroy(l, "SwordsMachine", new(-55f, -11f, 293f));
 
-        NetAction.Sync(l, "Activator", new(-81f, 9f, 339.5f), obj => obj.transform.parent.parent.gameObject.SetActive(true)); // boss
+        NetAction.Sync(l, "Activator", new(-81f, 9f, 339.5f), obj => obj.parent.parent.gameObject.SetActive(true)); // boss
 
         #endregion
         #region 0-3
         l = "Level 0-3";
 
-        NetAction.Sync(l, "Cube (1)", new(-89.5f, 9.363636f, 413f)); // boss
+        NetAction.Sync(l, "Cube (1)", new(-89.5f, 9.3f, 413f)); // boss
 
         #endregion
         #region 0-5
@@ -107,8 +107,8 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         NetAction.Sync(l, "BossActivator", new(142.5f, 13f, 702.5f));
         NetAction.Sync(l, "DeadMinos", new(279.5f, -599f, 575f), obj =>
         {
-            obj.transform.parent.Find("GlobalLights (2)").Find("MetroWall (10)").gameObject.SetActive(false);
-            obj.transform.parent.Find("BossMusic").gameObject.SetActive(false);
+            obj.parent.Find("GlobalLights (2)/MetroWall (10)").gameObject.SetActive(false);
+            obj.parent.Find("BossMusic").gameObject.SetActive(false);
         });
 
         #endregion
@@ -158,7 +158,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
 
         NetAction.Sync(l, "DoorActivator", new(2.5f, -40f, 628f));
         NetAction.Sync(l, "Trigger (Intro)", new(-104f, -20f, 676f)); // boss
-        NetAction.Sync(l, "Secret Tablet", new(-116.425f, -39.593f, 675.9866f), obj => MusicManager.Instance.StopMusic());
+        NetAction.Sync(l, "Secret Tablet", new(-116.4f, -39.5f, 675.9f), obj => MusicManager.Instance.StopMusic());
 
         #endregion
         #region 4-4
@@ -177,11 +177,13 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         NetAction.Sync(l, "BossOutro", new(117.5f, 663.5f, 323f));
         NetAction.Sync(l, "ExitBuilding Raise", new(1027f, 261f, 202.5f), obj =>
         {
-            var exit = obj.transform.parent.Find("ExitBuilding");
+            var next = Tools.ObjFind("TutorialMessage").transform.Find("DeactivateMessage").gameObject;
+            if (next.activeSelf) return;
+            next.SetActive(true);
+
+            var exit = obj.parent.Find("ExitBuilding");
             exit.GetComponent<Door>().Close();
             exit.Find("GrapplePoint (2)").gameObject.SetActive(true);
-
-            Tools.ObjFind("TutorialMessage").transform.Find("DeactivateMessage").gameObject.SetActive(true);
         });
 
         #endregion
@@ -204,11 +206,10 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         StaticAction.Destroy(l, "Arena 1", new(87.5f, -53f, 1240f));
         StaticAction.Destroy(l, "Arena 2", new(87.5f, -53f, 1240f));
 
-        NetAction.Sync(l, "Trigger 1", new(103.4765f, 2.614944f, 914.7463f));
-        NetAction.Sync(l, "Trigger 2", new(103.8604f, -7.848165f, 930.1208f));
-        NetAction.Sync(l, "Trigger 3", new(103.4765f, 2.614944f, 914.7463f));
+        NetAction.Sync(l, "Trigger 1", new(103.4f, 2.61f, 914.7f));
+        NetAction.Sync(l, "Trigger 2", new(103.8f, -7.8f, 930.1f));
 
-        NetAction.Sync(l, "FightActivator", new(-77.783f, 52.552f, 1238.98f)); // boss
+        NetAction.Sync(l, "FightActivator", new(-77.7f, 52.5f, 1238.9f)); // boss
 
         #endregion
         #region 6-2

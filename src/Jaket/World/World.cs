@@ -237,10 +237,10 @@ public class World
     /// <summary> Synchronizes activations of the given game object. </summary>
     public static void SyncAction(GameObject obj) => EachNet(na =>
     {
-        if (na.Position != obj.transform.position || na.Name != obj.name) return;
+        if (!Tools.Within(obj, na.Position) || obj.name != na.Name) return;
 
         var index = (byte)Actions.IndexOf(na);
-        if (index != 0xFF && (LobbyController.IsOwner || !Activated.Contains(index)))
+        if (LobbyController.IsOwner || !Activated.Contains(index))
             Networking.Send(PacketType.ActivateObject, w =>
             {
                 Activated.Add(index);

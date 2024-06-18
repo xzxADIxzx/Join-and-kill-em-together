@@ -4,7 +4,6 @@ using System;
 using UnityEngine;
 
 using Jaket.Assets;
-using Jaket.Net;
 
 /// <summary> Abstract action performed in the world. </summary>
 public class WorldAction
@@ -41,6 +40,7 @@ public class StaticAction : WorldAction
             Tools.Instantiate(obj, pos + new Vector3(Mathf.Cos(rad), 0f, Mathf.Sin(rad)) * radius, Quaternion.Euler(0f, angle / 7f, 0f));
         }
     });
+
     /// <summary> Creates a static action that finds an object. </summary>
     public static StaticAction Find(string level, string name, Vector3 position, Action<GameObject> action) => new(level, () =>
     {
@@ -65,15 +65,15 @@ public class NetAction : WorldAction
     public NetAction(string level, string name, Vector3 position, Action action) : base(level, action) { Name = name; Position = position; }
 
     /// <summary> Creates a net action that synchronizes an object activator component. </summary>
-    public static NetAction Sync(string level, string name, Vector3 position, Action<GameObject> action = null) => new(level, name, position, () =>
-        Tools.ResFind<GameObject>(
-            obj => Tools.IsReal(obj) && obj.transform.position == position && obj.name == name,
+    public static NetAction Sync(string level, string name, Vector3 position, Action<Transform> action = null) => new(level, name, position, () =>
+        Tools.ResFind<ObjectActivator>(
+            obj => Tools.IsReal(obj) && Tools.Within(obj.transform, position) && obj.name == name,
             obj =>
             {
-                obj.SetActive(true);
-                action?.Invoke(obj);
+                obj.gameObject.SetActive(true);
+                obj.ActivateDelayed(obj.delay);
 
-                foreach (var act in obj.GetComponents<ObjectActivator>()) act.ActivateDelayed(act.delay);
+                action?.Invoke(obj.transform);
             }
         ));
 
