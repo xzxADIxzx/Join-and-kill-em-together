@@ -4,6 +4,7 @@ using System;
 using UnityEngine;
 
 using Jaket.IO;
+using Jaket.Content;
 
 /// <summary> Entity whose ownership can be transferred to another client at any time. </summary>
 public abstract class OwnableEntity : Entity
@@ -28,7 +29,7 @@ public abstract class OwnableEntity : Entity
     {
         if (IsOwner) return;
 
-        Log.Debug($"Ownership of {Id} transferred from {Owner} to the local player");
+        if (Enemies.Debug) Log.Debug($"Ownership of {Id} transferred from {Owner} to the local player");
         Owner = Tools.AccId;
         OnTransferred();
     }
@@ -42,7 +43,7 @@ public abstract class OwnableEntity : Entity
         uint id = r.Id(); // this is necessary so that clients don't fight for ownership of the entity
         if (Owner != id && Time.time > LastTransferTime + 1f)
         {
-            Log.Debug($"Ownership of {Id} transferred from {Owner} to {id}");
+            if (Enemies.Debug) Log.Debug($"Ownership of {Id} transferred from {Owner} to {id}");
             Owner = id;
             OnTransferred();
         }
