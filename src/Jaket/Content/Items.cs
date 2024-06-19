@@ -82,9 +82,6 @@ public class Items
             if (!Tools.IsReal(zone)) continue;
             zone.transform.SetParent(null);
             zone.CheckItem();
-
-            // at level 5-3 there are altars that activate skulls in the mirror part of the level, but the client has these skulls destroyed
-            if (zone.activateOnSuccess.Length > 0 && zone.activateOnSuccess[0] == null) zone.activateOnSuccess = new GameObject[] { zone.activateOnSuccess[1] };
         }
     }
 }

@@ -212,6 +212,20 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         NetAction.Sync(l, "FightActivator", new(-77.7f, 52.5f, 1238.9f)); // boss
 
         #endregion
+        #region 5-3
+        l = "Level 5-3";
+
+        // there are altars that activate skulls in the mirror part of the level, but the client has these skulls destroyed
+        StaticAction.Find(l, "Cube", new(-64.5f, 17.4f, 390.5f), obj =>
+        {
+            if (obj.TryGetComponent(out ItemPlaceZone zone)) zone.activateOnSuccess = new[] { zone.activateOnSuccess[1] };
+        });
+        StaticAction.Find(l, "Cube", new(-64.5f, 17.4f, 398.5f), obj =>
+        {
+            if (obj.TryGetComponent(out ItemPlaceZone zone)) zone.activateOnSuccess = new[] { zone.activateOnSuccess[1] };
+        });
+
+        #endregion
         #region 6-2
         l = "Level 6-2";
 
