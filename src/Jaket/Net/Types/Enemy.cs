@@ -29,6 +29,9 @@ public class Enemy : OwnableEntity
         if (EnemyId.statue) EnemyId.statue.health = bossHealth;
         if (EnemyId.machine) EnemyId.machine.health = bossHealth;
 
+        // Minos' hand has no boss bar
+        if (layers == 0) return;
+
         // create a boss bar or update the already existing one
         if (!TryGetComponent(out BossHealthBar bar)) bar = gameObject.AddComponent<BossHealthBar>();
 
