@@ -232,6 +232,17 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         NetAction.Sync(l, "Activator", new(641.2f, 690f, 521.7f), obj => Teleporter.Teleport(new(641.25f, 691.5f, 522f))); // boss
 
         #endregion
+        #region 6-1
+        l = "Level 6-1";
+
+        StaticAction.Find(l, "Trigger", new(0f, -10f, 590.5f), obj => obj.GetComponent<ObjectActivator>().events.toDisActivateObjects[0] = null);
+        StaticAction.Destroy(l, "Cube (5)", new(-40f, -10f, 548.5f));
+
+        StaticAction.Find(l, "Door", new(168.5f, -36.625f, 457f), obj => obj.GetComponent<Door>().closedPos = new(0f, 13.3751f, -15f));
+        StaticAction.Destroy(l, "Cage", new(168.5f, -130f, 140f));
+        StaticAction.Destroy(l, "Cube", new(102f, -165f, -503f));
+
+        #endregion
         #region 6-2
         l = "Level 6-2";
 
