@@ -39,15 +39,17 @@ public class World
     /// <summary> Creates a singleton of world. </summary>
     public static void Load()
     {
-        Events.OnLoaded += () =>
+        Events.OnLoadingStarted += () =>
         {
-            if (LobbyController.Offline) return;
-            if (LobbyController.IsOwner)
+            if (LobbyController.Online && LobbyController.IsOwner)
             {
                 Activated.Clear();
                 Networking.Send(PacketType.Level, WriteData);
             }
-            Restore();
+        };
+        Events.OnLoaded += () =>
+        {
+            if (LobbyController.Online) Restore();
         };
         Events.OnLobbyEntered += Restore;
         Events.EveryDozen += Optimize;
@@ -58,7 +60,7 @@ public class World
     /// <summary> Writes data about the world such as level, difficulty and triggers fired. </summary>
     public static void WriteData(Writer w)
     {
-        w.String(Tools.Scene);
+        w.String(Tools.Pending != null ? Tools.Pending : Tools.Scene);
 
         // the version is needed for a warning about incompatibility
         w.String(Version.CURRENT);
@@ -72,7 +74,6 @@ public class World
     public static void ReadData(Reader r)
     {
         Tools.Load(r.String());
-        Networking.Loading = true;
 
         // if the mod version doesn't match the host's one, then reading the packet is complete, as this may lead to bigger bugs
         if (r.String() != Version.CURRENT)

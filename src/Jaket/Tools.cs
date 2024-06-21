@@ -24,7 +24,7 @@ public class Tools
     /// <summary> Returns the name of the player with the given AccountId. </summary>
     public static string Name(uint id) => new Friend(id | 76561197960265728u).Name;
 
-    /// <summary> Just a shortcut needed in order to track statistics and errors. </summary>
+    /// <summary> Shortcut needed in order to track statistics and errors. </summary>
     public static void Send(Connection? con, System.IntPtr data, int size)
     {
         if (con == null)
@@ -42,6 +42,8 @@ public class Tools
 
     /// <summary> Name of the current scene. </summary>
     public static string Scene => SceneHelper.CurrentScene;
+    /// <summary> Name of the loading scene. </summary>
+    public static string Pending => SceneHelper.PendingScene;
 
     /// <summary> Loads the given scene. </summary>
     public static void Load(string scene) => SceneHelper.LoadScene(scene);
@@ -74,7 +76,6 @@ public class Tools
     #endregion
     #region resources
 
-    /// <summary> Just a shortcut. </summary>
     public static T[] ResFind<T>() where T : Object => Resources.FindObjectsOfTypeAll<T>();
 
     /// <summary> Iterates all objects of the type that predicate for the criterion. </summary>
@@ -83,7 +84,6 @@ public class Tools
         foreach (var item in ResFind<T>()) if (pred(item)) cons(item);
     }
 
-    /// <summary> Just a shortcut. </summary>
     public static T ObjFind<T>() where T : Object => Object.FindObjectOfType<T>();
     public static GameObject ObjFind(string name) => GameObject.Find(name);
 

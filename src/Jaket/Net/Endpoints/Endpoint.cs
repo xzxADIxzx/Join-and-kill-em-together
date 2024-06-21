@@ -42,8 +42,8 @@ public abstract class Endpoint
     /// <summary> Handles the packet and calls the corresponding listener. </summary>
     public void Handle(Connection con, uint sender, Reader r)
     {
-        var type = r.Enum<PacketType>(); // if the client hasn't loaded the level yet, then it only needs a packet with the level name
-        if (Networking.Loading && type != PacketType.Level) return;
+        var type = r.Enum<PacketType>();
+        if (Networking.Loading && type != PacketType.Level && type != PacketType.ImageChunk) return;
 
         // find the required listener and transfer control to it, all it has to do is read the payload
         if (listeners.TryGetValue(type, out var listener)) listener(con, sender, r);

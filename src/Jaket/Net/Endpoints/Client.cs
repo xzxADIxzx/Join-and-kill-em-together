@@ -67,6 +67,7 @@ public class Client : Endpoint, IConnectionManager
             Manager.Receive(256); Manager.Receive(256); Manager.Receive(256); Manager.Receive(256); // WHY
         }, () =>
         {
+            if (Networking.Loading) return;
             Networking.EachEntity(entity => entity.IsOwner, entity => Networking.Send(PacketType.Snapshot, w =>
             {
                 w.Id(entity.Id);

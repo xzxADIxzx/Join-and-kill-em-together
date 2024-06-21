@@ -115,6 +115,7 @@ public class Server : Endpoint, ISocketManager
     {
         Stats.MeasureTime(() => Manager.Receive(1024), () =>
         {
+            if (Networking.Loading) return;
             Networking.EachEntity(entity => Networking.Send(PacketType.Snapshot, w =>
             {
                 w.Id(entity.Id);

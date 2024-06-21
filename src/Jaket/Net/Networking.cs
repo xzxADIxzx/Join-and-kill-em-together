@@ -52,9 +52,14 @@ public class Networking
         Events.OnLoaded += () => WasMultiplayerUsed = LobbyController.Online;
         Events.OnLobbyAction += () => WasMultiplayerUsed |= LobbyController.Online;
 
+        Events.OnLoadingStarted += () =>
+        {
+            if (LobbyController.Online) SceneHelper.SetLoadingSubtext(UnityEngine.Random.value < .1f ? "I love you" : "/// MULTIPLAYER VIA JAKET ///");
+            Loading = true;
+        };
         Events.OnLoaded += () =>
         {
-            Clear(); // for safety
+            Clear();
             Loading = false;
         };
 
