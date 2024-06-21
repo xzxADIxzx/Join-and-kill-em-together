@@ -238,7 +238,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         StaticAction.Find(l, "Trigger", new(0f, -10f, 590.5f), obj => obj.GetComponent<ObjectActivator>().events.toDisActivateObjects[0] = null);
         StaticAction.Destroy(l, "Cube (5)", new(-40f, -10f, 548.5f));
 
-        StaticAction.Find(l, "Door", new(168.5f, -36.625f, 457f), obj => obj.GetComponent<Door>().closedPos = new(0f, 13.3751f, -15f));
+        StaticAction.Find(l, "Door", new(168.5f, -36.62495f, 457f), obj => obj.GetComponent<Door>().closedPos = new(0f, 13.3751f, -15f));
         StaticAction.Destroy(l, "Cage", new(168.5f, -130f, 140f));
         StaticAction.Destroy(l, "Cube", new(102f, -165f, -503f));
 
