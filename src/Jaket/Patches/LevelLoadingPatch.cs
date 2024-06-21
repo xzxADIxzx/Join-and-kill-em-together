@@ -11,6 +11,14 @@ using static Jaket.UI.Pal;
 [HarmonyPatch]
 public class LevelLoadingPatch
 {
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(SceneHelper), nameof(SceneHelper.LoadScene))]
+    static void Load() => Events.OnLoadingStarted.Fire();
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(SceneHelper), nameof(SceneHelper.RestartScene))]
+    static void Rest() => Events.OnLoadingStarted.Fire();
+
     [HarmonyPrefix]
     [HarmonyPatch(typeof(FinalRank), nameof(FinalRank.LevelChange))]
     static bool AfterLevel()
@@ -18,7 +26,7 @@ public class LevelLoadingPatch
         // if the player is the owner of the lobby, then everything is OK
         if (LobbyController.Offline || LobbyController.IsOwner) return true;
 
-        // otherwise, notify him that he need to wait for the host and prevent the next level from loading
+        // otherwise, notify them that they need to wait for the host and prevent the loading
         HudMessageReceiver.Instance.SendHudMessage("Wait for the lobby owner to load the level...");
         return false;
     }

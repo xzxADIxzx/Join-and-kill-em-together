@@ -11,13 +11,15 @@ using Jaket.Net;
 /// <summary> List of events used by the mod. Some of them are combined into one for simplicity. </summary>
 public class Events : MonoSingleton<Events>
 {
+    /// <summary> Event triggered when a loading of any scene has started. </summary>
+    public static SafeEvent OnLoadingStarted = new();
     /// <summary> Events triggered after loading any scene and the main menu. </summary>
     public static SafeEvent OnLoaded = new(), OnMainMenuLoaded = new();
     /// <summary> Event triggered when an action is taken on the lobby: creation, closing or connection. </summary>
     public static SafeEvent OnLobbyAction = new();
     /// <summary> Event triggered when the local player enters a lobby. </summary>
     public static SafeEvent OnLobbyEntered = new();
-    /// <summary> Event triggered when team composition changes. </summary>
+    /// <summary> Event triggered when a team composition changes. </summary>
     public static SafeEvent OnTeamChanged = new();
     /// <summary> Event triggered when a weapon or hand changes: weapon swap, hand color change. </summary>
     public static SafeEvent OnWeaponChanged = new();
@@ -35,10 +37,7 @@ public class Events : MonoSingleton<Events>
 
         SceneManager.sceneLoaded += (scene, mode) =>
         {
-            // any scene has loaded
             OnLoaded.Fire();
-
-            // the main menu has loaded, this is much less often used, but it is used
             if (Tools.Scene == "Main Menu") OnMainMenuLoaded.Fire();
         };
 
@@ -49,7 +48,6 @@ public class Events : MonoSingleton<Events>
         // interaction with the lobby affects many aspects of the game
         OnLobbyAction += OnTeamChanged.Fire;
         OnLobbyAction += OnWeaponChanged.Fire;
-
         OnLobbyAction += () =>
         {
             // update the discord & steam activity so everyone can know I've been working hard
