@@ -47,6 +47,7 @@ public class Turret : Enemy
     public override void Write(Writer w)
     {
         base.Write(w);
+
         w.Bool(turret.aiming);
         if (!turret.aiming)
         {
@@ -58,6 +59,8 @@ public class Turret : Enemy
     public override void Read(Reader r)
     {
         base.Read(r);
+        if (IsOwner) return;
+
         aiming = r.Bool();
         if (!aiming)
         {

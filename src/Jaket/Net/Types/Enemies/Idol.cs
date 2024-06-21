@@ -41,6 +41,7 @@ public class Idol : Enemy
     public override void Write(Writer w)
     {
         base.Write(w);
+
         if (UpdatesCount % 16 == 0)
             w.Vector(transform.position);
         else
@@ -57,6 +58,8 @@ public class Idol : Enemy
     public override void Read(Reader r)
     {
         base.Read(r);
+        if (IsOwner) return;
+
         if (r.Length > 14)
         {
             x.Read(r); y.Read(r); z.Read(r);

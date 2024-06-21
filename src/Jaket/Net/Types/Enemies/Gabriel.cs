@@ -81,8 +81,8 @@ public class Gabriel : Enemy
     public override void Write(Writer w)
     {
         base.Write(w);
-        w.Vector(transform.position);
 
+        w.Vector(transform.position);
         if (gabriel1) w.Byte(Animator.GetCurrentAnimatorClipInfo(0)[0].clip.name switch
         {
             "AxeThrow" => 1,
@@ -109,6 +109,8 @@ public class Gabriel : Enemy
     public override void Read(Reader r)
     {
         base.Read(r);
+        if (IsOwner) return;
+
         x.Read(r); y.Read(r); z.Read(r);
         attack = r.Byte();
     }

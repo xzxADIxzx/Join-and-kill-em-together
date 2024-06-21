@@ -52,6 +52,7 @@ public class Body : Enemy
     public override void Write(Writer w)
     {
         base.Write(w);
+
         w.Bool(EnemyId.spider.currentCE != null);
         if (EnemyId.spider.currentCE == null) w.Vector(transform.position);
     }
@@ -59,6 +60,8 @@ public class Body : Enemy
     public override void Read(Reader r)
     {
         base.Read(r);
+        if (IsOwner) return;
+
         charging = r.Bool();
         if (!charging)
         {
