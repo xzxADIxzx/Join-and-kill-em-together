@@ -20,7 +20,7 @@ public class Debugging : CanvasSingleton<Debugging>
     /// <summary> Data array in the last 157 seconds. </summary>
     private Data read = new(), write = new(), readTime = new(), writeTime = new();
     /// <summary> Text fields containing diverse info about the network state. </summary>
-    private Text readText, writeText, readTimeText, writeTimeText, entities, owner, impact;
+    private Text readText, writeText, readTimeText, writeTimeText, entities, owner, loading, impact;
 
     private void Start()
     {
@@ -57,7 +57,8 @@ public class Debugging : CanvasSingleton<Debugging>
         {
             entities = DoubleText(table, "ENTITIES:", 20f);
             owner = DoubleText(table, "IS OWNER:", 52f);
-            impact = DoubleText(table, "IMPACT ON FPS:", 84f, red);
+            loading = DoubleText(table, "LOADING:", 84f);
+            impact = DoubleText(table, "IMPACT ON FPS:", 116f, red);
         });
     }
 
@@ -95,6 +96,8 @@ public class Debugging : CanvasSingleton<Debugging>
         entities.text = $"{Networking.Entities.Count(p => p.Value && !p.Value.Dead)}<color=#BBBBBB>/{Networking.Entities.Count}</color>";
         owner.text = LobbyController.IsOwner.ToString().ToUpper();
         owner.color = LobbyController.IsOwner ? green : red;
+        loading.text = Networking.Loading.ToString().ToUpper();
+        loading.color = Networking.Loading ? green : red;
         impact.text = $"{(Stats.ReadTime + Stats.WriteTime) / Stats.DeltaTimeOnRecord * 100f:0.00}%";
 
         #endregion
