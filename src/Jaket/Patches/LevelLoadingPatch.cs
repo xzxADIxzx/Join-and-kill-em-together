@@ -51,17 +51,17 @@ public class RankPatch
     [HarmonyPatch(typeof(FinalRank), nameof(FinalRank.SetInfo))]
     static void RankExtra(FinalRank __instance)
     {
-        if (Networking.WasMultiplayerUsed)
-        {
-            __instance.totalRank.transform.parent.GetComponent<Image>().color = pink;
-            __instance.extraInfo.text += "- <color=#FF66CC>MULTIPLAYER USED</color>\n";
-        }
+        if (Networking.WasMultiplayerUsed) __instance.extraInfo.text += "- <color=#FF66CC>MULTIPLAYER USED</color>\n";
     }
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(FinalRank), nameof(FinalRank.SetRank))]
     static void RankColor(FinalRank __instance)
     {
-        if (Networking.WasMultiplayerUsed) __instance.totalRank.text = Bundle.CutColors(__instance.totalRank.text);
+        if (Networking.WasMultiplayerUsed)
+        {
+            __instance.totalRank.transform.parent.GetComponent<Image>().color = pink;
+            __instance.totalRank.text = Bundle.CutColors(__instance.totalRank.text);
+        }
     }
 }
