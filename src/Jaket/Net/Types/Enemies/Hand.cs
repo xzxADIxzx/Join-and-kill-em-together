@@ -15,7 +15,8 @@ public class Hand : Enemy
     private void Awake()
     {
         Init(_ => EntityType.Hand, true);
-        InitTransfer();
+
+        Owner = LobbyController.LastOwner.AccountId;
         World.Hand = this;
     }
 
@@ -37,13 +38,13 @@ public class Hand : Enemy
 
     public override void Write(Writer w)
     {
-        base.Write(w);
+        UpdatesCount++;
         w.Byte(HandPos);
     }
 
     public override void Read(Reader r)
     {
-        base.Read(r);
+        LastUpdate = Time.time;
         HandPos = r.Byte();
     }
 
