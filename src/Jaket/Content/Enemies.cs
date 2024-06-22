@@ -157,6 +157,9 @@ public class Enemies
         // update target only if the current target is the local player
         if (enemyId.target == null || !enemyId.target.isPlayer) return;
 
+        // with a large number of enemies, this code begins to greatly affect the FPS
+        if (Time.frameCount % (1 + Networking.Entities.Count / 16) != 0) return;
+
         var enemy = enemyId.transform.position;
         var target = NewMovement.Instance.transform;
         var dst = (enemy - target.position).sqrMagnitude;
