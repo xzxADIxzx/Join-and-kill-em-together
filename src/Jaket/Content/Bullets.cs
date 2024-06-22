@@ -151,7 +151,7 @@ public class Bullets
     {
         if (bullet.TryGetComponent<Entity>(out var entity) && entity.IsOwner)
         {
-            Networking.Entities[entity.Id] = DeadBullet.Instance;
+            DeadBullet.Replace(entity);
             Networking.Send(PacketType.KillEntity, w =>
             {
                 w.Id(entity.Id);

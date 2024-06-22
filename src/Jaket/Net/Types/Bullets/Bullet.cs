@@ -100,7 +100,7 @@ public class Bullet : OwnableEntity
 
     public override void Kill(Reader r)
     {
-        Networking.Entities[Id] = DeadBullet.Instance;
+        DeadBullet.Replace(this);
         if (grenade)
         {
             Exploded(false);

@@ -148,9 +148,13 @@ public class Networking
         // there is no need to optimize the network if no one uses it
         if (LobbyController.Offline) return;
 
-        List<Entity> toRemove = new();
-        Entities.Values.DoIf(e => e == null || (e.Dead && e.LastUpdate < Time.time - 1f && !e.gameObject.activeSelf), toRemove.Add);
-        toRemove.ForEach(e => Entities.Remove(e.Id));
+        List<uint> toRemove = new();
+
+        Entities.Values.DoIf(e => e == null || (e.Dead && e.LastUpdate < Time.time - 1f && !e.gameObject.activeSelf), e => toRemove.Add(e.Id));
+        if (DeadBullet.Instance.LastUpdate < Time.time - 1f)
+            Entities.DoIf(pair => pair.Value == DeadBullet.Instance, pair => toRemove.Add(pair.Key));
+
+        toRemove.ForEach(id => Entities.Remove(id));
     }
 
     #region iteration
