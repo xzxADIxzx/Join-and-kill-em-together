@@ -62,10 +62,7 @@ public class Client : Endpoint, IConnectionManager
 
     public override void Update()
     {
-        Stats.MeasureTime(ref Stats.ReadTime, () =>
-        {
-            Manager.Receive(256); Manager.Receive(256); Manager.Receive(256); Manager.Receive(256); // WHY
-        });
+        Stats.MeasureTime(ref Stats.ReadTime, () => Manager.Receive(256));
         Stats.MeasureTime(ref Stats.WriteTime, () =>
         {
             if (Networking.Loading) return;
