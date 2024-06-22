@@ -44,13 +44,13 @@ public class Spray : MonoBehaviour
 
     private void Update()
     {
-        if (Lifetime > 18f)
+        if (Lifetime > 58f)
         {
-            var t = InOutCubic((Lifetime - 18f) / 2f); // cubic interpolation looks better 
+            var t = InOutCubic((Lifetime - 58f) / 2f); // cubic interpolation looks better 
             image.transform.localScale = Vector3.one * (1f - t);
         }
 
-        if ((Lifetime += Time.deltaTime) > 20f)
+        if ((Lifetime += Time.deltaTime) > 60f)
         {
             SpawnDust(1, .3f);
             Destroy(gameObject);

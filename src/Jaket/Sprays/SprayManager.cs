@@ -44,7 +44,7 @@ public class SprayManager
             else SprayDistributor.UploadLocal();
 
             foreach (var spray in Sprays.Values)
-                if (spray != null) spray.Lifetime = 20f;
+                if (spray != null) spray.Lifetime = 60f;
         };
         Events.OnLobbyEntered += () =>
         {
@@ -86,7 +86,7 @@ public class SprayManager
     {
         if (Sprays.TryGetValue(owner, out var spray))
         {
-            spray.Lifetime = 18f;
+            spray.Lifetime = 58f;
             Sprays.Remove(owner);
         }
         if (!Cache.ContainsKey(owner))
