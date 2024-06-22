@@ -11,7 +11,7 @@ using Jaket.Net;
 using Jaket.Net.Types;
 using Jaket.UI.Dialogs;
 
-/// <summary> Class that works with the assets bundle for the player doll. </summary>
+/// <summary> Class that works with the assets bundle of the mod. </summary>
 public class DollAssets
 {
     /// <summary> Bundle containing assets for player doll. </summary>
@@ -39,6 +39,9 @@ public class DollAssets
     /// <summary> Hand textures used by local player. </summary>
     public static Texture[] HandTextures;
 
+    /// <summary> Coin texture used by team coins. </summary>
+    public static Texture CoinTexture;
+
     /// <summary> Icons for the emoji selection wheel. </summary>
     public static Sprite[] EmojiIcons, EmojiGlows;
 
@@ -48,7 +51,7 @@ public class DollAssets
         Bundle = LoadBundle();
 
         // cache the shader and the wing textures for future use
-        Shader = AssetHelper.LoadPrefab("cb3828ada2cbefe479fed3b51739edf6").GetComponent<V2>().smr.material.shader;
+        Shader = AssetHelper.LoadPrefab("cb3828ada2cbefe479fed3b51739edf6").GetComponent<global::V2>().smr.material.shader;
         WingTextures = new Texture[5];
         HandTextures = new Texture[4];
 
@@ -63,6 +66,8 @@ public class DollAssets
         LoadAsync<Texture>("V3-blast", tex => HandTextures[3] = tex);
         HandTextures[0] = FistControl.Instance.blueArm.ToAsset().GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture;
         HandTextures[2] = FistControl.Instance.redArm.ToAsset().GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture;
+
+        LoadAsync<Texture>("coin", tex => CoinTexture = tex);
 
         // load icons for emoji wheel
         EmojiIcons = new Sprite[12];
@@ -113,7 +118,7 @@ public class DollAssets
     {
         string assembly = Plugin.Instance.Location;
         string directory = Path.GetDirectoryName(assembly);
-        string bundle = Path.Combine(directory, "jaket-player-doll.bundle");
+        string bundle = Path.Combine(directory, "jaket-assets.bundle");
 
         return AssetBundle.LoadFromFile(bundle);
     }
@@ -155,7 +160,7 @@ public class DollAssets
     public static RemotePlayer CreateDoll()
     {
         // create a doll from the prefab obtained from the bundle
-        var obj = Object.Instantiate(Doll, Vector3.zero, Quaternion.identity);
+        var obj = Entities.Mark(Doll);
 
         // add components
         var enemyId = obj.AddComponent<EnemyIdentifier>();
@@ -163,8 +168,10 @@ public class DollAssets
 
         enemyId.enemyClass = EnemyClass.Machine;
         enemyId.enemyType = EnemyType.V2;
+        enemyId.dontCountAsKills = true;
         enemyId.weaknesses = new string[0];
         enemyId.burners = new();
+        enemyId.activateOnDeath = new GameObject[0];
         machine.destroyOnDeath = new GameObject[0];
         machine.hurtSounds = new AudioClip[0];
 
@@ -172,7 +179,7 @@ public class DollAssets
         foreach (var rigidbody in obj.transform.GetChild(0).GetComponentsInChildren<Rigidbody>())
         {
             rigidbody.gameObject.AddComponent<EnemyIdentifierIdentifier>();
-            rigidbody.gameObject.tag = MapTag(rigidbody.gameObject.tag);
+            rigidbody.tag = MapTag(rigidbody.gameObject.tag);
         }
 
         // add a script to further control the doll

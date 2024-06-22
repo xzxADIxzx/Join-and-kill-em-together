@@ -26,7 +26,7 @@ public class Brain : Entity
         if (LobbyController.IsOwner)
             LobbyController.ScaleHealth(ref EnemyId.machine.health);
 
-        World.Instance.Brain = this;
+        World.Brain = this;
     }
 
     private void Update()
@@ -57,7 +57,7 @@ public class Brain : Entity
         idol2 = r.Bool();
     }
 
-    public override void Kill() => EnemyId.InstaKill();
+    public override void Kill(Reader r) => EnemyId.InstaKill();
 
     #endregion
 }

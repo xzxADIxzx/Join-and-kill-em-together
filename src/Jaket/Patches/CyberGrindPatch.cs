@@ -23,7 +23,7 @@ public class CyberGrindPatch
         else
             pattern = CyberGrind.CurrentPattern;
 
-        // respawn the host if he is dead
+        // respawn the host
         if (LobbyController.IsOwner && NewMovement.Instance.dead) Movement.Instance.CyberRespawn();
     }
 

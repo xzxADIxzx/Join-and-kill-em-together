@@ -26,11 +26,11 @@
     <Reference Include="lib\Facepunch.Steamworks.Win64.dll" />
     <Reference Include="lib\plog.dll" />
 
-    <Reference Include="lib\Unity.TextMeshPro.dll" />
     <Reference Include="lib\Unity.Addressables.dll" />
+    <Reference Include="lib\Unity.ResourceManager.dll" />
+    <Reference Include="lib\Unity.TextMeshPro.dll" />
     <Reference Include="lib\UnityEngine.UI.dll" />
     <Reference Include="lib\UnityUIExtensions.dll" />
-    <Reference Include="lib\UnityEditor.dll" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">

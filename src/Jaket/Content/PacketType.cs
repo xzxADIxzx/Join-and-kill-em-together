@@ -6,17 +6,15 @@ public enum PacketType
     /// <summary> Data of an entity: player, enemy, item and etc. </summary>
     Snapshot,
     /// <summary> Initializes a loading of the level requested by the host. </summary>
-    LoadLevel,
-    /// <summary> Hey Client, could you leave the lobby please? The host asks you to leave the lobby because you were kicked... Cheers~ :heart: </summary>
-    Kick,
+    Level,
+    /// <summary> Hey Client, could you leave the lobby please? The host asks you to leave the lobby because you were banned... Cheers~ :heart: </summary>
+    Ban,
 
-    /// <summary> Client requests enemy spawn. </summary>
-    SpawnEntity,
-    /// <summary> Server or client requests bullet spawn. </summary>
+    /// <summary> Data of the bullet spawned by a player. </summary>
     SpawnBullet,
-    /// <summary> Data on the damage dealt to an entity. </summary>
+    /// <summary> Data of the damage dealt to an entity. </summary>
     DamageEntity,
-    /// <summary> Request from a host to kill an entity or from a client to destroy a bullet. </summary>
+    /// <summary> Request from a player to kill an entity or to destroy a bullet. </summary>
     KillEntity,
 
     /// <summary> Player changed their style: the color of weapons or clothes. </summary>

@@ -22,9 +22,9 @@ public class SprayManager
     public static bool Uploaded;
 
     /// <summary> Sprays spawned by players. </summary>
-    public static Dictionary<ulong, Spray> Sprays = new();
+    public static Dictionary<uint, Spray> Sprays = new();
     /// <summary> Cached sprays of other players. </summary>
-    public static Dictionary<ulong, SprayFile> Cache = new();
+    public static Dictionary<uint, SprayFile> Cache = new();
 
     /// <summary> Sound that is played when creating a spray. </summary>
     public static AudioClip puh;
@@ -44,15 +44,14 @@ public class SprayManager
             else SprayDistributor.UploadLocal();
 
             foreach (var spray in Sprays.Values)
-                if (spray != null) spray.Lifetime = 20f;
+                if (spray != null) spray.Lifetime = 60f;
         };
         Events.OnLobbyEntered += () =>
         {
             Uploaded = LobbyController.IsOwner;
             Cache.Clear();
-            Cache.Add(Networking.LocalPlayer.Id, CurrentSpray);
+            Cache.Add(Tools.AccId, CurrentSpray);
         };
-        // process requests every second
         Events.EverySecond += SprayDistributor.ProcessRequests;
     }
 
@@ -76,23 +75,21 @@ public class SprayManager
         CurrentSpray = spray;
         Uploaded = false;
 
-        Cache.Remove(Networking.LocalPlayer.Id);
-        Cache.Add(Networking.LocalPlayer.Id, CurrentSpray);
-
-        if (LobbyController.Online) Bundle.Hud("sprays.info");
+        Cache.Remove(Tools.AccId);
+        Cache.Add(Tools.AccId, CurrentSpray);
     }
 
     /// <summary> Spawns someone's spray in the given position. </summary>
-    public static Spray Spawn(ulong owner, Vector3 position, Vector3 direction)
+    public static Spray Spawn(uint owner, Vector3 position, Vector3 direction)
     {
         if (Sprays.TryGetValue(owner, out var spray))
         {
-            spray.Lifetime = 18f;
+            spray.Lifetime = 58f;
             Sprays.Remove(owner);
         }
         if (!Cache.ContainsKey(owner))
         {
-            if (owner == Networking.LocalPlayer.Id) // seems like the player is in offline game
+            if (owner == Tools.AccId) // seems like the player is in offline game
                 Cache.Add(owner, CurrentSpray);
             else
                 SprayDistributor.Request(owner);
@@ -112,6 +109,6 @@ public class SprayManager
             Bundle.Hud("sprays.empty"); // You haven't chosen a spray. Please, choose on in settings.
             return null;
         }
-        return Spawn(Networking.LocalPlayer.Id, position, direction);
+        return Spawn(Tools.AccId, position, direction);
     }
 }

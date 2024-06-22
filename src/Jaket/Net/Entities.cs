@@ -1,6 +1,7 @@
 namespace Jaket.Net;
 
 using System.Collections.Generic;
+using UnityEngine;
 
 using Jaket.Assets;
 using Jaket.Content;
@@ -12,7 +13,7 @@ public class Entities
     /// <summary> Dictionary of entity types to their providers. </summary>
     public static Dictionary<EntityType, Prov> Providers = new();
     /// <summary> Last used id, next id's are guaranteed to be greater than it. </summary>
-    public static ulong LastId;
+    public static uint LastId;
 
     /// <summary> Loads providers into the dictionary. </summary>
     public static void Load()
@@ -25,17 +26,17 @@ public class Entities
             Providers.Add(sucks, () => Enemies.Instantiate(sucks));
         }
 
-        Providers.Add(EntityType.Hand, () => World.Instance.Hand);
-        Providers.Add(EntityType.Leviathan, () => World.Instance.Leviathan);
-        Providers.Add(EntityType.Minotaur_Chase, () => World.Instance.Minotaur);
+        Providers.Add(EntityType.Hand, () => World.Hand);
+        Providers.Add(EntityType.Leviathan, () => World.Leviathan);
+        Providers.Add(EntityType.Minotaur_Chase, () => World.Minotaur);
 
         for (var type = EntityType.SecuritySystem_Main; type <= EntityType.SecuritySystem_Tower_; type++)
         {
             var sucks = type;
-            Providers.Add(sucks, () => World.Instance.SecuritySystem[sucks - EntityType.SecuritySystemOffset]);
+            Providers.Add(sucks, () => World.SecuritySystem[sucks - EntityType.SecuritySystemOffset]);
         }
 
-        Providers.Add(EntityType.Brain, () => World.Instance.Brain);
+        Providers.Add(EntityType.Brain, () => World.Brain);
 
         for (var type = EntityType.AppleBait; type <= EntityType.V1; type++)
         {
@@ -43,12 +44,23 @@ public class Entities
             Providers.Add(sucks, () => Items.Instantiate(sucks));
         }
 
+        Providers.Add(EntityType.Coin, () => Bullets.EInstantiate(EntityType.Coin));
         Providers.Add(EntityType.Rocket, () => Bullets.EInstantiate(EntityType.Rocket));
         Providers.Add(EntityType.Ball, () => Bullets.EInstantiate(EntityType.Ball));
     }
 
+    /// <summary> Instantiates the given prefab and marks it with the Net tag. </summary>
+    public static GameObject Mark(GameObject prefab)
+    {
+        // the instance is created on these coordinates so as not to collide with anything after the spawn
+        var instance = Tools.Instantiate(prefab, Vector3.zero);
+
+        instance.name = "Net";
+        return instance;
+    }
+
     /// <summary> Returns an entity of the given type. </summary>
-    public static Entity Get(ulong id, EntityType type)
+    public static Entity Get(uint id, EntityType type)
     {
         var entity = Providers[type]();
         if (entity == null) return null;
@@ -59,24 +71,17 @@ public class Entities
         return entity;
     }
 
-    /// <summary> Entity provider. </summary>
-    public delegate Entity Prov();
-
-    /// <summary> Returns whether the last id has a collision with any player's id. </summary>
-    public static bool HasCollisionWithPlayerId()
+    /// <summary> Returns the next available id, skips ids of all existing entities. </summary>
+    public static uint NextId()
     {
-        foreach (var member in LobbyController.Lobby?.Members)
-            if (member.Id == LastId) return true;
+        if (LastId < Tools.AccId) LastId = Tools.AccId;
 
-        return false;
-    }
-
-    /// <summary> Returns the next available id, skips the id of all players. </summary>
-    public static ulong NextId()
-    {
-        do LastId++;
-        while (HasCollisionWithPlayerId());
+        LastId++;
+        while (Networking.Entities.ContainsKey(LastId)) LastId += 8192;
 
         return LastId;
     }
+
+    /// <summary> Entity provider. </summary>
+    public delegate Entity Prov();
 }

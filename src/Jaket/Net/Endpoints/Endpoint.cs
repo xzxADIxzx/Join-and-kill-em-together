@@ -1,19 +1,16 @@
 namespace Jaket.Net.Endpoints;
 
-using Steamworks;
 using Steamworks.Data;
 using System;
 using System.Collections.Generic;
 
 using Jaket.Content;
 using Jaket.IO;
-using Jaket.Net.Types;
 
 /// <summary> Network connection endpoint that contains listeners for different packet types. </summary>
 public abstract class Endpoint
 {
-    protected Dictionary<ulong, Entity> entities => Networking.Entities;
-    protected LocalPlayer localPlayer => Networking.LocalPlayer;
+    protected Dictionary<uint, Entity> ents => Networking.Entities;
 
     /// <summary> List of packet listeners by packet types. </summary>
     protected Dictionary<PacketType, PacketListener> listeners = new();
@@ -43,18 +40,18 @@ public abstract class Endpoint
     });
 
     /// <summary> Handles the packet and calls the corresponding listener. </summary>
-    public void Handle(Connection con, SteamId sender, Reader r)
+    public void Handle(Connection con, uint sender, Reader r)
     {
-        var type = r.Enum<PacketType>(); // if the client hasn't downloaded the level yet, then it only needs a packet with the level name
-        if (Networking.Loading && type != PacketType.LoadLevel) return;
+        var type = r.Enum<PacketType>();
+        if (Networking.Loading && type != PacketType.Level && type != PacketType.ImageChunk) return;
 
         // find the required listener and transfer control to it, all it has to do is read the payload
         if (listeners.TryGetValue(type, out var listener)) listener(con, sender, r);
         Stats.Read += r.Length;
     }
     /// <summary> Handles the packet from unmanaged memory. </summary>
-    public void Handle(Connection con, SteamId sender, IntPtr data, int size) => Reader.Read(data, size, r => Handle(con, sender, r));
+    public void Handle(Connection con, uint sender, IntPtr data, int size) => Reader.Read(data, size, r => Handle(con, sender, r));
 
     /// <summary> Packet listener that accepts the sender of the packet and the packet itself. </summary>
-    public delegate void PacketListener(Connection con, SteamId sender, Reader r);
+    public delegate void PacketListener(Connection con, uint sender, Reader r);
 }

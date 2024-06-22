@@ -1,6 +1,5 @@
 namespace Jaket.Net.Types;
 
-using Steamworks;
 using UnityEngine;
 
 using Jaket.Assets;
@@ -20,26 +19,30 @@ public class LocalPlayer : Entity
     private FistControl fc => FistControl.Instance;
     private GameObject cw => GunControl.Instance.currentWeapon;
 
-    /// <summary> Local player's team, changes through the players list. </summary>
+    /// <summary> Team can be changed through the players list. </summary>
     public Team Team;
-    /// <summary> Component that reproduces the voice of the local player, not his teammates. </summary>
+    /// <summary> Component that plays the voice of the local player, not his teammates. </summary>
     public AudioSource Voice;
 
     /// <summary> Whether the player parried a projectile or just punched. </summary>
     public bool Parried;
     /// <summary> Hook position. Will be zero if the hook is not currently in use. </summary>
     public Vector3 Hook;
-    /// <summary> The entity of the item the player is currently holding in their hands. </summary>
+    /// <summary> Entity of the item the player is currently holding in their hands. </summary>
     public Item HeldItem;
     /// <summary> Entity that the player pulls to himself with a hook. </summary>
     public Entity Pulled;
 
     /// <summary> Index of the current weapon in the global list. </summary>
     private byte weapon;
+    /// <summary> Whether the next packet of drill damage will be skipped. </summary>
+    private bool skip;
+    /// <summary> Whether the current level is 4-4. Needed to sync fake slide animation. </summary>
+    private bool is44;
 
     private void Awake()
     {
-        Id = SteamClient.SteamId;
+        Owner = Id = Tools.AccId;
         Type = EntityType.Player;
 
         Voice = gameObject.AddComponent<AudioSource>(); // add a 2D audio source that will be heard from everywhere
@@ -54,13 +57,13 @@ public class LocalPlayer : Entity
         HeldItem = null;
 
         fc.currentPunch.ForceThrow();
-        if (fc.currentPunch.holding) fc.currentPunch.PlaceHeldObject(new ItemPlaceZone[0], null);
+        fc.currentPunch.PlaceHeldObject(new ItemPlaceZone[0], null);
     }
 
     #region special
 
-    /// <summary> Synchronizes the style of the local player. </summary>
-    public void SyncStyle() => Networking.Send(PacketType.Style, w =>
+    /// <summary> Synchronizes the suit of the local player. </summary>
+    public void SyncSuit() => Networking.Send(PacketType.Style, w =>
     {
         w.Id(Id);
         if (cw?.GetComponentInChildren<GunColorGetter>()?.TryGetComponent<Renderer>(out var renderer) ?? false)
@@ -74,18 +77,19 @@ public class LocalPlayer : Entity
                 w.Color(block.GetColor("_CustomColor2"));
                 w.Color(block.GetColor("_CustomColor3"));
             });
-            else w.Inc(12);
         }
-        else w.Inc(13);
-    }, size: 21);
+        else w.Bool(false);
+    }, size: 17);
 
-    /// <summary> Caches different things related to weapons and paints hands. </summary>
+    /// <summary> Caches the id of the current weapon and paints the hands of the local player. </summary>
     public void UpdateWeapons()
     {
         weapon = Weapons.Type();
-        if (LobbyController.Online) SyncStyle();
+        is44 = Tools.Scene == "Level 4-4";
 
-        // according to the lore, the player plays for V3, so we need to paint the hand
+        if (LobbyController.Online) SyncSuit();
+
+        // according to the lore, the player plays for V3, so we need to paint the hands
         var punch = fc.transform.Find("Arm Blue(Clone)");
         if (punch) punch.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture();
 
@@ -101,26 +105,28 @@ public class LocalPlayer : Entity
 
     public override void Write(Writer w)
     {
+        UpdatesCount++;
+
         w.Vector(nm.transform.position);
         w.Float(nm.transform.eulerAngles.y);
         w.Float(135f - Mathf.Clamp(CameraController.Instance.rotationX, -40f, 80f));
+        w.Vector(Hook);
+        w.Id(Pulled?.Id ?? 0u);
 
         w.Byte((byte)nm.hp);
         w.Byte((byte)Mathf.Floor(WeaponCharges.Instance.raicharge * 2.5f));
-        w.Enum(Team);
-        w.Byte(weapon);
-        w.Byte(Movement.Instance.Emoji);
-        w.Byte(Movement.Instance.Rps);
-
-        w.Bools(nm.walking, nm.sliding, nm.slamForce > 0f && !nm.gc.onGround, nm.boost && !nm.sliding,
-                nm.ridingRocket != null, !nm.gc.onGround, fc.shopping, Chat.Shown);
-
-        w.Bool(Hook != Vector3.zero && HookArm.Instance.enabled);
-        w.Vector(Hook);
-        w.Id(Pulled?.Id ?? 0L);
+        w.Player(Team, weapon, Movement.Instance.Emoji, Movement.Instance.Rps, Chat.Shown);
+        w.Bools(
+            nm.walking,
+            nm.sliding || (is44 && nm.transform.position.y > 610f && nm.transform.position.y < 611f),
+            nm.gc.heavyFall,
+            !nm.gc.onGround,
+            nm.boost && !nm.sliding,
+            nm.ridingRocket != null,
+            Hook != Vector3.zero,
+            fc.shopping);
     }
 
-    // there is no point in reading anything, because it is a local player
     public override void Read(Reader r) { }
 
     public override void Damage(Reader r)
@@ -129,14 +135,12 @@ public class LocalPlayer : Entity
         if (!nm.dead && !team.Ally()) // no need to deal damage if an ally hits you
         {
             byte type = r.Byte();
-            nm.GetHurt(Mathf.CeilToInt(r.Float() * (Bullets.Types[type] == "drill" ? 1f : 5f)), false, 0f, r.Bool());
+            float mul = Bullets.Types[type] == "drill" ? ((skip = !skip) ? 0f : 1f) : 4f;
 
+            nm.GetHurt(Mathf.CeilToInt(r.Float() * mul), false, 0f);
             if (nm.dead) LobbyController.Lobby?.SendChatString("#/s" + (byte)team);
         }
     }
-
-    // why would you need this?
-    public override void Kill() { }
 
     #endregion
 }

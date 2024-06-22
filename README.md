@@ -14,7 +14,6 @@ This modification made by [me](https://github.com/xzxADIxzx) and my team adds su
    * Rich Presence
    * Lobby settings
 * Automatic check for updates
-   * Please stop playing on version 0.3.0
 * User interface
    * Lobby menu, player list and settings
    * Player indicators to help you find each other on the map
@@ -27,11 +26,13 @@ This modification made by [me](https://github.com/xzxADIxzx) and my team adds su
    * Emotions wheel to tease your friends or bosses
    * Pointers to guide your friends in the right direction
    * SAM TTS Engine for speaking messages via /tts command
+   * Sprays and moderation system for them
+   * Extended V2 coins mechanic
 * Synchronization of everything
    * Players, their weapons, weapons paint, fists, hook, animations, particles and even head rotation
    * All projectiles in the game and chargeback damage
    * All sorts of items such as torches, skulls and developer plushies
-   * Synchronization of position and health of enemies
+   * Synchronization of position and attacks of enemies
    * Synchronization of special bosses such as Leviathan, Minos' hand and Minotaur
    * Synchronization of different triggers at levels
    * Synchronization of the Cyber Grind
@@ -69,7 +70,7 @@ To compile you will need .NET SDK 6.0 and Git.
    1. Run `cd <path-to-cloned-repository>`
 2. Run `dotnet restore`
 3. Create lib folder in root directory.
-   1. Copy **Assembly-CSharp.dll**, **Facepunch.Steamworks.Win64.dll**, **plog.dll**, **Unity.Addressables.dll**, **Unity.TextMeshPro.dll**, **UnityEngine.UI.dll** and **UnityUIExtensions.dll** from `ULTRAKILL\ULTRAKILL_Data\Managed`
+   1. Copy **Assembly-CSharp.dll**, **Facepunch.Steamworks.Win64.dll**, **plog.dll**, **Unity.Addressables.dll**, **Unity.ResourceManager.dll**, **Unity.TextMeshPro.dll**, **UnityEngine.UI.dll** and **UnityUIExtensions.dll** from `ULTRAKILL\ULTRAKILL_Data\Managed`
    2. As well as **BepInEx.dll** and **0Harmony.dll** from `ULTRAKILL\BepInEx\core`
 4. Compile the mod with `dotnet build`
 5. At the output you will get the **Jaket.dll** file, which will be located in the `bin\Debug\netstandard2.0` folder.

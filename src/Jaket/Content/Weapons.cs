@@ -33,20 +33,22 @@ public class Weapons
         Prefabs.AddRange(GunSetter.Instance.rocketRed.ToAssets());
     }
 
-    /// <summary> Finds the weapon type by the name. </summary>
-    public static byte Type(GameObject weapon)
+    /// <summary> Finds the weapon type by object name. </summary>
+    public static byte Type()
     {
-        string name = weapon.name.Substring(0, weapon.name.IndexOf("("));
+        var weap = GunControl.Instance.currentWeapon;
+        if (weap == null) return 0xFF;
+
+        var name = weap.name.Substring(0, weap.name.IndexOf("("));
         return (byte)Prefabs.FindIndex(prefab => prefab.name == name);
     }
-    public static byte Type() => GunControl.Instance.currentWeapon == null ? (byte)0xFF : Type(GunControl.Instance.currentWeapon);
 
     /// <summary> Spawns a weapon with the given type and assigns its parent transform. </summary>
-    public static GameObject Instantiate(byte type, Transform parent)
+    public static void Instantiate(byte type, Transform parent)
     {
-        var obj = Object.Instantiate(Prefabs[type], parent);
+        var obj = Tools.Instantiate(Prefabs[type], parent);
 
-        // weapon prefabs are disabled and are located in the AlwaysOnTop layer
+        // weapon prefabs are disabled and located in the AlwaysOnTop layer
         obj.SetActive(true);
         FixLayer(obj.transform);
 
@@ -57,11 +59,18 @@ public class Weapons
         // destroy weapon's components
         Tools.Destroy(obj.GetComponent<Revolver>());
         Tools.Destroy(obj.GetComponent<Shotgun>());
+        Tools.Destroy(obj.GetComponent<ShotgunHammer>());
         Tools.Destroy(obj.GetComponent<Nailgun>());
         Tools.Destroy(obj.GetComponent<Railcannon>());
         Tools.Destroy(obj.GetComponent<RocketLauncher>());
 
-        return obj;
+        // make these annoying sounds quieter
+        Tools.Destroy(obj.transform.Find("ImpactHammer/Armature/Root/MotorSpinner/SpinSprite")?.gameObject);
+        foreach (var source in obj.GetComponentsInChildren<AudioSource>())
+        {
+            source.spatialBlend = 1f;
+            source.rolloffMode = AudioRolloffMode.Logarithmic;
+        }
     }
 
     /// <summary> Recursively iterates through all children of the transform and changes their layer to Outdoors. </summary>

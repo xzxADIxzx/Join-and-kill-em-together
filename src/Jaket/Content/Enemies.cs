@@ -1,9 +1,11 @@
 namespace Jaket.Content;
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 using Jaket.Assets;
+using Jaket.IO;
 using Jaket.Net;
 using Jaket.Net.Types;
 
@@ -12,24 +14,44 @@ public class Enemies
 {
     /// <summary> List of prefabs of all enemies. </summary>
     public static List<EnemyIdentifier> Prefabs = new();
+    /// <summary> Dictionary of entity types to their classes. </summary>
+    public static Dictionary<EntityType, Type> Types = new();
+
+    /// <summary> Whether damage and death of enemies must be logged. </summary>
+    public static bool Debug;
 
     /// <summary> Loads all enemies for future use. </summary>
     public static void Load()
     {
+        Events.OnLoaded += () =>
+        {
+            int length = GameAssets.Enemies.Length; // custom enemy was added to the prefabs list
+            if (Prefabs.Count != length) Prefabs.RemoveRange(length, Prefabs.Count - length);
+        };
+
         foreach (var name in GameAssets.Enemies) Prefabs.Add(GameAssets.Enemy(name).GetComponentInChildren<EnemyIdentifier>());
+
+        for (var type = EntityType.Filth; type <= EntityType.Puppet; type++) Types[type] = typeof(SimpleEnemy);
+        Types[EntityType.Swordsmachine] = typeof(Swords);
+        Types[EntityType.V2] = typeof(V2);
+        Types[EntityType.V2_GreenArm] = typeof(V2);
+        Types[EntityType.Sentry] = typeof(Turret);
+        Types[EntityType.MaliciousFace] = typeof(Body);
+        Types[EntityType.Idol] = typeof(Idol);
+        Types[EntityType.Gabriel] = typeof(Gabriel);
+        Types[EntityType.Gabriel_Angry] = typeof(Gabriel);
     }
 
     /// <summary> Finds the entity type by enemy class and type, taking into account the fact that some enemies have the same types. </summary>
-    public static EntityType Type(EnemyIdentifier enemyId)
+    public static EntityType Type(EnemyIdentifier id)
     {
-        // find object name without clone ending
-        string name = enemyId.name;
-        name = name.Contains("(") ? name.Substring(0, name.IndexOf("(")).Trim() : name;
+        if (id == null) return EntityType.None;
 
-        // there are the necessary crutches, because the developer incorrectly set the types of some opponents
-        switch (name)
+        // there are the necessary crutches, because developers incorrectly set the types of some enemies
+        switch (id.name.Contains("(") ? id.name.Substring(0, id.name.IndexOf("(")).Trim() : id.name)
         {
             case "V2 Green Arm Variant": return EntityType.V2_GreenArm;
+            case "V2 Green Arm": return EntityType.V2_GreenArm;
             case "Very Cancerous Rodent": return EntityType.VeryCancerousRodent;
             case "DroneFlesh": return EntityType.FleshPrison_Eye;
             case "DroneSkull Variant": return EntityType.FleshPanopticon_Face;
@@ -39,40 +61,39 @@ public class Enemies
         }
 
         // the remaining enemies can be found by their type
-        int index = Prefabs.FindIndex(prefab => prefab.enemyClass == enemyId.enemyClass && prefab.enemyType == enemyId.enemyType);
+        int index = Prefabs.FindIndex(prefab => prefab.enemyClass == id.enemyClass && prefab.enemyType == id.enemyType);
         return index == -1 ? EntityType.None : (EntityType.EnemyOffset + index);
     }
-    public static EntityType Type(Entity entity) => entity.EnemyId == null ? EntityType.None : Type(entity.EnemyId);
 
     /// <summary> Spawns an enemy with the given type. </summary>
-    public static Enemy Instantiate(EntityType type)
+    public static Entity Instantiate(EntityType type)
     {
-        // Malicious face's enemyId is in a child object
+        // EnemyId of Malicious Face and Cerberus is in a child object
         // https://discord.com/channels/1132614140414935070/1132614140876292190/1146507403102257162
-        var obj = type != EntityType.MaliciousFace ?
-                Object.Instantiate(Prefabs[type - EntityType.EnemyOffset].gameObject) :
-                Object.Instantiate(Prefabs[type - EntityType.EnemyOffset].transform.parent.gameObject).transform.GetChild(0).gameObject;
+        var obj = type != EntityType.MaliciousFace && type != EntityType.Cerberus ?
+                Entities.Mark(Prefabs[type - EntityType.EnemyOffset].gameObject) :
+                Entities.Mark(Prefabs[type - EntityType.EnemyOffset].transform.parent.gameObject).transform.GetChild(0).gameObject;
 
-        // for some reasons, the size of the Cerberus is smaller than necessary
-        if (type == EntityType.Cerberus) obj.transform.localScale = new(4f, 4f, 4f);
+        // repeat this, since only the parental object was renamed
+        obj.name = "Net";
 
-        return obj.AddComponent<Enemy>();
+        return obj.AddComponent(Types[type]) as Entity;
     }
 
-    /// <summary> Synchronizes the enemy between host and clients. </summary>
+    /// <summary> Synchronizes the enemy between network members. </summary>
     public static bool Sync(EnemyIdentifier enemyId)
     {
-        if (LobbyController.Offline || enemyId.dead) return true;
+        if (LobbyController.Offline || enemyId.dead || enemyId.name == "Net") return true;
 
-        // level 0-2 contains several cutscenes that don't need to be removed
-        if (Tools.Scene == "Level 0-2" && enemyId.enemyType == EnemyType.Swordsmachine && enemyId.GetComponent<BossHealthBar>() == null) return true;
-        // levels 2-4, 5-4 and 7-1 contain unique bosses that needs to be dealt with separately
+        // levels 2-4, 5-4, 7-1 and 7-4 contain unique bosses that needs to be dealt with separately
         if (Tools.Scene == "Level 2-4" && enemyId.name == "MinosArm")
         {
             enemyId.gameObject.AddComponent<Hand>();
             return true;
         }
-        if (Tools.Scene == "Level 5-4" && enemyId.enemyType == EnemyType.Leviathan)
+        // there is no need to sync the fake, since the coins are synced
+        if (Tools.Scene == "Level 5-2" && enemyId.name == "FerrymanIntro") return true;
+        if (Tools.Scene == "Level 5-4" && enemyId.name == "Leviathan")
         {
             enemyId.gameObject.AddComponent<Leviathan>();
             return true;
@@ -90,49 +111,30 @@ public class Enemies
             return true;
         }
 
-        // the enemy was created remotely
-        if (enemyId.name == "Net")
+        if (LobbyController.IsOwner || enemyId.TryGetComponent<Sandbox.SandboxEnemy>(out _))
         {
-            if (!LobbyController.IsOwner) enemyId.GetComponent<Enemy>()?.SpawnEffect();
-            return true;
-        }
-        if (LobbyController.IsOwner)
-        {
-            if (enemyId.GetComponent<Enemy>() == null) enemyId.gameObject.AddComponent<Enemy>(); // sometimes the game copies enemies
+            enemyId.gameObject.AddComponent(Types[Type(enemyId)]);
             return true;
         }
         else
         {
-            // ask host to spawn enemy if it was spawned via sandbox arm
-            if (enemyId.GetComponent<Sandbox.SandboxEnemy>() != null)
-                Networking.Send(PacketType.SpawnEntity, w =>
-                {
-                    w.Enum(Type(enemyId));
-                    w.Vector(enemyId.transform.position);
-                }, size: 13);
-
-            // the enemy is no longer needed, so destroy it
-            if (enemyId.enemyType == EnemyType.MaliciousFace && enemyId.name == "Body")
-                Tools.DestroyImmediate(enemyId.transform.parent.gameObject); // avoid a huge number of errors in the console
-            else
-                Tools.DestroyImmediate(enemyId.gameObject);
-
+            Tools.DestroyImmediate(enemyId.name != "Body" && enemyId.name != "StatueBoss" ? enemyId.gameObject : enemyId.transform.parent.gameObject);
             return false;
         }
     }
 
-    /// <summary> Synchronizes damage dealt to the enemy. </summary>
-    public static bool SyncDamage(EnemyIdentifier enemyId, ref float damage, bool explode, float critDamage, GameObject source)
+    /// <summary> Synchronizes the damage dealt to the enemy. </summary>
+    public static bool SyncDamage(EnemyIdentifier enemyId, float damage, float critDamage, GameObject source)
     {
         if (LobbyController.Offline || enemyId.dead) return true;
+        if (Debug) Log.Debug($"{(source == Bullets.NetDmg ? "Network" : source == Bullets.Fake ? "Fake" : "Local")} damage was dealt: {damage}, {critDamage}, {source?.name}");
 
         if (source == Bullets.NetDmg) return true; // the damage was received over the network
         if (source == Bullets.Fake) return false; // bullets are only needed for visual purposes and mustn't cause damage
 
-        if (enemyId.TryGetComponent<Entity>(out var entity) && (entity is not RemotePlayer player || !player.Invincible))
-            Bullets.SyncDamage(entity.Id, enemyId.hitter, damage, explode, critDamage);
+        if (enemyId.TryGetComponent<Entity>(out var entity) && (entity is not RemotePlayer player || !player.Doll.Dashing))
+            Bullets.SyncDamage(entity.Id, enemyId.hitter, damage, critDamage);
 
-        if (!LobbyController.IsOwner && damage + damage * critDamage >= enemyId.health - 1f) damage = 0.0001f;
         return true;
     }
 
@@ -140,26 +142,39 @@ public class Enemies
     public static void SyncDeath(EnemyIdentifier enemyId)
     {
         if (LobbyController.Offline || enemyId.dead) return;
-
-        // TODO remake in 1.3
-        if (enemyId.TryGetComponent<Enemy>(out var enemy))
+        if (enemyId.TryGetComponent<Enemy>(out var enemy) && !enemy.Dead)
         {
-            if (LobbyController.IsOwner)
-            {
-                Networking.Send(PacketType.KillEntity, w => w.Id(enemy.Id), size: 8);
-                Networking.Entities[enemy.Id] = null;
-            }
-            Tools.Destroy(enemy);
-        }
-        else if (enemyId.TryGetComponent<SecuritySystem>(out var sys) && LobbyController.IsOwner)
-        {
-            Networking.Send(PacketType.KillEntity, w => w.Id(sys.Id), size: 8);
-            Networking.Entities[sys.Id] = null;
-        }
-        else if (enemyId.TryGetComponent<Brain>(out var brain) && LobbyController.IsOwner)
-        {
-            Networking.Send(PacketType.KillEntity, w => w.Id(brain.Id), size: 8);
-            Networking.Entities[brain.Id] = null;
+            if (Debug) Log.Debug($"Enemy#{enemy.Id} died :(");
+            enemy.NetKill();
         }
     }
+
+    /// <summary> Finds the most suitable target for the enemy, that is the closest player. </summary>
+    public static void FindTarget(EnemyIdentifier enemyId) => Stats.MeasureTime(ref Stats.TargetUpdate, () =>
+    {
+        if (LobbyController.Offline || enemyId.dead) return;
+
+        // update target only if the current target is the local player
+        if (enemyId.target == null || !enemyId.target.isPlayer) return;
+
+        // with a large number of enemies, this code begins to greatly affect the FPS
+        if (Time.frameCount % (1 + Networking.Entities.Count / 16) != 0) return;
+
+        var enemy = enemyId.transform.position;
+        var target = NewMovement.Instance.transform;
+        var dst = (enemy - target.position).sqrMagnitude;
+
+        Networking.EachPlayer(player =>
+        {
+            var newDst = (enemy - player.transform.position).sqrMagnitude;
+            if (newDst < dst)
+            {
+                target = player.transform;
+                dst = newDst;
+            }
+        });
+
+        // update the target if there is a remote player that is closer to the enemy than you
+        if (target != NewMovement.Instance.transform) enemyId.target = new(target);
+    });
 }

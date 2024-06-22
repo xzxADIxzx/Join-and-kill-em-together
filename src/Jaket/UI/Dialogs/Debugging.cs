@@ -15,18 +15,19 @@ using static Rect;
 /// <summary> Tab containing different information about the load on the network. </summary>
 public class Debugging : CanvasSingleton<Debugging>
 {
-    /// <summary> Graphs displaying different values related to the load on the network. </summary>
-    private UILineRenderer readGraph, writeGraph, readTimeGraph, writeTimeGraph;
-    /// <summary> Data array in the last 157 seconds. </summary>
-    private Data read = new(), write = new(), readTime = new(), writeTime = new();
+    /// <summary> Data arrays containing values of the last 157 seconds. </summary>
+    private Data read = new(), write = new(), readTime = new(), writeTime = new(), entity = new(), target = new();
     /// <summary> Text fields containing diverse info about the network state. </summary>
-    private Text readText, writeText, readTimeText, writeTimeText, entities, owner, impact;
+    private Text readText, writeText, readTimeText, writeTimeText, entityText, targetText, entities, owner, loading, impact;
 
     private void Start()
     {
         Events.OnLobbyAction += () =>
         {
-            if (LobbyController.Offline) readText.text = writeText.text = readTimeText.text = writeTimeText.text = entities.text = owner.text = impact.text = "-";
+            if (LobbyController.Offline)
+                readText.text = writeText.text = readTimeText.text = writeTimeText.text =
+                entityText.text = targetText.text =
+                entities.text = owner.text = loading.text = impact.text = "-";
         };
         Events.EverySecond += UpdateGraph;
 
@@ -37,14 +38,16 @@ public class Debugging : CanvasSingleton<Debugging>
         }
 
         // write colors are darker
-        Color dark_green = Color.Lerp(green, black, .4f), dark_orange = Color.Lerp(orange, black, .4f);
+        Color dark_green = Color.Lerp(green, black, .4f), dark_orange = Color.Lerp(orange, black, .4f), dark_blue = Color.Lerp(blue, black, .4f);
 
         UIB.Table("Graph", transform, Msg(1888f) with { y = 114f, Height = 196f }, table =>
         {
-            writeTimeGraph = UIB.Line("Write Time", table, dark_orange);
-            readTimeGraph = UIB.Line("Read Time", table, orange);
-            writeGraph = UIB.Line("Write", table, dark_green);
-            readGraph = UIB.Line("Read", table, green);
+            target.Graph = UIB.Line("Target Update", table, dark_blue);
+            entity.Graph = UIB.Line("Entity Update", table, blue);
+            writeTime.Graph = UIB.Line("Write Time", table, dark_orange);
+            readTime.Graph = UIB.Line("Read Time", table, orange);
+            write.Graph = UIB.Line("Write", table, dark_green);
+            read.Graph = UIB.Line("Read", table, green);
         });
         UIB.Table("Stats", transform, Deb(0), table =>
         {
@@ -53,11 +56,17 @@ public class Debugging : CanvasSingleton<Debugging>
             readTimeText = DoubleText(table, "READ TIME:", 84f, orange);
             writeTimeText = DoubleText(table, "WRITE TIME:", 116f, dark_orange);
         });
-        UIB.Table("Networking", transform, Deb(1), table =>
+        UIB.Table("Also Stats", transform, Deb(1), table =>
+        {
+            entityText = DoubleText(table, "ENTITY UPDATE:", 20f, blue);
+            targetText = DoubleText(table, "TARGET UPDATE:", 52f, dark_blue);
+        });
+        UIB.Table("Networking", transform, Deb(2), table =>
         {
             entities = DoubleText(table, "ENTITIES:", 20f);
             owner = DoubleText(table, "IS OWNER:", 52f);
-            impact = DoubleText(table, "IMPACT ON FPS:", 84f, red);
+            loading = DoubleText(table, "LOADING:", 84f);
+            impact = DoubleText(table, "IMPACT ON FPS:", 116f, red);
         });
     }
 
@@ -67,16 +76,20 @@ public class Debugging : CanvasSingleton<Debugging>
 
         #region graph
 
-        read.Enqueue(Stats.LastRead); readTime.Enqueue(Stats.ReadTime);
-        write.Enqueue(Stats.LastWrite); writeTime.Enqueue(Stats.WriteTime);
+        read.Enqueue(Stats.LastRead); readTime.Enqueue(Stats.LastReadTime); entity.Enqueue(Stats.LastEntityUpdate);
+        write.Enqueue(Stats.LastWrite); writeTime.Enqueue(Stats.LastWriteTime); target.Enqueue(Stats.LastTargetUpdate);
 
         float peak = Mathf.Max(2048, read.Max(), write.Max());
-        readGraph.Points = read.Project(peak);
-        writeGraph.Points = write.Project(peak);
+        read.Project(peak);
+        write.Project(peak);
 
         peak = Mathf.Max(.1f, readTime.Max(), writeTime.Max());
-        readTimeGraph.Points = readTime.Project(peak);
-        writeTimeGraph.Points = writeTime.Project(peak);
+        readTime.Project(peak);
+        writeTime.Project(peak);
+
+        peak = Mathf.Max(.1f, entity.Max(), target.Max());
+        entity.Project(peak);
+        target.Project(peak);
 
         #endregion
 
@@ -86,16 +99,20 @@ public class Debugging : CanvasSingleton<Debugging>
 
         readText.text = $"{Stats.LastRead}b/s";
         writeText.text = $"{Stats.LastWrite}b/s";
-        readTimeText.text = $"{Stats.ReadTime:0.0000}ms";
-        writeTimeText.text = $"{Stats.WriteTime:0.0000}ms";
+        readTimeText.text = $"{Stats.LastReadTime:0.0000}ms";
+        writeTimeText.text = $"{Stats.LastWriteTime:0.0000}ms";
+        entityText.text = $"{Stats.LastEntityUpdate:0.0000}ms";
+        targetText.text = $"{Stats.LastTargetUpdate:0.0000}ms";
 
         #endregion
         #region networking
 
-        entities.text = Networking.Entities.Count(p => p.Value != null).ToString();
+        entities.text = $"{Networking.Entities.Count(p => p.Value && !p.Value.Dead)}<color=#BBBBBB>/{Networking.Entities.Count}</color>";
         owner.text = LobbyController.IsOwner.ToString().ToUpper();
         owner.color = LobbyController.IsOwner ? green : red;
-        impact.text = $"{(Stats.ReadTime + Stats.WriteTime) / 10f / Stats.DeltaTimeOnRecord:0.00}%";
+        loading.text = Networking.Loading.ToString().ToUpper();
+        loading.color = Networking.Loading ? green : red;
+        impact.text = $"{(Stats.LastReadTime + Stats.LastWriteTime + Stats.LastEntityUpdate + Stats.LastTargetUpdate) * .1f:0.00}%";
 
         #endregion
     }
@@ -109,16 +126,19 @@ public class Debugging : CanvasSingleton<Debugging>
     /// <summary> Constatnt size queue. </summary>
     private class Data : Queue<float>
     {
+        /// <summary> Graph displaying one type of values related to the load on the network. </summary>
+        public UILineRenderer Graph;
+
         public new void Enqueue(float value)
         {
             base.Enqueue(value);
             if (Count > 157) Dequeue();
         }
 
-        public Vector2[] Project(float peak)
+        public void Project(float peak)
         {
             float x = -12f;
-            return this.ToList().ConvertAll(v => new Vector2(x += 12f, v / peak * 180f)).ToArray();
+            Graph.Points = this.ToList().ConvertAll(v => new Vector2(x += 12f, v / peak * 180f)).ToArray();
         }
     }
 }

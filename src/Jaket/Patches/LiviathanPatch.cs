@@ -2,29 +2,26 @@ namespace Jaket.Patches;
 
 using HarmonyLib;
 
-using Jaket.Net;
 using Jaket.World;
 
 [HarmonyPatch]
 public class LeviathanPatch
 {
     [HarmonyPostfix]
-    [HarmonyPatch(typeof(LeviathanHead), "Update")]
-    static void Head(int ___previousAttack, ref int ___projectilesLeftInBurst, ref bool ___lookAtPlayer, ref bool ___rotateBody, ref bool ___inAction)
+    [HarmonyPatch(typeof(LeviathanHead), nameof(LeviathanHead.ChangePosition))]
+    static void Head(int ___previousSpawnPosition)
     {
-        if (LobbyController.Offline || World.Instance.Leviathan == null) return;
-        if (LobbyController.IsOwner)
-        {
-            // update the position of the head to synchronize its attacks
-            World.Instance.Leviathan.HeadPos = (byte)___previousAttack;
-        }
-        else
-        {
-            ___projectilesLeftInBurst = 100; // replenish ammo
+        if (World.Leviathan && World.Leviathan.IsOwner) World.Leviathan.HeadPos = (byte)___previousSpawnPosition;
+    }
 
-            // disable animations and changing of attacks so that the leviathan does not shake
-            ___lookAtPlayer = ___rotateBody = false;
-            ___inAction = true;
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(LeviathanHead), "Descend")]
+    static void Head()
+    {
+        if (World.Leviathan && World.Leviathan.IsOwner)
+        {
+            World.Leviathan.HeadPos = byte.MaxValue;
+            World.Leviathan.Attack = byte.MaxValue;
         }
     }
 
@@ -32,7 +29,20 @@ public class LeviathanPatch
     [HarmonyPatch(typeof(LeviathanTail), nameof(LeviathanTail.ChangePosition))]
     static void Tail(int ___previousSpawnPosition)
     {
-        // update the position of the tail to synchronize its attacks
-        if (LobbyController.Online && LobbyController.IsOwner) World.Instance.Leviathan.TailPos = (byte)___previousSpawnPosition;
+        if (World.Leviathan && World.Leviathan.IsOwner) World.Leviathan.TailPos = (byte)___previousSpawnPosition;
+    }
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(LeviathanHead), "ProjectileBurst")]
+    static void Ball()
+    {
+        if (World.Leviathan && World.Leviathan.IsOwner) World.Leviathan.Attack = 0;
+    }
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(LeviathanHead), "Bite")]
+    static void Bite()
+    {
+        if (World.Leviathan && World.Leviathan.IsOwner) World.Leviathan.Attack = 1;
     }
 }

@@ -9,6 +9,7 @@ using UnityEngine.UI;
 using Jaket.Assets;
 using Jaket.Commands;
 using Jaket.Net;
+using Jaket.Net.Types;
 using Jaket.Sam;
 using Jaket.World;
 
@@ -224,15 +225,13 @@ public class Chat : CanvasSingleton<Chat>
     /// <summary> Speaks the message before writing it. </summary>
     public void ReceiveTTS(Friend author, string message)
     {
+        // play the message in the local player's position if he is its author
         if (author.IsMe)
-            // play the message in the player's position if he is its author
             SamAPI.TryPlay(message, Networking.LocalPlayer.Voice);
-        else
-            // or find the author among other players and play the sound from them
-            Networking.EachPlayer(player =>
-            {
-                if (player.Id == author.Id) SamAPI.TryPlay(message, player.Voice);
-            });
+
+        // or find the author among the other players and play the sound from them
+        else if (Networking.Entities.TryGetValue(author.Id.AccountId, out var entity) && entity is RemotePlayer player)
+            SamAPI.TryPlay(message, player.Voice);
 
         Receive(Networking.GetTeamColor(author), TTS_PREFIX + author.Name.Replace("[", "\\["), message);
     }

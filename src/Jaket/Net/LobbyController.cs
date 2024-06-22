@@ -47,7 +47,7 @@ public class LobbyController
         {
             if (lobby.Owner.Id != 0L) LastOwner = lobby.Owner.Id;
 
-            if (lobby.GetData("banned").Contains(Networking.LocalPlayer.Id.ToString())) LeaveLobby();
+            if (lobby.GetData("banned").Contains(Tools.AccId.ToString())) LeaveLobby();
             if (IsMultikillLobby(lobby))
             {
                 LeaveLobby();
@@ -67,11 +67,7 @@ public class LobbyController
     }
 
     /// <summary> Is there a user with the given id among the members of the lobby. </summary>
-    public static bool Contains(SteamId id)
-    {
-        foreach (var member in Lobby?.Members) if (member.Id == id) return true;
-        return false;
-    }
+    public static bool Contains(uint id) => Lobby?.Members.Any(member => member.Id.AccountId == id) ?? false;
 
     #region control
 

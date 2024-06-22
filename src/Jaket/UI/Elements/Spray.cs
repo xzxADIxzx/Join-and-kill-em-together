@@ -11,7 +11,7 @@ using Jaket.UI.Dialogs;
 public class Spray : MonoBehaviour
 {
     /// <summary> Owner of the spray. </summary>
-    private ulong owner;
+    private uint owner;
     /// <summary> Spray position in space. </summary>
     private Vector3 position, direction;
 
@@ -21,7 +21,7 @@ public class Spray : MonoBehaviour
     public float Lifetime;
 
     /// <summary> Spawns a spray at the given position. </summary>
-    public static Spray Spawn(ulong owner, Vector3 position, Vector3 direction) =>
+    public static Spray Spawn(uint owner, Vector3 position, Vector3 direction) =>
         UIB.Component<Spray>(Tools.Create("Spray"), spray =>
         {
             spray.owner = owner;
@@ -44,13 +44,13 @@ public class Spray : MonoBehaviour
 
     private void Update()
     {
-        if (Lifetime > 18f)
+        if (Lifetime > 58f)
         {
-            var t = InOutCubic((Lifetime - 18f) / 2f); // cubic interpolation looks better 
+            var t = InOutCubic((Lifetime - 58f) / 2f); // cubic interpolation looks better 
             image.transform.localScale = Vector3.one * (1f - t);
         }
 
-        if ((Lifetime += Time.deltaTime) > 20f)
+        if ((Lifetime += Time.deltaTime) > 60f)
         {
             SpawnDust(1, .3f);
             Destroy(gameObject);

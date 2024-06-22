@@ -1,7 +1,6 @@
 namespace Jaket.UI.Fragments;
 
 using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.UI;
 
 using Jaket.Content;
