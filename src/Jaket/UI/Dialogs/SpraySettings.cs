@@ -78,6 +78,7 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
         Movement.UpdateState();
 
         if (Shown && transform.childCount > 0) Rebuild();
+        if (!Shown) SprayDistributor.UploadLocal();
     }
 
     /// <summary> Rebuilds the spray settings to update the list of sprays and players. </summary>

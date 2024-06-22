@@ -77,8 +77,6 @@ public class SprayManager
 
         Cache.Remove(Tools.AccId);
         Cache.Add(Tools.AccId, CurrentSpray);
-
-        if (LobbyController.Online) Bundle.Hud("sprays.info");
     }
 
     /// <summary> Spawns someone's spray in the given position. </summary>
