@@ -113,7 +113,8 @@ public class Server : Endpoint, ISocketManager
 
     public override void Update()
     {
-        Stats.MeasureTime(() => Manager.Receive(1024), () =>
+        Stats.MeasureTime(ref Stats.ReadTime, () => Manager.Receive(1024));
+        Stats.MeasureTime(ref Stats.WriteTime, () =>
         {
             if (Networking.Loading) return;
             Networking.EachEntity(entity => Networking.Send(PacketType.Snapshot, w =>

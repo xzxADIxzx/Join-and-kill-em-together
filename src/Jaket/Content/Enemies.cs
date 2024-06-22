@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Jaket.Assets;
+using Jaket.IO;
 using Jaket.Net;
 using Jaket.Net.Types;
 
@@ -149,7 +150,7 @@ public class Enemies
     }
 
     /// <summary> Finds the most suitable target for the enemy, that is the closest player. </summary>
-    public static void FindTarget(EnemyIdentifier enemyId)
+    public static void FindTarget(EnemyIdentifier enemyId) => Stats.MeasureTime(ref Stats.TargetUpdate, () =>
     {
         if (LobbyController.Offline || enemyId.dead) return;
 
@@ -172,5 +173,5 @@ public class Enemies
 
         // update the target if there is a remote player that is closer to the enemy than you
         if (target != NewMovement.Instance.transform) enemyId.target = new(target);
-    }
+    });
 }
