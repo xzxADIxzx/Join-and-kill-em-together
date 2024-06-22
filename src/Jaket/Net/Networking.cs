@@ -149,7 +149,7 @@ public class Networking
         if (LobbyController.Offline) return;
 
         List<Entity> toRemove = new();
-        Entities.Values.DoIf(e => e == null || (e.Dead && e.LastUpdate < Time.time - 1f && e.Type != EntityType.MaliciousFace && e.Type != EntityType.Gutterman), toRemove.Add);
+        Entities.Values.DoIf(e => e == null || (e.Dead && e.LastUpdate < Time.time - 1f && !e.gameObject.activeSelf), toRemove.Add);
         toRemove.ForEach(e => Entities.Remove(e.Id));
     }
 
