@@ -15,12 +15,15 @@ using Jaket.UI.Dialogs;
 public static class SprayDistributor
 {
     /// <summary> Size of the packet that contains an image chunk. </summary>
-    public const int CHUNK_SIZE = 240;
+    public const int CHUNK_SIZE = 250;
 
     /// <summary> List of all streams for spray loading. </summary>
     public static Dictionary<uint, Writer> Streams = new();
     /// <summary> List of requests for spray by id. </summary>
     public static Dictionary<uint, List<Connection>> Requests = new();
+
+    /// <summary> Whether the downloading progress must be logged. </summary>
+    public static bool Debug;
 
     #region distribution logic
 
@@ -49,7 +52,7 @@ public static class SprayDistributor
     }
 
     /// <summary> Requests someone's spray from the host. </summary>
-    public static void Request(uint owner) => Networking.Send(PacketType.RequestImage, w => w.Id(owner), size: 8);
+    public static void Request(uint owner) => Networking.Send(PacketType.RequestImage, w => w.Id(owner), size: 4);
 
     #endregion
     #region networking
@@ -61,15 +64,17 @@ public static class SprayDistributor
         Networking.Send(PacketType.ImageChunk, w =>
         {
             w.Id(owner);
+            w.Bool(true);
             w.Int(data.Length);
-        }, result, 12);
+        }, result, 9);
 
         // send data over the stream
         for (int i = 0; i < data.Length; i += CHUNK_SIZE) Networking.Send(PacketType.ImageChunk, w =>
         {
             w.Id(owner);
+            w.Bool(false);
             w.Bytes(data, i, Mathf.Min(CHUNK_SIZE, data.Length - i));
-        }, result, CHUNK_SIZE + 8);
+        }, result, CHUNK_SIZE + 5);
     }
 
     /// <summary> Uploads the current spray to the server. </summary>
@@ -89,29 +94,36 @@ public static class SprayDistributor
         if (!SpraySettings.Enabled) return;
 
         var id = r.Id(); // id of the spray owner
-        if (Streams.TryGetValue(id, out var stream)) // data packet
+        if (r.Bool()) // initial packet
         {
-            stream.Bytes(r.Bytes(Mathf.Min(CHUNK_SIZE, r.Length - 9)));
+            if (Streams.TryGetValue(id, out var stream))
+            {
+                Log.Warning("Overriding the old stream");
+                Marshal.FreeHGlobal(stream.mem);
+            }
+            Log.Info("Downloading spray#" + id);
+
+            int length = r.Int();
+            Streams[id] = new(Marshal.AllocHGlobal(length), length);
+        }
+        else // data packet
+        {
+            if (!Streams.TryGetValue(id, out var stream))
+            {
+                Log.Error("Stream's initial packet was lost!");
+                return;
+            }
+
+            stream.Bytes(r.Bytes(r.Length - 6));
             if (stream.Position >= stream.Length)
             {
                 // handle the downloaded spray
                 Reader.Read(stream.mem, stream.Length, r => HandleSpray(id, r.Bytes(r.Length)));
 
-                Marshal.FreeHGlobal(stream.mem); // free the memory allocated for image
+                Marshal.FreeHGlobal(stream.mem);
                 Streams.Remove(id);
             }
-        }
-        else // initial packet
-        {
-            if (r.Length != 13) // the client has lost the initial packet
-            {
-                Log.Error("Stream's initial packet was lost!");
-                return;
-            }
-            Log.Info("Downloading spray#" + id);
-
-            int length = r.Int();
-            Streams.Add(id, new(Marshal.AllocHGlobal(length), length));
+            if (Debug) Log.Debug($"Downloaded {100f * stream.Position / stream.Length:0.00}%");
         }
     }
 

@@ -52,7 +52,6 @@ public class SprayManager
             Cache.Clear();
             Cache.Add(Tools.AccId, CurrentSpray);
         };
-        // process requests every second
         Events.EverySecond += SprayDistributor.ProcessRequests;
     }
 
