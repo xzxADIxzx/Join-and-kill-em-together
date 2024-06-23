@@ -59,11 +59,11 @@ public class Swords : Enemy
         }
     }
 
-    private void Update()
+    private void Update() => Stats.MTE(() =>
     {
         if (IsOwner || Dead) return;
         transform.position = new(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
-    }
+    });
 
     #region entity
 

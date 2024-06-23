@@ -21,11 +21,11 @@ public class Shrimp : Enemy
         GetComponent<Mass>().crazyModeHealth = EnemyId.statue.health * .2f;
     }
 
-    private void Update()
+    private void Update() => Stats.MTE(() =>
     {
         if (IsOwner || Dead) return;
         transform.position = new(x.Target, y.Target, z.Target);
-    }
+    });
 
     #region entity
 

@@ -22,7 +22,7 @@ public class Idol : Enemy
 
     private void Start() => SpawnEffect();
 
-    private void Update()
+    private void Update() => Stats.MTE(() =>
     {
         if (IsOwner || Dead) return;
 
@@ -34,7 +34,7 @@ public class Idol : Enemy
             lastTargetId = target.Id;
             EnemyId.idol.ChangeOverrideTarget(fakeFerry && Tools.Within(fakeFerry.transform, transform, 100f) ? fakeFerry : target.Value?.EnemyId);
         }
-    }
+    });
 
     #region entity
 

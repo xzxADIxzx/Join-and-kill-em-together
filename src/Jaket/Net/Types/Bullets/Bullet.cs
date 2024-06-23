@@ -45,7 +45,7 @@ public class Bullet : OwnableEntity
 
     private void Start() => ClearTrail(GetComponentInChildren<TrailRenderer>(), x, y, z);
 
-    private void Update()
+    private void Update() => Stats.MTE(() =>
     {
         if (IsOwner || Dead) return;
 
@@ -63,7 +63,7 @@ public class Bullet : OwnableEntity
 
             if (transform.parent != null) transform.SetParent(null, true);
         }
-    }
+    });
 
     private void Exploded(bool value) => Tools.Field<Grenade>("exploded").SetValue(grenade, value);
 

@@ -24,7 +24,7 @@ public class Turret : Enemy
 
     private void Start() => SpawnEffect();
 
-    private void Update()
+    private void Update() => Stats.MTE(() =>
     {
         if (IsOwner || Dead) return;
 
@@ -38,7 +38,7 @@ public class Turret : Enemy
             else
                 Events.Post2(() => Cooldown(4200f));
         }
-    }
+    });
 
     private void Cooldown(float time) => Tools.Field<global::Turret>("cooldown").SetValue(turret, time);
 

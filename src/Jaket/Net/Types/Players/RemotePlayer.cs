@@ -77,7 +77,7 @@ public class RemotePlayer : Entity
         }
     }
 
-    private void Update()
+    private void Update() => Stats.MTE(() =>
     {
         Header.Update(Health, Typing);
         if (Animator == null) // the player is dead
@@ -108,9 +108,9 @@ public class RemotePlayer : Entity
                 Doll.ApplySuit();
             }
         }
-    }
+    });
 
-    private void LateUpdate()
+    private void LateUpdate() => Stats.MTE(() =>
     {
         // everything related to the hook is in LateUpdate, because it is a child of the player's doll and moves with it
         Doll.Hook.position = new(hookX.Get(LastUpdate), hookY.Get(LastUpdate), hookZ.Get(LastUpdate));
@@ -129,7 +129,7 @@ public class RemotePlayer : Entity
             if (pl.Rb.isKinematic) pl.EnemyId.gce.ForceOff();
             pl.Rb.velocity = (transform.position - pl.transform.position).normalized * 60f;
         }
-    }
+    });
 
     #region special
 

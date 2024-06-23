@@ -36,14 +36,14 @@ public class Body : Enemy
         });
     }
 
-    private void Update()
+    private void Update() => Stats.MTE(() =>
     {
         if (IsOwner || Dead) return;
 
         transform.position = new(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
 
         if (lastCharging != charging && (lastCharging = charging)) EnemyId.spider.Invoke("ChargeBeam", 0f);
-    }
+    });
 
     private void Cooldown(float time) => Tools.Field<SpiderBody>("beamProbability").SetValue(EnemyId.spider, time);
 

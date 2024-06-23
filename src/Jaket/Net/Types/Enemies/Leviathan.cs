@@ -37,7 +37,7 @@ public class Leviathan : Enemy
         if (!IsOwner) Cooldown(4200f);
     }
 
-    private void Update()
+    private void Update() => Stats.MTE(() =>
     {
         if (IsOwner || Dead) return;
 
@@ -74,7 +74,7 @@ public class Leviathan : Enemy
             }
             Cooldown(4200f);
         }
-    }
+    });
 
     private void Cooldown(float time) => Tools.Field<LeviathanHead>("attackCooldown").SetValue(head, time);
 

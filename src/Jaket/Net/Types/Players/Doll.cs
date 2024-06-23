@@ -80,7 +80,7 @@ public class Doll : MonoBehaviour
         HookWinch = GetComponentInChildren<LineRenderer>(true);
     }
 
-    private void Update()
+    private void Update() => Stats.MTE(() =>
     {
         if (Animator == null) return;
 
@@ -135,7 +135,7 @@ public class Doll : MonoBehaviour
             FallParticle.localScale = new(1.2f, .6f, 1f);
         }
         else if (!Falling && FallParticle != null) Destroy(FallParticle.gameObject);
-    }
+    });
 
     #region apply
 

@@ -82,7 +82,7 @@ public class TeamCoin : OwnableEntity
 
     private void Start() => ClearTrail(trail, x, y, z);
 
-    private void Update()
+    private void Update() => Stats.MTE(() =>
     {
         if (IsOwner || Dead) return;
 
@@ -93,7 +93,7 @@ public class TeamCoin : OwnableEntity
             Reset();
             Quadruple();
         }
-    }
+    });
 
     private void OnCollisionEnter(Collision other)
     {

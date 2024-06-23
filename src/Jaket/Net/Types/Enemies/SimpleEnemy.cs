@@ -26,11 +26,11 @@ public class SimpleEnemy : Enemy
         if (Tools.Scene == "Level 7-4" && Type == EntityType.SomethingWicked) gameObject.SetActive(false);
     }
 
-    private void Update()
+    private void Update() => Stats.MTE(() =>
     {
         if (IsOwner || Dead) return;
         transform.position = new(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
-    }
+    });
 
     #region entity
 

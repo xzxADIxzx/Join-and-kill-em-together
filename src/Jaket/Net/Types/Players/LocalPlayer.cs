@@ -51,14 +51,14 @@ public class LocalPlayer : Entity
         Events.OnWeaponChanged += () => Events.Post(UpdateWeapons);
     }
 
-    private void Update()
+    private void Update() => Stats.MTE(() =>
     {
         if (HeldItem == null || HeldItem.IsOwner) return;
         HeldItem = null;
 
         fc.currentPunch.ForceThrow();
         fc.currentPunch.PlaceHeldObject(new ItemPlaceZone[0], null);
-    }
+    });
 
     #region special
 

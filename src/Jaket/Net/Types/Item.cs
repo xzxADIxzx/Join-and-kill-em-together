@@ -35,7 +35,7 @@ public class Item : OwnableEntity
         torch = GetComponent<Torch>() != null;
     }
 
-    private void Update()
+    private void Update() => Stats.MTE(() =>
     {
         if (IsOwner || Dead) return;
 
@@ -68,7 +68,7 @@ public class Item : OwnableEntity
                 if (torch && col.TryGetComponent<Flammable>(out var flammable)) flammable.Burn(4f);
             }
         }
-    }
+    });
 
     public void PickUp()
     {
