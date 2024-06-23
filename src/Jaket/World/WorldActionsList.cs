@@ -251,6 +251,36 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         NetAction.Sync(l, "Trigger", new(-290f, 40f, 350f)); // boss
 
         #endregion
+        #region 7-1
+        l = "Level 7-1";
+
+        // secret boss
+        StaticAction.Destroy(l, "ViolenceArenaDoor", new(-120f, 0f, 530.5f));
+        NetAction.Sync(l, "Trigger", new(-120f, 5f, 591f));
+
+        // garden
+        StaticAction.Find(l, "Cube", new(0f, 3.4f, 582.5f), obj => obj.transform.position = new(0f, 7.4f, 582.5f));
+        StaticAction.Destroy(l, "Cube", new(-66.25f, 9.9f, 485f));
+
+        NetAction.SyncLimbo(l, new(96.75f, 26f, 545f));
+
+        // tunnel
+        StaticAction.Patch(l, "Wave 2", new(-242.5f, 0f, 0f));
+
+        NetAction.SyncButton(l, "Forward Button", new(-242.5f, -112.675f, 310.2799f), obj =>
+        {
+            obj.parent.parent.parent.parent.parent.parent.parent.parent.gameObject.SetActive(true);
+            Teleporter.Teleport(new(-242.5f, -112.5f, 314f));
+        });
+        NetAction.Sync(l, "Wave 2", new(-242.5f, 0f, 0f));
+        NetAction.Sync(l, "Wave 3", new(-242.5f, 0f, 0f));
+        NetAction.Sync(l, "PlayerTeleportActivator", new(-242.5f, 0f, 0f));
+
+        // outro
+        StaticAction.Find(l, "FightStart", new(-242.5f, 120f, -399.75f), obj => obj.GetComponent<ObjectActivator>().events.toDisActivateObjects[2] = null);
+        NetAction.Sync(l, "FightStart", new(-242.5f, 120f, -399.75f)); // boss
+
+        #endregion
         #region 7-2
         l = "Level 7-2";
 
