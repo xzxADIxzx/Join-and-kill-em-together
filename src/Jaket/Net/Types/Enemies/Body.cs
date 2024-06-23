@@ -23,7 +23,7 @@ public class Body : Enemy
     private void Start()
     {
         SpawnEffect();
-        Boss(() => Tools.Scene == "Level 0-1", 25f);
+        Boss(Tools.Scene == "Level 0-1", 25f);
 
         transform.parent.position = transform.position + Vector3.down * 10f; // teleport the spawn effect
         Events.Post2(() =>

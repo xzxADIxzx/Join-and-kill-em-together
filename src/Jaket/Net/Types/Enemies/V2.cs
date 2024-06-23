@@ -18,7 +18,7 @@ public class V2 : Enemy
     private void Start()
     {
         SpawnEffect();
-        Boss(() => Tools.Scene == "Level 1-4" || Tools.Scene == "Level 4-4", v2.secondEncounter ? 80f : 40f, v2.secondEncounter ? 2 : 1);
+        Boss(Tools.Scene == "Level 1-4" || Tools.Scene == "Level 4-4", v2.secondEncounter ? 80f : 40f, v2.secondEncounter ? 2 : 1);
 
         if (Tools.Scene == "Level 4-4")
         {

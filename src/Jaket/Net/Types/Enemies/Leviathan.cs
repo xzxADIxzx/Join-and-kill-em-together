@@ -29,7 +29,7 @@ public class Leviathan : Enemy
 
     private void Start()
     {
-        Boss(() => true, 200f, 2);
+        Boss(true, 200f, 2);
 
         leviathan.phaseChangeHealth = EnemyId.statue.health / 2f;
         leviathan.active = IsOwner;

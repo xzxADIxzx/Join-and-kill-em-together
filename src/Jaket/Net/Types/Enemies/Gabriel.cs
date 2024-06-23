@@ -25,7 +25,7 @@ public class Gabriel : Enemy
     private void Start()
     {
         SpawnEffect();
-        Boss(() => Tools.Scene == "Level 3-2" || Tools.Scene == "Level 6-2", 100f, 2);
+        Boss(Tools.Scene == "Level 3-2" || Tools.Scene == "Level 6-2", 100f, 2);
 
         if (gabriel1) gabriel1.phaseChangeHealth = EnemyId.machine.health / 2f;
         if (gabriel2) gabriel2.phaseChangeHealth = EnemyId.machine.health / 2f;

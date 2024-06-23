@@ -1,6 +1,5 @@
 namespace Jaket.Net.Types;
 
-using System;
 using UnityEngine;
 
 using Jaket.IO;
@@ -12,10 +11,9 @@ public class Enemy : OwnableEntity
     protected FloatLerp x = new(), y = new(), z = new();
 
     /// <summary> Increases the health of the enemy and adds a boss bar when certain conditions are reached. </summary>
-    protected void Boss(Func<bool> cond, float bossHealth, int layers = 1, string nameOverride = null)
+    protected void Boss(bool cond, float bossHealth, int layers = 1, string nameOverride = null)
     {
-        if (!cond()) return;
-
+        if (!cond) return;
         if (!LobbyController.IsOwner) float.TryParse(LobbyController.Lobby?.GetData("ppp"), out LobbyController.PPP);
         LobbyController.ScaleHealth(ref bossHealth);
 

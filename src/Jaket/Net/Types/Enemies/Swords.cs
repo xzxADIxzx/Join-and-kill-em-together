@@ -29,7 +29,7 @@ public class Swords : Enemy
         bool castleVein = Tools.Scene == "Level 1-3";
 
         SpawnEffect();
-        Boss(() => prelude || castleVein, prelude ? 125f : 50f, castleVein || firstPhase != null ? 1 : 2, prelude
+        Boss(prelude || castleVein, prelude ? 125f : 50f, castleVein || firstPhase != null ? 1 : 2, prelude
             ? null
             : (agonyOrTundra = !agonyOrTundra)
                 ? "SWORDSMACHINE \"AGONY\""
