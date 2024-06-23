@@ -1,5 +1,7 @@
 namespace Jaket.Net.Types;
 
+using UnityEngine;
+
 using Jaket.Content;
 using Jaket.IO;
 
@@ -76,8 +78,10 @@ public class V2 : Enemy
         }
         if (Tools.Scene == "Level 7-1")
         {
-            Tools.ObjFind("AltarStuff/Altar").SetActive(true);
+            Tools.ObjFind("AltarStuff").transform.Find("Altar").gameObject.SetActive(true);
             Tools.ObjFind("BigJohnatronMusic").SetActive(false);
+
+            Tools.ResFind<ItemPlaceZone>(zone => zone.transform.Find("Book") != null, zone => zone.transform.position += Vector3.up * 3f);
         }
     }
 

@@ -41,7 +41,7 @@ public class World
     {
         Events.OnLoadingStarted += () =>
         {
-            if (LobbyController.Online && LobbyController.IsOwner)
+            if (LobbyController.Online && LobbyController.IsOwner && Tools.Pending != "Main Menu")
             {
                 Activated.Clear();
                 Networking.Send(PacketType.Level, WriteData);
