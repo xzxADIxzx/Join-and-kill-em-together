@@ -18,7 +18,7 @@ public class V2 : Enemy
     private void Start()
     {
         SpawnEffect();
-        Boss(Tools.Scene == "Level 1-4" || Tools.Scene == "Level 4-4", v2.secondEncounter ? 80f : 40f, v2.secondEncounter ? 2 : 1);
+        Boss(Tools.Scene == "Level 1-4" || Tools.Scene == "Level 4-4" || Tools.Scene == "Level 7-1", v2.secondEncounter ? 80f : 40f, v2.secondEncounter ? 2 : 1);
 
         if (Tools.Scene == "Level 4-4")
         {
@@ -73,6 +73,11 @@ public class V2 : Enemy
 
             // the second call of StartFade on the host-side can cause NullReferenceException
             if (Tools.ObjFind("Music - Versus").TryGetComponent(out Crossfade fade) && !fade.inProgress) fade.StartFade();
+        }
+        if (Tools.Scene == "Level 7-1")
+        {
+            Tools.ObjFind("AltarStuff/Altar").SetActive(true);
+            Tools.ObjFind("BigJohnatronMusic").SetActive(false);
         }
     }
 

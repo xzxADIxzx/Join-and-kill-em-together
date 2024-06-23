@@ -41,6 +41,7 @@ public class Enemies
         Types[EntityType.Idol] = typeof(Idol);
         Types[EntityType.Gabriel] = typeof(Gabriel);
         Types[EntityType.Gabriel_Angry] = typeof(Gabriel);
+        Types[EntityType.Johninator] = typeof(V2);
     }
 
     /// <summary> Finds the entity type by enemy class and type, taking into account the fact that some enemies have the same types. </summary>
