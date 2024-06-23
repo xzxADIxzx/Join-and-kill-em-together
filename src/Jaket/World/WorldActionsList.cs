@@ -132,13 +132,13 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         #region 4-1
         l = "Level 4-1";
 
-        NetAction.Sync(l, "GameObject", new(-290.25f, 24.5f, 814.75f), obj => obj.GetComponentInParent<LimboSwitch>().Pressed());
+        NetAction.SyncLimbo(l, new(-290.25f, 24.5f, 814.75f));
 
         #endregion
         #region 4-2
         l = "Level 4-2";
 
-        NetAction.Sync(l, "GameObject", new(-150.75f, 33f, 953.1049f), obj => obj.GetComponentInParent<LimboSwitch>().Pressed());
+        NetAction.SyncLimbo(l, new(-150.75f, 33f, 953.1049f));
 
         StaticAction.Enable(l, "6A - Indoor Garden", new(-19f, 35f, 953.9481f));
         StaticAction.Enable(l, "6B - Outdoor Arena", new(35f, 35f, 954f));
