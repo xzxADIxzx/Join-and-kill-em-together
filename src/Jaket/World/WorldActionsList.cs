@@ -261,6 +261,10 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         StaticAction.Find(l, "Cube", new(0f, 3.4f, 582.5f), obj => obj.transform.position = new(0f, 7.4f, 582.5f));
         StaticAction.Destroy(l, "Cube", new(-66.25f, 9.9f, 485f));
 
+        StaticAction.Destroy(l, "ViolenceArenaDoor", new(0f, 12.5f, 589.5f));
+        StaticAction.Destroy(l, "Walkway Arena -> Stairway Up", new(80f, -25f, 590f));
+
+        NetAction.Sync(l, "Closer", new(0f, 20f, 579f));
         NetAction.SyncLimbo(l, new(96.75f, 26f, 545f));
 
         // tunnel
