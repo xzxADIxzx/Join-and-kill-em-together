@@ -87,7 +87,6 @@ public class NetAction : WorldAction
         StaticAction.Find(level, name, position, obj => Tools.GetClick(obj).AddListener(() =>
         {
             if (LobbyController.Online) World.SyncAction(obj);
-            Log.Debug($"BUTTON GOT CLICKED: {obj.transform.position.x} {obj.transform.position.y} {obj.transform.position.z}");
         }));
         new NetAction(level, name, position, () => Tools.ResFind<RectTransform>(
             obj => Tools.IsReal(obj) && Tools.Within(obj, position) && obj.name == name,

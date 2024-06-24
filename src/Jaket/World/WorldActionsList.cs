@@ -5,7 +5,6 @@ using UnityEngine;
 using Jaket.Content;
 using Jaket.Net;
 using Jaket.Net.Types;
-using Jaket.Sam;
 using Jaket.UI;
 using Jaket.UI.Fragments;
 
@@ -284,23 +283,18 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         #region 7-2
         l = "Level 7-2";
 
-        void Fill(string text, int size, bool def, Transform screen, params string[] toDestroy)
+        void Fill(string text, int size, TextAnchor align, Transform canvas)
         {
-            var canvas = screen.GetChild(0);
-            foreach (var name in toDestroy) Tools.Destroy(canvas.Find(name)?.gameObject);
-
-            UIB.Text(text, canvas, Size(964f, 964f), size: size, align: def ? TextAnchor.MiddleCenter : TextAnchor.UpperLeft).transform.localScale /= 8f;
+            for (int i = 3; i < canvas.childCount; i++) Tools.Destroy(canvas.GetChild(i).gameObject);
+            UIB.Text(text, canvas, Size(964f, 964f), null, size, align).transform.localScale /= 8f;
         }
-
         StaticAction.Find(l, "Intro -> Outdoors", new(-115f, 55f, 419.5f), obj =>
         {
             var door = obj.GetComponent<Door>();
             door?.onFullyOpened.AddListener(() =>
             {
-                door.onFullyOpened = new(); // clear listeners
-
-                HudMessageReceiver.Instance?.SendHudMessage("What?", silent: true);
-                SamAPI.TryPlay("What?", Networking.LocalPlayer.Voice);
+                door.onFullyOpened = null;
+                HudMessageReceiver.Instance?.SendHudMessage("<size=48>What?</size>", silent: true);
             });
         });
         StaticAction.Find(l, "9A", new(-23.5f, 37.75f, 806.25f), obj =>
@@ -308,21 +302,31 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
             // well, actions aren't perfect
             if (obj.transform.parent.name == "9 Nonstuff") return;
 
-            // open all of the doors and disable the Gate Control Terminal™
+            // open all of the doors
             for (int i = 1; i < obj.transform.childCount; i++) Tools.Destroy(obj.transform.GetChild(i).gameObject);
 
-            var text = string.Format(BASEMENT_TERMILA_TEXT, Tools.AccId.ToString().Substring(0, 3));
-            Fill(text, 64, false, obj.transform.Find("PuzzleScreen"), "Text (TMP) (1)", "Button A", "Button B", "Button C", "Button D");
+            // disable the Gate Control Terminal™
+            Fill(string.Format(BASEMENT_TERMILA_TEXT, Tools.AccId), 64, TextAnchor.UpperLeft, obj.transform.Find("PuzzleScreen/Canvas"));
         });
-        // don't block the path of the roomba once the fight starts
+        StaticAction.Find(l, "PuzzleScreen (1)", new(-230.5f, 31.75f, 813.5f), obj => Fill("UwU", 256, TextAnchor.MiddleCenter, obj.transform.Find("Canvas")));
+
         StaticAction.Find(l, "Trigger", new(-218.5f, 65f, 836.5f), obj => Tools.Destroy(obj.GetComponent<ObjectActivator>()));
-        StaticAction.Find(l, "PuzzleScreen (1)", new(-230.5f, 31.75f, 813.5f), obj =>
+        StaticAction.Find(l, "BayDoor", new(-305.75f, 49.75f, 600.5f), obj =>
         {
-            Fill("UwU", 256, true, obj.transform, "Text (TMP)", "Button (Closed)");
-        });
-        StaticAction.Find(l, "PuzzleScreen (1)", new(-317.75f, 55.25f, 605.25f), obj =>
-        {
-            if (!LobbyController.IsOwner) Fill("Only the host can do this!", 120, true, obj.transform, "Text (TMP)", "UsableButtons");
+            ObjectActivator trigger;
+            obj.GetComponent<Door>().activatedRooms = new[] { (trigger = Tools.Create<ObjectActivator>("Trigger", obj.transform)).gameObject };
+
+            trigger.gameObject.SetActive(false);
+            trigger.reactivateOnEnable = true;
+
+            trigger.events = new() { onActivate = new() };
+            trigger.events.onActivate.AddListener(() =>
+            {
+                var root = obj.transform.parent.Find("UsableScreen (1)/PuzzleScreen (1)/Canvas/UsableButtons/");
+                root.Find("Button (Closed)").gameObject.SetActive(false);
+                root.Find("Button (Open)").gameObject.SetActive(true);
+            });
+            trigger.events.toDisActivateObjects = new[] { trigger.gameObject };
         });
 
         // enable the track points at the level
@@ -331,8 +335,8 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         StaticAction.Enable(l, "2.25 - Door 3", new(46.5f, 26.75f, 823.75f));
         StaticAction.Enable(l, "3.5 - Door 4", new(46.5f, 26.75f, 858.75f));
 
+        NetAction.Sync(l, "Trigger", new(-115f, 50f, 348.5f));
         NetAction.Sync(l, "TowerDestruction", new(-119.75f, 34f, 552.25f));
-        NetAction.Sync(l, "DelayToClaw", new(-305.75f, 30f, 620.5f), obj => obj.transform.parent.Find("BayDoor").GetComponent<Door>().SimpleOpenOverride());
 
         #endregion
         #region 7-3

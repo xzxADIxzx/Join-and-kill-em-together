@@ -131,6 +131,13 @@ public class ActionPatch
     }
 
     [HarmonyPostfix]
+    [HarmonyPatch(typeof(Door), nameof(Door.SimpleOpenOverride))]
+    static void OpenSpec(Door __instance)
+    {
+        if (LobbyController.Online && __instance.name == "BayDoor") World.SyncAction(__instance, 4);
+    }
+
+    [HarmonyPostfix]
     [HarmonyPatch(typeof(StatueActivator), "Start")]
     static void Activate(StatueActivator __instance)
     {
