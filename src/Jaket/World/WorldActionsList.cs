@@ -1,5 +1,6 @@
 namespace Jaket.World;
 
+using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Content;
@@ -225,7 +226,15 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         #region 5-4
         l = "Level 5-4";
 
-        NetAction.Sync(l, "Activator", new(641.2f, 690f, 521.7f), obj => Teleporter.Teleport(new(641.25f, 691.5f, 522f))); // boss
+        NetAction.Sync(l, "Activator", new(641.2f, 690f, 521.7f), obj => // boss
+        {
+            obj.gameObject.scene.GetRootGameObjects().Do(o =>
+            {
+                if (o.name == "Underwater") o.SetActive(false);
+                if (o.name == "Surface") o.SetActive(true);
+            });
+            Teleporter.Teleport(new(641.25f, 691.5f, 522f));
+        });
 
         #endregion
         #region 6-1
