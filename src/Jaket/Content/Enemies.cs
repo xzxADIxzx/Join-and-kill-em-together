@@ -170,7 +170,7 @@ public class Enemies
         Networking.EachPlayer(player =>
         {
             var newDst = (enemy - player.transform.position).sqrMagnitude;
-            if (newDst < dst)
+            if (newDst < dst && player.Health > 0)
             {
                 target = player.transform;
                 dst = newDst;
