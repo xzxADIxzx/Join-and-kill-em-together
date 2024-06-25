@@ -346,8 +346,9 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         #region 7-3
         l = "Level 7-3";
 
-        // wtf?! why is there a torch???
-        StaticAction.Find(l, "1 - Dark Path", new(0f, -10f, 300f), obj => Tools.Destroy(obj.transform.Find("Altar (Torch) Variant").GetChild(0).gameObject));
+        // why is there a torch???
+        StaticAction.Find(l, "1 - Dark Path", new(0f, -10f, 300f), obj => Tools.Destroy(obj.transform.Find("Altar (Torch) Variant/Cube").gameObject));
+
         StaticAction.Find(l, "Door 1", new(-55.5f, -2.5f, 618.5f), obj => obj.GetComponent<Door>().Unlock());
         StaticAction.Find(l, "Door 2", new(-75.5f, -12.5f, 568.5f), obj => obj.GetComponent<Door>().Unlock());
         StaticAction.Find(l, "Door 1", new(-75.5f, -12.5f, 578.5f), obj => obj.GetComponent<Door>().Unlock());
@@ -361,6 +362,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         StaticAction.Destroy(l, "Door 2", new(-95.5f, 7.5f, 298.75f));
         StaticAction.Destroy(l, "ViolenceHallDoor (1)", new(-188f, 7.5f, 316.25f));
 
+        NetAction.Sync(l, "Trigger", new(-145.5f, 5f, 483.75f), obj => Teleporter.Teleport(new(-131f, -14.5f, 483.75f)));
         NetAction.Sync(l, "Opener", new(-170.5f, 0.5f, 480.75f));
         NetAction.Sync(l, "Opener", new(-170.5f, 0.5f, 490.75f), obj => Tools.ObjFind("Outdoors Areas/6 - Interior Garden/NightSkyActivator").SetActive(true));
         NetAction.Sync(l, "BigDoorOpener", new(-145.5f, -10f, 483.75f), obj => obj.transform.parent.gameObject.SetActive(true));
@@ -370,43 +372,22 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         l = "Level 7-4";
 
         // security system fight
-        StaticAction.Find(l, "Trigger", new(0f, 495.25f, 713.25f), obj => obj.SetActive(LobbyController.IsOwner));
-        StaticAction.Find(l, "SecuritySystem", new(0f, 0f, 8.25f), obj =>
+        NetAction.Sync(l, "Trigger", new(0f, 495.25f, 713.25f), obj =>
         {
-            var e = obj.AddComponent<ObjectActivator>().events = new();
-            (e.onActivate = new()).AddListener(() =>
-            {
-                var b = obj.GetComponent<CombinedBossBar>();
-                for (int i = 0; i < b.enemies.Length; i++)
-                {
-                    var s = World.SecuritySystem[i] = b.enemies[i].gameObject.AddComponent<SecuritySystem>();
-                    s.Type = EntityType.SecuritySystemOffset + i;
-                }
-            });
+            var b = obj.transform.parent.GetComponentInChildren<CombinedBossBar>(true);
+            for (int i = 0; i < b.enemies.Length; i++)
+                (World.SecuritySystem[i] = b.enemies[i].gameObject.AddComponent<SecuritySystem>()).Type = EntityType.SecuritySystemOffset + i;
+
+            Teleporter.Teleport(new(0f, 472f, 745f));
         });
-
-        StaticAction.Destroy(l, "ArenaWalls", new(-26.5f, 470f, 763.75f));
-
-        NetAction.Sync(l, "Trigger", new(0f, 495.25f, 713.25f), obj => obj.GetComponent<ObjectActivator>().Activate());
         NetAction.Sync(l, "ShieldDeactivator", new(0f, 477.5f, 724.25f));
         NetAction.Sync(l, "DeathSequence", new(-2.5f, 472.5f, 724.25f));
         NetAction.SyncButton(l, "Button", new(0f, 476.5f, 717.15f));
 
         // insides
-        StaticAction.Find(l, "EntryTrigger", new(0f, 458.5f, 649.75f), obj => obj.SetActive(LobbyController.IsOwner));
-        StaticAction.Find(l, "BrainFightTrigger", new(6.999941f, 841.5f, 610.7503f), obj => obj.SetActive(LobbyController.IsOwner));
-
-        NetAction.Sync(l, "EntryTrigger", new(0f, 458.5f, 649.75f), obj =>
-        {
-            obj.GetComponent<ObjectActivator>().Activate();
-            Teleporter.Teleport(new(0f, 460f, 650f));
-        });
+        NetAction.Sync(l, "EntryTrigger", new(0f, 458.5f, 649.75f), obj => Teleporter.Teleport(new(0f, 460f, 650f)));
         NetAction.Sync(l, "Deactivator", new(0.75f, 550.5f, 622.75f));
-        NetAction.Sync(l, "BrainFightTrigger", new(6.999941f, 841.5f, 610.7503f), obj =>
-        {
-            obj.GetComponent<ObjectActivator>().Activate();
-            Teleporter.Teleport(new(0f, 826.5f, 610f));
-        });
+        NetAction.Sync(l, "BrainFightTrigger", new(6.999941f, 841.5f, 610.7503f), obj => Teleporter.Teleport(new(0f, 826.5f, 610f)));
         NetAction.Sync(l, "DelayedIdolSpawner", new(14.49993f, 914.25f, 639.7503f), obj =>
         {
             obj.transform.parent.gameObject.SetActive(true);
