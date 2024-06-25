@@ -21,6 +21,10 @@ public class EnemyPatch
     [HarmonyPatch(nameof(EnemyIdentifier.Death), typeof(bool))]
     static void Death(EnemyIdentifier __instance) => Enemies.SyncDeath(__instance);
 
+    [HarmonyPrefix]
+    [HarmonyPatch("UpdateTarget")]
+    static bool Skip() => Time.frameCount % (1 + Networking.Entities.Count / 16) == 0;
+
     [HarmonyPostfix]
     [HarmonyPatch("UpdateTarget")]
     static void Target(EnemyIdentifier __instance) => Enemies.FindTarget(__instance);

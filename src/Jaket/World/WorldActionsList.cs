@@ -247,6 +247,8 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         StaticAction.Destroy(l, "Cage", new(168.5f, -130f, 140f));
         StaticAction.Destroy(l, "Cube", new(102f, -165f, -503f));
 
+        NetAction.Sync(l, "EnemyActivatorTrigger", new(168.5f, -125f, -438f));
+
         #endregion
         #region 6-2
         l = "Level 6-2";
