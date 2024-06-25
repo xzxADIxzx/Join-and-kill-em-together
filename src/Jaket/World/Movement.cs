@@ -303,8 +303,9 @@ public class Movement : MonoSingleton<Movement>
         cc.StopShake();
         nm.ActivatePlayer();
 
-        // the player is currently fighting the Minotaur in the tunnel or the brain in the Earthmover
+        // the player is currently fighting the Minotaur in the tunnel, the security system or the brain in the Earthmover
         if (World.TunnelRoomba) nm.transform.position = World.TunnelRoomba.position with { y = -112.5f };
+        if (World.SecuritySystem[0]) nm.transform.position = new(0f, 472f, 745f);
         if (World.Brain && World.Brain.IsFightActive) nm.transform.position = new(0f, 826.5f, 610f);
     }
 
