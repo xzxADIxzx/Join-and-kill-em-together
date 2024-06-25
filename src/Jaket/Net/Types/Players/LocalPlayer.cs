@@ -30,8 +30,6 @@ public class LocalPlayer : Entity
     public Vector3 Hook;
     /// <summary> Entity of the item the player is currently holding in their hands. </summary>
     public Item HeldItem;
-    /// <summary> Entity that the player pulls to himself with a hook. </summary>
-    public Entity Pulled;
 
     /// <summary> Index of the current weapon in the global list. </summary>
     private byte weapon;
@@ -111,7 +109,6 @@ public class LocalPlayer : Entity
         w.Float(nm.transform.eulerAngles.y);
         w.Float(135f - Mathf.Clamp(CameraController.Instance.rotationX, -40f, 80f));
         w.Vector(Hook);
-        w.Id(Pulled?.Id ?? 0u);
 
         w.Byte((byte)nm.hp);
         w.Byte((byte)Mathf.Floor(WeaponCharges.Instance.raicharge * 2.5f));

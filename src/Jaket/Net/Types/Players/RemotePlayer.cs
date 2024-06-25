@@ -15,8 +15,6 @@ public class RemotePlayer : Entity
 {
     /// <summary> Position of the player, the rotation of its body and head, and the position of the hook. </summary>
     private FloatLerp x, y, z, bodyRotation, headRotation, hookX, hookY, hookZ;
-    /// <summary> Entity that the player pulls to himself with a hook. </summary>
-    private EntityProv<Entity> pulled = new();
 
     /// <summary> Health may not match the real one due to byte limitations. </summary>
     public byte Health = 100;
@@ -119,16 +117,6 @@ public class RemotePlayer : Entity
 
         Doll.HookWinch.SetPosition(0, Doll.HookRoot.position);
         Doll.HookWinch.SetPosition(1, Doll.Hook.position);
-
-        // pull the entity caught by the hook
-        if (!LobbyController.IsOwner) return;
-
-        var pl = pulled.Value;
-        if (pl && pl.EnemyId && pl.Rb)
-        {
-            if (pl.Rb.isKinematic) pl.EnemyId.gce.ForceOff();
-            pl.Rb.velocity = (transform.position - pl.transform.position).normalized * 60f;
-        }
     });
 
     #region special
@@ -176,7 +164,6 @@ public class RemotePlayer : Entity
         w.Float(bodyRotation.Target);
         w.Float(headRotation.Target);
         w.Float(hookX.Target); w.Float(hookY.Target); w.Float(hookZ.Target);
-        w.Id(pulled.Id);
 
         w.Byte(Health);
         w.Byte(RailCharge);
@@ -195,10 +182,6 @@ public class RemotePlayer : Entity
         bodyRotation.Read(r);
         headRotation.Read(r);
         hookX.Read(r); hookY.Read(r); hookZ.Read(r);
-
-        var id = r.Id();
-        if (id == 0L) pulled.Value?.EnemyId?.gce.StopForceOff(); // player released the hook
-        pulled.Id = id;
 
         Health = r.Byte();
         RailCharge = r.Byte();

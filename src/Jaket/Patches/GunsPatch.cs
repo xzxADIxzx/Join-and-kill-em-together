@@ -52,9 +52,8 @@ public class ArmsPatch
     static void Hook(HookArm __instance, bool ___forcingFistControl, Vector3 ___hookPoint, bool ___lightTarget, EnemyIdentifier ___caughtEid)
     {
         if (LobbyController.Offline) return;
-        lp.Hook = ___forcingFistControl ? ___hookPoint : Vector3.zero;
 
-        if (__instance.state == HookState.Pulling && ___lightTarget && lp.Pulled == null) lp.Pulled = ___caughtEid.GetComponent<Enemy>();
-        if (__instance.state != HookState.Pulling || !___lightTarget) lp.Pulled = null;
+        lp.Hook = ___forcingFistControl ? ___hookPoint : Vector3.zero;
+        if (__instance.state == HookState.Pulling && ___lightTarget && ___caughtEid.name == "Net") ___caughtEid.GetComponent<Enemy>()?.TakeOwnage();
     }
 }
