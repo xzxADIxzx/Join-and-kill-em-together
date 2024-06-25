@@ -229,7 +229,7 @@ public class World
                 });
                 break;
             case 6:
-                Networking.EachEntity(entity => entity.Type == EntityType.Puppet, entity => entity.Kill(null));
+                Networking.EachEntity(entity => entity.Type == EntityType.Puppet, entity => entity.EnemyId.InstaKill());
                 Find<BloodFiller>(r.Vector(), f => f.InstaFill());
                 break;
         }

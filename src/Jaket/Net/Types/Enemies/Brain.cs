@@ -9,6 +9,9 @@ using Jaket.World;
 /// <summary> Representation of Earthmover's brain. </summary>
 public class Brain : Enemy
 {
+    /// <summary> Whether the player is currently fighting the brain. </summary>
+    public bool IsFightActive;
+
     /// <summary> Idols' state. </summary>
     private bool idol1, idol2;
     /// <summary> Idols' doors. </summary>
@@ -32,10 +35,13 @@ public class Brain : Enemy
 
     private void Update() => Stats.MTE(() =>
     {
-        if (IsOwner || Dead) return;
+        if (IsOwner || Dead || !IsFightActive) return;
 
         if (door1.open && !idol1) door1.Close();
         if (door2.open && !idol2) door2.Close();
+
+        if (!door1.open && idol1) door1.Open();
+        if (!door2.open && idol2) door2.Open();
     });
 
     #region entity

@@ -106,7 +106,8 @@ public class Enemies
             return true;
         }
         // the security system is a complex enemy consisting of several subenemies
-        if (Tools.Scene == "Level 7-4" && (enemyId.name == "Mainframe (Hurtable)" || enemyId.transform.parent?.name == "SecuritySystem")) return true;
+        if (Tools.Scene == "Level 7-4" && enemyId.GetComponentInParent<CombinedBossBar>() != null) return true;
+        if (Tools.Scene == "Level 7-4" && enemyId.name == "KillAllEnemiesChecker") return true; // what is that?!
         if (Tools.Scene == "Level 7-4" && enemyId.name == "Brain")
         {
             enemyId.gameObject.AddComponent<Brain>();

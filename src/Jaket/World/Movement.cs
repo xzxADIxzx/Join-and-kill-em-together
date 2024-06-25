@@ -305,7 +305,7 @@ public class Movement : MonoSingleton<Movement>
 
         // the player is currently fighting the Minotaur in the tunnel or the brain in the Earthmover
         if (World.TunnelRoomba) nm.transform.position = World.TunnelRoomba.position with { y = -112.5f };
-        if (World.Brain) nm.transform.position = new(0f, 826.5f, 610f);
+        if (World.Brain && World.Brain.IsFightActive) nm.transform.position = new(0f, 826.5f, 610f);
     }
 
     /// <summary> Respawns Cyber Grind players and launches a screen flash. </summary>
