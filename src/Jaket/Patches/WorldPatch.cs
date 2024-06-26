@@ -126,8 +126,9 @@ public class ActionPatch
     {
         var n = __instance.name;
         if (LobbyController.Online && LobbyController.IsOwner &&
-           (n.Contains("Case") || n.Contains("Glass") || n.Contains("Cover") || n.Contains("Skull") || n.Contains("Quake") || Tools.Scene == "Level 3-1"))
-            World.SyncAction(__instance, 4);
+           (n.Contains("Glass") || n.Contains("Cover") ||
+            n.Contains("Skull") || n.Contains("Quake") ||
+            Tools.Scene == "Level 3-1" || __instance.transform.parent?.parent?.name == "MazeWalls")) World.SyncAction(__instance, 4);
     }
 
     [HarmonyPostfix]

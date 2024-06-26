@@ -295,6 +295,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         #region 7-2
         l = "Level 7-2";
 
+        // other world
         void Fill(string text, int size, TextAnchor align, Transform canvas)
         {
             for (int i = 3; i < canvas.childCount; i++) Tools.Destroy(canvas.GetChild(i).gameObject);
@@ -349,6 +350,13 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
 
         NetAction.Sync(l, "Trigger", new(-115f, 50f, 348.5f));
         NetAction.Sync(l, "TowerDestruction", new(-119.75f, 34f, 552.25f));
+
+        // library
+        StaticAction.Find(l, "Enemies", new(88.5f, 5.75f, 701.25f), obj =>
+        {
+            foreach (var act in obj.GetComponents<MonoBehaviour>()) Tools.Destroy(act);
+        });
+        NetAction.Sync(l, "Arena Start", new(133.5f, 45.75f, 701.25f));
 
         #endregion
         #region 7-3
