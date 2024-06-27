@@ -354,7 +354,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         // library
         StaticAction.Find(l, "Enemies", new(88.5f, 5.75f, 701.25f), obj =>
         {
-            foreach (var act in obj.GetComponents<MonoBehaviour>()) Tools.Destroy(act);
+            if (!LobbyController.IsOwner) foreach (var act in obj.GetComponents<MonoBehaviour>()) Tools.Destroy(act);
         });
         NetAction.Sync(l, "Arena Start", new(133.5f, 45.75f, 701.25f));
 
