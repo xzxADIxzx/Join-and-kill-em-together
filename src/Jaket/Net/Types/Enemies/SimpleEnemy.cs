@@ -6,13 +6,13 @@ using Jaket.IO;
 /// <summary> Representation of most enemies. Synchronizes only the position of an enemy. </summary>
 public class SimpleEnemy : Enemy
 {
-    private void Awake()
+    protected virtual void Awake()
     {
         Init(_ => Enemies.Type(EnemyId));
         InitTransfer();
     }
 
-    private void Start()
+    protected virtual void Start()
     {
         SpawnEffect();
         Boss(Type == EntityType.Cerberus && Tools.Scene == "Level 0-5", 80f, 1, "CERBERUS, GUARDIAN OF HELL");
