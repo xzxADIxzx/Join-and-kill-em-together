@@ -62,6 +62,13 @@ public class LogicPatch
     }
 
     [HarmonyPrefix]
+    [HarmonyPatch(typeof(Gutterman), "Explode")]
+    static void BreakLogic(Gutterman __instance)
+    {
+        if (LobbyController.Online && __instance.TryGetComponent<Entity>(out var gman)) gman.NetKill();
+    }
+
+    [HarmonyPrefix]
     [HarmonyPatch(typeof(Idol), "SlowUpdate")]
     static bool IdolsLogic(Idol __instance) => LobbyController.Offline || __instance.name == "Local";
 

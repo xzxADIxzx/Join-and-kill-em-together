@@ -36,6 +36,7 @@ public class Enemies
         Types[EntityType.V2] = typeof(V2);
         Types[EntityType.V2_GreenArm] = typeof(V2);
         Types[EntityType.Sentry] = typeof(Turret);
+        Types[EntityType.Gutterman] = typeof(Gutterman);
         Types[EntityType.MaliciousFace] = typeof(Body);
         Types[EntityType.HideousMass] = typeof(Shrimp);
         Types[EntityType.Idol] = typeof(Idol);
