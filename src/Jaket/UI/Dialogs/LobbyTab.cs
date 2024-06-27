@@ -19,7 +19,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
     /// <summary> Current lobby access level: 0 - private, 1 - friends only, 2 - public. I was too lazy to create an enum. </summary>
     private int lobbyAccessLevel;
     /// <summary> Checkboxes with lobby settings. </summary>
-    private Toggle pvp, cheats;
+    private Toggle pvp, cheats, bosses;
 
     private void Start()
     {
@@ -47,7 +47,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
             UIB.Button("#lobby-tab.join", table, Btn(0f, 116f), clicked: LobbyController.JoinByCode);
             UIB.Button("#lobby-tab.list", table, Btn(0f, 164f), clicked: LobbyList.Instance.Toggle);
         });
-        UIB.Table("Lobby Config", "#lobby-tab.config", transform, Tlw(384f + 342f / 2f, 342f), table =>
+        UIB.Table("Lobby Config", "#lobby-tab.config", transform, Tlw(384f + 382f / 2f, 382f), table =>
         {
             field = UIB.Field("#lobby-tab.name", table, Tgl(0f, 64f), cons: name => LobbyController.Lobby?.SetData("name", name));
             field.characterLimit = 28;
@@ -76,6 +76,8 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
                 PPP.text = $"{(int)((LobbyController.PPP = value / 8f) * 100)}PPP";
                 LobbyController.Lobby?.SetData("ppp", LobbyController.PPP.ToString());
             });
+
+            bosses = UIB.Toggle("#lobby-tab.heal-bosses", table, Tgl(0f, 358f), clicked: allow => LobbyController.Lobby?.SetData("heal-bosses", allow.ToString()));
         });
 
         Version.Label(transform);
@@ -100,7 +102,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
         if (LobbyController.Offline)
         {
             lobbyAccessLevel = 0;
-            pvp.isOn = cheats.isOn = true;
+            pvp.isOn = cheats.isOn = bosses.isOn = true;
         }
         else field.text = LobbyController.Lobby?.GetData("name");
 

@@ -104,7 +104,13 @@ public class Networking
         SteamMatchmaking.OnChatMessage += (lobby, member, message) =>
         {
             if (message == "#/d")
+            {
                 Bundle.Msg("player.died", member.Name);
+                if (LobbyController.HealBosses) EachEntity(entity =>
+                {
+                    if (entity is Enemy enemy && enemy.IsBoss && !enemy.Dead) enemy.HealBoss();
+                });
+            }
 
             else if (message.StartsWith("#/k") && uint.TryParse(message.Substring(3), out uint id))
                 Bundle.Msg("player.banned", Tools.Name(id));
