@@ -109,6 +109,10 @@ public class Tools
     public static void Invoke<T>(string name, T obj, params object[] args) => AccessTools.Method(typeof(T), name).Invoke(obj, args);
     public static void Invoke(string name, object obj, params object[] args) => AccessTools.Method(obj.GetType(), name).Invoke(obj, args);
 
+    /// <summary> Calls the class method with the a single bool argument. </summary>
+    public static void Invoke<T>(string name, T obj, bool arg) => AccessTools.Method(typeof(T), name, new[] { typeof(bool) }).Invoke(obj, new object[] { arg });
+    public static void Invoke(string name, object obj, bool arg) => AccessTools.Method(obj.GetType(), name, new[] { typeof(bool) }).Invoke(obj, new object[] { arg });
+
     #endregion
     #region within
 

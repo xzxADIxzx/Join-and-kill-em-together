@@ -32,7 +32,7 @@ public class Item : OwnableEntity
         x = new(); y = new(); z = new();
         rx = new(); ry = new(); rz = new();
 
-        torch = GetComponent<Torch>() != null;
+        torch = TryGetComponent<Torch>(out _);
     }
 
     private void Update() => Stats.MTE(() =>
