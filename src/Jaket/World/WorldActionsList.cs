@@ -354,7 +354,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         // library
         StaticAction.Find(l, "Enemies", new(88.5f, 5.75f, 701.25f), obj =>
         {
-            if (!LobbyController.IsOwner) foreach (var act in obj.GetComponents<MonoBehaviour>()) Tools.Destroy(act);
+            if (!LobbyController.IsOwner) obj.GetComponents<MonoBehaviour>().Do(Tools.Destroy);
         });
         NetAction.Sync(l, "Arena Start", new(133.5f, 45.75f, 701.25f));
 
@@ -402,6 +402,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         // insides
         StaticAction.Find(l, "BrainFightTrigger", new(6.999941f, 841.5f, 610.7503f), obj => obj.GetComponent<ObjectActivator>()?.events.onActivate.AddListener(() =>
         {
+            obj.transform.parent.GetComponentsInChildren<DestroyOnCheckpointRestart>(true).Do(Tools.Destroy);
             if (World.Brain) World.Brain.IsFightActive = true;
         }));
         NetAction.Sync(l, "EntryTrigger", new(0f, 458.5f, 649.75f), obj => Teleporter.Teleport(new(0f, 460f, 650f)));
