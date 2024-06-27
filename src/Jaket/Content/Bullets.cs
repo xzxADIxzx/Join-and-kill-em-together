@@ -101,11 +101,11 @@ public class Bullets
     public static void CInstantiate(Reader r)
     {
         var obj = Entities.Mark(Prefabs[r.Byte()]);
-
         obj.transform.position = r.Vector();
         obj.transform.eulerAngles = r.Vector();
 
-        if (r.Position < r.Length) obj.GetComponent<Rigidbody>().velocity = r.Vector();
+        if (r.Length == 27) Coins.PaintBeam(obj, r.Enum<Team>());
+        if (r.Length == 38) obj.GetComponent<Rigidbody>().velocity = r.Vector();
     }
     public static Entity EInstantiate(EntityType type) => Entities.Mark(Prefabs[type switch
     {
@@ -116,7 +116,7 @@ public class Bullets
     }]).AddComponent(type == EntityType.Coin ? typeof(TeamCoin) : typeof(Bullet)) as Entity;
 
     /// <summary> Synchronizes the bullet between network members. </summary>
-    public static void Sync(GameObject bullet, bool hasRigidbody, bool applyOffset)
+    public static void Sync(GameObject bullet, bool hasRigidbody, bool applyOffset, byte team = byte.MaxValue)
     {
         if (LobbyController.Offline || bullet == null || bullet.name == "Net") return;
 
@@ -131,19 +131,20 @@ public class Bullets
                 w.Vector(bullet.transform.position + (applyOffset ? bullet.transform.forward * 2f : Vector3.zero));
                 w.Vector(bullet.transform.eulerAngles);
 
+                if (type == 0 && team != byte.MaxValue) w.Byte(team);
                 if (hasRigidbody) w.Vector(bullet.GetComponent<Rigidbody>().velocity);
-            }, size: hasRigidbody ? 37 : 25);
+            }, size: hasRigidbody ? 37 : 26);
         }
         else bullet.AddComponent(bullet.name == "Coin(Clone)" ? typeof(TeamCoin) : typeof(Bullet));
     }
 
     /// <summary> Synchronizes the bullet or marks it as fake if it was downloaded from the network. </summary>
-    public static void Sync(GameObject bullet, ref GameObject sourceWeapon, bool hasRigidbody, bool applyOffset)
+    public static void Sync(GameObject bullet, ref GameObject sourceWeapon, bool hasRigidbody, bool applyOffset, byte team = byte.MaxValue)
     {
         if (sourceWeapon == null && bullet.name == "Net")
             sourceWeapon = Fake;
         else
-            Sync(bullet, hasRigidbody, applyOffset);
+            Sync(bullet, hasRigidbody, applyOffset, team);
     }
 
     /// <summary> Synchronizes the "death" of the bullet. </summary>
