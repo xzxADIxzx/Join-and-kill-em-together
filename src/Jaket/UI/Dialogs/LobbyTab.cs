@@ -77,7 +77,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
                 LobbyController.Lobby?.SetData("ppp", LobbyController.PPP.ToString());
             });
 
-            bosses = UIB.Toggle("#lobby-tab.heal-bosses", table, Tgl(0f, 358f), clicked: allow => LobbyController.Lobby?.SetData("heal-bosses", allow.ToString()));
+            bosses = UIB.Toggle("#lobby-tab.heal-bosses", table, Tgl(0f, 358f), 20, allow => LobbyController.Lobby?.SetData("heal-bosses", allow.ToString()));
         });
 
         Version.Label(transform);
