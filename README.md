@@ -23,7 +23,7 @@ This modification made by [me](https://github.com/xzxADIxzx) and my team adds su
    * Interactive guide to help you understand the basics
 * Interaction between players
    * Up to 5 teams, making available both the passage of the campaign and PvP
-   * Emotions wheel to tease your friends or bosses
+   * Emote wheel to tease your friends or bosses
    * Pointers to guide your friends in the right direction
    * SAM TTS Engine for speaking messages via /tts command
    * Sprays and moderation system for them
@@ -75,7 +75,7 @@ To compile you will need .NET SDK 6.0 and Git.
 4. Compile the mod with `dotnet build`
 5. At the output you will get the **Jaket.dll** file, which will be located in the `bin\Debug\netstandard2.0` folder.
    1. Copy this file to the mods folder.
-   2. Copy the **jaket-player-doll.bundle** file and bundles folder from the assets folder to the mods folder.
+   2. Copy the **jaket-assets.bundle** file and bundles folder from the assets folder to the mods folder.
    3. Copy the **manifest.json** file from the root folder.
 
 ## Afterword
