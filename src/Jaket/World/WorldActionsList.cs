@@ -267,6 +267,10 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
 
         // garden
         StaticAction.Find(l, "Cube", new(0f, 3.4f, 582.5f), obj => obj.transform.position = new(0f, 7.4f, 582.5f));
+        StaticAction.Find(l, "MannequinAltar", new(-20f, 5f, 485f), obj =>
+        {
+            if (!LobbyController.IsOwner) obj.GetComponentInChildren<ItemPlaceZone>().deactivateOnSuccess = new GameObject[0];
+        });
         StaticAction.Destroy(l, "Cube", new(-66.25f, 9.9f, 485f));
 
         StaticAction.Destroy(l, "ViolenceArenaDoor", new(0f, 12.5f, 589.5f));
@@ -274,6 +278,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
 
         NetAction.Sync(l, "Closer", new(0f, 20f, 579f));
         NetAction.SyncLimbo(l, new(96.75f, 26f, 545f));
+        NetAction.Sync(l, "RedSkullPickedUp", new(-23.4f, -4.7f, 581.6f));
 
         // tunnel
         StaticAction.Patch(l, "Wave 2", new(-242.5f, 0f, 0f));
