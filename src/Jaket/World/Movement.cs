@@ -237,7 +237,7 @@ public class Movement : MonoSingleton<Movement>
         if (Settings.DisableFreezeFrames || UI.AnyDialog) Time.timeScale = 1f;
 
         // disable cheats if they are prohibited in the lobby
-        if (CheatsController.Instance.cheatsEnabled && !LobbyController.CheatsAllowed)
+        if (CheatsController.Instance.cheatsEnabled && !LobbyController.IsOwner && !LobbyController.CheatsAllowed)
         {
             CheatsController.Instance.cheatsEnabled = false;
             cm.transform.GetChild(0).GetChild(0).gameObject.SetActive(false);
