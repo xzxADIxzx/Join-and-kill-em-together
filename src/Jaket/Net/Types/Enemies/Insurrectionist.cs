@@ -110,5 +110,11 @@ public class Insurrectionist : Enemy
         attack = r.Byte();
     }
 
+    public override void Damage(Reader r)
+    {
+        Bullets.DealDamage(EnemyId, r);
+        if (EnemyId.hitter == "cannonball") sisy.Knockdown(transform.position + transform.forward);
+    }
+
     #endregion
 }
