@@ -44,7 +44,7 @@ public class World
             if (LobbyController.Online && LobbyController.IsOwner && Tools.Pending != "Main Menu")
             {
                 Activated.Clear();
-                Networking.Send(PacketType.Level, WriteData);
+                Networking.Send(PacketType.Level, WriteData, size: 256);
             }
         };
         Events.OnLoaded += () =>
@@ -60,7 +60,7 @@ public class World
     /// <summary> Writes data about the world such as level, difficulty and triggers fired. </summary>
     public static void WriteData(Writer w)
     {
-        w.String(Tools.Pending != null ? Tools.Pending : Tools.Scene);
+        w.String(Tools.Pending ?? Tools.Scene);
 
         // the version is needed for a warning about incompatibility
         w.String(Version.CURRENT);
