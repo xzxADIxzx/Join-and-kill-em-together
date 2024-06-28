@@ -279,7 +279,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
 
         NetAction.Sync(l, "Closer", new(0f, 20f, 579f), obj =>
         {
-            if (NewMovement.Instance.transform.position.x < 4f) Teleporter.Teleport(new(0f, 5.5f, 485f));
+            if (NewMovement.Instance.transform.position.z < 470f) Teleporter.Teleport(new(0f, 5.5f, 485f));
         });
         NetAction.SyncLimbo(l, new(96.75f, 26f, 545f));
         NetAction.Sync(l, "RedSkullPickedUp", new(-23.4f, -4.7f, 581.6f));
