@@ -35,6 +35,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         #region 0-1
         l = "Level 0-1";
 
+        StaticAction.Find(l, "Cube (2)", new(202f, 73f, 421f), obj => obj.GetComponent<ObjectActivator>().events.toDisActivateObjects = new GameObject[0]);
         NetAction.Sync(l, "Cube (2)", new(202f, 73f, 421f)); // boss
 
         #endregion
