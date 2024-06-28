@@ -63,4 +63,8 @@ public class GameAssets
     /// <summary> Loads a swordsmachine material by name. </summary>
     public static void SwordsMaterial(string name, Renderer output) =>
         Addressables.LoadAssetAsync<Material>($"Assets/Models/Enemies/SwordsMachine/{name}.mat").Task.ContinueWith(task => output.material = task.Result);
+
+    /// <summary> Loads an insurrectionist material by name. </summary>
+    public static void SisyMaterial(string name, Renderer[] output) =>
+        Addressables.LoadAssetAsync<Material>($"Assets/Models/Enemies/Sisyphus/{name}.mat").Task.ContinueWith(task => output[0].material = output[1].material = task.Result);
 }
