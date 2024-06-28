@@ -41,7 +41,7 @@ public class RemotePlayer : Entity
     private void Awake()
     {
         Init(null, true);
-        Voice = GetComponent<AudioSource>();
+        TryGetComponent(out Voice);
 
         x = new(); y = new(); z = new();
         bodyRotation = new();

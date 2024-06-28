@@ -21,7 +21,7 @@ public class Leviathan : Enemy
     private void Awake()
     {
         Init(_ => EntityType.Leviathan);
-        leviathan = GetComponent<LeviathanController>();
+        TryGetComponent(out leviathan);
 
         Owner = LobbyController.LastOwner.AccountId;
         World.Leviathan = this;

@@ -19,7 +19,7 @@ public class Turret : Enemy
     {
         Init(_ => Enemies.Type(EnemyId), true);
         InitTransfer(() => Cooldown(IsOwner ? 0f : 4200f));
-        turret = GetComponent<global::Turret>();
+        TryGetComponent(out turret);
     }
 
     private void Start() => SpawnEffect();

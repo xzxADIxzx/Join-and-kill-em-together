@@ -13,7 +13,7 @@ public class V2 : SimpleEnemy
     {
         Init(_ => Enemies.Type(EnemyId));
         InitTransfer();
-        v2 = GetComponent<global::V2>();
+        TryGetComponent(out v2);
     }
 
     protected override void Start()

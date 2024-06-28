@@ -17,7 +17,7 @@ public class Minotaur : Enemy
     private void Awake()
     {
         Init(_ => EntityType.Minotaur_Chase);
-        minotaur = GetComponent<MinotaurChase>();
+        TryGetComponent(out minotaur);
 
         Owner = LobbyController.LastOwner.AccountId;
         World.Minotaur = this;

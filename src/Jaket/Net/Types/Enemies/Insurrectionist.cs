@@ -23,9 +23,9 @@ public class Insurrectionist : Enemy
     private void Awake()
     {
         Init(_ => Enemies.Type(EnemyId), true);
-        InitTransfer(() => Events.Post(() => Cooldown(IsOwner ? 0f : 4200f)));
-        sisy = GetComponent<Sisyphus>();
-        audio = GetComponent<AudioSource>();
+        InitTransfer();
+        TryGetComponent(out sisy);
+        TryGetComponent(out audio);
         stomp = Tools.Field<Sisyphus>("stompVoice").GetValue(sisy) as AudioClip;
         other = Tools.Field<Sisyphus>("attackVoices").GetValue(sisy) as AudioClip[];
     }
@@ -38,6 +38,8 @@ public class Insurrectionist : Enemy
 
         if (Tools.Scene == "Level 4-2") GetComponentsInChildren<SkinnedMeshRenderer>().Do(r => r.material.color = new(1f, .9f, .4f));
         if (Tools.Scene == "Level 6-1") GameAssets.SisyMaterial(angryOrRude ? "SisyphusRed" : "SisyphusBlue", GetComponentsInChildren<SkinnedMeshRenderer>());
+
+        if (!IsOwner) Cooldown(4200f);
     }
 
     private void Update() => Stats.MTE(() =>

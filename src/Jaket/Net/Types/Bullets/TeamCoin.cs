@@ -70,8 +70,8 @@ public class TeamCoin : OwnableEntity
             }
             Reset();
         });
-        coin = GetComponent<Coin>();
-        audio = GetComponent<AudioSource>();
+        TryGetComponent(out coin);
+        TryGetComponent(out audio);
 
         x = new(); y = new(); z = new();
         if (IsOwner) OnTransferred();

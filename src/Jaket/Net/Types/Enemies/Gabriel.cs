@@ -18,8 +18,8 @@ public class Gabriel : Enemy
     {
         Init(_ => Enemies.Type(EnemyId), true);
         InitTransfer(() => Cooldown(IsOwner ? 0f : 4200f));
-        gabriel1 = GetComponent<global::Gabriel>();
-        gabriel2 = GetComponent<GabrielSecond>();
+        TryGetComponent(out gabriel1);
+        TryGetComponent(out gabriel2);
     }
 
     private void Start()

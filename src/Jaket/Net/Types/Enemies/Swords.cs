@@ -19,7 +19,7 @@ public class Swords : SimpleEnemy
     {
         Init(_ => Enemies.Type(EnemyId));
         InitTransfer();
-        swords = GetComponent<SwordsMachine>();
+        TryGetComponent(out swords);
     }
 
     protected override void Start()

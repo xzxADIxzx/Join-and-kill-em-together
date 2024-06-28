@@ -38,8 +38,8 @@ public abstract class Entity : MonoBehaviour
         Log.Debug($"Initializing an entity with name {name}");
 
         // do this before calling prov, so as not to break the search of the entity type
-        EnemyId = GetComponent<EnemyIdentifier>();
-        ItemId = GetComponent<ItemIdentifier>();
+        TryGetComponent(out EnemyId);
+        TryGetComponent(out ItemId);
 
         // if an entity is marked with this tag, then it was downloaded over the network,
         // otherwise the entity is local and must be added to the global list

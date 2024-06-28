@@ -35,8 +35,8 @@ public class Bullet : OwnableEntity
             }
             player.Id = Owner;
         });
-        grenade = GetComponent<Grenade>();
-        ball = GetComponent<Cannonball>();
+        TryGetComponent(out grenade);
+        TryGetComponent(out ball);
         Destroy(GetComponent<FloatingPointErrorPreventer>());
 
         x = new(); y = new(); z = new();
