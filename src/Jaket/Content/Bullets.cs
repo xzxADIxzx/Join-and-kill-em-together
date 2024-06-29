@@ -56,7 +56,7 @@ public class Bullets
             else
             if (weapon.TryGetComponent<ShotgunHammer>(out var hammer))
             {
-                Add(Tools.Field("overPumpExplosion", hammer).GetValue(hammer) as GameObject, "SH"); // thank you, developers
+                Add(Tools.Get("overPumpExplosion", hammer) as GameObject, "SH"); // thank you, developers
             }
             else
             if (weapon.TryGetComponent<Nailgun>(out var nailgun))
@@ -75,7 +75,7 @@ public class Bullets
             {
                 Add(launcher.rocket, $"RL PRI");
                 Add(launcher.cannonBall?.gameObject, $"RL ALT");
-                Add((Tools.Field("napalmProjectile", launcher).GetValue(launcher) as Rigidbody)?.gameObject, $"RL EXT");
+                Add((Tools.Get("napalmProjectile", launcher) as Rigidbody)?.gameObject, $"RL EXT");
             }
         }
 
@@ -204,7 +204,7 @@ public class Bullets
     public static void Punch(Harpoon harpoon, bool local)
     {
         // null pointer fix
-        Tools.Field<Harpoon>("aud").SetValue(harpoon, harpoon.GetComponent<AudioSource>());
+        Tools.Set("aud", harpoon, harpoon.GetComponent<AudioSource>());
 
         // this is necessary so that only the one who created or punched the harpoon deals the damage
         harpoon.sourceWeapon = local ? null : Fake;

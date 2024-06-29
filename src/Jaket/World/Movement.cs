@@ -242,7 +242,7 @@ public class Movement : MonoSingleton<Movement>
             CheatsController.Instance.cheatsEnabled = false;
             cm.transform.GetChild(0).GetChild(0).gameObject.SetActive(false);
 
-            (Tools.Field<CheatsManager>("idToCheat").GetValue(cm) as Dictionary<string, ICheat>).Values.Do(cm.DisableCheat);
+            (Tools.Get("idToCheat", cm) as Dictionary<string, ICheat>).Values.Do(cm.DisableCheat);
             Bundle.Hud("lobby.cheats");
         }
 

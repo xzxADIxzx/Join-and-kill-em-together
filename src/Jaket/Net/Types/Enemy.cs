@@ -29,7 +29,7 @@ public class Enemy : OwnableEntity
         if (layers == 0) return;
 
         // override the name of the enemy
-        if (nameOverride != null) Tools.Field<EnemyIdentifier>("overrideFullName").SetValue(EnemyId, nameOverride);
+        if (nameOverride != null) Tools.Set("overrideFullName", EnemyId, nameOverride);
 
         // create a boss bar or update the already existing one
         if (!TryGetComponent(out BossHealthBar bar)) bar = gameObject.AddComponent<BossHealthBar>();

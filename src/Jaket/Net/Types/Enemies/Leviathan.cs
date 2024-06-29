@@ -76,7 +76,7 @@ public class Leviathan : Enemy
         }
     });
 
-    private void Cooldown(float time) => Tools.Field<LeviathanHead>("attackCooldown").SetValue(head, time);
+    private void Cooldown(float time) => Tools.Set("attackCooldown", head, time);
 
     #region entity
 

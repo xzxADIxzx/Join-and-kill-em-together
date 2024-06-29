@@ -65,7 +65,7 @@ public class Bullet : OwnableEntity
         }
     });
 
-    private void Exploded(bool value) => Tools.Field<Grenade>("exploded").SetValue(grenade, value);
+    private void Exploded(bool value) => Tools.Set("exploded", grenade, value);
 
     #region entity
 

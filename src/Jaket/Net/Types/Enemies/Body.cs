@@ -45,7 +45,7 @@ public class Body : Enemy
         if (lastCharging != charging && (lastCharging = charging)) EnemyId.spider.Invoke("ChargeBeam", 0f);
     });
 
-    private void Cooldown(float time) => Tools.Field<SpiderBody>("beamProbability").SetValue(EnemyId.spider, time);
+    private void Cooldown(float time) => Tools.Set("beamProbability", EnemyId.spider, time);
 
     #region entity
 

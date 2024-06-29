@@ -72,8 +72,8 @@ public class Gabriel : Enemy
 
     private void Cooldown(float time)
     {
-        if (gabriel1) Tools.Field<global::Gabriel>("attackCooldown").SetValue(gabriel1, time);
-        if (gabriel2) Tools.Field<GabrielSecond>("attackCooldown").SetValue(gabriel2, time);
+        if (gabriel1) Tools.Set("attackCooldown", gabriel1, time);
+        if (gabriel2) Tools.Set("attackCooldown", gabriel2, time);
     }
 
     #region entity

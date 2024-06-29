@@ -237,7 +237,7 @@ public class TeamCoin : OwnableEntity
         else
             NetKill();
 
-        if (!beam) Coins.PaintBeam(beam = Tools.Instantiate(Bullets.Prefabs[0], Vector3.zero, Quaternion.identity), Team);
+        if (!beam) Coins.PaintBeam(beam = Instantiate(Bullets.Prefabs[0], Vector3.zero, Quaternion.identity), Team);
         beam.SetActive(true);
         beam.transform.position = transform.position;
 

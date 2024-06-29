@@ -21,7 +21,7 @@ public class SimpleEnemy : Enemy
         Boss(Type == EntityType.Minotaur && Tools.Scene == "Level 7-1", 80f, 1);
 
         // update the original health so that the transition to the second phase happens exactly in its half
-        if (Type == EntityType.TheCorpseOfKingMinos) Tools.Field<MinosBoss>("originalHealth").SetValue(GetComponent<MinosBoss>(), EnemyId.statue.health);
+        if (Type == EntityType.TheCorpseOfKingMinos) Tools.Set("originalHealth", GetComponent<MinosBoss>(), EnemyId.statue.health);
 
         if (LobbyController.IsOwner) return;
         if (Tools.Scene == "Level 2-4" && Type == EntityType.TheCorpseOfKingMinos) transform.localEulerAngles = new(0f, 90f, 0f);

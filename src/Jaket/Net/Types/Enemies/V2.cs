@@ -37,7 +37,7 @@ public class V2 : SimpleEnemy
         v2.SlideOnly(true);
 
         // v2 stuck in an endless cycle if this value is true
-        Tools.Field<global::V2>("escaping").SetValue(v2, false);
+        Tools.Set("escaping", v2, false);
     }
 
     #region entity

@@ -26,8 +26,8 @@ public class Insurrectionist : Enemy
         InitTransfer();
         TryGetComponent(out sisy);
         TryGetComponent(out audio);
-        stomp = Tools.Field<Sisyphus>("stompVoice").GetValue(sisy) as AudioClip;
-        other = Tools.Field<Sisyphus>("attackVoices").GetValue(sisy) as AudioClip[];
+        stomp = Tools.Get("stompVoice", sisy) as AudioClip;
+        other = Tools.Get("attackVoices", sisy) as AudioClip[];
     }
 
     private void Start()
@@ -77,18 +77,18 @@ public class Insurrectionist : Enemy
             }
             if (attack >= 2 && attack <= 5)
             {
-                Tools.Field<Sisyphus>("m_AttackType").SetValue(sisy, attack - 2);
+                Tools.Set("m_AttackType", sisy, attack - 2);
                 audio.PlayOneShot(other[attack - 2]);
             }
         }
     });
 
-    private void Cooldown(float time) => Tools.Field<Sisyphus>("cooldown").SetValue(sisy, time);
+    private void Cooldown(float time) => Tools.Set("cooldown", sisy, time);
 
     private void SetTracking(float x, float y)
     {
-        Tools.Field<Sisyphus>("trackingX").SetValue(sisy, x);
-        Tools.Field<Sisyphus>("trackingY").SetValue(sisy, y);
+        Tools.Set("trackingX", sisy, x);
+        Tools.Set("trackingY", sisy, y);
     }
 
     #region entity
