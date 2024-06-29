@@ -31,7 +31,8 @@ public class UIB
     public static void Load()
     {
         // replace the font in a few in-game fragments
-        Events.OnLoaded += () => Events.Post(() =>
+        Action fix;
+        Events.OnLoaded += fix = () => Events.Post(() =>
         {
             HudMessageReceiver.Instance.text.font = DollAssets.FontTMP;
             NewMovement.Instance.youDiedText.font = DollAssets.Font;
@@ -43,6 +44,7 @@ public class UIB
                 canvas.sortingOrder = 2000;
             });
         });
+        fix();
 
         // find all sprites
         var all = Tools.ResFind<Sprite>();
