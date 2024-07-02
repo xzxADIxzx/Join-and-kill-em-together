@@ -129,7 +129,7 @@ public class Enemies
     }
 
     /// <summary> Synchronizes the damage dealt to the enemy. </summary>
-    public static bool SyncDamage(EnemyIdentifier enemyId, float damage, float critDamage, GameObject source)
+    public static bool SyncDamage(EnemyIdentifier enemyId, float damage, float crit, GameObject source)
     {
         if (LobbyController.Offline || enemyId.dead) return true;
         if (Debug) Log.Debug($"{(source == Bullets.NetDmg ? "Network" : source == Bullets.Fake ? "Fake" : "Local")} damage was dealt: {enemyId.hitter}, {damage}, {critDamage}, {source?.name}");
@@ -138,7 +138,7 @@ public class Enemies
         if (source == Bullets.Fake) return false; // bullets are only needed for visual purposes and mustn't cause damage
 
         if (enemyId.TryGetComponent<Entity>(out var entity) && (entity is not RemotePlayer player || !player.Doll.Dashing))
-            Bullets.SyncDamage(entity.Id, enemyId.hitter, damage, critDamage);
+            Bullets.SyncDamage(entity.Id, enemyId.hitter, damage, crit);
 
         return true;
     }

@@ -219,7 +219,7 @@ public class Bullets
     #region damage
 
     /// <summary> Synchronizes damage dealt to the enemy. </summary>
-    public static void SyncDamage(uint enemyId, string hitter, float damage, float critDamage)
+    public static void SyncDamage(uint enemyId, string hitter, float damage, float crit)
     {
         var type = (byte)Array.IndexOf(Types, hitter);
         if (type != 0xFF) Networking.Send(PacketType.DamageEntity, w =>
@@ -229,7 +229,7 @@ public class Bullets
             w.Byte(type);
 
             w.Float(damage);
-            w.Float(critDamage);
+            w.Bool(crit == 0f);
         }, size: 14);
     }
 
@@ -238,7 +238,7 @@ public class Bullets
     {
         r.Inc(1); // skip team because enemies don't have a team
         enemyId.hitter = Types[r.Byte()];
-        enemyId.DeliverDamage(enemyId.gameObject, Vector3.zero, enemyId.transform.position, r.Float(), false, r.Float(), NetDmg);
+        enemyId.DeliverDamage(enemyId.gameObject, Vector3.zero, enemyId.transform.position, r.Float(), false, r.Bool() ? 0f : 1f, NetDmg);
     }
 
     #endregion

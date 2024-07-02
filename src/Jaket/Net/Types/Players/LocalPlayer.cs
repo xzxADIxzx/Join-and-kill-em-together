@@ -131,8 +131,7 @@ public class LocalPlayer : Entity
         var team = r.Enum<Team>();
         if (!nm.dead && !team.Ally()) // no need to deal damage if an ally hits you
         {
-            byte type = r.Byte();
-            float mul = Bullets.Types[type] == "drill" ? ((skip = !skip) ? 0f : 1f) : 4f;
+            float mul = Bullets.Types[r.Byte()] == "drill" ? ((skip = !skip) ? 0f : 1f) : 4f;
 
             nm.GetHurt(Mathf.CeilToInt(r.Float() * mul), false, 0f);
             if (nm.dead) LobbyController.Lobby?.SendChatString("#/s" + (byte)team);
