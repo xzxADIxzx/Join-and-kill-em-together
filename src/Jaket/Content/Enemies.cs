@@ -132,7 +132,7 @@ public class Enemies
     public static bool SyncDamage(EnemyIdentifier enemyId, float damage, float crit, GameObject source)
     {
         if (LobbyController.Offline || enemyId.dead) return true;
-        if (Debug) Log.Debug($"{(source == Bullets.NetDmg ? "Network" : source == Bullets.Fake ? "Fake" : "Local")} damage was dealt: {enemyId.hitter}, {damage}, {critDamage}, {source?.name}");
+        if (Debug) Log.Debug($"{(source == Bullets.NetDmg ? "Network" : source == Bullets.Fake ? "Fake" : "Local")} damage was dealt: {enemyId.hitter}, {damage}, {crit}, {source?.name}");
 
         if (source == Bullets.NetDmg) return true; // the damage was received over the network
         if (source == Bullets.Fake) return false; // bullets are only needed for visual purposes and mustn't cause damage

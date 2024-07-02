@@ -49,8 +49,6 @@ public class TeamCoin : OwnableEntity
 
     /// <summary> Power of the coin increases after a punch or ricochet. </summary>
     private int power = 2;
-    /// <summary> The amount of ricochets increases after punch, so I use only one variable. </summary>
-    private int ricochets => power - 2;
 
     private void Awake()
     {
@@ -202,7 +200,6 @@ public class TeamCoin : OwnableEntity
             }
             return;
         }
-        power++;
 
         shot = true;
         Reset();
@@ -219,7 +216,7 @@ public class TeamCoin : OwnableEntity
         if ((target?.CompareTag("Coin") ?? false) && target.TryGetComponent(out TeamCoin c))
         {
             c.ccc = ccc; // :D
-            c.power = power;
+            c.power = ++power;
         }
     }
 
@@ -231,13 +228,13 @@ public class TeamCoin : OwnableEntity
         // play the sound before killing the coin
         PlaySound(Instantiate(coin.coinHitSound, transform));
 
-        // run the second shot if the player hit the coin in a short timing
-        if (doubled && beam == null) // only RV0 PRI can be doubled
-            Invoke("DoubleReflect", .1f);
+        var rvp = beam == null; // only RV1 PRI can be doubled
+        if (rvp && doubled)
+            Invoke("DoubleReflect", .1f); // run the second shot if the player hit the coin in a short timing
         else
             NetKill();
 
-        if (!beam) Coins.PaintBeam(beam = Instantiate(Bullets.Prefabs[0], Vector3.zero, Quaternion.identity), Team);
+        if (rvp) Coins.PaintBeam(beam = Instantiate(Bullets.Prefabs[0], Vector3.zero, Quaternion.identity), Team);
         beam.SetActive(true);
         beam.transform.position = transform.position;
 
@@ -250,8 +247,13 @@ public class TeamCoin : OwnableEntity
 
         if (beam.TryGetComponent<RevolverBeam>(out var rb))
         {
-            rb.damage += power / 4f;
-            rb.addedDamage += power / 4f;
+            if (rvp)
+                rb.damage = power;
+            else
+            {
+                rb.damage += power / 4f - rb.addedDamage;
+                rb.addedDamage = power / 4f;
+            }
         }
 
         doubled = quadrupled = false; // before the second shot, the coin can flash again
