@@ -287,6 +287,9 @@ public class Movement : MonoSingleton<Movement>
         PlayerActivatorRelay.Instance?.Activate();
         if (GameStateManager.Instance.IsStateActive("pit-falling"))
             GameStateManager.Instance.PopState("pit-falling");
+
+        // this annoying sound makes me cry
+        Tools.ObjFind("Hellmap")?.SetActive(false);
     }
 
     /// <summary> Repeats a part of the checkpoint logic, needed in order to avoid resetting rooms. </summary>
