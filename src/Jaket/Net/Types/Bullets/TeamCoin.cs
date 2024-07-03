@@ -34,7 +34,7 @@ public class TeamCoin : OwnableEntity
     /// <summary> Whether the coin is shot. </summary>
     public bool shot;
     /// <summary> Whether the coin will reflect an incoming beam twice. </summary>
-    private bool doubled;
+    private bool doubled { get => coin.hitTimes == 2; set => coin.hitTimes = value ? 2 : 1; }
     /// <summary> Whether the coin is in the cooldown phase before shooting to a player or enemy. </summary>
     private bool quadrupled, lastQuadrupled;
     /// <summary> Effects indicate the current state of the coin. </summary>
