@@ -254,6 +254,15 @@ public class TeamCoin : OwnableEntity
                 rb.damage += power / 4f - rb.addedDamage;
                 rb.addedDamage = power / 4f;
             }
+
+            if (quadrupled)
+            {
+                var prefix = rb.ultraRicocheter ? "<color=orange>ULTRA</color>" : "";
+                int points = rb.ultraRicocheter ? 100 : 50;
+                if (power > 2) points += (power - 1) * 15;
+
+                sh.AddPoints(points, "ultrakill.ricoshot", rb.sourceWeapon, null, power - 1, prefix);
+            }
         }
 
         doubled = quadrupled = false; // before the second shot, the coin can flash again
