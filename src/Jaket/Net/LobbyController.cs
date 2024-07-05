@@ -90,7 +90,7 @@ public class LobbyController
             Lobby?.SetData("jaket", "true");
             Lobby?.SetData("name", $"{SteamClient.Name}'s Lobby");
             Lobby?.SetData("level", MapMap(Tools.Scene));
-            Lobby?.SetData("pvp", "True"); Lobby?.SetData("cheats", "True"); Lobby?.SetData("heal-bosses", "True");
+            Lobby?.SetData("pvp", "True"); Lobby?.SetData("cheats", "False"); Lobby?.SetData("heal-bosses", "True");
         });
     }
 
