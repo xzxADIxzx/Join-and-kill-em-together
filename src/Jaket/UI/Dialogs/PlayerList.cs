@@ -14,12 +14,12 @@ public class PlayerList : CanvasSingleton<PlayerList>
     private void Start()
     {
         UIB.Shadow(transform);
-        UIB.Table("Teams", "#player-list.team", transform, Tlw(16f + 170f / 2f, 170f), table =>
+        UIB.Table("Teams", "#player-list.team", transform, Tlw(16f + 166f / 2f, 166f), table =>
         {
-            UIB.Text("#player-list.info", table, Btn(0f, 73f) with { Height = 50f }, size: 17);
+            UIB.Text("#player-list.info", table, Btn(0f, 71f) with { Height = 46f }, size: 16);
 
             float x = -24f;
-            foreach (Team team in System.Enum.GetValues(typeof(Team))) UIB.TeamButton(team, table, Tlw(134f, 56f) with { x = x += 64f, Width = 56f }, () =>
+            foreach (Team team in System.Enum.GetValues(typeof(Team))) UIB.TeamButton(team, table, Tlw(130f, 56f) with { x = x += 64f, Width = 56f }, () =>
             {
                 Networking.LocalPlayer.Team = team;
                 Events.OnTeamChanged.Fire();
@@ -51,7 +51,7 @@ public class PlayerList : CanvasSingleton<PlayerList>
         if (LobbyController.Offline) return;
 
         float height = LobbyController.Lobby.Value.MemberCount * 48f + 48f;
-        UIB.Table("List", "#player-list.list", transform, Tlw(200f + height / 2f, height), table =>
+        UIB.Table("List", "#player-list.list", transform, Tlw(198f + height / 2f, height), table =>
         {
             float y = 20f;
             foreach (var member in LobbyController.Lobby?.Members)
