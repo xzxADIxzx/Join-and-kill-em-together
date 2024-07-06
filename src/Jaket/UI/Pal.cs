@@ -27,5 +27,5 @@ public static class Pal
     public static Color coral = new(1f, .5f, .31f);
     public static Color discord = new(.345f, .396f, .949f);
 
-    public static Color Dark(Color original) => Color.Lerp(original, black, .4f);
+    public static Color Dark(Color original) => Color.Lerp(original, black, .38f);
 }
