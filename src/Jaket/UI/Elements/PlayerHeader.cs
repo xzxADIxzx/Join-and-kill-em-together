@@ -37,8 +37,8 @@ public class PlayerHeader
             health = UIB.Image("Health", canvas, h, red).rectTransform;
             overhealth = UIB.Image("Overhealth", canvas, h, green).rectTransform;
 
-            var e = Size(48f, 24f) with { y = -30f };
-            UIB.Table("Ellipsis", canvas, e with { Height = 18f }, table => ellipsis = UIB.Text("...", table, e with { y = 8f }));
+            UIB.Table("Ellipsis", canvas, Size(48f, 18f) with { y = -30f }, table => ellipsis = UIB.Text("...", table, Huge with { y = 8f }, size: 240));
+            ellipsis.transform.localScale /= 10f;
         });
     }
 

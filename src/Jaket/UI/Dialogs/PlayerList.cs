@@ -19,7 +19,7 @@ public class PlayerList : CanvasSingleton<PlayerList>
             UIB.Text("#player-list.info", table, Btn(71f) with { Height = 46f }, size: 16);
 
             float x = -24f;
-            foreach (Team team in System.Enum.GetValues(typeof(Team))) UIB.TeamButton(team, table, new(x += 64f, 130f, 56f, 56f, new(0f, 1f)), () =>
+            foreach (Team team in System.Enum.GetValues(typeof(Team))) UIB.TeamButton(team, table, new(x += 64f, -130f, 56f, 56f, new(0f, 1f)), () =>
             {
                 Networking.LocalPlayer.Team = team;
                 Events.OnTeamChanged.Fire();
@@ -59,14 +59,14 @@ public class PlayerList : CanvasSingleton<PlayerList>
                 if (LobbyController.LastOwner == member.Id)
                 {
                     UIB.ProfileButton(member, table, Stn(y += 48f, -48f));
-                    UIB.IconButton("★", table, Icon(138f, y), new(1f, .7f, .1f), new(1f, 4f), () => Bundle.Hud("player-list.owner"));
+                    UIB.IconButton("★", table, Icon(140f, y), new(1f, .7f, .1f), new(1f, 4f), () => Bundle.Hud("player-list.owner"));
                 }
                 else
                 {
                     if (LobbyController.IsOwner)
                     {
                         UIB.ProfileButton(member, table, Stn(y += 48f, -48f));
-                        UIB.IconButton("X", table, Icon(138f, y), red, clicked: () => Administration.Ban(member.Id.AccountId));
+                        UIB.IconButton("X", table, Icon(140f, y), red, clicked: () => Administration.Ban(member.Id.AccountId));
                     }
                     else UIB.ProfileButton(member, table, Btn(y += 48f));
                 }

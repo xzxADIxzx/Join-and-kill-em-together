@@ -308,7 +308,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         void Fill(string text, int size, TextAnchor align, Transform canvas)
         {
             for (int i = 3; i < canvas.childCount; i++) Tools.Destroy(canvas.GetChild(i).gameObject);
-            UIB.Text(text, canvas, Huge, null, size, align).transform.localScale /= 8f;
+            UIB.Text(text, canvas, Size(964f, 964f), null, size, align).transform.localScale /= 8f;
         }
         StaticAction.Find(l, "Intro -> Outdoors", new(-115f, 55f, 419.5f), obj =>
         {
