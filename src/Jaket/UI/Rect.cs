@@ -43,13 +43,13 @@ public struct Rect
     public static Rect Size(float w, float h) => new(0f, 0f, w, h);
 
     #endregion
+    #region chat & other
 
-    /// <summary> Creates a rect with the default anchor of the chat message. </summary>
-    public static Rect Msg(float width) => new(0f, 0f, width, 32f, new(.5f, 0f), new(.5f, 0f));
+    public static Rect Blh(float width) => new(0f, 0f, width, 32f, new(0f, 0f));
 
-    /// <summary> Creates a rect with the default anchor of the chat table. </summary>
-    public static Rect Blh(float width) => new(0f, 0f, width, 32f, new(0f, 0f), new(0f, 0f));
+    public static Rect Msg(float width) => new(0f, 0f, width, 32f, new(.5f, 0f));
 
-    /// <summary> Creates a rect with the default anchor of the debug table. </summary>
     public static Rect Deb(int x) => new(184f + 352f * x, 296f, 336f, 136f, new(0f, 0f), new(0f, 0f));
+
+    #endregion
 }

@@ -167,10 +167,10 @@ public class Bundle
     public static void Hud(string key, bool silent, params string[] args) => HudMessageReceiver.Instance?.SendHudMessage(Format(key, args), silent: silent);
 
     /// <summary> Sends a localized message to the chat. </summary>
-    public static void Msg(string key) => Chat.Instance.Receive(Get(key), format: false);
+    public static void Msg(string key) => Chat.Instance.Receive(Get(key), false);
 
     /// <summary> Sends a localized & formatted message to the chat. </summary>
-    public static void Msg(string key, params string[] args) => Chat.Instance.Receive(Format(key, args), format: false);
+    public static void Msg(string key, params string[] args) => Chat.Instance.Receive(Format(key, args), false);
 
     #endregion
 }

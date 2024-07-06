@@ -19,15 +19,14 @@ public class Commands
     /// <summary> Registers all default mod commands. </summary>
     public static void Load()
     {
-        Handler.Register("help", "Display the list of all commands and their descriptions", args =>
+        Handler.Register("help", "Display the list of all commands", args =>
         {
             Handler.Commands.ForEach(command =>
             {
-                string args = command.Args == null ? "" : $" [#BBBBBB]{command.Args}[]";
-                chat.Receive($"[14]* /{command.Name}{args} - {command.Desc}[]", true);
+                chat.Receive($"[14]* /{command.Name}{(command.Args == null ? "" : $" [#BBBBBB]{command.Args}[]")} - {command.Desc}[]");
             });
         });
-        Handler.Register("hello", "Resend tips for new players", args => chat.Hello(true));
+        Handler.Register("hello", "Resend the tips for new players", args => chat.Hello(true));
 
         Handler.Register("tts-volume", "\\[0-100]", "Set Sam's volume to keep your ears comfortable", args =>
         {
@@ -76,7 +75,7 @@ public class Commands
                 Tools.Instantiate(Items.Prefabs[EntityType.PlushyOffset + index - EntityType.ItemOffset].gameObject, NewMovement.Instance.transform.position);
         });
 
-        Handler.Register("level", "<layer> <level> / sandbox / the-cyber-grind", "Load the given lvl", args =>
+        Handler.Register("level", "<layer> <level> / sandbox / the-cyber-grind", "Load the given level", args =>
         {
             if (!LobbyController.IsOwner)
                 chat.Receive($"[#FF341C]Only the lobby owner can load levels.");
@@ -119,7 +118,7 @@ public class Commands
 
         Handler.Register("authors", "Display the list of the mod developers", args =>
         {
-            void Msg(string msg) => chat.Receive($"[14]{msg}[]", true);
+            void Msg(string msg) => chat.Receive($"[14]{msg}[]");
 
             Msg("Leading developers:");
             Msg("* [#0096FF]xzxADIxzx[] - the main developer of this mod");
@@ -138,7 +137,7 @@ public class Commands
             Msg("Testers:");
             Msg("[#cccccc]Fenicemaster, AndruGhost, Subjune, FruitCircuit");
 
-            chat.Receive("0096FF", Chat.BOT_PREFIX + "xzxADIxzx", "Thank you all, I couldn't have done it alone ♡", true);
+            chat.Receive("0096FF", Chat.BOT_PREFIX + "xzxADIxzx", "Thank you all, I couldn't have done it alone ♡");
         });
         Handler.Register("support", "Support the author by buying him a coffee", args => Application.OpenURL("https://www.buymeacoffee.com/adidev"));
     }
