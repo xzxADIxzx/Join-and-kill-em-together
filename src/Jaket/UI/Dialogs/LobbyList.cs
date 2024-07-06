@@ -92,7 +92,7 @@ public class LobbyList : CanvasSingleton<LobbyList>
 
                 var full = lobby.MemberCount <= 2 ? Green : lobby.MemberCount <= 4 ? Orange : Red;
                 var info = $"<color=#BBBBBB>{lobby.GetData("level")}</color> <color={full}>{lobby.MemberCount}/{lobby.MaxMembers}</color> ";
-                UIB.Text(info, b.transform, r.ToText(), align: TextAnchor.MiddleRight);
+                UIB.Text(info, b.transform, r.Text, align: TextAnchor.MiddleRight);
             }
     }
 

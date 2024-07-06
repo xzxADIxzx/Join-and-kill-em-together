@@ -5,6 +5,9 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 using Jaket.Assets;
+using Jaket.UI;
+
+using static Jaket.UI.Rect;
 
 public class Version
 {
@@ -52,10 +55,7 @@ public class Version
     /// <summary> Adds the mod version to the bottom left edge of the screen. </summary>
     public static void Label(Transform parent)
     {
-        UI.Rect r = new(16f + 168f, 36f, 336f, 40f, Vector2.zero, Vector2.zero);
-        UI.UIB.Table("Version", parent, r, table =>
-        {
-            UI.UIB.Text($"Jaket version is {CURRENT}", table, r.ToText(), Color.grey);
-        });
+        var r = Blw(36f, 40f);
+        UIB.Table("Version", parent, r, table => UIB.Text($"Jaket version is {CURRENT}", table, r.Text, Color.grey));
     }
 }

@@ -197,7 +197,7 @@ public class UIB
     public static Button Button(string name, Transform parent, Rect r, Color? color = null, int size = 24, TextAnchor align = TextAnchor.MiddleCenter, Action clicked = null)
     {
         var img = Image(name, parent, r, color, fill: false);
-        Text(name, img.transform, r.ToText(), color, size, align);
+        Text(name, img.transform, r.Text, color, size, align);
         return Component<Button>(img.gameObject, button =>
         {
             button.targetGraphic = img;
@@ -218,7 +218,7 @@ public class UIB
     public static Button TeamButton(Team team, Transform parent, Rect r, Action clicked = null)
     {
         var img = Image(team.ToString(), parent, r, team.Color());
-        if (team == Team.Pink) Text("UwU", img.transform, r.ToText(), Dark(pink));
+        if (team == Team.Pink) Text("UwU", img.transform, r.Text, Dark(pink));
         return Component<Button>(img.gameObject, button =>
         {
             button.targetGraphic = img;
