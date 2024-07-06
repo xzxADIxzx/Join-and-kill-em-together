@@ -236,8 +236,7 @@ public class UIB
         // key is the current keycode, bind is the name of the keybind
         Text key = null, bind = Text("#keybind." + name, parent, r, size: 16, align: TextAnchor.MiddleLeft);
 
-        var br = new Rect(-64f, 0f, 128f, 32f, new(1f, .5f), new(1f, .5f));
-        var img = Table("Button", bind.transform, br, table =>
+        var img = Table("Button", bind.transform, new(-64f, 0f, 128f, 32f, new(1f, .5f)), table =>
         {
             key = Text(Dialogs.Settings.KeyName(current), table, Size(128f, 32f), size: 16);
         });

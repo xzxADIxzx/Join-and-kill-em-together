@@ -59,7 +59,7 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
             UIB.Button("#sprays.refresh", sprays, Btn(644f), clicked: Refresh);
             UIB.Button("#sprays.open", sprays, Btn(692f), clicked: OpenFolder);
 
-            UIB.Toggle("#sprays.enabled", players, Tgl(0f, 696f), 16, _ =>
+            UIB.Toggle("#sprays.enabled", players, Tgl(696f), 16, _ =>
             {
                 pm.SetBool("jaket.sprays.enabled", Enabled = _);
             }).isOn = Enabled;
