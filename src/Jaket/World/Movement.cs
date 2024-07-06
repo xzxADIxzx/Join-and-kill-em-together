@@ -246,6 +246,13 @@ public class Movement : MonoSingleton<Movement>
             Bundle.Hud("lobby.cheats");
         }
 
+        // leave lobby if you have more than one mod
+        if (!LobbyController.IsOwner && !LobbyController.ModsAllowed && BepInEx.Bootstrap.Chainloader.PluginInfos.Count > 1)
+        {
+            LobbyController.LeaveLobby();
+            Bundle.Hud("lobby.mods");
+        }
+
         // fake Cyber Grind death
         if (nm.dead && nm.endlessMode)
         {

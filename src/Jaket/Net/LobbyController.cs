@@ -31,6 +31,8 @@ public class LobbyController
     public static bool PvPAllowed => Lobby?.GetData("pvp") == "True";
     /// <summary> Whether cheats are allowed in this lobby. </summary>
     public static bool CheatsAllowed => Lobby?.GetData("cheats") == "True";
+    /// <summary> Whether mods are allowed in this lobby. </summary>
+    public static bool ModsAllowed => Lobby?.GetData("mods") == "True";
     /// <summary> Whether bosses must be healed after death in this lobby. </summary>
     public static bool HealBosses => Lobby?.GetData("heal-bosses") == "True";
     /// <summary> Number of percentages that will be added to the boss's health for each player. </summary>
@@ -90,7 +92,10 @@ public class LobbyController
             Lobby?.SetData("jaket", "true");
             Lobby?.SetData("name", $"{SteamClient.Name}'s Lobby");
             Lobby?.SetData("level", MapMap(Tools.Scene));
-            Lobby?.SetData("pvp", "True"); Lobby?.SetData("cheats", "False"); Lobby?.SetData("heal-bosses", "True");
+            Lobby?.SetData("pvp", "True");
+            Lobby?.SetData("cheats", "False");
+            Lobby?.SetData("mods", "False");
+            Lobby?.SetData("heal-bosses", "True");
         });
     }
 

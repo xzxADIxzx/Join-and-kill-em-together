@@ -19,7 +19,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
     /// <summary> Current lobby access level: 0 - private, 1 - friends only, 2 - public. I was too lazy to create an enum. </summary>
     private int lobbyAccessLevel;
     /// <summary> Checkboxes with lobby settings. </summary>
-    private Toggle pvp, cheats, bosses;
+    private Toggle pvp, cheats, mods, bosses;
 
     private void Start()
     {
@@ -65,6 +65,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
 
             pvp = UIB.Toggle("#lobby-tab.allow-pvp", table, Tgl(0f, 152f), clicked: allow => LobbyController.Lobby?.SetData("pvp", allow.ToString()));
             cheats = UIB.Toggle("#lobby-tab.allow-cheats", table, Tgl(0f, 192f), clicked: allow => LobbyController.Lobby?.SetData("cheats", allow.ToString()));
+            mods = UIB.Toggle("#lobby-tab.allow-mods", table, Tgl(10f, 232f), clicked: allow => LobbyController.Lobby?.SetData("mods", allow.ToString()));
 
             UIB.Text("#lobby-tab.ppp-desc", table, Btn(0f, 247f) with { Height = 62f }, size: 16);
 
@@ -104,6 +105,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
             lobbyAccessLevel = 0;
             pvp.isOn = true;
             cheats.isOn = false;
+            mods.isOn = false;
             bosses.isOn = true;
         }
         else field.text = LobbyController.Lobby?.GetData("name");
