@@ -1,7 +1,9 @@
 ﻿namespace Jaket;
 
 using BepInEx;
+using BepInEx.Bootstrap;
 using HarmonyLib;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -31,6 +33,11 @@ public class Plugin : MonoBehaviour
     public bool Initialized;
     /// <summary> Path to the dll file of the mod. </summary>
     public string Location;
+
+    /// <summary> List of mods compatible with Jaket. </summary>
+    public static readonly string[] Compatible = { "Jaket", "IntroSkip", "PluginConfigurator", "AngryLevelLoader" };
+    /// <summary> Whether at least on incompatible mod is loaded. </summary>
+    public bool HasIncompatibility;
 
     private void Awake() => DontDestroyOnLoad(Instance = this); // save the instance of the mod for later use and prevent it from being destroyed by the game
 
@@ -82,6 +89,9 @@ public class Plugin : MonoBehaviour
 
         // initialize harmony and patch all the necessary classes
         new Harmony("Should I write something here?").PatchAll();
+
+        // check if there is any incompatible mods
+        HasIncompatibility = Chainloader.PluginInfos.Values.Any(info => !Compatible.Contains(info.Metadata.Name));
 
         // mark the plugin as initialized and log a message about it
         Initialized = true;

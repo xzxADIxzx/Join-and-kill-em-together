@@ -247,7 +247,7 @@ public class Movement : MonoSingleton<Movement>
         }
 
         // leave lobby if you have more than one mod
-        if (!LobbyController.IsOwner && !LobbyController.ModsAllowed && BepInEx.Bootstrap.Chainloader.PluginInfos.Count > 1)
+        if (Plugin.Instance.HasIncompatibility && !LobbyController.IsOwner && !LobbyController.ModsAllowed)
         {
             LobbyController.LeaveLobby();
             Bundle.Hud("lobby.mods");
