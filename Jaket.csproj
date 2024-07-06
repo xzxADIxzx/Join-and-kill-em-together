@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-	  <PackageReference Include="UnityEngine.Modules" Version="2019.4.40" IncludeAssets="compile" />
+    <PackageReference Include="UnityEngine.Modules" Version="2019.4.40" IncludeAssets="compile" />
 
     <Reference Include="lib\BepInEx.dll" />
     <Reference Include="lib\0Harmony.dll" />

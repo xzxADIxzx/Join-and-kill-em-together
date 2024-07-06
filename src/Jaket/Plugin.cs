@@ -35,7 +35,7 @@ public class Plugin : MonoBehaviour
     public string Location;
 
     /// <summary> List of mods compatible with Jaket. </summary>
-    public static readonly string[] Compatible = { "Jaket", "IntroSkip", "PluginConfigurator", "AngryLevelLoader" };
+    public static readonly string[] Compatible = { "Jaket", "CrosshairColorFixer", "IntroSkip", "Healthbars", "RcHud", "PluginConfigurator", "AngryLevelLoader" };
     /// <summary> Whether at least on incompatible mod is loaded. </summary>
     public bool HasIncompatibility;
 
