@@ -54,10 +54,10 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
             sprays = UIB.Rect("Sprays", table, new(-164f, -20f, 320f, 720f));
             players = UIB.Rect("Players", table, new(164f, -20f, 320f, 720f));
 
-            preview = UIB.Image("Preview", sprays, Btn(0f, 456f) with { Height = 320f }, type: Image.Type.Filled);
+            preview = UIB.Image("Preview", sprays, Btn(456f) with { Height = 320f }, type: Image.Type.Filled);
 
-            UIB.Button("#sprays.refresh", sprays, Btn(0f, 644f), clicked: Refresh);
-            UIB.Button("#sprays.open", sprays, Btn(0f, 692f), clicked: OpenFolder);
+            UIB.Button("#sprays.refresh", sprays, Btn(644f), clicked: Refresh);
+            UIB.Button("#sprays.open", sprays, Btn(692f), clicked: OpenFolder);
 
             UIB.Toggle("#sprays.enabled", players, Tgl(0f, 696f), 16, _ =>
             {
@@ -91,7 +91,7 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
         {
             var spray = SprayManager.Loaded[i];
             var n = " " + spray.ShortName();
-            var r = Btn(0f, 28f + 48f * i);
+            var r = Btn(28f + 48f * i);
 
             if (spray.Name == SprayManager.CurrentSpray?.Name)
                 UIB.Button(n, sprays, r, green, align: TextAnchor.MiddleLeft);
@@ -106,7 +106,7 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
             else
                 UIB.Button(n, sprays, r, red, align: TextAnchor.MiddleLeft, clicked: () => Bundle.Hud("sprays.invalid"));
         }
-        if (SprayManager.Loaded.Count < 6) UIB.Button("+", sprays, Btn(0f, 28f + 48f * SprayManager.Loaded.Count), grey, clicked: OpenFolder);
+        if (SprayManager.Loaded.Count < 6) UIB.Button("+", sprays, Btn(28f + 48f * SprayManager.Loaded.Count), grey, clicked: OpenFolder);
 
         preview.sprite = SprayManager.CurrentSpray != null ? SprayManager.CurrentSpray.Sprite : UIB.Checkmark;
         preview.preserveAspect = true;
@@ -128,12 +128,12 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
         void BuildList(string name, List<Friend> list, Color color, Action<Friend> clicked)
         {
             if (list.Count == 0) return;
-            UIB.Text(name, players, Btn(0f, y += 48f), align: TextAnchor.MiddleLeft);
+            UIB.Text(name, players, Btn(y += 48f), align: TextAnchor.MiddleLeft);
 
             foreach (var member in list)
             {
                 var sucks = member;
-                UIB.Button(member.Name, players, Btn(0f, y += 48f), color, clicked: () => clicked(sucks));
+                UIB.Button(member.Name, players, Btn(y += 48f), color, clicked: () => clicked(sucks));
             }
         }
         BuildList("WHITELIST:", whitelist, green, member =>

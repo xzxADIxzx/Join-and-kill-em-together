@@ -2,9 +2,12 @@ namespace Jaket.UI;
 
 using UnityEngine;
 
-/// <summary> Structure containing data on the position of the interface element. </summary>
+/// <summary> Structure containing the position of an interface element. </summary>
 public struct Rect
 {
+    /// <summary> Huge rectangle used for high quality text. </summary>
+    public static readonly Rect Huge = Size(4200f, 4200f);
+
     /// <summary> Position relative to the anchor. </summary>
     public float x, y;
     /// <summary> Constant size in pixels. </summary>
@@ -15,7 +18,19 @@ public struct Rect
     public Rect(float x, float y, float width, float height, Vector2 min, Vector2 max)
     { this.x = x; this.y = y; Width = width; Height = height; Min = min; Max = max; }
 
+    public Rect(float x, float y, float width, float height, Vector2 anchor) : this(x, y, width, height, anchor, anchor) { }
+
     public Rect(float x, float y, float width, float height) : this(x, y, width, height, new(.5f, .5f), new(.5f, .5f)) { }
+
+    #region common
+
+    public static Rect Tlw(float y, float height) => new(16f + 336f / 2f, -y, 336f, height, new(0f, 1f));
+
+    public static Rect Btn(float y) => new(0f, -y, 320f, 40f, new(.5f, 1f));
+
+    public static Rect Stn(float y, float shift) => new(shift / 2f, -y, 320f - Mathf.Abs(shift), 40f, new(.5f, 1f));
+
+    #endregion
 
     /// <summary> Creates a rect with the default anchor of the chat message. </summary>
     public static Rect Msg(float width) => new(0f, 0f, width, 32f, new(.5f, 0f), new(.5f, 0f));
@@ -25,12 +40,6 @@ public struct Rect
 
     /// <summary> Creates a rect with the default anchor of the debug table. </summary>
     public static Rect Deb(int x) => new(184f + 352f * x, 296f, 336f, 136f, new(0f, 0f), new(0f, 0f));
-
-    /// <summary> Creates a rect with the default width and anchor of the table. </summary>
-    public static Rect Tlw(float y, float height) => new(16f + 168f, -y, 336f, height, new(0f, 1f), new(0f, 1f));
-
-    /// <summary> Creates a rect with the default size of the button. </summary>
-    public static Rect Btn(float x, float y) => new(x, -y, 320f, 40f, new(.5f, 1f), new(.5f, 1f));
 
     /// <summary> Creates a rect with the default size of the toggle. </summary>
     public static Rect Tgl(float x, float y) => new(x, -y, 320f, 32f, new(.5f, 1f), new(.5f, 1f));
@@ -43,7 +52,4 @@ public struct Rect
 
     /// <summary> Creates a new rect at the center of the current with the same size. </summary>
     public readonly Rect ToText() => new(0f, 1f, Width, Height);
-
-    public static Rect operator *(Rect rect, float mul) => rect with { Width = rect.Width * mul, Height = rect.Height * mul };
-    public static Rect operator /(Rect rect, float div) => rect with { Width = rect.Width / div, Height = rect.Height / div };
 }

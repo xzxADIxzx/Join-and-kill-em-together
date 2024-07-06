@@ -33,8 +33,8 @@ public class Debugging : CanvasSingleton<Debugging>
 
         Text DoubleText(Transform table, string name, float y, Color? color = null)
         {
-            UIB.Text(name, table, Btn(0f, y), color, align: TextAnchor.MiddleLeft);
-            return UIB.Text("-", table, Btn(0f, y), color, align: TextAnchor.MiddleRight);
+            UIB.Text(name, table, Btn(y), color, align: TextAnchor.MiddleLeft);
+            return UIB.Text("-", table, Btn(y), color, align: TextAnchor.MiddleRight);
         }
 
         UIB.Table("Graph", transform, Msg(1888f) with { y = 114f, Height = 196f }, table =>

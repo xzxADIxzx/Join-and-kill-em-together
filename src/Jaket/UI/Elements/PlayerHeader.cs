@@ -28,8 +28,7 @@ public class PlayerHeader
         float width = Name.Length * 14f + 16f;
         canvas = UIB.WorldCanvas("Header", parent, new(0f, 5f, 0f), build: canvas =>
         {
-            var n = Size(width, 40f);
-            UIB.Table("Name", canvas, n, table => Text = UIB.Text(Name, table, n.ToText() * 10f, size: 240));
+            UIB.Table("Name", canvas, Size(width, 40f), table => Text = UIB.Text(Name, table, Huge, size: 240));
             Text.transform.localScale /= 10f;
 
             var h = Size(160f, 4f) with { y = -30f };

@@ -102,7 +102,7 @@ public class UIB
     public static Image Table(string name, string title, Transform parent, Rect r, Action<Transform> build = null) =>
         Table(name, parent, r, table =>
         {
-            Text(title, table, Btn(0f, 24f) with { Width = 640f }, size: 32);
+            Text(title, table, Btn(24f) with { Width = 640f }, size: 32);
             build?.Invoke(table);
         });
 
@@ -251,8 +251,8 @@ public class UIB
     /// <summary> Adds a button corresponding to the Discord style and opening a link to our server. </summary>
     public static Button DiscordButton(string name, Transform parent)
     {
-        var img = Image(name, parent, Btn(0f, 0f), discord);
-        Text(name, img.transform, Size(10000f, 10000f), size: 240).transform.localScale /= 10f;
+        var img = Image(name, parent, Btn(0f), discord);
+        Text(name, img.transform, Huge, size: 240).transform.localScale /= 10f;
         return Component<Button>(img.gameObject, button =>
         {
             button.targetGraphic = img;

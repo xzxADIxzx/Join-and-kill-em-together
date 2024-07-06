@@ -28,8 +28,8 @@ public class LobbyList : CanvasSingleton<LobbyList>
     {
         UIB.Table("List", "#lobby-list.name", transform, Size(640f, 640f), table =>
         {
-            refresh = UIB.Button("", table, Tlw(68f, 40f) with { x = 100f, Width = 184f }, clicked: Refresh);
-            UIB.Field("#lobby-list.search", table, Tlw(68f, 40f) with { x = 392f, Width = 384f }, cons: text =>
+            refresh = UIB.Button("", table, new(100f, -68f, 184f, 40f, new(0f, 1f)), clicked: Refresh);
+            UIB.Field("#lobby-list.search", table, new(392f, -68f, 384f, 40f, new(0f, 1f)), cons: text =>
             {
                 search = text.Trim().ToLower();
                 Rebuild();
@@ -72,14 +72,14 @@ public class LobbyList : CanvasSingleton<LobbyList>
             if (LobbyController.IsMultikillLobby(lobby))
             {
                 var name = " [MULTIKILL] " + lobby.GetData("lobbyName");
-                var r = Btn(0f, y += 48f) with { Width = 624f };
+                var r = Btn(y += 48f) with { Width = 624f };
 
                 UIB.Button(name, content, r, red, 24, TextAnchor.MiddleLeft, () => Bundle.Hud("lobby.mk"));
             }
             else
             {
                 var name = " " + lobby.GetData("name");
-                var r = Btn(0f, y += 48f) with { Width = 624f };
+                var r = Btn(y += 48f) with { Width = 624f };
 
                 if (search != "")
                 {
