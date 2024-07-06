@@ -6,6 +6,7 @@ using Steamworks.Data;
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net.Types;
+using Jaket.Sprays;
 using Jaket.World;
 
 /// <summary> Client endpoint processing socket events and host packets. </summary>
@@ -18,58 +19,60 @@ public class Client : Endpoint, IConnectionManager
     {
         Listen(PacketType.Snapshot, r =>
         {
-            ulong id = r.Id();
+            var id = r.Id();
             var type = r.Enum<EntityType>();
 
-            // if the entity is not in the list, add a new one with the given type or local if available
-            if (!entities.ContainsKey(id)) entities[id] = id == SteamClient.SteamId ? Networking.LocalPlayer : Entities.Get(id, type);
-
-            // after respawn, Leviathan or hand may be absent, so it must be returned if possible
-            // sometimes players disappear for some unknown reason, and sometimes I destroy them myself
-            if (entities[id] == null) entities[id] = Entities.Get(id, type);
-
-            entities[id]?.Read(r);
+            if (!ents.ContainsKey(id) || ents[id] == null) ents[id] = Entities.Get(id, type);
+            ents[id]?.Read(r);
         });
-
-        Listen(PacketType.LoadLevel, r => World.Instance.ReadData(r));
-
-        Listen(PacketType.Kick, r => LobbyController.LeaveLobby());
+        Listen(PacketType.Level, World.ReadData);
+        Listen(PacketType.Ban, r => LobbyController.LeaveLobby());
 
         Listen(PacketType.SpawnBullet, Bullets.CInstantiate);
-
-        Listen(PacketType.DamageEntity, r => entities[r.Id()]?.Damage(r));
-
-        Listen(PacketType.KillEntity, r => entities[r.Id()]?.Kill());
+        Listen(PacketType.DamageEntity, r =>
+        {
+            if (ents.TryGetValue(r.Id(), out var entity)) entity?.Damage(r);
+        });
+        Listen(PacketType.KillEntity, r =>
+        {
+            if (ents.TryGetValue(r.Id(), out var entity)) entity?.Kill(r);
+        });
 
         Listen(PacketType.Style, r =>
         {
-            if (entities[r.Id()] is RemotePlayer player) player?.Style(r);
+            if (ents[r.Id()] is RemotePlayer player) player.Doll.ReadSuit(r);
         });
         Listen(PacketType.Punch, r =>
         {
-            if (entities[r.Id()] is RemotePlayer player) player?.Punch(r);
+            if (ents[r.Id()] is RemotePlayer player) player.Punch(r);
         });
         Listen(PacketType.Point, r =>
         {
-            if (entities[r.Id()] is RemotePlayer player) player?.Point(r);
+            if (ents[r.Id()] is RemotePlayer player) player.Point(r);
         });
 
-        Listen(PacketType.ActivateObject, r => World.Instance.ReadAction(r));
+        Listen(PacketType.Spray, r => SprayManager.Spawn(r.Id(), r.Vector(), r.Vector()));
+
+        Listen(PacketType.ImageChunk, SprayDistributor.Download);
+
+        Listen(PacketType.ActivateObject, World.ReadAction);
 
         Listen(PacketType.CyberGrindAction, CyberGrind.LoadPattern);
     }
 
     public override void Update()
     {
-        // read incoming data
-        Manager.Receive(256); Manager.Receive(256); Manager.Receive(256); Manager.Receive(256); // WHY
-
-        // write data
-        Networking.EachOwned(entity => Networking.Send(PacketType.Snapshot, w =>
+        Stats.MeasureTime(ref Stats.ReadTime, () => Manager.Receive(256));
+        Stats.MeasureTime(ref Stats.WriteTime, () =>
         {
-            w.Id(entity.Id);
-            entity.Write(w);
-        }));
+            if (Networking.Loading) return;
+            Networking.EachEntity(entity => entity.IsOwner, entity => Networking.Send(PacketType.Snapshot, w =>
+            {
+                w.Id(entity.Id);
+                w.Enum(entity.Type);
+                entity.Write(w);
+            }));
+        });
 
         // flush data
         Manager.Connection.Flush();
@@ -92,7 +95,7 @@ public class Client : Endpoint, IConnectionManager
 
     public void OnDisconnected(ConnectionInfo info) => Log.Info("[Client] Disconnected");
 
-    public void OnMessage(System.IntPtr data, int size, long msg, long time, int channel) => Handle(Manager.Connection, LobbyController.LastOwner, data, size);
+    public void OnMessage(System.IntPtr data, int size, long msg, long time, int channel) => Handle(Manager.Connection, LobbyController.LastOwner.AccountId, data, size);
 
     #endregion
 }

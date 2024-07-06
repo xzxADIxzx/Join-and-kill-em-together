@@ -9,9 +9,11 @@ using UnityEngine.UI;
 using Jaket.Assets;
 using Jaket.Commands;
 using Jaket.Net;
+using Jaket.Net.Types;
 using Jaket.Sam;
 using Jaket.World;
 
+using static Pal;
 using static Rect;
 
 /// <summary> Front end of the chat, back end implemented via Steamworks. </summary>
@@ -186,7 +188,7 @@ public class Chat : CanvasSingleton<Chat>
         float start = Time.time;
         while (Time.time - start < .4f)
         {
-            Field.textComponent.color = Color.Lerp(Color.green, Color.white, (Time.time - start) * 2.5f);
+            Field.textComponent.color = Color.Lerp(green, white, (Time.time - start) * 2.5f);
             yield return null;
         }
     }
@@ -218,22 +220,20 @@ public class Chat : CanvasSingleton<Chat>
     }
 
     /// <summary> Writes a message to the chat, formatting it beforehand. </summary>
-    public void Receive(string color, string author, string message, bool oneline = false) => Receive($"<b>[#{color}]{author}[][#FF7F50]:[]</b> {message}", oneline);
+    public void Receive(string color, string author, string msg, bool oneline = false) => Receive($"<b>[#{color}]{author}[][#FF7F50]:[]</b> {Bundle.CutDangerous(msg)}", oneline);
 
     /// <summary> Speaks the message before writing it. </summary>
     public void ReceiveTTS(Friend author, string message)
     {
+        // play the message in the local player's position if he is its author
         if (author.IsMe)
-            // play the message in the player's position if he is its author
             SamAPI.TryPlay(message, Networking.LocalPlayer.Voice);
-        else
-            // or find the author among other players and play the sound from them
-            Networking.EachPlayer(player =>
-            {
-                if (player.Id == author.Id) SamAPI.TryPlay(message, player.Voice);
-            });
 
-        Receive(Networking.GetTeamColor(author), TTS_PREFIX + author.Name, message);
+        // or find the author among the other players and play the sound from them
+        else if (Networking.Entities.TryGetValue(author.Id.AccountId, out var entity) && entity is RemotePlayer player)
+            SamAPI.TryPlay(message, player.Voice);
+
+        Receive(Networking.GetTeamColor(author), TTS_PREFIX + author.Name.Replace("[", "\\["), message);
     }
 
     /// <summary> Sends some useful information to the chat. </summary>

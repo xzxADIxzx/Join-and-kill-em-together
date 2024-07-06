@@ -29,7 +29,7 @@ public class Log
     public static void Load()
     {
         Logger = new("Jaket");
-        LogPath = Path.Combine(Path.GetDirectoryName(Plugin.Instance.Info.Location), "logs", $"Log {Time.Replace(':', '.')}.txt");
+        LogPath = Path.Combine(Path.GetDirectoryName(Plugin.Instance.Location), "logs", $"Log {Time.Replace(':', '.')}.txt");
 
         Events.OnLobbyAction += () =>
         {
@@ -43,7 +43,7 @@ public class Log
     /// <summary> Formats and writes the msg to all output points. </summary>
     public static void LogLevel(Level level, string msg)
     {
-        Logger.Log(level == Level.Debug ? $"<color=#CCCCCC>{msg}</color>" : msg, level switch
+        Logger.Log(level == Level.Debug ? $"<color=#BBBBBB>{msg}</color>" : msg, level switch
         {
             Level.Debug or Level.Info => plog.Models.Level.Info,
             Level.Warning => plog.Models.Level.Warning,

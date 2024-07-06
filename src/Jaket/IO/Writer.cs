@@ -1,10 +1,11 @@
 namespace Jaket.IO;
 
-using Steamworks;
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using UnityEngine;
+
+using Jaket.Content;
 
 /// <summary> Wrapper over Marshal for convenience and the ability to write floating point numbers. </summary>
 public class Writer
@@ -13,25 +14,24 @@ public class Writer
     public int Position;
     /// <summary> Allocated memory length. </summary>
     public readonly int Length;
-
     /// <summary> Pointer to the allocated memory. </summary>
     public readonly IntPtr mem;
+
     /// <summary> Creates a writer with the given memory. </summary>
-    public Writer(IntPtr memory, int length) { this.mem = memory; this.Length = length; }
+    public Writer(IntPtr memory, int length) { mem = memory; Length = length; }
 
     /// <summary> Allocates memory and writes data there. </summary>
-    public static void Write(Action<Writer> cons, Action<IntPtr, int> result, int memoryAmount = 64)
+    public static void Write(Action<Writer> cons, Action<IntPtr, int> result, int memoryAmount)
     {
-        Writer instance = new(Marshal.AllocHGlobal(memoryAmount), memoryAmount);
+        Writer instance = new(Pointers.Allocate(memoryAmount), memoryAmount);
         cons(instance);
         result(instance.mem, instance.Position); // 64 bytes are allocated in memory by default, which is enough for each entity, but not all of this memory is used
-        Pointers.Add(instance.mem);
     }
 
     /// <summary> Converts float to integer. </summary>
-    public static unsafe int Float2Int(float value) => *(int*)(&value);
-    /// <summary> Converts ulong to long. </summary>
-    public static unsafe long Ulong2long(ulong value) => *(long*)(&value);
+    public static unsafe int Float2Int(float value) => *(int*)&value;
+    /// <summary> Converts uint to int. </summary>
+    public static unsafe int Uint2int(uint value) => *(int*)&value;
 
     /// <summary> Moves the cursor by a given number of bytes and returns the old cursor position. </summary>
     public int Inc(int amount)
@@ -52,11 +52,15 @@ public class Writer
 
     public void Byte(byte value) => Marshal.WriteByte(mem, Inc(1), value);
 
-    public void Bytes(byte[] value) => Marshal.Copy(value, 0, mem + Inc(value.Length), value.Length);
+    public void Bytes(byte[] value) => Bytes(value, 0, value.Length);
+
+    public void Bytes(byte[] value, int start, int length) => Marshal.Copy(value, start, mem + Inc(length), length);
 
     public void Int(int value) => Marshal.WriteInt32(mem, Inc(4), value);
 
     public void Float(float value) => Marshal.WriteInt32(mem, Inc(4), Float2Int(value));
+
+    public void Id(uint value) => Marshal.WriteInt32(mem, Inc(4), Uint2int(value));
 
     public void String(string value)
     {
@@ -74,9 +78,15 @@ public class Writer
 
     public void Color(Color32 value) => Int(value.rgba);
 
-    public void Id(SteamId value) => Marshal.WriteInt64(mem, Inc(8), Ulong2long(value));
-
     public void Enum<T>(T value) where T : Enum => Byte(Convert.ToByte(value));
+
+    public void Player(Team team, byte weapon, byte emoji, byte rps, bool typing)
+    {
+        if (weapon == 0xFF) weapon = 0b111111;
+        if (emoji == 0xFF) emoji = 0b1111; // null emoji is recorded as 255, but only 4 bits stand out under emoji
+
+        Marshal.WriteInt16(mem, Inc(2), (short)((weapon << 10) | (Convert.ToByte(team) << 7) | (emoji << 3) | (rps << 1) | (typing ? 1 : 0)));
+    }
 
     #endregion
 }

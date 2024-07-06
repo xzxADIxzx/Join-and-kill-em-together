@@ -11,63 +11,21 @@ AvatarMask:
   m_Elements:
   - m_Path: 
     m_Weight: 1
-  - m_Path: Ears
+  - m_Path: V3
     m_Weight: 0
   - m_Path: Metarig
     m_Weight: 0
-  - m_Path: Metarig/Coin
-    m_Weight: 0
-  - m_Path: Metarig/Coin/Coin_end
-    m_Weight: 0
   - m_Path: Metarig/Hook
     m_Weight: 0
-  - m_Path: Metarig/Left Thigh
-    m_Weight: 0
-  - m_Path: Metarig/Left Thigh/Left Knee
-    m_Weight: 0
-  - m_Path: Metarig/Left Thigh/Left Knee/Left Ankle
-    m_Weight: 0
-  - m_Path: Metarig/Left Thigh/Left Knee/Left Ankle/Left Foot
-    m_Weight: 0
-  - m_Path: Metarig/Left Thigh/Left Knee/Left Ankle/Left Foot/Left Foot_end
-    m_Weight: 0
-  - m_Path: Metarig/Right Thigh
-    m_Weight: 0
-  - m_Path: Metarig/Right Thigh/Right Knee
-    m_Weight: 0
-  - m_Path: Metarig/Right Thigh/Right Knee/Right Ankle
-    m_Weight: 0
-  - m_Path: Metarig/Right Thigh/Right Knee/Right Ankle/Right Foot
-    m_Weight: 0
-  - m_Path: Metarig/Right Thigh/Right Knee/Right Ankle/Right Foot/Right Foot_end
-    m_Weight: 0
-  - m_Path: Metarig/Rocket 1
-    m_Weight: 0
-  - m_Path: Metarig/Rocket 1/Rocket_end
-    m_Weight: 0
-  - m_Path: Metarig/Skateboard 1
-    m_Weight: 0
-  - m_Path: Metarig/Skateboard 1/Front Wheels
-    m_Weight: 0
-  - m_Path: Metarig/Skateboard 1/Front Wheels/Front Left Wheel
-    m_Weight: 0
-  - m_Path: Metarig/Skateboard 1/Front Wheels/Front Left Wheel/Front Left Wheel_end
-    m_Weight: 0
-  - m_Path: Metarig/Skateboard 1/Front Wheels/Front Right Wheel
-    m_Weight: 0
-  - m_Path: Metarig/Skateboard 1/Front Wheels/Front Right Wheel/Front Right Wheel_end
-    m_Weight: 0
-  - m_Path: Metarig/Skateboard 1/Rear Wheels
-    m_Weight: 0
-  - m_Path: Metarig/Skateboard 1/Rear Wheels/Rear Left Wheel
-    m_Weight: 0
-  - m_Path: Metarig/Skateboard 1/Rear Wheels/Rear Left Wheel/Rear Left Wheel_end
-    m_Weight: 0
-  - m_Path: Metarig/Skateboard 1/Rear Wheels/Rear Right Wheel
-    m_Weight: 0
-  - m_Path: Metarig/Skateboard 1/Rear Wheels/Rear Right Wheel/Rear Right Wheel_end
+  - m_Path: Metarig/Throne
     m_Weight: 0
   - m_Path: Metarig/Spine 0
+    m_Weight: 0
+  - m_Path: Metarig/Spine 0/Spine 1
+    m_Weight: 0
+  - m_Path: Metarig/Spine 0/Spine 1/Spine 2
+    m_Weight: 0
+  - m_Path: Metarig/Spine 0/Spine 1/Spine 2/Spine 2_end
     m_Weight: 0
   - m_Path: Metarig/Spine 0/Left Shoulder
     m_Weight: 0
@@ -76,6 +34,18 @@ AvatarMask:
   - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist
     m_Weight: 1
   - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm
+    m_Weight: 1
+  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Thumb
+      0
+    m_Weight: 1
+  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Thumb
+      0/Left Thumb 1
+    m_Weight: 1
+  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Thumb
+      0/Left Thumb 1/Left Thumb 2
+    m_Weight: 1
+  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Thumb
+      0/Left Thumb 1/Left Thumb 2/Left Thumb 2_end
     m_Weight: 1
   - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Finger
       0 Phalanx 0
@@ -145,34 +115,6 @@ AvatarMask:
       3 Phalanx 0/Left Finger 3 Phalanx 1/Left Finger 3 Phalanx 2/Left Finger 3 Phalanx
       3/Left Finger 3 Phalanx 3_end
     m_Weight: 1
-  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Thumb
-      0
-    m_Weight: 1
-  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Thumb
-      0/Left Thumb 1
-    m_Weight: 1
-  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Thumb
-      0/Left Thumb 1/Left Thumb 2
-    m_Weight: 1
-  - m_Path: Metarig/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm/Left Thumb
-      0/Left Thumb 1/Left Thumb 2/Left Thumb 2_end
-    m_Weight: 1
-  - m_Path: Metarig/Spine 0/Left Wing 0
-    m_Weight: 0
-  - m_Path: Metarig/Spine 0/Left Wing 0/Left Wing 0_end
-    m_Weight: 0
-  - m_Path: Metarig/Spine 0/Left Wing 1
-    m_Weight: 0
-  - m_Path: Metarig/Spine 0/Left Wing 1/Left Wing 1_end
-    m_Weight: 0
-  - m_Path: Metarig/Spine 0/Left Wing 2
-    m_Weight: 0
-  - m_Path: Metarig/Spine 0/Left Wing 2/Left Wing 2_end
-    m_Weight: 0
-  - m_Path: Metarig/Spine 0/Left Wing 3
-    m_Weight: 0
-  - m_Path: Metarig/Spine 0/Left Wing 3/Left Wing 3_end
-    m_Weight: 0
   - m_Path: Metarig/Spine 0/Right Shoulder
     m_Weight: 0
   - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow
@@ -180,6 +122,18 @@ AvatarMask:
   - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist
     m_Weight: 0
   - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm
+    m_Weight: 0
+  - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
+      Thumb 0
+    m_Weight: 0
+  - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
+      Thumb 0/Right Thumb 1
+    m_Weight: 0
+  - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
+      Thumb 0/Right Thumb 1/Right Thumb 2
+    m_Weight: 0
+  - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
+      Thumb 0/Right Thumb 1/Right Thumb 2/Right Thumb 2_end
     m_Weight: 0
   - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
       Finger 0 Phalanx 0
@@ -249,18 +203,6 @@ AvatarMask:
       Finger 3 Phalanx 0/Right Finger 3 Phalanx 1/Right Finger 3 Phalanx 2/Right
       Finger 3 Phalanx 3/Right Finger 3 Phalanx 3_end
     m_Weight: 0
-  - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
-      Thumb 0
-    m_Weight: 0
-  - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
-      Thumb 0/Right Thumb 1
-    m_Weight: 0
-  - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
-      Thumb 0/Right Thumb 1/Right Thumb 2
-    m_Weight: 0
-  - m_Path: Metarig/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm/Right
-      Thumb 0/Right Thumb 1/Right Thumb 2/Right Thumb 2_end
-    m_Weight: 0
   - m_Path: Metarig/Spine 0/Right Wing 0
     m_Weight: 0
   - m_Path: Metarig/Spine 0/Right Wing 0/Right Wing 0_end
@@ -277,17 +219,73 @@ AvatarMask:
     m_Weight: 0
   - m_Path: Metarig/Spine 0/Right Wing 3/Right Wing 3_end
     m_Weight: 0
-  - m_Path: Metarig/Spine 0/Spine 1
+  - m_Path: Metarig/Spine 0/Left Wing 0
     m_Weight: 0
-  - m_Path: Metarig/Spine 0/Spine 1/Spine 2
+  - m_Path: Metarig/Spine 0/Left Wing 0/Left Wing 0_end
     m_Weight: 0
-  - m_Path: Metarig/Spine 0/Spine 1/Spine 2/Spine 2_end
+  - m_Path: Metarig/Spine 0/Left Wing 1
     m_Weight: 0
-  - m_Path: Metarig/Throne
+  - m_Path: Metarig/Spine 0/Left Wing 1/Left Wing 1_end
     m_Weight: 0
-  - m_Path: Rocket
+  - m_Path: Metarig/Spine 0/Left Wing 2
+    m_Weight: 0
+  - m_Path: Metarig/Spine 0/Left Wing 2/Left Wing 2_end
+    m_Weight: 0
+  - m_Path: Metarig/Spine 0/Left Wing 3
+    m_Weight: 0
+  - m_Path: Metarig/Spine 0/Left Wing 3/Left Wing 3_end
+    m_Weight: 0
+  - m_Path: Metarig/Left Thigh
+    m_Weight: 0
+  - m_Path: Metarig/Left Thigh/Left Knee
+    m_Weight: 0
+  - m_Path: Metarig/Left Thigh/Left Knee/Left Ankle
+    m_Weight: 0
+  - m_Path: Metarig/Left Thigh/Left Knee/Left Ankle/Left Foot
+    m_Weight: 0
+  - m_Path: Metarig/Left Thigh/Left Knee/Left Ankle/Left Foot/Left Foot_end
+    m_Weight: 0
+  - m_Path: Metarig/Right Thigh
+    m_Weight: 0
+  - m_Path: Metarig/Right Thigh/Right Knee
+    m_Weight: 0
+  - m_Path: Metarig/Right Thigh/Right Knee/Right Ankle
+    m_Weight: 0
+  - m_Path: Metarig/Right Thigh/Right Knee/Right Ankle/Right Foot
+    m_Weight: 0
+  - m_Path: Metarig/Right Thigh/Right Knee/Right Ankle/Right Foot/Right Foot_end
+    m_Weight: 0
+  - m_Path: Metarig/Coin 1
+    m_Weight: 0
+  - m_Path: Metarig/Coin 1/Coin_end
+    m_Weight: 0
+  - m_Path: Metarig/Skateboard 1
+    m_Weight: 0
+  - m_Path: Metarig/Skateboard 1/Front Wheels
+    m_Weight: 0
+  - m_Path: Metarig/Skateboard 1/Front Wheels/Front Left Wheel
+    m_Weight: 0
+  - m_Path: Metarig/Skateboard 1/Front Wheels/Front Left Wheel/Front Left Wheel_end
+    m_Weight: 0
+  - m_Path: Metarig/Skateboard 1/Front Wheels/Front Right Wheel
+    m_Weight: 0
+  - m_Path: Metarig/Skateboard 1/Front Wheels/Front Right Wheel/Front Right Wheel_end
+    m_Weight: 0
+  - m_Path: Metarig/Skateboard 1/Rear Wheels
+    m_Weight: 0
+  - m_Path: Metarig/Skateboard 1/Rear Wheels/Rear Left Wheel
+    m_Weight: 0
+  - m_Path: Metarig/Skateboard 1/Rear Wheels/Rear Left Wheel/Rear Left Wheel_end
+    m_Weight: 0
+  - m_Path: Metarig/Skateboard 1/Rear Wheels/Rear Right Wheel
+    m_Weight: 0
+  - m_Path: Metarig/Skateboard 1/Rear Wheels/Rear Right Wheel/Rear Right Wheel_end
     m_Weight: 0
   - m_Path: Skateboard
     m_Weight: 0
-  - m_Path: V3
+  - m_Path: Coin
+    m_Weight: 0
+  - m_Path: Suits
+    m_Weight: 0
+  - m_Path: Suits/Ears
     m_Weight: 0

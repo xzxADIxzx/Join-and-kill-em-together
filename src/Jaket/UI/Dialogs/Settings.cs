@@ -6,12 +6,13 @@ using UnityEngine.UI;
 using Jaket.Assets;
 using Jaket.World;
 
+using static Pal;
 using static Rect;
 
 /// <summary> Global mod settings not related to the lobby. </summary>
 public class Settings : CanvasSingleton<Settings>
 {
-    private static PrefsManager pm => PrefsManager.Instance;
+    static PrefsManager pm => PrefsManager.Instance;
 
     #region general
 
@@ -110,7 +111,7 @@ public class Settings : CanvasSingleton<Settings>
     private void Start()
     {
         UIB.Shadow(transform);
-        UIB.Table("General", "#settings.general", transform, Tlw(16f + 280f / 2f, 280f), table =>
+        UIB.Table("General", "#settings.general", transform, Tlw(16f + 328f / 2f, 328f), table =>
         {
             UIB.Button("#settings.reset", table, Btn(0f, 68f), clicked: ResetGeneral);
 
@@ -138,13 +139,15 @@ public class Settings : CanvasSingleton<Settings>
             {
                 pm.SetBool("jaket.disable-freeze", DisableFreezeFrames = _);
             }).isOn = DisableFreezeFrames;
+
+            UIB.Button("#settings.sprays", table, Btn(0f, 300f), clicked: SpraySettings.Instance.Toggle);
         });
-        UIB.Table("Controls", "#settings.controls", transform, Tlw(312f + 672f / 2f, 672f), table =>
+        UIB.Table("Controls", "#settings.controls", transform, Tlw(360f + 576f / 2f, 576f), table =>
         {
             UIB.Button("#settings.reset", table, Btn(0f, 68f), clicked: ResetControls);
 
             for (int i = 0; i < Keybinds.Length; i++)
-                UIB.KeyButton(Keybinds[i], CurrentKeys[i], table, Btn(0f, 116f + i * 48f));
+                UIB.KeyButton(Keybinds[i], CurrentKeys[i], table, Tgl(0f, 112f + i * 40f));
         });
 
         Version.Label(transform);
@@ -212,7 +215,7 @@ public class Settings : CanvasSingleton<Settings>
         this.text = text;
         this.background = background;
 
-        background.color = new(1f, .7f, .1f);
+        background.color = orange;
         Rebinding = true;
     }
 

@@ -5,51 +5,85 @@ using UnityEngine;
 
 using Jaket.Content;
 using Jaket.Net;
-using Jaket.Net.Types;
 
 [HarmonyPatch(typeof(EnemyIdentifier))]
 public class EnemyPatch
 {
     [HarmonyPrefix]
     [HarmonyPatch("Start")]
-    static bool Start(EnemyIdentifier __instance) => Enemies.Sync(__instance);
+    static bool Spawn(EnemyIdentifier __instance) => Enemies.Sync(__instance);
 
     [HarmonyPrefix]
     [HarmonyPatch(nameof(EnemyIdentifier.DeliverDamage))]
-    static bool Damage(EnemyIdentifier __instance, ref float multiplier, bool tryForExplode, float critMultiplier, GameObject sourceWeapon) =>
-        Enemies.SyncDamage(__instance, ref multiplier, tryForExplode, critMultiplier, sourceWeapon);
+    static bool Damage(EnemyIdentifier __instance, float multiplier, float critMultiplier, GameObject sourceWeapon) => Enemies.SyncDamage(__instance, multiplier, critMultiplier, sourceWeapon);
 
     [HarmonyPrefix]
-    [HarmonyPatch(nameof(EnemyIdentifier.Death))]
+    [HarmonyPatch(nameof(EnemyIdentifier.Death), typeof(bool))]
     static void Death(EnemyIdentifier __instance) => Enemies.SyncDeath(__instance);
+
+    [HarmonyPrefix]
+    [HarmonyPatch("UpdateTarget")]
+    static bool Skip() => Time.frameCount % (1 + Networking.Entities.Count / 16) == 0;
 
     [HarmonyPostfix]
     [HarmonyPatch("UpdateTarget")]
-    static void Target(EnemyIdentifier __instance)
+    static void Target(EnemyIdentifier __instance) => Enemies.FindTarget(__instance);
+}
+
+[HarmonyPatch]
+public class LogicPatch
+{
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(SwordsMachine), "Start")]
+    static void OutroSM(ref bool ___bossVersion)
     {
-        if (LobbyController.Offline) return;
+        if (LobbyController.Online && (Tools.Scene == "Level 0-2" || Tools.Scene == "Level 0-3" || Tools.Scene == "Level 1-3")) ___bossVersion = true;
+    }
 
-        // update target only if the current target is the local player
-        if (__instance.target == null || !__instance.target.isPlayer) return;
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(V2), "Start")]
+    static void IntroV2(V2 __instance)
+    {
+        if (LobbyController.Online && Tools.Scene == "Level 1-4") __instance.intro = __instance.longIntro = true;
+    }
 
-        // micro optimization
-        float SqrDst(Vector3 v1, Vector3 v2) => (v1 - v2).sqrMagnitude;
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(V2), "Start")]
+    static void OutroV2(ref bool ___bossVersion)
+    {
+        if (LobbyController.Online && (Tools.Scene == "Level 1-4" || Tools.Scene == "Level 4-4")) ___bossVersion = true;
+    }
 
-        var target = NewMovement.Instance.transform;
-        float dst = SqrDst(__instance.transform.position, target.position);
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(SpiderBody), "BreakCorpse")]
+    static void BreakLogic(SpiderBody __instance)
+    {
+        if (LobbyController.Online && __instance.TryGetComponent<Entity>(out var body)) body.NetKill();
+    }
 
-        Networking.EachPlayer(player =>
-        {
-            var newDst = SqrDst(__instance.transform.position, player.transform.position);
-            if (newDst < dst)
-            {
-                target = player.transform;
-                dst = newDst;
-            }
-        });
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(Gutterman), "Explode")]
+    static void BreakLogic(Gutterman __instance)
+    {
+        if (LobbyController.Online && __instance.TryGetComponent<Entity>(out var gman)) gman.NetKill();
+    }
 
-        // update the target if there is a remote player that is closer to the enemy than you
-        if (target != NewMovement.Instance.transform) __instance.target = new(target);
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(Idol), "SlowUpdate")]
+    static bool IdolsLogic(Idol __instance) => LobbyController.Offline || __instance.name == "Local";
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(Gabriel), "Start")]
+    static void OutroG1(ref bool ___bossVersion)
+    {
+        if (LobbyController.Online && Tools.Scene == "Level 3-2") ___bossVersion = true;
+    }
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(GabrielSecond), "Start")]
+    static void OutroG2(ref bool ___bossVersion)
+    {
+        if (LobbyController.Online && Tools.Scene == "Level 6-2") ___bossVersion = true;
     }
 }
 
@@ -57,66 +91,10 @@ public class EnemyPatch
 public class OtherPatch
 {
     [HarmonyPrefix]
-    [HarmonyPatch(typeof(V2), "Start")]
-    static void Intro(V2 __instance)
-    {
-        if (LobbyController.Online && Tools.Scene == "Level 1-4" && !__instance.secondEncounter)
-            __instance.intro = __instance.longIntro = true;
-    }
-
-    [HarmonyPostfix]
-    [HarmonyPatch(typeof(V2), "Start")]
-    static void Outro(V2 __instance, ref bool ___bossVersion) => ___bossVersion = __instance.intro;
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(Idol), "SlowUpdate")]
-    static bool IdolsLogic() => LobbyController.Offline || LobbyController.IsOwner;
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(FerrymanFake), "Update")]
-    static bool FerryLogic() => LobbyController.Offline || LobbyController.IsOwner;
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(FerrymanFake), nameof(FerrymanFake.OnLand))]
-    static void FerryDeath(FerrymanFake __instance)
-    {
-        if (LobbyController.IsOwner && __instance.TryGetComponent<Enemy>(out var enemy)) Networking.Send(PacketType.KillEntity, w => w.Id(enemy.Id), size: 8);
-    }
-
-
+    [HarmonyPatch(typeof(StyleHUD), nameof(StyleHUD.AddPoints))]
+    static void StyleHudErrorFix(ref GameObject sourceWeapon) => sourceWeapon = sourceWeapon == Bullets.NetDmg ? null : sourceWeapon;
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(EventOnDestroy), "OnDestroy")]
     static bool Destroy() => LobbyController.Offline || LobbyController.IsOwner;
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(BossHealthBar), "Awake")]
-    static void BossBar(BossHealthBar __instance)
-    {
-        if (LobbyController.Offline || !__instance.TryGetComponent<EnemyIdentifier>(out var enemyId)) return;
-
-        if (LobbyController.IsOwner || enemyId.enemyType == EnemyType.Minos || enemyId.enemyType == EnemyType.Leviathan)
-        {
-            // get the PPP value if the player is not the host
-            if (!LobbyController.IsOwner) float.TryParse(LobbyController.Lobby?.GetData("ppp"), out LobbyController.PPP);
-
-            enemyId.ForceGetHealth(); // the health of the identifier changes, it's only an indicator of real health, so you can do whatever you want with it
-            LobbyController.ScaleHealth(ref enemyId.health);
-
-            // boss bar will do all the work
-            if (__instance.healthLayers == null) return;
-
-            if (__instance.healthLayers.Length == 0)
-                __instance.healthLayers = new HealthLayer[] { new() { health = enemyId.health } };
-            else
-            {
-                float sum = 0f; // sum of the health of all layers except the last one
-                for (int i = 0; i < __instance.healthLayers.Length - 1; i++) sum += __instance.healthLayers[i].health;
-
-                // change the health of the last bar so that it does not turn green
-                __instance.healthLayers[__instance.healthLayers.Length - 1].health = enemyId.health - sum;
-            }
-        }
-        else if (__instance.TryGetComponent<Enemy>(out var enemy)) __instance.healthLayers = enemy.Layers();
-    }
 }

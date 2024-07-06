@@ -3,6 +3,7 @@ namespace Jaket.Assets;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -26,6 +27,22 @@ public class Bundle
     /// <summary> Loads the translation specified in the settings. </summary>
     public static void Load()
     {
+        var root = Path.GetDirectoryName(Plugin.Instance.Location);
+        #region r2mm fix
+
+        var bundles = Path.Combine(root, "bundles");
+        if (!Directory.Exists(bundles)) Directory.CreateDirectory(bundles);
+
+        foreach (var prop in Directory.EnumerateFiles(root, "*.properties"))
+        {
+            var dest = Path.Combine(bundles, Path.GetFileName(prop));
+
+            File.Delete(dest);
+            File.Move(prop, dest);
+        }
+
+        #endregion
+
         var locale = PrefsManager.Instance.GetString("jaket.locale", "en");
         int localeId = Array.IndexOf(Codes, locale);
 
@@ -35,7 +52,7 @@ public class Bundle
             return;
         }
 
-        var file = Path.Combine(Path.GetDirectoryName(Plugin.Instance.Info.Location), "bundles", $"{Files[localeId]}.properties");
+        var file = Path.Combine(root, "bundles", $"{Files[localeId]}.properties");
         string[] lines;
         try
         {
@@ -53,7 +70,7 @@ public class Bundle
             if (line == "" || line.StartsWith("#")) continue;
 
             var pair = line.Split('=');
-            props.Add(pair[0].Trim(), ParseColors(pair[1].Trim()));
+            props.Add(pair[0].Trim(), locale == "ar" ? ParseArabic(pair[1].Trim()) : ParseColors(pair[1].Trim()));
         }
 
         LoadedLocale = localeId;
@@ -65,8 +82,11 @@ public class Bundle
     // <summary> Returns a string without Unity and Jaket formatting. </summary>
     public static string CutColors(string original) => Regex.Replace(original, "<.*?>|\\[.*?\\]", string.Empty);
 
+    // <summary> Returns a string without the tags that can cause lags. </summary>
+    public static string CutDangerous(string original) => Regex.Replace(original, "</?size.*?>|</?quad.*?>|</?material.*?>", string.Empty);
+
     /// <summary> Parses the colors in the given string so that Unity could understand them. </summary>
-    public static string ParseColors(string original)
+    public static string ParseColors(string original, int maxSize = 64)
     {
         Stack<bool> types = new(); // true - font size, false - color
         StringBuilder builder = new(original.Length);
@@ -80,7 +100,7 @@ public class Bundle
         {
             // find the index of the next special char
             int old = pointer;
-            pointer = original.IndexOfAny(new[] { '\\', '[', ']' }, pointer);
+            pointer = original.IndexOfAny(new[] { '\\', '[' }, pointer);
 
             // save a piece of the original line without special characters
             builder.Append(original.Substring(old, pointer - old));
@@ -107,17 +127,12 @@ public class Bundle
                     pointer = original.IndexOf(']', pointer);
 
                     var content = original.Substring(old, pointer - old);
-                    bool isSize = int.TryParse(content, out _);
+                    bool isSize = int.TryParse(content, out var size);
 
                     types.Push(isSize);
-                    builder.Append(isSize ? "<size=" : "<color=").Append(content).Append('>');
+                    builder.Append(isSize ? "<size=" : "<color=").Append(isSize ? Math.Min(size, maxSize) : content).Append('>');
                     pointer++;
                 }
-            }
-            else if (c == ']')
-            {
-                builder.Append(']');
-                pointer++;
             }
         }
 
@@ -126,6 +141,9 @@ public class Bundle
 
         return builder.ToString().Substring(1);
     }
+
+    /// <summary> Reverses the string because Arabic is right-to-left language. </summary>
+    public static string ParseArabic(string original) => new(CutColors(original).Replace("\\n", "\n").Replace('{', '#').Replace('}', '{').Replace('#', '}').Reverse().ToArray());
 
     #endregion
     #region usage

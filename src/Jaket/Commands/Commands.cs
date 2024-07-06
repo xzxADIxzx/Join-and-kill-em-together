@@ -11,8 +11,8 @@ using Jaket.UI.Dialogs;
 /// <summary> List of chat commands used by the mod. </summary>
 public class Commands
 {
-    /// <summary> Reference to chat. </summary>
-    private static Chat chat => Chat.Instance;
+    static Chat chat => Chat.Instance;
+
     /// <summary> Chat command handler. </summary>
     public static CommandHandler Handler = new();
 
@@ -23,7 +23,7 @@ public class Commands
         {
             Handler.Commands.ForEach(command =>
             {
-                string args = command.Args == null ? "" : $" [#cccccccc]{command.Args}[]";
+                string args = command.Args == null ? "" : $" [#BBBBBB]{command.Args}[]";
                 chat.Receive($"[14]* /{command.Name}{args} - {command.Desc}[]", true);
             });
         });
@@ -73,19 +73,10 @@ public class Commands
             if (index == -1)
                 chat.Receive($"[#FF341C]Plushy named {name} not found.");
             else
-            {
-                if (LobbyController.IsOwner)
-                    Items.Instantiate(EntityType.PlushyOffset + index).transform.position = NewMovement.Instance.transform.position;
-                else
-                    Networking.Send(PacketType.SpawnEntity, w =>
-                    {
-                        w.Enum(EntityType.PlushyOffset + index);
-                        w.Vector(NewMovement.Instance.transform.position);
-                    }, size: 13);
-            }
+                Tools.Instantiate(Items.Prefabs[EntityType.PlushyOffset + index - EntityType.ItemOffset].gameObject, NewMovement.Instance.transform.position);
         });
 
-        Handler.Register("level", "<layer> <level> / sandbox / the-cyber-grind", "Load the given level", args =>
+        Handler.Register("level", "<layer> <level> / sandbox / the-cyber-grind", "Load the given lvl", args =>
         {
             if (!LobbyController.IsOwner)
                 chat.Receive($"[#FF341C]Only the lobby owner can load levels.");
@@ -112,7 +103,7 @@ public class Commands
                 Tools.Load($"Level {layer}-{level}");
                 chat.Receive($"[#32CD32]Level {layer}-{level} is loading.");
             }
-            else if (args[1].ToUpper() == "S" && int.TryParse(args[0], out level) && level >= 0 && level <= 6 && level != 3 && level != 6)
+            else if (args[1].ToUpper() == "S" && int.TryParse(args[0], out level) && level >= 0 && level <= 7 && level != 3 && level != 6)
             {
                 Tools.Load($"Level {level}-S");
                 chat.Receive($"[#32CD32]Secret level {level}-S is loading.");
@@ -141,7 +132,8 @@ public class Commands
             Msg("* [#00E666]Kekson1a[] - Steam Rich Presence support");
 
             Msg("Translators:");
-            Msg("[#cccccc]NotPhobos - Spanish, sSAR - Italian, Theoyeah - French, Sowler - Polish, Ukrainian, Poyozit - Portuguese, Fraku - Filipino, Iyad - Arabic");
+            Msg("[#cccccc]NotPhobos - Spanish, sSAR - Italian, Theoyeah - French, Sowler - Polish,");
+            Msg("[#cccccc]Ukrainian, Poyozit - Portuguese, Fraku - Filipino, Iyad - Arabic");
 
             Msg("Testers:");
             Msg("[#cccccc]Fenicemaster, AndruGhost, Subjune, FruitCircuit");

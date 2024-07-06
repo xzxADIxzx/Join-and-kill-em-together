@@ -33,11 +33,13 @@ public class LobbyController
     public static bool CheatsAllowed => Lobby?.GetData("cheats") == "True";
     /// <summary> Whether mods are allowed in this lobby. </summary>
     public static bool ModsAllowed => Lobby?.GetData("mods") == "True";
+    /// <summary> Whether bosses must be healed after death in this lobby. </summary>
+    public static bool HealBosses => Lobby?.GetData("heal-bosses") == "True";
     /// <summary> Number of percentages that will be added to the boss's health for each player. </summary>
     public static float PPP;
 
     /// <summary> Scales health to increase difficulty. </summary>
-    public static void ScaleHealth(ref float health) => health *= 1f + (Lobby?.MemberCount - 1f ?? 1f) * PPP;
+    public static void ScaleHealth(ref float health) => health *= 1f + Math.Min(Lobby?.MemberCount - 1 ?? 1, 1) * PPP;
     /// <summary> Whether the given lobby is created via Multikill. </summary>
     public static bool IsMultikillLobby(Lobby lobby) => lobby.Data.Any(pair => pair.Key == "mk_lobby");
 
@@ -49,7 +51,7 @@ public class LobbyController
         {
             if (lobby.Owner.Id != 0L) LastOwner = lobby.Owner.Id;
 
-            if (lobby.GetData("banned").Contains(Networking.LocalPlayer.Id.ToString())) LeaveLobby();
+            if (lobby.GetData("banned").Contains(Tools.AccId.ToString())) LeaveLobby();
             if (IsMultikillLobby(lobby))
             {
                 LeaveLobby();
@@ -69,11 +71,7 @@ public class LobbyController
     }
 
     /// <summary> Is there a user with the given id among the members of the lobby. </summary>
-    public static bool Contains(SteamId id)
-    {
-        foreach (var member in Lobby?.Members) if (member.Id == id) return true;
-        return false;
-    }
+    public static bool Contains(uint id) => Lobby?.Members.Any(member => member.Id.AccountId == id) ?? false;
 
     #region control
 
@@ -95,8 +93,9 @@ public class LobbyController
             Lobby?.SetData("name", $"{SteamClient.Name}'s Lobby");
             Lobby?.SetData("level", MapMap(Tools.Scene));
             Lobby?.SetData("pvp", "True");
-            Lobby?.SetData("cheats", "True");
-            Lobby?.SetData("mods", "True");
+            Lobby?.SetData("cheats", "False");
+            Lobby?.SetData("mods", "False");
+            Lobby?.SetData("heal-bosses", "True");
         });
     }
 

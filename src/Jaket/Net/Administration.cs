@@ -1,6 +1,5 @@
 namespace Jaket.Net;
 
-using Steamworks;
 using System.Collections.Generic;
 
 using Jaket.Content;
@@ -8,100 +7,89 @@ using Jaket.Content;
 /// <summary> Class dedicated to protecting the lobby from unfavorable people. </summary>
 public class Administration
 {
-    /// <summary> Max amount of common bullets per second. </summary>
-    public const int MAX_COMMON_BULLETS_PS = 16;
-    /// <summary> Max amount of entity bullets per player. </summary>
-    public const int MAX_ENTITY_BULLETS_PP = 8;
-    /// <summary> Max amount of enemies per player. </summary>
-    public const int MAX_ENEMIES_PP = 16;
+    /// <summary> Max amount of entity bullets per player and common bullets per second. </summary>
+    public const int MAX_BULLETS = 12;
+    /// <summary> Max amount of entities per player. </summary>
+    public const int MAX_ENTITIES = 16;
     /// <summary> Max amount of plushies per player. </summary>
-    public const int MAX_PLUSHIES_PP = 8;
+    public const int MAX_PLUSHIES = 6;
 
     /// <summary> List of banned player ids. </summary>
-    public static List<SteamId> Banned = new();
+    public static List<uint> Banned = new();
+    /// <summary> List of banned player sprays. </summary>
+    public static List<uint> BannedSprays = new();
 
-    public static Dictionary<ulong, int> CommonBullets = new();
-    public static Tree EntityBullets = new();
-    public static Tree Enemies = new();
-    public static Tree Plushies = new();
+    private static Dictionary<uint, int> commonBullets = new();
+    private static Tree entityBullets = new();
+    private static Tree entities = new();
+    private static Tree plushies = new();
 
     /// <summary> Subscribes to events to clear lists. </summary>
     public static void Load()
     {
-        Events.OnLobbyEntered += () => { Banned.Clear(); EntityBullets.Clear(); Enemies.Clear(); Plushies.Clear(); };
-        Events.EverySecond += CommonBullets.Clear;
+        Events.OnLobbyEntered += () => { Banned.Clear(); entityBullets.Clear(); entities.Clear(); plushies.Clear(); };
+        Events.EverySecond += commonBullets.Clear;
     }
 
-    /// <summary> Kicks the member from the lobby, or rather asks him to leave, because Valve has not added such functionality to its API. </summary>
-    public static void Ban(Friend member)
+    /// <summary> Kicks the member from the lobby, or rather asks him to leave, because Valve hasn't added such functionality to their API. </summary>
+    public static void Ban(uint id)
     {
         // who does the client think he is?!
         if (!LobbyController.IsOwner) return;
 
-        Networking.Send(PacketType.Kick, null, (data, size) =>
+        Networking.Send(PacketType.Ban, null, (data, size) =>
         {
-            var con = Networking.FindCon(member.Id);
-            con?.SendMessage(data, size);
+            var con = Networking.FindCon(id);
+            Tools.Send(con, data, size);
             con?.Flush();
             con?.Close();
         });
 
-        Banned.Add(member.Id);
-        LobbyController.Lobby?.SendChatString("#/k" + member.Id);
+        Banned.Add(id);
+        LobbyController.Lobby?.SendChatString("#/k" + id);
         LobbyController.Lobby?.SetData("banned", string.Join(" ", Banned));
     }
 
     /// <summary> Whether the player can spawn another common bullet. </summary>
-    public static bool CanSpawnCommonBullet(SteamId id, int amount) => Increase(id, amount) <= MAX_COMMON_BULLETS_PS;
-
-    /// <summary> Whether the player can spawn another entity bullet. </summary>
-    public static bool CanSpawnEntityBullet(SteamId id) => Count(id, EntityBullets) <= MAX_ENTITY_BULLETS_PP;
-
-    /// <summary> Adds a new enemy to the list and kills the old one. </summary>
-    public static void EnemySpawned(SteamId id, Entity entity, bool big)
+    public static bool CanSpawnBullet(uint owner, int amount)
     {
-        // player can only spawn one big enemy at a time
-        if (big && Enemies.TryGetValue(id, out var list)) list.ForEach(e => e.Kill());
-
-        // kill an old enemy if the player has exceeded the limit
-        if (Count(id, Enemies) >= MAX_ENEMIES_PP) Enemies[id][0].Kill();
-        Enemies[id].Add(entity);
+        commonBullets.TryGetValue(owner, out int value);
+        return (commonBullets[owner] = value + amount) <= MAX_BULLETS;
     }
 
-    /// <summary> Adds a new plushy to the list and destroys the old one. </summary>
-    public static void PlushySpawned(SteamId id, Entity entity)
+    /// <summary> Handles the creations of a new entity by a client. If the client exceeds its limit, the old entity will be destroyed. </ Summary>
+    public static void Handle(uint owner, Entity entity)
     {
-        if (Count(id, Plushies) >= MAX_PLUSHIES_PP)
+        void Default(Tree tree, int max)
         {
-            Networking.Send(PacketType.KillEntity, w => w.Id(Plushies[id][0].Id), size: 8);
-            Plushies[id][0].Kill();
+            if (tree.Count(owner) > max) tree[owner][0].NetKill();
+            tree[owner].Add(entity);
         }
-        Plushies[id].Add(entity);
-    }
 
-    #region tools
-
-    /// <summary> Increases the counter of bullets sent by the player at that second. </summary>
-    public static int Increase(SteamId id, int amount)
-    {
-        CommonBullets.TryGetValue(id, out int value);
-        return CommonBullets[id] = value + amount;
-    }
-
-    /// <summary> Counts the number of living entities the given player has in the tree. </summary>
-    public static int Count(SteamId id, Tree tree)
-    {
-        if (tree.ContainsKey(id))
-            return tree[id].Count - tree[id].RemoveAll(entity => entity == null);
-        else
+        if (entity.Type.IsEnemy() || entity.Type.IsItem())
         {
-            tree[id] = new();
-            return 0;
+            // player can only spawn one big enemy at a time
+            if (entity.Type.IsBigEnemy() && entities.TryGetValue(owner, out var list)) list.ForEach(e => e.NetKill());
+
+            Default(entities, MAX_ENTITIES);
+        }
+        else if (entity.Type.IsPlushy()) Default(plushies, MAX_PLUSHIES);
+        else if (entity.Type.IsBullet()) Default(entityBullets, MAX_BULLETS);
+    }
+
+    /// <summary> Tree with players ids as roots and entities created by these players as children. </summary>
+    public class Tree : Dictionary<uint, List<Entity>>
+    {
+        /// <summary> Counts the number of living entities the given player has in the tree. </summary>
+        public new int Count(uint id)
+        {
+            if (ContainsKey(id))
+                return this[id].Count - this[id].RemoveAll(entity => entity == null || entity.Dead);
+            else
+            {
+                this[id] = new();
+                return 0;
+            }
         }
     }
-
-    #endregion
-
-    /// <summary> Just a shortcut to avoid writing a lot of code. </summary>
-    public class Tree : Dictionary<SteamId, List<Entity>> { }
 }

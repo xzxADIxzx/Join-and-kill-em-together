@@ -5,12 +5,11 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-using Color = UnityEngine.Color;
-
 using Jaket.Assets;
 using Jaket.Net;
 using Jaket.World;
 
+using static Pal;
 using static Rect;
 
 /// <summary> Browser for public lobbies that receives the list via Steam API and displays it in the scrollbar. </summary>
@@ -36,7 +35,7 @@ public class LobbyList : CanvasSingleton<LobbyList>
                 Rebuild();
             });
 
-            UIB.IconButton("X", table, Icon(292f, 68f), new(1f, .2f, .1f), clicked: Toggle);
+            UIB.IconButton("X", table, Icon(292f, 68f), red, clicked: Toggle);
             content = UIB.Scroll("List", table, new(0f, 272f, 624f, 544f, new(.5f, 0f), new(.5f, 0f))).content;
         });
         Refresh();
@@ -75,7 +74,7 @@ public class LobbyList : CanvasSingleton<LobbyList>
                 var name = " [MULTIKILL] " + lobby.GetData("lobbyName");
                 var r = Btn(0f, y += 48f) with { Width = 624f };
 
-                UIB.Button(name, content, r, new(1f, .2f, .1f), 24, TextAnchor.MiddleLeft, () => Bundle.Hud("lobby.mk"));
+                UIB.Button(name, content, r, red, 24, TextAnchor.MiddleLeft, () => Bundle.Hud("lobby.mk"));
             }
             else
             {
@@ -91,7 +90,7 @@ public class LobbyList : CanvasSingleton<LobbyList>
 
                 var b = UIB.Button(name, content, r, align: TextAnchor.MiddleLeft, clicked: () => LobbyController.JoinLobby(lobby));
 
-                var full = lobby.MemberCount <= 2 ? "#32CD32" : lobby.MemberCount <= 4 ? "#FFA500" : "#FF341C";
+                var full = lobby.MemberCount <= 2 ? Green : lobby.MemberCount <= 4 ? Orange : Red;
                 var info = $"<color=#BBBBBB>{lobby.GetData("level")}</color> <color={full}>{lobby.MemberCount}/{lobby.MaxMembers}</color> ";
                 UIB.Text(info, b.transform, r.ToText(), align: TextAnchor.MiddleRight);
             }

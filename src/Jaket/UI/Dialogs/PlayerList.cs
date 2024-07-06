@@ -5,6 +5,7 @@ using Jaket.Content;
 using Jaket.Net;
 using Jaket.World;
 
+using static Pal;
 using static Rect;
 
 /// <summary> List of all players and teams. </summary>
@@ -65,7 +66,7 @@ public class PlayerList : CanvasSingleton<PlayerList>
                     if (LobbyController.IsOwner)
                     {
                         UIB.ProfileButton(member, table, Btn(-24f, y += 48f) with { Width = 272f });
-                        UIB.IconButton("X", table, Icon(138f, y), new(1f, .2f, .1f), clicked: () => Administration.Ban(member));
+                        UIB.IconButton("X", table, Icon(138f, y), red, clicked: () => Administration.Ban(member.Id.AccountId));
                     }
                     else UIB.ProfileButton(member, table, Btn(0f, y += 48f));
                 }

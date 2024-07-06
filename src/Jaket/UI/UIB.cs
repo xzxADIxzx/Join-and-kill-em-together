@@ -13,6 +13,7 @@ using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net;
 
+using static Pal;
 using static Rect;
 
 /// <summary> Class that builds the entire interface of the mod. </summary>
@@ -29,6 +30,22 @@ public class UIB
     /// <summary> Loads the resources needed for interface. </summary>
     public static void Load()
     {
+        // replace the font in a few in-game fragments
+        Action fix;
+        Events.OnLoaded += fix = () => Events.Post(() =>
+        {
+            HudMessageReceiver.Instance.text.font = DollAssets.FontTMP;
+            NewMovement.Instance.youDiedText.font = DollAssets.Font;
+
+            // fix the sorting order to display hud messages on top of other interface fragments
+            if (!HudMessageReceiver.Instance.TryGetComponent<Canvas>(out _)) Component<Canvas>(HudMessageReceiver.Instance.gameObject, canvas =>
+            {
+                canvas.overrideSorting = true;
+                canvas.sortingOrder = 2000;
+            });
+        });
+        fix();
+
         // find all sprites
         var all = Tools.ResFind<Sprite>();
         Sprite Find(string name) => Array.Find(all, s => s.name == name);
@@ -128,7 +145,7 @@ public class UIB
         Component<Text>(Rect("Text", parent, r).gameObject, text =>
         {
             text.text = name.StartsWith("#") ? Bundle.Get(name.Substring(1)) : name;
-            text.color = color ?? Color.white;
+            text.color = color ?? white;
             text.font = DollAssets.Font;
             text.fontSize = size;
             text.alignment = align;
@@ -141,7 +158,7 @@ public class UIB
     public static Image Image(string name, Transform parent, Rect r, Color? color = null, Sprite sprite = null, bool fill = true, ImageType type = ImageType.Sliced) =>
         Component<Image>(Rect(name, parent, r).gameObject, image =>
         {
-            image.color = color ?? Color.white;
+            image.color = color ?? white;
             image.sprite = sprite ?? Background;
             image.fillCenter = fill;
             image.type = type;
@@ -154,7 +171,7 @@ public class UIB
         if (outline) Component<Outline>(obj, outline =>
         {
             outline.effectDistance = new(3f, -3f);
-            outline.effectColor = Color.white;
+            outline.effectColor = white;
         });
         return Component<UICircle>(obj, circle =>
         {
@@ -169,7 +186,7 @@ public class UIB
     public static DiamondGraph DiamondImage(string name, Transform parent, Rect r, float a, float b, float c, float d, Color? color = null) =>
         Component<DiamondGraph>(Rect(name, parent, r).gameObject, diamond =>
         {
-            diamond.color = color ?? Color.white;
+            diamond.color = color ?? white;
             diamond.A = a; diamond.B = b; diamond.C = c; diamond.D = d;
         });
 
@@ -219,10 +236,10 @@ public class UIB
         // key is the current keycode, bind is the name of the keybind
         Text key = null, bind = Text("#keybind." + name, parent, r, size: 16, align: TextAnchor.MiddleLeft);
 
-        var br = new Rect(-64f, 0f, 128f, 40f, new(1f, .5f), new(1f, .5f));
+        var br = new Rect(-64f, 0f, 128f, 32f, new(1f, .5f), new(1f, .5f));
         var img = Table("Button", bind.transform, br, table =>
         {
-            key = Text(Dialogs.Settings.KeyName(current), table, Size(128f, 40f), size: 16);
+            key = Text(Dialogs.Settings.KeyName(current), table, Size(128f, 32f), size: 16);
         });
         return Component<Button>(img.gameObject, button =>
         {
@@ -234,7 +251,7 @@ public class UIB
     /// <summary> Adds a button corresponding to the Discord style and opening a link to our server. </summary>
     public static Button DiscordButton(string name, Transform parent)
     {
-        var img = Image(name, parent, Btn(0f, 0f), new(.345f, .396f, .949f));
+        var img = Image(name, parent, Btn(0f, 0f), discord);
         Text(name, img.transform, Size(10000f, 10000f), size: 240).transform.localScale /= 10f;
         return Component<Button>(img.gameObject, button =>
         {
@@ -314,17 +331,24 @@ public class UIB
 
     /// <summary> Adds a gradient shadow located on the left side. </summary>
     public static Image Shadow(Transform parent) =>
-        Image("Shadow", parent, new(160f, 0f, 320f, 2000f, new(0f, .5f), new(0f, .5f)), Color.black, Shadows);
+        Image("Shadow", parent, new(160f, 0f, 320f, 4200f, new(0f, .5f), new(0f, .5f)), black, Shadows);
 
     /// <summary> Adds a circular shadow located in the center. </summary>
     public static UICircle CircleShadow(Transform parent) =>
         Component<UICircle>(Rect("Shadow", parent, Size(640f, 640f)).gameObject, circle =>
         {
             circle.sprite = CircleShadows;
-            circle.color = Color.black;
+            circle.color = black;
             circle.Thickness = 245f;
             circle.Fill = false;
         });
+
+    #endregion
+    #region line
+
+    /// <summary> Adds a line renderer, the size of which will always be equals to the screen. </summary>
+    public static UILineRenderer Line(string name, Transform parent, Color? color = null) =>
+        Component<UILineRenderer>(Rect(name, parent, new(8f, 8f, 0f, 0f, Vector2.zero, Vector2.zero)).gameObject, line => line.color = color ?? white);
 
     #endregion
 }

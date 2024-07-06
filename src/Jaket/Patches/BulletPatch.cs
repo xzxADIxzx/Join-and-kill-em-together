@@ -4,30 +4,37 @@ using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Content;
+using Jaket.Net;
 using Jaket.Net.Types;
 
 [HarmonyPatch]
 public class CommonBulletsPatch
 {
     [HarmonyPrefix]
-    [HarmonyPatch(typeof(Coin), "Start")]
-    static void Coin(Coin __instance) => Events.Post2(() => Bullets.Sync(__instance.gameObject, ref __instance.sourceWeapon, true, false));
-
-    [HarmonyPrefix]
     [HarmonyPatch(typeof(RevolverBeam), "Start")]
-    static void Beam(RevolverBeam __instance) => Bullets.Sync(__instance.gameObject, ref __instance.sourceWeapon, false, true);
+    static void Beam(RevolverBeam __instance) => Bullets.Sync(__instance.gameObject, ref __instance.sourceWeapon, false, true, __instance.noMuzzleflash ? (byte)__instance.bodiesPierced : byte.MaxValue);
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(Projectile), "Start")]
     static void Projectile(Projectile __instance) => Bullets.Sync(__instance.gameObject, ref __instance.sourceWeapon, false, true);
 
     [HarmonyPrefix]
+    [HarmonyPatch(typeof(GasolineProjectile), MethodType.Constructor)]
+    static void Gasoline(GasolineProjectile __instance) => Events.Post(() => Bullets.Sync(__instance.gameObject, true, false));
+
+    [HarmonyPrefix]
     [HarmonyPatch(typeof(ExplosionController), "Start")]
     static void Explosion(ExplosionController __instance)
     {
-        var explosion = __instance.GetComponentInChildren<Explosion>();
-        if (__instance.name == "SG EXT(Clone)") // only shotgun explosions need to be synchronized
-            Bullets.Sync(__instance.gameObject, ref explosion.sourceWeapon, false, false);
+        var ex = __instance.GetComponentInChildren<Explosion>();
+        if (ex == null) return;
+
+        var n1 = __instance.name;
+        var n2 = ex.sourceWeapon?.name ?? "";
+
+        // only shotgun and hammer explosions must be synchronized
+        if ((n1 == "SG EXT(Clone)" && n2.StartsWith("Shotgun")) || (n1 == "SH(Clone)" && n2.StartsWith("Hammer")) || n1 == "Net")
+            Bullets.Sync(__instance.gameObject, ref ex.sourceWeapon, false, false);
     }
 
     [HarmonyPrefix]
@@ -36,13 +43,13 @@ public class CommonBulletsPatch
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(Harpoon), "Start")]
-    static void Harpoon(Harpoon __instance) => Events.Post2(() => Bullets.Sync(__instance.gameObject, true, true));
+    static void Harpoon(Harpoon __instance) => Events.Post2(() => Bullets.Sync(__instance.gameObject, ref __instance.sourceWeapon, true, true));
 
 
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(Explosion), "Start")]
-    static void Blast(Explosion __instance) => Bullets.SyncBlast(__instance.transform.parent?.gameObject, ref __instance.sourceWeapon);
+    static void Blast(Explosion __instance) => Bullets.SyncBlast(__instance.transform.parent?.gameObject);
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(PhysicalShockwave), "Start")]
@@ -53,7 +60,7 @@ public class CommonBulletsPatch
     static bool Core(Grenade __instance)
     {
         // if the grenade is a rocket or local, then explode it, otherwise skip the explosion because it will be synced
-        if (__instance.rocket || __instance.name != "Net") return true;
+        if (LobbyController.Offline || __instance.rocket || __instance.name != "Net") return true;
 
         Tools.Destroy(__instance.gameObject);
         return false;
@@ -62,24 +69,19 @@ public class CommonBulletsPatch
     [HarmonyPrefix]
     [HarmonyPatch(typeof(Nail), "TouchEnemy")]
     static bool Sawblade(Nail __instance, Transform other) =>
-        __instance.sawblade && other.TryGetComponent<EnemyIdentifierIdentifier>(out var eid) &&
-        eid.eid != null && eid.eid.TryGetComponent<RemotePlayer>(out var player)
+        LobbyController.Online
+        && __instance.sawblade
+        && other.TryGetComponent<EnemyIdentifierIdentifier>(out var eid)
+        && eid.eid != null
+        && eid.eid.TryGetComponent<RemotePlayer>(out var player)
             ? !player.Team.Ally()
             : true;
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(Harpoon), "FixedUpdate")]
-    static void HarpoonDamage(Harpoon __instance, ref float ___drillCooldown)
-    {
-        // this is necessary so that only the one who created the harpoon causes the damage
-        if (__instance.name == "Net") ___drillCooldown = 1f;
-    }
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(Harpoon), "OnTriggerEnter")]
     static bool HarpoonLogic(Harpoon __instance, Collider other, ref bool ___hit, ref Rigidbody ___rb)
     {
-        if (__instance.name == "Net" && !___hit && other.gameObject == NewMovement.Instance.gameObject)
+        if (__instance.sourceWeapon == Bullets.Fake && !___hit && other.gameObject == NewMovement.Instance.gameObject)
         {
             ___hit = true;
             ___rb.constraints = RigidbodyConstraints.FreezeAll;
@@ -94,13 +96,71 @@ public class CommonBulletsPatch
 [HarmonyPatch]
 public class EntityBulletsPatch
 {
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(RevolverBeam), nameof(RevolverBeam.ExecuteHits))]
+    static bool CoinFix(RevolverBeam __instance, RaycastHit currentHit) => __instance.name != "Net" || !(currentHit.transform?.CompareTag("Coin") ?? false);
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(Coin), "Start")]
+    static bool CoinSpawn(Coin __instance)
+    {
+        if (LobbyController.Online)
+        {
+            Bullets.Sync(__instance.gameObject, ref __instance.sourceWeapon, default, default);
+            return false;
+        }
+        else return true;
+    }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(Coin), "DelayedReflectRevolver")]
+    static bool CoinReflect(Coin __instance, GameObject beam)
+    {
+        if (LobbyController.Online)
+        {
+            __instance.GetComponent<TeamCoin>()?.Reflect(beam);
+            return false;
+        }
+        else return true;
+    }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(Coin), "DelayedPunchflection")]
+    static bool CoinPunch(Coin __instance)
+    {
+        if (LobbyController.Online)
+        {
+            __instance.GetComponent<TeamCoin>()?.Punch();
+            return false;
+        }
+        else return true;
+    }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(Coin), "Bounce")]
+    static bool CoinBounce(Coin __instance)
+    {
+        if (LobbyController.Online)
+        {
+            __instance.GetComponent<TeamCoin>()?.Bounce();
+            return false;
+        }
+        else return true;
+    }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(Coin), "OnCollisionEnter")]
+    static bool CoinCollision() => LobbyController.Offline;
+
+
+
     [HarmonyPostfix]
-    [HarmonyPatch(typeof(Grenade), "Start")] // DO NOT USE AWAKE                    __instance?.gameObject doesn't work ._.
-    static void GrenadeSpawn(Grenade __instance) => Events.Post2(() => Bullets.Sync(__instance ? __instance.gameObject : null, true, false));
+    [HarmonyPatch(typeof(Grenade), "Start")] // DO NOT USE AWAKE
+    static void GrenadeSpawn(Grenade __instance) => Bullets.Sync(__instance.gameObject, true, false);
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(Grenade), nameof(Grenade.Explode))]
-    static void GrenadeDeath(Grenade __instance) => Bullets.SyncDeath(__instance.gameObject);
+    static void GrenadeDeath(Grenade __instance, bool harmless, float sizeMultiplier) => Bullets.SyncDeath(__instance.gameObject, harmless, sizeMultiplier > 1f);
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(Grenade), nameof(Grenade.PlayerRideStart))]
@@ -114,9 +174,11 @@ public class EntityBulletsPatch
         if (__instance.rocketSpeed != 100f) __result = __instance.rocketSpeed == 98f;
     }
 
+
+
     [HarmonyPostfix]
     [HarmonyPatch(typeof(Cannonball), "Start")]
-    static void CannonballSpawn(Cannonball __instance) => Bullets.Sync(__instance.gameObject, true, false);
+    static void CannonballSpawn(Cannonball __instance) => Bullets.Sync(__instance.gameObject, default, default);
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(Cannonball), nameof(Cannonball.Break))]

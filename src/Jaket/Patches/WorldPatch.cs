@@ -13,6 +13,10 @@ using Jaket.World;
 public class ArenaPatch
 {
     [HarmonyPrefix]
+    [HarmonyPatch(typeof(Door), nameof(Door.Optimize))]
+    static bool Unload() => LobbyController.Offline;
+
+    [HarmonyPrefix]
     [HarmonyPatch(nameof(ActivateArena.Activate))]
     static void Activate(ActivateArena __instance)
     {
@@ -24,42 +28,11 @@ public class ArenaPatch
     [HarmonyPatch("OnTriggerEnter")]
     static void Enter(ActivateArena __instance, Collider other, ArenaStatus ___astat)
     {
-        int status = __instance.waitForStatus; // there is quite a big check caused by complex game logic that had to be repeated
-        if (DisableEnemySpawns.DisableArenaTriggers || (status > 0 && (___astat == null || ___astat.currentStatus < status))) return;
+        // there is a large check caused by complex game logic that has to be repeated
+        if (DisableEnemySpawns.DisableArenaTriggers || (__instance.waitForStatus > 0 && (___astat == null || ___astat.currentStatus < __instance.waitForStatus))) return;
 
-        // launch the arena even when a remote player has entered it
-        if (!__instance.activated && other.gameObject.name == "Net" && other.GetComponent<RemotePlayer>() != null) __instance.Activate();
-    }
-}
-
-[HarmonyPatch(typeof(DoorController))]
-public class DoorPatch
-{
-    [HarmonyPrefix]
-    [HarmonyPatch("OnTriggerEnter")]
-    static void Enter(DoorController __instance, Collider other, Door ___dc)
-    {
-        // teammates do not have the Enemy tag, which is why the doors do not open
-        if (other.gameObject.name == "Net" && other.TryGetComponent<RemotePlayer>(out var player) && !__instance.doorUsers.Contains(player.EnemyId))
-        {
-            __instance.doorUsers.Add(player.EnemyId);
-            __instance.enemyIn = true;
-
-            // unload rooms without players for optimization
-            ___dc?.Optimize();
-        }
-    }
-
-    [HarmonyPrefix]
-    [HarmonyPatch("OnTriggerExit")]
-    static void Exit(DoorController __instance, Collider other)
-    {
-        // you should close the doors behind you
-        if (other.gameObject.name == "Net" && other.TryGetComponent<RemotePlayer>(out var player) && __instance.doorUsers.Contains(player.EnemyId))
-        {
-            __instance.doorUsers.Remove(player.EnemyId);
-            __instance.enemyIn = __instance.doorUsers.Count > 0;
-        }
+        // launch the arena when a remote player entered it
+        if (!__instance.activated && other.name == "Net" && other.GetComponent<RemotePlayer>() != null) __instance.Activate();
     }
 }
 
@@ -114,7 +87,7 @@ public class TramPatch
     static void FightStart(TramControl __instance)
     {
         // find the cart in which the player will appear after respawn
-        if (LobbyController.Online && Tools.Scene == "Level 7-1") World.Instance.TunnelRoomba = __instance.transform.parent;
+        if (LobbyController.Online && Tools.Scene == "Level 7-1") World.TunnelRoomba = __instance.transform.parent;
     }
 
     [HarmonyPostfix]
@@ -133,50 +106,49 @@ public class TramPatch
 [HarmonyPatch]
 public class ActionPatch
 {
-    static void Activate(GameObject obj)
-    {
-        if (LobbyController.Online && LobbyController.IsOwner) World.EachNet(na =>
-        {
-            if (na.Position == obj.transform.position && na.Name == obj.name) World.SyncActivation(na);
-        });
-    }
-
     [HarmonyPostfix]
     [HarmonyPatch(typeof(ObjectActivator), nameof(ObjectActivator.Activate))]
-    static void ActivateObject(ObjectActivator __instance) => Activate(__instance.gameObject);
-
-    [HarmonyPostfix]
-    [HarmonyPatch(typeof(StatueActivator), "Start")]
-    static void ActivateStatue(StatueActivator __instance) => Activate(__instance.gameObject);
+    static void Activate(ObjectActivator __instance)
+    {
+        if (LobbyController.Online) World.SyncAction(__instance.gameObject);
+    }
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(FinalDoor), nameof(FinalDoor.Open))]
     static void OpenDoor(FinalDoor __instance)
     {
-        if (LobbyController.Online) World.SyncOpening(__instance);
+        if (LobbyController.Online) World.SyncAction(__instance, 3);
     }
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(Door), nameof(Door.Open))]
     static void OpenCase(Door __instance)
     {
-        var name = __instance.name;
+        var n = __instance.name;
         if (LobbyController.Online && LobbyController.IsOwner &&
-           (name.Contains("Case") || name.Contains("Glass") || name.Contains("Cover") || name.Contains("Skull") || Tools.Scene == "Level 3-1"))
-            World.SyncOpening(__instance, false);
+           (n.Contains("Glass") || n.Contains("Cover") ||
+            n.Contains("Skull") || n.Contains("Quake") ||
+            Tools.Scene == "Level 3-1" || __instance.transform.parent?.parent?.name == "MazeWalls")) World.SyncAction(__instance, 4);
     }
 
     [HarmonyPostfix]
-    [HarmonyPatch(typeof(WeaponPickUp), "Awake")]
-    static void DropShotgun()
+    [HarmonyPatch(typeof(Door), nameof(Door.SimpleOpenOverride))]
+    static void OpenSpec(Door __instance)
     {
-        if (LobbyController.Online && LobbyController.IsOwner && Tools.Scene == "Level 0-3") World.SyncDrop();
+        if (LobbyController.Online && __instance.name == "BayDoor") World.SyncAction(__instance, 4);
+    }
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(StatueActivator), "Start")]
+    static void Activate(StatueActivator __instance)
+    {
+        if (LobbyController.Online && LobbyController.IsOwner) World.SyncAction(__instance, 5);
     }
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(BloodFiller), "FullyFilled")]
     static void FillBlood(BloodFiller __instance)
     {
-        if (LobbyController.Online && LobbyController.IsOwner) World.SyncTree(__instance);
+        if (LobbyController.Online && LobbyController.IsOwner) World.SyncAction(__instance, 6);
     }
 }

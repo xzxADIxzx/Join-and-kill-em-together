@@ -5,10 +5,13 @@ using HarmonyLib;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net;
+using Jaket.Net.Types;
+using Jaket.Sprays;
 using Jaket.UI;
 using Jaket.UI.Dialogs;
 using Jaket.UI.Elements;
@@ -17,16 +20,17 @@ using Jaket.UI.Fragments;
 /// <summary> Class responsible for additions to control and local display of emotions. </summary>
 public class Movement : MonoSingleton<Movement>
 {
-    private static NewMovement nm => NewMovement.Instance;
-    private static FistControl fc => FistControl.Instance;
-    private static GunControl gc => GunControl.Instance;
-    private static CameraController cc => CameraController.Instance;
-    private static PlayerInput pi => InputManager.Instance.InputSource;
+    static NewMovement nm => NewMovement.Instance;
+    static FistControl fc => FistControl.Instance;
+    static GunControl gc => GunControl.Instance;
+    static CameraController cc => CameraController.Instance;
+    static PlayerInput pi => InputManager.Instance.InputSource;
+    static CheatsManager cm => CheatsManager.Instance;
 
     /// <summary> Environmental mask needed to prevent the skateboard from riding on water and camera from falling trough the ground. </summary>
     private readonly int mask = LayerMaskDefaults.Get(LMD.Environment);
     /// <summary> An array containing the length of all emotions in seconds. </summary>
-    private readonly float[] emojiLength = { 2.458f, 4.708f, 1.833f, 2.875f, 0f, 9.083f, -1f, 12.125f, -1f, 3.292f, 0f, -1f };
+    private readonly float[] emojiLength = { 2.458f, 4.708f, 1.833f, 2.875f, 0f, 9.083f, -1f, 11.022f, -1f, 3.292f, 0f, -1f };
 
     /// <summary> Current emotion preview, can be null. </summary>
     public GameObject EmojiPreview;
@@ -51,6 +55,8 @@ public class Movement : MonoSingleton<Movement>
 
     /// <summary> Last pointer created by the player. </summary>
     public Pointer Pointer;
+    /// <summary> Last spray created by the player. </summary>
+    public Spray Spray;
 
     /// <summary> Creates a singleton of movement. </summary>
     public static void Load()
@@ -58,15 +64,29 @@ public class Movement : MonoSingleton<Movement>
         // initialize the singleton
         Tools.Create<Movement>("Movement");
 
-        // interrupt emoji to prevent some bugs
-        Events.OnLoaded += () => Instance.StartEmoji(0xFF, false);
+        Events.OnLoaded += () =>
+        {
+            // interrupt emoji to prevent some bugs
+            Instance.StartEmoji(0xFF, false);
+
+            if (nm.endlessMode)
+            {
+                // disable restart button for clients
+                CanvasController.Instance.transform.Find("PauseMenu/Restart Mission").GetComponent<Button>().interactable = LobbyController.Offline || LobbyController.IsOwner;
+
+                // disable text override component
+                nm.youDiedText.GetComponents<MonoBehaviour>()[1].enabled = false;
+            }
+        };
 
         // update death screen text to display number of living players in the Cyber Grind
-        Instance.InvokeRepeating("DeathScreenUpdate", 0f, 1f);
+        Instance.InvokeRepeating("GridUpdate", 0f, 1f);
     }
 
     private void Update()
     {
+        if (Tools.Scene == "Main Menu") return;
+
         if (Input.GetKeyDown(Settings.ScrollUp)) Chat.Instance.ScrollMessages(true);
         if (Input.GetKeyDown(Settings.ScrollDown)) Chat.Instance.ScrollMessages(false);
 
@@ -76,6 +96,8 @@ public class Movement : MonoSingleton<Movement>
         if (Input.GetKeyDown(Settings.LobbyTab)) LobbyTab.Instance.Toggle();
         if (Input.GetKeyDown(Settings.PlayerList)) PlayerList.Instance.Toggle();
         if (Input.GetKeyDown(Settings.Settingz)) Settings.Instance.Toggle();
+        if (Input.GetKeyDown(KeyCode.F4)) Debugging.Instance.Toggle();
+        if (Input.GetKeyDown(KeyCode.C) && Debugging.Shown) Debugging.Instance.Clear();
 
         if (Input.GetKeyDown(Settings.PlayerIndicators)) PlayerIndicators.Instance.Toggle();
         if (Input.GetKeyDown(Settings.PlayerInfo)) PlayerInfo.Instance.Toggle();
@@ -91,20 +113,25 @@ public class Movement : MonoSingleton<Movement>
             if (EmojiWheel.Shown) EmojiWheel.Instance.Hide();
         }
 
-        if (Input.GetKeyDown(Settings.Pointer) && Physics.Raycast(cc.transform.position, cc.transform.forward, out var hit, float.MaxValue, mask))
+        bool p = Input.GetKeyDown(Settings.Pointer), s = Input.GetKeyDown(Settings.Spray);
+        if ((p || s) && Physics.Raycast(cc.transform.position, cc.transform.forward, out var hit, float.MaxValue, mask))
         {
-            if (Pointer != null) Pointer.Lifetime = 4.5f;
-            Pointer = Pointer.Spawn(Networking.LocalPlayer.Team, hit.point, hit.normal);
-
-            if (LobbyController.Online) Networking.Send(PacketType.Point, w =>
+            if (p)
             {
-                w.Id(Networking.LocalPlayer.Id);
+                if (Pointer != null) Pointer.Lifetime = 4.5f;
+                Pointer = Pointer.Spawn(Networking.LocalPlayer.Team, hit.point, hit.normal);
+            }
+            if (s) Spray = SprayManager.Spawn(hit.point, hit.normal);
+
+            if (LobbyController.Online) Networking.Send(p ? PacketType.Point : PacketType.Spray, w =>
+            {
+                w.Id(Tools.AccId);
                 w.Vector(hit.point);
                 w.Vector(hit.normal);
             }, size: 32);
         }
 
-        if (Input.GetKeyDown(Settings.SelfDestruction) && !UI.AnyDialog) nm.GetHurt(1000, false, 0f);
+        if (Input.GetKeyDown(Settings.SelfDestruction) && !UI.AnyDialog) nm.GetHurt(4200, false, 0f);
         if (Input.GetKeyDown(KeyCode.F11)) InteractiveGuide.Instance.Launch();
     }
 
@@ -197,15 +224,11 @@ public class Movement : MonoSingleton<Movement>
 
         // ultrasoap
         if (Tools.Scene != "Main Menu" && !nm.dead)
-        {
             nm.rb.constraints = UI.AnyDialog
                 ? RigidbodyConstraints.FreezeAll
                 : Instance.Emoji == 0xFF || Instance.Emoji == 0x0B // skateboard
                     ? RigidbodyConstraints.FreezeRotation
                     : (RigidbodyConstraints)122;
-        }
-
-
 
         // all the following changes are related to the network part of the game and shouldn't affect the local
         if (LobbyController.Offline) return;
@@ -213,17 +236,13 @@ public class Movement : MonoSingleton<Movement>
         // pause stops time and weapon wheel slows it down, but in multiplayer everything should be real-time
         if (Settings.DisableFreezeFrames || UI.AnyDialog) Time.timeScale = 1f;
 
-        // reset slam force if the player is riding on a rocket
-        if (nm.ridingRocket != null) nm.slamForce = 0f;
-
         // disable cheats if they are prohibited in the lobby
-        if (!LobbyController.CheatsAllowed && CheatsController.Instance.cheatsEnabled)
+        if (CheatsController.Instance.cheatsEnabled && !LobbyController.IsOwner && !LobbyController.CheatsAllowed)
         {
             CheatsController.Instance.cheatsEnabled = false;
-            CheatsManager.Instance.transform.GetChild(0).GetChild(0).gameObject.SetActive(false);
+            cm.transform.GetChild(0).GetChild(0).gameObject.SetActive(false);
 
-            var cheats = Tools.Field<CheatsManager>("idToCheat").GetValue(CheatsManager.Instance) as Dictionary<string, ICheat>;
-            cheats.Values.Do(CheatsManager.Instance.DisableCheat);
+            (Tools.Get("idToCheat", cm) as Dictionary<string, ICheat>).Values.Do(cm.DisableCheat);
             Bundle.Hud("lobby.cheats");
         }
 
@@ -248,31 +267,42 @@ public class Movement : MonoSingleton<Movement>
         }
     }
 
-    private void DeathScreenUpdate()
+    private void GridUpdate()
     {
-        // disable text override component if the player is in the Cyber Grind
-        nm.youDiedText.GetComponents<MonoBehaviour>()[1].enabled = !nm.endlessMode;
-        if (nm.endlessMode)
-        {
-            int alive = CyberGrind.PlayersAlive();
-            nm.youDiedText.text = Bundle.Format("cg", alive.ToString());
+        if (LobbyController.Offline || !nm.endlessMode) return;
 
-            var final = nm.GetComponentInChildren<FinalCyberRank>();
-            if (alive == 0 && final.savedTime == 0f)
-            {
-                final.GameOver();
-                Destroy(nm.blackScreen.gameObject);
-            }
+        int alive = CyberGrind.PlayersAlive();
+        nm.youDiedText.text = Bundle.Format("cg", alive.ToString());
+
+        var final = nm.GetComponentInChildren<FinalCyberRank>();
+        if (alive == 0 && final.savedTime == 0f)
+        {
+            final.GameOver();
+            Destroy(nm.blackScreen.gameObject);
         }
+    }
+
+    #region respawn
+
+    /// <summary> Teleports the local player to the given position and activates movement if it is disabled. </summary>
+    public void Teleport(Vector3 position)
+    {
+        UpdateState();
+        nm.transform.position = position;
+        nm.rb.velocity = Vector3.zero;
+
+        PlayerActivatorRelay.Instance?.Activate();
+        if (GameStateManager.Instance.IsStateActive("pit-falling"))
+            GameStateManager.Instance.PopState("pit-falling");
+
+        // this annoying sound makes me cry
+        Tools.ObjFind("Hellmap")?.SetActive(false);
     }
 
     /// <summary> Repeats a part of the checkpoint logic, needed in order to avoid resetting rooms. </summary>
     public void Respawn(Vector3 position, float rotation)
     {
-        cc.activated = nm.enabled = true;
-        nm.transform.position = position;
-        nm.rb.velocity = Vector3.zero;
-
+        Teleport(position);
         if (PlayerTracker.Instance.playerType == PlayerType.FPS)
             cc.ResetCamera(rotation);
         else
@@ -283,13 +313,20 @@ public class Movement : MonoSingleton<Movement>
         cc.StopShake();
         nm.ActivatePlayer();
 
-        // the player is currently fighting the Minotaur in the tunnel
-        if (World.Instance.TunnelRoomba) nm.transform.position = World.Instance.TunnelRoomba.position with { y = -112.5f };
+        // the player is currently fighting the Minotaur in the tunnel, the security system or the brain in the Earthmover
+        if (World.TunnelRoomba) nm.transform.position = World.TunnelRoomba.position with { y = -112.5f };
+        if (World.SecuritySystem[0]) nm.transform.position = new(0f, 472f, 745f);
+        if (World.Brain && World.Brain.IsFightActive) nm.transform.position = new(0f, 826.5f, 610f);
     }
 
-    /// <summary> Respawns Cyber Grind players. </summary>
-    public void CyberRespawn() => Respawn(new(0f, 80f, 62.5f), 0f);
+    /// <summary> Respawns Cyber Grind players and launches a screen flash. </summary>
+    public void CyberRespawn()
+    {
+        Respawn(new(0f, 80f, 62.5f), 0f);
+        Teleporter.Instance.Flash();
+    }
 
+    #endregion
     #region toggling
 
     /// <summary> Updates the state machine: toggles movement, cursor and third-person camera. </summary>
@@ -326,47 +363,19 @@ public class Movement : MonoSingleton<Movement>
     #endregion
     #region emoji
 
-    /// <summary> Creates a preview of the given emoji in player coordinates. </summary>
-    public void PreviewEmoji(byte id)
-    {
-        EmojiPreview = Instantiate(DollAssets.Preview, nm.transform);
-        EmojiPreview.transform.localPosition = new(0f, -1.5f, 0f);
-        EmojiPreview.transform.localScale = new(2.18f, 2.18f, 2.18f); // preview created for terminal and too small
-
-        var anim = EmojiPreview.transform.GetChild(0).GetComponent<Animator>();
-
-        anim.SetTrigger("Show Emoji");
-        anim.SetInteger("Emoji", id);
-        anim.SetInteger("Rps", Rps);
-
-        // apply team to emotion preview
-        var team = Networking.LocalPlayer.Team;
-        var mat1 = EmojiPreview.transform.GetChild(0).GetChild(4).GetComponent<Renderer>().materials[1];
-        var mat2 = EmojiPreview.transform.GetChild(0).GetChild(3).GetComponent<Renderer>().materials[0];
-
-        mat1.mainTexture = mat2.mainTexture = DollAssets.WingTextures[(int)team];
-        if (team == Team.Pink) EmojiPreview.transform.GetChild(0).GetChild(0).gameObject.SetActive(true);
-
-        if (id == 6) EmojiPreview.transform.GetChild(0).GetChild(1).GetChild(7).gameObject.SetActive(true); // throne
-        if (id == 8) EmojiPreview.transform.GetChild(0).GetChild(1).GetChild(6).GetChild(10).GetChild(0).localEulerAngles = new(-20f, 0f, 0f); // neck
-    }
-
     /// <summary> Triggers an emoji with the given id. </summary>
     public void StartEmoji(byte id, bool updateState = true)
     {
         EmojiStart = Time.time;
-        Emoji = id; // save id for synchronization over the network
+        Emoji = id; // save id to sync it later
 
-        // toggle movement and third-person camera
         if (updateState) UpdateState();
-
-        // destroy the old preview so they don't stack
         Destroy(EmojiPreview);
         Destroy(FallParticle);
 
         // if id is -1, then the emotion was not selected
         if (id == 0xFF) return;
-        else PreviewEmoji(id);
+        else EmojiPreview = Doll.Spawn(nm.transform, Networking.LocalPlayer.Team, id, Rps).gameObject;
 
         // stop sliding so that the preview is not underground
         nm.playerCollider.height = 3.5f;
@@ -385,10 +394,7 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Returns the emoji id to -1 after the end of an animation. </summary>
     public IEnumerator ClearEmoji()
     {
-        // wait for the end of an animation
         yield return new WaitForSeconds(emojiLength[Emoji] + .5f);
-
-        // return the emoji id to -1
         StartEmoji(0xFF);
     }
 
