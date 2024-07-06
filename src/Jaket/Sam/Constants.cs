@@ -16,7 +16,7 @@ public class Constants
     };
 
     /// <summary> Set of rules that in some way known only to God changes the pronunciation of phonemes. </summary>
-    public static readonly int[] RulesSet1 = new[]
+    public static readonly int[] RulesSet1 =
     {
         ']','A'|0x80,
         ' ','(','A','.',')',                    '=','E','H','4','Y','.',' '|0x80,
@@ -475,7 +475,7 @@ public class Constants
     };
 
     /// <summary> Set of rules that in some way known only to God changes the pronunciation of phonemes. </summary>
-    public static readonly int[] RulesSet2 = new[]
+    public static readonly int[] RulesSet2 =
     {
         '(','A',')',                            '='|0x80,
         '(','!',')',                            '=','.'|0x80,
@@ -548,7 +548,7 @@ public class Constants
     public static int WildMatch(char sign) => PhonemeNameTable.IndexOf(sign + "*");
 
     /// <summary> Table of phoneme flags, used to distinguish between different types of sounds. </summary>
-    public static ushort[] PhonemeFlagsTable = new ushort[]
+    public static ushort[] PhonemeFlagsTable =
     {
         0x8000, 0xC100, 0xC100, 0xC100, 0xC100, 0x00A4, 0x00A4, 0x00A4,
         0x00A4, 0x00A4, 0x00A4, 0x0084, 0x0084, 0x00A4, 0x00A4, 0x0084,
@@ -569,7 +569,7 @@ public class Constants
     #region other
 
     /// <summary> Table of phoneme frequencies composed from three original ones. </summary>
-    public static readonly int[] PhonemeFrequencyTable = new[]
+    public static readonly int[] PhonemeFrequencyTable =
     {
         0x000000, 0x5B4313, 0x5B4313, 0x5B4313, 0x5B4313, 0x6E540A, 0x5D490E, 0x5B4313,
         0x583F18, 0x59281B, 0x572C17, 0x581F15, 0x522510, 0x592D14, 0x5D490E, 0x3E3112,
@@ -584,7 +584,7 @@ public class Constants
     };
 
     /// <summary> Table of phoneme amplitudes composed from three original ones. </summary>
-    public static readonly int[] PhonemeAmplitudesTable = new[]
+    public static readonly int[] PhonemeAmplitudesTable =
     {
         0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x080A0D, 0x070B0D, 0x080D0E,
         0x080E0F, 0x010D0F, 0x010C0F, 0x000C0F, 0x010B0F, 0x00090C, 0x070B0D, 0x050B0C,
@@ -599,7 +599,7 @@ public class Constants
     };
 
     /// <summary> Table of phoneme lengths combined from two original ones. </summary>
-    public static readonly short[] PhonemeLengthTable = new short[]
+    public static readonly short[] PhonemeLengthTable =
     {
         0x0000, 0x1212, 0x1212, 0x1212, 0x0808, 0x0B08, 0x0908, 0x0B08, //  * .* ?* ,* -* IY IH EH
         0x0E08, 0x0F0B, 0x0B06, 0x100C, 0x0C0A, 0x0605, 0x0605, 0x0E0B, // AE AA AH AO UH AX IX ER
@@ -614,7 +614,7 @@ public class Constants
     };
 
     /// <summary> Pre-calculated sine values from -127 to 127. </summary>
-    public static readonly short[] Sinus = new short[]
+    public static readonly short[] Sinus =
     {
          0  ,  3  ,  6  ,  9  ,  12 ,  16 ,  19 ,  22 ,  25 ,  28 ,  31 ,  34 ,  37 ,  40 ,  43 ,  46 ,  49 ,  51 ,  54 ,  57 ,  60 ,  63 ,  65 ,  68 ,
          71 ,  73 ,  76 ,  78 ,  81 ,  83 ,  85 ,  88 ,  90 ,  92 ,  94 ,  96 ,  98 ,  100,  102,  104,  106,  107,  109,  111,  112,  113,  115,  116,
@@ -630,7 +630,7 @@ public class Constants
     };
 
     /// <summary> Time table for more accurate c64 simulation. </summary>
-    public static readonly int[,] TimeTable = new[,]
+    public static readonly int[,] TimeTable =
     {
         { 162, 167, 167, 127, 128 },
         { 226, 60,  60,  0,   0   },
@@ -643,7 +643,7 @@ public class Constants
     #region blend
 
     /// <summary> Used to determine the length of phoneme blending. The candidate with the lower score is selected. </summary>
-    public static readonly int[] BlendRank = new[]
+    public static readonly int[] BlendRank =
     {
         0x00, 0x1F, 0x1F, 0x1F, 0x1F, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x05, 0x05,
         0x02, 0x0A, 0x02, 0x08, 0x05, 0x05, 0x0B, 0x0A, 0x09, 0x08, 0x08, 0xA0, 0x08, 0x08, 0x17, 0x1F,
@@ -653,7 +653,7 @@ public class Constants
     };
 
     /// <summary> Number of frames at the beginning of a phoneme intended for interpolation. </summary>
-    public static readonly int[] InBlend = new[]
+    public static readonly int[] InBlend =
     {
         0, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
         4, 4, 3, 3, 4, 4, 3, 3, 3, 3, 3, 1, 2, 3, 2, 1,
@@ -663,7 +663,7 @@ public class Constants
     };
 
     /// <summary> Number of frames at the end of a phoneme intended for interpolation. </summary>
-    public static readonly int[] OutBlend = new[]
+    public static readonly int[] OutBlend =
     {
         0, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
         4, 4, 3, 2, 4, 4, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1,
@@ -675,7 +675,7 @@ public class Constants
     #endregion
     #region unknown
 
-    public static readonly int[] Tab1 = new[]
+    public static readonly int[] Tab1 =
     {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -686,25 +686,25 @@ public class Constants
         32, 32, 155, 32, 192, 185, 32, 205, 163, 76, 138, 142
     };
 
-    public static readonly int[] Tab2 = new[]
+    public static readonly int[] Tab2 =
     {
         0, 149, 247, 162, 57, 197, 6, 126, 199, 38, 55, 78, 145,
         241, 85, 161, 254, 36, 69, 45, 167, 54, 83, 46, 71, 218
     };
 
-    public static readonly int[] Tab3 = new[]
+    public static readonly int[] Tab3 =
     {
         125, 126, 126, 127, 128, 129, 130, 130, 130, 132, 132, 132, 132,
         132, 133, 135, 135, 136, 136, 137, 138, 139, 139, 140, 140, 140
     };
 
-    public static readonly int[] Tab4 = new[] { 0, 0, 224, 230, 236, 243, 249, 0, 6, 12, 6 };
+    public static readonly int[] Tab4 = { 0, 0, 224, 230, 236, 243, 249, 0, 6, 12, 6 };
 
-    public static readonly int[] Tab5 = new[] { 0x18, 0x1A, 0x17, 0x17, 0x17 };
+    public static readonly int[] Tab5 = { 0x18, 0x1A, 0x17, 0x17, 0x17 };
 
-    public static readonly int[] AmplitudeRescale = new[] { 0, 1, 2, 2, 2, 3, 3, 4, 4, 5, 6, 8, 9, 11, 13, 15, 0 };
+    public static readonly int[] AmplitudeRescale = { 0, 1, 2, 2, 2, 3, 3, 4, 4, 5, 6, 8, 9, 11, 13, 15, 0 };
 
-    public static readonly int[] SampledConsonantFlags = new[]
+    public static readonly int[] SampledConsonantFlags =
     {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -713,7 +713,7 @@ public class Constants
         0, 0, 0, 27, 0, 0, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0
     };
 
-    public static readonly int[] SampleTable = new[]
+    public static readonly int[] SampleTable =
     {
         0x38, 0x84, 0x6B, 0x19, 0xC6, 0x63, 0x18, 0x86, 0x73, 0x98, 0xC6, 0xB1, 0x1C, 0xCA, 0x31, 0x8C, 0xC7, 0x31, 0x88, 0xC2, 0x30, 0x98, 0x46, 0x31,
         0x18, 0xC6, 0x35, 0x0C, 0xCA, 0x31, 0x0C, 0xC6, 0x21, 0x10, 0x24, 0x69, 0x12, 0xC2, 0x31, 0x14, 0xC4, 0x71, 0x08, 0x4A, 0x22, 0x49, 0xAB, 0x6A,
