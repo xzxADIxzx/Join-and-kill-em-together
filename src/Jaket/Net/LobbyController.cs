@@ -73,6 +73,12 @@ public class LobbyController
     /// <summary> Is there a user with the given id among the members of the lobby. </summary>
     public static bool Contains(uint id) => Lobby?.Members.Any(member => member.Id.AccountId == id) ?? false;
 
+    /// <summary> Returns the member at the given index or null. </summary>
+    public static Friend? At(int index) => Lobby?.Members.ElementAt(Math.Min(Math.Max(index, 0), Lobby.Value.MemberCount));
+
+    /// <summary> Returns the index of the local player in the lits of members. </summary>
+    public static int IndexOfLocal() => Lobby?.Members.ToList().FindIndex(member => member.IsMe) ?? 0;
+
     #region control
 
     /// <summary> Asynchronously creates a new lobby with default settings and connects to it. </summary>

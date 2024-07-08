@@ -54,6 +54,8 @@ public class Movement : MonoSingleton<Movement>
     private Vector3 position;
     /// <summary> Third person camera rotation. </summary>
     private Vector2 rotation;
+    /// <summary> Third person camera target. If an emote is playing, the camera will aim at the local player, otherwise, at a remote player. </summary>
+    private int targetPlayer;
 
     /// <summary> Last pointer created by the player. </summary>
     public Pointer Pointer;
@@ -135,6 +137,12 @@ public class Movement : MonoSingleton<Movement>
 
         if (Input.GetKeyDown(Settings.SelfDestruction) && !UI.AnyDialog) nm.GetHurt(4200, false, 0f);
         if (Input.GetKeyDown(KeyCode.F11)) InteractiveGuide.Instance.Launch();
+
+        if (pi.Fire1.WasPerformedThisFrame) targetPlayer--;
+        if (pi.Fire2.WasPerformedThisFrame) targetPlayer++;
+
+        if (targetPlayer < 0) targetPlayer = LobbyController.Lobby?.MemberCount - 1 ?? 0;
+        if (targetPlayer >= LobbyController.Lobby?.MemberCount) targetPlayer = 0;
     }
 
     private void LateUpdate() // late update is needed to overwrite the time scale value and camera rotation
@@ -191,7 +199,7 @@ public class Movement : MonoSingleton<Movement>
         }
 
         // third person camera
-        if (Emoji != 0xFF)
+        if (Emoji != 0xFF || (LobbyController.Online && nm.dead && fakeDeath))
         {
             // rotate the camera according to mouse sensitivity
             if (!UI.AnyDialog)
@@ -207,10 +215,12 @@ public class Movement : MonoSingleton<Movement>
             nm.rb.useGravity = true;
 
             var cam = cc.cam.transform;
-            var player = nm.transform.position + Vector3.up;
+            var player = nm.dead && Networking.Entities.TryGetValue(LobbyController.At(targetPlayer)?.Id.AccountId ?? 0, out var rp) && rp != Networking.LocalPlayer
+                ? rp.transform.position + Vector3.up * 2.5f
+                : nm.transform.position + Vector3.up;
 
             // move the camera position towards the start if the animation has just started, or towards the end if the animation ends
-            bool ends = Time.time - EmojiStart > emojiLength[Emoji] && emojiLength[Emoji] != -1f;
+            bool ends = !nm.dead && Time.time - EmojiStart > emojiLength[Emoji] && emojiLength[Emoji] != -1f;
             position = Vector3.MoveTowards(position, ends ? end : start, 12f * Time.deltaTime);
 
             // return the camera to its original position and rotate it around the player
@@ -286,14 +296,15 @@ public class Movement : MonoSingleton<Movement>
     public void OnDied()
     {
         StartEmoji(0xFF);
-        if (LobbyController.Online && fakeDeath)
+        if (LobbyController.Online && fakeDeath) Events.Post(() =>
         {
+            StartThirdPerson();
             nm.endlessMode = true; // take the death screen under control
 
             nm.blackScreen.gameObject.SetActive(true);
             nm.blackScreen.transform.Find("LaughingSkull").gameObject.SetActive(false);
             nm.screenHud.SetActive(false);
-        }
+        });
     }
 
     #region respawn
@@ -351,6 +362,8 @@ public class Movement : MonoSingleton<Movement>
         ToggleCursor(dialog);
         ToggleHud(Instance.Emoji == 0xFF);
 
+        if (nm.dead) return;
+
         nm.activated = fc.activated = gc.activated = !blocking;
         cc.activated = !blocking && !EmojiWheel.Shown;
 
@@ -377,6 +390,14 @@ public class Movement : MonoSingleton<Movement>
     #endregion
     #region emoji
 
+    /// <summary> Resets the values of the third person camera. </summary>
+    public void StartThirdPerson()
+    {
+        rotation = new(cc.rotationY, cc.rotationX + 90f);
+        position = new();
+        targetPlayer = LobbyController.IndexOfLocal();
+    }
+
     /// <summary> Triggers an emoji with the given id. </summary>
     public void StartEmoji(byte id, bool updateState = true)
     {
@@ -396,8 +417,7 @@ public class Movement : MonoSingleton<Movement>
         nm.gc.transform.localPosition = new(0f, -1.256f, 0f);
 
         // rotate the third person camera in the same direction as the first person camera
-        rotation = new(cc.rotationY, cc.rotationX + 90f);
-        position = new();
+        StartThirdPerson();
         SkateboardSpeed = 0f;
 
         Bundle.Hud("emoji", true); // telling how to interrupt an emotion
