@@ -3,7 +3,7 @@ namespace Jaket.Net.Types;
 using Jaket.Content;
 using Jaket.IO;
 
-/// <summary> Representation of a turret enemy. </summary>
+/// <summary> Representation of a turret. </summary>
 public class Turret : Enemy
 {
     global::Turret turret;

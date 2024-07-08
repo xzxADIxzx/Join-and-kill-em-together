@@ -3,7 +3,7 @@ namespace Jaket.Net.Types;
 using Jaket.Content;
 using Jaket.IO;
 
-/// <summary> Representation of an idol enemy. </summary>
+/// <summary> Representation of an idol. </summary>
 public class Idol : Enemy
 {
     /// <summary> Synchronized target of the idol. </summary>

@@ -43,6 +43,7 @@ public class Enemies
         Types[EntityType.Idol] = typeof(Idol);
         Types[EntityType.Gabriel] = typeof(Gabriel);
         Types[EntityType.Gabriel_Angry] = typeof(Gabriel);
+        Types[EntityType.SomethingWicked] = typeof(Wicked);
         Types[EntityType.Johninator] = typeof(V2);
     }
 
