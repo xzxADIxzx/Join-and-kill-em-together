@@ -31,6 +31,8 @@ public class Movement : MonoSingleton<Movement>
     private readonly int mask = LayerMaskDefaults.Get(LMD.Environment);
     /// <summary> An array containing the length of all emotions in seconds. </summary>
     private readonly float[] emojiLength = { 2.458f, 4.708f, 1.833f, 2.875f, 0f, 9.083f, -1f, 11.022f, -1f, 3.292f, 0f, -1f };
+    /// <summary> Whether the death must be fake on this level. </summary>
+    private static bool fakeDeath => nm.endlessMode || Tools.Scene == "Level 0-S";
 
     /// <summary> Current emotion preview, can be null. </summary>
     public GameObject EmojiPreview;
@@ -69,7 +71,7 @@ public class Movement : MonoSingleton<Movement>
             // interrupt emoji to prevent some bugs
             Instance.StartEmoji(0xFF, false);
 
-            if (nm.endlessMode)
+            if (fakeDeath)
             {
                 // disable restart button for clients
                 CanvasController.Instance.transform.Find("PauseMenu/Restart Mission").GetComponent<Button>().interactable = LobbyController.Offline || LobbyController.IsOwner;
@@ -79,7 +81,7 @@ public class Movement : MonoSingleton<Movement>
             }
         };
 
-        // update death screen text to display number of living players in the Cyber Grind
+        // update death screen text to display the number of living players in the Cyber Grind
         Instance.InvokeRepeating("GridUpdate", 0f, 1f);
     }
 
@@ -253,32 +255,44 @@ public class Movement : MonoSingleton<Movement>
             Bundle.Hud("lobby.mods");
         }
 
-        // fake Cyber Grind death
-        if (nm.dead && nm.endlessMode)
+        // fake Cyber Grind///0-S death
+        if (nm.dead && nm.blackScreen.color.a < .4f && fakeDeath)
         {
-            nm.blackScreen.gameObject.SetActive(true);
-            nm.screenHud.SetActive(false);
-
-            if (nm.blackScreen.color.a < 0.5f)
-            {
-                nm.blackScreen.color = nm.blackScreen.color with { a = nm.blackScreen.color.a + .75f * Time.deltaTime };
-                nm.youDiedText.color = nm.youDiedText.color with { a = nm.blackScreen.color.a };
-            }
+            nm.blackScreen.color = nm.blackScreen.color with { a = nm.blackScreen.color.a + .75f * Time.deltaTime };
+            nm.youDiedText.color = nm.youDiedText.color with { a = nm.blackScreen.color.a * 1.25f };
         }
     }
 
     private void GridUpdate()
     {
-        if (LobbyController.Offline || !nm.endlessMode) return;
+        if (LobbyController.Offline || !fakeDeath) return;
 
         int alive = CyberGrind.PlayersAlive();
         nm.youDiedText.text = Bundle.Format("cg", alive.ToString());
 
-        var final = nm.GetComponentInChildren<FinalCyberRank>();
-        if (alive == 0 && final.savedTime == 0f)
+        if (alive > 0) return;
+        if (Tools.Scene == "Level 0-S") StatsManager.Instance.Restart();
+        else
         {
-            final.GameOver();
-            Destroy(nm.blackScreen.gameObject);
+            var final = nm.GetComponentInChildren<FinalCyberRank>();
+            if (final.savedTime == 0f)
+            {
+                final.GameOver();
+                Destroy(nm.blackScreen.gameObject);
+            }
+        }
+    }
+
+    public void OnDied()
+    {
+        StartEmoji(0xFF);
+        if (LobbyController.Online && fakeDeath)
+        {
+            nm.endlessMode = true; // take the death screen under control
+
+            nm.blackScreen.gameObject.SetActive(true);
+            nm.blackScreen.transform.Find("LaughingSkull").gameObject.SetActive(false);
+            nm.screenHud.SetActive(false);
         }
     }
 
