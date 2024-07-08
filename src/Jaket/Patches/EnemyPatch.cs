@@ -85,6 +85,13 @@ public class LogicPatch
     {
         if (LobbyController.Online && Tools.Scene == "Level 6-2") ___bossVersion = true;
     }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(Wicked), "Update")]
+    static void WickedLogic(EnemyIdentifier ___eid)
+    {
+        if (LobbyController.Online) ___eid.totalSpeedModifier = 1f + LobbyController.PPP;
+    }
 }
 
 [HarmonyPatch]

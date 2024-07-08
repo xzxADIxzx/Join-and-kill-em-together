@@ -17,9 +17,7 @@ public class Wicked : SimpleEnemy
     protected override void Start()
     {
         if (Tools.Scene == "Level 7-4") gameObject.SetActive(false);
-
-        LobbyController.ScaleHealth(ref EnemyId.totalSpeedModifier);
-        Invoke("UpdateTarget", .1f);
+        InvokeRepeating("UpdateTarget", .1f, .1f);
     }
 
     private void UpdateTarget() => Tools.Set("player", wicked, EnemyId.target?.targetTransform.gameObject);
