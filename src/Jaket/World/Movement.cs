@@ -278,7 +278,7 @@ public class Movement : MonoSingleton<Movement>
         if (LobbyController.Offline || !fakeDeath) return;
 
         int alive = CyberGrind.PlayersAlive();
-        nm.youDiedText.text = Bundle.Format("cg", alive.ToString());
+        nm.youDiedText.text = Bundle.Format("spect", alive.ToString(), EndlessGrid.Instance ? "#spect.cg" : "#spect.0s");
 
         if (alive > 0) return;
         if (Tools.Scene == "Level 0-S") StatsManager.Instance.Restart();
