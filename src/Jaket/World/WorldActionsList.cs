@@ -67,6 +67,16 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         NetAction.Sync(l, "DelayedDoorActivation", new(175f, -6f, 382f));
 
         #endregion
+        #region 0-S
+        l = "Level 0-S";
+
+        StaticAction.Find(l, "Cube", new(0f, -7.6f, 30f), obj =>
+        {
+            if (obj.TryGetComponent(out ItemPlaceZone zone)) zone.deactivateOnSuccess = new[] { zone.deactivateOnSuccess[0] };
+        });
+        StaticAction.Enable(l, "Wicked", new(-60f, -10f, 30f));
+
+        #endregion
         #region 1-2
         l = "Level 1-2";
 
