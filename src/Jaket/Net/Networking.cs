@@ -103,6 +103,8 @@ public class Networking
 
         SteamMatchmaking.OnChatMessage += (lobby, member, message) =>
         {
+            if (Administration.Banned.Contains(member.Id.AccountId)) return;
+
             if (message == "#/d")
             {
                 Bundle.Msg("player.died", member.Name);

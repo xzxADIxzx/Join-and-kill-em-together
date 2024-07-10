@@ -1,5 +1,6 @@
 namespace Jaket.Net;
 
+using HarmonyLib;
 using System.Collections.Generic;
 
 using Jaket.Content;
@@ -27,6 +28,16 @@ public class Administration
     /// <summary> Subscribes to events to clear lists. </summary>
     public static void Load()
     {
+        Events.OnLobbyAction += () =>
+        {
+            if (LobbyController.IsOwner) return;
+
+            Banned.Clear();
+            LobbyController.Lobby?.GetData("banned").Split(' ').Do(sid =>
+            {
+                if (uint.TryParse(sid, out var id)) Banned.Add(id);
+            });
+        };
         Events.OnLobbyEntered += () => { Banned.Clear(); entityBullets.Clear(); entities.Clear(); plushies.Clear(); };
         Events.EverySecond += commonBullets.Clear;
     }
