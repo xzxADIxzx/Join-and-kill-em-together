@@ -44,6 +44,9 @@ public class Item : OwnableEntity
             : new(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
         transform.eulerAngles = new(rx.GetAngel(LastUpdate), ry.GetAngel(LastUpdate), rz.GetAngel(LastUpdate));
 
+        // fix the rotation of the item in a hand
+        if (holding) transform.eulerAngles -= new Vector3(20f, 140f);
+
         // remove from the altar
         if (!placed && ItemId.ipz != null)
         {
@@ -59,13 +62,13 @@ public class Item : OwnableEntity
             {
                 if (col.gameObject.layer != 22) continue;
 
-                if (placed && ItemId.ipz == null && col.TryGetComponent<ItemPlaceZone>(out var _))
+                if (placed && ItemId.ipz == null && col.TryGetComponent<ItemPlaceZone>(out _))
                 {
                     transform.SetParent(col.transform);
                     foreach (var zone in col.GetComponents<ItemPlaceZone>()) zone.CheckItem();
                 }
 
-                if (torch && col.TryGetComponent<Flammable>(out var flammable)) flammable.Burn(4f);
+                if (torch && col.TryGetComponent(out Flammable flammable)) flammable.Burn(4f);
             }
         }
     });
