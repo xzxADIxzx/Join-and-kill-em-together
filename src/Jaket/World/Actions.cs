@@ -31,9 +31,6 @@ public class StaticAction : WorldAction
     /// <summary> Creates a static action that duplicates torches. </summary>
     public static void PlaceTorches(string level, Vector3 pos, float radius) => new StaticAction(level, () =>
     {
-        // there are already 8 torches on the map, no more needed
-        if (Tools.ResFind<Torch>().Length >= 8) return;
-
         var obj = GameAssets.Torch();
         for (float angle = 360f * 6f / 7f; angle >= 0f; angle -= 360f / 7f)
         {
