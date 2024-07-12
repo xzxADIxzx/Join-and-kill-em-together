@@ -83,11 +83,14 @@ public class Networking
             }
         };
 
-        SteamMatchmaking.OnLobbyMemberJoined += (lobby, member) => Bundle.Msg("player.joined", member.Name);
+        SteamMatchmaking.OnLobbyMemberJoined += (lobby, member) =>
+        {
+            if (!Administration.Banned.Contains(member.Id.AccountId)) Bundle.Msg("player.joined", member.Name);
+        };
 
         SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) =>
         {
-            Bundle.Msg("player.left", member.Name);
+            if (!Administration.Banned.Contains(member.Id.AccountId)) Bundle.Msg("player.left", member.Name);
             if (!LobbyController.IsOwner) return;
 
             // kill the player doll and hide the nickname above
