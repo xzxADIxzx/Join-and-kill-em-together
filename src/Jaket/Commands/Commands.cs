@@ -75,8 +75,10 @@ public class Commands
                 Tools.Instantiate(Items.Prefabs[EntityType.PlushyOffset + index - EntityType.ItemOffset].gameObject, NewMovement.Instance.transform.position);
         });
 
-        Handler.Register("level", "<layer> <level> / sandbox / the-cyber-grind", "Load the given level", args =>
+        Handler.Register("level", "<layer> <level> / sandbox / cyber grind", "Load the given level", args =>
         {
+            if (args.Length == 1 && args[0].Contains("-")) args = args[0].Split('-');
+
             if (!LobbyController.IsOwner)
                 chat.Receive($"[#FF341C]Only the lobby owner can load levels.");
 
