@@ -37,7 +37,7 @@ public class Item : OwnableEntity
 
     private void Update() => Stats.MTE(() =>
     {
-        if (IsOwner || Dead) return;
+        if (IsOwner || Dead || (player.Value?.Health == 0)) return;
 
         transform.position = holding && player.Value != null
             ? player.Value.Doll.HoldPosition
