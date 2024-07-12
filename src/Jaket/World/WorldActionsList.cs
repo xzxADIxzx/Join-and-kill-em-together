@@ -198,6 +198,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         #region 5-1
         l = "Level 5-1";
 
+        StaticAction.Find(l, "1 - Main Cave", new(0f, -50f, 350f), obj => obj.GetComponent<ObjectActivator>().events.toDisActivateObjects[0] = null);
         StaticAction.Destroy(l, "HudMessage", new(0f, -100f, 295.5f));
         StaticAction.Destroy(l, "Door", new(218.5f, -41f, 234.5f));
 
