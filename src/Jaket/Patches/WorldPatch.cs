@@ -32,16 +32,14 @@ public class ArenaPatch
         if (DisableEnemySpawns.DisableArenaTriggers || (__instance.waitForStatus > 0 && (___astat == null || ___astat.currentStatus < __instance.waitForStatus))) return;
 
         // launch the arena when a remote player entered it
-        if (!__instance.activated && other.name == "Net" && other.GetComponent<RemotePlayer>() != null) __instance.Activate();
+        if (!__instance.activated && other.name == "Net" && other.TryGetComponent<RemotePlayer>(out _)) __instance.Activate();
     }
 }
 
 [HarmonyPatch(typeof(CheckPoint))]
 public class RoomPatch
 {
-    /// <summary> Copy of the list of the rooms to reset. </summary>
-    private static List<GameObject> rooms;
-    /// <summary> Fake class needed so that the checkpoint does not recreates the rooms at the first activation. </summary>
+    /// <summary> Fake needed to prohibit the checkpoint to recreate the rooms at the first activation. </summary>
     private class FakeList : List<GameObject> { public new int Count => 0; }
 
     [HarmonyPrefix]
@@ -55,21 +53,15 @@ public class RoomPatch
     [HarmonyPatch(nameof(CheckPoint.OnRespawn))]
     static void ClearRooms(CheckPoint __instance)
     {
-        if (LobbyController.Online)
-        {
-            rooms = __instance.newRooms;
-            __instance.newRooms = new();
-        }
+        if (LobbyController.Online) __instance.newRooms.Clear();
     }
 
     [HarmonyPostfix]
     [HarmonyPatch(nameof(CheckPoint.OnRespawn))]
-    static void RestoreRooms(CheckPoint __instance)
+    static void Respawn(CheckPoint __instance)
     {
         if (LobbyController.Online)
         {
-            __instance.newRooms = rooms;
-
             __instance.onRestart?.Invoke();
             __instance.toActivate?.SetActive(true);
 
