@@ -362,13 +362,15 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
             trigger.events.toDisActivateObjects = new[] { trigger.gameObject };
         });
 
+        StaticAction.Destroy(l, "15 Activator (Station)", new(46.5001f, 24.5f, 701.25f));
+
         // enable the track points at the level
         StaticAction.Enable(l, "0 - Door 1", new(46.5f, 26.75f, 753.75f));
         StaticAction.Enable(l, "1.25 - Door 2", new(46.5f, 26.75f, 788.75f));
         StaticAction.Enable(l, "2.25 - Door 3", new(46.5f, 26.75f, 823.75f));
         StaticAction.Enable(l, "3.5 - Door 4", new(46.5f, 26.75f, 858.75f));
 
-        NetAction.Sync(l, "Trigger", new(-115f, 50f, 348.5f));
+        NetAction.Sync(l, "Trigger", new(-115f, 50f, 348.5f)); // boss
         NetAction.Sync(l, "TowerDestruction", new(-119.75f, 34f, 552.25f));
 
         // library
