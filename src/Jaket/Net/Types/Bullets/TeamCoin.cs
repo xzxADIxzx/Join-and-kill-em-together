@@ -49,7 +49,10 @@ public class TeamCoin : OwnableEntity
 
     /// <summary> Power of the coin increases after a punch or ricochet. </summary>
     private int power = 2;
-
+	/// <summary> the actual number of hitscan beams the coin is holding (only applies to alt revolver) - glitch </summary>
+	private int tbeams = 2;
+	/// <summary> i rewrote the damage tracking code for alt revolver so this is needed - glitch </summary>
+	private float prevdmg = (float)1.25;
     private void Awake()
     {
         Init(_ => Bullets.EType(name), true);
@@ -217,6 +220,9 @@ public class TeamCoin : OwnableEntity
         {
             c.ccc = ccc; // :D
             c.power = ++power;
+            if (beam.TryGetComponent<RevolverBeam>(out var rb) && rb.sourceWeapon && rb.sourceWeapon.TryGetComponent<Revolver>(out var rs) && rs.altVersion && doubled == true) {
+                c.tbeams = ++tbeams;
+            }
         }
     }
 
@@ -247,12 +253,23 @@ public class TeamCoin : OwnableEntity
 
         if (beam.TryGetComponent<RevolverBeam>(out var rb))
         {
-            if (rvp)
+            if (rvp) {
                 rb.damage = power;
+			}
             else
             {
-                rb.damage += power / 4f - rb.addedDamage;
-                rb.addedDamage = power / 4f;
+            	if (rb.sourceWeapon && rb.sourceWeapon.TryGetComponent<Revolver>(out var rs) && rs.altVersion) {
+					if (doubled == true) {
+						tbeams += 1;
+					}
+					prevdmg = rb.damage;
+                	rb.damage = (((float)1.25+(power/4f)) * ((float)tbeams/(float)2));
+					rb.addedDamage = rb.damage - prevdmg;
+            	}
+				else {
+                	rb.damage += power / 4f - rb.addedDamage;
+                	rb.addedDamage = power / 4f;
+				}
             }
 
             if (quadrupled)

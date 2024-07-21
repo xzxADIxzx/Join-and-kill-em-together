@@ -251,23 +251,6 @@ public class Movement : MonoSingleton<Movement>
         // pause stops time and weapon wheel slows it down, but in multiplayer everything should be real-time
         if (Settings.DisableFreezeFrames || UI.AnyDialog) Time.timeScale = 1f;
 
-        // disable cheats if they are prohibited in the lobby
-        if (CheatsController.Instance.cheatsEnabled && !LobbyController.IsOwner && !LobbyController.CheatsAllowed)
-        {
-            CheatsController.Instance.cheatsEnabled = false;
-            cm.transform.GetChild(0).GetChild(0).gameObject.SetActive(false);
-
-            (Tools.Get("idToCheat", cm) as Dictionary<string, ICheat>).Values.Do(cm.DisableCheat);
-            Bundle.Hud("lobby.cheats");
-        }
-
-        // leave lobby if you have more than one mod
-        if (Plugin.Instance.HasIncompatibility && !LobbyController.IsOwner && !LobbyController.ModsAllowed)
-        {
-            LobbyController.LeaveLobby();
-            Bundle.Hud("lobby.mods");
-        }
-
         // fake Cyber Grind///0-S death
         if (nm.dead && nm.blackScreen.color.a < .4f && fakeDeath)
         {

@@ -50,7 +50,7 @@ public class PlayerInfo : CanvasSingleton<PlayerInfo>
         Networking.EachPlayer(player =>
         {
             // the player should only see information about teammates
-            if (player.Team.Ally()) teammates.Add(player);
+            teammates.Add(player);
         });
 
         float height = teammates.Count == 0 ? 40f : teammates.Count * 48f + 8f;
