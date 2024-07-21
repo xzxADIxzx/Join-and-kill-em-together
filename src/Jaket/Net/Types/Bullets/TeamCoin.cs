@@ -255,6 +255,8 @@ public class TeamCoin : OwnableEntity
                 rb.addedDamage = power / 4f;
             }
 
+            if (doubled && rb.strongAlt && rb.hitAmount < 99) rb.maxHitsPerTarget = ++rb.hitAmount;
+
             if (quadrupled)
             {
                 var prefix = rb.ultraRicocheter ? "<color=orange>ULTRA</color>" : "";
