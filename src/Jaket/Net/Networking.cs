@@ -107,6 +107,7 @@ public class Networking
         SteamMatchmaking.OnChatMessage += (lobby, member, message) =>
         {
             if (Administration.Banned.Contains(member.Id.AccountId)) return;
+            if (message.Length > Chat.MAX_MESSAGE_LENGTH + 8) message = message.Substring(0, Chat.MAX_MESSAGE_LENGTH);
 
             if (message == "#/d")
             {
