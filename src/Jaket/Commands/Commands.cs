@@ -75,7 +75,7 @@ public class Commands
                 Tools.Instantiate(Items.Prefabs[EntityType.PlushyOffset + index - EntityType.ItemOffset].gameObject, NewMovement.Instance.transform.position);
         });
 
-        Handler.Register("level", "<layer> <level> / sandbox / cyber grind", "Load the given level", args =>
+        Handler.Register("level", "<layer> <level> / sandbox / cyber grind / credits museum", "Load the given level", args =>
         {
             if (args.Length == 1 && args[0].Contains("-")) args = args[0].Split('-');
 
@@ -91,6 +91,11 @@ public class Commands
             {
                 Tools.Load("Endless");
                 chat.Receive("[#32CD32]The Cyber Grind is loading.");
+            }
+            else if (args.Length >= 1 && (args[0].ToLower().Contains("credits") || args[0].ToLower() == "museum"))
+            {
+                Tools.Load("CreditsMuseum2");
+                chat.Receive("[#32CD32]The Credits Museum is loading.");
             }
             else if (args.Length < 2)
                 chat.Receive($"[#FF341C]Insufficient number of arguments.");
