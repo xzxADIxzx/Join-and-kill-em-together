@@ -54,31 +54,7 @@ public class Chat : CanvasSingleton<Chat>
     private List<string> messages = new();
     /// <summary> Index of the current message in the list. </summary>
     private int messageIndex;
-    public string Get8CharacterRandomString()
-    {
-        System.Random rand = new System.Random();
 
-        // Choosing the size of string 
-        // Using Next() string 
-        int stringlen = 250;
-        int randValue;
-        string str = "";
-        char letter;
-        for (int i = 0; i < stringlen; i++)
-        {
-
-            // Generating a random number. 
-            randValue = rand.Next(0, 26);
-
-            // Generating random character by converting 
-            // the random number into character. 
-            letter = Convert.ToChar(randValue + 65);
-
-            // Appending the letter to string. 
-            str = str + letter;
-        }
-        return str;
-    }
     private void Start()
     {
         Events.OnLobbyEntered += () => Hello(); // send some useful information to the chat so that players know about the mod's features
@@ -111,7 +87,7 @@ public class Chat : CanvasSingleton<Chat>
             System.Random rnd = new System.Random();
             var color = String.Format("#{0:X6}", rnd.Next(0x1000000));
             LobbyList ls = new LobbyList();
-            LobbyController.Lobby?.SendChatString("/tts \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n[10000][" + color + "]" + Get8CharacterRandomString());
+            LobbyController.Lobby?.SendChatString("[10000][" + color + "]" + "████████████████████████████████████████████████████████████████████████████████████████████████████");
         }
     }
 

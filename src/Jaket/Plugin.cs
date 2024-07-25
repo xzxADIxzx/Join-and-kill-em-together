@@ -4,8 +4,11 @@ using BepInEx;
 using BepInEx.Bootstrap;
 using HarmonyLib;
 using System.Linq;
-using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Reflection;
+using System;
+using UnityEngine;
+using UnityEngine.Rendering;
 
 using Jaket.Assets;
 using Jaket.Content;
@@ -39,6 +42,8 @@ public class Plugin : MonoBehaviour
     /// <summary> Whether at least on incompatible mod is loaded. </summary>
     public bool HasIncompatibility;
 
+    private int prevhealth = MonoSingleton<NewMovement>.Instance.hp;
+
     private void Awake() => DontDestroyOnLoad(Instance = this); // save the instance of the mod for later use and prevent it from being destroyed by the game
 
     private void Start()
@@ -52,6 +57,7 @@ public class Plugin : MonoBehaviour
         Events.Load();
         // interface components and assets bundle can only be loaded from the main menu
         Events.OnMainMenuLoaded += Init;
+
     }
 
     private void OnApplicationQuit() => Log.Flush();
@@ -96,5 +102,37 @@ public class Plugin : MonoBehaviour
         // mark the plugin as initialized and log a message about it
         Initialized = true;
         Log.Info("Jaket initialized!");
+    }
+    private void Update() {
+        if (MonoSingleton<NewMovement>.Instance.hp != prevhealth) {
+MonoSingleton<ColorBlindSettings>.Instance.filthColor = new Color(((float)100 - (float)MonoSingleton<NewMovement>.Instance.hp)/100, (float)MonoSingleton<NewMovement>.Instance.hp/100, 0F, 1F);
+MonoSingleton<ColorBlindSettings>.Instance.strayColor = new Color(((float)100 - (float)MonoSingleton<NewMovement>.Instance.hp)/100, (float)MonoSingleton<NewMovement>.Instance.hp/100, 0F, 1F);
+MonoSingleton<ColorBlindSettings>.Instance.schismColor = new Color(((float)100 - (float)MonoSingleton<NewMovement>.Instance.hp)/100, (float)MonoSingleton<NewMovement>.Instance.hp/100, 0F, 1F);
+MonoSingleton<ColorBlindSettings>.Instance.shotgunnerColor = new Color(((float)100 - (float)MonoSingleton<NewMovement>.Instance.hp)/100, (float)MonoSingleton<NewMovement>.Instance.hp/100, 0F, 1F);
+MonoSingleton<ColorBlindSettings>.Instance.stalkerColor = new Color(((float)100 - (float)MonoSingleton<NewMovement>.Instance.hp)/100, (float)MonoSingleton<NewMovement>.Instance.hp/100, 0F, 1F);
+MonoSingleton<ColorBlindSettings>.Instance.sisyphusColor = new Color(((float)100 - (float)MonoSingleton<NewMovement>.Instance.hp)/100, (float)MonoSingleton<NewMovement>.Instance.hp/100, 0F, 1F);
+MonoSingleton<ColorBlindSettings>.Instance.ferrymanColor = new Color(((float)100 - (float)MonoSingleton<NewMovement>.Instance.hp)/100, (float)MonoSingleton<NewMovement>.Instance.hp/100, 0F, 1F);
+MonoSingleton<ColorBlindSettings>.Instance.droneColor = new Color(((float)100 - (float)MonoSingleton<NewMovement>.Instance.hp)/100, (float)MonoSingleton<NewMovement>.Instance.hp/100, 0F, 1F);
+MonoSingleton<ColorBlindSettings>.Instance.streetcleanerColor = new Color(((float)100 - (float)MonoSingleton<NewMovement>.Instance.hp)/100, (float)MonoSingleton<NewMovement>.Instance.hp/100, 0F, 1F);
+MonoSingleton<ColorBlindSettings>.Instance.swordsmachineColor = new Color(((float)100 - (float)MonoSingleton<NewMovement>.Instance.hp)/100, (float)MonoSingleton<NewMovement>.Instance.hp/100, 0F, 1F);
+MonoSingleton<ColorBlindSettings>.Instance.mindflayerColor = new Color(((float)100 - (float)MonoSingleton<NewMovement>.Instance.hp)/100, (float)MonoSingleton<NewMovement>.Instance.hp/100, 0F, 1F);
+MonoSingleton<ColorBlindSettings>.Instance.v2Color = new Color(((float)100 - (float)MonoSingleton<NewMovement>.Instance.hp)/100, (float)MonoSingleton<NewMovement>.Instance.hp/100, 0F, 1F);
+MonoSingleton<ColorBlindSettings>.Instance.turretColor = new Color(((float)100 - (float)MonoSingleton<NewMovement>.Instance.hp)/100, (float)MonoSingleton<NewMovement>.Instance.hp/100, 0F, 1F);
+MonoSingleton<ColorBlindSettings>.Instance.guttermanColor = new Color(((float)100 - (float)MonoSingleton<NewMovement>.Instance.hp)/100, (float)MonoSingleton<NewMovement>.Instance.hp/100, 0F, 1F);
+MonoSingleton<ColorBlindSettings>.Instance.guttertankColor = new Color(((float)100 - (float)MonoSingleton<NewMovement>.Instance.hp)/100, (float)MonoSingleton<NewMovement>.Instance.hp/100, 0F, 1F);
+MonoSingleton<ColorBlindSettings>.Instance.maliciousColor = new Color(((float)100 - (float)MonoSingleton<NewMovement>.Instance.hp)/100, (float)MonoSingleton<NewMovement>.Instance.hp/100, 0F, 1F);
+MonoSingleton<ColorBlindSettings>.Instance.cerberusColor = new Color(((float)100 - (float)MonoSingleton<NewMovement>.Instance.hp)/100, (float)MonoSingleton<NewMovement>.Instance.hp/100, 0F, 1F);
+MonoSingleton<ColorBlindSettings>.Instance.idolColor = new Color(((float)100 - (float)MonoSingleton<NewMovement>.Instance.hp)/100, (float)MonoSingleton<NewMovement>.Instance.hp/100, 0F, 1F);
+MonoSingleton<ColorBlindSettings>.Instance.mannequinColor = new Color(((float)100 - (float)MonoSingleton<NewMovement>.Instance.hp)/100, (float)MonoSingleton<NewMovement>.Instance.hp/100, 0F, 1F);
+MonoSingleton<ColorBlindSettings>.Instance.virtueColor = new Color(((float)100 - (float)MonoSingleton<NewMovement>.Instance.hp)/100, (float)MonoSingleton<NewMovement>.Instance.hp/100, 0F, 1F);
+            MonoSingleton<ColorBlindSettings>.Instance.SetEnemyColor((EnemyType)1, new Color(((float)100 - (float)MonoSingleton<NewMovement>.Instance.hp)/100, (float)MonoSingleton<NewMovement>.Instance.hp/100, 0F, 1F));
+            //FieldInfo field = MonoSingleton<PostProcessV2_Handler>.Instance.GetType().GetField("outlineProcessor", BindingFlags.NonPublic | BindingFlags.Instance);
+            //Material outlineProcessor = (Material) field.GetValue(MonoSingleton<PostProcessV2_Handler>.Instance);
+            //outlineProcessor.SetColor("_OutlineColor", new Color(((float)100 - (float)MonoSingleton<NewMovement>.Instance.hp)/100, (float)MonoSingleton<NewMovement>.Instance.hp/100, 0F, 1F));
+            //outlineProcessor.SetColor("_Color", new Color(((float)100 - (float)MonoSingleton<NewMovement>.Instance.hp)/100, (float)MonoSingleton<NewMovement>.Instance.hp/100, 0F, 1F));
+            //MonoSingleton<PostProcessV2_Handler>.Instance.postProcessV2_VSRM.SetColor("_Color", new Color(((float)100 - (float)MonoSingleton<NewMovement>.Instance.hp)/100, (float)MonoSingleton<NewMovement>.Instance.hp/100, 0F, 1F));
+            //MonoSingleton<PostProcessV2_Handler>.Instance.postProcessV2_VSRM.SetColor("_OutlineColor", new Color(((float)100 - (float)MonoSingleton<NewMovement>.Instance.hp)/100, (float)MonoSingleton<NewMovement>.Instance.hp/100, 0F, 1F));
+            prevhealth = MonoSingleton<NewMovement>.Instance.hp;
+        }
     }
 }

@@ -440,11 +440,11 @@
   "project": {
     "version": "1.3.0",
     "restore": {
-      "projectUniqueName": "/home/glitch/Join-and-kill-em-together-main/Jaket.csproj",
+      "projectUniqueName": "/home/glitch/modded-jaket/Jaket.csproj",
       "projectName": "Jaket",
-      "projectPath": "/home/glitch/Join-and-kill-em-together-main/Jaket.csproj",
+      "projectPath": "/home/glitch/modded-jaket/Jaket.csproj",
       "packagesPath": "/home/glitch/.nuget/packages/",
-      "outputPath": "/home/glitch/Join-and-kill-em-together-main/obj/",
+      "outputPath": "/home/glitch/modded-jaket/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/home/glitch/.nuget/NuGet/NuGet.Config"
