@@ -100,6 +100,7 @@ public class Bullet : OwnableEntity
 
     public override void Kill(Reader r)
     {
+        base.Kill(r);
         DeadBullet.Replace(this);
         if (grenade)
         {
