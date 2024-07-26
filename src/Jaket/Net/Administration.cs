@@ -9,7 +9,7 @@ using Jaket.Content;
 public class Administration
 {
     /// <summary> Max amount of entity bullets per player and common bullets per second. </summary>
-    public const int MAX_BULLETS = 12;
+    public const int MAX_BULLETS = 10;
     /// <summary> Max amount of entities per player. </summary>
     public const int MAX_ENTITIES = 16;
     /// <summary> Max amount of plushies per player. </summary>
