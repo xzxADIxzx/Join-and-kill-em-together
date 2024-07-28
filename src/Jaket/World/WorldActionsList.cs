@@ -134,6 +134,8 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         #region 3-2
         l = "Level 3-2";
 
+        StaticAction.Destroy(l, "Door", new(-10f, -161f, 955f));
+
         NetAction.Sync(l, "Cube", new(-5f, -121f, 965f), obj => Teleporter.Teleport(new(-5f, -159.5f, 970f))); // boss
 
         #endregion
