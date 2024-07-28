@@ -70,9 +70,13 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         #region 0-S
         l = "Level 0-S";
 
-        StaticAction.Find(l, "Cube", new(0f, -7.6f, 30f), obj =>
+        StaticAction.Find(l, "Cube", new(0f, -7.6f, 30f), obj => // blue altar
         {
             if (obj.TryGetComponent(out ItemPlaceZone zone)) zone.deactivateOnSuccess = new[] { zone.deactivateOnSuccess[0] };
+        });
+        StaticAction.Find(l, "Cube", new(-60f, -7.6f, 17.5f), obj => // red altar
+        {
+            if (obj.TryGetComponent(out ItemPlaceZone zone)) zone.deactivateOnSuccess = new GameObject[0];
         });
         StaticAction.Enable(l, "Wicked", new(-60f, -10f, 30f));
 
@@ -83,6 +87,11 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
             zone.setDamage = 20f;
             zone.trigger = true;
         }));
+
+        NetAction.Sync(l, "Cube", new(-56.6f, -21.4f, -5.9f), obj =>
+        {
+            if (NewMovement.Instance.dead) Movement.Instance.Respawn(new(-60f, -8.5f, 30f), 180f);
+        });
 
         #endregion
         #region 1-2
