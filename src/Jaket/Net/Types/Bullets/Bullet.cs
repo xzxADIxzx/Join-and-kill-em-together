@@ -102,6 +102,13 @@ public class Bullet : OwnableEntity
     {
         base.Kill(r);
         DeadBullet.Replace(this);
+
+        if (r == null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         if (grenade)
         {
             Exploded(false);
