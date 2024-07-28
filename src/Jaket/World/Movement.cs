@@ -74,7 +74,7 @@ public class Movement : MonoSingleton<Movement>
             Instance.StartEmoji(0xFF, false);
 
             // disable jump at 0-S
-            if (Tools.Scene == "Level 0-S") nm.modNoJump = true;
+            if (Tools.Scene == "Level 0-S") nm.modNoJump = LobbyController.Online;
 
             if (fakeDeath)
             {
