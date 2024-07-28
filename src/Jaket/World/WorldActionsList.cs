@@ -76,6 +76,14 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         });
         StaticAction.Enable(l, "Wicked", new(-60f, -10f, 30f));
 
+        StaticAction.Find(l, "Cube", new(-65f, -30.5f, 180f), obj => UIB.Component<HurtZone>(obj, zone =>
+        {
+            zone.bounceForce = 100f; // allow players to get out of acid
+            zone.damageType = EnviroDamageType.Acid;
+            zone.setDamage = 20f;
+            zone.trigger = true;
+        }));
+
         #endregion
         #region 1-2
         l = "Level 1-2";
