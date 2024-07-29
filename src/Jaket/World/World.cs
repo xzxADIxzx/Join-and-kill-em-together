@@ -240,8 +240,8 @@ public class World
     {
         if (!Tools.Within(obj, na.Position) || obj.name != na.Name) return;
 
-        var index = (byte)Actions.IndexOf(na);
-        if (LobbyController.IsOwner || !Activated.Contains(index))
+        byte index = (byte)Actions.IndexOf(na);
+        if (!Activated.Contains(index))
             Networking.Send(PacketType.ActivateObject, w =>
             {
                 Activated.Add(index);
