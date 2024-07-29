@@ -2,6 +2,7 @@ namespace Jaket.Net.Endpoints;
 
 using Steamworks;
 using Steamworks.Data;
+using System;
 
 using Jaket.Content;
 using Jaket.IO;
@@ -94,7 +95,7 @@ public class Client : Endpoint, IConnectionManager
 
     public void OnDisconnected(ConnectionInfo info) => Log.Info("[Client] Disconnected");
 
-    public void OnMessage(System.IntPtr data, int size, long msg, long time, int channel) => Handle(Manager.Connection, LobbyController.LastOwner.AccountId, data, size);
+    public void OnMessage(IntPtr data, int size, long msg, long time, int channel) => Handle(Manager.Connection, LobbyController.LastOwner.AccountId, data, size);
 
     #endregion
 }

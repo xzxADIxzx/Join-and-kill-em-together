@@ -72,9 +72,8 @@ public class TeamCoin : OwnableEntity
         TryGetComponent(out audio);
 
         x = new(); y = new(); z = new();
-        if (IsOwner) OnTransferred();
 
-        coin.doubled = true; // for some reason, without this, the coin cannot be punched
+        if (IsOwner) OnTransferred();
         Coins.Alive.Add(this);
     }
 
@@ -115,7 +114,7 @@ public class TeamCoin : OwnableEntity
     private void Activate()
     {
         foreach (var col in cols) col.enabled = true;
-        coin.enabled = true;
+        if (coin) coin.enabled = true;
     }
 
     private void Effect(GameObject flash, float size)
@@ -129,6 +128,8 @@ public class TeamCoin : OwnableEntity
 
     private void Double()
     {
+        coin.doubled = true; // for some reason, without this, the coin cannot be punched
+
         doubled = true;
         Effect(coin.flash, 20f);
     }

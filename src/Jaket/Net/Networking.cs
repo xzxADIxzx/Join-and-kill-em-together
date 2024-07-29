@@ -93,9 +93,6 @@ public class Networking
             if (!Administration.Banned.Contains(member.Id.AccountId)) Bundle.Msg("player.left", member.Name);
             if (!LobbyController.IsOwner) return;
 
-            // kill the player doll and hide the nickname above
-            if (Entities.TryGetValue(member.Id.AccountId, out var entity) && entity is RemotePlayer player) player?.NetKill();
-
             // returning the exited player's entities back to the host owner & close the connection
             FindCon(member.Id.AccountId)?.Close();
             EachEntity(entity =>

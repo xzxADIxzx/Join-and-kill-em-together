@@ -2,6 +2,7 @@ namespace Jaket.Net.Endpoints;
 
 using Steamworks;
 using Steamworks.Data;
+using System;
 
 using Jaket.Content;
 using Jaket.IO;
@@ -85,7 +86,7 @@ public class Server : Endpoint, ISocketManager
             if (sender != owner)
             {
                 Administration.Ban(sender);
-                Log.Warning($"{sender} was blocked due to an attempt to overwrite someone else's spray");
+                Log.Warning($"[Server] {sender} was blocked due to an attempt to overwrite someone else's spray");
             }
             else
             {
@@ -181,9 +182,30 @@ public class Server : Endpoint, ISocketManager
         Networking.Send(PacketType.Level, World.WriteData, (data, size) => Tools.Send(con, data, size), size: 256);
     }
 
-    public void OnDisconnected(Connection con, ConnectionInfo info) => Log.Info($"[Server] {info.Identity.SteamId.AccountId} disconnected");
+    public void OnDisconnected(Connection con, ConnectionInfo info)
+    {
+        Log.Info($"[Server] {info.Identity.SteamId.AccountId} disconnected");
+        if (ents.TryGetValue(info.Identity.SteamId.AccountId, out var entity) && entity is RemotePlayer player) player?.NetKill();
+    }
 
-    public void OnMessage(Connection con, NetIdentity id, System.IntPtr data, int size, long msg, long time, int channel) => Handle(con, id.SteamId.AccountId, data, size);
+    public void OnMessage(Connection con, NetIdentity id, IntPtr data, int size, long msg, long time, int channel)
+    {
+        var accId = id.SteamId.AccountId;
+
+        if (Administration.IsSpam(accId, size))
+        {
+            Administration.ClearSpam(accId);
+            Log.Warning($"[Server] {accId} was warned due to sending a large amount of data");
+
+            if (Administration.IsWarned(accId))
+            {
+                Administration.Ban(accId);
+                Log.Warning($"[Server] {accId} was blocked due to an attempt to spam");
+            }
+        }
+
+        Handle(con, accId, data, size);
+    }
 
     #endregion
 }
