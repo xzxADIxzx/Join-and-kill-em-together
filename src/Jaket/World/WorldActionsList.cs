@@ -230,6 +230,25 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         #region 5-2
         l = "Level 5-2";
 
+        StaticAction.Find(l, "Panel", new(960f, 540f, 0f), obj =>
+        {
+            var uwu = obj.GetComponent<ImageFadeIn>();
+            if (uwu == null) return;
+
+            uwu.onFull = new();
+            uwu.onFull.AddListener(() =>
+            {
+                Tools.Destroy(obj);
+                Tools.Destroy(Tools.ObjFind("Jakito Huge"));
+
+                var sea = Tools.ObjFind("Sea").transform;
+                sea.Find("SeaAmbiance").gameObject.SetActive(true);
+                sea.Find("SeaAmbiance (Waves)").gameObject.SetActive(true);
+
+                HudMessageReceiver.Instance?.SendHudMessage("<size=48>Haha</size>", silent: true);
+            });
+        });
+
         StaticAction.Destroy(l, "SkullBlue", new(-3.700458f, -1.589029f, 950.6616f));
         StaticAction.Destroy(l, "Arena 1", new(87.5f, -53f, 1240f));
         StaticAction.Destroy(l, "Arena 2", new(87.5f, -53f, 1240f));
