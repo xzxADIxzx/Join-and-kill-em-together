@@ -109,7 +109,7 @@ public class Server : Endpoint, ISocketManager
             Log.Debug($"[Server] Got an image request for spray#{owner}. Count: {list.Count}");
         });
 
-        Listen(PacketType.ActivateObject, World.ReadAction);
+        ListenAndRedirect(PacketType.ActivateObject, World.ReadAction);
     }
 
     public override void Update()
