@@ -26,6 +26,7 @@ public class SimpleEnemy : Enemy
             Tools.Set("originalHealth", GetComponent<MinosBoss>(), EnemyId.statue.health);
             if (!LobbyController.IsOwner) transform.localEulerAngles = new(0f, 90f, 0f);
         }
+        if (Type == EntityType.Ferryman) Tools.Set("phaseChangeHealth", GetComponent<Ferryman>(), EnemyId.machine.health / 2f);
     }
 
     private void Update() => Stats.MTE(() =>
