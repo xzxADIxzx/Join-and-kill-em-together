@@ -62,8 +62,8 @@ public class Items
     {
         if (LobbyController.Offline || itemId == null || itemId.gameObject == null) return;
 
-        // the item was created remotely, the item is a book or the item is a prefab
-        if (itemId.name == "Net" || itemId.name.Contains("Book") || !Tools.IsReal(itemId)) return;
+        // the item is already synced, the item is a book or the item is a prefab
+        if (itemId.name == "Net" || itemId.name == "Local" || itemId.name.Contains("Book") || !Tools.IsReal(itemId)) return;
         // sometimes developers just deactivate skulls instead of removing them
         if (!itemId.gameObject.activeSelf || GameAssets.ItemExceptions.Contains(itemId.name)) return;
 
@@ -84,4 +84,11 @@ public class Items
             zone.CheckItem();
         }
     }
+}
+
+/// <summary> Extension class that allows you to get item data. </summary>
+public static class ItemExtensions
+{
+    /// <summary> Whether the item is placed on an altar. </summary>
+    public static bool Placed(this ItemIdentifier itemId) => itemId.transform.parent?.gameObject.layer == 22; // item layer
 }

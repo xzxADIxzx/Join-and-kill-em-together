@@ -1,5 +1,6 @@
 namespace Jaket.Net.Types;
 
+using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Content;
@@ -17,8 +18,6 @@ public class Item : OwnableEntity
     private bool holding;
     /// <summary> Whether the item is placed on an altar. </summary>
     private bool placed;
-    /// <summary> Whether the item is a torch. </summary>
-    private bool torch;
 
     private void Awake()
     {
@@ -31,8 +30,6 @@ public class Item : OwnableEntity
 
         x = new(); y = new(); z = new();
         rx = new(); ry = new(); rz = new();
-
-        torch = TryGetComponent<Torch>(out _);
     }
 
     private void Update() => Stats.MTE(() =>
@@ -42,35 +39,29 @@ public class Item : OwnableEntity
         transform.position = holding && player.Value != null
             ? player.Value.Doll.HoldPosition
             : new(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
-        transform.eulerAngles = new(rx.GetAngel(LastUpdate), ry.GetAngel(LastUpdate), rz.GetAngel(LastUpdate));
 
-        // fix the rotation of the item in a hand
+        transform.eulerAngles = new(rx.GetAngel(LastUpdate), ry.GetAngel(LastUpdate), rz.GetAngel(LastUpdate));
         if (holding) transform.eulerAngles -= new Vector3(20f, 140f);
 
         // remove from the altar
-        if (!placed && ItemId.ipz != null)
+        if (!placed && ItemId.Placed())
         {
+            transform.GetComponentsInParent<ItemPlaceZone>().Do(zone => Events.Post(() => zone.CheckItem()));
             transform.SetParent(null);
-            ItemId.ipz.CheckItem();
             ItemId.ipz = null;
         }
-        // put on the altar or light the torches
-        if ((placed && ItemId.ipz == null) || torch)
-        {
-            var colliders = Physics.OverlapSphere(transform.position, .5f, 20971776, QueryTriggerInteraction.Collide);
-            foreach (var col in colliders)
+        // put on the altar
+        if (placed && !ItemId.Placed()) Physics.OverlapSphere(transform.position, .5f, 20971776, QueryTriggerInteraction.Collide).DoIf(
+            col => col.gameObject.layer == 22,
+            col =>
             {
-                if (col.gameObject.layer != 22) continue;
-
-                if (placed && ItemId.ipz == null && col.TryGetComponent<ItemPlaceZone>(out _))
+                var zones = col.GetComponents<ItemPlaceZone>();
+                if (zones.Length > 0)
                 {
                     transform.SetParent(col.transform);
-                    foreach (var zone in col.GetComponents<ItemPlaceZone>()) zone.CheckItem();
+                    zones.Do(zone => zone.CheckItem());
                 }
-
-                if (torch && col.TryGetComponent(out Flammable flammable)) flammable.Burn(4f);
-            }
-        }
+            });
     });
 
     public void PickUp()
@@ -87,8 +78,8 @@ public class Item : OwnableEntity
 
         w.Vector(transform.position);
         w.Vector(transform.eulerAngles);
-        w.Bool(IsOwner ? FistControl.Instance.heldObject == ItemId : holding);
-        w.Bool(IsOwner ? ItemId.ipz != null : placed);
+        w.Bool(IsOwner ? ItemId.pickedUp : holding);
+        w.Bool(IsOwner ? ItemId.Placed() : placed);
     }
 
     public override void Read(Reader r)
