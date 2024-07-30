@@ -72,7 +72,10 @@ public class Body : Enemy
     public override void Kill()
     {
         if (toBreakCorpse)
+        {
+            DeadBullet.Replace(this);
             EnemyId.spider.BreakCorpse();
+        }
         else
         {
             EnemyId.InstaKill();
