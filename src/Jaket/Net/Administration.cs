@@ -62,7 +62,7 @@ public class Administration
             var con = Networking.FindCon(id);
             Tools.Send(con, data, size);
             con?.Flush();
-            con?.Close();
+            Events.Post2(() => con?.Close());
         });
 
         Banned.Add(id);
