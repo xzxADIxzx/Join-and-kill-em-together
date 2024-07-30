@@ -436,6 +436,8 @@ public class Movement : MonoSingleton<Movement>
     public IEnumerator ClearEmoji()
     {
         yield return new WaitForSeconds(emojiLength[Emoji] + .5f);
+
+        if (Emoji == 3) LobbyController.Lobby?.SendChatString("#/r" + Rps);
         StartEmoji(0xFF);
     }
 
