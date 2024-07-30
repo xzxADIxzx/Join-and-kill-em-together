@@ -37,16 +37,16 @@ This modification made by [me](https://github.com/xzxADIxzx) and my team adds su
    * Synchronization of different triggers at levels
    * Synchronization of the Cyber Grind
 * Translation into many languages
-   * Arabic
-   * Portuguese
+   * Arabic        by Iyad
+   * Portuguese    by Poyozit
    * English
-   * Filipino
-   * French
-   * Italian
-   * Polish
+   * Filipino      by Fraku
+   * French        by Theoyeah
+   * Italian       by sSAR
+   * Polish        by Sowler
    * Russian
-   * Spanish
-   * Ukrainian
+   * Spanish       by NotPhobos
+   * Ukrainian     by Sowler
 
 ## Installation
 Before installing, it's important to know that the mod requires **BepInEx** to work.  
