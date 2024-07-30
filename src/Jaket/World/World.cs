@@ -220,6 +220,7 @@ public class World
 
             case 3: Find<FinalDoor>(r.Vector(), d => d.transform.Find("FinalDoorOpener").gameObject.SetActive(true)); break;
             case 4: Find<Door>(r.Vector(), d => d.Open()); break;
+            case 7: Find<Flammable>(r.Vector(), d => d.Burn(4.01f)); break;
 
             case 5:
                 Find<StatueActivator>(r.Vector(), d =>
