@@ -21,7 +21,7 @@ public class Version
     public const string TAG = "\"tag_name\": \"V", NAME = "\"name\": \"";
 
     /// <summary> Notifies the player that their version of the mod doesn't match the host's one. </summary>
-    public static void Notify() => Bundle.Hud("version.host-outdated");
+    public static void Notify() => Bundle.Hud2NS("version.host-outdated");
 
     /// <summary> Checks for updates using Github and notifies the player about it. </summary>
     public static void Check4Update() => Fetch((done, result) =>

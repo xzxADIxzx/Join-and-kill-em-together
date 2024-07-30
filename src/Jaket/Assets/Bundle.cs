@@ -23,6 +23,8 @@ public class Bundle
     public static int LoadedLocale = -1;
     /// <summary> Dictionary with all lines of loaded localization. </summary>
     private static Dictionary<string, string> props = new();
+    /// <summary> Text that will be shown in the hud after scene loading. </summary>
+    private static string text2Show;
 
     /// <summary> Loads the translation specified in the settings. </summary>
     public static void Load()
@@ -40,6 +42,17 @@ public class Bundle
             File.Delete(dest);
             File.Move(prop, dest);
         }
+
+        #endregion
+        #region 2NS
+
+        Events.OnLoaded += () =>
+        {
+            if (text2Show == null) return;
+
+            HudMessageReceiver.Instance?.SendHudMessage(text2Show);
+            text2Show = null;
+        };
 
         #endregion
 
@@ -165,6 +178,12 @@ public class Bundle
 
     /// <summary> Sends a localized & formatted message to the HUD. </summary>
     public static void Hud(string key, bool silent, params string[] args) => HudMessageReceiver.Instance?.SendHudMessage(Format(key, args), silent: silent);
+
+    /// <summary> Sends a localized message to the HUD after scene loading. </summary>
+    public static void Hud2NS(string key) => text2Show = Get(key);
+
+    /// <summary> Sends a localized & formatted message to the HUD after scene loading. </summary>
+    public static void Hud2NS(string key, params string[] args) => text2Show = Format(key, args);
 
     /// <summary> Sends a localized message to the chat. </summary>
     public static void Msg(string key) => Chat.Instance.Receive(Get(key), false);

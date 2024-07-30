@@ -269,7 +269,7 @@ public class Movement : MonoSingleton<Movement>
         if (Plugin.Instance.HasIncompatibility && !LobbyController.IsOwner && !LobbyController.ModsAllowed)
         {
             LobbyController.LeaveLobby();
-            Bundle.Hud("lobby.mods");
+            Bundle.Hud2NS("lobby.mods");
         }
 
         // fake Cyber Grind///0-S death
