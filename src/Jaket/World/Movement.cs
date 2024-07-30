@@ -73,8 +73,12 @@ public class Movement : MonoSingleton<Movement>
             // interrupt emoji to prevent some bugs
             Instance.StartEmoji(0xFF, false);
 
-            // disable jump at 0-S
-            if (Tools.Scene == "Level 0-S") nm.modNoJump = LobbyController.Online;
+            // disable hook and jump at 0-S
+            if (Tools.Scene == "Level 0-S")
+            {
+                nm.modNoJump = LobbyController.Online;
+                HookArm.Instance.gameObject.SetActive(LobbyController.Offline);
+            }
 
             if (fakeDeath)
             {
