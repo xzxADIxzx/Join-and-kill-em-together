@@ -51,5 +51,11 @@ public class SimpleEnemy : Enemy
         x.Read(r); y.Read(r); z.Read(r);
     }
 
+    public override void OnDied()
+    {
+        base.OnDied();
+        if (Type == EntityType.Virtue) DeadBullet.Replace(this);
+    }
+
     #endregion
 }
