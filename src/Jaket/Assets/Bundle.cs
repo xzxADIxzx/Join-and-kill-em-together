@@ -156,7 +156,7 @@ public class Bundle
     }
 
     /// <summary> Reverses the string because Arabic is right-to-left language. </summary>
-    public static string ParseArabic(string original) => new(CutColors(original).Replace("\\n", "\n").Replace('{', '#').Replace('}', '{').Replace('#', '}').Reverse().ToArray());
+    public static string ParseArabic(string original) => new(original.Replace("\\n", "\n").Replace('{', '#').Replace('}', '{').Replace('#', '}').Reverse().ToArray());
 
     #endregion
     #region usage
