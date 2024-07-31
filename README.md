@@ -42,7 +42,7 @@ This modification made by [me](https://github.com/xzxADIxzx) and my team adds su
    * English
    * Filipino      by Fraku
    * French        by Theoyeah
-   * Italian       by sSAR
+   * Italian       by sSAR, Fenicemaster
    * Polish        by Sowler
    * Russian
    * Spanish       by NotPhobos
