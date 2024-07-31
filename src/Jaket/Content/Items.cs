@@ -1,5 +1,6 @@
 namespace Jaket.Content;
 
+using HarmonyLib;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -80,8 +81,12 @@ public class Items
         foreach (var zone in Tools.ResFind<ItemPlaceZone>())
         {
             if (!Tools.IsReal(zone)) continue;
+
             zone.transform.SetParent(null);
             zone.CheckItem();
+
+            zone.arenaStatuses.Do(s => s.currentStatus = 0);
+            zone.reverseArenaStatuses.Do(s => s.currentStatus = 0);
         }
     }
 }

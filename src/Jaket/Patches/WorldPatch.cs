@@ -31,7 +31,7 @@ public class ArenaPatch
         // there is a large check caused by complex game logic that has to be repeated
         if (DisableEnemySpawns.DisableArenaTriggers || (__instance.waitForStatus > 0 && (___astat == null || ___astat.currentStatus < __instance.waitForStatus))) return;
 
-        // launch the arena when a remote player entered it
+        // launch the arena when a remote player enters it
         if (!__instance.activated && other.name == "Net" && other.TryGetComponent<RemotePlayer>(out _)) __instance.Activate();
     }
 }
