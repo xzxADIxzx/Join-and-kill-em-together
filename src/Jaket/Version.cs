@@ -12,7 +12,7 @@ using static Jaket.UI.Rect;
 public class Version
 {
     /// <summary> Current version of the mod installed by the player. </summary>
-    public const string CURRENT = "1.3.0";
+    public const string CURRENT = "1.3.42";
     /// <summary> Repository of the mod, where the newest version will be taken from. </summary>
     public const string REPO = "xzxADIxzx/Join-and-kill-em-together";
     /// <summary> Github API URL. I think it's not difficult to guess. </summary>

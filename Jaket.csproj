@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Jaket</AssemblyName>
     <Description>Multikill is still in development, so I created my own multiplayer mod for Ultrakill</Description>
-    <Version>1.3.0</Version>
+    <Version>1.3.42</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <RestoreAdditionalProjectSources>
