@@ -51,11 +51,6 @@ public class LobbyController
         {
             if (lobby.Owner.Id != 0L) LastOwner = lobby.Owner.Id;
 
-            if (lobby.GetData("banned").Contains(Tools.AccId.ToString()))
-            {
-                LeaveLobby();
-                Bundle.Hud2NS("lobby.banned");
-            }
             if (IsMultikillLobby(lobby))
             {
                 LeaveLobby();
@@ -92,7 +87,7 @@ public class LobbyController
         Log.Debug("Creating a lobby...");
 
         CreatingLobby = true;
-        SteamMatchmaking.CreateLobbyAsync(8).ContinueWith(task =>
+        SteamMatchmaking.CreateLobbyAsync(250).ContinueWith(task =>
         {
             CreatingLobby = false; IsOwner = true;
             Lobby = task.Result;
