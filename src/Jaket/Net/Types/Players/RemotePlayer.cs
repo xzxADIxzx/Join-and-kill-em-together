@@ -83,7 +83,7 @@ public class RemotePlayer : Entity
             if (Health != 0) Destroy(gameObject); // the player has respawned, the doll needs to be recreated
             return;
         }
-        else if (Health == 0) EnemyId.machine.GoLimp();
+        else if (Health == 0) GoLimp();
 
         transform.position = new(x.Get(LastUpdate), y.Get(LastUpdate) - (Doll.Sliding ? .3f : 1.5f), z.Get(LastUpdate));
         transform.eulerAngles = new(0f, bodyRotation.GetAngel(LastUpdate));
@@ -118,6 +118,14 @@ public class RemotePlayer : Entity
         Doll.HookWinch.SetPosition(0, Doll.HookRoot.position);
         Doll.HookWinch.SetPosition(1, Doll.Hook.position);
     });
+
+    private void GoLimp()
+    {
+        EnemyId.machine.GoLimp();
+        Destroy(Doll.WingLight);
+        Destroy(Doll.SlideParticle?.gameObject);
+        Destroy(Doll.FallParticle?.gameObject);
+    }
 
     #region special
 
@@ -194,7 +202,7 @@ public class RemotePlayer : Entity
 
     public override void Kill(Reader r = null)
     {
-        EnemyId.machine.GoLimp();
+        GoLimp();
         Header.Hide();
 
         Destroy(Doll.Hand.gameObject); // destroy the weapon so that the railcannon's sound doesn't play forever

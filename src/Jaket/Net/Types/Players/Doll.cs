@@ -40,6 +40,8 @@ public class Doll : MonoBehaviour
     public Material WingMat, CoinMat, SkateMat;
     /// <summary> Trail of the wings. </summary>
     public TrailRenderer WingTrail;
+    /// <summary> Light of the wings. </summary>
+    public Light WingLight;
     /// <summary> Winch of the hook. </summary>
     public LineRenderer HookWinch;
 
@@ -77,6 +79,7 @@ public class Doll : MonoBehaviour
         CoinMat = Coin.GetComponent<Renderer>().material;
         SkateMat = Skateboard.GetComponent<Renderer>().material;
         WingTrail = GetComponentInChildren<TrailRenderer>();
+        WingLight = GetComponentInChildren<Light>();
         HookWinch = GetComponentInChildren<LineRenderer>(true);
     }
 
@@ -143,7 +146,9 @@ public class Doll : MonoBehaviour
     {
         WingMat.mainTexture = SkateMat.mainTexture = DollAssets.WingTextures[(int)team];
         CoinMat.color = team.Color();
-        if (WingTrail != null) WingTrail.startColor = team.Color() with { a = .5f };
+
+        if (WingTrail) WingTrail.startColor = team.Color() with { a = .5f };
+        if (WingLight) WingLight.color = team.Color();
 
         // TODO make it part of customization
         Suits.GetChild(0).gameObject.SetActive(team == Team.Pink);
