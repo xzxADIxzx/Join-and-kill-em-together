@@ -47,6 +47,11 @@ public class LocalPlayer : Entity
 
         Events.OnLoaded += () => Events.Post(UpdateWeapons);
         Events.OnWeaponChanged += () => Events.Post(UpdateWeapons);
+        Events.OnTeamChanged += () =>
+        {
+            var light = nm.transform.Find("Point Light");
+            if (light) light.GetComponent<Light>().color = LobbyController.Offline ? Color.white : Team.Color();
+        };
     }
 
     private void Update() => Stats.MTE(() =>
