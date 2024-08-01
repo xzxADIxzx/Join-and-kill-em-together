@@ -1,5 +1,6 @@
 namespace Jaket.World;
 
+using UnityEngine;
 using UnityEngine.UI;
 
 using Jaket.Net;
@@ -16,25 +17,24 @@ public class Votes
     /// <summary> Replaces Mirage with Virage, patches buttons and other minor stuff. </summary>
     public static void Init2S()
     {
-        #region Mirage 2 Virage
-
-        // sprite
         var fallen = Tools.ObjFind("Canvas/PowerUpVignette/Panel/Aspect Ratio Mask/Fallen");
         for (int i = 0; i < 4; i++)
             fallen.transform.GetChild(i).GetComponent<Image>().sprite = null;
 
         Tools.ResFind<SpritePoses>(sp => Tools.IsReal(sp) && sp.copyChangeTo.Length > 0, sp => sp.poses = null);
+    }
 
-        // name
-        var dialog = Tools.ObjFind("Canvas/PowerUpVignette/Panel/Aspect Ratio Mask/Middle/Dialogue Box (A4)/Text").GetComponent<Text>();
+    /// <summary> Changes the name of the character to Virage. </summary>
+    public static void Name(Text dialog, ref string name)
+    {
         dialog.text = dialog.text.Replace("Mirage", "Virage");
+
+        var tex = dialog.font.material.mainTexture; // aspect ratio of the font texture must always be 1
+        if (tex.width != tex.height) dialog.font.RequestCharactersInTexture("I", Mathf.Max(tex.width, tex.height));
 
         dialog.font.RequestCharactersInTexture("3", 22);
         dialog.font.GetCharacterInfo('3', out var info, 22);
-        var virage = $"VIRAG <quad size=18 x={info.uvBottomLeft.x:0.0000} y={info.uvBottomLeft.y:0.0000} width={info.uvTopRight.x - info.uvBottomLeft.x:0.0000} height={info.uvTopRight.y - info.uvBottomLeft.y:0.0000}> :".Replace(',', '.');
 
-        Tools.ResFind<IntermissionController>(Tools.IsReal, ic => ic.preText = ic.preText.Replace("MIRAGE:", virage));
-
-        #endregion
+        name = name.Replace("MIRAGE:", $"VIRAG <quad size=18 x={info.uvBottomLeft.x:0.0000} y={info.uvBottomLeft.y:0.0000} width={info.uvTopRight.x - info.uvBottomLeft.x:0.0000} height={info.uvTopRight.y - info.uvBottomLeft.y:0.0000}> :".Replace(',', '.'));
     }
 }
