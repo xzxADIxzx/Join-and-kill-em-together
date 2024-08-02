@@ -39,7 +39,7 @@ public class UI
 
         PlayerIndicators.Build("Player Indicators", false, false, scene => scene == "Main Menu");
         PlayerInfo.Build("Player Information", false, false, scene => scene == "Main Menu", () => { if (PlayerInfo.Shown) PlayerInfo.Instance.Toggle(); });
-        EmojiWheel.Build("Emoji Wheel", false, false);
+        EmoteWheel.Build("Emote Wheel", false, false);
         Skateboard.Build("Skateboard", false, false);
         MainMenuAccess.Build("Main Menu Access", false, true, hide: () => MainMenuAccess.Instance.Toggle());
         InteractiveGuide.Build("Interactive Guide", false, false, hide: () => InteractiveGuide.Instance.OfferAssistance());
@@ -59,7 +59,7 @@ public class UI
     {
         if (LobbyList.Shown) LobbyList.Instance.Toggle();
         if (SpraySettings.Shown) SpraySettings.Instance.Toggle();
-        if (EmojiWheel.Shown) EmojiWheel.Instance.Hide();
+        if (EmoteWheel.Shown) EmoteWheel.Instance.Hide();
         if (OptionsManager.Instance.paused) OptionsManager.Instance.UnPause();
     }
 }

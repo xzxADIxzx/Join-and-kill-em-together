@@ -165,22 +165,14 @@ public class UIB
         });
 
     /// <summary> Adds a circular image. </summary>
-    public static UICircle CircleImage(string name, Transform parent, Rect r, float arc, int rotation, float thickness, bool outline = false)
-    {
-        var obj = Rect(name, parent, r).gameObject;
-        if (outline) Component<Outline>(obj, outline =>
-        {
-            outline.effectDistance = new(3f, -3f);
-            outline.effectColor = white;
-        });
-        return Component<UICircle>(obj, circle =>
+    public static UICircle CircleImage(string name, Transform parent, Rect r, float arc, int rotation, float thickness) =>
+        Component<UICircle>(Rect(name, parent, r).gameObject, circle =>
         {
             circle.Arc = arc;
             circle.ArcRotation = rotation;
             circle.Thickness = thickness;
             circle.Fill = false;
         });
-    }
 
     /// <summary> Adds a diamond-shaped image. </summary>
     public static DiamondGraph DiamondImage(string name, Transform parent, Rect r, float a, float b, float c, float d, Color? color = null) =>

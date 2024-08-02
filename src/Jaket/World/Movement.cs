@@ -116,12 +116,12 @@ public class Movement : MonoSingleton<Movement>
         if (Input.GetKey(Settings.EmojiWheel) && !LobbyList.Shown && !WeaponWheel.Instance.gameObject.activeSelf)
         {
             HoldTime += Time.deltaTime; // if the key has been pressed for 0.25 seconds, show the emoji wheel
-            if (!EmojiWheel.Shown && HoldTime > .25f) EmojiWheel.Instance.Show();
+            if (!EmoteWheel.Shown && HoldTime > .25f) EmoteWheel.Instance.Show();
         }
         else
         {
             HoldTime = 0f;
-            if (EmojiWheel.Shown) EmojiWheel.Instance.Hide();
+            if (EmoteWheel.Shown) EmoteWheel.Instance.Hide();
         }
 
         bool p = Input.GetKeyDown(Settings.Pointer), s = Input.GetKeyDown(Settings.Spray);
@@ -372,7 +372,7 @@ public class Movement : MonoSingleton<Movement>
         if (nm.dead) return;
 
         nm.activated = fc.activated = gc.activated = !blocking;
-        cc.activated = !blocking && !EmojiWheel.Shown;
+        cc.activated = !blocking && !EmoteWheel.Shown;
 
         if (blocking) fc.NoFist();
         else fc.YesFist();
