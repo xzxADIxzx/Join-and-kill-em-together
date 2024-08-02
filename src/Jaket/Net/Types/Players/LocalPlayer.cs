@@ -117,7 +117,7 @@ public class LocalPlayer : Entity
 
         w.Byte((byte)nm.hp);
         w.Byte((byte)Mathf.Floor(WeaponCharges.Instance.raicharge * 2.5f));
-        w.Player(Team, weapon, Movement.Instance.Emoji, Movement.Instance.Rps, Chat.Shown);
+        w.Player(Team, weapon, Movement.Instance.Emote, Movement.Instance.Rps, Chat.Shown);
         w.Bools(
             nm.walking,
             nm.sliding || (is44 && nm.transform.position.y > 610f && nm.transform.position.y < 611f),

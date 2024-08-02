@@ -133,7 +133,7 @@ public class Commands
             Msg("* [#FFA000]Fumboy[] - textures and a part of animations");
 
             Msg("Contributors:");
-            Msg("* [#00E666]Rey Hunter[] - really cool icons for emotions");
+            Msg("* [#00E666]Rey Hunter[] - really cool icons for emotes");
             Msg("* [#00E666]Ardub[] - invaluable help with The Cyber Grind [12][#cccccc](he did 90% of the work)");
             Msg("* [#00E666]Kekson1a[] - Steam Rich Presence support");
 

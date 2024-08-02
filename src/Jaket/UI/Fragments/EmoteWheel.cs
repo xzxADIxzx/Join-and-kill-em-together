@@ -129,6 +129,6 @@ public class EmoteWheel : CanvasSingleton<EmoteWheel>
         // randomize RPS index if RPS emote is selected
         if (selected == 3) Movement.Instance.Rps = (byte)Random.Range(0, 3);
         // play emote if the selected segment is not a page transition
-        if (selected != 4) Movement.Instance.StartEmoji((byte)(Second ? selected + 6 : selected));
+        if (selected != 4) Movement.Instance.StartEmote((byte)(Second ? selected + 6 : selected));
     }
 }

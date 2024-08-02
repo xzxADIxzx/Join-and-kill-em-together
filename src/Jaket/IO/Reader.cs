@@ -74,18 +74,18 @@ public class Reader
 
     public T Enum<T>() where T : Enum => (T)System.Enum.ToObject(typeof(T), Byte());
 
-    public void Player(out Team team, out byte weapon, out byte emoji, out byte rps, out bool typing)
+    public void Player(out Team team, out byte weapon, out byte emote, out byte rps, out bool typing)
     {
         short value = Marshal.ReadInt16(mem, Inc(2));
 
         weapon = (byte)(value >> 10 & 0b111111);
         team = (Team)(value >> 7 & 0b111);
-        emoji = (byte)(value >> 3 & 0b1111);
+        emote = (byte)(value >> 3 & 0b1111);
         rps = (byte)(value >> 1 & 0b11);
         typing = (value & 1) != 0;
 
         if (weapon == 0b111111) weapon = 0xFF;
-        if (emoji == 0b1111) emoji = 0xFF;
+        if (emote == 0b1111) emote = 0xFF;
     }
 
     #endregion
