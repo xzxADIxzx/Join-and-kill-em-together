@@ -92,7 +92,7 @@ public class ModAssets
 
         Load<Sprite>("V3-chan-fallen", s => ChanFallen = s);
 
-        for (int i = 1; i <= 7; i++)
+        for (int i = 0; i < 7; i++)
         {
             int j = i;
             Load<Sprite>("V3-chan-" + i, s => ChanPoses[j] = s);
