@@ -22,6 +22,12 @@ Notes-instructions on how to correctly import assets into Unity will be listed h
 * Max Size: 1024
 * Add to the assets bundle (via the bottom menu)
 
+## Chan
+
+* Texture Type: Sprite
+* Max Size: 2048
+* Add to the assets bundle (via the bottom menu)
+
 ## Model
 
 * Model -> Sort Hierarchy By Name: False

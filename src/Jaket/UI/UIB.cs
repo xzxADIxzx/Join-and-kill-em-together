@@ -34,8 +34,8 @@ public class UIB
         Action fix;
         Events.OnLoaded += fix = () => Events.Post(() =>
         {
-            HudMessageReceiver.Instance.text.font = DollAssets.FontTMP;
-            NewMovement.Instance.youDiedText.font = DollAssets.Font;
+            HudMessageReceiver.Instance.text.font = ModAssets.FontTMP;
+            NewMovement.Instance.youDiedText.font = ModAssets.Font;
 
             // fix the sorting order to display hud messages on top of other interface fragments
             if (!HudMessageReceiver.Instance.TryGetComponent<Canvas>(out _)) Component<Canvas>(HudMessageReceiver.Instance.gameObject, canvas =>
@@ -146,7 +146,7 @@ public class UIB
         {
             text.text = name.StartsWith("#") ? Bundle.Get(name.Substring(1)) : name;
             text.color = color ?? white;
-            text.font = DollAssets.Font;
+            text.font = ModAssets.Font;
             text.fontSize = size;
             text.alignment = align;
         });

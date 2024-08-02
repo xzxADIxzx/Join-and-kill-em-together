@@ -63,7 +63,7 @@ public class Settings : CanvasSingleton<Settings>
         get => pm.GetInt("jaket.tts.volume", 60);
         set
         {
-            DollAssets.Mixer?.SetFloat("Volume", value / 2f - 30f); // the value should be between -30 and 20 decibels
+            ModAssets.Mixer?.SetFloat("Volume", value / 2f - 30f); // the value should be between -30 and 20 decibels
             pm.SetInt("jaket.tts.volume", value);
         }
     }
@@ -105,7 +105,7 @@ public class Settings : CanvasSingleton<Settings>
         Spray = GetKey("spray", KeyCode.T);
         SelfDestruction = GetKey("self-destruction", KeyCode.K);
 
-        DollAssets.Mixer?.SetFloat("Volume", TTSVolume / 2f - 30f);
+        ModAssets.Mixer?.SetFloat("Volume", TTSVolume / 2f - 30f);
     }
 
     private void Start()

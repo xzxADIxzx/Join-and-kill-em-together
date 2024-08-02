@@ -3,6 +3,7 @@ namespace Jaket.World;
 using UnityEngine;
 using UnityEngine.UI;
 
+using Jaket.Assets;
 using Jaket.Net;
 
 /// <summary> Class that manages voting for the skip of a cutscene or an option at 2-S. </summary>
@@ -19,9 +20,9 @@ public class Votes
     {
         var fallen = Tools.ObjFind("Canvas/PowerUpVignette/Panel/Aspect Ratio Mask/Fallen");
         for (int i = 0; i < 4; i++)
-            fallen.transform.GetChild(i).GetComponent<Image>().sprite = null;
+            fallen.transform.GetChild(i).GetComponent<Image>().sprite = ModAssets.ChanFallen;
 
-        Tools.ResFind<SpritePoses>(sp => Tools.IsReal(sp) && sp.copyChangeTo.Length > 0, sp => sp.poses = null);
+        Tools.ResFind<SpritePoses>(sp => Tools.IsReal(sp) && sp.copyChangeTo.Length > 0, sp => sp.poses = ModAssets.ChanPoses);
     }
 
     /// <summary> Changes the name of the character to Virage. </summary>

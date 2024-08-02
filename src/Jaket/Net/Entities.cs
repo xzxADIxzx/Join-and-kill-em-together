@@ -18,7 +18,7 @@ public class Entities
     /// <summary> Loads providers into the dictionary. </summary>
     public static void Load()
     {
-        Providers.Add(EntityType.Player, DollAssets.CreateDoll);
+        Providers.Add(EntityType.Player, ModAssets.CreateDoll);
 
         for (var type = EntityType.Filth; type <= EntityType.Puppet; type++)
         {
