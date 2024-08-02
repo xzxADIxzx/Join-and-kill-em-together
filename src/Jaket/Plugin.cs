@@ -87,6 +87,7 @@ public class Plugin : MonoBehaviour
 
         World.World.Load();
         WorldActionsList.Load();
+        Votes.Load();
         Movement.Load();
         SprayManager.Load();
 
