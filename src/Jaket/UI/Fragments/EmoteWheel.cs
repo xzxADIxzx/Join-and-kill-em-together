@@ -58,9 +58,9 @@ public class EmoteWheel : CanvasSingleton<EmoteWheel>
     private void Update()
     {
         // some code from the weapon wheel that I don't understand
-        direction = Vector2.ClampMagnitude(direction + InputManager.Instance.InputSource.WheelLook.ReadValue<Vector2>(), 1f);
-        float num = Mathf.Repeat(Mathf.Atan2(direction.x, direction.y) * 57.29578f + 90f, 360f);
-        selected = direction.sqrMagnitude > .1f ? (int)(num / 60f) : selected;
+        direction = Vector2.ClampMagnitude(direction + InputManager.Instance.InputSource.WheelLook.ReadValue<Vector2>() / 12f, 1f);
+        float num = Mathf.Repeat(Mathf.Atan2(direction.x, direction.y) * Mathf.Rad2Deg + 90f, 360f);
+        selected = direction.sqrMagnitude > .9f ? (int)(num / 60f) : selected;
 
         for (int i = 0; i < Segments.Length; i++) Segments[i].SetActive(i == selected);
 
