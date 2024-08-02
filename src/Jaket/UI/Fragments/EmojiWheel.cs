@@ -92,13 +92,13 @@ public class EmojiWheel : CanvasSingleton<EmojiWheel>
 
     private void UpdateIcons()
     {
-        if (TrueForAll(ModAssets.EmojiIcons, tex => tex != null) && TrueForAll(ModAssets.EmojiGlows, tex => tex != null))
+        if (TrueForAll(ModAssets.EmoteIcons, tex => tex != null) && TrueForAll(ModAssets.EmoteGlows, tex => tex != null))
         {
             for (int i = 0; i < 6; i++)
             {
                 int j = Second ? i + 6 : i; // if the wheel is on the second page, then need to take other icons
-                Segments[i].icon.sprite = ModAssets.EmojiIcons[j];
-                Segments[i].iconGlow.sprite = ModAssets.EmojiGlows[j];
+                Segments[i].icon.sprite = ModAssets.EmoteIcons[j];
+                Segments[i].iconGlow.sprite = ModAssets.EmoteGlows[j];
             }
         }
         else Invoke("UpdateIcons", 5f);
