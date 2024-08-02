@@ -3,6 +3,7 @@
 using BepInEx;
 using BepInEx.Bootstrap;
 using HarmonyLib;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -20,7 +21,7 @@ public class PluginLoader : BaseUnityPlugin
 {
     private void Awake() => SceneManager.sceneLoaded += (_, _) =>
     {
-        if (Plugin.Instance == null) Tools.Create<Plugin>("Jaket").Location = Info.Location;
+        if (Plugin.Instance == null) Tools.Create<Plugin>("Jaket").Location = Path.GetDirectoryName(Info.Location);
     };
 }
 
