@@ -98,7 +98,7 @@ public class LobbyController
         Log.Debug("Creating a lobby...");
 
         CreatingLobby = true;
-        SteamMatchmaking.CreateLobbyAsync(16).ContinueWith(task =>
+        SteamMatchmaking.CreateLobbyAsync(250).ContinueWith(task =>
         {
             CreatingLobby = false; IsOwner = true;
             Lobby = task.Result;
