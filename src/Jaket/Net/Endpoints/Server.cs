@@ -3,6 +3,7 @@ namespace Jaket.Net.Endpoints;
 using Steamworks;
 using Steamworks.Data;
 using System;
+using System.Linq;
 
 using Jaket.Content;
 using Jaket.IO;
@@ -150,17 +151,26 @@ public class Server : Endpoint, ISocketManager
         // multiple connections are prohibited
         if (identity.IsSteamId && Networking.FindCon(accId).HasValue)
         {
-            Log.Debug("[Server] Connection is rejected: already connected");
+            Log.Debug("[Server] Connection rejected: already connected");
             con.Close();
             return;
-        }
+        }        
 
         // check if the player is banned
         if (identity.IsSteamId && Administration.Banned.Contains(accId))
         {
-            Log.Debug("[Server] Connection is rejected: banned");
+            Log.Debug("[Server] Connection rejected: banned");
             con.Close();
             return;
+        }
+
+        // prevent blacklisted players from joining
+        if (identity.IsSteamId && Plugin.UIDBlacklist.Contains(accId.ToString())) {
+            Log.Debug($"[Server] Connection rejected: blacklisted");
+            con.Close();
+        } else {
+            // this is here so that I can get the UID of whoever I want to blacklist
+            Log.Debug($"[Server][UID Dump] {accId} :: \"{Tools.Name(accId)}\"");
         }
 
         // this will be used later to find the connection by its id

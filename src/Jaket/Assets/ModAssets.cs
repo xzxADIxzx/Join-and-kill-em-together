@@ -101,8 +101,8 @@ public class ModAssets
         for (int i = 0; i < 12; i++)
         {
             var j = i;
-            Load<Sprite>("V3-emoji-" + i, s => EmoteIcons[j] = s);
-            Load<Sprite>("V3-emoji-" + i + "-glow", s => EmoteGlows[j] = s);
+            Load<Sprite>("V3-emote-" + i, s => EmoteIcons[j] = s);
+            Load<Sprite>("V3-emote-" + i + "-glow", s => EmoteGlows[j] = s);
         }
 
         // fonts

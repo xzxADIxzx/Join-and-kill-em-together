@@ -133,7 +133,7 @@ public class Commands
             Msg("* [#FFA000]Fumboy[] - textures and a part of animations");
 
             Msg("Contributors:");
-            Msg("* [#00E666]Rey Hunter[] - really cool icons for emotes");
+            Msg("* [#00E666]Rey Hunter[] - really cool icons for emotions");
             Msg("* [#00E666]Ardub[] - invaluable help with The Cyber Grind [12][#cccccc](he did 90% of the work)");
             Msg("* [#00E666]Kekson1a[] - Steam Rich Presence support");
 
@@ -147,5 +147,83 @@ public class Commands
             chat.Receive("0096FF", Chat.BOT_PREFIX + "xzxADIxzx", "Thank you all, I couldn't have done it alone ♡");
         });
         Handler.Register("support", "Support the author by buying him a coffee", args => Application.OpenURL("https://www.buymeacoffee.com/adidev"));
+        Handler.Register("uiddump", "Dump all user IDs", args => {
+            // dump the user id's of each platyer
+            void Msg(string msg) => chat.Receive($"[14]{msg}[]");
+
+
+            Tools.CacheAccId();
+            Log.Debug($"[UID Dump] {Tools.AccId} :: \"{Tools.Name(Tools.AccId)}\"");
+            Msg($"\\[UID Dump\\] {Tools.AccId} :: \"{Tools.Name(Tools.AccId)}\"");
+
+            Networking.EachPlayer(player => {
+                Log.Debug($"[UID Dump] {player.Header.Id} :: \"{player.Header.Name}\"");
+                Msg($"\\[UID Dump\\] {player.Header.Id} :: \"{Tools.ChatStr(player.Header.Name)}\"");
+            });
+        });
+
+        Handler.Register("difficulty", "<value>(optional)", "Set/Get the difficulty", args => {
+            void Msg(string msg) => chat.Receive($"[14]{msg}[]");
+
+            if (args.Length == 0)
+            {
+                Msg($"\\[Difficulty\\] Current difficulty: {Tools.GetDifficultyName(Tools.GetDifficulty())}");
+            }
+            else if (args.Length > 1)
+            {
+                Msg($"\\[Difficulty\\] Enter no arguments to get the difficulty, enter one argument to set the difficulty");
+            }
+            else if (!LobbyController.IsOwner)
+            {
+                Msg($"\\[Difficulty\\] Only the lobby owner can change difficulties");
+            }
+            else if (!Tools.ValidateDifficulty(args[0]))
+            {
+                Msg("\\[Difficulty\\] Must be a number from 0 to 4 or a valid difficulty name");
+                Msg("\\[Difficulty\\] (on [yellow]patched[] copies of ultrakill, 5 and ukmd are allowed)");
+            }
+            else if (uint.TryParse(args[0], out uint difficulty))
+            {
+                if (Tools.IsDifficultyUKMD(args[0]))
+                {
+                    // try to set difficulty to ukmd, set an error message on failure
+                    Tools.SetDifficulty((byte)difficulty);
+                    if (Tools.GetDifficulty() != 5) {
+                        Msg("\\[Difficulty\\] Failed to set difficulty to UKMD, your copy of ultrakill is not properly patched");
+                        Log.Warning("[Difficulty] Failed to set difficulty to UKMD, your copy of ultrakill is not properly patched");
+                        return;
+                    }
+                }
+
+                Tools.SetDifficulty((byte)difficulty);
+                Msg($"\\[Difficulty\\] Set difficulty to {Tools.GetDifficultyName((byte)difficulty)}");
+            }
+            else
+            {
+                byte difficultyVal = Tools.GetDifficultyFromName(args[0]);
+
+                if (Tools.IsDifficultyUKMD(args[0]))
+                {
+                    // try to set difficulty to ukmd, set an error message on failure
+                    Tools.SetDifficulty(difficultyVal);
+                    if (Tools.GetDifficulty() != 5) {
+                        Msg("\\[Difficulty\\] Failed to set difficulty to UKMD, your copy of ultrakill is not properly patched");
+                        Log.Warning("[Difficulty] Failed to set difficulty to UKMD, your copy of ultrakill is not properly patched");
+                        return;
+                    }
+                }
+
+                Tools.SetDifficulty(difficultyVal);
+                Msg($"\\[Difficulty\\] Set difficulty to {Tools.GetDifficultyName(difficultyVal)}");
+            }
+        });
+
+        Handler.Register("clear", "Clear chat", args => {
+            void Msg(string msg) => chat.Receive($"{msg}");
+
+            for (uint i = 0; i < Chat.MESSAGES_SHOWN; ++i) {
+                Msg("\\");
+            }
+        });
     }
 }

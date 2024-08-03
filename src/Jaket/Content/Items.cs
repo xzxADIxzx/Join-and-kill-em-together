@@ -68,9 +68,6 @@ public class Items
         // sometimes developers just deactivate skulls instead of removing them
         if (!itemId.gameObject.activeSelf || GameAssets.ItemExceptions.Contains(itemId.name)) return;
 
-        // somewhy this value is true for the plushies in the museum
-        itemId.pickedUp = false;
-
         if (LobbyController.IsOwner || single)
             itemId.gameObject.AddComponent<Item>();
         else

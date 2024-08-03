@@ -40,14 +40,12 @@ public class Doll : MonoBehaviour
     public Material WingMat, CoinMat, SkateMat;
     /// <summary> Trail of the wings. </summary>
     public TrailRenderer WingTrail;
-    /// <summary> Light of the wings. </summary>
-    public Light WingLight;
     /// <summary> Winch of the hook. </summary>
     public LineRenderer HookWinch;
 
     /// <summary> Spawns a preview of the given emote. </summary>
     public static Doll Spawn(Transform parent, Team team, byte emote, byte rps) =>
-        UIB.Component<Doll>(Instantiate(ModAssets.Preview, parent), doll =>
+        UIB.Component<Doll>(Instantiate(DollAssets.Preview, parent), doll =>
         {
             doll.transform.localPosition = new(0f, -1.5f);
             doll.transform.localScale = Vector3.one * 2.18f;
@@ -79,7 +77,6 @@ public class Doll : MonoBehaviour
         CoinMat = Coin.GetComponent<Renderer>().material;
         SkateMat = Skateboard.GetComponent<Renderer>().material;
         WingTrail = GetComponentInChildren<TrailRenderer>();
-        WingLight = GetComponentInChildren<Light>();
         HookWinch = GetComponentInChildren<LineRenderer>(true);
     }
 
@@ -109,8 +106,8 @@ public class Doll : MonoBehaviour
 
         if (LastEmote != Emote)
         {
-            Animator.SetTrigger("show-emoji");
-            Animator.SetInteger("emoji", LastEmote = Emote);
+            Animator.SetTrigger("show-emote");
+            Animator.SetInteger("emote", LastEmote = Emote);
             Animator.SetInteger("rps", Rps);
 
             Throne.gameObject.SetActive(Emote == 6);
@@ -144,11 +141,9 @@ public class Doll : MonoBehaviour
 
     public void ApplyTeam(Team team)
     {
-        WingMat.mainTexture = SkateMat.mainTexture = ModAssets.WingTextures[(int)team];
+        WingMat.mainTexture = SkateMat.mainTexture = DollAssets.WingTextures[(int)team];
         CoinMat.color = team.Color();
-
-        if (WingTrail) WingTrail.startColor = team.Color() with { a = .5f };
-        if (WingLight) WingLight.color = team.Color();
+        if (WingTrail != null) WingTrail.startColor = team.Color() with { a = .5f };
 
         // TODO make it part of customization
         Suits.GetChild(0).gameObject.SetActive(team == Team.Pink);

@@ -4,7 +4,6 @@ using HarmonyLib;
 using System.Collections.Generic;
 using ULTRAKILL.Cheats;
 using UnityEngine;
-using UnityEngine.UI;
 
 using Jaket.Net;
 using Jaket.Net.Types;
@@ -150,16 +149,5 @@ public class ActionPatch
     static void FillBlood(BloodFiller __instance)
     {
         if (LobbyController.Online && LobbyController.IsOwner) World.SyncAction(__instance, 6);
-    }
-}
-
-[HarmonyPatch(typeof(IntermissionController))]
-public class LovelyPatch
-{
-    [HarmonyPrefix]
-    [HarmonyPatch("Start")]
-    static void Name(IntermissionController __instance)
-    {
-        if (LobbyController.Online) Votes.Name(__instance.GetComponent<Text>(), ref __instance.preText);
     }
 }

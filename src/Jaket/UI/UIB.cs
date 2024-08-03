@@ -34,8 +34,8 @@ public class UIB
         Action fix;
         Events.OnLoaded += fix = () => Events.Post(() =>
         {
-            HudMessageReceiver.Instance.text.font = ModAssets.FontTMP;
-            NewMovement.Instance.youDiedText.font = ModAssets.Font;
+            HudMessageReceiver.Instance.text.font = DollAssets.FontTMP;
+            NewMovement.Instance.youDiedText.font = DollAssets.Font;
 
             // fix the sorting order to display hud messages on top of other interface fragments
             if (!HudMessageReceiver.Instance.TryGetComponent<Canvas>(out _)) Component<Canvas>(HudMessageReceiver.Instance.gameObject, canvas =>
@@ -146,7 +146,7 @@ public class UIB
         {
             text.text = name.StartsWith("#") ? Bundle.Get(name.Substring(1)) : name;
             text.color = color ?? white;
-            text.font = ModAssets.Font;
+            text.font = DollAssets.Font;
             text.fontSize = size;
             text.alignment = align;
         });
@@ -165,14 +165,22 @@ public class UIB
         });
 
     /// <summary> Adds a circular image. </summary>
-    public static UICircle CircleImage(string name, Transform parent, Rect r, float arc, int rotation, float thickness) =>
-        Component<UICircle>(Rect(name, parent, r).gameObject, circle =>
+    public static UICircle CircleImage(string name, Transform parent, Rect r, float arc, int rotation, float thickness, bool outline = false)
+    {
+        var obj = Rect(name, parent, r).gameObject;
+        if (outline) Component<Outline>(obj, outline =>
+        {
+            outline.effectDistance = new(3f, -3f);
+            outline.effectColor = white;
+        });
+        return Component<UICircle>(obj, circle =>
         {
             circle.Arc = arc;
             circle.ArcRotation = rotation;
             circle.Thickness = thickness;
             circle.Fill = false;
         });
+    }
 
     /// <summary> Adds a diamond-shaped image. </summary>
     public static DiamondGraph DiamondImage(string name, Transform parent, Rect r, float a, float b, float c, float d, Color? color = null) =>

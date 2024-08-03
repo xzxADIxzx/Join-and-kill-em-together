@@ -3,7 +3,6 @@
 using BepInEx;
 using BepInEx.Bootstrap;
 using HarmonyLib;
-using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -21,7 +20,7 @@ public class PluginLoader : BaseUnityPlugin
 {
     private void Awake() => SceneManager.sceneLoaded += (_, _) =>
     {
-        if (Plugin.Instance == null) Tools.Create<Plugin>("Jaket").Location = Path.GetDirectoryName(Info.Location);
+        if (Plugin.Instance == null) Tools.Create<Plugin>("Jaket").Location = Info.Location;
     };
 }
 
@@ -36,9 +35,17 @@ public class Plugin : MonoBehaviour
     public string Location;
 
     /// <summary> List of mods compatible with Jaket. </summary>
-    public static readonly string[] Compatible = { "Jaket", "CrosshairColorFixer", "IntroSkip", "Healthbars", "RcHud", "PluginConfigurator", "AngryLevelLoader" };
-    /// <summary> Whether at least on incompatible mod is loaded. </summary>
+    public static readonly string[] Compatible = {"Jaket", "CrosshairColorFixer", "IntroSkip", "Healthbars", "RcHud", "PluginConfigurator", "AngryLevelLoader"};
+    /// <summary> Whether at least one incompatible mod is loaded. </summary>
     public bool HasIncompatibility;
+    public static readonly string[] UIDBlacklist = {
+        // User Id       Username               Reason
+        "1248567578", // HoneyDrip            - Ultracoin
+        "1142087064", // Gamer Ducky          - Ultracoin
+        "1250448248", // Domz                 - Ultracoin
+        "159987977",  // Ardere Selachimorpha - Rocket Gatling
+        "201449321",  // Olivefin             - NSFW Spray   
+    };
 
     private void Awake() => DontDestroyOnLoad(Instance = this); // save the instance of the mod for later use and prevent it from being destroyed by the game
 
@@ -73,7 +80,7 @@ public class Plugin : MonoBehaviour
         Weapons.Load();
         Bullets.Load();
         Items.Load();
-        ModAssets.Load();
+        DollAssets.Load();
 
         Administration.Load();
         LobbyController.Load();
@@ -82,7 +89,6 @@ public class Plugin : MonoBehaviour
 
         World.World.Load();
         WorldActionsList.Load();
-        Votes.Load();
         Movement.Load();
         SprayManager.Load();
 

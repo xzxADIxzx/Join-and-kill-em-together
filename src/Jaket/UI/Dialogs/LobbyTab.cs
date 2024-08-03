@@ -50,7 +50,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
         UIB.Table("Lobby Config", "#lobby-tab.config", transform, Tlw(384f + 422f / 2f, 422f), table =>
         {
             field = UIB.Field("#lobby-tab.name", table, Tgl(64f), cons: name => LobbyController.Lobby?.SetData("name", name));
-            field.characterLimit = 28;
+            field.characterLimit = 256;
 
             accessibility = UIB.Button("#lobby-tab.private", table, Btn(108f), clicked: () =>
             {

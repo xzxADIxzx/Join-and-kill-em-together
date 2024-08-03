@@ -26,6 +26,58 @@ public class Tools
     public static void CacheAccId() => AccId = Id.AccountId;
     /// <summary> Returns the name of the player with the given AccountId. </summary>
     public static string Name(uint id) => new Friend(id | 76561197960265728u).Name;
+    public static string ChatStr(string msg) => msg.Replace("[", "\\[").Replace("]", "\\]");
+    public static bool IsDifficultyUKMD(string difficulty) {
+        if (difficulty.ToLower().Contains("ukmd") || difficulty.ToLower().Contains("ultrakill"))
+        {
+            return true;
+        }
+
+        if (difficulty == "5") return true;
+
+        return false;
+    }
+    public static void SetDifficulty(byte val) => PrefsManager.Instance.SetInt("difficulty", val);
+    public static byte GetDifficulty() => (byte)PrefsManager.Instance.GetInt("difficulty");
+    public static string GetDifficultyName(byte val) => val switch {
+        0 => "Harmless",
+        1 => "Lenient",
+        2 => "Standard",
+        3 => "Violent",
+        4 => "Brutal",
+        5 => "UKMD",
+        _ => ""
+    };
+
+    public static bool ValidateDifficulty(string val) {
+        if (GetDifficultyFromName(val) != 42) return true;
+        
+        return val switch {
+            "0" => true,
+            "1" => true,
+            "2" => true,
+            "3" => true,
+            "4" => true,
+            "5" => true,
+            _   => false
+        };
+    }
+
+    public static byte GetDifficultyFromName(string name)
+    {
+        if (name.ToLower().Contains("harmless")) return 0;
+        if (name.ToLower().Contains("lenient")) return 1;
+        if (name.ToLower().Contains("standard") || name.ToLower().Contains("normal")) return 2;
+        if (name.ToLower().Contains("violent")) return 3;
+        if (name.ToLower().Contains("brutal")) return 4;
+
+        if (name.ToLower().Contains("ukmd") || name.ToLower().Contains("ultrakill"))
+        {
+            return 5;
+        }
+
+        return 42;
+    }
 
     /// <summary> Shortcut needed in order to track statistics and errors. </summary>
     public static void Send(Connection? con, IntPtr data, int size)

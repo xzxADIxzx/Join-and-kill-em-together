@@ -88,9 +88,7 @@ public class Enemies
     /// <summary> Synchronizes the enemy between network members. </summary>
     public static bool Sync(EnemyIdentifier enemyId)
     {
-        if (LobbyController.Offline || enemyId.dead) return true;
-        if (Tools.Scene == "Endless") enemyId.spawnEffect = null;
-        if (enemyId.name == "Net") return true;
+        if (LobbyController.Offline || enemyId.dead || enemyId.name == "Net") return true;
 
         // levels 2-4, 5-4, 7-1 and 7-4 contain unique bosses that needs to be dealt with separately
         if (Tools.Scene == "Level 2-4" && enemyId.name == "MinosArm")

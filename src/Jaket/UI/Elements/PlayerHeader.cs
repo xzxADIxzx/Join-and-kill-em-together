@@ -6,15 +6,17 @@ using UnityEngine.UI;
 using static Pal;
 using static Rect;
 
-/// <summary> Header containing nickname and health. </summary>
+/// <summary>  containing nickname and health. </summary>
 public class PlayerHeader
 {
     /// <summary> Player name taken from Steam. </summary>
     public string Name;
+    /// <summary> Player Id </summary>
+    public uint Id;
     /// <summary> Component containing the name. </summary>
     public Text Text;
 
-    /// <summary> Canvas containing header content. </summary>
+    /// <summary> Canvas containing  content. </summary>
     private Transform canvas;
     /// <summary> Health images that the player directly sees. </summary>
     private RectTransform health, overhealth;
@@ -24,9 +26,10 @@ public class PlayerHeader
     public PlayerHeader(uint id, Transform parent)
     {
         Name = Tools.Name(id);
+        Id = id;
 
         float width = Name.Length * 14f + 16f;
-        canvas = UIB.WorldCanvas("Header", parent, new(0f, 5f, 0f), build: canvas =>
+        canvas = UIB.WorldCanvas("", parent, new(0f, 5f, 0f), build: canvas =>
         {
             UIB.Table("Name", canvas, Size(width, 40f), table => Text = UIB.Text(Name, table, Huge, size: 240));
             Text.transform.localScale /= 10f;

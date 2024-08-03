@@ -17,7 +17,7 @@ using Jaket.UI.Dialogs;
 using Jaket.UI.Elements;
 using Jaket.UI.Fragments;
 
-/// <summary> Class responsible for additions to control and local display of emotes. </summary>
+/// <summary> Class responsible for additions to control and local display of emotions. </summary>
 public class Movement : MonoSingleton<Movement>
 {
     static NewMovement nm => NewMovement.Instance;
@@ -29,16 +29,16 @@ public class Movement : MonoSingleton<Movement>
 
     /// <summary> Environmental mask needed to prevent the skateboard from riding on water and camera from falling trough the ground. </summary>
     private readonly int mask = LayerMaskDefaults.Get(LMD.Environment);
-    /// <summary> Array containing the length of all emotes in seconds. </summary>
+    /// <summary> An array containing the length of all emotions in seconds. </summary>
     private readonly float[] emoteLength = { 2.458f, 4.708f, 1.833f, 2.875f, 0f, 9.083f, -1f, 11.022f, -1f, 3.292f, 0f, -1f };
     /// <summary> Whether the death must be fake on this level. </summary>
-    private static bool fakeDeath => nm.endlessMode || Tools.Scene == "Level 0-S";
+    private static bool fakeDeath => nm.endlessMode /* || Tools.Scene == "Level 0-S" */;
 
-    /// <summary> Current emote preview, can be null. </summary>
+    /// <summary> Current emotion preview, can be null. </summary>
     public GameObject EmotePreview;
-    /// <summary> Start time of the current emote and hold time of the emote wheel key. </summary>
+    /// <summary> Start time of the current emotion and hold time of the emotion wheel key. </summary>
     public float EmoteStart, HoldTime;
-    /// <summary> Id of the currently playing emote. </summary>
+    /// <summary> Id of the currently playing emotion. </summary>
     public byte Emote = 0xFF, Rps;
 
     /// <summary> Speed at which the skateboard moves. </summary>
@@ -74,11 +74,11 @@ public class Movement : MonoSingleton<Movement>
             Instance.StartEmote(0xFF, false);
 
             // disable hook and jump at 0-S
-            if (Tools.Scene == "Level 0-S")
-            {
-                nm.modNoJump = LobbyController.Online;
-                HookArm.Instance.gameObject.SetActive(LobbyController.Offline);
-            }
+            // if (Tools.Scene == "Level 0-S")
+            // {
+            //     nm.modNoJump = LobbyController.Online;
+            //     HookArm.Instance.gameObject.SetActive(LobbyController.Offline);
+            // }
 
             if (fakeDeath)
             {
@@ -115,7 +115,7 @@ public class Movement : MonoSingleton<Movement>
 
         if (Input.GetKey(Settings.EmoteWheel) && !LobbyList.Shown && !WeaponWheel.Instance.gameObject.activeSelf)
         {
-            HoldTime += Time.deltaTime;
+            HoldTime += Time.deltaTime; // if the key has been pressed for 0.25 seconds, show the emote wheel
             if (!EmoteWheel.Shown && HoldTime > .25f) EmoteWheel.Instance.Show();
         }
         else
@@ -415,7 +415,7 @@ public class Movement : MonoSingleton<Movement>
         Destroy(EmotePreview);
         Destroy(FallParticle);
 
-        // if id is -1, then the emote was not selected
+        // if id is -1, then the emotion was not selected
         if (id == 0xFF) return;
         else EmotePreview = Doll.Spawn(nm.transform, Networking.LocalPlayer.Team, id, Rps).gameObject;
 
@@ -427,7 +427,7 @@ public class Movement : MonoSingleton<Movement>
         StartThirdPerson();
         SkateboardSpeed = 0f;
 
-        Bundle.Hud("emote", true); // telling how to interrupt the emote
+        Bundle.Hud("emote", true); // telling how to interrupt an emotion
         StopCoroutine("ClearEmote");
         if (emoteLength[id] != -1f) StartCoroutine("ClearEmote");
     }
