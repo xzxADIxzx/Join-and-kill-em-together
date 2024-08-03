@@ -3,7 +3,6 @@
 .vs/
 
 obj/*
-bin/*
 lib/*
 build/*
 
