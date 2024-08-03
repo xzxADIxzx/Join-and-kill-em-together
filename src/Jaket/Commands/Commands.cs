@@ -230,9 +230,9 @@ public class Commands
             }
         });
 
-        Handler.Register("blacklist", "add <Username> / remove <Username> / list", "Blacklist the user with said UID", args => {
+        Handler.Register("blacklist", "add <Username> /  list", "Blacklist the user with said UID", args => {
             void Msg(string msg) => chat.Receive($"[14]{msg}[]");
-            string helpMessage = "\\[Blacklist\\] usage: /blacklist add <Username> / remove <Username> / list";
+            string helpMessage = "\\[Blacklist\\] usage: /blacklist add <Username> list";
 
             if (args.Length >= 2)
             {
@@ -250,36 +250,13 @@ public class Commands
                             {
                                 if (!File.ReadAllLines(Plugin.UIDBlacklistPath).Contains(player.Header.Name))
                                 {
-                                    File.AppendAllText(Plugin.UIDBlacklistPath, player.Header.Name + "\n");
+                                    File.AppendAllText(Plugin.UIDBlacklistPath, player.Header.Name + "\r\n");
                                 }
 
                                 if (LobbyController.IsOwner) Administration.Ban(player.Header.Id);
                                 Msg($"\\[Blacklist\\] Blacklisted user {player.Header.Id} :: \"{player.Header.Name}\"");
                             }
                         });
-                    }
-                    else
-                    {
-                                                
-                        for (int i = 0; i < File.ReadAllLines(Plugin.UIDBlacklistPath).Length; ++i) {
-                            string line = File.ReadAllLines(Plugin.UIDBlacklistPath)[i];
-
-                            if (line == string.Join(" ", args.ToList().Skip(1)))
-                            {
-                                Msg($"\\[Blacklist\\] Removed user {line} from blacklist.");
-                            }
-                        }
-
-
-                        string tempFile = Plugin.UIDBlacklistPath + "1";
-                        var linesToKeep = File.ReadLines(Plugin.UIDBlacklistPath).Where(l => l != string.Join(" ", args.ToList().Skip(1)));
-
-                        File.WriteAllLines(tempFile, linesToKeep);
-                        File.CreateText(tempFile);
-                        
-                        File.WriteAllLines(tempFile, linesToKeep);
-                        File.Delete(Plugin.UIDBlacklistPath);
-                        File.Move(tempFile, Plugin.UIDBlacklistPath);
                     }
                     return;
                 }
