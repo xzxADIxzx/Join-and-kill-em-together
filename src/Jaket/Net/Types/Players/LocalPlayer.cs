@@ -94,13 +94,13 @@ public class LocalPlayer : Entity
 
         // according to the lore, the player plays for V3, so we need to paint the hands
         var punch = fc.transform.Find("Arm Blue(Clone)");
-        if (punch) punch.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture();
+        if (punch) punch.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = ModAssets.HandTexture();
 
         var right = cw?.transform.GetChild(0).Find("RightArm");
-        if (right) right.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture();
+        if (right) right.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = ModAssets.HandTexture();
 
         var knuckle = fc.transform.Find("Arm Red(Clone)");
-        if (knuckle) knuckle.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture(false);
+        if (knuckle) knuckle.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = ModAssets.HandTexture(false);
     }
 
     #endregion
@@ -117,7 +117,7 @@ public class LocalPlayer : Entity
 
         w.Byte((byte)nm.hp);
         w.Byte((byte)Mathf.Floor(WeaponCharges.Instance.raicharge * 2.5f));
-        w.Player(Team, weapon, Movement.Instance.Emoji, Movement.Instance.Rps, Chat.Shown);
+        w.Player(Team, weapon, Movement.Instance.Emote, Movement.Instance.Rps, Chat.Shown);
         w.Bools(
             nm.walking,
             nm.sliding || (is44 && nm.transform.position.y > 610f && nm.transform.position.y < 611f),

@@ -3,6 +3,7 @@
 using BepInEx;
 using BepInEx.Bootstrap;
 using HarmonyLib;
+using System.IO;
 using System.Linq;
 using UnityEngine.SceneManagement;
 using System.Reflection;
@@ -23,7 +24,7 @@ public class PluginLoader : BaseUnityPlugin
 {
     private void Awake() => SceneManager.sceneLoaded += (_, _) =>
     {
-        if (Plugin.Instance == null) Tools.Create<Plugin>("Jaket").Location = Info.Location;
+        if (Plugin.Instance == null) Tools.Create<Plugin>("Jaket").Location = Path.GetDirectoryName(Info.Location);
     };
 }
 
@@ -78,7 +79,7 @@ public class Plugin : MonoBehaviour
         Weapons.Load();
         Bullets.Load();
         Items.Load();
-        DollAssets.Load();
+        ModAssets.Load();
 
         Administration.Load();
         LobbyController.Load();

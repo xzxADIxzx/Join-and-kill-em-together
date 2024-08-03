@@ -28,14 +28,14 @@ public class Settings : CanvasSingleton<Settings>
 
     /// <summary> List of internal names of all key bindings. </summary>
     public static readonly string[] Keybinds =
-    { "chat", "scroll-messages-up", "scroll-messages-down", "lobby-tab", "player-list", "settings", "player-indicators", "player-information", "emoji-wheel", "pointer", "spray", "self-destruction" };
+    { "chat", "scroll-messages-up", "scroll-messages-down", "lobby-tab", "player-list", "settings", "player-indicators", "player-information", "emote-wheel", "pointer", "spray", "self-destruction" };
 
     /// <summary> Array with current control settings. </summary>
     public static KeyCode[] CurrentKeys => new[]
-    { Chat, ScrollUp, ScrollDown, LobbyTab, PlayerList, Settingz, PlayerIndicators, PlayerInfo, EmojiWheel, Pointer, Spray, SelfDestruction };
+    { Chat, ScrollUp, ScrollDown, LobbyTab, PlayerList, Settingz, PlayerIndicators, PlayerInfo, EmoteWheel, Pointer, Spray, SelfDestruction };
 
     /// <summary> List of all key bindings in the mod. </summary>
-    public static KeyCode Chat, ScrollUp, ScrollDown, LobbyTab, PlayerList, Settingz, PlayerIndicators, PlayerInfo, EmojiWheel, Pointer, Spray, SelfDestruction;
+    public static KeyCode Chat, ScrollUp, ScrollDown, LobbyTab, PlayerList, Settingz, PlayerIndicators, PlayerInfo, EmoteWheel, Pointer, Spray, SelfDestruction;
 
     /// <summary> Gets the key binding value from its path. </summary>
     public static KeyCode GetKey(string path, KeyCode def) => (KeyCode)pm.GetInt($"jaket.binds.{path}", (int)def);
@@ -63,7 +63,7 @@ public class Settings : CanvasSingleton<Settings>
         get => pm.GetInt("jaket.tts.volume", 60);
         set
         {
-            DollAssets.Mixer?.SetFloat("Volume", value / 2f - 30f); // the value should be between -30 and 20 decibels
+            ModAssets.Mixer?.SetFloat("Volume", value / 2f - 30f); // the value should be between -30 and 20 decibels
             pm.SetInt("jaket.tts.volume", value);
         }
     }
@@ -100,12 +100,12 @@ public class Settings : CanvasSingleton<Settings>
         Settingz = GetKey("settings", KeyCode.F3);
         PlayerIndicators = GetKey("player-indicators", KeyCode.Z);
         PlayerInfo = GetKey("player-information", KeyCode.X);
-        EmojiWheel = GetKey("emoji-wheel", KeyCode.B);
+        EmoteWheel = GetKey("emote-wheel", KeyCode.B);
         Pointer = GetKey("pointer", KeyCode.Mouse2);
         Spray = GetKey("spray", KeyCode.T);
         SelfDestruction = GetKey("self-destruction", KeyCode.K);
 
-        DollAssets.Mixer?.SetFloat("Volume", TTSVolume / 2f - 30f);
+        ModAssets.Mixer?.SetFloat("Volume", TTSVolume / 2f - 30f);
     }
 
     private void Start()

@@ -22,13 +22,13 @@ public class BestiaryPatch
         v3.enemyType = EnemyType.Filth;
 
         v3.backgroundColor = ___objects.enemies[11].backgroundColor;
-        v3.gridIcon = DollAssets.Icon;
+        v3.gridIcon = ModAssets.Icon;
 
         v3.objectName = entry.name;
         v3.type = entry.type;
         v3.description = entry.description;
         v3.strategy = entry.strategy;
-        v3.preview = DollAssets.Preview;
+        v3.preview = ModAssets.Preview;
 
         // insert V3 after the turret in the list
         Array.Resize(ref ___objects.enemies, ___objects.enemies.Length + 1);
@@ -43,5 +43,5 @@ public class BestiaryEntry
     /// <summary> Bestiary entry fields displayed in terminal. </summary>
     public string name, type, description, strategy;
     /// <summary> Loads the V3 bestiary entry from the bundle. </summary>
-    public static BestiaryEntry Load() => JsonUtility.FromJson<BestiaryEntry>(DollAssets.Bundle.LoadAsset<TextAsset>("V3-bestiary-entry").text);
+    public static BestiaryEntry Load() => JsonUtility.FromJson<BestiaryEntry>(ModAssets.Desc);
 }

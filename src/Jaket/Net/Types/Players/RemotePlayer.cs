@@ -52,10 +52,10 @@ public class RemotePlayer : Entity
     private void Start()
     {
         Doll = gameObject.AddComponent<Doll>();
-        Doll.OnEmojiStart += () =>
+        Doll.OnEmoteStart += () =>
         {
             // recreate the weapon if the animation is over
-            if (Doll.Emoji == 0xFF) LastWeapon = 0xFF;
+            if (Doll.Emote == 0xFF) LastWeapon = 0xFF;
             // or destroy it if the animation has started
             else foreach (Transform child in Doll.Hand) Destroy(child.gameObject);
         };
@@ -87,7 +87,7 @@ public class RemotePlayer : Entity
 
         transform.position = new(x.Get(LastUpdate), y.Get(LastUpdate) - (Doll.Sliding ? .3f : 1.5f), z.Get(LastUpdate));
         transform.eulerAngles = new(0f, bodyRotation.GetAngel(LastUpdate));
-        Doll.Head.localEulerAngles = new(Doll.Emoji == 8 ? -20f : headRotation.Get(LastUpdate), 0f);
+        Doll.Head.localEulerAngles = new(Doll.Emote == 8 ? -20f : headRotation.Get(LastUpdate), 0f);
 
         EnemyId.machine.health = 4200f; // prevent the doll from dying too early
 
@@ -178,7 +178,7 @@ public class RemotePlayer : Entity
 
         if (!Doll) return;
 
-        w.Player(Team, Weapon, Doll.Emoji, Doll.Rps, Typing);
+        w.Player(Team, Weapon, Doll.Emote, Doll.Rps, Typing);
         Doll.WriteAnim(w);
     }
 
@@ -196,7 +196,7 @@ public class RemotePlayer : Entity
 
         if (!Doll || r.Position >= r.Length) return;
 
-        r.Player(out Team, out Weapon, out Doll.Emoji, out Doll.Rps, out Typing);
+        r.Player(out Team, out Weapon, out Doll.Emote, out Doll.Rps, out Typing);
         Doll.ReadAnim(r);
     }
 

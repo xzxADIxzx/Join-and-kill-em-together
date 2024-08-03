@@ -17,7 +17,7 @@ public class SprayManager
     /// <summary> Other sprays located in the sprays folder. </summary>
     public static List<SprayFile> Loaded = new();
     /// <summary> Folder containing the local sprays. </summary>
-    public static string Folder => Path.Combine(Path.GetDirectoryName(Plugin.Instance.Location), "sprays");
+    public static string Folder => Path.Combine(Plugin.Instance.Location, "sprays");
     /// <summary> Whether the current spray has been uploaded. </summary>
     public static bool Uploaded;
 

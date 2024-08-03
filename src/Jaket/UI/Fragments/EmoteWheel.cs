@@ -1,23 +1,23 @@
 namespace Jaket.UI.Fragments;
 
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI.Extensions;
 
 using Jaket.Assets;
 using Jaket.World;
 
-using static System.Array;
 using static Rect;
 
-/// <summary> Wheel for selecting emotions that will be displayed as an animation of the player doll. </summary>
-public class EmojiWheel : CanvasSingleton<EmojiWheel>
+/// <summary> Wheel for selecting emotes that will be displayed as an animation of the player doll. </summary>
+public class EmoteWheel : CanvasSingleton<EmoteWheel>
 {
-    /// <summary> An array containing the rotation of all segments in degrees. </summary>
+    /// <summary> Array containing the rotations of all segments in degrees. </summary>
     public readonly static float[] SegmentRotations = { -30f, 0f, 30f, -30f, 0f, 30f };
-    /// <summary> List of all wheel segments. Needed to change the color of elements and store icons. </summary>
+    /// <summary> List of wheel segments. Needed to change the color of the elements and store icons. </summary>
     public readonly WheelSegment[] Segments = new WheelSegment[6];
 
-    /// <summary> Whether the second page of the emoji wheel is open. </summary>
+    /// <summary> Whether the second page of the wheel is open. </summary>
     public bool Second;
 
     /// <summary> Id of the selected segment, it will be highlighted in red. </summary>
@@ -34,19 +34,20 @@ public class EmojiWheel : CanvasSingleton<EmojiWheel>
     {
         UIB.CircleShadow(transform);
         fill = UIB.CircleImage("Fill", transform, Size(0f, 0f), 1f / 6f, 240, 0f);
+        UIB.CircleImage("White", transform, Size(154f, 154f), 1f, 0, 12f);
 
         for (int i = 0; i < 6; i++)
         {
-            float deg = 150f - i * 60f, rad = deg * Mathf.Deg2Rad;
-            var pos = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad)) * 200f;
+            float rot = (150f - i * 60f) * Mathf.Deg2Rad;
+            var pos = new Vector2(Mathf.Cos(rot), Mathf.Sin(rot)) * 200f;
 
             var segment = Segments[i] = new WheelSegment
             {
-                segment = UIB.CircleImage("Segment " + i, transform, Size(150f, 150f), 1f / 6f, i * 60, 8f, true),
-                divider = UIB.CircleImage("Divider " + i, transform, Size(640f, 640f), .005f, i * 60, 245f),
+                segment = UIB.CircleImage("Segment " + i, transform, Size(150f, 150f), 1f / 6f, i * 60, 8f),
+                divider = UIB.CircleImage("Divider " + i, transform, Size(640f, 640f), 2f / 360f, i * 60 - 1, 255f),
 
-                iconGlow = UIB.Image("Glow", transform, new(pos.x, pos.y, 285f, 150f)),
-                icon = UIB.Image("Icon", transform, new(pos.x, pos.y, 285f, 150f)),
+                iconGlow = UIB.Image("Glow", transform, new(pos.x, pos.y, 284f, 150f)),
+                icon = UIB.Image("Icon", transform, new(pos.x, pos.y, 284f, 150f)),
             };
 
             segment.icon.transform.localEulerAngles = segment.iconGlow.transform.localEulerAngles = new(0f, 0f, SegmentRotations[i]);
@@ -57,14 +58,14 @@ public class EmojiWheel : CanvasSingleton<EmojiWheel>
     private void Update()
     {
         // some code from the weapon wheel that I don't understand
-        direction = Vector2.ClampMagnitude(direction + InputManager.Instance.InputSource.WheelLook.ReadValue<Vector2>(), 1f);
-        float num = Mathf.Repeat(Mathf.Atan2(direction.x, direction.y) * 57.29578f + 90f, 360f);
-        selected = direction.sqrMagnitude > 0f ? (int)(num / 60f) : selected;
+        direction = Vector2.ClampMagnitude(direction + InputManager.Instance.InputSource.WheelLook.ReadValue<Vector2>() / 12f, 1f);
+        float num = Mathf.Repeat(Mathf.Atan2(direction.x, direction.y) * Mathf.Rad2Deg + 90f, 360f);
+        selected = direction.sqrMagnitude > .9f ? (int)(num / 60f) : selected;
 
         for (int i = 0; i < Segments.Length; i++) Segments[i].SetActive(i == selected);
 
         // progress of the transition to the next page
-        float progress = holdTime >= 0f && selected == 4 ? holdTime * 2f : 0f, size = 150f + progress * 500f;
+        float progress = holdTime >= 0f && selected == 4 ? holdTime * 2.5f : 0f, size = 150f + progress * 500f;
 
         fill.Thickness = progress * 250f;
         fill.color = new(1f, 0f, 0f, 1f - progress);
@@ -81,7 +82,7 @@ public class EmojiWheel : CanvasSingleton<EmojiWheel>
         else holdTime += Time.deltaTime;
 
         // turn page
-        if (holdTime > .5f && selected == 4)
+        if (holdTime > .4f && selected == 4)
         {
             holdTime = -60f;
 
@@ -92,19 +93,19 @@ public class EmojiWheel : CanvasSingleton<EmojiWheel>
 
     private void UpdateIcons()
     {
-        if (TrueForAll(DollAssets.EmojiIcons, tex => tex != null) && TrueForAll(DollAssets.EmojiGlows, tex => tex != null))
+        if (ModAssets.EmoteIcons.All(t => t != null) && ModAssets.EmoteGlows.All(t => t != null))
         {
             for (int i = 0; i < 6; i++)
             {
-                int j = Second ? i + 6 : i; // if the wheel is on the second page, then need to take other icons
-                Segments[i].icon.sprite = DollAssets.EmojiIcons[j];
-                Segments[i].iconGlow.sprite = DollAssets.EmojiGlows[j];
+                int j = Second ? i + 6 : i;
+                Segments[i].icon.sprite = ModAssets.EmoteIcons[j];
+                Segments[i].iconGlow.sprite = ModAssets.EmoteGlows[j];
             }
         }
         else Invoke("UpdateIcons", 5f);
     }
 
-    /// <summary> Shows the emoji wheel and resets the selected segment. </summary>
+    /// <summary> Shows the wheel and resets the selected segment. </summary>
     public void Show()
     {
         if (!Shown) UI.HideCentralGroup();
@@ -119,16 +120,15 @@ public class EmojiWheel : CanvasSingleton<EmojiWheel>
         direction = Vector2.zero;
     }
 
-    /// <summary> Hides the emoji wheel and starts the selected animation. </summary>
+    /// <summary> Hides the wheel and starts the selected animation. </summary>
     public void Hide()
     {
         gameObject.SetActive(Shown = false);
         Movement.UpdateState();
 
         // randomize RPS index if RPS emote is selected
-        if (selected == 3 && !Second) Movement.Instance.Rps = (byte)Random.Range(0, 3);
-
+        if (selected == 3) Movement.Instance.Rps = (byte)Random.Range(0, 3);
         // play emote if the selected segment is not a page transition
-        if (selected != 4) Movement.Instance.StartEmoji((byte)(Second ? selected + 6 : selected));
+        if (selected != 4) Movement.Instance.StartEmote((byte)(Second ? selected + 6 : selected));
     }
 }

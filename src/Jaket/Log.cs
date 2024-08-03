@@ -29,7 +29,7 @@ public class Log
     public static void Load()
     {
         Logger = new("Jaket");
-        LogPath = Path.Combine(Path.GetDirectoryName(Plugin.Instance.Location), "logs", $"Log {Time.Replace(':', '.')}.txt");
+        LogPath = Path.Combine(Plugin.Instance.Location, "logs", $"Log {Time.Replace(':', '.')}.txt");
 
         Events.OnLobbyAction += () =>
         {
