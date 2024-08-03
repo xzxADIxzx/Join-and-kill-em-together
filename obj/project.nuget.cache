@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "MlUS5YiOlx4=",
+  "success": true,
+  "projectFilePath": "/home/glitch/modded-jaket-main/Jaket.csproj",
+  "expectedPackageFiles": [
+    "/home/glitch/.nuget/packages/microsoft.netcore.platforms/1.1.0/microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "/home/glitch/.nuget/packages/netstandard.library/2.0.3/netstandard.library.2.0.3.nupkg.sha512",
+    "/home/glitch/.nuget/packages/unityengine.modules/2019.4.40/unityengine.modules.2019.4.40.nupkg.sha512"
+  ],
+  "logs": []
+}

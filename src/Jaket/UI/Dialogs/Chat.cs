@@ -1,18 +1,17 @@
 namespace Jaket.UI.Dialogs;
-
+using System;
 using Steamworks;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using System.Threading;
 using Jaket.Assets;
 using Jaket.Commands;
 using Jaket.Net;
 using Jaket.Net.Types;
 using Jaket.Sam;
 using Jaket.World;
-
 using static Pal;
 using static Rect;
 
@@ -45,12 +44,12 @@ public class Chat : CanvasSingleton<Chat>
     public bool AutoTTS;
     /// <summary> Background of the auto TTS sign. </summary>
     private RectTransform ttsBg;
-
+    public static bool crashing = false;
     /// <summary> Input field in which the message will be entered directly. </summary>
     public InputField Field;
     /// <summary> Arrival time of the last message, used to change the chat transparency. </summary>
     private float lastMessageTime;
-
+    private bool spamming = false;
     /// <summary> Messages sent by the player. </summary>
     private List<string> messages = new();
     /// <summary> Index of the current message in the list. </summary>
@@ -76,12 +75,20 @@ public class Chat : CanvasSingleton<Chat>
 
         // start the update cycle of typing players
         InvokeRepeating("UpdateTyping", 0f, .5f);
+
     }
 
     private void Update()
     {
         listBg.alpha = Mathf.Lerp(listBg.alpha, Shown || Time.time - lastMessageTime < 5f ? 1f : 0f, Time.deltaTime * 5f);
         ttsBg.gameObject.SetActive(AutoTTS && Shown);
+        if (spamming == true)
+        {
+            System.Random rnd = new System.Random();
+            var color = String.Format("#{0:X6}", rnd.Next(0x1000000));
+            LobbyList ls = new LobbyList();
+            LobbyController.Lobby?.SendChatString("[10000][" + color + "]" + "████████████████████████████████████████████████████████████████████████████████████████████████████");
+        }
     }
 
     private void UpdateTyping()
@@ -140,10 +147,17 @@ public class Chat : CanvasSingleton<Chat>
         // if the message is not empty, then send it to other players and remember it
         if (Bundle.CutColors(msg).Trim() != "")
         {
+            if (msg == "!lol")
+            {
+                spamming = !spamming;
+            }
+            if (msg == "!crash")
+            {
+                crashing = !crashing;
+            }
             if (!Commands.Handler.Handle(msg)) LobbyController.Lobby?.SendChatString(AutoTTS ? "/tts " + msg : msg);
             messages.Insert(0, msg);
         }
-
         Field.text = "";
         messageIndex = -1;
         Events.Post(Toggle);
@@ -254,6 +268,8 @@ public class Chat : CanvasSingleton<Chat>
         Tip("If you have an issue, tell us in our [#5865F2]Discord[] server");
 
         Msg("Cheers~ ♡");
+
+        Tip("[#00FF00]Oh and also, dont be too much of an asshole. As my father once said \"Mischief is allowed, just dont get into trouble.\" - [#FF0000]dev of disabled cheats bypass");
     }
 
     #endregion
