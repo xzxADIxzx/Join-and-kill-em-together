@@ -230,9 +230,9 @@ public class Commands
             }
         });
 
-        Handler.Register("blacklist", "add <Username> /  list", "Blacklist the user with said UID", args => {
+        Handler.Register("blacklist", "add <Username> / remove <Username> /  list", "Blacklist the user with said UID", args => {
             void Msg(string msg) => chat.Receive($"[14]{msg}[]");
-            string helpMessage = "\\[Blacklist\\] usage: /blacklist add <Username> list";
+            string helpMessage = "\\[Blacklist\\] usage: /blacklist add <Username> / remove <Username> / list";
 
             if (args.Length >= 2)
             {
@@ -257,6 +257,20 @@ public class Commands
                                 Msg($"\\[Blacklist\\] Blacklisted user {player.Header.Id} :: \"{player.Header.Name}\"");
                             }
                         });
+                    }
+                    else
+                    {
+                                                
+                        for (int i = 0; i < File.ReadAllLines(Plugin.UIDBlacklistPath).Length; ++i) {
+                            string line = File.ReadAllLines(Plugin.UIDBlacklistPath)[i];
+
+                            if (line == string.Join(" ", args.ToList().Skip(1)))
+                            {
+                                Msg($"\\[Blacklist\\] Removed user {line} from blacklist.");
+                            }
+                        }
+
+                        File.WriteAllLines(Plugin.UIDBlacklistPath, File.ReadLines(Plugin.UIDBlacklistPath).Where(l => l != string.Join(" ", args.ToList().Skip(1))).ToList());
                     }
                     return;
                 }
