@@ -34,5 +34,7 @@ public enum PacketType
     /// <summary> Need to activate a certain object. It can be anything, because there are a lot of different stuff in the game. </summary>
     ActivateObject,
     /// <summary> Any action with CyberGrind, like pattern and wave. </summary>
-    CyberGrindAction
+    CyberGrindAction,
+    /// <summary> Player voted for an option. Voting can be different: skip of a cutscene, dialog or choice of an option. </summary>
+    Vote
 }
