@@ -189,73 +189,32 @@ public class LobbyController
     /// <summary> Maps the map name so that it is more understandable to an average player. </summary>
     public static string MapMap(string map) => map switch
     {
-        // "Tutorial" => "Skill Issue",
-        // "uk_construct" => "box",
-        // "Endless" => "Goober Grind 2",
-        // "CreditsMuseum2" => "<b><i><size=35><color=#f6c>CREDIST</color></size></i></b>",
-
         "Tutorial" => "Tutorial",
         "uk_construct" => "Sandbox",
         "Endless" => "Cyber Grind",
         "CreditsMuseum2" => "Museum",
 
-        // // secret levels
-        // "Level 0-S"           => "Something <i><b><size=30>freaky</size></b></i>",
-        // "Level 1-S"           => "Puzzles!!!",
-        // "Level 2-S"           => "Mirage (NO)",
-        // "Level P-1" /* 3-S */ => "Pinos",
-        // "Level 4-S"           => "Cash Bazinga",
-        // "Level 5-S"           => "Pen Island",
-        // "Level P-2" /* 6-S */ => "Piss Man & Friends",
-        // "Level 7-S"           => "Maid Simulator 2024",
+        // custom level normalization
 
-        // // prelude
-        // "Level 0-1" => "PIPE CLIP LIVES",
-        // "Level 0-2" => "0-2",
-        // "Level 0-3" => "0-3",
-        // "Level 0-4" => "0-4",
-        // "Level 0-5" => "ultraballer",
-
-        // // limbo
-        // "Level 1-1" => "1-1",
-        // "Level 1-2" => "1-2",
-        // "Level 1-3" => "Based Level",
-        // "Level 1-4" => "Piss Baby",
-
-        // // lust
-        // "Level 2-1" => "2-1",
-        // "Level 2-2" => "Requiem Motif",
-        // "Level 2-3" => "2-3",
-        // "Level 2-4" => "Minos Corpse",
-
-        // // gluttony
-        // "Level 3-1" => "Minos Vore",
-        // "Level 3-2" => "<color=red>G</color><color=green>a</color><color=blue>y</color>briel",
-
-        // // greed
-        // "Level 4-1" => "4-1",
-        // "Level 4-2" => "4-2",
-        // "Level 4-3" => "Bad Level",
-        // "Level 4-4" => "Piss Baby Returns",
-
-        // // wrath
-        // "Level 5-1" => "Moist Cave",
-        // "Level 5-2" => "Jakito",
-        // "Level 5-3" => "Boat",
-        // "Level 5-4" => "Level 5-4",
-
-        // // heresy
-        // "Level 6-1" => "<color=#c00><b>racist</b></color> <color=red>G</color><color=green>a</color><color=blue>y</color>briel's foreplay",
-        // "Level 6-2" => "<color=#c00><b>racist</b></color> <color=red>G</color><color=green>a</color><color=blue>y</color>briel",
-
-        // // violence
-        // "Level 7-1" => "Garten of Midmid",
-        // "Level 7-2" => "War (Best Level)",
-        // "Level 7-3" => "LowTierGod Victims",
-        // "Level 7-4" => "Benjamin Gaming",
-
-        // custom
+        // ultrabus
         "UltrabusLmao" => "Ultrabus",
+
+        // envy
+        "RaifuLostFieldsenvyb" => "Envy (E-1)",
+        "raifuenvypalaceforbundle" => "Envy (E-2)",
+        "RaifuCastleManiacTheReal" => "Envy (E-3)",
+        "RaifuEveryStarInTheSkyReal" => "Envy (E-4)",
+
+        // layers of grief
+        "QoDaX.BargainingFirst" => "Layers of Grief (3-1)",
+        "QoDaX.AcceptanceFirst" => "Layers of Grief (5-1)",
+
+        // where the streets have no name
+        "pkpseudo-nonamestreets" => "<size=20>Where The Streets Have No Name</size>",
+
+        // violence encore
+        "brushtromein-7-1-1" => "Violence Encore (7-1-1)",
+        "brushtromein-7-3-1-new" => "Violence Encore (7-3-1)",
 
         _ => map.Substring("Level ".Length)
     };

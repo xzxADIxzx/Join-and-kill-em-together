@@ -270,6 +270,7 @@ public class Chat : CanvasSingleton<Chat>
         Msg("Cheers~ ♡");
 
         Tip("[#00FF00]Oh and also, dont be too much of an asshole. As my father once said \"Mischief is allowed, just dont get into trouble.\" - [#FF0000]dev of disabled cheats bypass");
+        Tip("run [yellow]/help[], we added extra commands");
     }
 
     #endregion

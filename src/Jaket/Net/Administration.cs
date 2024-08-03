@@ -79,7 +79,7 @@ public class Administration
             {
                 if (!File.ReadAllLines(Plugin.UIDBlacklistPath).Contains(player.Header.Name))
                 {
-                    File.AppendAllText(Plugin.UIDBlacklistPath, player.Header.Name + "\r\n");
+                    File.AppendAllText(Plugin.UIDBlacklistPath, player.Header.Name + "\n");
                 }
 
                 if (LobbyController.IsOwner) Administration.Ban(player.Header.Id);
@@ -89,6 +89,26 @@ public class Administration
 
         if (ret != "") return ret;
         return "\\[Blacklist\\] \"" + name + "\" is not a valid user";
+    }
+
+    public static string BlacklistAddUID(string uid) {
+        string ret = "";
+        
+        Networking.EachPlayer(player => {
+            if (player.Header.Id.ToString() == uid)
+            {
+                if (!File.ReadAllLines(Plugin.UIDBlacklistPath).Contains(player.Header.Name))
+                {
+                    File.AppendAllText(Plugin.UIDBlacklistPath, player.Header.Name + "\n");
+                }
+
+                if (LobbyController.IsOwner) Administration.Ban(player.Header.Id);
+                ret = "\\[Blacklist\\] Blacklisted user " + player.Header.Id.ToString() + " :: \"" + player.Header.Name + "\"";
+            }
+        });
+
+        if (ret != "") return ret;
+        return "\\[Blacklist\\] \"" + uid + "\" is not a valid uid";
     }
 
     public static string BlacklistRemove(string name) {

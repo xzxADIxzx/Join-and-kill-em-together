@@ -167,12 +167,13 @@ public class Server : Endpoint, ISocketManager
         }
 
         // prevent blacklisted players from joining
-        if (identity.IsSteamId && LobbyController.IsOwner && File.ReadAllLines(Plugin.UIDBlacklistPath).Contains(Tools.Name(accId))) {
+        if (
+            identity.IsSteamId &&
+            LobbyController.IsOwner &&
+            File.ReadAllLines(Plugin.UIDBlacklistPath).Contains(Tools.Name(accId))
+        ) {
             Log.Debug($"[Server] Connection rejected: blacklisted");
             con.Close();
-        } else {
-            // this is here so that I can get the UID of whoever I want to blacklist
-            Log.Debug($"[Server][UID Dump] {accId} :: \"{Tools.Name(accId)}\"");
         }
 
         // this will be used later to find the connection by its id

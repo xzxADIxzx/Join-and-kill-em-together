@@ -166,7 +166,7 @@ public class Commands
             });
         });
 
-        Handler.Register("difficulty", "<value>(optional)", "Set/Get the difficulty", args => {
+        Handler.Register("difficulty", "<value>(optional)", "Set/Get the difficulty (Applies after level restart)", args => {
             void Msg(string msg) => chat.Receive($"[14]{msg}[]");
 
             if (args.Length == 0)
@@ -230,13 +230,14 @@ public class Commands
             }
         });
 
-        Handler.Register("blacklist", "add <Username> / remove <Username> /  list", "Blacklist the user with said UID", args => {
+        Handler.Register("blacklist", "add <Username> /  add_uid <UID> / remove <Username> / list", "Blacklist the user with said UID", args => {
             void Msg(string msg) => chat.Receive($"[14]{msg}[]");
-            string helpMessage = "\\[Blacklist\\] usage: /blacklist add <Username> / remove <Username> / list";
+            string helpMessage = "\\[Blacklist\\] usage: /blacklist add <Username> / add_uid <UID> / remove <Username> / list";
+            string[] valid = {"add", "add_uid", "remove"};
 
             if (args.Length >= 2)
             {
-                if (args[0].ToLower() != "add" && args[0].ToLower() != "remove")
+                if (!valid.Contains(args[0].ToLower()))
                 {
                     Msg(helpMessage);
                     return;
@@ -260,6 +261,10 @@ public class Commands
                         // });
 
                         Msg(Administration.BlacklistAdd(username));
+                    }
+                    else if (args[0].ToLower() == "add_uid")
+                    {
+                        Msg(Administration.BlacklistAddUID(username));
                     }
                     else
                     {
