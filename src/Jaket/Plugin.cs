@@ -39,12 +39,7 @@ public class Plugin : MonoBehaviour
     /// <summary> Whether at least one incompatible mod is loaded. </summary>
     public bool HasIncompatibility;
     public static readonly string[] UIDBlacklist = {
-        // User Id       Username               Reason
-        "1248567578", // HoneyDrip            - Ultracoin
-        "1142087064", // Gamer Ducky          - Ultracoin
-        "1250448248", // Domz                 - Ultracoin
-        "159987977",  // Ardere Selachimorpha - Rocket Gatling
-        "201449321",  // Olivefin             - NSFW Spray   
+        
     };
 
     private void Awake() => DontDestroyOnLoad(Instance = this); // save the instance of the mod for later use and prevent it from being destroyed by the game
