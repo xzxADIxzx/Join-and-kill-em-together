@@ -1,19 +1,33 @@
 namespace Jaket.World;
 
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 using Jaket.Assets;
+using Jaket.Content;
 using Jaket.Net;
 
 /// <summary> Class that manages voting for the skip of a cutscene or an option at 2-S. </summary>
 public class Votes
 {
+    /// <summary> Voted players' ids and their votes. </summary>
+    public static Dictionary<uint, byte> Ids2Votes = new();
+
     /// <summary> Loads the vote system. </summary>
     public static void Load() => Events.OnLoaded += () =>
     {
         if (LobbyController.Online && Tools.Scene == "Level 2-S") Init2S();
     };
+
+    /// <summary> Votes for the given option. </summary>
+    public static void Vote(byte option) => Networking.Send(PacketType.Vote, w =>
+    {
+        w.Id(Tools.AccId);
+        w.Byte(option);
+    });
+
+    #region 2-S
 
     /// <summary> Replaces Mirage with Virage, patches buttons and other minor stuff. </summary>
     public static void Init2S()
@@ -38,4 +52,6 @@ public class Votes
 
         name = name.Replace("MIRAGE:", $"VIRAG <quad size=18 x={info.uvBottomLeft.x:0.0000} y={info.uvBottomLeft.y:0.0000} width={info.uvTopRight.x - info.uvBottomLeft.x:0.0000} height={info.uvTopRight.y - info.uvBottomLeft.y:0.0000}> :".Replace(',', '.'));
     }
+
+    #endregion
 }

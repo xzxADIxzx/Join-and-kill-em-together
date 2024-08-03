@@ -85,7 +85,7 @@ public class Server : Endpoint, ISocketManager
         {
             var owner = r.Id(); r.Position = 1; // extract the spray owner
 
-            // stop an attempt to overwrite someone else's spray, because this can lead to tragic consequences
+            // prevent an attempt to overwrite someone else's spray, because this can lead to tragic consequences
             if (sender != owner)
             {
                 Administration.Ban(sender);
@@ -113,6 +113,23 @@ public class Server : Endpoint, ISocketManager
         });
 
         ListenAndRedirect(PacketType.ActivateObject, World.ReadAction);
+
+        Listen(PacketType.Vote, (con, sender, r) =>
+        {
+            var owner = r.Id();
+
+            // prevent an attempt to vote on behalf of another
+            if (sender != owner)
+            {
+                Administration.Ban(sender);
+                Log.Warning($"[Server] {sender} was blocked due to an attempt to vote on behalf of another");
+            }
+            else
+            {
+                Votes.Ids2Votes[owner] = r.Byte();
+                Redirect(r, con);
+            }
+        });
     }
 
     public override void Update()
