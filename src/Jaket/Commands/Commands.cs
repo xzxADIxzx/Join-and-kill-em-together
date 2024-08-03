@@ -295,5 +295,9 @@ public class Commands
                 Msg(Administration.BlacklistList());
             }
         });
+
+        Handler.Register("lol", "Spam chat", args => {
+            Chat.Spamming = !Chat.Spamming;
+        });
     }
 }
