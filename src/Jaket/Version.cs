@@ -40,7 +40,7 @@ public class Version
     /// <summary> Extracts a tag and a name of the latest version of the mod from a json file. </summary>
     public static bool Parse(string result, out string latest, out string name)
     {
-        // default value with sad emote
+        // default value with sad emoji
         latest = name = "Failed to parse data ;(";
 
         int tagIndex = result.IndexOf(TAG), nameIndex = result.IndexOf(NAME);

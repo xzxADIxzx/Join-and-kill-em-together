@@ -9,7 +9,7 @@ using Jaket.IO;
 using Jaket.UI;
 
 /// <summary>
-/// Doll of a player, remote from network or local from emote.
+/// Doll of a player, remote from network or local from emoji.
 /// Responsible for the visual part of the player, i.e. suits and animations.
 /// </summary>
 public class Doll : MonoBehaviour
@@ -19,10 +19,10 @@ public class Doll : MonoBehaviour
     /// <summary> Animator states that affect which animation will be played. </summary>
     public bool Walking, Sliding, Falling, InAir, WasInAir, Dashing, WasDashing, Riding, WasRiding, Hooking, WasHooking, Shopping, WasShopping;
 
-    /// <summary> Emote that plays at the moment. </summary>
-    public byte Emote, LastEmote = 0xFF, Rps;
-    /// <summary> Event triggered after the start of emote. </summary>
-    public Action OnEmoteStart = () => { };
+    /// <summary> Emoji that plays at the moment. </summary>
+    public byte Emoji, LastEmoji = 0xFF, Rps;
+    /// <summary> Event triggered after the start of emoji. </summary>
+    public Action OnEmojiStart = () => { };
 
     /// <summary> Whether the player uses custom weapon colors. </summary>
     public bool CustomColors;
@@ -43,8 +43,8 @@ public class Doll : MonoBehaviour
     /// <summary> Winch of the hook. </summary>
     public LineRenderer HookWinch;
 
-    /// <summary> Spawns a preview of the given emote. </summary>
-    public static Doll Spawn(Transform parent, Team team, byte emote, byte rps) =>
+    /// <summary> Spawns a preview of the given emoji. </summary>
+    public static Doll Spawn(Transform parent, Team team, byte emoji, byte rps) =>
         UIB.Component<Doll>(Instantiate(DollAssets.Preview, parent), doll =>
         {
             doll.transform.localPosition = new(0f, -1.5f);
@@ -54,7 +54,7 @@ public class Doll : MonoBehaviour
             doll.Suits.gameObject.SetActive(true);
             // TODO load local players' suit + ApplySuit
 
-            doll.Emote = emote;
+            doll.Emoji = emoji;
             doll.Rps = rps;
         });
 
@@ -104,18 +104,18 @@ public class Doll : MonoBehaviour
         }
         if (WasShopping != Shopping && (WasShopping = Shopping)) Animator.SetTrigger("open-shop");
 
-        if (LastEmote != Emote)
+        if (LastEmoji != Emoji)
         {
-            Animator.SetTrigger("show-emote");
-            Animator.SetInteger("emote", LastEmote = Emote);
+            Animator.SetTrigger("show-emoji");
+            Animator.SetInteger("emoji", LastEmoji = Emoji);
             Animator.SetInteger("rps", Rps);
 
-            Throne.gameObject.SetActive(Emote == 6);
-            Coin.gameObject.SetActive(Emote == 7);
-            Skateboard.gameObject.SetActive(Emote == 11);
-            if (Emote == 8) Head.localEulerAngles = new(-20f, 0f);
+            Throne.gameObject.SetActive(Emoji == 6);
+            Coin.gameObject.SetActive(Emoji == 7);
+            Skateboard.gameObject.SetActive(Emoji == 11);
+            if (Emoji == 8) Head.localEulerAngles = new(-20f, 0f);
 
-            OnEmoteStart();
+            OnEmojiStart();
         }
 
         if (Sliding && SlideParticle == null)

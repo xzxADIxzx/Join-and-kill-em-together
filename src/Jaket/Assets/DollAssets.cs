@@ -42,8 +42,8 @@ public class DollAssets
     /// <summary> Coin texture used by team coins. </summary>
     public static Texture CoinTexture;
 
-    /// <summary> Icons for the emote selection wheel. </summary>
-    public static Sprite[] EmoteIcons, EmoteGlows;
+    /// <summary> Icons for the emoji selection wheel. </summary>
+    public static Sprite[] EmojiIcons, EmojiGlows;
 
     /// <summary> Loads assets bundle and other necessary stuff. </summary>
     public static void Load()
@@ -69,15 +69,15 @@ public class DollAssets
 
         LoadAsync<Texture>("coin", tex => CoinTexture = tex);
 
-        // load icons for emote wheel
-        EmoteIcons = new Sprite[12];
-        EmoteGlows = new Sprite[12];
+        // load icons for emoji wheel
+        EmojiIcons = new Sprite[12];
+        EmojiGlows = new Sprite[12];
 
         for (int i = 0; i < 12; i++)
         {
             var index = i;
-            LoadAsync<Sprite>("V3-emote-" + i, tex => EmoteIcons[index] = tex);
-            LoadAsync<Sprite>("V3-emote-" + i + "-glow", tex => EmoteGlows[index] = tex);
+            LoadAsync<Sprite>("V3-emoji-" + i, tex => EmojiIcons[index] = tex);
+            LoadAsync<Sprite>("V3-emoji-" + i + "-glow", tex => EmojiGlows[index] = tex);
         }
 
         // create prefabs of the player doll and its preview

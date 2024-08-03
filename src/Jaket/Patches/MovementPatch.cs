@@ -72,6 +72,6 @@ public class CommonPatch
     [HarmonyPatch(typeof(WeaponWheel), "OnEnable")]
     static void Wheel(WeaponWheel __instance)
     {
-        if (EmoteWheel.Shown) __instance.gameObject.SetActive(false);
+        if (EmojiWheel.Shown) __instance.gameObject.SetActive(false);
     }
 }

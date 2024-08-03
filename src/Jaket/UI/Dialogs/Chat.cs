@@ -248,7 +248,7 @@ public class Chat : CanvasSingleton<Chat>
         Msg("Hello, it's me, the main developer of Jaket.");
         Msg("I just wanted to give you some tips:");
 
-        Tip($"Hold [#FFA500]{Settings.EmoteWheel}[] to open the emote wheel");
+        Tip($"Hold [#FFA500]{Settings.EmojiWheel}[] to open the emote wheel");
         Tip("Try typing [#FFA500]/help[] in the chat");
         Tip("Take a look at the bestiary, there's a [#FF66CC]surprise[] :3");
         Tip("If you have an issue, tell us in our [#5865F2]Discord[] server");
