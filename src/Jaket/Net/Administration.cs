@@ -79,16 +79,20 @@ public class Administration
             {
                 if (!File.ReadAllLines(Plugin.UIDBlacklistPath).Contains(player.Header.Name))
                 {
-                    File.AppendAllText(Plugin.UIDBlacklistPath, player.Header.Name + "\n");
+                    File.AppendAllText(Plugin.UIDBlacklistPath, player.Header.Id.ToString() + "\n");
                 }
 
                 if (LobbyController.IsOwner) Administration.Ban(player.Header.Id);
-                ret = "\\[Blacklist\\] Blacklisted user " + player.Header.Id.ToString() + " :: \"" + player.Header.Name + "\"";
+                ret = "\\[Blacklist\\] Blacklisted user " + player.Header.Id.ToString() + " :: \"" + Tools.ChatStr(player.Header.Name) + "\"";
             }
         });
 
-        if (ret != "") return ret;
-        return "\\[Blacklist\\] \"" + name + "\" is not a valid user";
+        if (ret != "") {
+            Tools.CacheBlacklist();
+            return ret;
+        };
+
+        return "\\[Blacklist\\] \"" + Tools.ChatStr(name) + "\" is not a valid user";
     }
 
     public static string BlacklistAddUID(string uid) {
@@ -99,38 +103,46 @@ public class Administration
             {
                 if (!File.ReadAllLines(Plugin.UIDBlacklistPath).Contains(player.Header.Name))
                 {
-                    File.AppendAllText(Plugin.UIDBlacklistPath, player.Header.Name + "\n");
+                    File.AppendAllText(Plugin.UIDBlacklistPath, player.Header.Id.ToString() + "\n");
                 }
 
                 if (LobbyController.IsOwner) Administration.Ban(player.Header.Id);
-                ret = "\\[Blacklist\\] Blacklisted user " + player.Header.Id.ToString() + " :: \"" + player.Header.Name + "\"";
+                ret = "\\[Blacklist\\] Blacklisted user " + player.Header.Id.ToString() + " :: \"" + Tools.ChatStr(player.Header.Name) + "\"";
             }
         });
 
-        if (ret != "") return ret;
-        return "\\[Blacklist\\] \"" + uid + "\" is not a valid uid";
+        if (ret != "") {
+            Tools.CacheBlacklist();
+            return ret;
+        };
+
+        return "\\[Blacklist\\] \"" + Tools.ChatStr(uid) + "\" is not a valid uid";
     }
 
     public static string BlacklistRemove(string name) {
-        if (!File.ReadAllLines(Plugin.UIDBlacklistPath).Contains(name)) {
-            return "\\[Blacklist\\] Invalid Name: \"" + name + "\" This is your blacklist: \n" + BlacklistList();
+        if (!Tools.CachedBlacklist.Contains(name)) {
+            return "\\[Blacklist\\] Invalid Name: \"" + Tools.ChatStr(name) + "\" This is your blacklist: \n" + BlacklistList();
         }
 
-        File.WriteAllLines(Plugin.UIDBlacklistPath, File.ReadLines(Plugin.UIDBlacklistPath).Where(l => l != name).ToList());
-        return $"\\[Blacklist\\] Removed user \"" + name +"\" from blacklist.";
+        File.WriteAllLines(Plugin.UIDBlacklistPath, File.ReadLines(Plugin.UIDBlacklistPath).Where(l => l != Tools.ChatStr(name)).ToList());
+        Tools.CacheBlacklist();
+        return $"\\[Blacklist\\] Removed user \"" + Tools.ChatStr(name) +"\" from blacklist.";
     }
 
     public static string BlacklistList() {
-        List<string> cachedFile = File.ReadAllLines(Plugin.UIDBlacklistPath).ToList();
         string ret = "";
 
-        if (cachedFile.Count == 0) {
+        if (Tools.CachedBlacklist.Length == 0) {
             return $"\\[Blacklist\\] There's nobody in your blacklist";
         }
 
-        for (int i = 0; i < cachedFile.Count; ++i) {
-            string line = cachedFile[i];
-            ret += "\\[Blacklist\\] \"" + line + "\"\n";
+        for (int i = 0; i < Tools.CachedBlacklist.Length; ++i) {
+            string line = Tools.CachedBlacklist[i];
+
+            if (uint.TryParse(line, out uint uid))
+            {
+                ret += "\\[Blacklist\\] \"" + Tools.Name(uid) + "\"\n";
+            }
         }
 
         return ret;

@@ -77,6 +77,7 @@ public class Plugin : MonoBehaviour
         Pointers.Allocate();
         Stats.StartRecord();
         Tools.CacheAccId();
+        Tools.CacheBlacklist();
 
         Commands.Commands.Load();
         Bundle.Load();

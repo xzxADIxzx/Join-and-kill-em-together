@@ -187,7 +187,7 @@ public class Server : Endpoint, ISocketManager
         if (
             identity.IsSteamId &&
             LobbyController.IsOwner &&
-            File.ReadAllLines(Plugin.UIDBlacklistPath).Contains(Tools.Name(accId))
+            Tools.CachedBlacklist.Contains(Tools.Name(accId))
         ) {
             Log.Debug($"[Server] Connection rejected: blacklisted");
             con.Close();
