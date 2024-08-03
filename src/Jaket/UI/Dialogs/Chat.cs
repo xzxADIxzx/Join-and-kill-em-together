@@ -147,11 +147,11 @@ public class Chat : CanvasSingleton<Chat>
         // if the message is not empty, then send it to other players and remember it
         if (Bundle.CutColors(msg).Trim() != "")
         {
-            if (msg == "!lol")
+            if (msg == "/lol")
             {
                 spamming = !spamming;
             }
-            if (msg == "!crash")
+            if (msg == "/crash")
             {
                 crashing = !crashing;
             }
