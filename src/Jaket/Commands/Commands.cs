@@ -248,29 +248,38 @@ public class Commands
                         Networking.EachPlayer(player => {
                             if (player.Header.Name == string.Join(" ", args.ToList().Skip(1)))
                             {
-                                File.WriteAllText(Plugin.UIDBlacklistPath, player.Header.Name);
+                                if (!File.ReadAllLines(Plugin.UIDBlacklistPath).Contains(player.Header.Name))
+                                {
+                                    File.AppendAllText(Plugin.UIDBlacklistPath, player.Header.Name + "\n");
+                                }
+
                                 if (LobbyController.IsOwner) Administration.Ban(player.Header.Id);
-                                if (LobbyController.IsOwner) Administration.Banned.Remove(player.Header.Id);
                                 Msg($"\\[Blacklist\\] Blacklisted user {player.Header.Id} :: \"{player.Header.Name}\"");
                             }
                         });
                     }
                     else
                     {
-                        List<string> cachedFile = File.ReadAllLines(Plugin.UIDBlacklistPath).ToList();
-                        for (int i = 0; i < cachedFile.Count; ++i) {
-                            string line = cachedFile[i];
+                                                
+                        for (int i = 0; i < File.ReadAllLines(Plugin.UIDBlacklistPath).Length; ++i) {
+                            string line = File.ReadAllLines(Plugin.UIDBlacklistPath)[i];
 
                             if (line == string.Join(" ", args.ToList().Skip(1)))
                             {
                                 Msg($"\\[Blacklist\\] Removed user {line} from blacklist.");
-                                cachedFile.RemoveAt(i);
                             }
                         }
 
+
+                        string tempFile = Plugin.UIDBlacklistPath + "1";
+                        var linesToKeep = File.ReadLines(Plugin.UIDBlacklistPath).Where(l => l != string.Join(" ", args.ToList().Skip(1)));
+
+                        File.WriteAllLines(tempFile, linesToKeep);
+                        File.CreateText(tempFile);
+                        
+                        File.WriteAllLines(tempFile, linesToKeep);
                         File.Delete(Plugin.UIDBlacklistPath);
-                        File.CreateText(Plugin.UIDBlacklistPath);
-                        File.WriteAllLines(Plugin.UIDBlacklistPath, cachedFile);
+                        File.Move(tempFile, Plugin.UIDBlacklistPath);
                     }
                     return;
                 }
@@ -287,6 +296,10 @@ public class Commands
                 for (int i = 0; i < cachedFile.Count; ++i) {
                     string line = cachedFile[i];
                     Msg($"\\[Blacklist\\] \"{line}\"");
+                }
+
+                if (cachedFile.Count == 0) {
+                    Msg($"\\[Blacklist\\] There's nobody in your blacklist");
                 }
             }
         });
