@@ -243,36 +243,40 @@ public class Commands
                 }
                 else
                 {
+                    string username = string.Join(" ", args.ToList().Skip(1));
                     if (args[0].ToLower() == "add")
                     {
-                        Networking.EachPlayer(player => {
-                            if (player.Header.Name == string.Join(" ", args.ToList().Skip(1)))
-                            {
-                                if (!File.ReadAllLines(Plugin.UIDBlacklistPath).Contains(player.Header.Name))
-                                {
-                                    File.AppendAllText(Plugin.UIDBlacklistPath, player.Header.Name + "\r\n");
-                                }
+                        // Networking.EachPlayer(player => {
+                        //     if (player.Header.Name == string.Join(" ", args.ToList().Skip(1)))
+                        //     {
+                        //         if (!File.ReadAllLines(Plugin.UIDBlacklistPath).Contains(player.Header.Name))
+                        //         {
+                        //             File.AppendAllText(Plugin.UIDBlacklistPath, player.Header.Name + "\r\n");
+                        //         }
 
-                                if (LobbyController.IsOwner) Administration.Ban(player.Header.Id);
-                                Msg($"\\[Blacklist\\] Blacklisted user {player.Header.Id} :: \"{player.Header.Name}\"");
-                            }
-                        });
+                        //         if (LobbyController.IsOwner) Administration.Ban(player.Header.Id);
+                        //         Msg($"\\[Blacklist\\] Blacklisted user {player.Header.Id} :: \"{player.Header.Name}\"");
+                        //     }
+                        // });
+
+                        Msg(Administration.BlacklistAdd(username));
                     }
                     else
                     {
                                                 
-                        for (int i = 0; i < File.ReadAllLines(Plugin.UIDBlacklistPath).Length; ++i) {
-                            string line = File.ReadAllLines(Plugin.UIDBlacklistPath)[i];
+                        // for (int i = 0; i < File.ReadAllLines(Plugin.UIDBlacklistPath).Length; ++i) {
+                        //     string line = File.ReadAllLines(Plugin.UIDBlacklistPath)[i];
 
-                            if (line == string.Join(" ", args.ToList().Skip(1)))
-                            {
-                                Msg($"\\[Blacklist\\] Removed user {line} from blacklist.");
-                            }
-                        }
+                        //     if (line == string.Join(" ", args.ToList().Skip(1)))
+                        //     {
+                        //         Msg($"\\[Blacklist\\] Removed user {line} from blacklist.");
+                        //     }
+                        // }
 
-                        File.WriteAllLines(Plugin.UIDBlacklistPath, File.ReadLines(Plugin.UIDBlacklistPath).Where(l => l != string.Join(" ", args.ToList().Skip(1))).ToList());
+                        // File.WriteAllLines(Plugin.UIDBlacklistPath, File.ReadLines(Plugin.UIDBlacklistPath).Where(l => l != string.Join(" ", args.ToList().Skip(1))).ToList());
+
+                        Msg(Administration.BlacklistRemove(username));
                     }
-                    return;
                 }
             }
             else
@@ -283,15 +287,7 @@ public class Commands
                     return;
                 }
 
-                List<string> cachedFile = File.ReadAllLines(Plugin.UIDBlacklistPath).ToList();
-                for (int i = 0; i < cachedFile.Count; ++i) {
-                    string line = cachedFile[i];
-                    Msg($"\\[Blacklist\\] \"{line}\"");
-                }
-
-                if (cachedFile.Count == 0) {
-                    Msg($"\\[Blacklist\\] There's nobody in your blacklist");
-                }
+                Msg(Administration.BlacklistList());
             }
         });
     }

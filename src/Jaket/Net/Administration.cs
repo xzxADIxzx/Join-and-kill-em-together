@@ -2,8 +2,11 @@ namespace Jaket.Net;
 
 using HarmonyLib;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 using Jaket.Content;
+using Jaket.UI.Dialogs;
 
 /// <summary> Class dedicated to protecting the lobby from unfavorable people. </summary>
 public class Administration
@@ -66,6 +69,51 @@ public class Administration
         Banned.Add(id);
         LobbyController.Lobby?.SendChatString("#/k" + id);
         LobbyController.Lobby?.SetData("banned", string.Join(" ", Banned));
+    }
+
+    public static string BlacklistAdd(string name) {
+        string ret = "";
+        
+        Networking.EachPlayer(player => {
+            if (player.Header.Name == name)
+            {
+                if (!File.ReadAllLines(Plugin.UIDBlacklistPath).Contains(player.Header.Name))
+                {
+                    File.AppendAllText(Plugin.UIDBlacklistPath, player.Header.Name + "\r\n");
+                }
+
+                if (LobbyController.IsOwner) Administration.Ban(player.Header.Id);
+                ret = "\\[Blacklist\\] Blacklisted user " + player.Header.Id.ToString() + " :: \"" + player.Header.Name + "\"";
+            }
+        });
+
+        if (ret != "") return ret;
+        return "\\[Blacklist\\] \"" + name + "\" is not a valid user";
+    }
+
+    public static string BlacklistRemove(string name) {
+        if (!File.ReadAllLines(Plugin.UIDBlacklistPath).Contains(name)) {
+            return "\\[Blacklist\\] Invalid Name: \"" + name + "\" This is your blacklist: \n" + BlacklistList();
+        }
+
+        File.WriteAllLines(Plugin.UIDBlacklistPath, File.ReadLines(Plugin.UIDBlacklistPath).Where(l => l != name).ToList());
+        return $"\\[Blacklist\\] Removed user \"" + name +"\" from blacklist.";
+    }
+
+    public static string BlacklistList() {
+        List<string> cachedFile = File.ReadAllLines(Plugin.UIDBlacklistPath).ToList();
+        string ret = "";
+
+        if (cachedFile.Count == 0) {
+            return $"\\[Blacklist\\] There's nobody in your blacklist";
+        }
+
+        for (int i = 0; i < cachedFile.Count; ++i) {
+            string line = cachedFile[i];
+            ret += "\\[Blacklist\\] \"" + line + "\"\n";
+        }
+
+        return ret;
     }
 
     /// <summary> Whether the player is sending a large amount of data. </summary>
