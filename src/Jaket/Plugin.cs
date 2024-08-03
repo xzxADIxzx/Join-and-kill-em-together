@@ -7,6 +7,7 @@ using System.Linq;
 using UnityEngine.SceneManagement;
 using System.Reflection;
 using System;
+using System.IO;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -41,9 +42,7 @@ public class Plugin : MonoBehaviour
     public static readonly string[] Compatible = {"Jaket", "CrosshairColorFixer", "IntroSkip", "Healthbars", "RcHud", "PluginConfigurator", "AngryLevelLoader"};
     /// <summary> Whether at least one incompatible mod is loaded. </summary>
     public bool HasIncompatibility;
-    public static readonly string[] UIDBlacklist = {
-        
-    };
+    public static readonly string UIDBlacklistPath = "custom-jaket.uidblacklist.txt";
 
     private int prevhealth = MonoSingleton<NewMovement>.Instance.hp;
 
@@ -68,6 +67,10 @@ public class Plugin : MonoBehaviour
     private void Init()
     {
         if (Initialized) return;
+
+        if (!File.Exists(UIDBlacklistPath)) {
+            File.CreateText(UIDBlacklistPath);
+        }
 
         // notify players about the availability of an update so that they no longer whine to me about something not working
         Version.Check4Update();

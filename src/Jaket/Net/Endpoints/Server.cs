@@ -3,10 +3,12 @@ namespace Jaket.Net.Endpoints;
 using Steamworks;
 using Steamworks.Data;
 using System;
+using System.IO;
 using System.Linq;
 
 using Jaket.Content;
 using Jaket.IO;
+using Jaket.Net;
 using Jaket.Net.Types;
 using Jaket.Sprays;
 using Jaket.World;
@@ -165,7 +167,7 @@ public class Server : Endpoint, ISocketManager
         }
 
         // prevent blacklisted players from joining
-        if (identity.IsSteamId && Plugin.UIDBlacklist.Contains(accId.ToString())) {
+        if (identity.IsSteamId && LobbyController.IsOwner && File.ReadAllLines(Plugin.UIDBlacklistPath).Contains(Tools.Name(accId))) {
             Log.Debug($"[Server] Connection rejected: blacklisted");
             con.Close();
         } else {

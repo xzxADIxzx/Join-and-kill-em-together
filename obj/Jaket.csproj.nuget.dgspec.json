@@ -1,25 +1,27 @@
 {
   "format": 1,
   "restore": {
-    "/home/glitch/modded-jaket-main/Jaket.csproj": {}
+    "C:\\Users\\Kayden\\Downloads\\custom-jaket2-main\\Jaket.csproj": {}
   },
   "projects": {
-    "/home/glitch/modded-jaket-main/Jaket.csproj": {
-      "version": "1.3.0",
+    "C:\\Users\\Kayden\\Downloads\\custom-jaket2-main\\Jaket.csproj": {
+      "version": "1.3.42",
       "restore": {
-        "projectUniqueName": "/home/glitch/modded-jaket-main/Jaket.csproj",
+        "projectUniqueName": "C:\\Users\\Kayden\\Downloads\\custom-jaket2-main\\Jaket.csproj",
         "projectName": "Jaket",
-        "projectPath": "/home/glitch/modded-jaket-main/Jaket.csproj",
-        "packagesPath": "/home/glitch/.nuget/packages/",
-        "outputPath": "/home/glitch/modded-jaket-main/obj/",
+        "projectPath": "C:\\Users\\Kayden\\Downloads\\custom-jaket2-main\\Jaket.csproj",
+        "packagesPath": "C:\\Users\\Kayden\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Kayden\\Downloads\\custom-jaket2-main\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/glitch/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\Kayden\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netstandard2.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {},
           "https://api.nuget.org/v3/index.json": {},
           "https://nuget.bepinex.dev/v3/index.json": {},
@@ -35,11 +37,6 @@
           "warnAsError": [
             "NU1605"
           ]
-        },
-        "restoreAuditProperties": {
-          "enableAudit": "true",
-          "auditLevel": "low",
-          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -69,7 +66,7 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.303/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.424\\RuntimeIdentifierGraph.json"
         }
       }
     }

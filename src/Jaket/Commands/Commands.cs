@@ -1,6 +1,10 @@
 namespace Jaket.Commands;
 
 using System;
+using System.Collections; 
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UnityEngine;
 
 using Jaket.Assets;
@@ -223,6 +227,67 @@ public class Commands
 
             for (uint i = 0; i < Chat.MESSAGES_SHOWN; ++i) {
                 Msg("\\");
+            }
+        });
+
+        Handler.Register("blacklist", "add <Username> / remove <Username> / list", "Blacklist the user with said UID", args => {
+            void Msg(string msg) => chat.Receive($"[14]{msg}[]");
+            string helpMessage = "\\[Blacklist\\] usage: /blacklist add <Username> / remove <Username> / list";
+
+            if (args.Length >= 2)
+            {
+                if (args[0].ToLower() != "add" && args[0].ToLower() != "remove")
+                {
+                    Msg(helpMessage);
+                    return;
+                }
+                else
+                {
+                    if (args[0].ToLower() == "add")
+                    {
+                        Networking.EachPlayer(player => {
+                            if (player.Header.Name == string.Join(" ", args.ToList().Skip(1)))
+                            {
+                                File.WriteAllText(Plugin.UIDBlacklistPath, player.Header.Name);
+                                if (LobbyController.IsOwner) Administration.Ban(player.Header.Id);
+                                if (LobbyController.IsOwner) Administration.Banned.Remove(player.Header.Id);
+                                Msg($"\\[Blacklist\\] Blacklisted user {player.Header.Id} :: \"{player.Header.Name}\"");
+                            }
+                        });
+                    }
+                    else
+                    {
+                        List<string> cachedFile = File.ReadAllLines(Plugin.UIDBlacklistPath).ToList();
+                        for (int i = 0; i < cachedFile.Count; ++i) {
+                            string line = cachedFile[i];
+
+                            if (line == string.Join(" ", args.ToList().Skip(1)))
+                            {
+                                Msg($"\\[Blacklist\\] Removed user {line} from blacklist.");
+                                cachedFile.RemoveAt(i);
+                            }
+                        }
+
+                        File.Delete(Plugin.UIDBlacklistPath);
+                        File.CreateText(Plugin.UIDBlacklistPath);
+                        File.WriteAllLines(Plugin.UIDBlacklistPath, cachedFile);
+                    }
+                    return;
+                }
+            }
+            else
+            {
+                if (args[0].ToLower() != "list")
+                {
+                    Msg(helpMessage);
+                    return;
+                }
+
+                List<string> cachedFile = File.ReadAllLines(Plugin.UIDBlacklistPath).ToList();
+                for (int i = 0; i < cachedFile.Count; ++i) {
+                    string line = cachedFile[i];
+                    Msg($"\\[Blacklist\\] \"{line}\"");
+                }
             }
         });
     }

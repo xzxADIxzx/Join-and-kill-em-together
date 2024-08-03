@@ -105,7 +105,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
             lobbyAccessLevel = 0;
             pvp.isOn = true;
             cheats.isOn = false;
-            mods.isOn = false;
+            mods.isOn = true;
             bosses.isOn = true;
         }
         else field.text = LobbyController.Lobby?.GetData("name");
