@@ -40,17 +40,18 @@ public class Votes
     }
 
     /// <summary> Changes the name of the character to Virage. </summary>
+    // removing the functionallity from this fork
     public static void Name(Text dialog, ref string name)
     {
-        dialog.text = dialog.text.Replace("Mirage", "Virage");
+        // dialog.text = dialog.text.Replace("Mirage", "Virage");
 
-        var tex = dialog.font.material.mainTexture; // aspect ratio of the font texture must always be 1
-        if (tex.width != tex.height) dialog.font.RequestCharactersInTexture("I", Mathf.Max(tex.width, tex.height));
+        // var tex = dialog.font.material.mainTexture; // aspect ratio of the font texture must always be 1
+        // if (tex.width != tex.height) dialog.font.RequestCharactersInTexture("I", Mathf.Max(tex.width, tex.height));
 
-        dialog.font.RequestCharactersInTexture("3", 22);
-        dialog.font.GetCharacterInfo('3', out var info, 22);
+        // dialog.font.RequestCharactersInTexture("3", 22);
+        // dialog.font.GetCharacterInfo('3', out var info, 22);
 
-        name = name.Replace("MIRAGE:", $"VIRAG <quad size=18 x={info.uvBottomLeft.x:0.0000} y={info.uvBottomLeft.y:0.0000} width={info.uvTopRight.x - info.uvBottomLeft.x:0.0000} height={info.uvTopRight.y - info.uvBottomLeft.y:0.0000}> :".Replace(',', '.'));
+        // name = name.Replace("MIRAGE:", $"VIRAG <quad size=18 x={info.uvBottomLeft.x:0.0000} y={info.uvBottomLeft.y:0.0000} width={info.uvTopRight.x - info.uvBottomLeft.x:0.0000} height={info.uvTopRight.y - info.uvBottomLeft.y:0.0000}> :".Replace(',', '.'));
     }
 
     #endregion
