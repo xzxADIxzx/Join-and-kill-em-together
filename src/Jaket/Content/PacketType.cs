@@ -36,5 +36,7 @@ public enum PacketType
     /// <summary> Any action with CyberGrind, like pattern and wave. </summary>
     CyberGrindAction,
     /// <summary> Player voted for an option. Voting can be different: skip of a cutscene, dialog or choice of an option. </summary>
-    Vote
+    Vote,
+
+    None
 }

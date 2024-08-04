@@ -81,7 +81,7 @@ public class Administration
     public static void Kick(uint id)
     {
 
-        Networking.Send(PacketType.Ban, null, (data, size) =>
+        Networking.Send(PacketType.None, null, (data, size) =>
         {
             var con = Networking.FindCon(id);
             Tools.Send(con, data, size);

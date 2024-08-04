@@ -1,12 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "hw1m651C5Qg=",
+  "dgSpecHash": "bT3XXuJcI2UohUWbo/HbKDUt4omI5BsFxvHj+fzEqAX3ZJQh6tO+PndyGJkjYP0x2fu2NGaid20vBgij6IwJQw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\koolaid\\Documents\\GitHub\\custom-jaket2\\Jaket.csproj",
+  "projectFilePath": "A:\\Downloads\\custom-jaket2-main\\Jaket.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\koolaid\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
-    "C:\\Users\\koolaid\\.nuget\\packages\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512",
-    "C:\\Users\\koolaid\\.nuget\\packages\\unityengine.modules\\2019.4.40\\unityengine.modules.2019.4.40.nupkg.sha512"
+    "C:\\Users\\Kayden\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "C:\\Users\\Kayden\\.nuget\\packages\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512",
+    "C:\\Users\\Kayden\\.nuget\\packages\\unityengine.modules\\2019.4.40\\unityengine.modules.2019.4.40.nupkg.sha512"
   ],
   "logs": []
 }

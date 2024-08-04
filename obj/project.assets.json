@@ -435,19 +435,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\koolaid\\.nuget\\packages\\": {}
+    "C:\\Users\\Kayden\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.3.42",
     "restore": {
-      "projectUniqueName": "C:\\Users\\koolaid\\Documents\\GitHub\\custom-jaket2\\Jaket.csproj",
+      "projectUniqueName": "A:\\Downloads\\custom-jaket2-main\\Jaket.csproj",
       "projectName": "Jaket",
-      "projectPath": "C:\\Users\\koolaid\\Documents\\GitHub\\custom-jaket2\\Jaket.csproj",
-      "packagesPath": "C:\\Users\\koolaid\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\koolaid\\Documents\\GitHub\\custom-jaket2\\obj\\",
+      "projectPath": "A:\\Downloads\\custom-jaket2-main\\Jaket.csproj",
+      "packagesPath": "C:\\Users\\Kayden\\.nuget\\packages\\",
+      "outputPath": "A:\\Downloads\\custom-jaket2-main\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\koolaid\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Kayden\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -470,11 +470,6 @@
         "warnAsError": [
           "NU1605"
         ]
-      },
-      "restoreAuditProperties": {
-        "enableAudit": "true",
-        "auditLevel": "low",
-        "auditMode": "direct"
       }
     },
     "frameworks": {
@@ -504,7 +499,7 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.303\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.424\\RuntimeIdentifierGraph.json"
       }
     }
   }
