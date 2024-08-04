@@ -79,7 +79,6 @@ public class Administration
             {
                 if (!File.ReadAllLines(Plugin.UIDBlacklistPath).Contains(player.Header.Name))
                 {
-                    File.AppendAllText(Plugin.UIDBlacklistPath, player.Header.Name + "\n");
                     File.AppendAllText(Plugin.UIDBlacklistPath, player.Header.Id.ToString() + "\n");
                 }
 
@@ -104,7 +103,6 @@ public class Administration
             {
                 if (!File.ReadAllLines(Plugin.UIDBlacklistPath).Contains(player.Header.Name))
                 {
-                    File.AppendAllText(Plugin.UIDBlacklistPath, player.Header.Name + "\n");
                     File.AppendAllText(Plugin.UIDBlacklistPath, player.Header.Id.ToString() + "\n");
                 }
 
@@ -129,14 +127,7 @@ public class Administration
             line = Tools.CachedBlacklist[i];
             if (uint.TryParse(line, out uint uid)) 
             {
-                Log.Debug($"BlacklistRemove: uid {uid}");
-                Log.Debug($"BlacklistRemove: uid_name {Tools.Name(uid)}");
-                Log.Debug($"BlacklistRemove: input name {name}");
                 if (Tools.Name(uid) == name) break;
-            }
-            else
-            {
-                Log.Debug($"BlacklistRemove: FAILED! line {line}");
             }
 
             line = "";
