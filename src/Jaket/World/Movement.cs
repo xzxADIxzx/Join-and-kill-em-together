@@ -349,8 +349,8 @@ public class Movement : MonoSingleton<Movement>
     {
         bool dialog = UI.AnyDialog, blocking = UI.AnyMovementBlocking;
 
-        ToggleCursor(dialog);
-        ToggleHud(Instance.Emoji == 0xFF);
+        ToggleCursor(dialog || Tools.Scene == "Level 2-S");
+        ToggleHud(Instance.Emote == 0xFF);
 
         if (nm.dead) return;
 
