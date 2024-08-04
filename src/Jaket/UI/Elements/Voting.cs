@@ -1,13 +1,17 @@
 namespace Jaket.UI.Elements;
 
 using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+using Random = System.Random;
+
 using Jaket.Assets;
-using Jaket.World;
+using Jaket.IO;
 using Jaket.Net;
+using Jaket.World;
 
 using static Rect;
 
@@ -25,8 +29,24 @@ public class Voting : MonoBehaviour
     private int lifetime;
     /// <summary> Text displaying the remaining time until the end of the voting. </summary>
     private Text display;
+
     /// <summary> Text displaying the amount of votes for each option. </summary>
     private Text[] options = new Text[3];
+    /// <summary> Option with the largest number of votes. </summary>
+    private int best
+    {
+        get
+        {
+            int[] v = { Votes.Count(0), Votes.Count(1), Votes.Count(2) };
+            int max = Mathf.Max(v[0], v[1], v[2]);
+
+            List<int> list = new();
+            for (int i = 0; i < 3; i++) if (v[i] == max) list.Add(i);
+
+            Random rand = new(Writer.Uint2int(LobbyController.Lobby.Value.Id.AccountId));
+            return list[rand.Next(0, list.Count)];
+        }
+    }
 
     private void Start()
     {
@@ -79,7 +99,7 @@ public class Voting : MonoBehaviour
                         Votes.Vote(option);
                         Votes.UpdateVote(Tools.AccId, option);
                     });
-                    options[option] = UIB.Text("-------", btn.transform, new(-20f, 0f, 128f, 128f, new(0f, .5f)), size: 16);
+                    options[option] = UIB.Text("", btn.transform, new(-20f, 0f, 128f, 128f, new(0f, .5f)), size: 16);
                     options[option].transform.eulerAngles = new(0f, 0f, 90f);
 
                     return ori.Invoke;
@@ -116,7 +136,12 @@ public class Voting : MonoBehaviour
 
         if (type == VotingType.Choice)
         {
-            for (byte i = 0; i < 3; i++) options[i].text = Bundle.Format("votes.amount", Votes.Count(i).ToString());
+            for (byte i = 0; i < 3; i++)
+            {
+                options[i].text = Bundle.Format("votes.amount", Votes.Count(i).ToString());
+                options[i].color = Pal.red;
+            }
+            options[best].color = Pal.green;
         }
     }
 
@@ -139,7 +164,7 @@ public class Voting : MonoBehaviour
                 onOver(0);
                 break;
             case VotingType.Choice:
-                // TODO choose the best option
+                onOver(best);
                 break;
         }
     }
