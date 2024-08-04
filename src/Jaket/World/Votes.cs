@@ -62,6 +62,21 @@ public class Votes
             fallen.transform.GetChild(i).GetComponent<Image>().sprite = ModAssets.ChanFallen;
 
         Tools.ResFind<SpritePoses>(sp => Tools.IsReal(sp) && sp.copyChangeTo.Length > 0, sp => sp.poses = ModAssets.ChanPoses);
+
+        Tools.ObjFind("Canvas/PowerUpVignette/Panel/Intro/Text").AddComponent<Voting>();
+        Tools.ObjFind("Canvas/PowerUpVignette/Panel/Intro/Text (1)").AddComponent<Voting>();
+
+        foreach (Transform act in Tools.ObjFind("Canvas/PowerUpVignette/Panel/Aspect Ratio Mask").transform)
+        {
+            foreach (Transform dialog in act)
+            {
+                if (dialog.name.Contains("Dialogue"))
+                    dialog.transform.GetChild(0).gameObject.AddComponent<Voting>();
+
+                if (dialog.name.Contains("Choices"))
+                    dialog.gameObject.AddComponent<Voting>();
+            }
+        }
     }
 
     /// <summary> Changes the name of the character to Virage. </summary>
