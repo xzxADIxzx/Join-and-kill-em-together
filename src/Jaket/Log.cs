@@ -35,7 +35,7 @@ public class Log
         {
             var lobby = LobbyController.Offline ? "null" : $"{LobbyController.Lobby?.GetData("name")} ({LobbyController.Lobby.Value.Id})";
             var owner = LobbyController.Lobby?.Owner.ToString() ?? "null";
-            Debug($"Lobby status updated: cl is {lobby}, owner is {owner}");
+            Debug($"Lobby status updated: name is {lobby}, owner is {owner}");
         };
         Events.OnLobbyEntered += () => Debug("Entered the new lobby");
     }

@@ -15,17 +15,35 @@ public class Votes
     public static Dictionary<uint, byte> Ids2Votes = new();
 
     /// <summary> Loads the vote system. </summary>
-    public static void Load() => Events.OnLoaded += () =>
+    public static void Load()
     {
-        if (LobbyController.Online && Tools.Scene == "Level 2-S") Init2S();
-    };
+        Events.OnLoaded += () =>
+        {
+            if (LobbyController.Online) Init();
+        };
+        Events.OnLobbyEntered += Init;
+    }
+
+    /// <summary> Initializes the vote system. </summary>
+    public static void Init()
+    {
+        if (Tools.Scene == "Level 2-S") Init2S();
+        Tools.ResFind<CutsceneSkip>(Tools.IsReal, cs => cs.gameObject.AddComponent<Voting>());
+    }
 
     /// <summary> Votes for the given option. </summary>
-    public static void Vote(byte option) => Networking.Send(PacketType.Vote, w =>
+    public static void Vote(byte option = 0) => Networking.Send(PacketType.Vote, w =>
     {
         w.Id(Tools.AccId);
         w.Byte(option);
     });
+
+    /// <summary> Updates the vote of the given player. </summary>
+    public static void UpdateVote(uint owner, byte vote)
+    {
+        Ids2Votes[owner] = vote;
+        CurrentVoting?.Invoke("UpdatesVotes", 0f);
+    }
 
     #region 2-S
 

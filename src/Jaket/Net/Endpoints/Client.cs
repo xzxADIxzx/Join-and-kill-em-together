@@ -64,7 +64,7 @@ public class Client : Endpoint, IConnectionManager
 
         Listen(PacketType.CyberGrindAction, CyberGrind.LoadPattern);
 
-        Listen(PacketType.Vote, r => Votes.Ids2Votes[r.Id()] = r.Byte());
+        Listen(PacketType.Vote, r => Votes.UpdateVote(r.Id(), r.Byte()));
     }
 
     public override void Update()
