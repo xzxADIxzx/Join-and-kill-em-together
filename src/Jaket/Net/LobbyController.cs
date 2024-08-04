@@ -197,7 +197,6 @@ public class LobbyController
         "Intermission2" => "Intermission",
 
         // custom level normalization
-
         // ultrabus
         "UltrabusLmao" => "Ultrabus",
 
