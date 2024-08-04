@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyDescriptionAttribute("Multikill is still in development, so I created my own multiplayer mod for Ultrak" +
     "ill")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.3.42.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.3.42")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.3.42+e4f14caa2d4b14a781e357409ac522ba4adf0eee")]
 [assembly: System.Reflection.AssemblyProductAttribute("Jaket")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Jaket")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.3.42.0")]
