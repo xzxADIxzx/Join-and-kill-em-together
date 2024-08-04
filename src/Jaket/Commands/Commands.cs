@@ -296,7 +296,7 @@ public class Commands
             }
         });
 
-        Handler.Register("lol", "Spam chat", args => {
+        Handler.Register("lol", "Toggle chat spam", args => {
             Chat.Spamming = !Chat.Spamming;
         });
     }
