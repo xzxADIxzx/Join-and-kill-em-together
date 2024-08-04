@@ -1,31 +1,56 @@
 namespace Jaket.World;
 
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
 using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net;
+using Jaket.UI.Elements;
 
 /// <summary> Class that manages voting for the skip of a cutscene or an option at 2-S. </summary>
 public class Votes
 {
     /// <summary> Voted players' ids and their votes. </summary>
     public static Dictionary<uint, byte> Ids2Votes = new();
+    /// <summary> Current voting taking all updates. </summary>
+    public static Voting CurrentVoting;
 
     /// <summary> Loads the vote system. </summary>
-    public static void Load() => Events.OnLoaded += () =>
+    public static void Load()
     {
-        if (LobbyController.Online && Tools.Scene == "Level 2-S") Init2S();
-    };
+        Events.OnLoaded += () =>
+        {
+            if (LobbyController.Online) Init();
+        };
+        Events.OnLobbyEntered += Init;
+    }
+
+    /// <summary> Initializes the vote system. </summary>
+    public static void Init()
+    {
+        if (Tools.Scene == "Level 2-S") Init2S();
+        Tools.ResFind<CutsceneSkip>(Tools.IsReal, cs => cs.gameObject.AddComponent<Voting>());
+    }
 
     /// <summary> Votes for the given option. </summary>
-    public static void Vote(byte option) => Networking.Send(PacketType.Vote, w =>
+    public static void Vote(byte option = 0) => Networking.Send(PacketType.Vote, w =>
     {
         w.Id(Tools.AccId);
         w.Byte(option);
     });
+
+    /// <summary> Updates the vote of the given player. </summary>
+    public static void UpdateVote(uint owner, byte vote)
+    {
+        Ids2Votes[owner] = vote;
+        CurrentVoting?.Invoke("UpdateVotes", 0f);
+    }
+
+    /// <summary> Counts the amount of votes for the given option. </summary>
+    public static int Count(byte vote) => Ids2Votes.Count(p => p.Value == vote);
 
     #region 2-S
 

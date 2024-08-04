@@ -126,7 +126,7 @@ public class Server : Endpoint, ISocketManager
             }
             else
             {
-                Votes.Ids2Votes[owner] = r.Byte();
+                Votes.UpdateVote(owner, r.Byte());
                 Redirect(r, con);
             }
         });
