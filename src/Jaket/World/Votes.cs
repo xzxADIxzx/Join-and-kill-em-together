@@ -7,12 +7,15 @@ using UnityEngine.UI;
 using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net;
+using Jaket.UI.Elements;
 
 /// <summary> Class that manages voting for the skip of a cutscene or an option at 2-S. </summary>
 public class Votes
 {
     /// <summary> Voted players' ids and their votes. </summary>
     public static Dictionary<uint, byte> Ids2Votes = new();
+    /// <summary> Current voting taking all updates. </summary>
+    public static Voting CurrentVoting;
 
     /// <summary> Loads the vote system. </summary>
     public static void Load()
