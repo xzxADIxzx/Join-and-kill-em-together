@@ -25,6 +25,7 @@ public class Administration
 
     /// <summary> List of banned player ids. </summary>
     public static List<uint> Banned = new();
+    public static List<uint> Kicked = new();
     /// <summary> List of banned player sprays. </summary>
     public static List<uint> BannedSprays = new();
 
@@ -43,12 +44,18 @@ public class Administration
             if (LobbyController.IsOwner) return;
 
             Banned.Clear();
+            Kicked.Clear();
             LobbyController.Lobby?.GetData("banned").Split(' ').Do(sid =>
             {
                 if (uint.TryParse(sid, out var id)) Banned.Add(id);
             });
+
+            LobbyController.Lobby?.GetData("kicked").Split(' ').Do(sid =>
+            {
+                if (uint.TryParse(sid, out var id)) Kicked.Add(id);
+            });
         };
-        Events.OnLobbyEntered += () => { Banned.Clear(); entityBullets.Clear(); entities.Clear(); plushies.Clear(); };
+        Events.OnLobbyEntered += () => { Banned.Clear(); Kicked.Clear(); entityBullets.Clear(); entities.Clear(); plushies.Clear(); };
         Events.EverySecond += spam.Clear;
         Events.EverySecond += commonBullets.Clear;
         Events.EveryDozen += warnings.Clear;
@@ -69,6 +76,22 @@ public class Administration
         Banned.Add(id);
         LobbyController.Lobby?.SendChatString("#/k" + id);
         LobbyController.Lobby?.SetData("banned", string.Join(" ", Banned));
+    }
+
+    public static void Kick(uint id)
+    {
+
+        Networking.Send(PacketType.Ban, null, (data, size) =>
+        {
+            var con = Networking.FindCon(id);
+            Tools.Send(con, data, size);
+            con?.Flush();
+            Events.Post2(() => con?.Close());
+        });
+
+        Kicked.Add(id);
+        Chat.Instance.Send($"\n[yellow][14]\\[Server\\] Kicked {Tools.Name(id)}[][]");
+        LobbyController.Lobby?.SetData("kicked", string.Join(" ", Kicked));
     }
 
     public static string BlacklistAdd(string name) {
