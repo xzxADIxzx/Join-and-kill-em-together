@@ -192,6 +192,8 @@ public class LobbyController
         "uk_construct" => "Sandbox",
         "Endless" => "Cyber Grind",
         "CreditsMuseum2" => "Museum",
+        "Intermission1" => "Intermission",
+        "Intermission2" => "Intermission",
         _ => map.Substring("Level ".Length)
     };
 
