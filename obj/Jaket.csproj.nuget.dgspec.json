@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "A:\\Downloads\\custom-jaket2-main\\Jaket.csproj": {}
+    "A:\\Downloads\\custom-jaket2\\Jaket.csproj": {}
   },
   "projects": {
-    "A:\\Downloads\\custom-jaket2-main\\Jaket.csproj": {
+    "A:\\Downloads\\custom-jaket2\\Jaket.csproj": {
       "version": "1.3.42",
       "restore": {
-        "projectUniqueName": "A:\\Downloads\\custom-jaket2-main\\Jaket.csproj",
+        "projectUniqueName": "A:\\Downloads\\custom-jaket2\\Jaket.csproj",
         "projectName": "Jaket",
-        "projectPath": "A:\\Downloads\\custom-jaket2-main\\Jaket.csproj",
+        "projectPath": "A:\\Downloads\\custom-jaket2\\Jaket.csproj",
         "packagesPath": "C:\\Users\\Kayden\\.nuget\\packages\\",
-        "outputPath": "A:\\Downloads\\custom-jaket2-main\\obj\\",
+        "outputPath": "A:\\Downloads\\custom-jaket2\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Kayden\\AppData\\Roaming\\NuGet\\NuGet.Config",

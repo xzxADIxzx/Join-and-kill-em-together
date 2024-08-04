@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "bT3XXuJcI2UohUWbo/HbKDUt4omI5BsFxvHj+fzEqAX3ZJQh6tO+PndyGJkjYP0x2fu2NGaid20vBgij6IwJQw==",
+  "dgSpecHash": "/AllUgO2Y9AhFAokLMNh1Oji77Cqt8isiUrHWrB/H4jzz02ZuUzKvmLSRXrtNV26Wc8lyqFeIc5SOTg2WwvbXA==",
   "success": true,
-  "projectFilePath": "A:\\Downloads\\custom-jaket2-main\\Jaket.csproj",
+  "projectFilePath": "A:\\Downloads\\custom-jaket2\\Jaket.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Kayden\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
     "C:\\Users\\Kayden\\.nuget\\packages\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512",
