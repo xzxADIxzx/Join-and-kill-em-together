@@ -92,8 +92,8 @@ public class Voting : MonoBehaviour
 
     private void UpdateVotes()
     {
+        if (lifetime == 0) Invoke("SlowUpdate", 0f);
         if (Votes.Ids2Votes.Count == LobbyController.Lobby?.MemberCount) lifetime = 9;
-        if (lifetime == 0) SlowUpdate();
 
         if (type == VotingType.Choice)
         {
@@ -101,7 +101,7 @@ public class Voting : MonoBehaviour
         }
     }
 
-    private void OnEnabled()
+    private void OnEnable()
     {
         Votes.Ids2Votes.Clear();
         Votes.CurrentVoting = this;
@@ -109,7 +109,7 @@ public class Voting : MonoBehaviour
         lifetime = 0;
     }
 
-    private void OnDisabled()
+    private void OnDisable()
     {
         switch (type)
         {
