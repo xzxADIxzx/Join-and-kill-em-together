@@ -1,6 +1,7 @@
 namespace Jaket.World;
 
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -45,8 +46,11 @@ public class Votes
     public static void UpdateVote(uint owner, byte vote)
     {
         Ids2Votes[owner] = vote;
-        CurrentVoting?.Invoke("UpdatesVotes", 0f);
+        CurrentVoting?.Invoke("UpdateVotes", 0f);
     }
+
+    /// <summary> Counts the amount of votes for the given option. </summary>
+    public static int Count(byte vote) => Ids2Votes.Count(p => p.Value == vote);
 
     #region 2-S
 

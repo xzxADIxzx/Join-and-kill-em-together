@@ -25,6 +25,8 @@ public class Voting : MonoBehaviour
     private int lifetime;
     /// <summary> Text displaying the remaining time until the end of the voting. </summary>
     private Text display;
+    /// <summary> Text displaying the amount of votes for each option. </summary>
+    private Text[] options = new Text[3];
 
     private void Start()
     {
@@ -67,9 +69,26 @@ public class Voting : MonoBehaviour
                 break;
 
             case VotingType.Choice:
+                Action Patch(char button, byte option)
+                {
+                    var btn = transform.Find($"Button ({button})").GetComponent<Button>();
+                    var ori = btn.onClick;
+                    btn.onClick = new();
+                    btn.onClick.AddListener(() =>
+                    {
+                        Votes.Vote(option);
+                        Votes.UpdateVote(Tools.AccId, option);
+                    });
+                    options[option] = UIB.Text("-------", btn.transform, new(-20f, 0f, 128f, 128f, new(0f, .5f)), size: 16);
+                    options[option].transform.eulerAngles = new(0f, 0f, 90f);
+
+                    return ori.Invoke;
+                }
+                Action[] originals = { Patch('A', 0), Patch('B', 1), Patch('C', 2) };
 
                 display = UIB.Text("#votes.choice", transform, Msg(640f) with { y = 20f }, size: 16);
 
+                onOver = _ => originals[_].Invoke();
                 break;
         }
     }
@@ -97,7 +116,7 @@ public class Voting : MonoBehaviour
 
         if (type == VotingType.Choice)
         {
-            // TODO update labels
+            for (byte i = 0; i < 3; i++) options[i].text = Bundle.Format("votes.amount", Votes.Count(i).ToString());
         }
     }
 
@@ -113,6 +132,9 @@ public class Voting : MonoBehaviour
     {
         switch (type)
         {
+            case VotingType.CutsceneSkip:
+                Destroy(display);
+                break;
             case VotingType.CutsceneSkip or VotingType.DialogSkip:
                 onOver(0);
                 break;
