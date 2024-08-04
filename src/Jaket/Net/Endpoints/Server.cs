@@ -229,7 +229,7 @@ public class Server : Endpoint, ISocketManager
 
             if (Administration.IsWarned(accId))
             {
-                Administration.Ban(accId);
+                Administration.Kick(accId);
                 Log.Warning($"[Server] {accId} was blocked due to an attempt to spam");
             }
         }
