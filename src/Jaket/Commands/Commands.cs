@@ -260,11 +260,11 @@ public class Commands
                         //     }
                         // });
 
-                        Msg(Administration.BlacklistAdd(username));
+                        Msg("\\[Blacklist\\] " + Tools.ChatStr(Administration.BlacklistAdd(username)));
                     }
                     else if (args[0].ToLower() == "add_uid")
                     {
-                        Msg(Administration.BlacklistAddUID(username));
+                        Msg("\\[Blacklist\\] " + Tools.ChatStr(Administration.BlacklistAddUID(username)));
                     }
                     else
                     {
@@ -280,7 +280,7 @@ public class Commands
 
                         // File.WriteAllLines(Plugin.UIDBlacklistPath, File.ReadLines(Plugin.UIDBlacklistPath).Where(l => l != string.Join(" ", args.ToList().Skip(1))).ToList());
 
-                        Msg(Administration.BlacklistRemove(username));
+                        Msg("\\[Blacklist\\] " + Tools.ChatStr(Administration.BlacklistRemove(username)));
                     }
                 }
             }
@@ -292,7 +292,7 @@ public class Commands
                     return;
                 }
 
-                Msg(Administration.BlacklistList());
+                Msg(Tools.ChatStr(Administration.BlacklistList()));
             }
         });
 

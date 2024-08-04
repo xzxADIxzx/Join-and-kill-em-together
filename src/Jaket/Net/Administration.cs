@@ -83,7 +83,7 @@ public class Administration
                 }
 
                 if (LobbyController.IsOwner) Administration.Ban(player.Header.Id);
-                ret = "\\[Blacklist\\] Blacklisted user " + player.Header.Id.ToString() + " :: \"" + Tools.ChatStr(player.Header.Name) + "\"";
+                ret = "[Blacklist] Blacklisted user " + player.Header.Id.ToString() + " :: \"" + Tools.ChatStr(player.Header.Name) + "\"";
             }
         });
 
@@ -92,7 +92,7 @@ public class Administration
             return ret;
         };
 
-        return "\\[Blacklist\\] \"" + Tools.ChatStr(name) + "\" is not a valid user";
+        return "[Blacklist] \"" + Tools.ChatStr(name) + "\" is not a valid user";
     }
 
     public static string BlacklistAddUID(string uid) {
@@ -107,7 +107,7 @@ public class Administration
                 }
 
                 if (LobbyController.IsOwner) Administration.Ban(player.Header.Id);
-                ret = "\\[Blacklist\\] Blacklisted user " + player.Header.Id.ToString() + " :: \"" + Tools.ChatStr(player.Header.Name) + "\"";
+                ret = "[Blacklist] Blacklisted user " + player.Header.Id.ToString() + " :: \"" + Tools.ChatStr(player.Header.Name) + "\"";
             }
         });
 
@@ -116,7 +116,7 @@ public class Administration
             return ret;
         };
 
-        return "\\[Blacklist\\] \"" + Tools.ChatStr(uid) + "\" is not a valid uid";
+        return "[Blacklist] \"" + Tools.ChatStr(uid) + "\" is not a valid uid";
     }
 
     public static string BlacklistRemove(string name) {
@@ -133,18 +133,18 @@ public class Administration
             line = "";
         }
 
-        if (line == "") return "\\[Blacklist\\] Invalid Name: \"" + Tools.ChatStr(name) + "\" This is your blacklist: \n" + BlacklistList();
+        if (line == "") return "[Blacklist] Invalid Name: \"" + Tools.ChatStr(name) + "\" This is your blacklist: \n" + BlacklistList();
 
         File.WriteAllLines(Plugin.UIDBlacklistPath, File.ReadLines(Plugin.UIDBlacklistPath).Where(l => l != line).ToList());
         Tools.CacheBlacklist();
-        return $"\\[Blacklist\\] Removed user \"" + Tools.ChatStr(name) +"\" from blacklist.";
+        return $"[Blacklist] Removed user \"" + Tools.ChatStr(name) +"\" from blacklist.";
     }
 
     public static string BlacklistList() {
         string ret = "";
 
         if (Tools.CachedBlacklist.Length == 0) {
-            return $"\\[Blacklist\\] There's nobody in your blacklist";
+            return $"[Blacklist] There's nobody in your blacklist";
         }
 
         for (int i = 0; i < Tools.CachedBlacklist.Length; ++i) {
@@ -152,7 +152,7 @@ public class Administration
 
             if (uint.TryParse(line, out uint uid))
             {
-                ret += "\\[Blacklist\\] \"" + Tools.Name(uid) + "\"\n";
+                ret += "[Blacklist] \"" + Tools.Name(uid) + "\"\n";
             }
         }
 
