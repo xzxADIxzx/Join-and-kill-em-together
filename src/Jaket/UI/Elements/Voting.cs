@@ -159,8 +159,8 @@ public class Voting : MonoBehaviour
         {
             case VotingType.CutsceneSkip:
                 Destroy(display);
-                break;
-            case VotingType.CutsceneSkip or VotingType.DialogSkip:
+                goto case VotingType.DialogSkip;
+            case VotingType.DialogSkip:
                 onOver(0);
                 break;
             case VotingType.Choice:
