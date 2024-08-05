@@ -49,11 +49,6 @@ public class Administration
             {
                 if (uint.TryParse(sid, out var id)) Banned.Add(id);
             });
-
-            LobbyController.Lobby?.GetData("kicked").Split(' ').Do(sid =>
-            {
-                if (uint.TryParse(sid, out var id)) Kicked.Add(id);
-            });
         };
         Events.OnLobbyEntered += () => { Banned.Clear(); Kicked.Clear(); entityBullets.Clear(); entities.Clear(); plushies.Clear(); };
         Events.EverySecond += spam.Clear;
@@ -91,7 +86,6 @@ public class Administration
 
         Kicked.Add(id);
         Chat.Instance.Send($"\n[yellow][14]\\[Server\\] Kicked {Tools.Name(id)}[][]");
-        LobbyController.Lobby?.SetData("kicked", string.Join(" ", Kicked));
     }
 
     public static string BlacklistAdd(string name) {
