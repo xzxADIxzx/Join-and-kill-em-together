@@ -1,3 +1,6 @@
+### Join the Jaket Modders discord to recieve notifications about updates and the like!
+https://discord.gg/eYr6nzF3
+
 ## Building
 To compile you will need .NET SDK 6.0 and Git.  
 **Important**: You don't need this if you just want to play with the mod.
@@ -15,6 +18,7 @@ To compile you will need .NET SDK 6.0 and Git.
    3. Copy the **manifest.json** file from the root folder.
 
 ## Installation
+### ! ! ! NOTICE ! ! ! BACK UP YOUR ORIGINAL JAKET.DLL
 Replace your jaket.dll with the one in bin/Debug/netstandard2.0
 - if using r2ModMan do the following to find your Jaket installation
    1. Go to your profile that has your Jaket installation
