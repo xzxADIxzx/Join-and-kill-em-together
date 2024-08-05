@@ -52,11 +52,11 @@ public class DollAssets
 
         // cache the shader and the wing textures for future use
         Shader = AssetHelper.LoadPrefab("cb3828ada2cbefe479fed3b51739edf6").GetComponent<global::V2>().smr.material.shader;
-        WingTextures = new Texture[6];
+        WingTextures = new Texture[Tools.EnumMax<Team>() + 1];
         HandTextures = new Texture[4];
 
         // loading wing textures from the bundle
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < WingTextures.Length; i++)
         {
             var index = i; // C# sucks
             LoadAsync<Texture>("V3-wings-" + ((Team)i).ToString(), tex => WingTextures[index] = tex);

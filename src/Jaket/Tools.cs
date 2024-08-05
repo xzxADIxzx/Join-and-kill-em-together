@@ -6,7 +6,9 @@ using Steamworks;
 using Steamworks.Data;
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 using UnityEngine;
@@ -33,6 +35,15 @@ public class Tools
     /// <summary> Returns the name of the player with the given AccountId. </summary>
     public static string Name(uint id) => new Friend(id | 76561197960265728u).Name;
     public static string ChatStr(string msg) => msg.Replace("[", "\\[").Replace("]", "\\]");
+    /// <summary>
+    /// <summary> get the maximum value of an emum </summary>
+    public static int EnumMax<T>() {
+        int[] vals = ((int[])Enum.GetValues(typeof(T)));
+        return vals[vals.Length - 1];
+    }
+    /// </summary>
+    /// <param name="difficulty"></param>
+    /// <returns></returns>
     public static bool IsDifficultyUKMD(string difficulty) {
         if (difficulty.ToLower().Contains("ukmd") || difficulty.ToLower().Contains("ultrakill"))
         {

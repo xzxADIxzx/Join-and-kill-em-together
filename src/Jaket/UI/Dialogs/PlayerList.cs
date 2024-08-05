@@ -14,18 +14,40 @@ public class PlayerList : CanvasSingleton<PlayerList>
     private void Start()
     {
         UIB.Shadow(transform);
-        UIB.Table("Teams", "#player-list.team", transform, Tlw(16f + 166f / 2f, 166f), table =>
+        UIB.Table("Teams", "#player-list.team", transform, new(16f + 616f / 2f, -(16f + 166f / 2f), 616f, 166f, new(0f, 1f)), table =>
         {
             UIB.Text("#player-list.info", table, Btn(71f) with { Height = 46f }, size: 16);
 
             float x = -24f;
-            foreach (Team team in System.Enum.GetValues(typeof(Team))) UIB.TeamButton(team, table, new(x += 64f, -130f, 56f, 56f, new(0f, 1f)), () =>
-            {
-                Networking.LocalPlayer.Team = team;
-                Events.OnTeamChanged.Fire();
+            float y = -130f;
+            // foreach (Team team in System.Enum.GetValues(typeof(Team))) UIB.TeamButton(team, table, new(x += 64f, y, 56f, 56f, new(0f, 1f)), () =>
+            // {
+            //     if (team == Team.Pink) {
+            //         x = -24f;
+            //         y = -30;
+            //     }
 
-                Rebuild();
-            });
+            //     Networking.LocalPlayer.Team = team;
+            //     Events.OnTeamChanged.Fire();
+
+            //     Rebuild();
+            // });
+
+            for (int i = 0; i <= Tools.EnumMax<Team>(); ++i) {
+                Team team = (Team)i;
+
+                // if (team == Team.Pink + 1) {
+                //     x = -24f;
+                //     y = -194;
+                // }
+
+                UIB.TeamButton(team, table, new(x += 64f, y, 56f, 56f, new(0f, 1f)), () => {
+                    Networking.LocalPlayer.Team = team;
+                    Events.OnTeamChanged.Fire();
+
+                    Rebuild();
+                });
+            }
         });
 
         Version.Label(transform);
@@ -51,7 +73,7 @@ public class PlayerList : CanvasSingleton<PlayerList>
         if (LobbyController.Offline) return;
 
         float height = LobbyController.Lobby.Value.MemberCount * 48f + 48f;
-        UIB.Table("List", "#player-list.list", transform, Tlw(198f + height / 2f, height), table =>
+        UIB.Table("List", "#player-list.list", transform, new(16f + 336f / 2f, -(198f + height / 2f), 546f, height, new(0f, 1f)), table =>
         {
             void Msg(string msg) => Chat.Instance.Receive($"[14]{msg}[]");
 
