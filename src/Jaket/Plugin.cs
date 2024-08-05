@@ -59,7 +59,6 @@ public class Plugin : MonoBehaviour
         Events.Load();
         // interface components and assets bundle can only be loaded from the main menu
         Events.OnMainMenuLoaded += Init;
-
     }
 
     private void OnApplicationQuit() => Log.Flush();

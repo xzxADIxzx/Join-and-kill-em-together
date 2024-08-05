@@ -53,6 +53,8 @@ public class PlayerList : CanvasSingleton<PlayerList>
         float height = LobbyController.Lobby.Value.MemberCount * 48f + 48f;
         UIB.Table("List", "#player-list.list", transform, Tlw(198f + height / 2f, height), table =>
         {
+            void Msg(string msg) => Chat.Instance.Receive($"[14]{msg}[]");
+
             float y = 20f;
             foreach (var member in LobbyController.Lobby?.Members)
             {
@@ -64,11 +66,14 @@ public class PlayerList : CanvasSingleton<PlayerList>
                 else
                 {
                     UIB.ProfileButton(member, table, Stn(y += 48f, -48f));
-                    UIB.IconButton("K", table, Icon(140f, y), new(1f, .8f, 0f), clicked: () => Administration.Kick(member.Id.AccountId));
-                    UIB.IconButton("B", table, Icon(188f, y), orange, clicked: () => Administration.Ban(member.Id.AccountId));
+                    if (member.Id.AccountId != Tools.AccId && LobbyController.IsOwner)
+                    {
+                        UIB.IconButton("K", table, Icon(140f, y), new(1f, .8f, 0f), clicked: () => Administration.Kick(member.Id.AccountId));
+                        UIB.IconButton("B", table, Icon(188f, y), orange, clicked: () => Administration.Ban(member.Id.AccountId));
+                    }
                 }
 
-                if (member.Id.AccountId != Tools.AccId) UIB.IconButton("P", table, Icon(236f, y), red, clicked: () => Administration.BlacklistAddUID(member.Id.AccountId.ToString()));
+                if (member.Id.AccountId != Tools.AccId) UIB.IconButton("P", table, Icon(236f, y), red, clicked: () => Msg(Tools.ChatStr(Administration.BlacklistAddUID(member.Id.AccountId.ToString()))));
             }
         });
     }

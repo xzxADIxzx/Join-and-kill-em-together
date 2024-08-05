@@ -33,10 +33,7 @@ public class LobbyController
     public static bool PvPAllowed => Lobby?.GetData("pvp") == "True";
     /// <summary> Whether cheats are allowed in this lobby. </summary>
     // P-1 and P-2 boss doors like to get stuck after I die - so cheats are enabled there
-    public static bool CheatsAllowed => 
-        Lobby?.GetData("cheats") == "True" ||
-        Tools.Scene == "Level P-1" ||
-        Tools.Scene == "Level P-2";
+    public static bool CheatsAllowed => true;
     /// <summary> Whether mods are allowed in this lobby. </summary>
     public static bool ModsAllowed => true;
     /// <summary> Whether bosses must be healed after death in this lobby. </summary>
