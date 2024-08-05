@@ -159,7 +159,6 @@ public class Administration
         }
 
         if (!valid) return "[Blacklist] Invalid Name: \"" + Tools.ChatStr(name) + "\" This is your blacklist: \n" + BlacklistList();
-
         File.WriteAllLines(Plugin.UIDBlacklistPath, File.ReadLines(Plugin.UIDBlacklistPath).Where(l => l != Tools.CachedBlacklist[i - 1]).ToList());
         File.WriteAllLines(Plugin.UIDBlacklistPath, File.ReadLines(Plugin.UIDBlacklistPath).Where(l => l != Tools.CachedBlacklist[i]).ToList());
         Tools.CacheBlacklist();
