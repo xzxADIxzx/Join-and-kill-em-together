@@ -89,7 +89,7 @@ public class Administration
         });
 
         Kicked.Add(id);
-        LobbyController.Lobby?.SendChatString($"<color=red><size=14>Kicked {Tools.ChatStr(Tools.Name(id))}</color></size>" + id);
+        LobbyController.Lobby?.SendChatString($"<color=red><size=14>Kicked {Tools.ChatStr(Tools.Name(id))}</color></size>");
         LobbyController.Lobby?.SetData("kicked", string.Join(" ", Kicked));
     }
 
