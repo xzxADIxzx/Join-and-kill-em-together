@@ -18,8 +18,9 @@ To compile you will need .NET SDK 6.0 and Git.
    3. Copy the **manifest.json** file from the root folder.
 
 ## Installation
-### ! ! ! NOTICE ! ! ! BACK UP YOUR ORIGINAL JAKET.DLL
-Replace your jaket.dll with the one in bin/Debug/netstandard2.0
+### ! ! ! NOTICE ! ! ! BACK UP YOUR ORIGINAL JAKET.DLL AND JAKET-ASSETS.BUNDLE
+1. Replace your jaket.dll with the one in bin/Debug/netstandard2.0/
+2. Replace your jaket-assets.bundle with the one in assets/
 - if using r2ModMan do the following to find your Jaket installation
    1. Go to your profile that has your Jaket installation
    2. Go to Settings > Locations > Browse Profile Folder
@@ -28,4 +29,4 @@ Replace your jaket.dll with the one in bin/Debug/netstandard2.0
 
 ## Troubleshooting
 If your copy of modded Jaket causes all or some text to become "OH NO" do the following:
-   - replace all files in (jaket installation path)/assets/bundles with the ones from this repo
+   - replace all files in (jaket installation path)/bundles with the ones from this repo
