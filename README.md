@@ -1,3 +1,6 @@
+### Join the Jaket Modders discord to recieve notifications about updates and the like!
+https://discord.gg/eYr6nzF3
+
 ## Building
 To compile you will need .NET SDK 6.0 and Git.  
 **Important**: You don't need this if you just want to play with the mod.
