@@ -95,7 +95,7 @@ public class Networking
 
             if (Administration.Kicked.Contains(member.Id.AccountId)) {
                 Administration.Kicked.Remove(member.Id.AccountId);
-                LobbyController.Lobby?.SetData("kicked", string.Join(" ", Kicked));
+                LobbyController.Lobby?.SetData("kicked", string.Join(" ", Administration.Kicked));
             }
 
             // returning the exited player's entities back to the host owner & close the connection
