@@ -1,5 +1,6 @@
 # About
-Notes-instructions on how to correctly import assets into Unity will be listed here.
+Notes-instructions on how to correctly import assets into Unity will be listed here.   
+*P.S. Textures use sRGB color profile.*
 
 ## Bundle
 
