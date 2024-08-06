@@ -29,9 +29,8 @@ public class Items
     }
 
     /// <summary> Finds the entity type by item class and first/last child name. </summary>
-    public static EntityType Type(Entity entity)
+    public static EntityType Type(ItemIdentifier id)
     {
-        var id = entity.ItemId;
         if (id == null) return EntityType.None;
 
         // items are divided into two types: regular and plushies
@@ -64,7 +63,7 @@ public class Items
         if (LobbyController.Offline || itemId == null || itemId.gameObject == null) return;
 
         // the item is already synced, the item is a book or the item is a prefab
-        if (itemId.name == "Net" || itemId.name == "Local" || itemId.name.Contains("Book") || !Tools.IsReal(itemId)) return;
+        if (itemId.name == "Net" || itemId.name == "Local" || itemId.name.Contains("Book") || !Tools.IsReal(itemId) || itemId.infiniteSource) return;
         // sometimes developers just deactivate skulls instead of removing them
         if (!itemId.gameObject.activeSelf || GameAssets.ItemExceptions.Contains(itemId.name)) return;
 
