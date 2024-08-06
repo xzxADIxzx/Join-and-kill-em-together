@@ -63,23 +63,29 @@ public class Commands
 
         Handler.Register("plushies", "Display the list of all dev plushies", args =>
         {
-            string[] plushies = (string[])GameAssets.PlushiesButReadable.Clone();
-            Array.Sort(plushies); // sort alphabetically for a more presentable look
+            void Msg(string role, string devs) => chat.Receive($"[14]{role}:\n{devs}{(role[0] == 'M' ? "" : "\n")}[]");
 
-            chat.Receive(string.Join(", ", plushies));
+            Msg("Leading developers", "Hakita, Pitr, Victoria");
+            Msg("Programmers", "Heckteck, CabalCrow, Lucas");
+            Msg("Artists", "Francis, Jericho, BigRock, Mako, Samuel, Salad");
+            Msg("Composers", "Meganeko, KGC, BJ, Jake, John, Quetzal");
+            Msg("Voice actors", "Gianni, Weyte, Lenval, Joy, Mandy");
+            Msg("Quality assurance", "Cameron, Dalia, Tucker, Scott");
+            Msg("Other", "Jacob, Vvizard");
+            Msg("Machines", "V1, V2, V3, xzxADIxzx, Sowler");
         });
-        Handler.Register("plushy", "<name>", "Spawn a plushy by name", args =>
+        Handler.Register("plushie", "<name>", "Spawn a plushie by name", args =>
         {
             string name = args.Length == 0 ? null : args[0].ToLower();
-            int index = Array.FindIndex(GameAssets.PlushiesButReadable, plushy => plushy.ToLower() == name);
+            int index = Array.FindIndex(GameAssets.PlushiesButReadable, plushie => plushie.Contains(name));
 
             if (index == -1)
-                chat.Receive($"[#FF341C]Plushy named {name} not found.");
+                chat.Receive($"[#FF341C]Plushie named {name} not found.");
             else
-                Tools.Instantiate(Items.Prefabs[EntityType.PlushyOffset + index - EntityType.ItemOffset].gameObject, NewMovement.Instance.transform.position);
+                Tools.Instantiate(Items.Prefabs[EntityType.PlushieOffset + index - EntityType.ItemOffset], NewMovement.Instance.transform.position);
         });
 
-        Handler.Register("level", "<layer> <level> / sandbox / cyber grind / credits museum", "Load the given level", args =>
+        Handler.Register("level", "<layer> <level> / sandbox / cyber grind / museum", "Load a level", args =>
         {
             if (args.Length == 1 && args[0].Contains("-")) args = args[0].Split('-');
 

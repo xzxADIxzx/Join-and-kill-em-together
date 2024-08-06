@@ -13,7 +13,7 @@ using Jaket.Net.Types;
 public class Items
 {
     /// <summary> List of prefabs of all items. </summary>
-    public static List<Transform> Prefabs = new();
+    public static List<GameObject> Prefabs = new();
 
     /// <summary> Loads all items for future use. </summary>
     public static void Load()
@@ -24,20 +24,20 @@ public class Items
         };
         Events.OnLobbyEntered += () => Events.Post2(SyncAll);
 
-        foreach (var name in GameAssets.Items) Prefabs.Add(GameAssets.Item(name).transform);
-        foreach (var name in GameAssets.Plushies) Prefabs.Add(GameAssets.Plushy(name).transform);
+        foreach (var name in GameAssets.Items) Prefabs.Add(GameAssets.Item(name));
+        foreach (var name in GameAssets.Plushies) Prefabs.Add(GameAssets.Plushie(name));
     }
 
     /// <summary> Finds the entity type by item class and first/last child name. </summary>
-    public static EntityType Type(Entity entity)
+    public static EntityType Type(ItemIdentifier id)
     {
-        var id = entity.ItemId;
         if (id == null) return EntityType.None;
 
-        // items are divided into two types: regular and plushies
-        if (id.name.StartsWith("DevPlushie"))
+        if (id.name.StartsWith("Dev"))
         {
-            int index = Prefabs.FindIndex(prefab => prefab.GetChild(prefab.childCount - 1).name == id.transform.GetChild(id.transform.childCount - 1).name);
+            if (id.name.Contains("(Clone)")) id.name = id.name.Substring(0, id.name.IndexOf("(Clone)")).Trim();
+
+            int index = Prefabs.FindIndex(prefab => prefab.name == id.name);
             return index == -1 ? EntityType.None : (EntityType.ItemOffset + index);
         }
         else return id.transform.GetChild(0).name switch
@@ -56,7 +56,7 @@ public class Items
     }
 
     /// <summary> Spawns an item with the given type. </summary>
-    public static Entity Instantiate(EntityType type) => Entities.Mark(Prefabs[type - EntityType.ItemOffset].gameObject).AddComponent<Item>();
+    public static Entity Instantiate(EntityType type) => Entities.Mark(Prefabs[type - EntityType.ItemOffset]).AddComponent<Item>();
 
     /// <summary> Synchronizes the item between network members. </summary>
     public static void Sync(ItemIdentifier itemId, bool single = true)
@@ -64,7 +64,7 @@ public class Items
         if (LobbyController.Offline || itemId == null || itemId.gameObject == null) return;
 
         // the item is already synced, the item is a book or the item is a prefab
-        if (itemId.name == "Net" || itemId.name == "Local" || itemId.name.Contains("Book") || !Tools.IsReal(itemId)) return;
+        if (itemId.name == "Net" || itemId.name == "Local" || itemId.name.Contains("Book") || !Tools.IsReal(itemId) || itemId.infiniteSource) return;
         // sometimes developers just deactivate skulls instead of removing them
         if (!itemId.gameObject.activeSelf || GameAssets.ItemExceptions.Contains(itemId.name)) return;
 

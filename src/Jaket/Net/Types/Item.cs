@@ -21,7 +21,7 @@ public class Item : OwnableEntity
 
     private void Awake()
     {
-        Init(Items.Type, true);
+        Init(_ => Items.Type(ItemId), true);
         InitTransfer(() =>
         {
             if (Rb && !IsOwner) Rb.isKinematic = true;

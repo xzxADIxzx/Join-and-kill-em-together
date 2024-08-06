@@ -77,6 +77,12 @@ public class Votes
                     dialog.gameObject.AddComponent<Voting>();
             }
         }
+
+        var fix = Tools.ObjFind("Canvas/PowerUpVignette/Panel/Aspect Ratio Mask/Middle/Choices Box (1)").AddComponent<ObjectActivator>();
+        fix.reactivateOnEnable = true;
+
+        fix.events = new() { onActivate = new() };
+        fix.events.onActivate.AddListener(() => fix.GetComponent<Voting>().enabled = true);
     }
 
     /// <summary> Changes the name of the character to Virage. </summary>

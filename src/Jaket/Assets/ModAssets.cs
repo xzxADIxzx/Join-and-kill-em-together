@@ -59,7 +59,7 @@ public class ModAssets
         };
 
         // general
-        Shader = Enemies.Prefabs[EntityType.V2 - EntityType.EnemyOffset].GetComponent<global::V2>().smr.material.shader;
+        Shader = Enemies.Prefabs[EntityType.V2_RedArm - EntityType.EnemyOffset].GetComponent<global::V2>().smr.material.shader;
 
         Load<Sprite>("V3-icon", s => Icon = s);
         Load<TextAsset>("V3-bestiary-entry", f => Desc = f.text);

@@ -213,7 +213,7 @@ public class Administration
 
             Default(entities, MAX_ENTITIES);
         }
-        else if (entity.Type.IsPlushy()) Default(plushies, MAX_PLUSHIES);
+        else if (entity.Type.IsPlushie()) Default(plushies, MAX_PLUSHIES);
         else if (entity.Type.IsBullet()) Default(entityBullets, MAX_BULLETS);
     }
 
