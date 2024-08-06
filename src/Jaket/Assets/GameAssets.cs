@@ -57,7 +57,7 @@ public class GameAssets
 
     public static GameObject Item(string name) => Prefab(name.StartsWith(".") ? $"Fishing/{name.Substring(1)}.prefab" : $"Items/{name}.prefab");
 
-    public static GameObject Plushy(string name) => Prefab($"Items/DevPlushies/DevPlushie{(name.StartsWith(".") ? name.Substring(1) : $" ({name})")}.prefab");
+    public static GameObject Plushie(string name) => Prefab($"Items/DevPlushies/DevPlushie{(name.StartsWith(".") ? name.Substring(1) : $" ({name})")}.prefab");
 
     /// <summary> Loads the torch prefab. </summary>
     public static GameObject Torch() => Prefab("Levels/Interactive/Altar (Torch) Variant.prefab");

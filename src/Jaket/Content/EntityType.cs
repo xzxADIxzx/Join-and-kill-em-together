@@ -104,7 +104,7 @@ public enum EntityType
     EnemyOffset = Filth,
     SecuritySystemOffset = SecuritySystem_Main,
     ItemOffset = AppleBait,
-    PlushyOffset = Hakita,
+    PlushieOffset = Hakita,
     BulletOffset = Coin
 }
 
@@ -125,10 +125,10 @@ public static class TypeExtensions
     public static bool IsTargetable(this EntityType type) => IsEnemy(type) && type != EntityType.Idol && type != EntityType.CancerousRodent;
 
     /// <summary> Whether the type is an item. </summary>
-    public static bool IsItem(this EntityType type) => type >= EntityType.ItemOffset && type < EntityType.PlushyOffset;
+    public static bool IsItem(this EntityType type) => type >= EntityType.ItemOffset && type < EntityType.PlushieOffset;
 
-    /// <summary> Whether the type is a plushy. </summary>
-    public static bool IsPlushy(this EntityType type) => type >= EntityType.PlushyOffset && type < EntityType.BulletOffset;
+    /// <summary> Whether the type is a plushie. </summary>
+    public static bool IsPlushie(this EntityType type) => type >= EntityType.PlushieOffset && type < EntityType.BulletOffset;
 
     /// <summary> Whether the type is a bullet. </summary>
     public static bool IsBullet(this EntityType type) => type >= EntityType.BulletOffset;

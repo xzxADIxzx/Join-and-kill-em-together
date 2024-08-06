@@ -64,18 +64,18 @@ public class Commands
 
             chat.Receive(string.Join(", ", plushies));
         });
-        Handler.Register("plushy", "<name>", "Spawn a plushy by name", args =>
+        Handler.Register("plushie", "<name>", "Spawn a plushie by name", args =>
         {
             string name = args.Length == 0 ? null : args[0].ToLower();
-            int index = Array.FindIndex(GameAssets.PlushiesButReadable, plushy => plushy.ToLower() == name);
+            int index = Array.FindIndex(GameAssets.PlushiesButReadable, plushie => plushie == name);
 
             if (index == -1)
-                chat.Receive($"[#FF341C]Plushy named {name} not found.");
+                chat.Receive($"[#FF341C]Plushie named {name} not found.");
             else
-                Tools.Instantiate(Items.Prefabs[EntityType.PlushyOffset + index - EntityType.ItemOffset].gameObject, NewMovement.Instance.transform.position);
+                Tools.Instantiate(Items.Prefabs[EntityType.PlushieOffset + index - EntityType.ItemOffset], NewMovement.Instance.transform.position);
         });
 
-        Handler.Register("level", "<layer> <level> / sandbox / cyber grind / credits museum", "Load the given level", args =>
+        Handler.Register("level", "<layer> <level> / sandbox / cyber grind / museum", "Load a level", args =>
         {
             if (args.Length == 1 && args[0].Contains("-")) args = args[0].Split('-');
 

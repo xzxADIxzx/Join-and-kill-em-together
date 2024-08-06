@@ -13,7 +13,7 @@ using Jaket.Net.Types;
 public class Items
 {
     /// <summary> List of prefabs of all items. </summary>
-    public static List<Transform> Prefabs = new();
+    public static List<GameObject> Prefabs = new();
 
     /// <summary> Loads all items for future use. </summary>
     public static void Load()
@@ -24,8 +24,8 @@ public class Items
         };
         Events.OnLobbyEntered += () => Events.Post2(SyncAll);
 
-        foreach (var name in GameAssets.Items) Prefabs.Add(GameAssets.Item(name).transform);
-        foreach (var name in GameAssets.Plushies) Prefabs.Add(GameAssets.Plushy(name).transform);
+        foreach (var name in GameAssets.Items) Prefabs.Add(GameAssets.Item(name));
+        foreach (var name in GameAssets.Plushies) Prefabs.Add(GameAssets.Plushie(name));
     }
 
     /// <summary> Finds the entity type by item class and first/last child name. </summary>
@@ -36,7 +36,7 @@ public class Items
         // items are divided into two types: regular and plushies
         if (id.name.StartsWith("DevPlushie"))
         {
-            int index = Prefabs.FindIndex(prefab => prefab.GetChild(prefab.childCount - 1).name == id.transform.GetChild(id.transform.childCount - 1).name);
+            int index = Prefabs.FindIndex(prefab => prefab.transform.GetChild(prefab.transform.childCount - 1).name == id.transform.GetChild(id.transform.childCount - 1).name);
             return index == -1 ? EntityType.None : (EntityType.ItemOffset + index);
         }
         else return id.transform.GetChild(0).name switch
@@ -55,7 +55,7 @@ public class Items
     }
 
     /// <summary> Spawns an item with the given type. </summary>
-    public static Entity Instantiate(EntityType type) => Entities.Mark(Prefabs[type - EntityType.ItemOffset].gameObject).AddComponent<Item>();
+    public static Entity Instantiate(EntityType type) => Entities.Mark(Prefabs[type - EntityType.ItemOffset]).AddComponent<Item>();
 
     /// <summary> Synchronizes the item between network members. </summary>
     public static void Sync(ItemIdentifier itemId, bool single = true)
