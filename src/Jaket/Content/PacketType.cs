@@ -3,8 +3,9 @@ namespace Jaket.Content;
 /// <summary> All packet types. Will replenish over time. </summary>
 public enum PacketType
 {
+    Dummy = -1,
     /// <summary> Data of an entity: player, enemy, item and etc. </summary>
-    Snapshot,
+    Snapshot = 0,
     /// <summary> Initializes a loading of the level requested by the host. </summary>
     Level,
     /// <summary> Hey Client, could you leave the lobby please? The host asks you to leave the lobby because you were banned... Cheers~ :heart: </summary>

@@ -208,11 +208,11 @@ public class LobbyController
         "QoDaX.AcceptanceFirst" => "Layers of Grief (5-1)",
 
         // where the streets have no name
-        "pkpseudo-nonamestreets" => "<size=20>Where The Streets Have No Name</size>",
+        "pkpseudo-nonamestreets" => "<size=15>Where The Streets Have No Name</size>",
 
         // violence encore
-        "brushtromein-7-1-1" => "Violence Encore (7-1-1)",
-        "brushtromein-7-3-1-new" => "Violence Encore (7-3-1)",
+        "brushtromein-7-1-1" => "<size=20>Violence Encore (7-1-1)</size>",
+        "brushtromein-7-3-1-new" => "<size=20>Violence Encore (7-3-1)</size>",
 
         _ => map.Substring("Level ".Length)
     };

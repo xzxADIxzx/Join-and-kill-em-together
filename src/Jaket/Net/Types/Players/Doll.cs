@@ -146,7 +146,7 @@ public class Doll : MonoBehaviour
         if (WingTrail != null) WingTrail.startColor = team.Color() with { a = .5f };
 
         // TODO make it part of customization
-        Suits.GetChild(0).gameObject.SetActive(team == Team.Pink);
+        Suits.GetChild(0).gameObject.SetActive(team == Team.Pink || team == Team.Purple);
     }
 
     public void ApplySuit()
