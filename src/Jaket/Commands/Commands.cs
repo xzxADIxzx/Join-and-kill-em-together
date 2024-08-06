@@ -59,10 +59,16 @@ public class Commands
 
         Handler.Register("plushies", "Display the list of all dev plushies", args =>
         {
-            string[] plushies = (string[])GameAssets.PlushiesButReadable.Clone();
-            Array.Sort(plushies); // sort alphabetically for a more presentable look
+            void Msg(string role, string devs) => chat.Receive($"[14]{role}:\n{devs}{(role[0] == 'M' ? "" : "\n")}[]");
 
-            chat.Receive(string.Join(", ", plushies));
+            Msg("Leading developers", "Hakita, Pitr, Victoria");
+            Msg("Programmers", "Heckteck, CabalCrow, Lucas");
+            Msg("Artists", "Francis, Jericho, BigRock, Mako, Samuel, Salad");
+            Msg("Composers", "Meganeko, KGC, BJ, Jake, John, Quetzal");
+            Msg("Voice actors", "Gianni, Weyte, Lenval, Joy, Mandy");
+            Msg("Quality assurance", "Cameron, Dalia, Tucker, Scott");
+            Msg("Other", "Jacob, Vvizard");
+            Msg("Machines", "V1, V2, V3, xzxADIxzx, Sowler");
         });
         Handler.Register("plushie", "<name>", "Spawn a plushie by name", args =>
         {

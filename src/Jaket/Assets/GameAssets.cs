@@ -32,7 +32,7 @@ public class GameAssets
     {
         "Hakita", "PITR", "Dawg", "Heckteck", ". (CabalCrow) Variant", "Lucas", "Francis", "Jericho", "BigRock", "Mako",
         "Sam", "Salad", "Meganeko", "KGC", "HEALTH - BJ", "HEALTH - Jake", "HEALTH - John", "Quetzal", "Gianni", "Weyte",
-        "Lenval", "Joy", "Mandy", "Cameron", "Dalia", "Tucker", "Scott", "Jacob", "Vvizard", "."
+        "Lenval", "Joy", "Mandy", "Cameron", "Dalia", "Tucker", "Scott", "Jacob", "Vvizard", ".", ".", ".", ".", "."
     };
 
     /// <summary> List of readable names of all dev plushies. </summary>
