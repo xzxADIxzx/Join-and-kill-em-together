@@ -10,11 +10,11 @@ public class GameAssets
     #region content
 
     /// <summary> List of items that mustn't be synchronized, because they are not items at all. </summary>
-    public static readonly string[] ItemExceptions = new[]
+    public static readonly string[] ItemExceptions =
     { "Minotaur", "Tram (3)", "BombTrigger", "BombStationTramTeleporterKey", "Checker" };
 
     /// <summary> List of internal names of all enemies. </summary>
-    public static readonly string[] Enemies = new[]
+    public static readonly string[] Enemies =
     {
         "Zombie", "Projectile Zombie", "Super Projectile Zombie", "ShotgunHusk", "MinosBoss", "Stalker", "Sisyphus", "Ferryman",
         "SwordsMachineNonboss", "Drone", "Streetcleaner", "Mindflayer", "V2", "V2 Green Arm Variant", "Turret", "Gutterman",
@@ -24,23 +24,23 @@ public class GameAssets
     };
 
     /// <summary> List of internal names of all items. </summary>
-    public static readonly string[] Items = new[]
+    public static readonly string[] Items =
     { ".Apple Bait", ".Maurice Bait", "SkullBlue", "SkullRed", "Soap", "Torch", "Florp Throwable" };
 
     /// <summary> List of internal names of all dev plushies. </summary>
-    public static readonly string[] Plushies = new[]
+    public static readonly string[] Plushies =
     {
-        "Jacob", "Mako", "HEALTH - Jake", "Dalia", "Jericho", "Meganeko", "Tucker", "BigRock", "Dawg", "Sam",
-        "Cameron", "Gianni", "Salad", "Mandy", "Joy", "Weyte", "Heckteck", "Hakita", "Lenval", ". (CabalCrow) Variant",
-        "Quetzal", "HEALTH - John", "PITR", "HEALTH - BJ", "Francis", "Vvizard", "Lucas", "Scott", "KGC", "."
+        "Hakita", "PITR", "Dawg", "Heckteck", ". (CabalCrow) Variant", "Lucas", "Francis", "Jericho", "BigRock", "Mako",
+        "Sam", "Salad", "Meganeko", "KGC", "HEALTH - BJ", "HEALTH - Jake", "HEALTH - John", "Quetzal", "Gianni", "Weyte",
+        "Lenval", "Joy", "Mandy", "Cameron", "Dalia", "Tucker", "Scott", "Jacob", "Vvizard", "."
     };
 
     /// <summary> List of readable names of all dev plushies. </summary>
-    public static readonly string[] PlushiesButReadable = new[]
+    public static readonly string[] PlushiesButReadable =
     {
-        "Jacob", "Maximilian", "Jake", "Dalia", "Jericho", "Meganeko", "Tucker", "BigRock", "Victoria", "Samuel",
-        "Cameron", "Gianni", "Salad", "Mandy", "Joy", "Weyte", "Heckteck", "Hakita", "Lenval", "CabalCrow",
-        "Quetzal", "John", "Pitr", "BJ", "Francis", "Vvizard", "Lucas", "Scott", "KGC", "V1"
+        "Hakita", "Pitr", "Victoria", "Heckteck", "CabalCrow", "Lucas", "Francis", "Jericho", "BigRock", "Mako",
+        "Samuel", "Salad", "Meganeko", "KGC", "BJ", "Jake", "John", "Quetzal", "Gianni", "Weyte",
+        "Lenval", "Joy", "Mandy", "Cameron", "Dalia", "Tucker", "Scott", "Jacob", "Vvizard", "V1", "V2", "V3", "xzxADIxzx", "Sowler"
     };
 
     #endregion
@@ -57,7 +57,7 @@ public class GameAssets
 
     public static GameObject Item(string name) => Prefab(name.StartsWith(".") ? $"Fishing/{name.Substring(1)}.prefab" : $"Items/{name}.prefab");
 
-    public static GameObject Plushy(string name) => Prefab($"Items/DevPlushies/DevPlushie{(name.StartsWith(".") ? name.Substring(1) : $"({name})")}.prefab");
+    public static GameObject Plushy(string name) => Prefab($"Items/DevPlushies/DevPlushie{(name.StartsWith(".") ? name.Substring(1) : $" ({name})")}.prefab");
 
     /// <summary> Loads the torch prefab. </summary>
     public static GameObject Torch() => Prefab("Levels/Interactive/Altar (Torch) Variant.prefab");
