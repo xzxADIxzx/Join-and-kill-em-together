@@ -1,11 +1,14 @@
 namespace Jaket.Assets;
 
+using System;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
 /// <summary> Class that works with the assets of the game. </summary>
 public class GameAssets
 {
+    #region content
+
     /// <summary> List of items that mustn't be synchronized, because they are not items at all. </summary>
     public static readonly string[] ItemExceptions = new[]
     { "Minotaur", "Tram (3)", "BombTrigger", "BombStationTramTeleporterKey", "Checker" };
@@ -32,7 +35,7 @@ public class GameAssets
         "Quetzal", "HEALTH - John", "PITR", "HEALTH - BJ", "Francis", "Vvizard", "Lucas", "Scott", "KGC", "."
     };
 
-    /// <summary> List of readable names of all dev plushies needed for the /plushy command. </summary>
+    /// <summary> List of readable names of all dev plushies. </summary>
     public static readonly string[] PlushiesButReadable = new[]
     {
         "Jacob", "Maximilian", "Jake", "Dalia", "Jericho", "Meganeko", "Tucker", "BigRock", "Victoria", "Samuel",
@@ -40,31 +43,36 @@ public class GameAssets
         "Quetzal", "John", "Pitr", "BJ", "Francis", "Vvizard", "Lucas", "Scott", "KGC", "V1"
     };
 
-    /// <summary> Loads an enemy prefab by name. </summary>
-    public static GameObject Enemy(string name) => AssetHelper.LoadPrefab($"Assets/Prefabs/Enemies/{name}.prefab");
+    #endregion
+    #region tools
 
-    /// <summary> Loads an item prefab by name. </summary>
-    public static GameObject Item(string name) =>
-        AssetHelper.LoadPrefab($"Assets/Prefabs/{(name.StartsWith(".") ? $"Fishing/{name.Substring(1)}" : $"Items/{name}")}.prefab");
+    private static GameObject Prefab(string name) => AssetHelper.LoadPrefab($"Assets/Prefabs/{name}");
 
-    /// <summary> Loads a dev plushy prefab by name. </summary>
-    public static GameObject Plushy(string name) =>
-        AssetHelper.LoadPrefab($"Assets/Prefabs/Items/DevPlushies/DevPlushie{(name.StartsWith(".") ? name.Substring(1) : $" ({name})")}.prefab");
+    private static void Material(string name, Action<Material> cons) => Addressables.LoadAssetAsync<Material>($"Assets/Models/{name}").Task.ContinueWith(task => cons(task.Result));
+
+    #endregion
+    #region loading
+
+    public static GameObject Enemy(string name) => Prefab($"Enemies/{name}.prefab");
+
+    public static GameObject Item(string name) => Prefab(name.StartsWith(".") ? $"Fishing/{name.Substring(1)}.prefab" : $"Items/{name}.prefab");
+
+    public static GameObject Plushy(string name) => Prefab($"Items/DevPlushies/DevPlushie{(name.StartsWith(".") ? name.Substring(1) : $"({name})")}.prefab");
 
     /// <summary> Loads the torch prefab. </summary>
-    public static GameObject Torch() => AssetHelper.LoadPrefab("Assets/Prefabs/Levels/Interactive/Altar (Torch) Variant.prefab");
+    public static GameObject Torch() => Prefab("Levels/Interactive/Altar (Torch) Variant.prefab");
 
     /// <summary> Loads the blast explosion prefab. </summary>
-    public static GameObject Blast() => AssetHelper.LoadPrefab("Assets/Prefabs/Attacks and Projectiles/Explosions/Explosion Wave.prefab");
+    public static GameObject Blast() => Prefab("Attacks and Projectiles/Explosions/Explosion Wave.prefab");
 
     /// <summary> Loads the shotgun pickup prefab. </summary>
-    public static GameObject Shotgun() => AssetHelper.LoadPrefab("Assets/Prefabs/Weapons/Pickups/ShotgunPickUp.prefab");
+    public static GameObject Shotgun() => Prefab("Weapons/Pickups/ShotgunPickUp.prefab");
 
     /// <summary> Loads a swordsmachine material by name. </summary>
-    public static void SwordsMaterial(string name, Renderer output) =>
-        Addressables.LoadAssetAsync<Material>($"Assets/Models/Enemies/SwordsMachine/{name}.mat").Task.ContinueWith(task => output.material = task.Result);
+    public static void SwordsMaterial(string name, Renderer output) => Material($"Enemies/SwordsMachine/{name}.mat", mat => output.material = mat);
 
     /// <summary> Loads an insurrectionist material by name. </summary>
-    public static void SisyMaterial(string name, Renderer[] output) =>
-        Addressables.LoadAssetAsync<Material>($"Assets/Models/Enemies/Sisyphus/{name}.mat").Task.ContinueWith(task => output[0].material = output[1].material = task.Result);
+    public static void SisyMaterial(string name, Renderer[] output) => Material($"Enemies/Sisyphus/{name}.mat", mat => output[0].material = output[1].material = mat);
+
+    #endregion
 }
