@@ -35,6 +35,7 @@ public class Items
 
         if (id.name.StartsWith("Dev"))
         {
+            if (id.name == "DevPlushie (1)") return EntityType.Lenval; // for God's sake, tell my why?!
             if (id.name.Contains("(Clone)")) id.name = id.name.Substring(0, id.name.IndexOf("(Clone)")).Trim();
 
             int index = Prefabs.FindIndex(prefab => prefab.name == id.name);
