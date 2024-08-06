@@ -1,6 +1,17 @@
 ### Join the Jaket Modders discord to recieve notifications about updates and the like!
 https://discord.gg/eYr6nzF3
 
+## Differences from Unmodified Jaket
+- 4 more teams
+- new utility commands in chat
+   - /blacklist - manage blacklists
+   - /difficulty - get/set the difficulty
+   - /clear - client side clears chat
+- new admin options
+   - \[K\] a button to kick, removes someone from the lobby, but it allows them to rejoin later
+   - \[B\] a button to ban someone from the current lobby
+   - \[P\] a button to permaban someone from all of your future lobbies, (manage permabans with /blacklist)
+
 ## Building
 To compile you will need .NET SDK 6.0 and Git.  
 **Important**: You don't need this if you just want to play with the mod.
