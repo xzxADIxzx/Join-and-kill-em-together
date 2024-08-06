@@ -52,7 +52,7 @@ public class Tools
     public static void Load(string scene) => SceneHelper.LoadScene(scene);
 
     /// <summary> Whether the given object is on a scene or is it just an asset. </summary>
-    public static bool IsReal(GameObject obj) => obj.scene.name != null;
+    public static bool IsReal(GameObject obj) => obj.scene.name != null && obj.scene.name != "DontDestroyOnLoad";
     public static bool IsReal(Component comp) => IsReal(comp.gameObject);
 
     #endregion

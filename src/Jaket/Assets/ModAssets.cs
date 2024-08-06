@@ -19,6 +19,8 @@ public class ModAssets
 {
     /// <summary> Player doll and its preview prefabs. </summary>
     public static GameObject Doll, Preview;
+    /// <summary> Jaket plushies. </summary>
+    public static GameObject V2, V3;
 
     /// <summary> Player doll icon. </summary>
     public static Sprite Icon;
@@ -109,7 +111,7 @@ public class ModAssets
         Font = bundle.LoadAsset<Font>("font.ttf");
         FontTMP = TMP_FontAsset.CreateFontAsset(Font);
 
-        // dolls
+        // dolls & plushies
         Load<GameObject>("Player Doll.prefab", p =>
         {
             Object.DontDestroyOnLoad(Doll = p);
@@ -120,6 +122,26 @@ public class ModAssets
         {
             Object.DontDestroyOnLoad(Preview = p);
             FixMaterials(p);
+        });
+
+        Load<Texture>("V2-plushie", t =>
+        {
+            int i = EntityType.V2 - EntityType.ItemOffset;
+            Object.DontDestroyOnLoad(V2 = Items.Prefabs[i] = Object.Instantiate(Items.Prefabs[i]));
+
+            V2.name = "DevPlushie (V2)";
+            V2.GetComponentInChildren<Renderer>().material.mainTexture = t;
+            V2.GetComponent<Rigidbody>().isKinematic = true;
+        });
+
+        Load<Texture>("V3-plushie", t =>
+        {
+            int i = EntityType.V3 - EntityType.ItemOffset;
+            Object.DontDestroyOnLoad(V3 = Items.Prefabs[i] = Object.Instantiate(Items.Prefabs[i]));
+
+            V3.name = "DevPlushie (V3)";
+            V3.GetComponentInChildren<Renderer>().material.mainTexture = t;
+            V3.GetComponent<Rigidbody>().isKinematic = true;
         });
     }
 
