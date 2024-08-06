@@ -38,9 +38,9 @@ public class GameAssets
     /// <summary> List of readable names of all dev plushies. </summary>
     public static readonly string[] PlushiesButReadable =
     {
-        "Hakita", "Pitr", "Victoria", "Heckteck", "CabalCrow", "Lucas", "Francis", "Jericho", "BigRock", "Mako",
-        "Samuel", "Salad", "Meganeko", "KGC", "BJ", "Jake", "John", "Quetzal", "Gianni", "Weyte",
-        "Lenval", "Joy", "Mandy", "Cameron", "Dalia", "Tucker", "Scott", "Jacob", "Vvizard", "V1", "V2", "V3", "xzxADIxzx", "Sowler"
+        "hakita", "pitr", "victoria", "heckteck", "cabalcrow", "lucas", "francis", "jericho", "bigrock", "mako",
+        "samuel", "salad", "meganeko", "kgc", "bj", "jake", "john", "quetzal", "gianni", "weyte",
+        "lenval", "joy", "mandy", "cameron", "dalia", "tucker", "scott", "jacob", "vvizard", "v1", "v2", "v3", "xzxadixzx", "sowler"
     };
 
     #endregion
