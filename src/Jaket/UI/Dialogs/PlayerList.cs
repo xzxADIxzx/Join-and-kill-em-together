@@ -14,7 +14,7 @@ public class PlayerList : CanvasSingleton<PlayerList>
     private void Start()
     {
         UIB.Shadow(transform);
-        UIB.Table("Teams", "#player-list.team", transform, new(16f + 616f / 2f, -(16f + 166f / 2f), 616f, 166f, new(0f, 1f)), table =>
+        UIB.Table("Teams", "#player-list.team", transform, new(16f + 532f / 2f, -(16f + 166f / 2f), 532f, 166f, new(0f, 1f)), table =>
         {
             UIB.Text("#player-list.info", table, Btn(71f) with { Height = 46f }, size: 16);
 
