@@ -33,10 +33,11 @@ public class Items
     {
         if (id == null) return EntityType.None;
 
-        // items are divided into two types: regular and plushies
-        if (id.name.StartsWith("DevPlushie"))
+        if (id.name.StartsWith("Dev"))
         {
-            int index = Prefabs.FindIndex(prefab => prefab.transform.GetChild(prefab.transform.childCount - 1).name == id.transform.GetChild(id.transform.childCount - 1).name);
+            if (id.name.Contains("(Clone)")) id.name = id.name.Substring(0, id.name.IndexOf("(Clone)")).Trim();
+
+            int index = Prefabs.FindIndex(prefab => prefab.name == id.name);
             return index == -1 ? EntityType.None : (EntityType.ItemOffset + index);
         }
         else return id.transform.GetChild(0).name switch
