@@ -85,7 +85,7 @@ public class GameAssets
     public static GameObject Shotgun() => Prefab("Weapons/Pickups/ShotgunPickUp");
 
     /// <summary> Loads the fish pickup prefab. </summary>
-    public static GameObject FishTemplate() => Prefab("Assets/Prefabs/Fishing/Fish Pickup Template.prefab");
+    public static GameObject FishTemplate() => Prefab("Fishing/Fish Pickup Template");
 
     /// <summary> Loads a swordsmachine material by name. </summary>
     public static void SwordsMaterial(string name, Renderer output) => Material($"Enemies/SwordsMachine/{name}", mat => output.material = mat);
