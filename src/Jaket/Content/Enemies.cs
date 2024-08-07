@@ -75,9 +75,9 @@ public class Enemies
     {
         // EnemyId of Malicious Face and Cerberus is in a child object
         // https://discord.com/channels/1132614140414935070/1132614140876292190/1146507403102257162
-        var obj = type != EntityType.MaliciousFace && type != EntityType.Cerberus ?
-                Entities.Mark(Prefabs[type - EntityType.EnemyOffset].gameObject) :
-                Entities.Mark(Prefabs[type - EntityType.EnemyOffset].transform.parent.gameObject).transform.GetChild(0).gameObject;
+        var obj = type != EntityType.MaliciousFace && type != EntityType.Cerberus
+            ? Entities.Mark(Prefabs[type - EntityType.EnemyOffset].gameObject)
+            : Entities.Mark(Prefabs[type - EntityType.EnemyOffset].transform.parent.gameObject).transform.GetChild(0).gameObject;
 
         // repeat this, since only the parental object was renamed
         obj.name = "Net";
