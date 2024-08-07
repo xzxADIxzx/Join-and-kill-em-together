@@ -34,9 +34,9 @@ public class GameAssets
     /// <summary> List of internal names of all fishes. </summary>
     public static readonly string[] Fishes =
     {
-        "Funny Fish!!!.prefab", "pitr fish.prefab", "Trout.prefab", "Amid Efil Fish.prefab", "Dusk Chomper.prefab",
-        "Bomb Fish.prefab", "Gib Eyeball Fish.prefab", "IronLungFish.prefab", "Dope Fish.prefab", "Fish Stick.prefab",
-        "Cooked Fish.prefab", "Shark Fish.prefab", "Burnt Stuff.prefab"
+        "Funny Fish!!!", "pitr fish", "Trout", "Amid Efil Fish", "Dusk Chomper",
+        "Bomb Fish", "Gib Eyeball Fish", "IronLungFish", "Dope Fish", "Fish Stick",
+        "Cooked Fish", "Shark Fish", "Burnt Stuff"
     };
 
     /// <summary> List of internal names of all dev plushies. </summary>
