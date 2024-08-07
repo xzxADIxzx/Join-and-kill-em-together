@@ -54,13 +54,27 @@ public enum EntityType
     SecuritySystem_Tower, SecuritySystem_Tower_,
     Brain,
 
-    AppleBait,
-    SkullBait,
     BlueSkull,
     RedSkull,
     Soap,
     Torch,
     Florp,
+
+    AppleBait,
+    SkullBait,
+    FunnyStupidFish,
+    PitrFish,
+    TroutFish,
+    MetalFish,
+    ChomperFish,
+    BombFish,
+    EyeballFish,
+    FrogFish,
+    DopeFish,
+    StickFish,
+    CookedFish,
+    Shark,
+    BurntStuff,
 
     Hakita,
     Pitr,
@@ -103,7 +117,8 @@ public enum EntityType
 
     EnemyOffset = Filth,
     SecuritySystemOffset = SecuritySystem_Main,
-    ItemOffset = AppleBait,
+    ItemOffset = BlueSkull,
+    FishOffset = AppleBait,
     PlushieOffset = Hakita,
     BulletOffset = Coin
 }
@@ -125,7 +140,10 @@ public static class TypeExtensions
     public static bool IsTargetable(this EntityType type) => IsEnemy(type) && type != EntityType.Idol && type != EntityType.CancerousRodent;
 
     /// <summary> Whether the type is an item. </summary>
-    public static bool IsItem(this EntityType type) => type >= EntityType.ItemOffset && type < EntityType.PlushieOffset;
+    public static bool IsItem(this EntityType type) => type >= EntityType.ItemOffset && type < EntityType.FishOffset;
+
+    /// <summary> Whether the type is a bait or fish. </summary>
+    public static bool IsFish(this EntityType type) => type >= EntityType.FishOffset && type < EntityType.PlushieOffset;
 
     /// <summary> Whether the type is a plushie. </summary>
     public static bool IsPlushie(this EntityType type) => type >= EntityType.PlushieOffset && type < EntityType.BulletOffset;
