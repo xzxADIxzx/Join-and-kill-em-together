@@ -91,7 +91,7 @@ public class Votes
         dialog.text = dialog.text.Replace("Mirage", "Virage");
 
         var tex = dialog.font.material.mainTexture; // aspect ratio of the font texture must always be 1
-        if (tex.width != tex.height) dialog.font.RequestCharactersInTexture("I", Mathf.Max(tex.width, tex.height));
+        if (tex.width != tex.height) dialog.font.RequestCharactersInTexture("I love you", 512);
 
         dialog.font.RequestCharactersInTexture("3", 22);
         dialog.font.GetCharacterInfo('3', out var info, 22);
