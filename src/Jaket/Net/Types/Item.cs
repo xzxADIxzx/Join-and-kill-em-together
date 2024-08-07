@@ -73,6 +73,11 @@ public class Item : OwnableEntity
             });
     });
 
+    private void OnDestroy()
+    {
+        if (IsOwner) NetKill();
+    }
+
     public void PickUp()
     {
         TakeOwnage();
