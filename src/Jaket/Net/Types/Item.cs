@@ -1,6 +1,7 @@
 namespace Jaket.Net.Types;
 
 using HarmonyLib;
+using System.Linq;
 using UnityEngine;
 
 using Jaket.Content;
@@ -9,6 +10,8 @@ using Jaket.IO;
 /// <summary> Representation of all items in the game, except glasses and books. </summary>
 public class Item : OwnableEntity
 {
+    static FishManager fm => FishManager.Instance;
+
     /// <summary> Item position and rotation. </summary>
     private FloatLerp x, y, z, rx, ry, rz;
     /// <summary> Player holding the item in their hands. </summary>
@@ -30,6 +33,12 @@ public class Item : OwnableEntity
 
         x = new(); y = new(); z = new();
         rx = new(); ry = new(); rz = new();
+    }
+
+    private void Start()
+    {
+        if (Type.IsFish() && TryGetComponent(out FishObjectReference fish))
+            fm.UnlockFish(fish.fishObject = fm.recognizedFishes.Keys.ElementAt(Type - EntityType.FishOffset - 2));
     }
 
     private void Update() => Stats.MTE(() =>

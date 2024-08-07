@@ -91,7 +91,7 @@ public class Administration
             tree[owner].Add(entity);
         }
 
-        if (entity.Type.IsEnemy() || entity.Type.IsItem())
+        if (entity.Type.IsEnemy() || entity.Type.IsItem() || entity.Type.IsFish())
         {
             // player can only spawn one big enemy at a time
             if (entity.Type.IsBigEnemy() && entities.TryGetValue(owner, out var list)) list.ForEach(e => e.NetKill());
