@@ -72,7 +72,11 @@ public class Items
             : Entities.Mark(Prefabs[type - EntityType.ItemOffset]);
 
         // prefabs of fishes do not contain anything except the model of the fish
-        if (fsh) Tools.Instantiate(Prefabs[type - EntityType.ItemOffset], obj.transform);
+        if (fsh)
+        {
+            Tools.Instantiate(Prefabs[type - EntityType.ItemOffset], obj.transform).transform.localPosition = Vector3.zero;
+            obj.AddComponent<FishObjectReference>();
+        }
 
         return obj.AddComponent<Item>();
     }
