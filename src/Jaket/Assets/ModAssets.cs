@@ -12,6 +12,7 @@ using Object = UnityEngine.Object;
 using Jaket.Content;
 using Jaket.Net;
 using Jaket.Net.Types;
+using Jaket.UI;
 using Jaket.UI.Dialogs;
 
 /// <summary> Class that works with the assets of the mod. </summary>
@@ -20,7 +21,7 @@ public class ModAssets
     /// <summary> Player doll and its preview prefabs. </summary>
     public static GameObject Doll, Preview;
     /// <summary> Jaket plushies. </summary>
-    public static GameObject V2, V3;
+    public static GameObject V2, V3, xzxADIxzx, Sowler;
 
     /// <summary> Player doll icon. </summary>
     public static Sprite Icon;
@@ -143,6 +144,21 @@ public class ModAssets
             V3.GetComponentInChildren<Renderer>().material.mainTexture = t;
             V3.GetComponent<Rigidbody>().isKinematic = true;
         });
+
+        Load<GameObject>("DevPlushie (xzxADIxzx).prefab", p =>
+        {
+            Object.DontDestroyOnLoad(xzxADIxzx = Items.Prefabs[EntityType.xzxADIxzx - EntityType.ItemOffset] = p);
+            FixMaterials(p, new(1.2f, 1.2f, 1.2f));
+
+            UIB.Component<ItemIdentifier>(p, itemId =>
+            {
+                itemId.itemType = ItemType.CustomKey1;
+                itemId.reverseTransformSettings = true;
+
+                itemId.putDownRotation = new(0f, 120f, 90f);
+                itemId.putDownScale = new(.5f, .5f, .5f);
+            });
+        });
     }
 
     /// <summary> Creates a new player doll from the prefab. </summary>
@@ -183,11 +199,11 @@ public class ModAssets
     #region fixes
 
     /// <summary> Changes the colors of materials and their shaders to match the style of the game. </summary>
-    public static void FixMaterials(GameObject obj) => obj.GetComponentsInChildren<Renderer>(true).DoIf(
+    public static void FixMaterials(GameObject obj, Color? color = null) => obj.GetComponentsInChildren<Renderer>(true).DoIf(
         r => r is not TrailRenderer,
         r => r.materials.Do(m =>
         {
-            m.color = Color.white;
+            m.color = color ?? Color.white;
             m.shader = Shader;
         }));
 
