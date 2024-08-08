@@ -84,6 +84,9 @@ public class GameAssets
     /// <summary> Loads the shotgun pickup prefab. </summary>
     public static GameObject Shotgun() => Prefab("Weapons/Pickups/ShotgunPickUp");
 
+    /// <summary> Loads the squeaky toy sound prefab. </summary>
+    public static GameObject Squeaky() => AssetHelper.LoadPrefab("Assets/Particles/SoundBubbles/SqueakyToy.prefab");
+
     /// <summary> Loads the fish pickup prefab. </summary>
     public static GameObject FishTemplate() => Prefab("Fishing/Fish Pickup Template");
 

@@ -153,6 +153,8 @@ public class ModAssets
             UIB.Component<ItemIdentifier>(p, itemId =>
             {
                 itemId.itemType = ItemType.CustomKey1;
+                itemId.pickUpSound = GameAssets.Squeaky();
+
                 itemId.reverseTransformSettings = true;
 
                 itemId.putDownRotation = new(0f, 120f, 90f);
