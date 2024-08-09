@@ -82,7 +82,15 @@ public class Item : OwnableEntity
     {
         TakeOwnage();
         Networking.LocalPlayer.HeldItem = this;
+
+        // a special feature of my dev plushie
+        if (Type == EntityType.xzxADIxzx)
+            for (int i = 0; i <= 16; i++)
+                Invoke(i == 16 ? "Return" : "Rotate", i * Networking.SNAPSHOTS_SPACING);
     }
+
+    private void Rotate() => transform.Find("adi/Head").localEulerAngles = new(90f * Random.Range(0, 3), 90f * Random.Range(0, 3), 90f * Random.Range(0, 3));
+    private void Return() => transform.Find("adi/Head").localEulerAngles = new(270f, Random.value < .042f ? 45f : 0f, 0f);
 
     #region entity
 
