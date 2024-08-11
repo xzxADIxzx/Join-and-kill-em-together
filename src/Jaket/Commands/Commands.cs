@@ -23,7 +23,7 @@ public class Commands
         {
             Handler.Commands.ForEach(command =>
             {
-                chat.Receive($"[14]* /{command.Name}{(command.Args == null ? "" : $" [#BBBBBB]{command.Args}[]")} - {command.Desc}[]");
+                chat.Receive($"[14]/{command.Name}{(command.Args == null ? "" : $" [#BBBBBB]{command.Args}[]")} - {command.Desc}[]");
             });
         });
         Handler.Register("hello", "Resend the tips for new players", args => chat.Hello(true));
