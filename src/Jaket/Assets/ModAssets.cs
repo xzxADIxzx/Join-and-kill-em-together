@@ -54,6 +54,7 @@ public class ModAssets
     public static void Load()
     {
         var bundle = AssetBundle.LoadFromFile(Path.Combine(Plugin.Instance.Location, "jaket-assets.bundle"));
+        GameAssets.Squeaky(); // preload the sound; otherwise, it crashes .-.
 
         void Load<T>(string name, Action<T> cons) where T : Object
         {
@@ -159,6 +160,23 @@ public class ModAssets
 
                 itemId.putDownRotation = new(0f, 120f, 90f);
                 itemId.putDownScale = new(.5f, .5f, .5f);
+            });
+        });
+
+        Load<GameObject>("DevPlushie (Sowler).prefab", p =>
+        {
+            Object.DontDestroyOnLoad(Sowler = Items.Prefabs[EntityType.Sowler  - EntityType.ItemOffset] = p);
+            FixMaterials(p);
+
+            UIB.Component<ItemIdentifier>(p, itemId =>
+            {
+                itemId.itemType = ItemType.CustomKey1;
+                itemId.pickUpSound = GameAssets.Squeaky();
+
+                itemId.reverseTransformSettings = true;
+
+                itemId.putDownRotation = new(-15f, 120f, 95f);
+                itemId.putDownScale = new(.45f, .45f, .45f);
             });
         });
     }
