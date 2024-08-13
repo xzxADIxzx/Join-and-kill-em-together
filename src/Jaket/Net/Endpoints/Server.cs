@@ -50,9 +50,13 @@ public class Server : Endpoint, ISocketManager
                 Redirect(r, con);
             }
         });
-        Listen(PacketType.DamageEntity, r =>
+        Listen(PacketType.DamageEntity, (con, sender, r) =>
         {
-            if (ents.TryGetValue(r.Id(), out var entity)) entity?.Damage(r);
+            if (ents.TryGetValue(r.Id(), out var entity))
+            {
+                entity?.Damage(r);
+                Redirect(r, con);
+            }
         });
         Listen(PacketType.KillEntity, (con, sender, r) =>
         {
