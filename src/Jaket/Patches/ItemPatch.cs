@@ -38,7 +38,7 @@ public class BinPatch
         if (Tools.Scene != "CreditsMuseum2" || __instance.targetType != ItemType.CustomKey1 || !other || !other.transform.parent) return true;
 
         if (other.transform.parent.name == "adi") return PlushieAdi(__instance, other);
-        if (other.transform.parent.name == "sowler") return PlushieSowler(__instance, other);
+        if (other.transform.parent.name == "sowler") return PlushieSowler(other);
         return true;
     }
 
@@ -76,15 +76,31 @@ public class BinPatch
         return true;
     }
 
-    static bool PlushieSowler(ItemTrigger trigger, Collider col)
+    static bool PlushieSowler(Collider col)
     {
-        GameAssets.GabLine("gab_Intro1d", clip => AudioSource.PlayClipAtPoint(clip, trigger.transform.position));
-
         var cam = CameraController.Instance.transform;
         var owl = col.transform.parent.parent;
 
-        owl.position = cam.position - cam.forward with { y = 0f } * 8f;
+        owl.position = cam.position - cam.forward with { y = 0f } * 16f;
         owl.LookAt(cam);
+
+        var source = owl.gameObject.AddComponent<AudioSource>();
+        var act = owl.gameObject.AddComponent<ObjectActivator>();
+
+        GameAssets.GabLine("gab_Intro1d", clip =>
+        {
+            source.clip = clip;
+            source.rolloffMode = AudioRolloffMode.Linear;
+            source.Play();
+
+            act.ActivateDelayed(5f);
+            act.events = new() { onActivate = new() };
+            act.events.onActivate.AddListener(() =>
+            {
+                Tools.Destroy(source);
+                Tools.Destroy(act);
+            });
+        });
 
         return false;
     }
