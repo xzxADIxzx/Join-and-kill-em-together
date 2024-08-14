@@ -81,8 +81,9 @@ public class BinPatch
         var cam = CameraController.Instance.transform;
         var owl = col.transform.parent.parent;
 
-        owl.position = cam.position - cam.forward with { y = 0f } * 16f;
+        owl.position = cam.position - cam.forward with { y = 0f } * 8f;
         owl.LookAt(cam);
+        col.attachedRigidbody.velocity = Vector3.zero;
 
         var source = owl.gameObject.AddComponent<AudioSource>();
         var act = owl.gameObject.AddComponent<ObjectActivator>();
