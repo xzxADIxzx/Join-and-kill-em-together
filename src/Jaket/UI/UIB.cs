@@ -239,6 +239,18 @@ public class UIB
         });
     }
 
+    /// <summary> Adds a button corresponding to the shop style. </summary>
+    public static Button ShopButton(string name, Transform parent, Rect r, Action clicked)
+    {
+        var img = Image(name, parent, r, shopc, fill: false);
+        Text(name, img.transform, Huge, size: 280).transform.localScale /= 10f;
+        return Component<Button>(img.gameObject, button =>
+        {
+            button.targetGraphic = img;
+            button.onClick.AddListener(() => clicked());
+        });
+    }
+
     /// <summary> Adds a button corresponding to the Discord style and opening a link to our server. </summary>
     public static Button DiscordButton(string name, Transform parent)
     {
@@ -248,6 +260,18 @@ public class UIB
         {
             button.targetGraphic = img;
             button.onClick.AddListener(() => Application.OpenURL("https://discord.gg/USpt3hCBgn"));
+        });
+    }
+
+    /// <summary> Adds a button corresponding to the Buy Me a Coffee style and opening a link to my page. </summary>
+    public static Button BMaCButton(string name, Transform parent)
+    {
+        var img = Image(name, parent, Btn(0f), bmac);
+        Text(name, img.transform, Huge, size: 240).transform.localScale /= 10f;
+        return Component<Button>(img.gameObject, button =>
+        {
+            button.targetGraphic = img;
+            button.onClick.AddListener(() => Application.OpenURL("https://www.buymeacoffee.com/adithedev"));
         });
     }
 

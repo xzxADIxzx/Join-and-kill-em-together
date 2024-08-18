@@ -7,6 +7,9 @@ public struct Rect
 {
     /// <summary> Huge rectangle used for high quality text. </summary>
     public static readonly Rect Huge = Size(4200f, 4200f);
+    /// <summary> Rectangle that fills its parent. </summary>
+    public static readonly Rect Fill = new(0f, 0f, 0f, 0f, Vector2.zero, Vector2.one);
+
     /// <summary> Rect at the center of the current with the same size. </summary>
     public readonly Rect Text => new(0f, 1f, Width, Height);
 
