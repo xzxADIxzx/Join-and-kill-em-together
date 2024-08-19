@@ -45,7 +45,7 @@ public class LocalPlayer : Entity
 
         Voice = gameObject.AddComponent<AudioSource>(); // add a 2D audio source that will be heard from everywhere
 
-        Events.OnLoaded += () => Events.Post(UpdateWeapons);
+        Events.OnLoaded += () => Invoke("UpdateWeapons", .1f);
         Events.OnWeaponChanged += () => Events.Post(UpdateWeapons);
         Events.OnTeamChanged += () =>
         {
