@@ -11,7 +11,7 @@
     },
     { // maid
         "historicalId": 6,
-        "hierarchyId": -1,
+        "hierarchyId": 2,
         "cost": 42000
     },
     { // cultist

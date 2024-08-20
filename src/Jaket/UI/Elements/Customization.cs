@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using Jaket.IO;
+using Jaket.Net;
 
 using static Pal;
 using static Rect;
@@ -67,6 +68,7 @@ public class Customization : MonoBehaviour
             Shop.SelectedHat = localId;
 
         Shop.SavePurchases();
+        Networking.LocalPlayer.SyncSuit();
         Rebuild();
     }
 

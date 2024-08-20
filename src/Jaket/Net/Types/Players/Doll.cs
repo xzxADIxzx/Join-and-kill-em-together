@@ -24,6 +24,8 @@ public class Doll : MonoBehaviour
     /// <summary> Event triggered after the start of emote. </summary>
     public Action OnEmoteStart = () => { };
 
+    /// <summary> Hat and jacket that the doll wears. </summary>
+    public int Hat, Jacket;
     /// <summary> Whether the player uses custom weapon colors. </summary>
     public bool CustomColors;
     /// <summary> Custom weapon colors themselves. </summary>
@@ -46,17 +48,19 @@ public class Doll : MonoBehaviour
     public LineRenderer HookWinch;
 
     /// <summary> Spawns a preview of the given emote. </summary>
-    public static Doll Spawn(Transform parent, Team team, byte emote, byte rps) =>
+    public static Doll Spawn(Transform parent, Team team, int hat, int jacket, byte emote, byte rps) =>
         UIB.Component<Doll>(Instantiate(ModAssets.Preview, parent), doll =>
         {
             doll.transform.localPosition = new(0f, -1.5f);
             doll.transform.localScale = Vector3.one * 2.18f;
 
-            doll.ApplyTeam(team);
-            // TODO load local players' suit + ApplySuit
-
+            doll.Hat = hat;
+            doll.Jacket = jacket;
             doll.Emote = emote;
             doll.Rps = rps;
+
+            doll.ApplyTeam(team);
+            doll.ApplySuit();
         });
 
     private void Awake()
@@ -153,6 +157,14 @@ public class Doll : MonoBehaviour
 
     public void ApplySuit()
     {
+        foreach (Transform suit in Suits) suit.gameObject.SetActive(false);
+
+        int hat = Shop.Entries[Hat].hierarchyId;
+        if (hat != -1) Suits.GetChild(hat).gameObject.SetActive(true);
+
+        int jacket = Shop.Entries[Jacket].hierarchyId;
+        if (jacket != -1) Suits.GetChild(jacket).gameObject.SetActive(true);
+
         foreach (var getter in Hand.GetComponentsInChildren<GunColorGetter>())
         {
             var renderer = getter.GetComponent<Renderer>();
@@ -179,8 +191,13 @@ public class Doll : MonoBehaviour
 
     public void ReadSuit(Reader r)
     {
+        Hat = r.Int();
+        Jacket = r.Int();
+
         CustomColors = r.Bool();
         if (CustomColors) { Color1 = r.Color(); Color2 = r.Color(); Color3 = r.Color(); }
+
+        ApplySuit();
     }
 
     #endregion

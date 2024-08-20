@@ -69,6 +69,10 @@ public class LocalPlayer : Entity
     public void SyncSuit() => Networking.Send(PacketType.Style, w =>
     {
         w.Id(Id);
+
+        w.Int(Shop.SelectedHat);
+        w.Int(Shop.SelectedJacket);
+
         if (cw?.GetComponentInChildren<GunColorGetter>()?.TryGetComponent<Renderer>(out var renderer) ?? false)
         {
             bool custom = renderer.material.name.Contains("Custom");
@@ -82,7 +86,7 @@ public class LocalPlayer : Entity
             });
         }
         else w.Bool(false);
-    }, size: 17);
+    }, size: 25);
 
     /// <summary> Caches the id of the current weapon and paints the hands of the local player. </summary>
     public void UpdateWeapons()
