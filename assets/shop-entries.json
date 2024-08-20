@@ -1,6 +1,18 @@
 [
-    { // no hat
+    { // empty
         "historicalId": 0,
+        "hierarchyId": -1
+    },
+    { // jaket
+        "historicalId": 4,
+        "hierarchyId": -1
+    },
+    { // maid
+        "historicalId": 6,
+        "hierarchyId": -1
+    },
+    { // cultist
+        "historicalId": 8,
         "hierarchyId": -1
     },
     { // ears
@@ -11,8 +23,20 @@
         "historicalId": 3,
         "hierarchyId": 1
     },
-    { // no jacket
+    { // empty
         "historicalId": 1,
+        "hierarchyId": -1
+    },
+    { // jaket
+        "historicalId": 5,
+        "hierarchyId": -1
+    },
+    { // maid
+        "historicalId": 7,
+        "hierarchyId": -1
+    },
+    { // cultist
+        "historicalId": 9,
         "hierarchyId": -1
     }
 ]
