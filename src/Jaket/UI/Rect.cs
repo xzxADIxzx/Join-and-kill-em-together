@@ -54,5 +54,7 @@ public struct Rect
 
     public static Rect Deb(int x) => new(184f + 352f * x, 296f, 336f, 136f, new(0f, 0f), new(0f, 0f));
 
+    public static Rect Shp(float x, float y) => new(x, y, 40f, 40f, new(0f, 1f));
+
     #endregion
 }

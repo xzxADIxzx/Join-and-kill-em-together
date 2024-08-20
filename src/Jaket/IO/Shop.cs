@@ -11,6 +11,8 @@ public class Shop
 {
     /// <summary> Path to the file in which the purchases are saved. </summary>
     public static string SavePath => Path.Combine(GameProgressSaver.SavePath, "customization.bepis");
+    /// <summary> The first jacket is approximately in the middle of the list, but not exactly, because there are two more hats. </summary>
+    public static int FirstJacket => Entries.Length / 2 + 1;
 
     /// <summary> Cosmetic trinkets that can be bought in the terminal shop. </summary>
     public static ShopEntry[] Entries;
@@ -54,7 +56,7 @@ public class Shop
     public static void LoadPurchases()
     {
         SelectedHat = 0;
-        SelectedJacket = Entries.Length / 2 + 1;
+        SelectedJacket = FirstJacket;
         Unlocked = 0L;
 
         if (File.Exists(SavePath))
