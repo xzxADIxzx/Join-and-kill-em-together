@@ -540,7 +540,7 @@ public class Constants
     /// <summary> Finds the phoneme id that completely matches the given one. </summary>
     public static int FullMatch(char sign1, char sign2)
     {
-        string sum = sign1 + "" + sign2; // C# sucks
+        string sum = sign1 + "" + sign2;
         return PhonemeNameTable.FindIndex(value => value == sum && value[1] != '*');
     }
 

@@ -74,22 +74,23 @@ public class Customization : MonoBehaviour
             var rect = Shp(20f + i % 6 * 40f, -20f - i / 6 * 40f);
             var icon = UIB.Image("Button", buttons, rect, Shop.IsUnlocked(offset + i) ? white : black, null);
 
+            int j = i;
             UIB.Component<Button>(icon.gameObject, button =>
             {
                 button.targetGraphic = icon;
                 button.onClick.AddListener(() =>
                 {
                     if (second)
-                        Shop.SelectedJacket = offset + i;
+                        Shop.SelectedJacket = offset + j;
                     else
-                        Shop.SelectedHat = i;
+                        Shop.SelectedHat = j;
                     Rebuild();
                 });
             });
             Tools.Destroy(icon.gameObject.AddComponent<ShopButton>()); // hacky
         }
 
-        int j = second ? Shop.SelectedJacket - offset : Shop.SelectedHat;
-        UIB.Image("Selection", buttons, Shp(20f + j % 6 * 40f, -20f - j / 6 * 40f), shopc, fill: false).transform.localPosition += Vector3.back * 15f;
+        int l = second ? Shop.SelectedJacket - offset : Shop.SelectedHat;
+        UIB.Image("Selection", buttons, Shp(20f + l % 6 * 40f, -20f - l / 6 * 40f), shopc, fill: false).transform.localPosition += Vector3.back * 15f;
     }
 }
