@@ -10,6 +10,7 @@ using UnityEngine.Audio;
 using Object = UnityEngine.Object;
 
 using Jaket.Content;
+using Jaket.IO;
 using Jaket.Net;
 using Jaket.Net.Types;
 using Jaket.UI;
@@ -165,7 +166,7 @@ public class ModAssets
 
         Load<GameObject>("DevPlushie (Sowler).prefab", p =>
         {
-            Object.DontDestroyOnLoad(Sowler = Items.Prefabs[EntityType.Sowler  - EntityType.ItemOffset] = p);
+            Object.DontDestroyOnLoad(Sowler = Items.Prefabs[EntityType.Sowler - EntityType.ItemOffset] = p);
             FixMaterials(p);
 
             UIB.Component<ItemIdentifier>(p, itemId =>
@@ -178,6 +179,13 @@ public class ModAssets
                 itemId.putDownRotation = new(-15f, 120f, 95f);
                 itemId.putDownScale = new(.45f, .45f, .45f);
             });
+        });
+
+        // shop
+        Load<TextAsset>("shop-entries", f =>
+        {
+            Shop.Load(f.text);
+            Shop.LoadPurchases();
         });
     }
 
