@@ -1,0 +1,18 @@
+[
+    { // no hat
+        "historicalId": 0,
+        "hierarchyId": -1
+    },
+    { // ears
+        "historicalId": 2,
+        "hierarchyId": 0
+    },
+    { // big ears
+        "historicalId": 3,
+        "hierarchyId": 1
+    },
+    { // no jacket
+        "historicalId": 1,
+        "hierarchyId": -1
+    }
+]
