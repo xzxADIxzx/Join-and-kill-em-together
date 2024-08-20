@@ -26,7 +26,7 @@ public class Shop
     public static void Load(string json)
     {
         json = Regex.Replace(json, "//.*?\n|\\[\n", string.Empty);
-        Entries = new ShopEntry[json.Count(c => c == '\n') / 3];
+        Entries = new ShopEntry[json.Count(c => c == '\n') / 4];
 
         for (int i = 0, s = 0, e = 0; i < Entries.Length; i++)
         {
@@ -74,7 +74,7 @@ public class Shop
     #region progress
 
     /// <summary> Whether the given entry was purchased in this save. </summary>
-    public static bool IsUnlocked(int entryId) => Entries[entryId].hierarchyId == -1 || (Unlocked & 1U << entryId) == 1U << entryId;
+    public static bool IsUnlocked(int entryId) => Entries[entryId].cost == 0 || (Unlocked & 1U << entryId) == 1U << entryId;
 
     /// <summary> Purchases the given entry. </summary>
     public static void Unlock(int entryId) => Unlocked |= 1U << entryId;
@@ -89,4 +89,6 @@ public class ShopEntry
     public int historicalId;
     /// <summary> This id may change and displays the position of purchase in the suits hierarchy. </summary>
     public int hierarchyId;
+    /// <summary> Cost of the entry in Ps. </summary>
+    public int cost;
 }

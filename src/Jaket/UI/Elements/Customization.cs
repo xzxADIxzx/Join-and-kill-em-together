@@ -59,6 +59,17 @@ public class Customization : MonoBehaviour
         Rebuild();
     }
 
+    private void OnClick(int localId)
+    {
+        if (second)
+            Shop.SelectedJacket = Shop.FirstJacket + localId;
+        else
+            Shop.SelectedHat = localId;
+
+        Shop.SavePurchases();
+        Rebuild();
+    }
+
     /// <summary> Rebuilds the element to update the page. </summary>
     public void Rebuild()
     {
@@ -78,14 +89,7 @@ public class Customization : MonoBehaviour
             UIB.Component<Button>(icon.gameObject, button =>
             {
                 button.targetGraphic = icon;
-                button.onClick.AddListener(() =>
-                {
-                    if (second)
-                        Shop.SelectedJacket = offset + j;
-                    else
-                        Shop.SelectedHat = j;
-                    Rebuild();
-                });
+                button.onClick.AddListener(() => OnClick(j));
             });
             Tools.Destroy(icon.gameObject.AddComponent<ShopButton>()); // hacky
         }
