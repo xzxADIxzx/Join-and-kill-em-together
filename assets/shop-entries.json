@@ -16,8 +16,8 @@
     },
     { // cultist
         "historicalId": 8,
-        "hierarchyId": -1,
-        "cost": 0
+        "hierarchyId": 4,
+        "cost": 88888
     },
     { // ears
         "historicalId": 2,
@@ -46,7 +46,7 @@
     },
     { // cultist
         "historicalId": 9,
-        "hierarchyId": -1,
-        "cost": 0
+        "hierarchyId": 3,
+        "cost": 88888
     }
 ]
