@@ -36,16 +36,8 @@ public class Customization : MonoBehaviour
             UIB.Text("#custom.support", canvas, new(0f, -32f, 4200f, 4200f, new(.5f, 1f)), size: 320).transform.localScale /= 10f;
             UIB.BMaCButton("Buy Me a Coffee", canvas).transform.localPosition = new(0f, 190f, 0f);
 
-            UIB.Table("Button", canvas, new(-111f, 48f, 206f, 64f, new(.5f, 0f)), button => UIB.ShopButton("#custom.hats", button, Fill, () =>
-            {
-                second = false;
-                Rebuild();
-            }));
-            UIB.Table("Button", canvas, new(+111f, 48f, 206f, 64f, new(.5f, 0f)), button => UIB.ShopButton("#custom.jackets", button, Fill, () =>
-            {
-                second = true;
-                Rebuild();
-            }));
+            UIB.Table("Button", canvas, new(-111f, 48f, 206f, 64f, new(.5f, 0f)), b => UIB.ShopButton("#custom.hats", b, Fill, () => Switch(false)));
+            UIB.Table("Button", canvas, new(+111f, 48f, 206f, 64f, new(.5f, 0f)), b => UIB.ShopButton("#custom.jackets", b, Fill, () => Switch(true)));
 
             selection = UIB.Image("Selection", canvas, new(0f, 48f, 206f, 64f, new(.5f, 0f)), shopc, fill: false).transform;
             selection.localPosition += Vector3.back * 15f;
@@ -65,6 +57,12 @@ public class Customization : MonoBehaviour
         preview.localScale = Vector3.one * 80f;
         preview = preview.Find("V3/Suits");
 
+        Rebuild();
+    }
+
+    private void Switch(bool target)
+    {
+        second = target;
         Rebuild();
     }
 
