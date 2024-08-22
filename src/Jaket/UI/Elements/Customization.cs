@@ -101,11 +101,11 @@ public class Customization : MonoBehaviour
 
         int offset = second ? Shop.FirstJacket : 0;
 
-        for (int i = 1; i < buttons.childCount; i++) Destroy(buttons.GetChild(i).gameObject);
+        for (int i = 0; i < buttons.childCount; i++) Destroy(buttons.GetChild(i).gameObject);
         for (int i = 0; i < Shop.Entries.Length / 2 + (second ? -1 : 1); i++)
         {
             var rect = Shp(20f + i % 6 * 40f, -20f - i / 6 * 40f);
-            var icon = UIB.Image("Button", buttons, rect, Shop.IsUnlocked(offset + i) ? white : black, ModAssets.ShopIcons[offset + i]);
+            var icon = UIB.Image("Button", buttons, rect, Shop.IsUnlocked(offset + i) ? white : black, Shop.Icon(offset + i));
 
             int j = i;
             UIB.Component<Button>(icon.gameObject, button =>

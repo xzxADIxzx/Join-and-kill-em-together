@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
+using Jaket.Assets;
+
 /// <summary> Class responsible for saving purchases in the mod shop. </summary>
 public class Shop
 {
@@ -78,6 +80,9 @@ public class Shop
 
     /// <summary> Purchases the given entry. </summary>
     public static void Unlock(int entryId) => Unlocked |= 1U << entryId;
+
+    /// <summary> Returns the icon of the given entry. </summary>
+    public static Sprite Icon(int entryId) => ModAssets.ShopIcons[Entries[entryId].historicalId];
 
     #endregion
 }

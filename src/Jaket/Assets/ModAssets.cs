@@ -116,9 +116,9 @@ public class ModAssets
         }
 
         // shop
-        ShopIcons = new Sprite[9];
+        ShopIcons = new Sprite[10];
 
-        for (int i = 0; i < 9; i++)
+        for (int i = 0; i < 10; i++)
         {
             int j = i;
             Load<Sprite>("shop-" + i, s => ShopIcons[j] = s);
