@@ -105,7 +105,7 @@ public class Customization : MonoBehaviour
         for (int i = 0; i < Shop.Entries.Length / 2 + (second ? -1 : 1); i++)
         {
             var rect = Shp(20f + i % 6 * 40f, -20f - i / 6 * 40f);
-            var icon = UIB.Image("Button", buttons, rect, Shop.IsUnlocked(offset + i) ? white : black, null);
+            var icon = UIB.Image("Button", buttons, rect, Shop.IsUnlocked(offset + i) ? white : black, ModAssets.ShopIcons[offset + i]);
 
             int j = i;
             UIB.Component<Button>(icon.gameObject, button =>

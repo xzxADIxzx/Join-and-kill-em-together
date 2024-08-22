@@ -1,50 +1,50 @@
 [
-    { // empty
+    { // hat: empty
         "historicalId": 0,
         "hierarchyId": -1,
         "cost": 0
     },
-    { // jaket
+    { // hat: jaket
         "historicalId": 4,
         "hierarchyId": -1,
         "cost": 25000
     },
-    { // maid
+    { // hat: maid
         "historicalId": 6,
         "hierarchyId": 2,
         "cost": 42000
     },
-    { // cultist
+    { // hat: cultist
         "historicalId": 8,
         "hierarchyId": 4,
         "cost": 88888
     },
-    { // ears
+    { // hat: ears
         "historicalId": 2,
         "hierarchyId": 0,
         "cost": 500000
     },
-    { // big ears
+    { // hat: big ears
         "historicalId": 3,
         "hierarchyId": 1,
         "cost": 1000000
     },
-    { // empty
+    { // jacket: empty
         "historicalId": 1,
         "hierarchyId": -1,
         "cost": 0
     },
-    { // jaket
+    { // jacket: jaket
         "historicalId": 5,
         "hierarchyId": -1,
         "cost": 25000
     },
-    { // maid
+    { // jacket: maid
         "historicalId": 7,
         "hierarchyId": -1,
         "cost": 42000
     },
-    { // cultist
+    { // jacket: cultist
         "historicalId": 9,
         "hierarchyId": 3,
         "cost": 88888

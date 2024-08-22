@@ -47,6 +47,11 @@ public class ModAssets
     /// <summary> Icons for the emote selection wheel. </summary>
     public static Sprite[] EmoteIcons, EmoteGlows;
 
+    /// <summary> Text file that contains the description of cosmetic trinkets. </summary>
+    public static string ShopEntries;
+    /// <summary> Icons for the customization element in the shop. </summary>
+    public static Sprite[] ShopIcons;
+
     /// <summary> Font used by the mod. Differs from the original in support of Cyrillic alphabet. </summary>
     public static Font Font;
     public static TMP_FontAsset FontTMP;
@@ -109,6 +114,21 @@ public class ModAssets
             Load<Sprite>("V3-emoji-" + i, s => EmoteIcons[j] = s);
             Load<Sprite>("V3-emoji-" + i + "-glow", s => EmoteGlows[j] = s);
         }
+
+        // shop
+        ShopIcons = new Sprite[9];
+
+        for (int i = 0; i < 9; i++)
+        {
+            int j = i;
+            Load<Sprite>("shop-" + i, s => ShopIcons[j] = s);
+        }
+
+        Load<TextAsset>("shop-entries", f =>
+        {
+            Shop.Load(ShopEntries = f.text);
+            Shop.LoadPurchases();
+        });
 
         // fonts
         Font = bundle.LoadAsset<Font>("font.ttf");
@@ -179,13 +199,6 @@ public class ModAssets
                 itemId.putDownRotation = new(-15f, 120f, 95f);
                 itemId.putDownScale = new(.45f, .45f, .45f);
             });
-        });
-
-        // shop
-        Load<TextAsset>("shop-entries", f =>
-        {
-            Shop.Load(f.text);
-            Shop.LoadPurchases();
         });
     }
 
