@@ -76,8 +76,9 @@ public class Customization : MonoBehaviour
             Shop.SelectedHat = localId;
 
         Shop.SavePurchases();
-        Networking.LocalPlayer.SyncSuit();
         Rebuild();
+
+        if (LobbyController.Online) Networking.LocalPlayer.SyncSuit();
     }
 
     /// <summary> Rebuilds the element to update the page. </summary>
