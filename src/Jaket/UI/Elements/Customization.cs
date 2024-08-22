@@ -1,5 +1,6 @@
 namespace Jaket.UI.Elements;
 
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,6 +23,13 @@ public class Customization : MonoBehaviour
     private Transform preview;
     /// <summary> Transform containing buttons for choosing cosmetic trinkets. </summary>
     private Transform buttons;
+    /// <summary> Transform containing the purchase menu. </summary>
+    private Transform buyMenu;
+
+    private Image buyIcon;
+    private Text buyText;
+    private Button buyButton;
+    private Action buyAction;
 
     private void Start()
     {
@@ -45,7 +53,23 @@ public class Customization : MonoBehaviour
             preview = UIB.Image("Preview", canvas, new(96f, 216f, 160f, 240f, new(0f, 0f)), shopc, fill: false).transform;
             buttons = UIB.Rect("Buttons", canvas, new(-136f, 216f, 240f, 240f, new(1f, 0f)));
 
+            UIB.Table("Buy Menu", canvas, Fill, table =>
+            {
+                buyMenu = table;
+                buyMenu.localPosition = buyMenu.localPosition with { z = -30f };
+
+                UIB.Image("Border", table, Fill, shopc, fill: false);
+
+                buyIcon = UIB.Image("Icon", table, new(0f, 80f, 96f, 96f));
+                buyText = UIB.Text("Message", table, Huge, size: 280);
+                buyText.transform.localScale /= 10f;
+
+                UIB.ShopButton("#custom.cancel", table, new(-111f, -80f, 206f, 64f), () => HideBuyMenu(false));
+                buyButton = UIB.ShopButton("#custom.buy", table, new(+111f, -80f, 206f, 64f), () => HideBuyMenu(true));
+            });
+
             for (int i = 1; i < canvas.childCount; i++) canvas.GetChild(i).transform.localPosition += Vector3.back * 15f;
+            for (int i = 1; i < buyMenu.childCount; i++) buyMenu.GetChild(i).transform.localPosition += Vector3.back * 15f;
 
             foreach (var button in canvas.GetComponentsInChildren<Button>())
                 Tools.Destroy(button.gameObject.AddComponent<ShopButton>()); // hacky
@@ -62,21 +86,56 @@ public class Customization : MonoBehaviour
 
     private void Switch(bool target)
     {
+        if (buyMenu.gameObject.activeSelf) return;
         second = target;
         Rebuild();
     }
 
-    private void OnClick(int localId)
+    private void HideBuyMenu(bool bought)
     {
-        if (second)
-            Shop.SelectedJacket = Shop.FirstJacket + localId;
+        preview.parent.gameObject.SetActive(true);
+        buyMenu.gameObject.SetActive(false);
+        if (bought) buyAction();
+    }
+
+    private void OnClick(int id)
+    {
+        var unlocked = Shop.IsUnlocked(id);
+        if (unlocked)
+        {
+            if (second)
+                Shop.SelectedJacket = id;
+            else
+                Shop.SelectedHat = id;
+
+            Shop.SavePurchases();
+            Rebuild();
+
+            if (LobbyController.Online) Networking.LocalPlayer.SyncSuit();
+        }
         else
-            Shop.SelectedHat = localId;
+        {
+            preview.parent.gameObject.SetActive(false);
+            buyMenu.gameObject.SetActive(true);
+            buyIcon.sprite = Shop.Icon(id);
 
-        Shop.SavePurchases();
-        Rebuild();
-
-        if (LobbyController.Online) Networking.LocalPlayer.SyncSuit();
+            int cost = Shop.Entries[id].cost;
+            if (buyButton.interactable = GameProgressSaver.GetMoney() >= cost)
+            {
+                buyAction = () =>
+                {
+                    GameProgressSaver.AddMoney(-cost);
+                    Shop.Unlock(id);
+                    OnClick(id);
+                };
+                buyText.text = Bundle.Format("custom.message", MoneyText.DivideMoney(cost), $"#custom.{id}");
+            }
+            else
+            {
+                buyAction = null;
+                buyText.text = Bundle.Get("custom.not-enough-message");
+            }
+        }
     }
 
     /// <summary> Rebuilds the element to update the page. </summary>
@@ -109,7 +168,7 @@ public class Customization : MonoBehaviour
             UIB.Component<Button>(icon.gameObject, button =>
             {
                 button.targetGraphic = icon;
-                button.onClick.AddListener(() => OnClick(j));
+                button.onClick.AddListener(() => OnClick(offset + j));
             });
             Tools.Destroy(icon.gameObject.AddComponent<ShopButton>()); // hacky
         }
