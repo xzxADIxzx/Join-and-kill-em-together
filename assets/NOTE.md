@@ -25,7 +25,7 @@ Notes-instructions on how to correctly import assets into Unity will be listed h
 
 ### Shop icons
 * Filter Mode: Point
-* Compression: High Quality
+* Compression: None
 
 ## Chan
 

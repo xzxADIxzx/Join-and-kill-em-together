@@ -81,6 +81,7 @@ public class Customization : MonoBehaviour
         preview.localScale = Vector3.one * 80f;
         preview = preview.Find("V3/Suits");
 
+        HideBuyMenu(false);
         Rebuild();
     }
 
