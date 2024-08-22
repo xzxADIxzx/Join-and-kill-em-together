@@ -20,9 +20,12 @@ Notes-instructions on how to correctly import assets into Unity will be listed h
 ## Icons
 
 * Texture Type: Sprite
-* Filter Mode: Point (only for the shop icons)
 * Max Size: 1024
 * Add to the assets bundle (via the bottom menu)
+
+### Shop icons
+* Filter Mode: Point
+* Compression: High Quality
 
 ## Chan
 
