@@ -4,7 +4,6 @@
 
 obj/*
 bin/*
-lib/*
 build/*
 
 *.sln
