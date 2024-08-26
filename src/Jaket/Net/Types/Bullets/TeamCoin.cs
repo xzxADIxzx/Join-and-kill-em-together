@@ -150,7 +150,7 @@ public class TeamCoin : OwnableEntity
         mat.mainTexture = null; // the texture has its own color, which is extremely undesirable
     }
 
-    private void Quadruple()
+    private void Quadruple(bool silent = false)
     {
         quadrupled = true;
         Effect(coin.enemyFlash, 15f);
@@ -158,6 +158,7 @@ public class TeamCoin : OwnableEntity
         var light = effect.GetComponent<Light>();
         light.color = Team.Color();
         light.intensity = 10f;
+        if (silent) Destroy(effect.GetComponent<AudioSource>());
     }
 
     private void Reset()
@@ -209,7 +210,7 @@ public class TeamCoin : OwnableEntity
         if (isPlayer || isEnemy)
         {
             TakeOwnage();
-            Quadruple();
+            Quadruple(isEnemy);
         }
         Invoke("Reflect", (isPlayer ? 1.2f : isEnemy ? .3f : .1f) + offset);
 

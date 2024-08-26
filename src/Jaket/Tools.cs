@@ -10,7 +10,10 @@ using UnityEngine.Events;
 
 using Object = UnityEngine.Object;
 
+using Jaket.Assets;
 using Jaket.IO;
+using Jaket.Net;
+using Jaket.Net.Types;
 
 /// <summary> Set of different tools for simplifying life and systematization of code. </summary>
 public class Tools
@@ -119,6 +122,21 @@ public class Tools
     public static bool Within(Transform a, Transform b, float dst = 1f) => Within(a.position, b.position, dst);
     public static bool Within(GameObject a, Vector3 b, float dst = 1f) => Within(a.transform.position, b, dst);
     public static bool Within(GameObject a, GameObject b, float dst = 1f) => Within(a.transform.position, b.transform.position, dst);
+
+    #endregion
+    #region debug
+
+    /// <summary> Spawns a dummy at the position of the local player. </summary>
+    public static RemotePlayer Dummy()
+    {
+        var dummy = ModAssets.CreateDoll();
+        dummy.name = "Dummy";
+
+        // pass the data of the local player to the dummy
+        Writer.Write(Networking.LocalPlayer.Write, (data, size) => Reader.Read(data, size, dummy.Read), 48);
+
+        return dummy;
+    }
 
     #endregion
 }

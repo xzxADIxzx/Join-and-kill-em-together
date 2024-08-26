@@ -175,7 +175,7 @@ public class Customization : MonoBehaviour
         }
 
         int l = second ? Shop.SelectedJacket - offset : Shop.SelectedHat;
-        UIB.Image("Selection", buttons, Shp(20f + l % 6 * 40f, -20f - l / 6 * 40f), shopc, fill: false).transform.localPosition += Vector3.back * 15f;
+        UIB.Image("Selection", buttons, Shp(20f + l % 6 * 40f, -20f - l / 6 * 40f), shopc, fill: false).transform.localPosition += Vector3.back * 10f;
 
         #endregion
     }
