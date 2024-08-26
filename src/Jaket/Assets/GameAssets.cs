@@ -83,6 +83,9 @@ public class GameAssets
     /// <summary> Loads the blast explosion prefab. </summary>
     public static GameObject Blast() => Prefab("Attacks and Projectiles/Explosions/Explosion Wave");
 
+    /// <summary> Loads the harmless explosion prefab. </summary>
+    public static GameObject Harmless() => Prefab("Attacks and Projectiles/Explosions/Explosion Harmless");
+
     /// <summary> Loads the shotgun pickup prefab. </summary>
     public static GameObject Shotgun() => Prefab("Weapons/Pickups/ShotgunPickUp");
 

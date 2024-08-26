@@ -43,7 +43,7 @@ public class Items
             int index = Prefabs.FindIndex(prefab => prefab.name == id.name);
             return index == -1 ? EntityType.None : (EntityType.ItemOffset + index);
         }
-        if (id.name.StartsWith("Fish") && id.TryGetComponent(out FishObjectReference fish))
+        if (id.TryGetComponent(out FishObjectReference fish))
         {
             int index = FishManager.Instance.recognizedFishes.Keys.ToList().IndexOf(fish.fishObject);
             return index == -1 ? EntityType.BurntStuff : (EntityType.FishOffset + index + 2);

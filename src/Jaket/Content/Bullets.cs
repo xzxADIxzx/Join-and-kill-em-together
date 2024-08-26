@@ -23,7 +23,7 @@ public class Bullets
         /* shotgun */ "shotgun", "shotgunzone", "chainsaw", "chainsawzone", "chainsawbounce", "chainsawprojectile", "hammer",
         /* other */ "nail", "sawblade", "cannonball",
         /* drill */ "harpoon", "drill", "drillpunch",
-        /* environmental*/ "explosion", "aftershock", "zapper",
+        /* environmental */ "explosion" /*???*/, "aftershock", "zapper",
         /* melee */ "punch", "heavypunch", "ground slam", "hook",
         /* parry */ "projectile", "enemy"
     };
