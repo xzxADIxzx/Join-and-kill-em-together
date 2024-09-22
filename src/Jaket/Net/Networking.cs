@@ -37,6 +37,18 @@ public class Networking
     /// <summary> Whether multiplayer was used in the current level. </summary>
     public static bool WasMultiplayerUsed;
 
+    /// <summary> Returns the list of all entities. </summary>
+    public static Entity[] Dump
+    {
+        get
+        {
+            var list = new Entity[Entities.Count()];
+            int i = 0;
+            Entities.Each(entry => list[i++] = entry.Value);
+            return list;
+        }
+    }
+
     /// <summary> Loads server, client and event listeners. </summary>
     public static void Load()
     {
