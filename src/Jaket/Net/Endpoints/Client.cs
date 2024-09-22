@@ -23,7 +23,7 @@ public class Client : Endpoint, IConnectionManager
             var id = r.Id();
             var type = r.Enum<EntityType>();
 
-            if (!ents.ContainsKey(id) || ents[id] == null) ents[id] = Entities.Get(id, type);
+            if (ents[id] == null) ents[id] = Entities.Get(id, type);
             ents[id]?.Read(r);
         });
         Listen(PacketType.Level, World.ReadData);

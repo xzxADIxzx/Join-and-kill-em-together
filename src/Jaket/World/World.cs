@@ -164,7 +164,7 @@ public class World
         Tools.ResFind<GoreZone>(zone => Tools.IsReal(zone) && zone.isActiveAndEnabled && FarEnough(zone.transform), zone => zone.ResetGibs());
 
         // big pieces of corpses, such as arms or legs, are part of the entities
-        Networking.Entities.Values.DoIf(entity =>
+        Networking.Entities.Each(entity =>
 
                 entity && entity.Dead && entity is Enemy &&
                 entity.Type != EntityType.MaliciousFace &&

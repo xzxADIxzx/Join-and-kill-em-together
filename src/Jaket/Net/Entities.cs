@@ -77,7 +77,7 @@ public class Entities
         if (LastId < Tools.AccId) LastId = Tools.AccId;
 
         LastId++;
-        while (Networking.Entities.ContainsKey(LastId)) LastId += 8192;
+        while (Networking.Entities.Contains(LastId)) LastId += 8192;
 
         return LastId;
     }

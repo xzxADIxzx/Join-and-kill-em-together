@@ -28,7 +28,7 @@ public class Networking
     public static Client Client = new();
 
     /// <summary> List of all entities by their id. May contain null. </summary>
-    public static Dictionary<uint, Entity> Entities = new();
+    public static Pools Entities = new();
     /// <summary> Local player singleton. </summary>
     public static LocalPlayer LocalPlayer;
 
@@ -162,11 +162,13 @@ public class Networking
 
         List<uint> toRemove = new();
 
-        Entities.Values.DoIf(e => e == null || (e.Dead && e.LastUpdate < Time.time - 1f && !e.gameObject.activeSelf), e => toRemove.Add(e.Id));
-        if (DeadBullet.Instance.LastUpdate < Time.time - 1f)
-            Entities.DoIf(pair => pair.Value == DeadBullet.Instance, pair => toRemove.Add(pair.Key));
+        Entities.Each(e => e == null || (e.Dead && e.LastUpdate < Time.time - 1f && !e.gameObject.activeSelf), e => toRemove.Add(e.Id));
+        if (DeadBullet.Instance.LastUpdate < Time.time - 1f) Entities.Each(pair =>
+        {
+            if (pair.Value == DeadBullet.Instance) toRemove.Add(pair.Key);
+        });
 
-        toRemove.ForEach(id => Entities.Remove(id));
+        toRemove.ForEach(Entities.Remove);
     }
 
     #region iteration
@@ -178,16 +180,10 @@ public class Networking
     }
 
     /// <summary> Iterates each non-null entity. </summary>
-    public static void EachEntity(Action<Entity> cons)
-    {
-        foreach (var entity in Entities.Values) if (entity != null && !entity.Dead) cons(entity);
-    }
+    public static void EachEntity(Action<Entity> cons) => Entities.Each(entity => entity != null && !entity.Dead, cons);
 
     /// <summary> Iterates each non-null entity that fits the given predicate. </summary>
-    public static void EachEntity(Predicate<Entity> pred, Action<Entity> cons) => EachEntity(entity =>
-    {
-        if (pred(entity)) cons(entity);
-    });
+    public static void EachEntity(Predicate<Entity> pred, Action<Entity> cons) => Entities.Each(entity => entity != null && !entity.Dead && pred(entity), cons);
 
     /// <summary> Iterates each player. </summary>
     public static void EachPlayer(Action<RemotePlayer> cons) => EachEntity(entity =>

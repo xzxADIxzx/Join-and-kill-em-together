@@ -23,7 +23,7 @@ public class EnemyPatch
 
     [HarmonyPrefix]
     [HarmonyPatch("UpdateTarget")]
-    static bool Skip() => Time.frameCount % (1 + Networking.Entities.Count / 16) == 0;
+    static bool Skip() => Time.frameCount % 8 == 0;
 
     [HarmonyPostfix]
     [HarmonyPatch("UpdateTarget")]

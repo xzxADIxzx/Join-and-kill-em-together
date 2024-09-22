@@ -30,7 +30,7 @@ public class Pools
     }
 
     /// <summary> Returns whether an entity with the given key/id was found. </summary>
-    public bool TryGet(uint key, out Entity value)
+    public bool TryGetValue(uint key, out Entity value)
     {
         var entry = entries[key & 0x3FF];
 
@@ -40,7 +40,7 @@ public class Pools
     }
 
     /// <summary> Returns whether an entity with the given key/id is present in the hash map. </summary>
-    public bool Contains(uint key) => TryGet(key, out _);
+    public bool Contains(uint key) => TryGetValue(key, out _);
 
     /// <summary> Removes an entry with the given key/id. </summary>
     public void Remove(uint key)
@@ -73,6 +73,12 @@ public class Pools
 
     /// <summary> Iterates each entry in the given pool. </summary>
     public void Each(int pool, Action<Entry> cons) => Each(pool, 4, cons);
+
+    /// <summary> Iterates each entity that are suitable for the given predicate. </summary>
+    public void Each(Predicate<Entity> pred, Action<Entity> cons) => Each(pair =>
+    {
+        if (pred(pair.Value)) cons(pair.Value);
+    });
 
     /// <summary> Counts the number of entries that are suitable for the given predicate. </summary>
     public int Count(Predicate<Entry> pred)

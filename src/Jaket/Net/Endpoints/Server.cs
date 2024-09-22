@@ -26,7 +26,7 @@ public class Server : Endpoint, ISocketManager
             // player can only have one doll and its id should match the player's id
             if ((id == sender && type != EntityType.Player) || (id != sender && type == EntityType.Player)) return;
 
-            if (!ents.ContainsKey(id) || ents[id] == null)
+            if (ents[id] == null)
             {
                 // double-check on cheats just in case of any custom multiplayer clients existence
                 if (!LobbyController.CheatsAllowed && (type.IsEnemy() || type.IsItem())) return;
