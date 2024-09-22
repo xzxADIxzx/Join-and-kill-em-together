@@ -33,6 +33,7 @@ public class UI
         LobbyTab.Build("Lobby Tab", false, true);
         LobbyList.Build("Lobby List", false, true);
         PlayerList.Build("Player List", false, true);
+        TeamList.Build("Team List", false, true);
         Settings.Build("Settings", false, true);
         SpraySettings.Build("Spray Settings", false, true);
         Debugging.Build("Debugging Menu", false, false);

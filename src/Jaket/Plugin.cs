@@ -13,6 +13,8 @@ using Jaket.IO;
 using Jaket.Net;
 using Jaket.Sprays;
 using Jaket.World;
+using Jaket.UI;
+using Jaket.UI.Dialogs;
 
 /// <summary> Bootloader class needed to avoid destroying the mod by the game. </summary>
 [BepInPlugin("xzxADIxzx.Jaket", "Jaket", Version.CURRENT)]
@@ -86,6 +88,8 @@ public class Plugin : MonoBehaviour
 
         UI.UIB.Load();
         UI.UI.Load();
+
+        Events.EveryTick += Pal.UpdateRainbow;
 
         // initialize harmony and patch all the necessary classes
         new Harmony("Should I write something here?").PatchAll();

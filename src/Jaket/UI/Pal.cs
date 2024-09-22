@@ -5,6 +5,8 @@ using UnityEngine;
 /// <summary> Palette of all colors used by the mod. </summary>
 public static class Pal
 {
+    private static float rainbowHue = 0f;
+
     public static string Green = "#32CD32";
     public static string Yellow = "#FFC939";
     public static string Orange = "#FFA500";
@@ -28,6 +30,13 @@ public static class Pal
     public static Color grey = new(.73f, .73f, .73f);
     public static Color coral = new(1f, .5f, .31f);
     public static Color discord = new(.345f, .396f, .949f);
+    public static Color rainbow = new(1f, 1f, 1f);
 
     public static Color Dark(Color original) => Color.Lerp(original, black, .38f);
+    public static void UpdateRainbow()
+    {
+        rainbow = Color.HSVToRGB(rainbowHue, 1f, 1f);
+        rainbowHue += 0.6f * Time.deltaTime;
+        rainbowHue %= 1f;
+    }
 }

@@ -8,12 +8,15 @@ using Jaket.Content;
 using Jaket.IO;
 using Jaket.UI;
 
+using static Jaket.UI.Pal;
+
 /// <summary>
 /// Doll of a player, remote from network or local from emoji.
 /// Responsible for the visual part of the player, i.e. suits and animations.
 /// </summary>
 public class Doll : MonoBehaviour
 {
+    Team Team;
     /// <summary> Component rendering animations of the doll. </summary>
     public Animator Animator;
     /// <summary> Animator states that affect which animation will be played. </summary>
@@ -37,7 +40,7 @@ public class Doll : MonoBehaviour
     public Vector3 HoldPosition => Hooking ? Hook.position : HookRoot.position;
 
     /// <summary> Materials of the wings, coin and skateboard. </summary>
-    public Material WingMat, CoinMat, SkateMat;
+    public Material BodyMat, WingMat, CoinMat, SkateMat;
     /// <summary> Trail of the wings. </summary>
     public TrailRenderer WingTrail;
     /// <summary> Winch of the hook. </summary>
@@ -73,6 +76,7 @@ public class Doll : MonoBehaviour
         Skateboard = V3.Find("Skateboard");
         Suits = V3.Find("Suits");
 
+        BodyMat = V3.Find("V3").GetComponent<Renderer>().materials[0];
         WingMat = V3.Find("V3").GetComponent<Renderer>().materials[1];
         CoinMat = Coin.GetComponent<Renderer>().material;
         SkateMat = Skateboard.GetComponent<Renderer>().material;
@@ -135,6 +139,15 @@ public class Doll : MonoBehaviour
             FallParticle.localScale = new(1.2f, .6f, 1f);
         }
         else if (!Falling && FallParticle != null) Destroy(FallParticle.gameObject);
+
+        if (Team == Team.RGB)
+        {
+            BodyMat.color = WingMat.color = SkateMat.color = CoinMat.color = rainbow;
+            WingTrail.startColor = rainbow with { a = .5f };
+
+            WingMat.mainTexture = SkateMat.mainTexture = DollAssets.WingTextures[(int)Team.White];
+            BodyMat.mainTexture = DollAssets.BodyTextures[(int)Team.White];
+        }
     });
 
     #region apply
@@ -142,11 +155,17 @@ public class Doll : MonoBehaviour
     public void ApplyTeam(Team team)
     {
         WingMat.mainTexture = SkateMat.mainTexture = DollAssets.WingTextures[(int)team];
+        BodyMat.mainTexture = DollAssets.BodyTextures[(int)team];
+
+        WingMat.color = white;
+        BodyMat.color = white;
+
         CoinMat.color = team.Color();
         if (WingTrail != null) WingTrail.startColor = team.Color() with { a = .5f };
 
         // TODO make it part of customization
-        Suits.GetChild(0).gameObject.SetActive(team == Team.Pink);
+        Suits.GetChild(0).gameObject.SetActive(team == Team.Pink || team == Team.Purple);
+        Team = team;
     }
 
     public void ApplySuit()

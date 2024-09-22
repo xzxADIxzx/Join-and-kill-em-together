@@ -96,7 +96,7 @@ public class Movement : MonoSingleton<Movement>
 
     private void Update()
     {
-        if (Tools.Scene == "Main Menu") return;
+        // if (Tools.Scene == "Main Menu") return;
 
         if (Input.GetKeyDown(Settings.ScrollUp)) Chat.Instance.ScrollMessages(true);
         if (Input.GetKeyDown(Settings.ScrollDown)) Chat.Instance.ScrollMessages(false);
@@ -105,7 +105,9 @@ public class Movement : MonoSingleton<Movement>
 
         if (Input.GetKeyDown(Settings.Chat)) Chat.Instance.Toggle();
         if (Input.GetKeyDown(Settings.LobbyTab)) LobbyTab.Instance.Toggle();
+
         if (Input.GetKeyDown(Settings.PlayerList)) PlayerList.Instance.Toggle();
+
         if (Input.GetKeyDown(Settings.Settingz)) Settings.Instance.Toggle();
         if (Input.GetKeyDown(KeyCode.F4)) Debugging.Instance.Toggle();
         if (Input.GetKeyDown(KeyCode.C) && Debugging.Shown) Debugging.Instance.Clear();

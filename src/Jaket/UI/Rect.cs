@@ -26,6 +26,8 @@ public struct Rect
 
     #region common
 
+    public static Rect Trw(float y, float height) => new(Screen.width - (16f + 336f / 2f), -y, 336f, height, new(0f, 1f));
+
     public static Rect Tlw(float y, float height) => new(16f + 336f / 2f, -y, 336f, height, new(0f, 1f));
 
     public static Rect Blw(float y, float height) => new(16f + 336f / 2f, y, 336f, height, new(0f, 0f));
