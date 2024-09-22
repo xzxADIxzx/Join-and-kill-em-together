@@ -43,13 +43,21 @@ public class Tools
     #endregion
     #region scene
 
-    /// <summary> Name of the current scene. </summary>
-    public static string Scene => SceneHelper.CurrentScene;
+    /// <summary> current difficulty. </summary>
+    public static int Difficulty
+    {
+        get => PrefsManager.Instance.GetInt("difficulty");
+        set => PrefsManager.Instance.SetInt("difficulty", value);
+    }
+
+    /// <summary> current scene. </summary>
+    public static string Scene
+    {
+        get => SceneHelper.CurrentScene;
+        set => SceneHelper.LoadScene(value);
+    }
     /// <summary> Name of the loading scene. </summary>
     public static string Pending => SceneHelper.PendingScene;
-
-    /// <summary> Loads the given scene. </summary>
-    public static void Load(string scene) => SceneHelper.LoadScene(scene);
 
     /// <summary> Whether the given object is on a scene or is it just an asset. </summary>
     public static bool IsReal(GameObject obj) => obj.scene.name != null;

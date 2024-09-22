@@ -125,7 +125,7 @@ public class LobbyController
         }
 
         // load the main menu if the client has left the lobby
-        if (!IsOwner && loadMainMenu) Tools.Load("Main Menu");
+        if (!IsOwner && loadMainMenu) Tools.Scene = "Main Menu";
 
         Networking.Clear();
         Events.OnLobbyAction.Fire();

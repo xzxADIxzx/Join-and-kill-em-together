@@ -84,17 +84,17 @@ public class Commands
 
             else if (args.Length >= 1 && (args[0].ToLower() == "sandbox" || args[0].ToLower() == "sand"))
             {
-                Tools.Load("uk_construct");
+                Tools.Scene = "uk_construct";
                 chat.Receive("[#32CD32]Sandbox is loading.");
             }
             else if (args.Length >= 1 && (args[0].ToLower().Contains("cyber") || args[0].ToLower().Contains("grind") || args[0].ToLower() == "cg"))
             {
-                Tools.Load("Endless");
+                Tools.Scene = "Endless";
                 chat.Receive("[#32CD32]The Cyber Grind is loading.");
             }
             else if (args.Length >= 1 && (args[0].ToLower().Contains("credits") || args[0].ToLower() == "museum"))
             {
-                Tools.Load("CreditsMuseum2");
+                Tools.Scene = "CreditsMuseum2";
                 chat.Receive("[#32CD32]The Credits Museum is loading.");
             }
             else if (args.Length < 2)
@@ -106,17 +106,17 @@ public class Commands
                 (level == 5 ? layer == 0 : true) && (layer == 3 || layer == 6 ? level <= 2 : true)
             )
             {
-                Tools.Load($"Level {layer}-{level}");
+                Tools.Scene = $"Level {layer}-{level}";
                 chat.Receive($"[#32CD32]Level {layer}-{level} is loading.");
             }
             else if (args[1].ToUpper() == "S" && int.TryParse(args[0], out level) && level >= 0 && level <= 7 && level != 3 && level != 6)
             {
-                Tools.Load($"Level {level}-S");
+                Tools.Scene = $"Level {level}-S";
                 chat.Receive($"[#32CD32]Secret level {level}-S is loading.");
             }
             else if (args[0].ToUpper() == "P" && int.TryParse(args[1], out level) && level >= 1 && level <= 2)
             {
-                Tools.Load($"Level P-{level}");
+                Tools.Scene = $"Level P-{level}";
                 chat.Receive($"[#32CD32]Prime level P-{level} is loading.");
             }
             else
@@ -147,5 +147,49 @@ public class Commands
             chat.Receive("0096FF", Chat.BOT_PREFIX + "xzxADIxzx", "Thank you all, I couldn't have done it alone ♡");
         });
         Handler.Register("support", "Support the author by buying him a coffee", args => Application.OpenURL("https://www.buymeacoffee.com/adidev"));
+
+        
+        Handler.Register("difficulty", "\\[val]", "get/set the current difficulty", args => 
+        {
+            void Msg(string msg) => chat.Receive($"[14]{msg}[]");
+
+            string GetDifficulty() => Tools.Difficulty switch
+            {
+                0 => "Harmless",
+                1 => "Lenient",
+                2 => "Standard",
+                3 => "Violent",
+                4 => "Brutal",
+                5 => "UKMD", // Not synced or able to be set, but still implemented for people with patched uk
+                _ => "???",
+            };
+
+            if (args.Length == 0)
+            {
+                string difficulty = GetDifficulty();
+                Msg($"Current difficulty is {difficulty}");
+                if (difficulty == "???" || difficulty == "UKMD")
+                {
+                    Msg("[#FFE600]Congrats Mr. Hackerman, unfortunately for you, this doesn't sync.[]");
+                }
+            }
+            else if (int.TryParse(args[0], out int difficulty) && 0 <= difficulty && difficulty <= 4)
+            {
+                Tools.Difficulty = difficulty;
+                Msg($"Difficulty set to {GetDifficulty()}");
+            }
+            else
+            {
+                Msg("[#FF341C]Val should either be left blank to get difficulty or should be an integer from 0-4 to set difficulty");
+            }
+        });
+
+        Handler.Register("clear", "Clear chat (locally)", args =>
+        {
+            for (int i = 0; i < Chat.MESSAGES_SHOWN; ++i)
+            {
+                chat.Receive("[1]\\ []");
+            }
+        });
     }
 }

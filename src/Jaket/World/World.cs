@@ -64,7 +64,7 @@ public class World
 
         // the version is needed for a warning about incompatibility
         w.String(Version.CURRENT);
-        w.Byte((byte)PrefsManager.Instance.GetInt("difficulty"));
+        w.Byte((byte)Tools.Difficulty);
 
         // synchronize activated actions
         w.Bytes(Activated.ToArray());
@@ -73,7 +73,7 @@ public class World
     /// <summary> Reads data about the world: loads the level, sets difficulty and fires triggers. </summary>
     public static void ReadData(Reader r)
     {
-        Tools.Load(r.String());
+        Tools.Scene = r.String();
 
         // if the mod version doesn't match the host's one, then reading the packet is complete, as this may lead to bigger bugs
         if (r.String() != Version.CURRENT)
@@ -81,7 +81,7 @@ public class World
             Version.Notify();
             return;
         }
-        PrefsManager.Instance.SetInt("difficulty", r.Byte());
+        Tools.Difficulty = r.Byte();
 
         Activated.Clear();
         Activated.AddRange(r.Bytes(r.Length - r.Position));
