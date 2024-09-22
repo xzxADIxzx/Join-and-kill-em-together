@@ -34,5 +34,8 @@ public enum PacketType
     /// <summary> Need to activate a certain object. It can be anything, because there are a lot of different stuff in the game. </summary>
     ActivateObject,
     /// <summary> Any action with CyberGrind, like pattern and wave. </summary>
-    CyberGrindAction
+    CyberGrindAction,
+
+    /// <summary> A packet that kicks the client out, but still lets them come back after. </summary>
+    Kick
 }

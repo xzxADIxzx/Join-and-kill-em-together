@@ -106,6 +106,13 @@ public class Networking
             if (Administration.Banned.Contains(member.Id.AccountId)) return;
             if (message.Length > Chat.MAX_MESSAGE_LENGTH + 8) message = message.Substring(0, Chat.MAX_MESSAGE_LENGTH);
 
+            uint id = 0;
+            if (message.Length > 3)
+            {
+                bool msgHasId = uint.TryParse(message.Substring(3), out uint idOut);
+                if (msgHasId) id = idOut;
+            }
+
             if (message == "#/d")
             {
                 Bundle.Msg("player.died", member.Name);
@@ -115,8 +122,11 @@ public class Networking
                 });
             }
 
-            else if (message.StartsWith("#/k") && uint.TryParse(message.Substring(3), out uint id))
+            else if (message.StartsWith("#/k") && id != 0)
                 Bundle.Msg("player.banned", Tools.Name(id));
+
+            else if (message.StartsWith("#/b") && id != 0)
+                Bundle.Msg("player.kicked", Tools.Name(id));
 
             else if (message.StartsWith("#/s") && byte.TryParse(message.Substring(3), out byte team))
             {

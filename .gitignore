@@ -5,6 +5,7 @@
 obj/*
 bin/*
 build/*
+latest/*
 
 *.sln
 *.bat

@@ -4,6 +4,9 @@ using HarmonyLib;
 using System.Collections.Generic;
 
 using Jaket.Content;
+using Jaket.UI.Dialogs;
+
+using static Jaket.UI.Pal;
 
 /// <summary> Class dedicated to protecting the lobby from unfavorable people. </summary>
 public class Administration
@@ -20,6 +23,8 @@ public class Administration
     /// <summary> Max amount of plushies per player. </summary>
     public const int MAX_PLUSHIES = 6;
 
+    /// <summary> Id of last kicked player </summary>
+    public static uint LastKicked = 0;
     /// <summary> List of banned player ids. </summary>
     public static List<uint> Banned = new();
     /// <summary> List of banned player sprays. </summary>
@@ -68,6 +73,27 @@ public class Administration
         Banned.Add(id);
         LobbyController.Lobby?.SendChatString("#/k" + id);
         LobbyController.Lobby?.SetData("banned", string.Join(" ", Banned));
+    }
+
+    /// <summary> Kicks the member from the lobby, or rather asks him to leave, because Valve hasn't added such functionality to their API. </summary>
+    public static void Kick(uint id)
+    {
+        // who does the client think he is?!
+        if (!LobbyController.IsOwner) return;
+
+        // fall back to ban packet on normal jaket lobbies because normal jaket doesn't understand
+        // the kick packet
+        Networking.Send(LobbyController.IsLobbyMultikill ? PacketType.Kick : PacketType.Ban, null, (data, size) =>
+        {
+            var con = Networking.FindCon(id);
+            Tools.Send(con, data, size);
+            con?.Flush();
+            Events.Post2(() => con?.Close());
+        });
+
+        LastKicked = id;
+        if (LobbyController.IsLobbyMultikill) LobbyController.Lobby?.SendChatString("#/b" + id);
+        else Chat.Instance.SendBot($"[{Yellow}]Player {Tools.Name(id)}");
     }
 
     /// <summary> Whether the player is sending a large amount of data. </summary>
