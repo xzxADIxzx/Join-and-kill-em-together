@@ -88,6 +88,13 @@ public class Pools
     /// <summary> Counts the number of entries. </summary>
     public int Count() => Count(_ => true);
 
+    /// <summary> Simple way to modify the hash map. </summary>
+    public Entity this[uint key]
+    {
+        set => Set(key, value);
+        get => Get(key);
+    }
+
     /// <summary> Hash map entry. Next can be null. </summary>
     public class Entry
     {
