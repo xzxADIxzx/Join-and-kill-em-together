@@ -63,7 +63,7 @@ public class Coins
         }
         if (LobbyController.PvPAllowed)
         {
-            Networking.EachPlayer(p =>
+            Networking.Entities.Player(p =>
             {
                 if (!p.Team.Ally() && p.Health > 0) Check(p.Doll.Head);
             });
@@ -74,9 +74,9 @@ public class Coins
             }
         }
 
-        Networking.EachEntity(e => e is Enemy, e =>
+        Networking.Entities.Alive(e => e is Enemy, e =>
         {
-            if (e.Type.IsTargetable() && e.EnemyId && !e.Dead) Check(e.EnemyId.weakPoint?.transform ?? e.transform);
+            if (e.Type.IsTargetable() && e.EnemyId) Check(e.EnemyId.weakPoint?.transform ?? e.transform);
         });
         if (target)
         {

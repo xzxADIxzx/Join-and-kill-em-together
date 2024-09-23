@@ -139,7 +139,7 @@ public class Server : Endpoint, ISocketManager
         Stats.MeasureTime(ref Stats.WriteTime, () =>
         {
             if (Networking.Loading) return;
-            Networking.EachEntity(entity => Networking.Send(PacketType.Snapshot, w =>
+            Networking.Entities.Alive(entity => Networking.Send(PacketType.Snapshot, w =>
             {
                 w.Id(entity.Id);
                 w.Enum(entity.Type);

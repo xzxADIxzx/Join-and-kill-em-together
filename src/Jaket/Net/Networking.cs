@@ -107,7 +107,7 @@ public class Networking
 
             // returning the exited player's entities back to the host owner & close the connection
             FindCon(member.Id.AccountId)?.Close();
-            EachEntity(entity =>
+            Entities.Alive(entity =>
             {
                 if (entity is OwnableEntity oe && oe.Owner == member.Id.AccountId) oe.TakeOwnage();
             });
@@ -121,7 +121,7 @@ public class Networking
             if (message == "#/d")
             {
                 Bundle.Msg("player.died", member.Name);
-                if (LobbyController.HealBosses) EachEntity(entity =>
+                if (LobbyController.HealBosses) Entities.Alive(entity =>
                 {
                     if (entity is Enemy enemy && enemy.IsBoss && !enemy.Dead) enemy.HealBoss();
                 });
@@ -148,7 +148,7 @@ public class Networking
     /// <summary> Kills all players and clears the list of entities. </summary>
     public static void Clear()
     {
-        EachPlayer(player => player.Kill());
+        Entities.Player(player => player.Kill());
         Entities.Clear();
         Entities[LocalPlayer.Id] = LocalPlayer;
     }
@@ -174,7 +174,7 @@ public class Networking
 
         List<uint> toRemove = new();
 
-        Entities.Each(e => e == null || (e.Dead && e.LastUpdate < Time.time - 1f && !e.gameObject.activeSelf), e => toRemove.Add(e.Id));
+        Entities.Entity(e => e == null || (e.Dead && e.LastUpdate < Time.time - 1f && !e.gameObject.activeSelf), e => toRemove.Add(e.Id));
         if (DeadBullet.Instance.LastUpdate < Time.time - 1f) Entities.Each(pair =>
         {
             if (pair.Value == DeadBullet.Instance) toRemove.Add(pair.Key);
@@ -183,28 +183,13 @@ public class Networking
         toRemove.ForEach(Entities.Remove);
     }
 
-    #region iteration
+    #region tools
 
     /// <summary> Iterates each server connection. </summary>
     public static void EachConnection(Action<Connection> cons)
     {
         foreach (var con in Server.Manager?.Connected) cons(con);
     }
-
-    /// <summary> Iterates each non-null entity. </summary>
-    public static void EachEntity(Action<Entity> cons) => Entities.Each(entity => entity != null && !entity.Dead, cons);
-
-    /// <summary> Iterates each non-null entity that fits the given predicate. </summary>
-    public static void EachEntity(Predicate<Entity> pred, Action<Entity> cons) => Entities.Each(entity => entity != null && !entity.Dead && pred(entity), cons);
-
-    /// <summary> Iterates each player. </summary>
-    public static void EachPlayer(Action<RemotePlayer> cons) => EachEntity(entity =>
-    {
-        if (entity is RemotePlayer player) cons(player);
-    });
-
-    #endregion
-    #region tools
 
     /// <summary> Returns the team of the given friend. </summary>
     public static Team GetTeam(Friend friend) => friend.IsMe

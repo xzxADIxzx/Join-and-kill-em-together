@@ -169,7 +169,7 @@ public class Enemies
         var target = NewMovement.Instance.transform;
         var dst = (enemy - target.position).sqrMagnitude;
 
-        Networking.EachPlayer(player =>
+        Networking.Entities.Player(player =>
         {
             var newDst = (enemy - player.transform.position).sqrMagnitude;
             if (newDst < dst && player.Health > 0)

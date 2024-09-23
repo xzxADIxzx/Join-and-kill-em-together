@@ -90,7 +90,7 @@ public class Chat : CanvasSingleton<Chat>
         List<string> list = new();
 
         if (Shown) list.Add(Bundle.Get("chat.you"));
-        Networking.EachPlayer(player =>
+        Networking.Entities.Player(player =>
         {
             if (player.Typing) list.Add(player.Header.Name);
         });

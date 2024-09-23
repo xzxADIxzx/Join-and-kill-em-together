@@ -21,7 +21,7 @@ public class CyberGrind
     public static int PlayersAlive()
     {
         int amount = nm.dead ? 0 : 1;
-        Networking.EachPlayer(p => amount += p.Health == 0 ? 0 : 1);
+        Networking.Entities.Player(p => amount += p.Health == 0 ? 0 : 1);
         return amount;
     }
 

@@ -193,13 +193,13 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
 
         StaticAction.Find(l, "SecondVersionActivator", new(117.5f, 663.5f, 323f), obj => obj.GetComponent<ObjectActivator>().events.onActivate.AddListener(() =>
         {
-            Networking.EachEntity(e => e.Type == EntityType.V2_GreenArm, e => e.gameObject.SetActive(true));
+            Networking.Entities.Alive(e => e.Type == EntityType.V2_GreenArm, e => e.gameObject.SetActive(true));
         }));
 
         NetAction.Sync(l, "Trigger", new(117.5f, 678.5f, 273f)); // boss
         NetAction.Sync(l, "ExitTrigger", new(172.5f, 668.5f, 263f), obj =>
         {
-            Networking.EachEntity(e => e.Type == EntityType.V2_GreenArm, e => e.gameObject.SetActive(false));
+            Networking.Entities.Alive(e => e.Type == EntityType.V2_GreenArm, e => e.gameObject.SetActive(false));
         });
         NetAction.Sync(l, "BossOutro", new(117.5f, 663.5f, 323f));
         NetAction.Sync(l, "ExitBuilding Raise", new(1027f, 261f, 202.5f), obj =>

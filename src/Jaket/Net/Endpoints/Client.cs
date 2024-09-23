@@ -73,7 +73,7 @@ public class Client : Endpoint, IConnectionManager
         Stats.MeasureTime(ref Stats.WriteTime, () =>
         {
             if (Networking.Loading) return;
-            Networking.EachEntity(entity => entity.IsOwner, entity => Networking.Send(PacketType.Snapshot, w =>
+            Networking.Entities.Alive(entity => entity.IsOwner, entity => Networking.Send(PacketType.Snapshot, w =>
             {
                 w.Id(entity.Id);
                 w.Enum(entity.Type);

@@ -2,6 +2,8 @@ namespace Jaket.Net;
 
 using System;
 
+using Jaket.Net.Types;
+
 /// <summary> Simple hash map divided into four pools. Uses unsigned integers as keys and entities as values. </summary>
 public class Pools
 {
@@ -71,13 +73,49 @@ public class Pools
     /// <summary> Iterates each entry in the hash map. </summary>
     public void Each(Action<Entry> cons) => Each(0, 1, cons);
 
-    /// <summary> Iterates each entry in the given pool. </summary>
-    public void Each(int pool, Action<Entry> cons) => Each(pool, 4, cons);
+    /// <summary> Iterates each entity. </summary>
+    public void Entity(Action<Entity> cons) => Each(pair => cons(pair.Value));
 
     /// <summary> Iterates each entity that are suitable for the given predicate. </summary>
-    public void Each(Predicate<Entity> pred, Action<Entity> cons) => Each(pair =>
+    public void Entity(Predicate<Entity> pred, Action<Entity> cons) => Entity(entity =>
     {
-        if (pred(pair.Value)) cons(pair.Value);
+        if (pred(entity)) cons(entity);
+    });
+
+    /// <summary> Iterates each alive entity. </summary>
+    public void Alive(Action<Entity> cons) => Each(pair =>
+    {
+        if (pair.Value && !pair.Value.Dead) cons(pair.Value);
+    });
+
+    /// <summary> Iterates each alive entity that are suitable for the given predicate. </summary>
+    public void Alive(Predicate<Entity> pred, Action<Entity> cons) => Alive(entity =>
+    {
+        if (pred(entity)) cons(entity);
+    });
+
+    /// <summary> Iterates each alive player. </summary>
+    public void Player(Action<RemotePlayer> cons) => Each(pair =>
+    {
+        if (pair.Value && !pair.Value.Dead && pair.Value is RemotePlayer player) cons(player);
+    });
+
+    /// <summary> Iterates each alive player that are suitable for the given predicate. </summary>
+    public void Player(Predicate<RemotePlayer> pred, Action<RemotePlayer> cons) => Player(player =>
+    {
+        if (pred(player)) cons(player);
+    });
+
+    /// <summary> Iterates each alive entity in the given pool. </summary>
+    public void Pool(int pool, Action<Entity> cons) => Each(pool, 4, pair =>
+    {
+        if (pair.Value && !pair.Value.Dead) cons(pair.Value);
+    });
+
+    /// <summary> Iterates each alive entity in the given pool that are suitable for the given predicate. </summary>
+    public void Pool(int pool, Predicate<Entity> pred, Action<Entity> cons) => Pool(pool, entity =>
+    {
+        if (pred(entity)) cons(entity);
     });
 
     /// <summary> Counts the number of entries that are suitable for the given predicate. </summary>

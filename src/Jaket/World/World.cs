@@ -164,7 +164,7 @@ public class World
         Tools.ResFind<GoreZone>(zone => Tools.IsReal(zone) && zone.isActiveAndEnabled && FarEnough(zone.transform), zone => zone.ResetGibs());
 
         // big pieces of corpses, such as arms or legs, are part of the entities
-        Networking.Entities.Each(entity =>
+        Networking.Entities.Entity(entity =>
 
                 entity && entity.Dead && entity is Enemy &&
                 entity.Type != EntityType.MaliciousFace &&
@@ -230,7 +230,7 @@ public class World
                 });
                 break;
             case 6:
-                Networking.EachEntity(entity => entity.Type == EntityType.Puppet, entity => entity.EnemyId.InstaKill());
+                Networking.Entities.Alive(entity => entity.Type == EntityType.Puppet, entity => entity.EnemyId.InstaKill());
                 Find<BloodFiller>(r.Vector(), f => f.InstaFill());
                 break;
         }

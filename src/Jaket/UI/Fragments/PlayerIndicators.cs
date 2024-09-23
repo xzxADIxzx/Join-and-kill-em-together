@@ -47,7 +47,7 @@ public class PlayerIndicators : CanvasSingleton<PlayerIndicators>
         targets.Clear();
 
         if (Tools.Scene == "Level 2-S" || Tools.Scene == "Intermission1" || Tools.Scene == "Intermission2") return;
-        Networking.EachPlayer(AddIndicator);
+        Networking.Entities.Player(AddIndicator);
         Update();
     }
 
