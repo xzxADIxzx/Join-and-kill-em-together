@@ -30,6 +30,8 @@ public class ModAssets
     public static string Desc;
     /// <summary> Shader used by the game for materials. </summary>
     public static Shader Shader;
+    /// <summary> Material used by the game for wing trails. </summary>
+    public static Material Additv;
     /// <summary> Mixer processing Sam's voice. Used to change volume. </summary>
     public static AudioMixer Mixer;
 
@@ -70,6 +72,7 @@ public class ModAssets
 
         // general
         Shader = Enemies.Prefabs[EntityType.V2_RedArm - EntityType.EnemyOffset].GetComponent<global::V2>().smr.material.shader;
+        Additv = Enemies.Prefabs[EntityType.V2_RedArm - EntityType.EnemyOffset].GetComponentInChildren<TrailRenderer>().material;
 
         Load<Sprite>("V3-icon", s => Icon = s);
         Load<TextAsset>("V3-bestiary-entry", f => Desc = f.text);
@@ -240,13 +243,15 @@ public class ModAssets
     #region fixes
 
     /// <summary> Changes the colors of materials and their shaders to match the style of the game. </summary>
-    public static void FixMaterials(GameObject obj, Color? color = null) => obj.GetComponentsInChildren<Renderer>(true).DoIf(
-        r => r is not TrailRenderer,
-        r => r.materials.Do(m =>
+    public static void FixMaterials(GameObject obj, Color? color = null) => obj.GetComponentsInChildren<Renderer>(true).Do(r =>
+    {
+        if (r is TrailRenderer) r.material = Additv;
+        else r.materials.Do(m =>
         {
             m.color = color ?? Color.white;
             m.shader = Shader;
-        }));
+        });
+    });
 
     /// <summary> Tags after loading from a bundle changes due to the mismatch in the tags list, this method returns everything to its place. </summary>
     public static string MapTag(string tag) => tag switch
