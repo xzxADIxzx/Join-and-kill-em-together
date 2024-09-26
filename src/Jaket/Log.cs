@@ -73,7 +73,7 @@ public class Log
 
     public static void Error(string msg) => LogLevel(Level.Error, msg);
 
-    public static void Error(Exception ex) => LogLevel(Level.Error, $"{ex.ToString()}\nOuter:\n{UnityEngine.StackTraceUtility.ExtractStackTrace()}");
+    public static void Error(Exception ex) => LogLevel(Level.Error, $"{ex}\nOuter:\n{UnityEngine.StackTraceUtility.ExtractStackTrace()}");
 
     /// <summary> Log importance levels. </summary>
     public enum Level

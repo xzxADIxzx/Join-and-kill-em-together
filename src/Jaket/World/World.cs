@@ -1,10 +1,10 @@
 namespace Jaket.World;
 
-using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net;
@@ -78,7 +78,7 @@ public class World
         // if the mod version doesn't match the host's one, then reading the packet is complete, as this may lead to bigger bugs
         if (r.String() != Version.CURRENT)
         {
-            Version.Notify();
+            Bundle.Hud2NS("version.host-outdated");
             return;
         }
         PrefsManager.Instance.SetInt("difficulty", r.Byte());

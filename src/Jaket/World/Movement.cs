@@ -267,7 +267,7 @@ public class Movement : MonoSingleton<Movement>
         }
 
         // leave lobby if you have more than one mod
-        if (Plugin.Instance.HasIncompatibility && !LobbyController.IsOwner && !LobbyController.ModsAllowed)
+        if (Version.HasIncompatibility && !LobbyController.IsOwner && !LobbyController.ModsAllowed)
         {
             LobbyController.LeaveLobby();
             Bundle.Hud2NS("lobby.mods");
