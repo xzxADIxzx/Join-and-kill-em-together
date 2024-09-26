@@ -25,7 +25,10 @@ public class Gutterman : SimpleEnemy
     public override void Kill()
     {
         if (toBreakCorpse)
+        {
+            DeadBullet.Replace(this);
             GetComponent<global::Gutterman>().Explode();
+        }
         else
         {
             EnemyId.InstaKill();

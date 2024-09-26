@@ -123,7 +123,7 @@ public class Networking
                 Bundle.Msg("player.died", member.Name);
                 if (LobbyController.HealBosses) Entities.Alive(entity =>
                 {
-                    if (entity is Enemy enemy && enemy.IsBoss && !enemy.Dead) enemy.HealBoss();
+                    if (entity is Enemy enemy && enemy.IsBoss) enemy.HealBoss();
                 });
             }
 
