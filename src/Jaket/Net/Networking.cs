@@ -28,7 +28,7 @@ public class Networking
     public static Client Client = new();
 
     /// <summary> List of all entities by their id. May contain null. </summary>
-    public static Dictionary<uint, Entity> Entities = new();
+    public static Pools Entities = new();
     /// <summary> Local player singleton. </summary>
     public static LocalPlayer LocalPlayer;
 
@@ -36,6 +36,18 @@ public class Networking
     public static bool Loading;
     /// <summary> Whether multiplayer was used in the current level. </summary>
     public static bool WasMultiplayerUsed;
+
+    /// <summary> Returns the list of all entities. </summary>
+    public static Entity[] Dump
+    {
+        get
+        {
+            var list = new Entity[Entities.Count()];
+            int i = 0;
+            Entities.Each(entry => list[i++] = entry.Value);
+            return list;
+        }
+    }
 
     /// <summary> Loads server, client and event listeners. </summary>
     public static void Load()
@@ -54,7 +66,7 @@ public class Networking
 
         Events.OnLoadingStarted += () =>
         {
-            if (LobbyController.Online) SceneHelper.SetLoadingSubtext(UnityEngine.Random.value < .1f ? "I love you" : "/// MULTIPLAYER VIA JAKET ///");
+            if (LobbyController.Online) SceneHelper.SetLoadingSubtext(UnityEngine.Random.value < .042f ? "I love you" : "/// MULTIPLAYER VIA JAKET ///");
             Loading = true;
         };
         Events.OnLoaded += () =>
@@ -83,19 +95,19 @@ public class Networking
             }
         };
 
-        SteamMatchmaking.OnLobbyMemberJoined += (lobby, member) => Bundle.Msg("player.joined", member.Name);
+        SteamMatchmaking.OnLobbyMemberJoined += (lobby, member) =>
+        {
+            if (!Administration.Banned.Contains(member.Id.AccountId)) Bundle.Msg("player.joined", member.Name);
+        };
 
         SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) =>
         {
-            Bundle.Msg("player.left", member.Name);
+            if (!Administration.Banned.Contains(member.Id.AccountId)) Bundle.Msg("player.left", member.Name);
             if (!LobbyController.IsOwner) return;
-
-            // kill the player doll and hide the nickname above
-            if (Entities.TryGetValue(member.Id.AccountId, out var entity) && entity is RemotePlayer player) player?.NetKill();
 
             // returning the exited player's entities back to the host owner & close the connection
             FindCon(member.Id.AccountId)?.Close();
-            EachEntity(entity =>
+            Entities.Alive(entity =>
             {
                 if (entity is OwnableEntity oe && oe.Owner == member.Id.AccountId) oe.TakeOwnage();
             });
@@ -103,8 +115,17 @@ public class Networking
 
         SteamMatchmaking.OnChatMessage += (lobby, member, message) =>
         {
+            if (Administration.Banned.Contains(member.Id.AccountId)) return;
+            if (message.Length > Chat.MAX_MESSAGE_LENGTH + 8) message = message.Substring(0, Chat.MAX_MESSAGE_LENGTH);
+
             if (message == "#/d")
+            {
                 Bundle.Msg("player.died", member.Name);
+                if (LobbyController.HealBosses) Entities.Alive(entity =>
+                {
+                    if (entity is Enemy enemy && enemy.IsBoss && !enemy.Dead) enemy.HealBoss();
+                });
+            }
 
             else if (message.StartsWith("#/k") && uint.TryParse(message.Substring(3), out uint id))
                 Bundle.Msg("player.banned", Tools.Name(id));
@@ -114,8 +135,11 @@ public class Networking
                 if (LocalPlayer.Team == (Team)team) StyleHUD.Instance.AddPoints(Mathf.RoundToInt(250f * StyleCalculator.Instance.airTime), "<color=#32CD32>FRATRICIDE</color>");
             }
 
+            else if (message.StartsWith("#/r") && byte.TryParse(message.Substring(3), out byte rps))
+                Chat.Instance.Receive($"[#FFA500]{member.Name} has chosen {rps switch { 0 => "rock", 1 => "paper", 2 => "scissors", _ => "nothing" }}");
+
             else if (message.StartsWith("/tts "))
-                Chat.Instance.ReceiveTTS(member, message.Substring(5));
+                Chat.Instance.ReceiveTTS(GetTeamColor(member), member, message.Substring(5));
             else
                 Chat.Instance.Receive(GetTeamColor(member), member.Name.Replace("[", "\\["), message);
         };
@@ -124,7 +148,7 @@ public class Networking
     /// <summary> Kills all players and clears the list of entities. </summary>
     public static void Clear()
     {
-        EachPlayer(player => player.Kill());
+        Entities.Player(player => player.Kill());
         Entities.Clear();
         Entities[LocalPlayer.Id] = LocalPlayer;
     }
@@ -150,41 +174,22 @@ public class Networking
 
         List<uint> toRemove = new();
 
-        Entities.Values.DoIf(e => e == null || (e.Dead && e.LastUpdate < Time.time - 1f && !e.gameObject.activeSelf), e => toRemove.Add(e.Id));
-        if (DeadBullet.Instance.LastUpdate < Time.time - 1f)
-            Entities.DoIf(pair => pair.Value == DeadBullet.Instance, pair => toRemove.Add(pair.Key));
+        Entities.Entity(e => e == null || (e.Dead && e.LastUpdate < Time.time - 1f && !e.gameObject.activeSelf), e => toRemove.Add(e.Id));
+        if (DeadBullet.Instance.LastUpdate < Time.time - 1f) Entities.Each(pair =>
+        {
+            if (pair.Value == DeadBullet.Instance) toRemove.Add(pair.Key);
+        });
 
-        toRemove.ForEach(id => Entities.Remove(id));
+        toRemove.ForEach(Entities.Remove);
     }
 
-    #region iteration
+    #region tools
 
     /// <summary> Iterates each server connection. </summary>
     public static void EachConnection(Action<Connection> cons)
     {
         foreach (var con in Server.Manager?.Connected) cons(con);
     }
-
-    /// <summary> Iterates each non-null entity. </summary>
-    public static void EachEntity(Action<Entity> cons)
-    {
-        foreach (var entity in Entities.Values) if (entity != null && !entity.Dead) cons(entity);
-    }
-
-    /// <summary> Iterates each non-null entity that fits the given predicate. </summary>
-    public static void EachEntity(Predicate<Entity> pred, Action<Entity> cons) => EachEntity(entity =>
-    {
-        if (pred(entity)) cons(entity);
-    });
-
-    /// <summary> Iterates each player. </summary>
-    public static void EachPlayer(Action<RemotePlayer> cons) => EachEntity(entity =>
-    {
-        if (entity is RemotePlayer player) cons(player);
-    });
-
-    #endregion
-    #region tools
 
     /// <summary> Returns the team of the given friend. </summary>
     public static Team GetTeam(Friend friend) => friend.IsMe

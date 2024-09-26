@@ -31,11 +31,15 @@ public class LobbyController
     public static bool PvPAllowed => Lobby?.GetData("pvp") == "True";
     /// <summary> Whether cheats are allowed in this lobby. </summary>
     public static bool CheatsAllowed => Lobby?.GetData("cheats") == "True";
+    /// <summary> Whether mods are allowed in this lobby. </summary>
+    public static bool ModsAllowed => Lobby?.GetData("mods") == "True";
+    /// <summary> Whether bosses must be healed after death in this lobby. </summary>
+    public static bool HealBosses => Lobby?.GetData("heal-bosses") == "True";
     /// <summary> Number of percentages that will be added to the boss's health for each player. </summary>
     public static float PPP;
 
     /// <summary> Scales health to increase difficulty. </summary>
-    public static void ScaleHealth(ref float health) => health *= 1f + (Lobby?.MemberCount - 1f ?? 1f) * PPP;
+    public static void ScaleHealth(ref float health) => health *= 1f + Math.Min(Lobby?.MemberCount - 1 ?? 1, 1) * PPP;
     /// <summary> Whether the given lobby is created via Multikill. </summary>
     public static bool IsMultikillLobby(Lobby lobby) => lobby.Data.Any(pair => pair.Key == "mk_lobby");
 
@@ -47,7 +51,11 @@ public class LobbyController
         {
             if (lobby.Owner.Id != 0L) LastOwner = lobby.Owner.Id;
 
-            if (lobby.GetData("banned").Contains(Tools.AccId.ToString())) LeaveLobby();
+            if (lobby.GetData("banned").Contains(Tools.AccId.ToString()))
+            {
+                LeaveLobby();
+                Bundle.Hud2NS("lobby.banned");
+            }
             if (IsMultikillLobby(lobby))
             {
                 LeaveLobby();
@@ -69,6 +77,12 @@ public class LobbyController
     /// <summary> Is there a user with the given id among the members of the lobby. </summary>
     public static bool Contains(uint id) => Lobby?.Members.Any(member => member.Id.AccountId == id) ?? false;
 
+    /// <summary> Returns the member at the given index or null. </summary>
+    public static Friend? At(int index) => Lobby?.Members.ElementAt(Math.Min(Math.Max(index, 0), Lobby.Value.MemberCount));
+
+    /// <summary> Returns the index of the local player in the lits of members. </summary>
+    public static int IndexOfLocal() => Lobby?.Members.ToList().FindIndex(member => member.IsMe) ?? 0;
+
     #region control
 
     /// <summary> Asynchronously creates a new lobby with default settings and connects to it. </summary>
@@ -88,7 +102,10 @@ public class LobbyController
             Lobby?.SetData("jaket", "true");
             Lobby?.SetData("name", $"{SteamClient.Name}'s Lobby");
             Lobby?.SetData("level", MapMap(Tools.Scene));
-            Lobby?.SetData("pvp", "True"); Lobby?.SetData("cheats", "True");
+            Lobby?.SetData("pvp", "True");
+            Lobby?.SetData("cheats", "False");
+            Lobby?.SetData("mods", "False");
+            Lobby?.SetData("heal-bosses", "True");
         });
     }
 
@@ -175,6 +192,8 @@ public class LobbyController
         "uk_construct" => "Sandbox",
         "Endless" => "Cyber Grind",
         "CreditsMuseum2" => "Museum",
+        "Intermission1" => "Intermission",
+        "Intermission2" => "Intermission",
         _ => map.Substring("Level ".Length)
     };
 

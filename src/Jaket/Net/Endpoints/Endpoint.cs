@@ -10,7 +10,7 @@ using Jaket.IO;
 /// <summary> Network connection endpoint that contains listeners for different packet types. </summary>
 public abstract class Endpoint
 {
-    protected Dictionary<uint, Entity> ents => Networking.Entities;
+    protected Pools ents => Networking.Entities;
 
     /// <summary> List of packet listeners by packet types. </summary>
     protected Dictionary<PacketType, PacketListener> listeners = new();

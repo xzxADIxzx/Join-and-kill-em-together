@@ -6,7 +6,7 @@ using UnityEngine.AI;
 using Jaket.Content;
 using Jaket.IO;
 
-/// <summary> Representation of a spider body enemy??? Who da hell gave this thing such name?! </summary>
+/// <summary> Representation of a spider body??? Who da hell gave this thing such name?! </summary>
 public class Body : Enemy
 {
     /// <summary> Whether the malicious face is charging a shot. </summary>
@@ -23,7 +23,7 @@ public class Body : Enemy
     private void Start()
     {
         SpawnEffect();
-        Boss(() => Tools.Scene == "Level 0-1", 25f);
+        Boss(Tools.Scene == "Level 0-1", 25f);
 
         transform.parent.position = transform.position + Vector3.down * 10f; // teleport the spawn effect
         Events.Post2(() =>
@@ -36,16 +36,16 @@ public class Body : Enemy
         });
     }
 
-    private void Update()
+    private void Update() => Stats.MTE(() =>
     {
         if (IsOwner || Dead) return;
 
         transform.position = new(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
 
         if (lastCharging != charging && (lastCharging = charging)) EnemyId.spider.Invoke("ChargeBeam", 0f);
-    }
+    });
 
-    private void Cooldown(float time) => Tools.Field<SpiderBody>("beamProbability").SetValue(EnemyId.spider, time);
+    private void Cooldown(float time) => Tools.Set("beamProbability", EnemyId.spider, time);
 
     #region entity
 
@@ -72,7 +72,10 @@ public class Body : Enemy
     public override void Kill()
     {
         if (toBreakCorpse)
+        {
+            DeadBullet.Replace(this);
             EnemyId.spider.BreakCorpse();
+        }
         else
         {
             EnemyId.InstaKill();

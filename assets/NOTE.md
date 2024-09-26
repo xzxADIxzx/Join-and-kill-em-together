@@ -1,5 +1,6 @@
 # About
-Notes-instructions on how to correctly import assets into Unity will be listed here.
+Notes-instructions on how to correctly import assets into Unity will be listed here.   
+*P.S. Textures use sRGB color profile.*
 
 ## Bundle
 
@@ -20,6 +21,16 @@ Notes-instructions on how to correctly import assets into Unity will be listed h
 
 * Texture Type: Sprite
 * Max Size: 1024
+* Add to the assets bundle (via the bottom menu)
+
+### Shop icons
+* Filter Mode: Point
+* Compression: None
+
+## Chan
+
+* Texture Type: Sprite
+* Max Size: 2048
 * Add to the assets bundle (via the bottom menu)
 
 ## Model

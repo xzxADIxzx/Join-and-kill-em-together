@@ -63,7 +63,7 @@ public class Coins
         }
         if (LobbyController.PvPAllowed)
         {
-            Networking.EachPlayer(p =>
+            Networking.Entities.Player(p =>
             {
                 if (!p.Team.Ally() && p.Health > 0) Check(p.Doll.Head);
             });
@@ -74,9 +74,9 @@ public class Coins
             }
         }
 
-        Networking.EachEntity(e => e is Enemy, e =>
+        Networking.Entities.Alive(e => e is Enemy, e =>
         {
-            if (e.Type.IsTargetable() && e.EnemyId && !e.Dead) Check(e.EnemyId.weakPoint?.transform ?? e.transform);
+            if (e.Type.IsTargetable() && e.EnemyId) Check(e.EnemyId.weakPoint?.transform ?? e.transform);
         });
         if (target)
         {
@@ -102,4 +102,16 @@ public class Coins
 
     /// <summary> Finds the position to which the player sent a coin by punching it. </summary>
     public static bool Punchcast(out RaycastHit hit) => Physics.Raycast(cc.position, cc.forward, out hit, float.PositiveInfinity, mask);
+
+    /// <summary> Paints the given revolver beam in the color of the given team. This must only be used with RV1 PRI. </summary>
+    public static void PaintBeam(GameObject beam, Team team)
+    {
+        var rb = beam.GetComponent<RevolverBeam>();
+        rb.noMuzzleflash = true;
+        rb.hitParticle = null;
+        rb.bodiesPierced = (int)team; // this field is unused by RV1 PRI so it's okay
+
+        var lr = beam.GetComponent<LineRenderer>();
+        lr.startColor = lr.endColor = team.Color();
+    }
 }

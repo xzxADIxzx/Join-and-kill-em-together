@@ -21,6 +21,10 @@ public class EnemyPatch
     [HarmonyPatch(nameof(EnemyIdentifier.Death), typeof(bool))]
     static void Death(EnemyIdentifier __instance) => Enemies.SyncDeath(__instance);
 
+    [HarmonyPrefix]
+    [HarmonyPatch("UpdateTarget")]
+    static bool Skip() => Time.frameCount % 8 == 0;
+
     [HarmonyPostfix]
     [HarmonyPatch("UpdateTarget")]
     static void Target(EnemyIdentifier __instance) => Enemies.FindTarget(__instance);
@@ -58,6 +62,13 @@ public class LogicPatch
     }
 
     [HarmonyPrefix]
+    [HarmonyPatch(typeof(Gutterman), "Explode")]
+    static void BreakLogic(Gutterman __instance)
+    {
+        if (LobbyController.Online && __instance.TryGetComponent<Entity>(out var gman)) gman.NetKill();
+    }
+
+    [HarmonyPrefix]
     [HarmonyPatch(typeof(Idol), "SlowUpdate")]
     static bool IdolsLogic(Idol __instance) => LobbyController.Offline || __instance.name == "Local";
 
@@ -73,6 +84,13 @@ public class LogicPatch
     static void OutroG2(ref bool ___bossVersion)
     {
         if (LobbyController.Online && Tools.Scene == "Level 6-2") ___bossVersion = true;
+    }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(Wicked), "Update")]
+    static void WickedLogic(EnemyIdentifier ___eid)
+    {
+        if (LobbyController.Online) ___eid.totalSpeedModifier = 1f + LobbyController.PPP;
     }
 }
 

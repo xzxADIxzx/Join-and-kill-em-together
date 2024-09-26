@@ -39,7 +39,7 @@ public class Weapons
         var weap = GunControl.Instance.currentWeapon;
         if (weap == null) return 0xFF;
 
-        var name = weap.name.Substring(0, weap.name.IndexOf("("));
+        var name = weap.name.Contains("(") ? weap.name.Substring(0, weap.name.IndexOf("(")) : weap.name;
         return (byte)Prefabs.FindIndex(prefab => prefab.name == name);
     }
 

@@ -23,23 +23,35 @@ public class Bundle
     public static int LoadedLocale = -1;
     /// <summary> Dictionary with all lines of loaded localization. </summary>
     private static Dictionary<string, string> props = new();
+    /// <summary> Text that will be shown in the hud after scene loading. </summary>
+    private static string text2Show;
 
     /// <summary> Loads the translation specified in the settings. </summary>
     public static void Load()
     {
-        var root = Path.GetDirectoryName(Plugin.Instance.Location);
         #region r2mm fix
 
-        var bundles = Path.Combine(root, "bundles");
+        var bundles = Path.Combine(Plugin.Instance.Location, "bundles");
         if (!Directory.Exists(bundles)) Directory.CreateDirectory(bundles);
 
-        foreach (var prop in Directory.EnumerateFiles(root, "*.properties"))
+        foreach (var prop in Directory.EnumerateFiles(Plugin.Instance.Location, "*.properties"))
         {
             var dest = Path.Combine(bundles, Path.GetFileName(prop));
 
             File.Delete(dest);
             File.Move(prop, dest);
         }
+
+        #endregion
+        #region 2NS
+
+        Events.OnLoaded += () =>
+        {
+            if (text2Show == null) return;
+
+            HudMessageReceiver.Instance?.SendHudMessage(text2Show);
+            text2Show = null;
+        };
 
         #endregion
 
@@ -52,7 +64,7 @@ public class Bundle
             return;
         }
 
-        var file = Path.Combine(root, "bundles", $"{Files[localeId]}.properties");
+        var file = Path.Combine(bundles, $"{Files[localeId]}.properties");
         string[] lines;
         try
         {
@@ -83,7 +95,7 @@ public class Bundle
     public static string CutColors(string original) => Regex.Replace(original, "<.*?>|\\[.*?\\]", string.Empty);
 
     // <summary> Returns a string without the tags that can cause lags. </summary>
-    public static string CutDangerous(string original) => Regex.Replace(original, "</?size.*?>|</?quad.*?>|</?material.*?>", string.Empty);
+    public static string CutDangerous(string original) => Regex.Replace(original, "</?size.*?>|</?quad.*?>|</?material.*?>", string.Empty).Replace('\n', ' ');
 
     /// <summary> Parses the colors in the given string so that Unity could understand them. </summary>
     public static string ParseColors(string original, int maxSize = 64)
@@ -143,7 +155,7 @@ public class Bundle
     }
 
     /// <summary> Reverses the string because Arabic is right-to-left language. </summary>
-    public static string ParseArabic(string original) => new(CutColors(original).Replace("\\n", "\n").Replace('{', '#').Replace('}', '{').Replace('#', '}').Reverse().ToArray());
+    public static string ParseArabic(string original) => new(original.Replace("\\n", "\n").Replace('{', '#').Replace('}', '{').Replace('#', '}').Reverse().ToArray());
 
     #endregion
     #region usage
@@ -166,11 +178,17 @@ public class Bundle
     /// <summary> Sends a localized & formatted message to the HUD. </summary>
     public static void Hud(string key, bool silent, params string[] args) => HudMessageReceiver.Instance?.SendHudMessage(Format(key, args), silent: silent);
 
+    /// <summary> Sends a localized message to the HUD after scene loading. </summary>
+    public static void Hud2NS(string key) => text2Show = Get(key);
+
+    /// <summary> Sends a localized & formatted message to the HUD after scene loading. </summary>
+    public static void Hud2NS(string key, params string[] args) => text2Show = Format(key, args);
+
     /// <summary> Sends a localized message to the chat. </summary>
-    public static void Msg(string key) => Chat.Instance.Receive(Get(key), format: false);
+    public static void Msg(string key) => Chat.Instance.Receive(Get(key), false);
 
     /// <summary> Sends a localized & formatted message to the chat. </summary>
-    public static void Msg(string key, params string[] args) => Chat.Instance.Receive(Format(key, args), format: false);
+    public static void Msg(string key, params string[] args) => Chat.Instance.Receive(Format(key, args), false);
 
     #endregion
 }

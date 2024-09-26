@@ -16,8 +16,9 @@ using Jaket.UI;
 using Jaket.UI.Dialogs;
 using Jaket.UI.Elements;
 using Jaket.UI.Fragments;
+using Jaket.IO;
 
-/// <summary> Class responsible for additions to control and local display of emotions. </summary>
+/// <summary> Class responsible for additions to control and local display of emotes. </summary>
 public class Movement : MonoSingleton<Movement>
 {
     static NewMovement nm => NewMovement.Instance;
@@ -29,15 +30,17 @@ public class Movement : MonoSingleton<Movement>
 
     /// <summary> Environmental mask needed to prevent the skateboard from riding on water and camera from falling trough the ground. </summary>
     private readonly int mask = LayerMaskDefaults.Get(LMD.Environment);
-    /// <summary> An array containing the length of all emotions in seconds. </summary>
-    private readonly float[] emojiLength = { 2.458f, 4.708f, 1.833f, 2.875f, 0f, 9.083f, -1f, 11.022f, -1f, 3.292f, 0f, -1f };
+    /// <summary> Array containing the length of all emotes in seconds. </summary>
+    private readonly float[] emoteLength = { 2.458f, 4.708f, 1.833f, 2.875f, 0f, 9.083f, -1f, 11.022f, -1f, 3.292f, 0f, -1f };
+    /// <summary> Whether the death must be fake on this level. </summary>
+    private static bool fakeDeath => nm.endlessMode || Tools.Scene == "Level 0-S";
 
-    /// <summary> Current emotion preview, can be null. </summary>
-    public GameObject EmojiPreview;
-    /// <summary> Start time of the current emotion and hold time of the emotion wheel key. </summary>
-    public float EmojiStart, HoldTime;
-    /// <summary> Id of the currently playing emotion. </summary>
-    public byte Emoji = 0xFF, Rps;
+    /// <summary> Current emote preview, can be null. </summary>
+    public GameObject EmotePreview;
+    /// <summary> Start time of the current emote and hold time of the emote wheel key. </summary>
+    public float EmoteStart, HoldTime;
+    /// <summary> Id of the currently playing emote. </summary>
+    public byte Emote = 0xFF, Rps;
 
     /// <summary> Speed at which the skateboard moves. </summary>
     public float SkateboardSpeed;
@@ -52,6 +55,8 @@ public class Movement : MonoSingleton<Movement>
     private Vector3 position;
     /// <summary> Third person camera rotation. </summary>
     private Vector2 rotation;
+    /// <summary> Third person camera target. If an emote is playing, the camera will aim at the local player, otherwise, at a remote player. </summary>
+    private int targetPlayer;
 
     /// <summary> Last pointer created by the player. </summary>
     public Pointer Pointer;
@@ -66,10 +71,17 @@ public class Movement : MonoSingleton<Movement>
 
         Events.OnLoaded += () =>
         {
-            // interrupt emoji to prevent some bugs
-            Instance.StartEmoji(0xFF, false);
+            // interrupt emote to prevent some bugs
+            Instance.StartEmote(0xFF, false);
 
-            if (nm.endlessMode)
+            // disable hook and jump at 0-S
+            if (Tools.Scene == "Level 0-S")
+            {
+                nm.modNoJump = LobbyController.Online;
+                HookArm.Instance.gameObject.SetActive(LobbyController.Offline);
+            }
+
+            if (fakeDeath)
             {
                 // disable restart button for clients
                 CanvasController.Instance.transform.Find("PauseMenu/Restart Mission").GetComponent<Button>().interactable = LobbyController.Offline || LobbyController.IsOwner;
@@ -79,7 +91,7 @@ public class Movement : MonoSingleton<Movement>
             }
         };
 
-        // update death screen text to display number of living players in the Cyber Grind
+        // update death screen text to display the number of living players in the Cyber Grind
         Instance.InvokeRepeating("GridUpdate", 0f, 1f);
     }
 
@@ -102,15 +114,15 @@ public class Movement : MonoSingleton<Movement>
         if (Input.GetKeyDown(Settings.PlayerIndicators)) PlayerIndicators.Instance.Toggle();
         if (Input.GetKeyDown(Settings.PlayerInfo)) PlayerInfo.Instance.Toggle();
 
-        if (Input.GetKey(Settings.EmojiWheel) && !LobbyList.Shown && !WeaponWheel.Instance.gameObject.activeSelf)
+        if (Input.GetKey(Settings.EmoteWheel) && !LobbyList.Shown && !WeaponWheel.Instance.gameObject.activeSelf)
         {
-            HoldTime += Time.deltaTime; // if the key has been pressed for 0.25 seconds, show the emoji wheel
-            if (!EmojiWheel.Shown && HoldTime > .25f) EmojiWheel.Instance.Show();
+            HoldTime += Time.deltaTime;
+            if (!EmoteWheel.Shown && HoldTime > .25f) EmoteWheel.Instance.Show();
         }
         else
         {
             HoldTime = 0f;
-            if (EmojiWheel.Shown) EmojiWheel.Instance.Hide();
+            if (EmoteWheel.Shown) EmoteWheel.Instance.Hide();
         }
 
         bool p = Input.GetKeyDown(Settings.Pointer), s = Input.GetKeyDown(Settings.Spray);
@@ -133,13 +145,19 @@ public class Movement : MonoSingleton<Movement>
 
         if (Input.GetKeyDown(Settings.SelfDestruction) && !UI.AnyDialog) nm.GetHurt(4200, false, 0f);
         if (Input.GetKeyDown(KeyCode.F11)) InteractiveGuide.Instance.Launch();
+
+        if (pi.Fire1.WasPerformedThisFrame) targetPlayer--;
+        if (pi.Fire2.WasPerformedThisFrame) targetPlayer++;
+
+        if (targetPlayer < 0) targetPlayer = LobbyController.Lobby?.MemberCount - 1 ?? 0;
+        if (targetPlayer >= LobbyController.Lobby?.MemberCount) targetPlayer = 0;
     }
 
     private void LateUpdate() // late update is needed to overwrite the time scale value and camera rotation
     {
         // skateboard logic
-        Skateboard.Instance.gameObject.SetActive(Emoji == 0x0B);
-        if (Emoji == 0x0B && !UI.AnyDialog)
+        Skateboard.Instance.gameObject.SetActive(Emote == 0x0B);
+        if (Emote == 0x0B && !UI.AnyDialog)
         {
             // speed & dash logic
             SkateboardSpeed = Mathf.MoveTowards(SkateboardSpeed, 20f, (SlowsDown ? 28f : 12f) * Time.deltaTime);
@@ -189,7 +207,7 @@ public class Movement : MonoSingleton<Movement>
         }
 
         // third person camera
-        if (Emoji != 0xFF)
+        if (Emote != 0xFF || (LobbyController.Online && nm.dead && fakeDeath))
         {
             // rotate the camera according to mouse sensitivity
             if (!UI.AnyDialog)
@@ -198,17 +216,19 @@ public class Movement : MonoSingleton<Movement>
                 rotation.y = Mathf.Clamp(rotation.y, 5f, 170f);
 
                 // cancel animation if space is pressed
-                if (Input.GetKey(KeyCode.Space)) StartEmoji(0xFF);
+                if (Input.GetKey(KeyCode.Space)) StartEmote(0xFF);
             }
 
             // turn on gravity, because if the taunt was launched on the ground, then it is disabled by default
             nm.rb.useGravity = true;
 
             var cam = cc.cam.transform;
-            var player = nm.transform.position + Vector3.up;
+            var player = nm.dead && Networking.Entities.TryGetValue(LobbyController.At(targetPlayer)?.Id.AccountId ?? 0, out var rp) && rp != Networking.LocalPlayer
+                ? rp.transform.position + Vector3.up * 2.5f
+                : nm.transform.position + Vector3.up;
 
             // move the camera position towards the start if the animation has just started, or towards the end if the animation ends
-            bool ends = Time.time - EmojiStart > emojiLength[Emoji] && emojiLength[Emoji] != -1f;
+            bool ends = !nm.dead && Time.time - EmoteStart > emoteLength[Emote] && emoteLength[Emote] != -1f;
             position = Vector3.MoveTowards(position, ends ? end : start, 12f * Time.deltaTime);
 
             // return the camera to its original position and rotate it around the player
@@ -226,7 +246,7 @@ public class Movement : MonoSingleton<Movement>
         if (Tools.Scene != "Main Menu" && !nm.dead)
             nm.rb.constraints = UI.AnyDialog
                 ? RigidbodyConstraints.FreezeAll
-                : Instance.Emoji == 0xFF || Instance.Emoji == 0x0B // skateboard
+                : Instance.Emote == 0xFF || Instance.Emote == 0x0B // skateboard
                     ? RigidbodyConstraints.FreezeRotation
                     : (RigidbodyConstraints)122;
 
@@ -237,42 +257,62 @@ public class Movement : MonoSingleton<Movement>
         if (Settings.DisableFreezeFrames || UI.AnyDialog) Time.timeScale = 1f;
 
         // disable cheats if they are prohibited in the lobby
-        if (CheatsController.Instance.cheatsEnabled && !LobbyController.CheatsAllowed)
+        if (CheatsController.Instance.cheatsEnabled && !LobbyController.IsOwner && !LobbyController.CheatsAllowed)
         {
             CheatsController.Instance.cheatsEnabled = false;
             cm.transform.GetChild(0).GetChild(0).gameObject.SetActive(false);
 
-            (Tools.Field<CheatsManager>("idToCheat").GetValue(cm) as Dictionary<string, ICheat>).Values.Do(cm.DisableCheat);
+            (Tools.Get("idToCheat", cm) as Dictionary<string, ICheat>).Values.Do(cm.DisableCheat);
             Bundle.Hud("lobby.cheats");
         }
 
-        // fake Cyber Grind death
-        if (nm.dead && nm.endlessMode)
+        // leave lobby if you have more than one mod
+        if (Plugin.Instance.HasIncompatibility && !LobbyController.IsOwner && !LobbyController.ModsAllowed)
         {
-            nm.blackScreen.gameObject.SetActive(true);
-            nm.screenHud.SetActive(false);
+            LobbyController.LeaveLobby();
+            Bundle.Hud2NS("lobby.mods");
+        }
 
-            if (nm.blackScreen.color.a < 0.5f)
-            {
-                nm.blackScreen.color = nm.blackScreen.color with { a = nm.blackScreen.color.a + .75f * Time.deltaTime };
-                nm.youDiedText.color = nm.youDiedText.color with { a = nm.blackScreen.color.a };
-            }
+        // fake Cyber Grind///0-S death
+        if (nm.dead && nm.blackScreen.color.a < .4f && fakeDeath)
+        {
+            nm.blackScreen.color = nm.blackScreen.color with { a = nm.blackScreen.color.a + .75f * Time.deltaTime };
+            nm.youDiedText.color = nm.youDiedText.color with { a = nm.blackScreen.color.a * 1.25f };
         }
     }
 
     private void GridUpdate()
     {
-        if (LobbyController.Offline || !nm.endlessMode) return;
+        if (LobbyController.Offline || !fakeDeath) return;
 
         int alive = CyberGrind.PlayersAlive();
-        nm.youDiedText.text = Bundle.Format("cg", alive.ToString());
+        nm.youDiedText.text = Bundle.Format("spect", alive.ToString(), EndlessGrid.Instance ? "#spect.cg" : "#spect.0s");
 
-        var final = nm.GetComponentInChildren<FinalCyberRank>();
-        if (alive == 0 && final.savedTime == 0f)
+        if (alive > 0) return;
+        if (Tools.Scene == "Level 0-S") StatsManager.Instance.Restart();
+        else
         {
-            final.GameOver();
-            Destroy(nm.blackScreen.gameObject);
+            var final = nm.GetComponentInChildren<FinalCyberRank>();
+            if (final.savedTime == 0f)
+            {
+                final.GameOver();
+                Destroy(nm.blackScreen.gameObject);
+            }
         }
+    }
+
+    public void OnDied()
+    {
+        StartEmote(0xFF);
+        if (LobbyController.Online && fakeDeath) Events.Post(() =>
+        {
+            StartThirdPerson();
+            nm.endlessMode = true; // take the death screen under control
+
+            nm.blackScreen.gameObject.SetActive(true);
+            nm.blackScreen.transform.Find("LaughingSkull").gameObject.SetActive(false);
+            nm.screenHud.SetActive(false);
+        });
     }
 
     #region respawn
@@ -287,6 +327,9 @@ public class Movement : MonoSingleton<Movement>
         PlayerActivatorRelay.Instance?.Activate();
         if (GameStateManager.Instance.IsStateActive("pit-falling"))
             GameStateManager.Instance.PopState("pit-falling");
+
+        // this annoying sound makes me cry
+        Tools.ObjFind("Hellmap")?.SetActive(false);
     }
 
     /// <summary> Repeats a part of the checkpoint logic, needed in order to avoid resetting rooms. </summary>
@@ -303,9 +346,10 @@ public class Movement : MonoSingleton<Movement>
         cc.StopShake();
         nm.ActivatePlayer();
 
-        // the player is currently fighting the Minotaur in the tunnel or the brain in the Earthmover
+        // the player is currently fighting the Minotaur in the tunnel, the security system or the brain in the Earthmover
         if (World.TunnelRoomba) nm.transform.position = World.TunnelRoomba.position with { y = -112.5f };
-        if (World.Brain) nm.transform.position = new(0f, 826.5f, 610f);
+        if (World.SecuritySystem[0]) nm.transform.position = new(0f, 472f, 745f);
+        if (World.Brain && World.Brain.IsFightActive) nm.transform.position = new(0f, 826.5f, 610f);
     }
 
     /// <summary> Respawns Cyber Grind players and launches a screen flash. </summary>
@@ -323,17 +367,19 @@ public class Movement : MonoSingleton<Movement>
     {
         bool dialog = UI.AnyDialog, blocking = UI.AnyMovementBlocking;
 
-        ToggleCursor(dialog);
-        ToggleHud(Instance.Emoji == 0xFF);
+        ToggleCursor(dialog || Tools.Scene == "Level 2-S");
+        ToggleHud(Instance.Emote == 0xFF);
+
+        if (nm.dead) return;
 
         nm.activated = fc.activated = gc.activated = !blocking;
-        cc.activated = !blocking && !EmojiWheel.Shown;
+        cc.activated = !blocking && !EmoteWheel.Shown;
 
         if (blocking) fc.NoFist();
         else fc.YesFist();
 
-        OptionsManager.Instance.frozen = Instance.Emoji != 0xFF || InteractiveGuide.Shown;
-        Console.Instance.enabled = Instance.Emoji == 0xFF;
+        OptionsManager.Instance.frozen = Instance.Emote != 0xFF || InteractiveGuide.Shown;
+        Console.Instance.enabled = Instance.Emote == 0xFF;
     }
 
     private static void ToggleCursor(bool enable)
@@ -350,41 +396,50 @@ public class Movement : MonoSingleton<Movement>
     }
 
     #endregion
-    #region emoji
+    #region emote
 
-    /// <summary> Triggers an emoji with the given id. </summary>
-    public void StartEmoji(byte id, bool updateState = true)
+    /// <summary> Resets the values of the third person camera. </summary>
+    public void StartThirdPerson()
     {
-        EmojiStart = Time.time;
-        Emoji = id; // save id to sync it later
+        rotation = new(cc.rotationY, cc.rotationX + 90f);
+        position = new();
+        targetPlayer = LobbyController.IndexOfLocal();
+    }
+
+    /// <summary> Triggers an emote with the given id. </summary>
+    public void StartEmote(byte id, bool updateState = true)
+    {
+        EmoteStart = Time.time;
+        Emote = id; // save id to sync it later
 
         if (updateState) UpdateState();
-        Destroy(EmojiPreview);
+        Destroy(EmotePreview);
         Destroy(FallParticle);
 
-        // if id is -1, then the emotion was not selected
+        // if id is -1, then the emote was not selected
         if (id == 0xFF) return;
-        else EmojiPreview = Doll.Spawn(nm.transform, Networking.LocalPlayer.Team, id, Rps).gameObject;
+        else EmotePreview = Doll.Spawn(nm.transform, Networking.LocalPlayer.Team, Shop.SelectedHat, Shop.SelectedJacket, id, Rps).gameObject;
 
         // stop sliding so that the preview is not underground
         nm.playerCollider.height = 3.5f;
         nm.gc.transform.localPosition = new(0f, -1.256f, 0f);
 
         // rotate the third person camera in the same direction as the first person camera
-        rotation = new(cc.rotationY, cc.rotationX + 90f);
-        position = new();
+        StartThirdPerson();
         SkateboardSpeed = 0f;
 
-        Bundle.Hud("emoji", true); // telling how to interrupt an emotion
-        StopCoroutine("ClearEmoji");
-        if (emojiLength[id] != -1f) StartCoroutine("ClearEmoji");
+        Bundle.Hud("emote", true); // telling how to interrupt the emote
+        StopCoroutine("ClearEmote");
+        if (emoteLength[id] != -1f) StartCoroutine("ClearEmote");
     }
 
-    /// <summary> Returns the emoji id to -1 after the end of an animation. </summary>
-    public IEnumerator ClearEmoji()
+    /// <summary> Returns the emote id to -1 after the end of an animation. </summary>
+    public IEnumerator ClearEmote()
     {
-        yield return new WaitForSeconds(emojiLength[Emoji] + .5f);
-        StartEmoji(0xFF);
+        yield return new WaitForSeconds(emoteLength[Emote] + .5f);
+
+        if (Emote == 3) LobbyController.Lobby?.SendChatString("#/r" + Rps);
+        StartEmote(0xFF);
     }
 
     #endregion

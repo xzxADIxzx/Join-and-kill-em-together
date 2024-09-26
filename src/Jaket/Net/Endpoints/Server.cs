@@ -2,6 +2,7 @@ namespace Jaket.Net.Endpoints;
 
 using Steamworks;
 using Steamworks.Data;
+using System;
 
 using Jaket.Content;
 using Jaket.IO;
@@ -25,7 +26,7 @@ public class Server : Endpoint, ISocketManager
             // player can only have one doll and its id should match the player's id
             if ((id == sender && type != EntityType.Player) || (id != sender && type == EntityType.Player)) return;
 
-            if (!ents.ContainsKey(id) || ents[id] == null)
+            if (ents[id] == null)
             {
                 // double-check on cheats just in case of any custom multiplayer clients existence
                 if (!LobbyController.CheatsAllowed && (type.IsEnemy() || type.IsItem())) return;
@@ -49,13 +50,17 @@ public class Server : Endpoint, ISocketManager
                 Redirect(r, con);
             }
         });
-        Listen(PacketType.DamageEntity, r =>
+        Listen(PacketType.DamageEntity, (con, sender, r) =>
         {
-            if (ents.TryGetValue(r.Id(), out var entity)) entity?.Damage(r);
+            if (ents.TryGetValue(r.Id(), out var entity))
+            {
+                entity?.Damage(r);
+                Redirect(r, con);
+            }
         });
         Listen(PacketType.KillEntity, (con, sender, r) =>
         {
-            if (ents.TryGetValue(r.Id(), out var entity) && entity && (entity is Enemy || entity is Bullet || entity is TeamCoin))
+            if (ents.TryGetValue(r.Id(), out var entity) && entity && entity is not RemotePlayer && entity is not LocalPlayer)
             {
                 entity.Kill(r);
                 Redirect(r, con);
@@ -81,11 +86,11 @@ public class Server : Endpoint, ISocketManager
         {
             var owner = r.Id(); r.Position = 1; // extract the spray owner
 
-            // stop an attempt to overwrite someone else's spray, because this can lead to tragic consequences
+            // prevent an attempt to overwrite someone else's spray, because this can lead to tragic consequences
             if (sender != owner)
             {
                 Administration.Ban(sender);
-                Log.Warning($"{sender} was blocked due to an attempt to overwrite someone else's spray");
+                Log.Warning($"[Server] {sender} was blocked due to an attempt to overwrite someone else's spray");
             }
             else
             {
@@ -108,7 +113,24 @@ public class Server : Endpoint, ISocketManager
             Log.Debug($"[Server] Got an image request for spray#{owner}. Count: {list.Count}");
         });
 
-        Listen(PacketType.ActivateObject, World.ReadAction);
+        ListenAndRedirect(PacketType.ActivateObject, World.ReadAction);
+
+        Listen(PacketType.Vote, (con, sender, r) =>
+        {
+            var owner = r.Id();
+
+            // prevent an attempt to vote on behalf of another
+            if (sender != owner)
+            {
+                Administration.Ban(sender);
+                Log.Warning($"[Server] {sender} was blocked due to an attempt to vote on behalf of another");
+            }
+            else
+            {
+                Votes.UpdateVote(owner, r.Byte());
+                Redirect(r, con);
+            }
+        });
     }
 
     public override void Update()
@@ -117,7 +139,7 @@ public class Server : Endpoint, ISocketManager
         Stats.MeasureTime(ref Stats.WriteTime, () =>
         {
             if (Networking.Loading) return;
-            Networking.EachEntity(entity => Networking.Send(PacketType.Snapshot, w =>
+            Networking.Entities.Alive(entity => Networking.Send(PacketType.Snapshot, w =>
             {
                 w.Id(entity.Id);
                 w.Enum(entity.Type);
@@ -178,12 +200,33 @@ public class Server : Endpoint, ISocketManager
     public void OnConnected(Connection con, ConnectionInfo info)
     {
         Log.Info($"[Server] {info.Identity.SteamId.AccountId} connected");
-        Networking.Send(PacketType.Level, World.WriteData, (data, size) => Tools.Send(con, data, size));
+        Networking.Send(PacketType.Level, World.WriteData, (data, size) => Tools.Send(con, data, size), size: 256);
     }
 
-    public void OnDisconnected(Connection con, ConnectionInfo info) => Log.Info($"[Server] {info.Identity.SteamId.AccountId} disconnected");
+    public void OnDisconnected(Connection con, ConnectionInfo info)
+    {
+        Log.Info($"[Server] {info.Identity.SteamId.AccountId} disconnected");
+        if (ents.TryGetValue(info.Identity.SteamId.AccountId, out var entity) && entity is RemotePlayer player) player?.NetKill();
+    }
 
-    public void OnMessage(Connection con, NetIdentity id, System.IntPtr data, int size, long msg, long time, int channel) => Handle(con, id.SteamId.AccountId, data, size);
+    public void OnMessage(Connection con, NetIdentity id, IntPtr data, int size, long msg, long time, int channel)
+    {
+        var accId = id.SteamId.AccountId;
+
+        if (Administration.IsSpam(accId, size))
+        {
+            Administration.ClearSpam(accId);
+            Log.Warning($"[Server] {accId} was warned due to sending a large amount of data");
+
+            if (Administration.IsWarned(accId))
+            {
+                Administration.Ban(accId);
+                Log.Warning($"[Server] {accId} was blocked due to an attempt to spam");
+            }
+        }
+
+        Handle(con, accId, data, size);
+    }
 
     #endregion
 }

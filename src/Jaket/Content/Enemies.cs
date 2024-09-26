@@ -32,14 +32,19 @@ public class Enemies
         foreach (var name in GameAssets.Enemies) Prefabs.Add(GameAssets.Enemy(name).GetComponentInChildren<EnemyIdentifier>());
 
         for (var type = EntityType.Filth; type <= EntityType.Puppet; type++) Types[type] = typeof(SimpleEnemy);
+        Types[EntityType.Insurrectionist] = typeof(Insurrectionist);
         Types[EntityType.Swordsmachine] = typeof(Swords);
-        Types[EntityType.V2] = typeof(V2);
+        Types[EntityType.V2_RedArm] = typeof(V2);
         Types[EntityType.V2_GreenArm] = typeof(V2);
         Types[EntityType.Sentry] = typeof(Turret);
+        Types[EntityType.Gutterman] = typeof(Gutterman);
         Types[EntityType.MaliciousFace] = typeof(Body);
+        Types[EntityType.HideousMass] = typeof(Shrimp);
         Types[EntityType.Idol] = typeof(Idol);
         Types[EntityType.Gabriel] = typeof(Gabriel);
         Types[EntityType.Gabriel_Angry] = typeof(Gabriel);
+        Types[EntityType.SomethingWicked] = typeof(Wicked);
+        Types[EntityType.Johninator] = typeof(V2);
     }
 
     /// <summary> Finds the entity type by enemy class and type, taking into account the fact that some enemies have the same types. </summary>
@@ -70,9 +75,9 @@ public class Enemies
     {
         // EnemyId of Malicious Face and Cerberus is in a child object
         // https://discord.com/channels/1132614140414935070/1132614140876292190/1146507403102257162
-        var obj = type != EntityType.MaliciousFace && type != EntityType.Cerberus ?
-                Entities.Mark(Prefabs[type - EntityType.EnemyOffset].gameObject) :
-                Entities.Mark(Prefabs[type - EntityType.EnemyOffset].transform.parent.gameObject).transform.GetChild(0).gameObject;
+        var obj = type != EntityType.MaliciousFace && type != EntityType.Cerberus
+            ? Entities.Mark(Prefabs[type - EntityType.EnemyOffset].gameObject)
+            : Entities.Mark(Prefabs[type - EntityType.EnemyOffset].transform.parent.gameObject).transform.GetChild(0).gameObject;
 
         // repeat this, since only the parental object was renamed
         obj.name = "Net";
@@ -83,7 +88,9 @@ public class Enemies
     /// <summary> Synchronizes the enemy between network members. </summary>
     public static bool Sync(EnemyIdentifier enemyId)
     {
-        if (LobbyController.Offline || enemyId.dead || enemyId.name == "Net") return true;
+        if (LobbyController.Offline || enemyId.dead) return true;
+        if (Tools.Scene == "Endless") enemyId.spawnEffect = null;
+        if (enemyId.name == "Net") return true;
 
         // levels 2-4, 5-4, 7-1 and 7-4 contain unique bosses that needs to be dealt with separately
         if (Tools.Scene == "Level 2-4" && enemyId.name == "MinosArm")
@@ -104,7 +111,8 @@ public class Enemies
             return true;
         }
         // the security system is a complex enemy consisting of several subenemies
-        if (Tools.Scene == "Level 7-4" && (enemyId.name == "Mainframe (Hurtable)" || enemyId.transform.parent?.name == "SecuritySystem")) return true;
+        if (Tools.Scene == "Level 7-4" && enemyId.GetComponentInParent<CombinedBossBar>() != null) return true;
+        if (Tools.Scene == "Level 7-4" && enemyId.name == "KillAllEnemiesChecker") return true; // what is that?!
         if (Tools.Scene == "Level 7-4" && enemyId.name == "Brain")
         {
             enemyId.gameObject.AddComponent<Brain>();
@@ -124,16 +132,16 @@ public class Enemies
     }
 
     /// <summary> Synchronizes the damage dealt to the enemy. </summary>
-    public static bool SyncDamage(EnemyIdentifier enemyId, float damage, float critDamage, GameObject source)
+    public static bool SyncDamage(EnemyIdentifier enemyId, float damage, float crit, GameObject source)
     {
         if (LobbyController.Offline || enemyId.dead) return true;
-        if (Debug) Log.Debug($"{(source == Bullets.NetDmg ? "Network" : source == Bullets.Fake ? "Fake" : "Local")} damage was dealt: {damage}, {critDamage}, {source?.name}");
+        if (Debug) Log.Debug($"{(source == Bullets.NetDmg ? "Network" : source == Bullets.Fake ? "Fake" : "Local")} damage was dealt: {enemyId.hitter}, {damage}, {crit}, {source?.name}");
 
         if (source == Bullets.NetDmg) return true; // the damage was received over the network
         if (source == Bullets.Fake) return false; // bullets are only needed for visual purposes and mustn't cause damage
 
         if (enemyId.TryGetComponent<Entity>(out var entity) && (entity is not RemotePlayer player || !player.Doll.Dashing))
-            Bullets.SyncDamage(entity.Id, enemyId.hitter, damage, critDamage);
+            Bullets.SyncDamage(entity.Id, enemyId.hitter, damage, crit);
 
         return true;
     }
@@ -157,17 +165,14 @@ public class Enemies
         // update target only if the current target is the local player
         if (enemyId.target == null || !enemyId.target.isPlayer) return;
 
-        // with a large number of enemies, this code begins to greatly affect the FPS
-        if (Time.frameCount % (1 + Networking.Entities.Count / 16) != 0) return;
-
         var enemy = enemyId.transform.position;
         var target = NewMovement.Instance.transform;
         var dst = (enemy - target.position).sqrMagnitude;
 
-        Networking.EachPlayer(player =>
+        Networking.Entities.Player(player =>
         {
             var newDst = (enemy - player.transform.position).sqrMagnitude;
-            if (newDst < dst)
+            if (newDst < dst && player.Health > 0)
             {
                 target = player.transform;
                 dst = newDst;

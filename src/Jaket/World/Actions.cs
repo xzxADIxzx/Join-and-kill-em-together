@@ -4,6 +4,7 @@ using System;
 using UnityEngine;
 
 using Jaket.Assets;
+using Jaket.Net;
 
 /// <summary> Abstract action performed in the world. </summary>
 public class WorldAction
@@ -28,11 +29,8 @@ public class StaticAction : WorldAction
     public StaticAction(string level, Action action) : base(level, action) { }
 
     /// <summary> Creates a static action that duplicates torches. </summary>
-    public static StaticAction PlaceTorches(string level, Vector3 pos, float radius) => new(level, () =>
+    public static void PlaceTorches(string level, Vector3 pos, float radius) => new StaticAction(level, () =>
     {
-        // there are already 8 torches on the map, no more needed
-        if (Tools.ResFind<Torch>().Length >= 8) return;
-
         var obj = GameAssets.Torch();
         for (float angle = 360f * 6f / 7f; angle >= 0f; angle -= 360f / 7f)
         {
@@ -42,16 +40,16 @@ public class StaticAction : WorldAction
     });
 
     /// <summary> Creates a static action that finds an object. </summary>
-    public static StaticAction Find(string level, string name, Vector3 position, Action<GameObject> action) => new(level, () =>
+    public static void Find(string level, string name, Vector3 position, Action<GameObject> action) => new StaticAction(level, () =>
     {
         Tools.ResFind(obj => Tools.IsReal(obj) && obj.transform.position == position && obj.name == name, action);
     });
     /// <summary> Creates a static action that adds a component to an object. </summary>
-    public static StaticAction Patch(string level, string name, Vector3 position) => Find(level, name, position, obj => obj.AddComponent<ObjectActivator>().events = new());
+    public static void Patch(string level, string name, Vector3 position) => Find(level, name, position, obj => obj.AddComponent<ObjectActivator>().events = new());
     /// <summary> Creates a static action that enables an object. </summary>
-    public static StaticAction Enable(string level, string name, Vector3 position) => Find(level, name, position, obj => obj.SetActive(true));
+    public static void Enable(string level, string name, Vector3 position) => Find(level, name, position, obj => obj.SetActive(true));
     /// <summary> Creates a static action that destroys an object. </summary>
-    public static StaticAction Destroy(string level, string name, Vector3 position) => Find(level, name, position, Tools.Destroy);
+    public static void Destroy(string level, string name, Vector3 position) => Find(level, name, position, Tools.Destroy);
 }
 
 /// <summary> Action that can be launched remotely. </summary>
@@ -65,7 +63,7 @@ public class NetAction : WorldAction
     public NetAction(string level, string name, Vector3 position, Action action) : base(level, action) { Name = name; Position = position; }
 
     /// <summary> Creates a net action that synchronizes an object activator component. </summary>
-    public static NetAction Sync(string level, string name, Vector3 position, Action<Transform> action = null) => new(level, name, position, () =>
+    public static void Sync(string level, string name, Vector3 position, Action<Transform> action = null) => new NetAction(level, name, position, () =>
         Tools.ResFind<ObjectActivator>(
             obj => Tools.IsReal(obj) && Tools.Within(obj.transform, position) && obj.name == name,
             obj =>
@@ -77,17 +75,23 @@ public class NetAction : WorldAction
             }
         ));
 
-    /// <summary> Creates a net action that synchronizes clicks on a button. </summary>
-    public static NetAction SyncButton(string level, string name, Vector3 position, Action<GameObject> action = null)
-    {
-        // synchronize clicks on the given button
-        var net = Sync(level, name, position, obj => { Tools.GetClick(obj).Invoke(); action?.Invoke(obj); });
+    /// <summary> Creates a net action that synchronizes a limbo switch component. </summary>
+    public static void SyncLimbo(string level, Vector3 position) => Sync(level, "GameObject", position, obj => obj.GetComponentInParent<LimboSwitch>().Pressed());
 
-        // patch the button to sync press on it if it was not already pressed by anyone
+    /// <summary> Creates a net action that synchronizes clicks on a button. </summary>
+    public static void SyncButton(string level, string name, Vector3 position, Action<RectTransform> action = null)
+    {
         StaticAction.Find(level, name, position, obj => Tools.GetClick(obj).AddListener(() =>
         {
-            if (LobbyController.IsOwner || !World.Activated.Contains((byte)World.Actions.IndexOf(net))) World.SyncAction(obj);
+            if (LobbyController.Online) World.SyncAction(obj);
         }));
-        return net;
+        new NetAction(level, name, position, () => Tools.ResFind<RectTransform>(
+            obj => Tools.IsReal(obj) && Tools.Within(obj, position) && obj.name == name,
+            obj =>
+            {
+                Tools.GetClick(obj.gameObject).Invoke();
+                action?.Invoke(obj);
+            }
+        ));
     }
 }

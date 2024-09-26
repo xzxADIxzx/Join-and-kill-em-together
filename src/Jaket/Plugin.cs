@@ -1,7 +1,10 @@
 ﻿namespace Jaket;
 
 using BepInEx;
+using BepInEx.Bootstrap;
 using HarmonyLib;
+using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -18,7 +21,7 @@ public class PluginLoader : BaseUnityPlugin
 {
     private void Awake() => SceneManager.sceneLoaded += (_, _) =>
     {
-        if (Plugin.Instance == null) Tools.Create<Plugin>("Jaket").Location = Info.Location;
+        if (Plugin.Instance == null) Tools.Create<Plugin>("Jaket").Location = Path.GetDirectoryName(Info.Location);
     };
 }
 
@@ -31,6 +34,12 @@ public class Plugin : MonoBehaviour
     public bool Initialized;
     /// <summary> Path to the dll file of the mod. </summary>
     public string Location;
+
+    /// <summary> List of mods compatible with Jaket. </summary>
+    public static readonly string[] Compatible =
+    { "Jaket", "CrosshairColorFixer", "IntroSkip", "Healthbars", "xyz.parsl.damage_stats", "RcHud", "WallJumpHUD", "HUD Config", "PluginConfigurator", "AngryLevelLoader", "DoomahLevelLoader" };
+    /// <summary> Whether at least on incompatible mod is loaded. </summary>
+    public bool HasIncompatibility;
 
     private void Awake() => DontDestroyOnLoad(Instance = this); // save the instance of the mod for later use and prevent it from being destroyed by the game
 
@@ -65,7 +74,7 @@ public class Plugin : MonoBehaviour
         Weapons.Load();
         Bullets.Load();
         Items.Load();
-        DollAssets.Load();
+        ModAssets.Load();
 
         Administration.Load();
         LobbyController.Load();
@@ -74,6 +83,7 @@ public class Plugin : MonoBehaviour
 
         World.World.Load();
         WorldActionsList.Load();
+        Votes.Load();
         Movement.Load();
         SprayManager.Load();
 
@@ -82,6 +92,9 @@ public class Plugin : MonoBehaviour
 
         // initialize harmony and patch all the necessary classes
         new Harmony("Should I write something here?").PatchAll();
+
+        // check if there is any incompatible mods
+        HasIncompatibility = Chainloader.PluginInfos.Values.Any(info => !Compatible.Contains(info.Metadata.Name));
 
         // mark the plugin as initialized and log a message about it
         Initialized = true;

@@ -21,7 +21,7 @@ public class Leviathan : Enemy
     private void Awake()
     {
         Init(_ => EntityType.Leviathan);
-        leviathan = GetComponent<LeviathanController>();
+        TryGetComponent(out leviathan);
 
         Owner = LobbyController.LastOwner.AccountId;
         World.Leviathan = this;
@@ -29,7 +29,7 @@ public class Leviathan : Enemy
 
     private void Start()
     {
-        Boss(() => true, 200f, 2);
+        Boss(true, 200f, 2);
 
         leviathan.phaseChangeHealth = EnemyId.statue.health / 2f;
         leviathan.active = IsOwner;
@@ -37,7 +37,7 @@ public class Leviathan : Enemy
         if (!IsOwner) Cooldown(4200f);
     }
 
-    private void Update()
+    private void Update() => Stats.MTE(() =>
     {
         if (IsOwner || Dead) return;
 
@@ -74,9 +74,9 @@ public class Leviathan : Enemy
             }
             Cooldown(4200f);
         }
-    }
+    });
 
-    private void Cooldown(float time) => Tools.Field<LeviathanHead>("attackCooldown").SetValue(head, time);
+    private void Cooldown(float time) => Tools.Set("attackCooldown", head, time);
 
     #region entity
 

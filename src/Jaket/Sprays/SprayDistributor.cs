@@ -15,7 +15,7 @@ using Jaket.UI.Dialogs;
 public static class SprayDistributor
 {
     /// <summary> Size of the packet that contains an image chunk. </summary>
-    public const int CHUNK_SIZE = 250;
+    public const int CHUNK_SIZE = 512;
 
     /// <summary> List of all streams for spray loading. </summary>
     public static Dictionary<uint, Writer> Streams = new();

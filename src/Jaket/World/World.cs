@@ -41,10 +41,10 @@ public class World
     {
         Events.OnLoadingStarted += () =>
         {
-            if (LobbyController.Online && LobbyController.IsOwner)
+            if (LobbyController.Online && LobbyController.IsOwner && Tools.Pending != "Main Menu")
             {
                 Activated.Clear();
-                Networking.Send(PacketType.Level, WriteData);
+                Networking.Send(PacketType.Level, WriteData, size: 256);
             }
         };
         Events.OnLoaded += () =>
@@ -60,7 +60,7 @@ public class World
     /// <summary> Writes data about the world such as level, difficulty and triggers fired. </summary>
     public static void WriteData(Writer w)
     {
-        w.String(Tools.Pending != null ? Tools.Pending : Tools.Scene);
+        w.String(Tools.Pending ?? Tools.Scene);
 
         // the version is needed for a warning about incompatibility
         w.String(Version.CURRENT);
@@ -164,7 +164,7 @@ public class World
         Tools.ResFind<GoreZone>(zone => Tools.IsReal(zone) && zone.isActiveAndEnabled && FarEnough(zone.transform), zone => zone.ResetGibs());
 
         // big pieces of corpses, such as arms or legs, are part of the entities
-        Networking.Entities.Values.DoIf(entity =>
+        Networking.Entities.Entity(entity =>
 
                 entity && entity.Dead && entity is Enemy &&
                 entity.Type != EntityType.MaliciousFace &&
@@ -220,6 +220,7 @@ public class World
 
             case 3: Find<FinalDoor>(r.Vector(), d => d.transform.Find("FinalDoorOpener").gameObject.SetActive(true)); break;
             case 4: Find<Door>(r.Vector(), d => d.Open()); break;
+            case 7: Find<Flammable>(r.Vector(), d => d.Burn(4.01f)); break;
 
             case 5:
                 Find<StatueActivator>(r.Vector(), d =>
@@ -229,7 +230,7 @@ public class World
                 });
                 break;
             case 6:
-                Networking.EachEntity(entity => entity.Type == EntityType.Puppet, entity => entity.Kill(null));
+                Networking.Entities.Alive(entity => entity.Type == EntityType.Puppet, entity => entity.EnemyId.InstaKill());
                 Find<BloodFiller>(r.Vector(), f => f.InstaFill());
                 break;
         }
@@ -240,8 +241,8 @@ public class World
     {
         if (!Tools.Within(obj, na.Position) || obj.name != na.Name) return;
 
-        var index = (byte)Actions.IndexOf(na);
-        if (LobbyController.IsOwner || !Activated.Contains(index))
+        byte index = (byte)Actions.IndexOf(na);
+        if (!Activated.Contains(index))
             Networking.Send(PacketType.ActivateObject, w =>
             {
                 Activated.Add(index);

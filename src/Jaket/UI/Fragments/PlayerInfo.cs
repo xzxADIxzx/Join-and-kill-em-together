@@ -47,11 +47,7 @@ public class PlayerInfo : CanvasSingleton<PlayerInfo>
         if (!Shown || !StyleHUD.Instance) return;
 
         List<RemotePlayer> teammates = new();
-        Networking.EachPlayer(player =>
-        {
-            // the player should only see information about teammates
-            if (player.Team.Ally()) teammates.Add(player);
-        });
+        Networking.Entities.Player(player => player.Team.Ally(), teammates.Add);
 
         float height = teammates.Count == 0 ? 40f : teammates.Count * 48f + 8f;
 
@@ -63,7 +59,7 @@ public class PlayerInfo : CanvasSingleton<PlayerInfo>
         else
         {
             float y = -20f;
-            teammates.ForEach(p => PlayerInfoEntry.Build(p, UIB.Rect(p.Header.Name, root.transform, Btn(0f, y += 48f) with { Width = 540f })));
+            teammates.ForEach(p => PlayerInfoEntry.Build(p, UIB.Rect(p.Header.Name, root.transform, Btn(y += 48f) with { Width = 540f })));
         }
 
         Events.Post2(UpdateMaterials);

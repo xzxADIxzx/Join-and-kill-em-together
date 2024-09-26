@@ -9,7 +9,7 @@ using Jaket.IO;
 using Jaket.UI;
 
 /// <summary>
-/// Doll of a player, remote from network or local from emoji.
+/// Doll of a player, remote from network or local from emote.
 /// Responsible for the visual part of the player, i.e. suits and animations.
 /// </summary>
 public class Doll : MonoBehaviour
@@ -19,11 +19,13 @@ public class Doll : MonoBehaviour
     /// <summary> Animator states that affect which animation will be played. </summary>
     public bool Walking, Sliding, Falling, InAir, WasInAir, Dashing, WasDashing, Riding, WasRiding, Hooking, WasHooking, Shopping, WasShopping;
 
-    /// <summary> Emoji that plays at the moment. </summary>
-    public byte Emoji, LastEmoji = 0xFF, Rps;
-    /// <summary> Event triggered after the start of emoji. </summary>
-    public Action OnEmojiStart = () => { };
+    /// <summary> Emote that plays at the moment. </summary>
+    public byte Emote, LastEmote = 0xFF, Rps;
+    /// <summary> Event triggered after the start of emote. </summary>
+    public Action OnEmoteStart = () => { };
 
+    /// <summary> Hat and jacket that the doll wears. </summary>
+    public int Hat, Jacket;
     /// <summary> Whether the player uses custom weapon colors. </summary>
     public bool CustomColors;
     /// <summary> Custom weapon colors themselves. </summary>
@@ -36,26 +38,29 @@ public class Doll : MonoBehaviour
     /// <summary> Position in which the doll holds an item. </summary>
     public Vector3 HoldPosition => Hooking ? Hook.position : HookRoot.position;
 
-    /// <summary> Materials of the wings, coin and skateboard. </summary>
-    public Material WingMat, CoinMat, SkateMat;
+    /// <summary> Materials of the wings, coin, skateboard and big ears. </summary>
+    public Material WingMat, CoinMat, SkateMat, EarsMat;
     /// <summary> Trail of the wings. </summary>
     public TrailRenderer WingTrail;
+    /// <summary> Light of the wings. </summary>
+    public Light WingLight;
     /// <summary> Winch of the hook. </summary>
     public LineRenderer HookWinch;
 
-    /// <summary> Spawns a preview of the given emoji. </summary>
-    public static Doll Spawn(Transform parent, Team team, byte emoji, byte rps) =>
-        UIB.Component<Doll>(Instantiate(DollAssets.Preview, parent), doll =>
+    /// <summary> Spawns a preview of the given emote. </summary>
+    public static Doll Spawn(Transform parent, Team team, int hat, int jacket, byte emote, byte rps) =>
+        UIB.Component<Doll>(Instantiate(ModAssets.Preview, parent), doll =>
         {
             doll.transform.localPosition = new(0f, -1.5f);
             doll.transform.localScale = Vector3.one * 2.18f;
 
-            doll.ApplyTeam(team);
-            doll.Suits.gameObject.SetActive(true);
-            // TODO load local players' suit + ApplySuit
-
-            doll.Emoji = emoji;
+            doll.Hat = hat;
+            doll.Jacket = jacket;
+            doll.Emote = emote;
             doll.Rps = rps;
+
+            doll.ApplyTeam(team);
+            doll.ApplySuit();
         });
 
     private void Awake()
@@ -76,11 +81,13 @@ public class Doll : MonoBehaviour
         WingMat = V3.Find("V3").GetComponent<Renderer>().materials[1];
         CoinMat = Coin.GetComponent<Renderer>().material;
         SkateMat = Skateboard.GetComponent<Renderer>().material;
+        EarsMat = Suits.Find("Big Ears").GetComponent<Renderer>().material;
         WingTrail = GetComponentInChildren<TrailRenderer>();
+        WingLight = GetComponentInChildren<Light>();
         HookWinch = GetComponentInChildren<LineRenderer>(true);
     }
 
-    private void Update()
+    private void Update() => Stats.MTE(() =>
     {
         if (Animator == null) return;
 
@@ -104,18 +111,18 @@ public class Doll : MonoBehaviour
         }
         if (WasShopping != Shopping && (WasShopping = Shopping)) Animator.SetTrigger("open-shop");
 
-        if (LastEmoji != Emoji)
+        if (LastEmote != Emote)
         {
             Animator.SetTrigger("show-emoji");
-            Animator.SetInteger("emoji", LastEmoji = Emoji);
+            Animator.SetInteger("emoji", LastEmote = Emote);
             Animator.SetInteger("rps", Rps);
 
-            Throne.gameObject.SetActive(Emoji == 6);
-            Coin.gameObject.SetActive(Emoji == 7);
-            Skateboard.gameObject.SetActive(Emoji == 11);
-            if (Emoji == 8) Head.localEulerAngles = new(-20f, 0f);
+            Throne.gameObject.SetActive(Emote == 6);
+            Coin.gameObject.SetActive(Emote == 7);
+            Skateboard.gameObject.SetActive(Emote == 11);
+            if (Emote == 8) Head.localEulerAngles = new(-20f, 0f);
 
-            OnEmojiStart();
+            OnEmoteStart();
         }
 
         if (Sliding && SlideParticle == null)
@@ -135,22 +142,29 @@ public class Doll : MonoBehaviour
             FallParticle.localScale = new(1.2f, .6f, 1f);
         }
         else if (!Falling && FallParticle != null) Destroy(FallParticle.gameObject);
-    }
+    });
 
     #region apply
 
     public void ApplyTeam(Team team)
     {
-        WingMat.mainTexture = SkateMat.mainTexture = DollAssets.WingTextures[(int)team];
+        WingMat.mainTexture = SkateMat.mainTexture = EarsMat.mainTexture = ModAssets.WingTextures[(int)team];
         CoinMat.color = team.Color();
-        if (WingTrail != null) WingTrail.startColor = team.Color() with { a = .5f };
 
-        // TODO make it part of customization
-        Suits.GetChild(0).gameObject.SetActive(team == Team.Pink);
+        if (WingTrail) WingTrail.startColor = team.Color() with { a = .5f };
+        if (WingLight) WingLight.color = team.Color();
     }
 
     public void ApplySuit()
     {
+        foreach (Transform suit in Suits) suit.gameObject.SetActive(false);
+
+        int hat = Shop.Entries[Hat].hierarchyId;
+        if (hat != -1) Suits.GetChild(hat).gameObject.SetActive(true);
+
+        int jacket = Shop.Entries[Jacket].hierarchyId;
+        if (jacket != -1) Suits.GetChild(jacket).gameObject.SetActive(true);
+
         foreach (var getter in Hand.GetComponentsInChildren<GunColorGetter>())
         {
             var renderer = getter.GetComponent<Renderer>();
@@ -177,8 +191,13 @@ public class Doll : MonoBehaviour
 
     public void ReadSuit(Reader r)
     {
+        Hat = r.Int();
+        Jacket = r.Int();
+
         CustomColors = r.Bool();
         if (CustomColors) { Color1 = r.Color(); Color2 = r.Color(); Color3 = r.Color(); }
+
+        ApplySuit();
     }
 
     #endregion

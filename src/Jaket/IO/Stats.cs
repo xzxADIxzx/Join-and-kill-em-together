@@ -36,4 +36,7 @@ public class Stats
         action();
         store += sw.ElapsedTicks / 10000f;
     }
+
+    /// <summary> Measures the time of execution of entities logic. </summary>
+    public static void MTE(Action action) => MeasureTime(ref EntityUpdate, action);
 }

@@ -30,8 +30,6 @@ public class LocalPlayer : Entity
     public Vector3 Hook;
     /// <summary> Entity of the item the player is currently holding in their hands. </summary>
     public Item HeldItem;
-    /// <summary> Entity that the player pulls to himself with a hook. </summary>
-    public Entity Pulled;
 
     /// <summary> Index of the current weapon in the global list. </summary>
     private byte weapon;
@@ -47,18 +45,23 @@ public class LocalPlayer : Entity
 
         Voice = gameObject.AddComponent<AudioSource>(); // add a 2D audio source that will be heard from everywhere
 
-        Events.OnLoaded += () => Events.Post(UpdateWeapons);
+        Events.OnLoaded += () => Invoke("UpdateWeapons", .4f);
         Events.OnWeaponChanged += () => Events.Post(UpdateWeapons);
+        Events.OnTeamChanged += () =>
+        {
+            var light = nm.transform.Find("Point Light");
+            if (light) light.GetComponent<Light>().color = LobbyController.Offline ? Color.white : Team.Color();
+        };
     }
 
-    private void Update()
+    private void Update() => Stats.MTE(() =>
     {
         if (HeldItem == null || HeldItem.IsOwner) return;
         HeldItem = null;
 
         fc.currentPunch.ForceThrow();
         fc.currentPunch.PlaceHeldObject(new ItemPlaceZone[0], null);
-    }
+    });
 
     #region special
 
@@ -66,6 +69,10 @@ public class LocalPlayer : Entity
     public void SyncSuit() => Networking.Send(PacketType.Style, w =>
     {
         w.Id(Id);
+
+        w.Int(Shop.SelectedHat);
+        w.Int(Shop.SelectedJacket);
+
         if (cw?.GetComponentInChildren<GunColorGetter>()?.TryGetComponent<Renderer>(out var renderer) ?? false)
         {
             bool custom = renderer.material.name.Contains("Custom");
@@ -79,7 +86,7 @@ public class LocalPlayer : Entity
             });
         }
         else w.Bool(false);
-    }, size: 17);
+    }, size: 25);
 
     /// <summary> Caches the id of the current weapon and paints the hands of the local player. </summary>
     public void UpdateWeapons()
@@ -91,13 +98,13 @@ public class LocalPlayer : Entity
 
         // according to the lore, the player plays for V3, so we need to paint the hands
         var punch = fc.transform.Find("Arm Blue(Clone)");
-        if (punch) punch.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture();
+        if (punch) punch.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = ModAssets.HandTexture();
 
         var right = cw?.transform.GetChild(0).Find("RightArm");
-        if (right) right.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture();
+        if (right) right.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = ModAssets.HandTexture();
 
         var knuckle = fc.transform.Find("Arm Red(Clone)");
-        if (knuckle) knuckle.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = DollAssets.HandTexture(false);
+        if (knuckle) knuckle.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = ModAssets.HandTexture(false);
     }
 
     #endregion
@@ -111,11 +118,10 @@ public class LocalPlayer : Entity
         w.Float(nm.transform.eulerAngles.y);
         w.Float(135f - Mathf.Clamp(CameraController.Instance.rotationX, -40f, 80f));
         w.Vector(Hook);
-        w.Id(Pulled?.Id ?? 0u);
 
         w.Byte((byte)nm.hp);
         w.Byte((byte)Mathf.Floor(WeaponCharges.Instance.raicharge * 2.5f));
-        w.Player(Team, weapon, Movement.Instance.Emoji, Movement.Instance.Rps, Chat.Shown);
+        w.Player(Team, weapon, Movement.Instance.Emote, Movement.Instance.Rps, Chat.Shown);
         w.Bools(
             nm.walking,
             nm.sliding || (is44 && nm.transform.position.y > 610f && nm.transform.position.y < 611f),
@@ -134,8 +140,7 @@ public class LocalPlayer : Entity
         var team = r.Enum<Team>();
         if (!nm.dead && !team.Ally()) // no need to deal damage if an ally hits you
         {
-            byte type = r.Byte();
-            float mul = Bullets.Types[type] == "drill" ? ((skip = !skip) ? 0f : 1f) : 4f;
+            float mul = Bullets.Types[r.Byte()] == "drill" ? ((skip = !skip) ? 0f : 1f) : 4f;
 
             nm.GetHurt(Mathf.CeilToInt(r.Float() * mul), false, 0f);
             if (nm.dead) LobbyController.Lobby?.SendChatString("#/s" + (byte)team);

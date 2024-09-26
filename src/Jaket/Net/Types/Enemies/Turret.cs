@@ -3,7 +3,7 @@ namespace Jaket.Net.Types;
 using Jaket.Content;
 using Jaket.IO;
 
-/// <summary> Representation of a turret enemy. </summary>
+/// <summary> Representation of a turret. </summary>
 public class Turret : Enemy
 {
     global::Turret turret;
@@ -19,12 +19,12 @@ public class Turret : Enemy
     {
         Init(_ => Enemies.Type(EnemyId), true);
         InitTransfer(() => Cooldown(IsOwner ? 0f : 4200f));
-        turret = GetComponent<global::Turret>();
+        TryGetComponent(out turret);
     }
 
     private void Start() => SpawnEffect();
 
-    private void Update()
+    private void Update() => Stats.MTE(() =>
     {
         if (IsOwner || Dead) return;
 
@@ -38,9 +38,9 @@ public class Turret : Enemy
             else
                 Events.Post2(() => Cooldown(4200f));
         }
-    }
+    });
 
-    private void Cooldown(float time) => Tools.Field<global::Turret>("cooldown").SetValue(turret, time);
+    private void Cooldown(float time) => Tools.Set("cooldown", turret, time);
 
     #region entity
 

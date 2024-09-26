@@ -36,9 +36,8 @@ public class MovementPatch
             // player death message
             LobbyController.Lobby?.SendChatString("#/d");
 
-            // close the chat & interrupt the emoji to avoid bugs
             Chat.Instance.Field.gameObject.SetActive(false);
-            Movement.Instance.StartEmoji(0xFF);
+            Movement.Instance.OnDied();
         }
     }
 }
@@ -73,6 +72,6 @@ public class CommonPatch
     [HarmonyPatch(typeof(WeaponWheel), "OnEnable")]
     static void Wheel(WeaponWheel __instance)
     {
-        if (EmojiWheel.Shown) __instance.gameObject.SetActive(false);
+        if (EmoteWheel.Shown) __instance.gameObject.SetActive(false);
     }
 }

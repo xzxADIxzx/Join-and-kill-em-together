@@ -23,7 +23,7 @@ public class Bullets
         /* shotgun */ "shotgun", "shotgunzone", "chainsaw", "chainsawzone", "chainsawbounce", "chainsawprojectile", "hammer",
         /* other */ "nail", "sawblade", "cannonball",
         /* drill */ "harpoon", "drill", "drillpunch",
-        /* environmental*/ "explosion", "aftershock", "zapper",
+        /* environmental */ "explosion" /*???*/, "aftershock", "zapper",
         /* melee */ "punch", "heavypunch", "ground slam", "hook",
         /* parry */ "projectile", "enemy"
     };
@@ -56,7 +56,7 @@ public class Bullets
             else
             if (weapon.TryGetComponent<ShotgunHammer>(out var hammer))
             {
-                Add(Tools.Field("overPumpExplosion", hammer).GetValue(hammer) as GameObject, "SH"); // thank you, developers
+                Add(Tools.Get("overPumpExplosion", hammer) as GameObject, "SH"); // thank you, developers
             }
             else
             if (weapon.TryGetComponent<Nailgun>(out var nailgun))
@@ -75,7 +75,7 @@ public class Bullets
             {
                 Add(launcher.rocket, $"RL PRI");
                 Add(launcher.cannonBall?.gameObject, $"RL ALT");
-                Add((Tools.Field("napalmProjectile", launcher).GetValue(launcher) as Rigidbody)?.gameObject, $"RL EXT");
+                Add((Tools.Get("napalmProjectile", launcher) as Rigidbody)?.gameObject, $"RL EXT");
             }
         }
 
@@ -101,11 +101,11 @@ public class Bullets
     public static void CInstantiate(Reader r)
     {
         var obj = Entities.Mark(Prefabs[r.Byte()]);
-
         obj.transform.position = r.Vector();
         obj.transform.eulerAngles = r.Vector();
 
-        if (r.Position < r.Length) obj.GetComponent<Rigidbody>().velocity = r.Vector();
+        if (r.Length == 27) Coins.PaintBeam(obj, r.Enum<Team>());
+        if (r.Length == 38) obj.GetComponent<Rigidbody>().velocity = r.Vector();
     }
     public static Entity EInstantiate(EntityType type) => Entities.Mark(Prefabs[type switch
     {
@@ -116,7 +116,7 @@ public class Bullets
     }]).AddComponent(type == EntityType.Coin ? typeof(TeamCoin) : typeof(Bullet)) as Entity;
 
     /// <summary> Synchronizes the bullet between network members. </summary>
-    public static void Sync(GameObject bullet, bool hasRigidbody, bool applyOffset)
+    public static void Sync(GameObject bullet, bool hasRigidbody, bool applyOffset, byte team = byte.MaxValue)
     {
         if (LobbyController.Offline || bullet == null || bullet.name == "Net") return;
 
@@ -131,19 +131,20 @@ public class Bullets
                 w.Vector(bullet.transform.position + (applyOffset ? bullet.transform.forward * 2f : Vector3.zero));
                 w.Vector(bullet.transform.eulerAngles);
 
+                if (type == 0 && team != byte.MaxValue) w.Byte(team);
                 if (hasRigidbody) w.Vector(bullet.GetComponent<Rigidbody>().velocity);
-            }, size: hasRigidbody ? 37 : 25);
+            }, size: hasRigidbody ? 37 : 26);
         }
         else bullet.AddComponent(bullet.name == "Coin(Clone)" ? typeof(TeamCoin) : typeof(Bullet));
     }
 
     /// <summary> Synchronizes the bullet or marks it as fake if it was downloaded from the network. </summary>
-    public static void Sync(GameObject bullet, ref GameObject sourceWeapon, bool hasRigidbody, bool applyOffset)
+    public static void Sync(GameObject bullet, ref GameObject sourceWeapon, bool hasRigidbody, bool applyOffset, byte team = byte.MaxValue)
     {
         if (sourceWeapon == null && bullet.name == "Net")
             sourceWeapon = Fake;
         else
-            Sync(bullet, hasRigidbody, applyOffset);
+            Sync(bullet, hasRigidbody, applyOffset, team);
     }
 
     /// <summary> Synchronizes the "death" of the bullet. </summary>
@@ -203,7 +204,7 @@ public class Bullets
     public static void Punch(Harpoon harpoon, bool local)
     {
         // null pointer fix
-        Tools.Field<Harpoon>("aud").SetValue(harpoon, harpoon.GetComponent<AudioSource>());
+        Tools.Set("aud", harpoon, harpoon.GetComponent<AudioSource>());
 
         // this is necessary so that only the one who created or punched the harpoon deals the damage
         harpoon.sourceWeapon = local ? null : Fake;
@@ -218,7 +219,7 @@ public class Bullets
     #region damage
 
     /// <summary> Synchronizes damage dealt to the enemy. </summary>
-    public static void SyncDamage(uint enemyId, string hitter, float damage, float critDamage)
+    public static void SyncDamage(uint enemyId, string hitter, float damage, float crit)
     {
         var type = (byte)Array.IndexOf(Types, hitter);
         if (type != 0xFF) Networking.Send(PacketType.DamageEntity, w =>
@@ -228,7 +229,7 @@ public class Bullets
             w.Byte(type);
 
             w.Float(damage);
-            w.Float(critDamage);
+            w.Bool(crit == 0f);
         }, size: 14);
     }
 
@@ -237,7 +238,7 @@ public class Bullets
     {
         r.Inc(1); // skip team because enemies don't have a team
         enemyId.hitter = Types[r.Byte()];
-        enemyId.DeliverDamage(enemyId.gameObject, Vector3.zero, enemyId.transform.position, r.Float(), false, r.Float(), NetDmg);
+        enemyId.DeliverDamage(enemyId.gameObject, Vector3.zero, enemyId.transform.position, r.Float(), false, r.Bool() ? 0f : 1f, NetDmg);
     }
 
     #endregion

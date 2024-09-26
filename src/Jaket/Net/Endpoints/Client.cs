@@ -2,6 +2,7 @@ namespace Jaket.Net.Endpoints;
 
 using Steamworks;
 using Steamworks.Data;
+using System;
 
 using Jaket.Content;
 using Jaket.IO;
@@ -22,11 +23,15 @@ public class Client : Endpoint, IConnectionManager
             var id = r.Id();
             var type = r.Enum<EntityType>();
 
-            if (!ents.ContainsKey(id) || ents[id] == null) ents[id] = Entities.Get(id, type);
+            if (ents[id] == null) ents[id] = Entities.Get(id, type);
             ents[id]?.Read(r);
         });
         Listen(PacketType.Level, World.ReadData);
-        Listen(PacketType.Ban, r => LobbyController.LeaveLobby());
+        Listen(PacketType.Ban, r =>
+        {
+            LobbyController.LeaveLobby();
+            Assets.Bundle.Hud2NS("lobby.banned");
+        });
 
         Listen(PacketType.SpawnBullet, Bullets.CInstantiate);
         Listen(PacketType.DamageEntity, r =>
@@ -58,6 +63,8 @@ public class Client : Endpoint, IConnectionManager
         Listen(PacketType.ActivateObject, World.ReadAction);
 
         Listen(PacketType.CyberGrindAction, CyberGrind.LoadPattern);
+
+        Listen(PacketType.Vote, r => Votes.UpdateVote(r.Id(), r.Byte()));
     }
 
     public override void Update()
@@ -66,7 +73,7 @@ public class Client : Endpoint, IConnectionManager
         Stats.MeasureTime(ref Stats.WriteTime, () =>
         {
             if (Networking.Loading) return;
-            Networking.EachEntity(entity => entity.IsOwner, entity => Networking.Send(PacketType.Snapshot, w =>
+            Networking.Entities.Alive(entity => entity.IsOwner, entity => Networking.Send(PacketType.Snapshot, w =>
             {
                 w.Id(entity.Id);
                 w.Enum(entity.Type);
@@ -95,7 +102,7 @@ public class Client : Endpoint, IConnectionManager
 
     public void OnDisconnected(ConnectionInfo info) => Log.Info("[Client] Disconnected");
 
-    public void OnMessage(System.IntPtr data, int size, long msg, long time, int channel) => Handle(Manager.Connection, LobbyController.LastOwner.AccountId, data, size);
+    public void OnMessage(IntPtr data, int size, long msg, long time, int channel) => Handle(Manager.Connection, LobbyController.LastOwner.AccountId, data, size);
 
     #endregion
 }

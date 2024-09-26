@@ -18,7 +18,7 @@ public class Entities
     /// <summary> Loads providers into the dictionary. </summary>
     public static void Load()
     {
-        Providers.Add(EntityType.Player, DollAssets.CreateDoll);
+        Providers.Add(EntityType.Player, ModAssets.CreateDoll);
 
         for (var type = EntityType.Filth; type <= EntityType.Puppet; type++)
         {
@@ -38,7 +38,7 @@ public class Entities
 
         Providers.Add(EntityType.Brain, () => World.Brain);
 
-        for (var type = EntityType.AppleBait; type <= EntityType.V1; type++)
+        for (var type = EntityType.BlueSkull; type <= EntityType.Sowler; type++)
         {
             var sucks = type;
             Providers.Add(sucks, () => Items.Instantiate(sucks));
@@ -77,7 +77,7 @@ public class Entities
         if (LastId < Tools.AccId) LastId = Tools.AccId;
 
         LastId++;
-        while (Networking.Entities.ContainsKey(LastId)) LastId += 8192;
+        while (Networking.Entities.Contains(LastId)) LastId += 8192;
 
         return LastId;
     }

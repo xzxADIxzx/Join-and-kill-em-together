@@ -18,14 +18,14 @@ public class Gabriel : Enemy
     {
         Init(_ => Enemies.Type(EnemyId), true);
         InitTransfer(() => Cooldown(IsOwner ? 0f : 4200f));
-        gabriel1 = GetComponent<global::Gabriel>();
-        gabriel2 = GetComponent<GabrielSecond>();
+        TryGetComponent(out gabriel1);
+        TryGetComponent(out gabriel2);
     }
 
     private void Start()
     {
         SpawnEffect();
-        Boss(() => Tools.Scene == "Level 3-2" || Tools.Scene == "Level 6-2", 100f, 2);
+        Boss(Tools.Scene == "Level 3-2" || Tools.Scene == "Level 6-2", 100f, 2);
 
         if (gabriel1) gabriel1.phaseChangeHealth = EnemyId.machine.health / 2f;
         if (gabriel2) gabriel2.phaseChangeHealth = EnemyId.machine.health / 2f;
@@ -42,7 +42,7 @@ public class Gabriel : Enemy
         }
     }
 
-    private void Update()
+    private void Update() => Stats.MTE(() =>
     {
         if (IsOwner || Dead) return;
         transform.position = new(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
@@ -68,12 +68,12 @@ public class Gabriel : Enemy
                     default: Cooldown(4200f); break;
                 }
         }
-    }
+    });
 
     private void Cooldown(float time)
     {
-        if (gabriel1) Tools.Field<global::Gabriel>("attackCooldown").SetValue(gabriel1, time);
-        if (gabriel2) Tools.Field<GabrielSecond>("attackCooldown").SetValue(gabriel2, time);
+        if (gabriel1) Tools.Set("attackCooldown", gabriel1, time);
+        if (gabriel2) Tools.Set("attackCooldown", gabriel2, time);
     }
 
     #region entity

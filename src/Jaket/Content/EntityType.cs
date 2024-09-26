@@ -18,7 +18,7 @@ public enum EntityType
     Drone,
     Streetcleaner,
     Mindflayer,
-    V2,
+    V2_RedArm,
     V2_GreenArm,
     Sentry,
     Gutterman,
@@ -54,44 +54,62 @@ public enum EntityType
     SecuritySystem_Tower, SecuritySystem_Tower_,
     Brain,
 
-    AppleBait,
-    SkullBait,
     BlueSkull,
     RedSkull,
     Soap,
     Torch,
     Florp,
 
-    Jacob,
-    Mako,
-    Jake,
-    Dalia,
-    Jericho,
-    Meganeko,
-    Tucker,
-    BigRock,
-    Dawg,
-    Sam,
-    Cameron,
-    Gianni,
-    Salad,
-    Mandy,
-    Joy,
-    Weyte,
-    Heckteck,
+    AppleBait,
+    SkullBait,
+    FunnyStupidFish,
+    PitrFish,
+    TroutFish,
+    MetalFish,
+    ChomperFish,
+    BombFish,
+    EyeballFish,
+    FrogFish,
+    DopeFish,
+    StickFish,
+    CookedFish,
+    Shark,
+    BurntStuff,
+
     Hakita,
-    Lenval,
+    Pitr,
+    Victoria,
+    Heckteck,
     CabalCrow,
-    Quetzal,
-    John,
-    PITR,
-    BJ,
-    Francis,
-    Vvizard,
     Lucas,
-    Scott,
+    Francis,
+    Jericho,
+    BigRock,
+    Mako,
+    Samuel,
+    Salad,
+    Meganeko,
     KGC,
+    BJ,
+    Jake,
+    John,
+    Quetzal,
+    Gianni,
+    Weyte,
+    Lenval,
+    Joy,
+    Mandy,
+    Cameron,
+    Dalia,
+    Tucker,
+    Scott,
+    Jacob,
+    Vvizard,
     V1,
+    V2,
+    V3,
+    xzxADIxzx,
+    Sowler,
 
     Coin,
     Rocket,
@@ -99,8 +117,9 @@ public enum EntityType
 
     EnemyOffset = Filth,
     SecuritySystemOffset = SecuritySystem_Main,
-    ItemOffset = AppleBait,
-    PlushyOffset = Jacob,
+    ItemOffset = BlueSkull,
+    FishOffset = AppleBait,
+    PlushieOffset = Hakita,
     BulletOffset = Coin
 }
 
@@ -121,10 +140,13 @@ public static class TypeExtensions
     public static bool IsTargetable(this EntityType type) => IsEnemy(type) && type != EntityType.Idol && type != EntityType.CancerousRodent;
 
     /// <summary> Whether the type is an item. </summary>
-    public static bool IsItem(this EntityType type) => type >= EntityType.ItemOffset && type < EntityType.PlushyOffset;
+    public static bool IsItem(this EntityType type) => type >= EntityType.ItemOffset && type < EntityType.FishOffset;
 
-    /// <summary> Whether the type is a plushy. </summary>
-    public static bool IsPlushy(this EntityType type) => type >= EntityType.PlushyOffset && type < EntityType.BulletOffset;
+    /// <summary> Whether the type is a bait or fish. </summary>
+    public static bool IsFish(this EntityType type) => type >= EntityType.FishOffset && type < EntityType.PlushieOffset;
+
+    /// <summary> Whether the type is a plushie. </summary>
+    public static bool IsPlushie(this EntityType type) => type >= EntityType.PlushieOffset && type < EntityType.BulletOffset;
 
     /// <summary> Whether the type is a bullet. </summary>
     public static bool IsBullet(this EntityType type) => type >= EntityType.BulletOffset;

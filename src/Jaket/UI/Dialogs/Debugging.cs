@@ -33,33 +33,30 @@ public class Debugging : CanvasSingleton<Debugging>
 
         Text DoubleText(Transform table, string name, float y, Color? color = null)
         {
-            UIB.Text(name, table, Btn(0f, y), color, align: TextAnchor.MiddleLeft);
-            return UIB.Text("-", table, Btn(0f, y), color, align: TextAnchor.MiddleRight);
+            UIB.Text(name, table, Btn(y), color, align: TextAnchor.MiddleLeft);
+            return UIB.Text("-", table, Btn(y), color, align: TextAnchor.MiddleRight);
         }
-
-        // write colors are darker
-        Color dark_green = Color.Lerp(green, black, .4f), dark_orange = Color.Lerp(orange, black, .4f), dark_blue = Color.Lerp(blue, black, .4f);
 
         UIB.Table("Graph", transform, Msg(1888f) with { y = 114f, Height = 196f }, table =>
         {
-            target.Graph = UIB.Line("Target Update", table, dark_blue);
+            target.Graph = UIB.Line("Target Update", table, Dark(blue));
             entity.Graph = UIB.Line("Entity Update", table, blue);
-            writeTime.Graph = UIB.Line("Write Time", table, dark_orange);
+            writeTime.Graph = UIB.Line("Write Time", table, Dark(orange));
             readTime.Graph = UIB.Line("Read Time", table, orange);
-            write.Graph = UIB.Line("Write", table, dark_green);
+            write.Graph = UIB.Line("Write", table, Dark(green));
             read.Graph = UIB.Line("Read", table, green);
         });
         UIB.Table("Stats", transform, Deb(0), table =>
         {
             readText = DoubleText(table, "READ:", 20f, green);
-            writeText = DoubleText(table, "WRITE:", 52f, dark_green);
+            writeText = DoubleText(table, "WRITE:", 52f, Dark(green));
             readTimeText = DoubleText(table, "READ TIME:", 84f, orange);
-            writeTimeText = DoubleText(table, "WRITE TIME:", 116f, dark_orange);
+            writeTimeText = DoubleText(table, "WRITE TIME:", 116f, Dark(orange));
         });
         UIB.Table("Also Stats", transform, Deb(1), table =>
         {
             entityText = DoubleText(table, "ENTITY UPDATE:", 20f, blue);
-            targetText = DoubleText(table, "TARGET UPDATE:", 52f, dark_blue);
+            targetText = DoubleText(table, "TARGET UPDATE:", 52f, Dark(blue));
         });
         UIB.Table("Networking", transform, Deb(2), table =>
         {
@@ -107,7 +104,7 @@ public class Debugging : CanvasSingleton<Debugging>
         #endregion
         #region networking
 
-        entities.text = $"{Networking.Entities.Count(p => p.Value && !p.Value.Dead)}<color=#BBBBBB>/{Networking.Entities.Count}</color>";
+        entities.text = $"{Networking.Entities.Count(p => p.Value && !p.Value.Dead)}<color=#BBBBBB>/{Networking.Entities.Count()}</color>";
         owner.text = LobbyController.IsOwner.ToString().ToUpper();
         owner.color = LobbyController.IsOwner ? green : red;
         loading.text = Networking.Loading.ToString().ToUpper();

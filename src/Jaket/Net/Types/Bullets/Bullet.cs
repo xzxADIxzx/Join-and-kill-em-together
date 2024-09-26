@@ -35,8 +35,8 @@ public class Bullet : OwnableEntity
             }
             player.Id = Owner;
         });
-        grenade = GetComponent<Grenade>();
-        ball = GetComponent<Cannonball>();
+        TryGetComponent(out grenade);
+        TryGetComponent(out ball);
         Destroy(GetComponent<FloatingPointErrorPreventer>());
 
         x = new(); y = new(); z = new();
@@ -45,7 +45,7 @@ public class Bullet : OwnableEntity
 
     private void Start() => ClearTrail(GetComponentInChildren<TrailRenderer>(), x, y, z);
 
-    private void Update()
+    private void Update() => Stats.MTE(() =>
     {
         if (IsOwner || Dead) return;
 
@@ -63,9 +63,9 @@ public class Bullet : OwnableEntity
 
             if (transform.parent != null) transform.SetParent(null, true);
         }
-    }
+    });
 
-    private void Exploded(bool value) => Tools.Field<Grenade>("exploded").SetValue(grenade, value);
+    private void Exploded(bool value) => Tools.Set("exploded", grenade, value);
 
     #region entity
 
@@ -100,7 +100,15 @@ public class Bullet : OwnableEntity
 
     public override void Kill(Reader r)
     {
+        base.Kill(r);
         DeadBullet.Replace(this);
+
+        if (r == null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         if (grenade)
         {
             Exploded(false);

@@ -23,7 +23,7 @@ This modification made by [me](https://github.com/xzxADIxzx) and my team adds su
    * Interactive guide to help you understand the basics
 * Interaction between players
    * Up to 5 teams, making available both the passage of the campaign and PvP
-   * Emotions wheel to tease your friends or bosses
+   * Emote wheel to tease your friends or bosses
    * Pointers to guide your friends in the right direction
    * SAM TTS Engine for speaking messages via /tts command
    * Sprays and moderation system for them
@@ -37,16 +37,16 @@ This modification made by [me](https://github.com/xzxADIxzx) and my team adds su
    * Synchronization of different triggers at levels
    * Synchronization of the Cyber Grind
 * Translation into many languages
-   * Arabic
-   * Portuguese
+   * Arabic        by Iyad
+   * Portuguese    by Poyozit
    * English
-   * Filipino
-   * French
-   * Italian
-   * Polish
+   * Filipino      by Fraku
+   * French        by Theoyeah
+   * Italian       by sSAR, Fenicemaster
+   * Polish        by Sowler
    * Russian
-   * Spanish
-   * Ukrainian
+   * Spanish       by NotPhobos
+   * Ukrainian     by Sowler
 
 ## Installation
 Before installing, it's important to know that the mod requires **BepInEx** to work.  
@@ -75,7 +75,7 @@ To compile you will need .NET SDK 6.0 and Git.
 4. Compile the mod with `dotnet build`
 5. At the output you will get the **Jaket.dll** file, which will be located in the `bin\Debug\netstandard2.0` folder.
    1. Copy this file to the mods folder.
-   2. Copy the **jaket-player-doll.bundle** file and bundles folder from the assets folder to the mods folder.
+   2. Copy the **jaket-assets.bundle** file and bundles folder from the assets folder to the mods folder.
    3. Copy the **manifest.json** file from the root folder.
 
 ## Afterword

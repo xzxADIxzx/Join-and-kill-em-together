@@ -15,8 +15,6 @@ public class RemotePlayer : Entity
 {
     /// <summary> Position of the player, the rotation of its body and head, and the position of the hook. </summary>
     private FloatLerp x, y, z, bodyRotation, headRotation, hookX, hookY, hookZ;
-    /// <summary> Entity that the player pulls to himself with a hook. </summary>
-    private EntityProv<Entity> pulled = new();
 
     /// <summary> Health may not match the real one due to byte limitations. </summary>
     public byte Health = 100;
@@ -43,7 +41,7 @@ public class RemotePlayer : Entity
     private void Awake()
     {
         Init(null, true);
-        Voice = GetComponent<AudioSource>();
+        TryGetComponent(out Voice);
 
         x = new(); y = new(); z = new();
         bodyRotation = new();
@@ -54,10 +52,10 @@ public class RemotePlayer : Entity
     private void Start()
     {
         Doll = gameObject.AddComponent<Doll>();
-        Doll.OnEmojiStart += () =>
+        Doll.OnEmoteStart += () =>
         {
             // recreate the weapon if the animation is over
-            if (Doll.Emoji == 0xFF) LastWeapon = 0xFF;
+            if (Doll.Emote == 0xFF) LastWeapon = 0xFF;
             // or destroy it if the animation has started
             else foreach (Transform child in Doll.Hand) Destroy(child.gameObject);
         };
@@ -77,7 +75,7 @@ public class RemotePlayer : Entity
         }
     }
 
-    private void Update()
+    private void Update() => Stats.MTE(() =>
     {
         Header.Update(Health, Typing);
         if (Animator == null) // the player is dead
@@ -85,11 +83,11 @@ public class RemotePlayer : Entity
             if (Health != 0) Destroy(gameObject); // the player has respawned, the doll needs to be recreated
             return;
         }
-        else if (Health == 0) EnemyId.machine.GoLimp();
+        else if (Health == 0) GoLimp();
 
         transform.position = new(x.Get(LastUpdate), y.Get(LastUpdate) - (Doll.Sliding ? .3f : 1.5f), z.Get(LastUpdate));
         transform.eulerAngles = new(0f, bodyRotation.GetAngel(LastUpdate));
-        Doll.Head.localEulerAngles = new(Doll.Emoji == 8 ? -20f : headRotation.Get(LastUpdate), 0f);
+        Doll.Head.localEulerAngles = new(Doll.Emote == 8 ? -20f : headRotation.Get(LastUpdate), 0f);
 
         EnemyId.machine.health = 4200f; // prevent the doll from dying too early
 
@@ -108,9 +106,9 @@ public class RemotePlayer : Entity
                 Doll.ApplySuit();
             }
         }
-    }
+    });
 
-    private void LateUpdate()
+    private void LateUpdate() => Stats.MTE(() =>
     {
         // everything related to the hook is in LateUpdate, because it is a child of the player's doll and moves with it
         Doll.Hook.position = new(hookX.Get(LastUpdate), hookY.Get(LastUpdate), hookZ.Get(LastUpdate));
@@ -119,16 +117,14 @@ public class RemotePlayer : Entity
 
         Doll.HookWinch.SetPosition(0, Doll.HookRoot.position);
         Doll.HookWinch.SetPosition(1, Doll.Hook.position);
+    });
 
-        // pull the entity caught by the hook
-        if (!LobbyController.IsOwner) return;
-
-        var pl = pulled.Value;
-        if (pl && pl.EnemyId && pl.Rb)
-        {
-            if (pl.Rb.isKinematic) pl.EnemyId.gce.ForceOff();
-            pl.Rb.velocity = (transform.position - pl.transform.position).normalized * 60f;
-        }
+    private void GoLimp()
+    {
+        EnemyId.machine.GoLimp();
+        Destroy(Doll.WingLight);
+        Destroy(Doll.SlideParticle?.gameObject);
+        Destroy(Doll.FallParticle?.gameObject);
     }
 
     #region special
@@ -176,14 +172,13 @@ public class RemotePlayer : Entity
         w.Float(bodyRotation.Target);
         w.Float(headRotation.Target);
         w.Float(hookX.Target); w.Float(hookY.Target); w.Float(hookZ.Target);
-        w.Id(pulled.Id);
 
         w.Byte(Health);
         w.Byte(RailCharge);
 
         if (!Doll) return;
 
-        w.Player(Team, Weapon, Doll.Emoji, Doll.Rps, Typing);
+        w.Player(Team, Weapon, Doll.Emote, Doll.Rps, Typing);
         Doll.WriteAnim(w);
     }
 
@@ -196,22 +191,18 @@ public class RemotePlayer : Entity
         headRotation.Read(r);
         hookX.Read(r); hookY.Read(r); hookZ.Read(r);
 
-        var id = r.Id();
-        if (id == 0L) pulled.Value?.EnemyId?.gce.StopForceOff(); // player released the hook
-        pulled.Id = id;
-
         Health = r.Byte();
         RailCharge = r.Byte();
 
         if (!Doll || r.Position >= r.Length) return;
 
-        r.Player(out Team, out Weapon, out Doll.Emoji, out Doll.Rps, out Typing);
+        r.Player(out Team, out Weapon, out Doll.Emote, out Doll.Rps, out Typing);
         Doll.ReadAnim(r);
     }
 
     public override void Kill(Reader r = null)
     {
-        EnemyId.machine.GoLimp();
+        GoLimp();
         Header.Hide();
 
         Destroy(Doll.Hand.gameObject); // destroy the weapon so that the railcannon's sound doesn't play forever

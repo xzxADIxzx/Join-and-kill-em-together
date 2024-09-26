@@ -19,7 +19,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
     /// <summary> Current lobby access level: 0 - private, 1 - friends only, 2 - public. I was too lazy to create an enum. </summary>
     private int lobbyAccessLevel;
     /// <summary> Checkboxes with lobby settings. </summary>
-    private Toggle pvp, cheats;
+    private Toggle pvp, cheats, mods, bosses;
 
     private void Start()
     {
@@ -28,7 +28,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
         UIB.Shadow(transform);
         UIB.Table("Lobby Control", "#lobby-tab.lobby", transform, Tlw(16f + 144f / 2f, 144f), table =>
         {
-            create = UIB.Button("#lobby-tab.create", table, Btn(0f, 68f), clicked: () =>
+            create = UIB.Button("#lobby-tab.create", table, Btn(68f), clicked: () =>
             {
                 if (LobbyController.Offline)
                     // create a new lobby if not already created
@@ -39,20 +39,20 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
 
                 Rebuild();
             });
-            invite = UIB.Button("#lobby-tab.invite", table, Btn(0f, 116f), clicked: LobbyController.InviteFriend);
+            invite = UIB.Button("#lobby-tab.invite", table, Btn(116f), clicked: LobbyController.InviteFriend);
         });
         UIB.Table("Lobby Codes", "#lobby-tab.codes", transform, Tlw(176f + 192f / 2f, 192f), table =>
         {
-            copy = UIB.Button("#lobby-tab.copy", table, Btn(0f, 68f), clicked: LobbyController.CopyCode);
-            UIB.Button("#lobby-tab.join", table, Btn(0f, 116f), clicked: LobbyController.JoinByCode);
-            UIB.Button("#lobby-tab.list", table, Btn(0f, 164f), clicked: LobbyList.Instance.Toggle);
+            copy = UIB.Button("#lobby-tab.copy", table, Btn(68f), clicked: LobbyController.CopyCode);
+            UIB.Button("#lobby-tab.join", table, Btn(116f), clicked: LobbyController.JoinByCode);
+            UIB.Button("#lobby-tab.list", table, Btn(164f), clicked: LobbyList.Instance.Toggle);
         });
-        UIB.Table("Lobby Config", "#lobby-tab.config", transform, Tlw(384f + 342f / 2f, 342f), table =>
+        UIB.Table("Lobby Config", "#lobby-tab.config", transform, Tlw(384f + 422f / 2f, 422f), table =>
         {
-            field = UIB.Field("#lobby-tab.name", table, Tgl(0f, 64f), cons: name => LobbyController.Lobby?.SetData("name", name));
+            field = UIB.Field("#lobby-tab.name", table, Tgl(64f), cons: name => LobbyController.Lobby?.SetData("name", name));
             field.characterLimit = 28;
 
-            accessibility = UIB.Button("#lobby-tab.private", table, Btn(0f, 108f), clicked: () =>
+            accessibility = UIB.Button("#lobby-tab.private", table, Btn(108f), clicked: () =>
             {
                 switch (lobbyAccessLevel = ++lobbyAccessLevel % 3)
                 {
@@ -63,19 +63,22 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
                 Rebuild();
             });
 
-            pvp = UIB.Toggle("#lobby-tab.allow-pvp", table, Tgl(0f, 152f), clicked: allow => LobbyController.Lobby?.SetData("pvp", allow.ToString()));
-            cheats = UIB.Toggle("#lobby-tab.allow-cheats", table, Tgl(0f, 192f), clicked: allow => LobbyController.Lobby?.SetData("cheats", allow.ToString()));
+            pvp = UIB.Toggle("#lobby-tab.allow-pvp", table, Tgl(152f), clicked: allow => LobbyController.Lobby?.SetData("pvp", allow.ToString()));
+            cheats = UIB.Toggle("#lobby-tab.allow-cheats", table, Tgl(192f), clicked: allow => LobbyController.Lobby?.SetData("cheats", allow.ToString()));
+            mods = UIB.Toggle("#lobby-tab.allow-mods", table, Tgl(232f), clicked: allow => LobbyController.Lobby?.SetData("mods", allow.ToString()));
 
-            UIB.Text("#lobby-tab.ppp-desc", table, Btn(0f, 247f) with { Height = 62f }, size: 16);
+            UIB.Text("#lobby-tab.ppp-desc", table, Btn(287f) with { Height = 62f }, size: 16);
 
-            UIB.Text("#lobby-tab.ppp-name", table, Btn(0f, 298f), align: TextAnchor.MiddleLeft);
-            var PPP = UIB.Text("0PPP", table, Btn(0f, 298f), align: TextAnchor.MiddleRight);
+            UIB.Text("#lobby-tab.ppp-name", table, Btn(338f), align: TextAnchor.MiddleLeft);
+            var PPP = UIB.Text("0PPP", table, Btn(338f), align: TextAnchor.MiddleRight);
 
-            UIB.Slider("Health Multiplier", table, Btn(0f, 326f) with { Height = 16f }, 16, value =>
+            UIB.Slider("Health Multiplier", table, Sld(366f), 16, value =>
             {
                 PPP.text = $"{(int)((LobbyController.PPP = value / 8f) * 100)}PPP";
                 LobbyController.Lobby?.SetData("ppp", LobbyController.PPP.ToString());
             });
+
+            bosses = UIB.Toggle("#lobby-tab.heal-bosses", table, Tgl(398f), 20, allow => LobbyController.Lobby?.SetData("heal-bosses", allow.ToString()));
         });
 
         Version.Label(transform);
@@ -100,7 +103,10 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
         if (LobbyController.Offline)
         {
             lobbyAccessLevel = 0;
-            pvp.isOn = cheats.isOn = true;
+            pvp.isOn = true;
+            cheats.isOn = false;
+            mods.isOn = false;
+            bosses.isOn = true;
         }
         else field.text = LobbyController.Lobby?.GetData("name");
 

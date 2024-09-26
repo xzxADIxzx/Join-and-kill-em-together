@@ -31,10 +31,11 @@ public class UIB
     public static void Load()
     {
         // replace the font in a few in-game fragments
-        Events.OnLoaded += () => Events.Post(() =>
+        Action fix;
+        Events.OnLoaded += fix = () => Events.Post(() =>
         {
-            HudMessageReceiver.Instance.text.font = DollAssets.FontTMP;
-            NewMovement.Instance.youDiedText.font = DollAssets.Font;
+            HudMessageReceiver.Instance.text.font = ModAssets.FontTMP;
+            NewMovement.Instance.youDiedText.font = ModAssets.Font;
 
             // fix the sorting order to display hud messages on top of other interface fragments
             if (!HudMessageReceiver.Instance.TryGetComponent<Canvas>(out _)) Component<Canvas>(HudMessageReceiver.Instance.gameObject, canvas =>
@@ -43,6 +44,7 @@ public class UIB
                 canvas.sortingOrder = 2000;
             });
         });
+        fix();
 
         // find all sprites
         var all = Tools.ResFind<Sprite>();
@@ -100,7 +102,7 @@ public class UIB
     public static Image Table(string name, string title, Transform parent, Rect r, Action<Transform> build = null) =>
         Table(name, parent, r, table =>
         {
-            Text(title, table, Btn(0f, 24f) with { Width = 640f }, size: 32);
+            Text(title, table, Btn(24f) with { Width = 640f }, size: 32);
             build?.Invoke(table);
         });
 
@@ -144,7 +146,7 @@ public class UIB
         {
             text.text = name.StartsWith("#") ? Bundle.Get(name.Substring(1)) : name;
             text.color = color ?? white;
-            text.font = DollAssets.Font;
+            text.font = ModAssets.Font;
             text.fontSize = size;
             text.alignment = align;
         });
@@ -163,22 +165,14 @@ public class UIB
         });
 
     /// <summary> Adds a circular image. </summary>
-    public static UICircle CircleImage(string name, Transform parent, Rect r, float arc, int rotation, float thickness, bool outline = false)
-    {
-        var obj = Rect(name, parent, r).gameObject;
-        if (outline) Component<Outline>(obj, outline =>
-        {
-            outline.effectDistance = new(3f, -3f);
-            outline.effectColor = white;
-        });
-        return Component<UICircle>(obj, circle =>
+    public static UICircle CircleImage(string name, Transform parent, Rect r, float arc, int rotation, float thickness) =>
+        Component<UICircle>(Rect(name, parent, r).gameObject, circle =>
         {
             circle.Arc = arc;
             circle.ArcRotation = rotation;
             circle.Thickness = thickness;
             circle.Fill = false;
         });
-    }
 
     /// <summary> Adds a diamond-shaped image. </summary>
     public static DiamondGraph DiamondImage(string name, Transform parent, Rect r, float a, float b, float c, float d, Color? color = null) =>
@@ -195,7 +189,7 @@ public class UIB
     public static Button Button(string name, Transform parent, Rect r, Color? color = null, int size = 24, TextAnchor align = TextAnchor.MiddleCenter, Action clicked = null)
     {
         var img = Image(name, parent, r, color, fill: false);
-        Text(name, img.transform, r.ToText(), color, size, align);
+        Text(name, img.transform, r.Text, color, size, align);
         return Component<Button>(img.gameObject, button =>
         {
             button.targetGraphic = img;
@@ -216,7 +210,7 @@ public class UIB
     public static Button TeamButton(Team team, Transform parent, Rect r, Action clicked = null)
     {
         var img = Image(team.ToString(), parent, r, team.Color());
-        if (team == Team.Pink) Text("UwU", img.transform, r.ToText());
+        if (team == Team.Pink) Text("UwU", img.transform, r.Text, Dark(pink));
         return Component<Button>(img.gameObject, button =>
         {
             button.targetGraphic = img;
@@ -234,8 +228,7 @@ public class UIB
         // key is the current keycode, bind is the name of the keybind
         Text key = null, bind = Text("#keybind." + name, parent, r, size: 16, align: TextAnchor.MiddleLeft);
 
-        var br = new Rect(-64f, 0f, 128f, 32f, new(1f, .5f), new(1f, .5f));
-        var img = Table("Button", bind.transform, br, table =>
+        var img = Table("Button", bind.transform, new(-64f, 0f, 128f, 32f, new(1f, .5f)), table =>
         {
             key = Text(Dialogs.Settings.KeyName(current), table, Size(128f, 32f), size: 16);
         });
@@ -246,15 +239,40 @@ public class UIB
         });
     }
 
+    /// <summary> Adds a button corresponding to the shop style. </summary>
+    public static Button ShopButton(string name, Transform parent, Rect r, Action clicked)
+    {
+        var img = Image(name, parent, r, shopc, fill: false);
+        Text(name, img.transform, Huge, size: 280).transform.localScale /= 10f;
+        return Component<Button>(img.gameObject, button =>
+        {
+            button.targetGraphic = img;
+            button.colors = colors;
+            button.onClick.AddListener(() => clicked());
+        });
+    }
+
     /// <summary> Adds a button corresponding to the Discord style and opening a link to our server. </summary>
     public static Button DiscordButton(string name, Transform parent)
     {
-        var img = Image(name, parent, Btn(0f, 0f), discord);
-        Text(name, img.transform, Size(10000f, 10000f), size: 240).transform.localScale /= 10f;
+        var img = Image(name, parent, Btn(0f), discord);
+        Text(name, img.transform, Huge, size: 240).transform.localScale /= 10f;
         return Component<Button>(img.gameObject, button =>
         {
             button.targetGraphic = img;
             button.onClick.AddListener(() => Application.OpenURL("https://discord.gg/USpt3hCBgn"));
+        });
+    }
+
+    /// <summary> Adds a button corresponding to the Buy Me a Coffee style and opening a link to my page. </summary>
+    public static Button BMaCButton(string name, Transform parent)
+    {
+        var img = Image(name, parent, Btn(0f), bmac);
+        Text(name, img.transform, Huge, size: 240).transform.localScale /= 10f;
+        return Component<Button>(img.gameObject, button =>
+        {
+            button.targetGraphic = img;
+            button.onClick.AddListener(() => Application.OpenURL("https://www.buymeacoffee.com/adithedev"));
         });
     }
 

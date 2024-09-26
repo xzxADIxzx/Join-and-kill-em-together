@@ -28,8 +28,7 @@ public class PlayerHeader
         float width = Name.Length * 14f + 16f;
         canvas = UIB.WorldCanvas("Header", parent, new(0f, 5f, 0f), build: canvas =>
         {
-            var n = Size(width, 40f);
-            UIB.Table("Name", canvas, n, table => Text = UIB.Text(Name, table, n.ToText() * 10f, size: 240));
+            UIB.Table("Name", canvas, Size(width, 40f), table => Text = UIB.Text(Name, table, Huge, size: 240));
             Text.transform.localScale /= 10f;
 
             var h = Size(160f, 4f) with { y = -30f };
@@ -38,8 +37,8 @@ public class PlayerHeader
             health = UIB.Image("Health", canvas, h, red).rectTransform;
             overhealth = UIB.Image("Overhealth", canvas, h, green).rectTransform;
 
-            var e = Size(48f, 24f) with { y = -30f };
-            UIB.Table("Ellipsis", canvas, e with { Height = 18f }, table => ellipsis = UIB.Text("...", table, e with { y = 8f }));
+            UIB.Table("Ellipsis", canvas, Size(48f, 18f) with { y = -30f }, table => ellipsis = UIB.Text("...", table, Huge with { y = 8f }, size: 240));
+            ellipsis.transform.localScale /= 10f;
         });
     }
 

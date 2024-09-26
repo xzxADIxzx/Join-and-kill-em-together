@@ -34,7 +34,7 @@ public class TeamCoin : OwnableEntity
     /// <summary> Whether the coin is shot. </summary>
     public bool shot;
     /// <summary> Whether the coin will reflect an incoming beam twice. </summary>
-    private bool doubled;
+    private bool doubled { get => coin.hitTimes == 2; set => coin.hitTimes = value ? 2 : 1; }
     /// <summary> Whether the coin is in the cooldown phase before shooting to a player or enemy. </summary>
     private bool quadrupled, lastQuadrupled;
     /// <summary> Effects indicate the current state of the coin. </summary>
@@ -49,8 +49,6 @@ public class TeamCoin : OwnableEntity
 
     /// <summary> Power of the coin increases after a punch or ricochet. </summary>
     private int power = 2;
-    /// <summary> The amount of ricochets increases after punch, so I use only one variable. </summary>
-    private int ricochets => power - 2;
 
     private void Awake()
     {
@@ -64,25 +62,24 @@ public class TeamCoin : OwnableEntity
                 mat ??= GetComponent<Renderer>().material;
                 trail ??= GetComponent<TrailRenderer>();
 
-                mat.mainTexture = DollAssets.CoinTexture;
+                mat.mainTexture = ModAssets.CoinTexture;
                 mat.color = Team.Color();
                 trail.startColor = Team.Color() with { a = .5f };
             }
             Reset();
         });
-        coin = GetComponent<Coin>();
-        audio = GetComponent<AudioSource>();
+        TryGetComponent(out coin);
+        TryGetComponent(out audio);
 
         x = new(); y = new(); z = new();
-        if (IsOwner) OnTransferred();
 
-        coin.doubled = true; // for some reason, without this, the coin cannot be punched
+        if (IsOwner) OnTransferred();
         Coins.Alive.Add(this);
     }
 
     private void Start() => ClearTrail(trail, x, y, z);
 
-    private void Update()
+    private void Update() => Stats.MTE(() =>
     {
         if (IsOwner || Dead) return;
 
@@ -93,7 +90,7 @@ public class TeamCoin : OwnableEntity
             Reset();
             Quadruple();
         }
-    }
+    });
 
     private void OnCollisionEnter(Collision other)
     {
@@ -117,7 +114,7 @@ public class TeamCoin : OwnableEntity
     private void Activate()
     {
         foreach (var col in cols) col.enabled = true;
-        coin.enabled = true;
+        if (coin) coin.enabled = true;
     }
 
     private void Effect(GameObject flash, float size)
@@ -131,6 +128,8 @@ public class TeamCoin : OwnableEntity
 
     private void Double()
     {
+        coin.doubled = true; // for some reason, without this, the coin cannot be punched
+
         doubled = true;
         Effect(coin.flash, 20f);
     }
@@ -151,7 +150,7 @@ public class TeamCoin : OwnableEntity
         mat.mainTexture = null; // the texture has its own color, which is extremely undesirable
     }
 
-    private void Quadruple()
+    private void Quadruple(bool silent = false)
     {
         quadrupled = true;
         Effect(coin.enemyFlash, 15f);
@@ -159,6 +158,7 @@ public class TeamCoin : OwnableEntity
         var light = effect.GetComponent<Light>();
         light.color = Team.Color();
         light.intensity = 10f;
+        if (silent) Destroy(effect.GetComponent<AudioSource>());
     }
 
     private void Reset()
@@ -202,7 +202,6 @@ public class TeamCoin : OwnableEntity
             }
             return;
         }
-        power++;
 
         shot = true;
         Reset();
@@ -211,7 +210,7 @@ public class TeamCoin : OwnableEntity
         if (isPlayer || isEnemy)
         {
             TakeOwnage();
-            Quadruple();
+            Quadruple(isEnemy);
         }
         Invoke("Reflect", (isPlayer ? 1.2f : isEnemy ? .3f : .1f) + offset);
 
@@ -219,7 +218,7 @@ public class TeamCoin : OwnableEntity
         if ((target?.CompareTag("Coin") ?? false) && target.TryGetComponent(out TeamCoin c))
         {
             c.ccc = ccc; // :D
-            c.power = power;
+            c.power = ++power;
         }
     }
 
@@ -231,13 +230,13 @@ public class TeamCoin : OwnableEntity
         // play the sound before killing the coin
         PlaySound(Instantiate(coin.coinHitSound, transform));
 
-        // run the second shot if the player hit the coin in a short timing
-        if (doubled && beam == null) // only RV0 PRI can be doubled
-            Invoke("DoubleReflect", .1f);
+        var rvp = beam == null; // only RV1 PRI can be doubled
+        if (rvp && doubled)
+            Invoke("DoubleReflect", .1f); // run the second shot if the player hit the coin in a short timing
         else
             NetKill();
 
-        beam ??= Instantiate(Bullets.Prefabs[0], transform.position, Quaternion.identity);
+        if (rvp) Coins.PaintBeam(beam = Instantiate(Bullets.Prefabs[0], Vector3.zero, Quaternion.identity), Team);
         beam.SetActive(true);
         beam.transform.position = transform.position;
 
@@ -250,8 +249,24 @@ public class TeamCoin : OwnableEntity
 
         if (beam.TryGetComponent<RevolverBeam>(out var rb))
         {
-            rb.damage += power / 4f;
-            rb.addedDamage += power / 4f;
+            if (rvp)
+                rb.damage = power;
+            else
+            {
+                rb.damage += power / 4f - rb.addedDamage;
+                rb.addedDamage = power / 4f;
+            }
+
+            if (doubled && rb.strongAlt && rb.hitAmount < 99) rb.maxHitsPerTarget = ++rb.hitAmount;
+
+            if (quadrupled)
+            {
+                var prefix = rb.ultraRicocheter ? "<color=orange>ULTRA</color>" : "";
+                int points = rb.ultraRicocheter ? 100 : 50;
+                if (power > 2) points += (power - 1) * 15;
+
+                sh.AddPoints(points, "ultrakill.ricoshot", rb.sourceWeapon, null, power - 1, prefix);
+            }
         }
 
         doubled = quadrupled = false; // before the second shot, the coin can flash again
@@ -365,7 +380,7 @@ public class TeamCoin : OwnableEntity
         Coins.Alive.Remove(this);
 
         mat = GetComponent<Renderer>().material;
-        mat.mainTexture = DollAssets.CoinTexture;
+        mat.mainTexture = ModAssets.CoinTexture;
         mat.color = Team.Color();
     }
 

@@ -31,7 +31,7 @@ public class InteractiveGuide : CanvasSingleton<InteractiveGuide>
         Add(0f, -444f, () => !Chat.Shown);
 
         Add(0f, 0f, () => Settings.Shown, Settings.Settingz);
-        Add(-256f, -272f, () => false);
+        Add(-256f, -252f, () => false);
         Add(0f, 0f, () => !Settings.Shown);
     }
 

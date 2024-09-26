@@ -20,9 +20,9 @@ public class Hand : Enemy
         World.Hand = this;
     }
 
-    private void Start() => Boss(() => true, 65f, 0);
+    private void Start() => Boss(true, 65f, 0);
 
-    private void Update()
+    private void Update() => Stats.MTE(() =>
     {
         if (IsOwner || Dead) return;
         if (LastHandPos != HandPos) Animator.SetTrigger((LastHandPos = HandPos) switch
@@ -32,7 +32,7 @@ public class Hand : Enemy
             2 => "SlamRight",
             _ => ""
         });
-    }
+    });
 
     #region entity
 

@@ -12,7 +12,7 @@ public class CommonBulletsPatch
 {
     [HarmonyPrefix]
     [HarmonyPatch(typeof(RevolverBeam), "Start")]
-    static void Beam(RevolverBeam __instance) => Bullets.Sync(__instance.gameObject, ref __instance.sourceWeapon, false, true);
+    static void Beam(RevolverBeam __instance) => Bullets.Sync(__instance.gameObject, ref __instance.sourceWeapon, false, true, __instance.noMuzzleflash ? (byte)__instance.bodiesPierced : byte.MaxValue);
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(Projectile), "Start")]

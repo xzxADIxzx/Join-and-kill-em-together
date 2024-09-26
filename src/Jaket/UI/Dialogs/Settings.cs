@@ -28,14 +28,14 @@ public class Settings : CanvasSingleton<Settings>
 
     /// <summary> List of internal names of all key bindings. </summary>
     public static readonly string[] Keybinds =
-    { "chat", "scroll-messages-up", "scroll-messages-down", "lobby-tab", "player-list", "settings", "player-indicators", "player-information", "emoji-wheel", "pointer", "spray", "self-destruction" };
+    { "chat", "scroll-messages-up", "scroll-messages-down", "lobby-tab", "player-list", "settings", "player-indicators", "player-information", "emote-wheel", "pointer", "spray", "self-destruction" };
 
     /// <summary> Array with current control settings. </summary>
     public static KeyCode[] CurrentKeys => new[]
-    { Chat, ScrollUp, ScrollDown, LobbyTab, PlayerList, Settingz, PlayerIndicators, PlayerInfo, EmojiWheel, Pointer, Spray, SelfDestruction };
+    { Chat, ScrollUp, ScrollDown, LobbyTab, PlayerList, Settingz, PlayerIndicators, PlayerInfo, EmoteWheel, Pointer, Spray, SelfDestruction };
 
     /// <summary> List of all key bindings in the mod. </summary>
-    public static KeyCode Chat, ScrollUp, ScrollDown, LobbyTab, PlayerList, Settingz, PlayerIndicators, PlayerInfo, EmojiWheel, Pointer, Spray, SelfDestruction;
+    public static KeyCode Chat, ScrollUp, ScrollDown, LobbyTab, PlayerList, Settingz, PlayerIndicators, PlayerInfo, EmoteWheel, Pointer, Spray, SelfDestruction;
 
     /// <summary> Gets the key binding value from its path. </summary>
     public static KeyCode GetKey(string path, KeyCode def) => (KeyCode)pm.GetInt($"jaket.binds.{path}", (int)def);
@@ -63,7 +63,7 @@ public class Settings : CanvasSingleton<Settings>
         get => pm.GetInt("jaket.tts.volume", 60);
         set
         {
-            DollAssets.Mixer?.SetFloat("Volume", value / 2f - 30f); // the value should be between -30 and 20 decibels
+            ModAssets.Mixer?.SetFloat("Volume", value / 2f - 30f); // the value should be between -30 and 20 decibels
             pm.SetInt("jaket.tts.volume", value);
         }
     }
@@ -100,12 +100,12 @@ public class Settings : CanvasSingleton<Settings>
         Settingz = GetKey("settings", KeyCode.F3);
         PlayerIndicators = GetKey("player-indicators", KeyCode.Z);
         PlayerInfo = GetKey("player-information", KeyCode.X);
-        EmojiWheel = GetKey("emoji-wheel", KeyCode.B);
+        EmoteWheel = GetKey("emote-wheel", KeyCode.B);
         Pointer = GetKey("pointer", KeyCode.Mouse2);
         Spray = GetKey("spray", KeyCode.T);
         SelfDestruction = GetKey("self-destruction", KeyCode.K);
 
-        DollAssets.Mixer?.SetFloat("Volume", TTSVolume / 2f - 30f);
+        ModAssets.Mixer?.SetFloat("Volume", TTSVolume / 2f - 30f);
     }
 
     private void Start()
@@ -113,41 +113,41 @@ public class Settings : CanvasSingleton<Settings>
         UIB.Shadow(transform);
         UIB.Table("General", "#settings.general", transform, Tlw(16f + 328f / 2f, 328f), table =>
         {
-            UIB.Button("#settings.reset", table, Btn(0f, 68f), clicked: ResetGeneral);
+            UIB.Button("#settings.reset", table, Btn(68f), clicked: ResetGeneral);
 
-            lang = UIB.Button("", table, Btn(0f, 116f), clicked: () =>
+            lang = UIB.Button("", table, Btn(116f), clicked: () =>
             {
                 pm.SetString("jaket.locale", Bundle.Codes[Language = ++Language % Bundle.Codes.Length]);
                 Rebuild();
             });
 
-            UIB.Text("FEEDBACKER:", table, Btn(0f, 164f), align: TextAnchor.MiddleLeft);
-            feed = UIB.Button("", table, Btn(80f, 164f) with { Width = 160f }, clicked: () =>
+            UIB.Text("FEEDBACKER:", table, Btn(164f), align: TextAnchor.MiddleLeft);
+            feed = UIB.Button("", table, Stn(164f, 160f), clicked: () =>
             {
                 pm.SetInt("jaket.feed-color", FeedColor = ++FeedColor % 3);
                 Rebuild();
             });
 
-            UIB.Text("KNUCKLE:", table, Btn(0f, 212f), align: TextAnchor.MiddleLeft);
-            knkl = UIB.Button("", table, Btn(80f, 212f) with { Width = 160f }, clicked: () =>
+            UIB.Text("KNUCKLE:", table, Btn(212f), align: TextAnchor.MiddleLeft);
+            knkl = UIB.Button("", table, Stn(212f, 160f), clicked: () =>
             {
                 pm.SetInt("jaket.knkl-color", KnuckleColor = ++KnuckleColor % 3);
                 Rebuild();
             });
 
-            UIB.Toggle("#settings.freeze", table, Tgl(0f, 256f), 20, _ =>
+            UIB.Toggle("#settings.freeze", table, Tgl(256f), 20, _ =>
             {
                 pm.SetBool("jaket.disable-freeze", DisableFreezeFrames = _);
             }).isOn = DisableFreezeFrames;
 
-            UIB.Button("#settings.sprays", table, Btn(0f, 300f), clicked: SpraySettings.Instance.Toggle);
+            UIB.Button("#settings.sprays", table, Btn(300f), clicked: SpraySettings.Instance.Toggle);
         });
         UIB.Table("Controls", "#settings.controls", transform, Tlw(360f + 576f / 2f, 576f), table =>
         {
-            UIB.Button("#settings.reset", table, Btn(0f, 68f), clicked: ResetControls);
+            UIB.Button("#settings.reset", table, Btn(68f), clicked: ResetControls);
 
             for (int i = 0; i < Keybinds.Length; i++)
-                UIB.KeyButton(Keybinds[i], CurrentKeys[i], table, Tgl(0f, 112f + i * 40f));
+                UIB.KeyButton(Keybinds[i], CurrentKeys[i], table, Tgl(112f + i * 40f));
         });
 
         Version.Label(transform);

@@ -3,11 +3,17 @@ namespace Jaket;
 using HarmonyLib;
 using Steamworks;
 using Steamworks.Data;
+using System;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.Events;
 
+using Object = UnityEngine.Object;
+
+using Jaket.Assets;
 using Jaket.IO;
+using Jaket.Net;
+using Jaket.Net.Types;
 
 /// <summary> Set of different tools for simplifying life and systematization of code. </summary>
 public class Tools
@@ -25,7 +31,7 @@ public class Tools
     public static string Name(uint id) => new Friend(id | 76561197960265728u).Name;
 
     /// <summary> Shortcut needed in order to track statistics and errors. </summary>
-    public static void Send(Connection? con, System.IntPtr data, int size)
+    public static void Send(Connection? con, IntPtr data, int size)
     {
         if (con == null)
         {
@@ -49,7 +55,7 @@ public class Tools
     public static void Load(string scene) => SceneHelper.LoadScene(scene);
 
     /// <summary> Whether the given object is on a scene or is it just an asset. </summary>
-    public static bool IsReal(GameObject obj) => obj.scene.name != null;
+    public static bool IsReal(GameObject obj) => obj.scene.name != null && obj.scene.name != "DontDestroyOnLoad";
     public static bool IsReal(Component comp) => IsReal(comp.gameObject);
 
     #endregion
@@ -62,11 +68,9 @@ public class Tools
         obj.transform.SetParent(parent ?? Plugin.Instance?.transform, false);
         return obj;
     }
+    /// <summary> Creates a new game object and adds a component of the given type to it. </summary>
     public static T Create<T>(string name, Transform parent = null) where T : Component => Create(name, parent).AddComponent<T>();
 
-    // system namespace also has Object class, so I added this to avoid conflicts
-
-    public static GameObject Instantiate(GameObject obj) => Object.Instantiate(obj);
     public static GameObject Instantiate(GameObject obj, Transform parent) => Object.Instantiate(obj, parent);
     public static GameObject Instantiate(GameObject obj, Vector3 position, Quaternion? rotation = null) => Object.Instantiate(obj, position, rotation ?? Quaternion.identity);
 
@@ -79,7 +83,7 @@ public class Tools
     public static T[] ResFind<T>() where T : Object => Resources.FindObjectsOfTypeAll<T>();
 
     /// <summary> Iterates all objects of the type that predicate for the criterion. </summary>
-    public static void ResFind<T>(System.Predicate<T> pred, System.Action<T> cons) where T : Object
+    public static void ResFind<T>(Predicate<T> pred, Action<T> cons) where T : Object
     {
         foreach (var item in ResFind<T>()) if (pred(item)) cons(item);
     }
@@ -91,33 +95,48 @@ public class Tools
     public static UnityEvent GetClick(GameObject btn)
     {
         var pointer = btn.GetComponents<MonoBehaviour>()[2]; // so much pain over the private class ControllerPointer
-        return Property("OnPressed", pointer).GetValue(pointer) as UnityEvent;
+        return AccessTools.Property(pointer.GetType(), "OnPressed").GetValue(pointer) as UnityEvent;
     }
 
     #endregion
     #region harmony
 
-    /// <summary> Returns information about the class field. </summary>
+    /// <summary> Returns the information about a field with the given name. </summary>
     public static FieldInfo Field<T>(string name) => AccessTools.Field(typeof(T), name);
-    public static FieldInfo Field(string name, object obj) => AccessTools.Field(obj.GetType(), name);
 
-    /// <summary> Returns information about the class property. </summary>
-    public static PropertyInfo Property<T>(string name) => AccessTools.Property(typeof(T), name);
-    public static PropertyInfo Property(string name, object obj) => AccessTools.Property(obj.GetType(), name);
+    /// <summary> Gets the value of a field with the given name. </summary>
+    public static object Get<T>(string name, T t) => Field<T>(name).GetValue(t);
+    /// <summary> Sets the value of a field with the given name. </summary>
+    public static void Set<T>(string name, T t, object value) => Field<T>(name).SetValue(t, value);
 
-    /// <summary> Calls the class method with the given arguments. </summary>
-    public static void Invoke<T>(string name, T obj, params object[] args) => AccessTools.Method(typeof(T), name).Invoke(obj, args);
-    public static void Invoke(string name, object obj, params object[] args) => AccessTools.Method(obj.GetType(), name).Invoke(obj, args);
+    /// <summary> Calls a method with the given name. </summary>
+    public static void Invoke<T>(string name, T t, params object[] args) => AccessTools.Method(typeof(T), name).Invoke(t, args);
+    /// <summary> Calls a method with the given name and a single boolean argument. </summary>
+    public static void Invoke<T>(string name, T t, bool arg) => AccessTools.Method(typeof(T), name, new[] { typeof(bool) }).Invoke(t, new object[] { arg });
 
     #endregion
     #region within
 
-    /// <summary> Whether the vector a is within the given distance from vector b. </summary>
     public static bool Within(Vector3 a, Vector3 b, float dst = 1f) => (a - b).sqrMagnitude < dst * dst;
     public static bool Within(Transform a, Vector3 b, float dst = 1f) => Within(a.position, b, dst);
     public static bool Within(Transform a, Transform b, float dst = 1f) => Within(a.position, b.position, dst);
     public static bool Within(GameObject a, Vector3 b, float dst = 1f) => Within(a.transform.position, b, dst);
     public static bool Within(GameObject a, GameObject b, float dst = 1f) => Within(a.transform.position, b.transform.position, dst);
+
+    #endregion
+    #region debug
+
+    /// <summary> Spawns a dummy at the position of the local player. </summary>
+    public static RemotePlayer Dummy()
+    {
+        var dummy = ModAssets.CreateDoll();
+        dummy.name = "Dummy";
+
+        // pass the data of the local player to the dummy
+        Writer.Write(Networking.LocalPlayer.Write, (data, size) => Reader.Read(data, size, dummy.Read), 48);
+
+        return dummy;
+    }
 
     #endregion
 }

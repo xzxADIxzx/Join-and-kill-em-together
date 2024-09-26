@@ -42,7 +42,7 @@ public class Pointer : MonoBehaviour
     {
         if (player != null) line = UIB.Component<LineRenderer>(gameObject, line =>
         {
-            line.material.shader = DollAssets.Shader;
+            line.material.shader = ModAssets.Shader;
             line.startColor = line.endColor = color;
             line.widthMultiplier = 0f;
         });
