@@ -71,7 +71,7 @@ public class Idol : Enemy
     public override void OnDied()
     {
         base.OnDied(); // after the death of the idol, its game object is destroyed
-        DeadBullet.Replace(this);
+        DeadEntity.Replace(this);
     }
 
     #endregion

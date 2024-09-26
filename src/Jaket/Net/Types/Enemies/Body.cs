@@ -73,7 +73,7 @@ public class Body : Enemy
     {
         if (toBreakCorpse)
         {
-            DeadBullet.Replace(this);
+            DeadEntity.Replace(this);
             EnemyId.spider.BreakCorpse();
         }
         else

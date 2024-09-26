@@ -54,7 +54,7 @@ public class SimpleEnemy : Enemy
     public override void OnDied()
     {
         base.OnDied();
-        if (Type == EntityType.Virtue) DeadBullet.Replace(this);
+        if (Type == EntityType.Virtue) DeadEntity.Replace(this);
     }
 
     #endregion

@@ -4,10 +4,10 @@ using UnityEngine;
 
 using Jaket.IO;
 
-/// <summary> Plug designed to prevent respawn of bullets. </summary>
-public class DeadBullet : Entity
+/// <summary> Plug designed to prevent respawn of entities. </summary>
+public class DeadEntity : Entity
 {
-    public static DeadBullet Instance;
+    public static DeadEntity Instance;
 
     public static void Replace(Entity entity)
     {

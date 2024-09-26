@@ -79,7 +79,7 @@ public class Bullets
             }
         }
 
-        Fake = Tools.Create<DeadBullet>("Fake").gameObject;
+        Fake = Tools.Create<DeadEntity>("Fake").gameObject;
         NetDmg = Tools.Create("Network Damage");
     }
 
@@ -152,7 +152,7 @@ public class Bullets
     {
         if (bullet.TryGetComponent<Entity>(out var entity) && entity.IsOwner)
         {
-            DeadBullet.Replace(entity);
+            DeadEntity.Replace(entity);
             Networking.Send(PacketType.KillEntity, w =>
             {
                 w.Id(entity.Id);

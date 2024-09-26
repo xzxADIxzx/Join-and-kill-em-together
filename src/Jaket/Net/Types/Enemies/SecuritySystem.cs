@@ -12,7 +12,7 @@ public class SecuritySystem : Enemy
     public override void OnDied()
     {
         base.OnDied();
-        DeadBullet.Replace(this);
+        DeadEntity.Replace(this);
     }
 
     #endregion

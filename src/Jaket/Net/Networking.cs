@@ -175,9 +175,9 @@ public class Networking
         List<uint> toRemove = new();
 
         Entities.Entity(e => e == null || (e.Dead && e.LastUpdate < Time.time - 1f && !e.gameObject.activeSelf), e => toRemove.Add(e.Id));
-        if (DeadBullet.Instance.LastUpdate < Time.time - 1f) Entities.Each(pair =>
+        if (DeadEntity.Instance.LastUpdate < Time.time - 1f) Entities.Each(pair =>
         {
-            if (pair.Value == DeadBullet.Instance) toRemove.Add(pair.Key);
+            if (pair.Value == DeadEntity.Instance) toRemove.Add(pair.Key);
         });
 
         toRemove.ForEach(Entities.Remove);

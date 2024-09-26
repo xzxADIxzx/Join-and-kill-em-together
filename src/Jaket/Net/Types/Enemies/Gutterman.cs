@@ -26,7 +26,7 @@ public class Gutterman : SimpleEnemy
     {
         if (toBreakCorpse)
         {
-            DeadBullet.Replace(this);
+            DeadEntity.Replace(this);
             GetComponent<global::Gutterman>().Explode();
         }
         else
