@@ -1,5 +1,5 @@
 [![Discord](https://img.shields.io/badge/discord-server-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/USpt3hCBgn)
-[![Support](https://img.shields.io/badge/Buy%20Me%20a-Coffee-FFDD00?style=for-the-badge&logo=buymeacoffee)](https://www.buymeacoffee.com/adidev)
+[![Support](https://img.shields.io/badge/Buy%20Me%20a-Coffee-FFDD00?style=for-the-badge&logo=buymeacoffee)](https://www.buymeacoffee.com/adithedev)
 [![License](https://img.shields.io/github/license/xzxADIxzx/Join-and-kill-em-together?style=for-the-badge)](https://github.com/xzxADIxzx/Join-and-kill-em-together/blob/main/LICENSE)
 [![Stars](https://img.shields.io/github/stars/xzxADIxzx/Join-and-kill-em-together?style=for-the-badge&logo=githubsponsors&color=EA4AAA)](https://github.com/xzxADIxzx/Join-and-kill-em-together)
 [![Devlogs](https://img.shields.io/badge/dev-logs-FF0000?style=for-the-badge&logo=youtube)](https://www.youtube.com/playlist?list=PLcTAO30JMDuRpoBTAkvu2ELKDM74j43Tz)
@@ -17,7 +17,7 @@ This modification made by [me](https://github.com/xzxADIxzx) and my team adds su
 * User interface
    * Lobby menu, player list and settings
    * Player indicators to help you find each other on the map
-   * Information about teammates: their health and rail charge
+   * Information about teammates: their health and railgun charge
    * List of public lobbies so you never get bored
    * Chat, in case you have no other means of communication
    * Interactive guide to help you understand the basics
@@ -28,14 +28,16 @@ This modification made by [me](https://github.com/xzxADIxzx) and my team adds su
    * SAM TTS Engine for speaking messages via /tts command
    * Sprays and moderation system for them
    * Extended V2 coins mechanic
+   * Voting system to skip cutscenes or choose dialogs
 * Synchronization of everything
-   * Players, their weapons, weapons paint, fists, hook, animations, particles and even head rotation
+   * Players, their weapons, weapons paint, fist, hook, animations, particles and even head rotation
    * All projectiles in the game and chargeback damage
    * All sorts of items such as torches, skulls and developer plushies
    * Synchronization of position and attacks of enemies
    * Synchronization of special bosses such as Leviathan, Minos' hand and Minotaur
    * Synchronization of different triggers at levels
    * Synchronization of the Cyber Grind
+   * Synchronization of 2-S and 5-S
 * Translation into many languages
    * Arabic        by Iyad
    * Portuguese    by Poyozit
