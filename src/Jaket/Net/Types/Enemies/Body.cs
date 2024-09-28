@@ -69,6 +69,8 @@ public class Body : Enemy
         }
     }
 
+    public override void OnDied() => Dead = true;
+
     public override void Kill()
     {
         if (toBreakCorpse)

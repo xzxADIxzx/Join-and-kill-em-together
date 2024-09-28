@@ -60,7 +60,11 @@ public class Enemy : OwnableEntity
     }
 
     /// <summary> This method is called after the death of the enemy, local or caused remotely. </summary>
-    public virtual void OnDied() => base.Kill(null);
+    public virtual void OnDied()
+    {
+        base.Kill(null);
+        DeadEntity.Replace(this);
+    }
 
     /// <summary> This method is called only after the remote death of the enemy. </summary>
     public virtual void Kill() => EnemyId.InstaKill();

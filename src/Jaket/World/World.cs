@@ -1,5 +1,6 @@
 namespace Jaket.World;
 
+using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -155,6 +156,7 @@ public class World
     /// <summary> Optimizes the level by destroying the corpses of enemies. </summary>
     public static void Optimize()
     {
+        // there is no need to optimize the world if remote entities are not present
         if (LobbyController.Offline) return;
 
         bool cg = Tools.Scene == "Endless";
@@ -164,15 +166,7 @@ public class World
         Tools.ResFind<GoreZone>(zone => Tools.IsReal(zone) && zone.isActiveAndEnabled && FarEnough(zone.transform), zone => zone.ResetGibs());
 
         // big pieces of corpses, such as arms or legs, are part of the entities
-        Networking.Entities.Entity(entity =>
-
-                entity && entity.Dead && entity is Enemy &&
-                entity.Type != EntityType.MaliciousFace &&
-                entity.Type != EntityType.Gutterman &&
-                entity.LastUpdate < Time.time - 1f &&
-                FarEnough(entity.transform),
-
-        entity => entity.gameObject.SetActive(false));
+        DeadEntity.Corpses.DoIf(corpse => FarEnough(corpse.transform), Tools.Destroy);
     }
 
     #endregion

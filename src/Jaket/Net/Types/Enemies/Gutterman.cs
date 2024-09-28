@@ -22,6 +22,8 @@ public class Gutterman : SimpleEnemy
 
     #region entity
 
+    public override void OnDied() => Dead = true;
+
     public override void Kill()
     {
         if (toBreakCorpse)

@@ -119,8 +119,9 @@ public class Item : OwnableEntity
     public override void Kill(Reader r)
     {
         base.Kill(r);
-        gameObject.SetActive(false);
+        DeadEntity.Replace(this);
 
+        Destroy(gameObject);
         if (Type == EntityType.BombFish && r != null) Instantiate(GameAssets.Harmless(), transform.position, Quaternion.identity);
     }
 

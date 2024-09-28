@@ -202,11 +202,14 @@ public class RemotePlayer : Entity
 
     public override void Kill(Reader r = null)
     {
-        GoLimp();
-        Header.Hide();
+        base.Kill(r);
+        DeadEntity.Replace(this);
 
+        Header.Hide();
+        GoLimp();
         Destroy(Doll.Hand.gameObject); // destroy the weapon so that the railcannon's sound doesn't play forever
-        DestroyImmediate(this); // destroy the entity so that the indicators no longer point to it
+        Destroy(this);
+
         Events.OnTeamChanged.Fire();
     }
 

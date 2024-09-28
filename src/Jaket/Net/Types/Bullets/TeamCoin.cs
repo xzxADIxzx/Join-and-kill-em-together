@@ -374,8 +374,9 @@ public class TeamCoin : OwnableEntity
     public override void Kill(Reader r)
     {
         base.Kill(r);
-        Reset();
+        DeadEntity.Replace(this);
 
+        Reset();
         coin.GetDeleted();
         Coins.Alive.Remove(this);
 

@@ -1,6 +1,5 @@
 namespace Jaket.Net;
 
-using HarmonyLib;
 using Steamworks;
 using Steamworks.Data;
 using System;
@@ -170,16 +169,13 @@ public class Networking
     private static void Optimize()
     {
         // there is no need to optimize the network if no one uses it
-        if (LobbyController.Offline) return;
+        if (LobbyController.Offline || DeadEntity.Instance.LastUpdate > Time.time - 1f) return;
 
         List<uint> toRemove = new();
-
-        Entities.Entity(e => e == null || (e.Dead && e.LastUpdate < Time.time - 1f && !e.gameObject.activeSelf), e => toRemove.Add(e.Id));
-        if (DeadEntity.Instance.LastUpdate < Time.time - 1f) Entities.Each(pair =>
+        Entities.Each(pair =>
         {
             if (pair.Value == DeadEntity.Instance) toRemove.Add(pair.Key);
         });
-
         toRemove.ForEach(Entities.Remove);
     }
 
