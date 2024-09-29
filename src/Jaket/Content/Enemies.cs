@@ -126,7 +126,7 @@ public class Enemies
         }
         else
         {
-            Tools.DestroyImmediate(enemyId.name != "Body" && enemyId.name != "StatueBoss" ? enemyId.gameObject : enemyId.transform.parent.gameObject);
+            Tools.DestImmediate(enemyId.name != "Body" && enemyId.name != "StatueBoss" ? enemyId.gameObject : enemyId.transform.parent.gameObject);
             return false;
         }
     }

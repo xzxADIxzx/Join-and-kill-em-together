@@ -44,7 +44,7 @@ public class BinPatch
 
     static bool PlushieAdi(ItemTrigger trigger, Collider col)
     {
-        GameObject Copy(string path) => Tools.Instantiate(Tools.ObjFind("SORT ME").transform.Find(path).gameObject, Vector3.zero);
+        GameObject Copy(string path) => Tools.Inst(Tools.ObjFind("SORT ME").transform.Find(path).gameObject, Vector3.zero);
 
         var black = Copy("OBJECT Activator Gianni world enemies/time of day changer");
         var white = Copy("time of day reverser");
@@ -98,8 +98,8 @@ public class BinPatch
             act.events = new() { onActivate = new() };
             act.events.onActivate.AddListener(() =>
             {
-                Tools.Destroy(source);
-                Tools.Destroy(act);
+                Tools.Dest(source);
+                Tools.Dest(act);
             });
         });
 

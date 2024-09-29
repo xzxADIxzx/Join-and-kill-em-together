@@ -49,7 +49,7 @@ public class Doll : MonoBehaviour
 
     /// <summary> Spawns a preview of the given emote. </summary>
     public static Doll Spawn(Transform parent, Team team, int hat, int jacket, byte emote, byte rps) =>
-        UIB.Component<Doll>(Instantiate(ModAssets.Preview, parent), doll =>
+        UIB.Component<Doll>(Tools.Inst(ModAssets.Preview, parent), doll =>
         {
             doll.transform.localPosition = new(0f, -1.5f);
             doll.transform.localScale = Vector3.one * 2.18f;
@@ -127,21 +127,21 @@ public class Doll : MonoBehaviour
 
         if (Sliding && SlideParticle == null)
         {
-            SlideParticle = Instantiate(NewMovement.Instance.slideParticle, transform).transform;
+            SlideParticle = Tools.Inst(NewMovement.Instance.slideParticle, transform).transform;
             SlideParticle.localPosition = new(0f, 0f, 3.5f);
             SlideParticle.localEulerAngles = new(0f, 180f, 0f);
             SlideParticle.localScale = new(1.5f, 1f, .8f);
         }
-        else if (!Sliding && SlideParticle != null) Destroy(SlideParticle.gameObject);
+        else if (!Sliding && SlideParticle != null) Tools.Dest(SlideParticle.gameObject);
 
         if (Falling && FallParticle == null)
         {
-            FallParticle = Instantiate(NewMovement.Instance.fallParticle, transform).transform;
+            FallParticle = Tools.Inst(NewMovement.Instance.fallParticle, transform).transform;
             FallParticle.localPosition = new(0f, 6f, 0f);
             FallParticle.localEulerAngles = new(90f, 0f, 0f);
             FallParticle.localScale = new(1.2f, .6f, 1f);
         }
-        else if (!Falling && FallParticle != null) Destroy(FallParticle.gameObject);
+        else if (!Falling && FallParticle != null) Tools.Dest(FallParticle.gameObject);
     });
 
     #region apply

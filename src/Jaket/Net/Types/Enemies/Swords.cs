@@ -40,9 +40,9 @@ public class Swords : SimpleEnemy
 
         if (prelude)
         {
-            swords.shotgunPickUp = Instantiate(GameAssets.Shotgun());
+            swords.shotgunPickUp = Tools.Inst(GameAssets.Shotgun());
             swords.shotgunPickUp.SetActive(false);
-            Destroy(swords.shotgunPickUp.GetComponent<KeepInBounds>());
+            Tools.Dest(swords.shotgunPickUp.GetComponent<KeepInBounds>());
         }
 
         if (castleVein)

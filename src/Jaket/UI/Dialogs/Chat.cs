@@ -208,7 +208,7 @@ public class Chat : CanvasSingleton<Chat>
         text.rectTransform.anchoredPosition = new(0f, 8f - height / 2f);
 
         foreach (RectTransform child in list) child.anchoredPosition += new Vector2(0f, height);
-        if (list.childCount > MESSAGES_SHOWN) DestroyImmediate(list.GetChild(0).gameObject);
+        if (list.childCount > MESSAGES_SHOWN) Tools.DestImmediate(list.GetChild(0).gameObject);
 
         // scale the chat panel
         var top = list.GetChild(0) as RectTransform;

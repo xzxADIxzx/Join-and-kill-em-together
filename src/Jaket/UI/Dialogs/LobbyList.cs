@@ -58,7 +58,7 @@ public class LobbyList : CanvasSingleton<LobbyList>
         refresh.GetComponentInChildren<Text>().text = Bundle.Get(LobbyController.FetchingLobbies ? "lobby-list.wait" : "lobby-list.refresh");
 
         // destroy old lobby entries if the search is completed
-        if (!LobbyController.FetchingLobbies) foreach (Transform child in content) Destroy(child.gameObject);
+        if (!LobbyController.FetchingLobbies) foreach (Transform child in content) Tools.Dest(child.gameObject);
         if (Lobbies == null) return;
 
         // look for the lobby using the search string

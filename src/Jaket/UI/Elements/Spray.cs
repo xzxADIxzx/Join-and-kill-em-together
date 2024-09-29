@@ -70,7 +70,7 @@ public class Spray : MonoBehaviour
         if ((Lifetime += Time.deltaTime) > 60f)
         {
             SpawnDust(1, .3f);
-            Destroy(gameObject);
+            Tools.Dest(gameObject);
             return;
         }
     }
@@ -86,7 +86,7 @@ public class Spray : MonoBehaviour
         var prefab = AssetHelper.LoadPrefab("Assets/Particles/ImpactParticle.prefab");
         for (var i = 0; i < amount; i++) // make it look more cloudy
         {
-            var particle = Instantiate(prefab, transform.position, Quaternion.identity);
+            var particle = Tools.Inst(prefab, transform.position);
             particle.transform.localScale = Vector3.one * scale;
             particle.GetComponent<AudioSource>().Stop(); // don't play the sound, we need only the particles
         }

@@ -35,7 +35,7 @@ public class StaticAction : WorldAction
         for (float angle = 360f * 6f / 7f; angle >= 0f; angle -= 360f / 7f)
         {
             float rad = angle * Mathf.Deg2Rad;
-            Tools.Instantiate(obj, pos + new Vector3(Mathf.Cos(rad), 0f, Mathf.Sin(rad)) * radius, Quaternion.Euler(0f, angle / 7f, 0f));
+            Tools.Inst(obj, pos + new Vector3(Mathf.Cos(rad), 0f, Mathf.Sin(rad)) * radius, Quaternion.Euler(0f, angle / 7f, 0f));
         }
     });
 
@@ -49,7 +49,7 @@ public class StaticAction : WorldAction
     /// <summary> Creates a static action that enables an object. </summary>
     public static void Enable(string level, string name, Vector3 position) => Find(level, name, position, obj => obj.SetActive(true));
     /// <summary> Creates a static action that destroys an object. </summary>
-    public static void Destroy(string level, string name, Vector3 position) => Find(level, name, position, Tools.Destroy);
+    public static void Destroy(string level, string name, Vector3 position) => Find(level, name, position, Tools.Dest);
 }
 
 /// <summary> Action that can be launched remotely. </summary>

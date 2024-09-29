@@ -42,7 +42,7 @@ public class PlayerIndicators : CanvasSingleton<PlayerIndicators>
     /// <summary> Rebuilds player indicators to match a new state. </summary>
     public void Rebuild()
     {
-        indicators.ForEach(ind => Destroy(ind.gameObject));
+        indicators.ForEach(ind => Tools.Dest(ind.gameObject));
         indicators.Clear();
         targets.Clear();
 

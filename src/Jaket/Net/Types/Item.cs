@@ -121,8 +121,8 @@ public class Item : OwnableEntity
         base.Kill(r);
         DeadEntity.Replace(this);
 
-        Destroy(gameObject);
-        if (Type == EntityType.BombFish && r != null) Instantiate(GameAssets.Harmless(), transform.position, Quaternion.identity);
+        Tools.Dest(gameObject);
+        if (Type == EntityType.BombFish && r != null) Tools.Inst(GameAssets.Harmless(), transform.position);
     }
 
     #endregion

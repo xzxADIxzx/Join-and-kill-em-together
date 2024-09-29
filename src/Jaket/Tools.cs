@@ -2,7 +2,6 @@ namespace Jaket;
 
 using HarmonyLib;
 using Steamworks;
-using Steamworks.Data;
 using System;
 using System.Reflection;
 using UnityEngine;
@@ -58,11 +57,13 @@ public class Tools
     /// <summary> Creates a new game object and adds a component of the given type to it. </summary>
     public static T Create<T>(string name, Transform parent = null) where T : Component => Create(name, parent).AddComponent<T>();
 
-    public static GameObject Instantiate(GameObject obj, Transform parent) => Object.Instantiate(obj, parent);
-    public static GameObject Instantiate(GameObject obj, Vector3 position, Quaternion? rotation = null) => Object.Instantiate(obj, position, rotation ?? Quaternion.identity);
+    public static GameObject Inst(GameObject obj) => Object.Instantiate(obj);
+    public static GameObject Inst(GameObject obj, Transform parent) => Object.Instantiate(obj, parent);
+    public static GameObject Inst(GameObject obj, Vector3 position, Quaternion? rotation = null) => Object.Instantiate(obj, position, rotation ?? Quaternion.identity);
 
-    public static void Destroy(Object obj) => Object.Destroy(obj);
-    public static void DestroyImmediate(Object obj) => Object.DestroyImmediate(obj);
+    public static void Dest(Object obj) => Object.Destroy(obj);
+    public static void DestImmediate(Object obj) => Object.DestroyImmediate(obj);
+    public static void DontDest(Object obj) => Object.DontDestroyOnLoad(obj);
 
     #endregion
     #region resources

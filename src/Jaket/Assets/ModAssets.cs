@@ -140,20 +140,20 @@ public class ModAssets
         // dolls & plushies
         Load<GameObject>("Player Doll.prefab", p =>
         {
-            Object.DontDestroyOnLoad(Doll = p);
+            Tools.DontDest(Doll = p);
             FixMaterials(p);
         });
 
         Load<GameObject>("Player Doll Preview.prefab", p =>
         {
-            Object.DontDestroyOnLoad(Preview = p);
+            Tools.DontDest(Preview = p);
             FixMaterials(p);
         });
 
         Load<Texture>("V2-plushie", t =>
         {
             int i = EntityType.V2 - EntityType.ItemOffset;
-            Object.DontDestroyOnLoad(V2 = Items.Prefabs[i] = Object.Instantiate(Items.Prefabs[i]));
+            Tools.DontDest(V2 = Items.Prefabs[i] = Tools.Inst(Items.Prefabs[i]));
 
             V2.name = "DevPlushie (V2)";
             V2.GetComponentInChildren<Renderer>().material.mainTexture = t;
@@ -163,7 +163,7 @@ public class ModAssets
         Load<Texture>("V3-plushie", t =>
         {
             int i = EntityType.V3 - EntityType.ItemOffset;
-            Object.DontDestroyOnLoad(V3 = Items.Prefabs[i] = Object.Instantiate(Items.Prefabs[i]));
+            Tools.DontDest(V3 = Items.Prefabs[i] = Tools.Inst(Items.Prefabs[i]));
 
             V3.name = "DevPlushie (V3)";
             V3.GetComponentInChildren<Renderer>().material.mainTexture = t;
@@ -172,7 +172,7 @@ public class ModAssets
 
         Load<GameObject>("DevPlushie (xzxADIxzx).prefab", p =>
         {
-            Object.DontDestroyOnLoad(xzxADIxzx = Items.Prefabs[EntityType.xzxADIxzx - EntityType.ItemOffset] = p);
+            Tools.DontDest(xzxADIxzx = Items.Prefabs[EntityType.xzxADIxzx - EntityType.ItemOffset] = p);
             FixMaterials(p, new(1.3f, 1.3f, 1.3f));
 
             UIB.Component<ItemIdentifier>(p, itemId =>
@@ -189,7 +189,7 @@ public class ModAssets
 
         Load<GameObject>("DevPlushie (Sowler).prefab", p =>
         {
-            Object.DontDestroyOnLoad(Sowler = Items.Prefabs[EntityType.Sowler - EntityType.ItemOffset] = p);
+            Tools.DontDest(Sowler = Items.Prefabs[EntityType.Sowler - EntityType.ItemOffset] = p);
             FixMaterials(p);
 
             UIB.Component<ItemIdentifier>(p, itemId =>

@@ -173,21 +173,21 @@ public class Movement : MonoSingleton<Movement>
                     // major assists make it possible to dash endlessly so we need to clamp boost charge
                     if (nm.boostCharge < 0f) nm.boostCharge = 0f;
 
-                    Instantiate(nm.dodgeParticle, nm.transform.position, nm.transform.rotation);
+                    Tools.Inst(nm.dodgeParticle, nm.transform.position, nm.transform.rotation);
                     AudioSource.PlayClipAtPoint(nm.dodgeSound, nm.transform.position);
                 }
-                else Instantiate(nm.staminaFailSound);
+                else Tools.Inst(nm.staminaFailSound);
             }
 
             if (SkateboardSpeed >= 70f && !SlowsDown)
             {
                 SlowsDown = true;
-                FallParticle = Instantiate(nm.fallParticle, nm.transform);
+                FallParticle = Tools.Inst(nm.fallParticle, nm.transform);
             }
             if (SkateboardSpeed <= 40f && SlowsDown)
             {
                 SlowsDown = false;
-                Destroy(FallParticle);
+                Tools.Dest(FallParticle);
             }
 
             // move the skateboard forward
@@ -296,7 +296,7 @@ public class Movement : MonoSingleton<Movement>
             if (final.savedTime == 0f)
             {
                 final.GameOver();
-                Destroy(nm.blackScreen.gameObject);
+                Tools.Dest(nm.blackScreen.gameObject);
             }
         }
     }
@@ -413,8 +413,8 @@ public class Movement : MonoSingleton<Movement>
         Emote = id; // save id to sync it later
 
         if (updateState) UpdateState();
-        Destroy(EmotePreview);
-        Destroy(FallParticle);
+        Tools.Dest(EmotePreview);
+        Tools.Dest(FallParticle);
 
         // if id is -1, then the emote was not selected
         if (id == 0xFF) return;

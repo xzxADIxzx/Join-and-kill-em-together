@@ -49,7 +49,7 @@ public abstract class Entity : MonoBehaviour
             if (provided == EntityType.None)
             {
                 Log.Warning($"Couldn't find the entity type of the object {name}");
-                Destroy(this);
+                Tools.Dest(this);
                 return;
             }
 

@@ -73,7 +73,7 @@ public class Pointer : MonoBehaviour
 
     private void Update()
     {
-        if ((Lifetime += Time.deltaTime) > 5f) Destroy(gameObject);
+        if ((Lifetime += Time.deltaTime) > 5f) Tools.Dest(gameObject);
 
         float scale = Lifetime < .5f ? Lifetime * 2f : Lifetime > 4.5f ? (5f - Lifetime) * 2f : 1f;
         float time = Time.time * 3f;

@@ -53,7 +53,7 @@ public class Entities
     public static GameObject Mark(GameObject prefab)
     {
         // the instance is created on these coordinates so as not to collide with anything after the spawn
-        var instance = Tools.Instantiate(prefab, Vector3.zero);
+        var instance = Tools.Inst(prefab, Vector3.zero);
 
         instance.name = "Net";
         return instance;

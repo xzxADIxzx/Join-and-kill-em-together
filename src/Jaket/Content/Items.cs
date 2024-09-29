@@ -74,7 +74,7 @@ public class Items
         // prefabs of fishes do not contain anything except the model of the fish
         if (fsh)
         {
-            Tools.Instantiate(Prefabs[type - EntityType.ItemOffset], obj.transform).transform.localPosition = Vector3.zero;
+            Tools.Inst(Prefabs[type - EntityType.ItemOffset], obj.transform).transform.localPosition = Vector3.zero;
             obj.AddComponent<FishObjectReference>();
         }
 
@@ -97,7 +97,7 @@ public class Items
         if (LobbyController.IsOwner || single)
             itemId.gameObject.AddComponent<Item>();
         else
-            Tools.DestroyImmediate(itemId.gameObject);
+            Tools.DestImmediate(itemId.gameObject);
     }
 
     /// <summary> Synchronizes all items in the level. </summary>

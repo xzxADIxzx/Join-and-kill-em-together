@@ -48,7 +48,7 @@ public class Enemy : OwnableEntity
 
         transform.position = new(x.Last = x.Target, y.Last = y.Target, z.Last = z.Target);
         if (EnemyId.spawnEffect)
-            Instantiate(EnemyId.spawnEffect, TryGetComponent(out Collider col) ? col.bounds.center : transform.position, transform.rotation);
+            Tools.Inst(EnemyId.spawnEffect, TryGetComponent(out Collider col) ? col.bounds.center : transform.position, transform.rotation);
     }
 
     #region entity

@@ -43,7 +43,7 @@ public class PlayerInfo : CanvasSingleton<PlayerInfo>
     /// <summary> Rebuilds the information table to match a new state. </summary>
     public void Rebuild()
     {
-        if (root) Destroy(root.gameObject); // for some reason the operator ? doesn't work here
+        if (root) Tools.Dest(root.gameObject); // for some reason the operator ? doesn't work here
         if (!Shown || !StyleHUD.Instance) return;
 
         List<RemotePlayer> teammates = new();

@@ -37,7 +37,7 @@ public class Bullet : OwnableEntity
         });
         TryGetComponent(out grenade);
         TryGetComponent(out ball);
-        Destroy(GetComponent<FloatingPointErrorPreventer>());
+        Tools.Dest(GetComponent<FloatingPointErrorPreventer>());
 
         x = new(); y = new(); z = new();
         rx = new(); ry = new(); rz = new();
@@ -105,7 +105,7 @@ public class Bullet : OwnableEntity
 
         if (r == null)
         {
-            Destroy(gameObject);
+            Tools.Dest(gameObject);
             return;
         }
 

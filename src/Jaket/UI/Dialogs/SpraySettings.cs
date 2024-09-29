@@ -86,7 +86,7 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
     {
         #region left side
 
-        for (int i = 3; i < sprays.childCount; i++) Destroy(sprays.GetChild(i).gameObject);
+        for (int i = 3; i < sprays.childCount; i++) Tools.Dest(sprays.GetChild(i).gameObject);
         for (int i = 0; i < Mathf.Min(6, SprayManager.Loaded.Count); i++)
         {
             var spray = SprayManager.Loaded[i];
@@ -114,7 +114,7 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
         #endregion
         #region right side
 
-        for (int i = 1; i < players.childCount; i++) Destroy(players.GetChild(i).gameObject);
+        for (int i = 1; i < players.childCount; i++) Tools.Dest(players.GetChild(i).gameObject);
         if ((LobbyController.Lobby?.MemberCount ?? 0) <= 1)
         {
             UIB.Text("#sprays.alone", players, Size(320f, 48f), grey);

@@ -78,7 +78,7 @@ public class Commands
             if (index == -1)
                 chat.Receive($"[#FF341C]Plushie named {name} not found.");
             else
-                Tools.Instantiate(Items.Prefabs[EntityType.PlushieOffset + index - EntityType.ItemOffset], NewMovement.Instance.transform.position);
+                Tools.Inst(Items.Prefabs[EntityType.PlushieOffset + index - EntityType.ItemOffset], NewMovement.Instance.transform.position);
         });
 
         Handler.Register("level", "<layer> <level> / sandbox / cyber grind / museum", "Load a level", args =>
