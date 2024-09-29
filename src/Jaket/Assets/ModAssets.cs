@@ -39,9 +39,9 @@ public class ModAssets
     /// <summary> Hand textures used by local player. </summary>
     public static Texture[] HandTextures;
 
-    /// <summary> Image of the fallen Virage. </summary>
-    public static Sprite ChanFallen;
-    /// <summary> Different poses of Virage. </summary>
+    /// <summary> Image of the fallen Vermicelli. </summary>
+    public static Sprite ChanFallen, ChanBackground;
+    /// <summary> Different poses of Vermicelli. </summary>
     public static Sprite[] ChanPoses;
     /// <summary> Icons for the emote selection wheel. </summary>
     public static Sprite[] EmoteIcons, EmoteGlows;
@@ -101,6 +101,7 @@ public class ModAssets
         EmoteGlows = new Sprite[12];
 
         Load<Sprite>("V3-chan-fallen", s => ChanFallen = s);
+        Load<Sprite>("V3-chan-background", s => ChanBackground = s);
 
         for (int i = 0; i < 7; i++)
         {

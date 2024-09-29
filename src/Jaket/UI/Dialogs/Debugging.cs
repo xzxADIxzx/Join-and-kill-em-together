@@ -118,7 +118,7 @@ public class Debugging : CanvasSingleton<Debugging>
     public void Toggle() => gameObject.SetActive(Shown = !Shown);
 
     /// <summary> Clears the graph. </summary>
-    public void Clear() { read.Clear(); write.Clear(); readTime.Clear(); writeTime.Clear(); }
+    public void Clear() { read.Clear(); write.Clear(); readTime.Clear(); writeTime.Clear(); entity.Clear(); target.Clear(); }
 
     /// <summary> Constatnt size queue. </summary>
     private class Data : Queue<float>

@@ -54,7 +54,7 @@ public class Votes
 
     #region 2-S
 
-    /// <summary> Replaces Mirage with Virage, patches buttons and other minor stuff. </summary>
+    /// <summary> Replaces Mirage with Vermicelli, patches buttons and other minor stuff. </summary>
     public static void Init2S()
     {
         var fallen = ObjFind("Canvas/PowerUpVignette/Panel/Aspect Ratio Mask/Fallen");
@@ -85,10 +85,10 @@ public class Votes
         fix.events.onActivate.AddListener(() => fix.GetComponent<Voting>().enabled = true);
     }
 
-    /// <summary> Changes the name of the character to Virage. </summary>
+    /// <summary> Changes the name of the character to Vermicelli. </summary>
     public static void Name(Text dialog, ref string name)
     {
-        dialog.text = dialog.text.Replace("Mirage", "Virage");
+        dialog.text = dialog.text.Replace("Mirage", "Vermicelli");
 
         var tex = dialog.font.material.mainTexture; // aspect ratio of the font texture must always be 1
         if (tex.width != tex.height) dialog.font.RequestCharactersInTexture("I love you", 512);
@@ -96,7 +96,7 @@ public class Votes
         dialog.font.RequestCharactersInTexture("3", 22);
         dialog.font.GetCharacterInfo('3', out var info, 22);
 
-        name = name.Replace("MIRAGE:", $"VIRAG <quad size=18 x={info.uvBottomLeft.x:0.0000} y={info.uvBottomLeft.y:0.0000} width={info.uvTopRight.x - info.uvBottomLeft.x:0.0000} height={info.uvTopRight.y - info.uvBottomLeft.y:0.0000}> :".Replace(',', '.'));
+        name = name.Replace("MIRAGE:", $"V <quad size=18 x={info.uvBottomLeft.x:0.0000} y={info.uvBottomLeft.y:0.0000} width={info.uvTopRight.x - info.uvBottomLeft.x:0.0000} height={info.uvTopRight.y - info.uvBottomLeft.y:0.0000}> RMICELLI:".Replace(',', '.'));
     }
 
     #endregion

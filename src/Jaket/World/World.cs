@@ -166,7 +166,7 @@ public class World
 
         // big pieces of corpses, such as arms or legs, are part of the entities
         DeadEntity.Corpses.Each(corpse => corpse && FarEnough(corpse.transform), Dest);
-        DeadEntity.Corpses.Clear();
+        DeadEntity.Corpses.RemoveAll(corpse => corpse == null);
     }
 
     #endregion
