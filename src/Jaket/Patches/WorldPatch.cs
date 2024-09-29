@@ -10,6 +10,8 @@ using Jaket.Net;
 using Jaket.Net.Types;
 using Jaket.World;
 
+using static Tools;
+
 [HarmonyPatch(typeof(ActivateArena))]
 public class ArenaPatch
 {
@@ -80,7 +82,7 @@ public class TramPatch
     static void FightStart(TramControl __instance)
     {
         // find the cart in which the player will appear after respawn
-        if (LobbyController.Online && Tools.Scene == "Level 7-1") World.TunnelRoomba = __instance.transform.parent;
+        if (LobbyController.Online && Scene == "Level 7-1") World.TunnelRoomba = __instance.transform.parent;
     }
 
     [HarmonyPostfix]
@@ -121,7 +123,7 @@ public class ActionPatch
         if (LobbyController.Online && LobbyController.IsOwner &&
            (n.Contains("Glass") || n.Contains("Cover") ||
             n.Contains("Skull") || n.Contains("Quake") ||
-            Tools.Scene == "Level 3-1" || __instance.transform.parent?.parent?.name == "MazeWalls")) World.SyncAction(__instance, 4);
+            Scene == "Level 3-1" || __instance.transform.parent?.parent?.name == "MazeWalls")) World.SyncAction(__instance, 4);
     }
 
     [HarmonyPostfix]

@@ -3,6 +3,8 @@ namespace Jaket.Net.Types;
 using Jaket.Content;
 using Jaket.IO;
 
+using static Tools;
+
 /// <summary> Representation of a hideous mass. </summary>
 public class Shrimp : Enemy
 {
@@ -15,8 +17,8 @@ public class Shrimp : Enemy
     private void Start()
     {
         SpawnEffect();
-        Boss(Tools.Scene == "Level 1-3", 175f, 1);
-        Boss(Tools.Scene == "Level 6-1", 60f, 1);
+        Boss(Scene == "Level 1-3", 175f, 1);
+        Boss(Scene == "Level 6-1", 60f, 1);
 
         GetComponent<Mass>().crazyModeHealth = EnemyId.statue.health * .2f;
     }

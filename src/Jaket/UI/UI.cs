@@ -8,6 +8,8 @@ using Jaket.UI.Dialogs;
 using Jaket.UI.Fragments;
 using Jaket.World;
 
+using static Tools;
+
 /// <summary> Class that loads and manages the interface of the mod. </summary>
 public class UI
 {
@@ -26,7 +28,7 @@ public class UI
     /// <summary> Creates singleton instances of fragments and dialogs. </summary>
     public static void Load()
     {
-        Root = Tools.Create("UI").transform;
+        Root = Create("UI").transform;
         Settings.Load(); // settings must be loaded before building the interface
 
         Chat.Build("Chat", true, true, hide: () => Chat.Instance.Field?.gameObject.SetActive(Chat.Shown = false));

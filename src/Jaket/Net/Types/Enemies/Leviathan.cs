@@ -6,6 +6,8 @@ using Jaket.Content;
 using Jaket.IO;
 using Jaket.World;
 
+using static Tools;
+
 /// <summary> Representation of Leviathan. </summary>
 public class Leviathan : Enemy
 {
@@ -69,14 +71,14 @@ public class Leviathan : Enemy
         {
             switch (LastAttack = Attack)
             {
-                case 0: Tools.Invoke("ProjectileBurst", head); break;
-                case 1: Tools.Invoke("Bite", head); break;
+                case 0: Call("ProjectileBurst", head); break;
+                case 1: Call("Bite", head); break;
             }
             Cooldown(4200f);
         }
     });
 
-    private void Cooldown(float time) => Tools.Set("attackCooldown", head, time);
+    private void Cooldown(float time) => Set("attackCooldown", head, time);
 
     #region entity
 

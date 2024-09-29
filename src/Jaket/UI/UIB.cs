@@ -15,6 +15,7 @@ using Jaket.Net;
 
 using static Pal;
 using static Rect;
+using static Tools;
 
 /// <summary> Class that builds the entire interface of the mod. </summary>
 public class UIB
@@ -47,7 +48,7 @@ public class UIB
         fix();
 
         // find all sprites
-        var all = Tools.ResFind<Sprite>();
+        var all = ResFind<Sprite>();
         Sprite Find(string name) => Array.Find(all, s => s.name == name);
 
         Background = Find("UISprite");
@@ -82,7 +83,7 @@ public class UIB
 
     /// <summary> Adds a rect at the specified position with the given size and anchor. </summary>
     public static RectTransform Rect(string name, Transform parent, Rect r) =>
-        Component<RectTransform>(Tools.Create(name, parent), rect =>
+        Component<RectTransform>(Create(name, parent), rect =>
         {
             rect.anchorMin = r.Min;
             rect.anchorMax = r.Max;
@@ -112,7 +113,7 @@ public class UIB
     /// <summary> Creates a canvas that is drawn on top of the camera. </summary>
     public static Transform Canvas(string name, Transform parent, int sort = 1000, float woh = 0f, RenderMode renderMode = RenderMode.ScreenSpaceOverlay, ScaleMode scaleMode = ScaleMode.ScaleWithScreenSize)
     {
-        var obj = Tools.Create(name, parent);
+        var obj = Create(name, parent);
         Component<Canvas>(obj, canvas =>
         {
             canvas.renderMode = renderMode;

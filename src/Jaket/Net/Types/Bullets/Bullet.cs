@@ -5,6 +5,8 @@ using UnityEngine;
 using Jaket.Content;
 using Jaket.IO;
 
+using static Tools;
+
 /// <summary> Representation of a rocket or cannonball. </summary>
 public class Bullet : OwnableEntity
 {
@@ -37,7 +39,7 @@ public class Bullet : OwnableEntity
         });
         TryGetComponent(out grenade);
         TryGetComponent(out ball);
-        Tools.Dest(GetComponent<FloatingPointErrorPreventer>());
+        Dest(GetComponent<FloatingPointErrorPreventer>());
 
         x = new(); y = new(); z = new();
         rx = new(); ry = new(); rz = new();
@@ -65,7 +67,7 @@ public class Bullet : OwnableEntity
         }
     });
 
-    private void Exploded(bool value) => Tools.Set("exploded", grenade, value);
+    private void Exploded(bool value) => Set("exploded", grenade, value);
 
     #region entity
 
@@ -105,7 +107,7 @@ public class Bullet : OwnableEntity
 
         if (r == null)
         {
-            Tools.Dest(gameObject);
+            Dest(gameObject);
             return;
         }
 

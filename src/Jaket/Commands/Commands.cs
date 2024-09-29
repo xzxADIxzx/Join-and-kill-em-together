@@ -8,6 +8,8 @@ using Jaket.Content;
 using Jaket.Net;
 using Jaket.UI.Dialogs;
 
+using static Tools;
+
 /// <summary> List of chat commands used by the mod. </summary>
 public class Commands
 {
@@ -78,7 +80,7 @@ public class Commands
             if (index == -1)
                 chat.Receive($"[#FF341C]Plushie named {name} not found.");
             else
-                Tools.Inst(Items.Prefabs[EntityType.PlushieOffset + index - EntityType.ItemOffset], NewMovement.Instance.transform.position);
+                Inst(Items.Prefabs[EntityType.PlushieOffset + index - EntityType.ItemOffset], NewMovement.Instance.transform.position);
         });
 
         Handler.Register("level", "<layer> <level> / sandbox / cyber grind / museum", "Load a level", args =>
@@ -90,17 +92,17 @@ public class Commands
 
             else if (args.Length >= 1 && (args[0].ToLower() == "sandbox" || args[0].ToLower() == "sand"))
             {
-                Tools.Load("uk_construct");
+                LoadScn("uk_construct");
                 chat.Receive("[#32CD32]Sandbox is loading.");
             }
             else if (args.Length >= 1 && (args[0].ToLower().Contains("cyber") || args[0].ToLower().Contains("grind") || args[0].ToLower() == "cg"))
             {
-                Tools.Load("Endless");
+                LoadScn("Endless");
                 chat.Receive("[#32CD32]The Cyber Grind is loading.");
             }
             else if (args.Length >= 1 && (args[0].ToLower().Contains("credits") || args[0].ToLower() == "museum"))
             {
-                Tools.Load("CreditsMuseum2");
+                LoadScn("CreditsMuseum2");
                 chat.Receive("[#32CD32]The Credits Museum is loading.");
             }
             else if (args.Length < 2)
@@ -112,17 +114,17 @@ public class Commands
                 (level == 5 ? layer == 0 : true) && (layer == 3 || layer == 6 ? level <= 2 : true)
             )
             {
-                Tools.Load($"Level {layer}-{level}");
+                LoadScn($"Level {layer}-{level}");
                 chat.Receive($"[#32CD32]Level {layer}-{level} is loading.");
             }
             else if (args[1].ToUpper() == "S" && int.TryParse(args[0], out level) && level >= 0 && level <= 7 && level != 3 && level != 6)
             {
-                Tools.Load($"Level {level}-S");
+                LoadScn($"Level {level}-S");
                 chat.Receive($"[#32CD32]Secret level {level}-S is loading.");
             }
             else if (args[0].ToUpper() == "P" && int.TryParse(args[1], out level) && level >= 1 && level <= 2)
             {
-                Tools.Load($"Level P-{level}");
+                LoadScn($"Level P-{level}");
                 chat.Receive($"[#32CD32]Prime level P-{level} is loading.");
             }
             else

@@ -7,6 +7,7 @@ using Jaket.Content;
 using Jaket.IO;
 
 using static Jaket.UI.Pal;
+using static Tools;
 
 /// <summary> Representation of a coin that has a team and the corresponding mechanics. </summary>
 public class TeamCoin : OwnableEntity
@@ -119,8 +120,8 @@ public class TeamCoin : OwnableEntity
 
     private void Effect(GameObject flash, float size)
     {
-        Tools.Dest(effect);
-        effect = Tools.Inst(flash, transform);
+        Dest(effect);
+        effect = Inst(flash, transform);
 
         effect.transform.localScale = Vector3.one * size;
         effect.GetComponentInChildren<SpriteRenderer>(true).color = Team.Color();
@@ -158,13 +159,13 @@ public class TeamCoin : OwnableEntity
         var light = effect.GetComponent<Light>();
         light.color = Team.Color();
         light.intensity = 10f;
-        if (silent) Tools.Dest(effect.GetComponent<AudioSource>());
+        if (silent) Dest(effect.GetComponent<AudioSource>());
     }
 
     private void Reset()
     {
         Rb.isKinematic = !Dead && (!IsOwner || shot);
-        Tools.Dest(effect);
+        Dest(effect);
 
         CancelInvoke("Double");
         CancelInvoke("DoubleEnd");
@@ -228,7 +229,7 @@ public class TeamCoin : OwnableEntity
         tag = "Untagged";
 
         // play the sound before killing the coin
-        PlaySound(Tools.Inst(coin.coinHitSound, transform));
+        PlaySound(Inst(coin.coinHitSound, transform));
 
         var rvp = beam == null; // only RV1 PRI can be doubled
         if (rvp && doubled)
@@ -236,7 +237,7 @@ public class TeamCoin : OwnableEntity
         else
             NetKill();
 
-        if (rvp) Coins.PaintBeam(beam = Tools.Inst(Bullets.Prefabs[0], Vector3.zero), Team);
+        if (rvp) Coins.PaintBeam(beam = Inst(Bullets.Prefabs[0], Vector3.zero), Team);
         beam.SetActive(true);
         beam.transform.position = transform.position;
 
@@ -300,7 +301,7 @@ public class TeamCoin : OwnableEntity
         // make the coin unavailable for future use
         if (pos == null) shot = true;
 
-        var beam = Tools.Inst(coin.refBeam, transform.position).GetComponent<LineRenderer>();
+        var beam = Inst(coin.refBeam, transform.position).GetComponent<LineRenderer>();
         PlaySound(beam.gameObject);
         trail.Clear();
 

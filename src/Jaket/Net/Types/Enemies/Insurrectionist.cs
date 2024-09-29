@@ -7,6 +7,8 @@ using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
 
+using static Tools;
+
 /// <summary> Representation of an insurrectionist. </summary>
 public class Insurrectionist : Enemy
 {
@@ -26,18 +28,18 @@ public class Insurrectionist : Enemy
         InitTransfer();
         TryGetComponent(out sisy);
         TryGetComponent(out audio);
-        stomp = Tools.Get("stompVoice", sisy) as AudioClip;
-        other = Tools.Get("attackVoices", sisy) as AudioClip[];
+        stomp = Get("stompVoice", sisy) as AudioClip;
+        other = Get("attackVoices", sisy) as AudioClip[];
     }
 
     private void Start()
     {
         SpawnEffect();
-        Boss(Tools.Scene == "Level 4-2", 110f, 1);
-        Boss(Tools.Scene == "Level 6-1", 100f, 1, (angryOrRude = !angryOrRude) ? "INSURRECTIONIST \"ANGRY\"" : "INSURRECTIONIST \"RUDE\"");
+        Boss(Scene == "Level 4-2", 110f, 1);
+        Boss(Scene == "Level 6-1", 100f, 1, (angryOrRude = !angryOrRude) ? "INSURRECTIONIST \"ANGRY\"" : "INSURRECTIONIST \"RUDE\"");
 
-        if (Tools.Scene == "Level 4-2") GetComponentsInChildren<SkinnedMeshRenderer>().Do(r => r.material.color = new(1f, .9f, .4f));
-        if (Tools.Scene == "Level 6-1") GameAssets.SisyMaterial(angryOrRude ? "SisyphusRed" : "SisyphusBlue", GetComponentsInChildren<SkinnedMeshRenderer>());
+        if (Scene == "Level 4-2") GetComponentsInChildren<SkinnedMeshRenderer>().Do(r => r.material.color = new(1f, .9f, .4f));
+        if (Scene == "Level 6-1") GameAssets.SisyMaterial(angryOrRude ? "SisyphusRed" : "SisyphusBlue", GetComponentsInChildren<SkinnedMeshRenderer>());
 
         if (!IsOwner) Cooldown(4200f);
     }
@@ -72,23 +74,23 @@ public class Insurrectionist : Enemy
                     SetTracking(.9f, .9f);
                     break;
 
-                case 6: Tools.Invoke("Jump", sisy, true); break;
+                case 6: Call("Jump", sisy, true); break;
                 default: sisy.Invoke("StopAction", 0.1f); break;
             }
             if (attack >= 2 && attack <= 5)
             {
-                Tools.Set("m_AttackType", sisy, attack - 2);
+                Set("m_AttackType", sisy, attack - 2);
                 audio.PlayOneShot(other[attack - 2]);
             }
         }
     });
 
-    private void Cooldown(float time) => Tools.Set("cooldown", sisy, time);
+    private void Cooldown(float time) => Set("cooldown", sisy, time);
 
     private void SetTracking(float x, float y)
     {
-        Tools.Set("trackingX", sisy, x);
-        Tools.Set("trackingY", sisy, y);
+        Set("trackingX", sisy, x);
+        Set("trackingY", sisy, y);
     }
 
     #region entity

@@ -9,6 +9,8 @@ using UnityEngine;
 using Jaket.Assets;
 using Jaket.IO;
 
+using static Tools;
+
 /// <summary> Lobby controller with several useful methods and properties. </summary>
 public class LobbyController
 {
@@ -51,7 +53,7 @@ public class LobbyController
         {
             if (lobby.Owner.Id != 0L) LastOwner = lobby.Owner.Id;
 
-            if (lobby.GetData("banned").Contains(Tools.AccId.ToString()))
+            if (lobby.GetData("banned").Contains(AccId.ToString()))
             {
                 LeaveLobby();
                 Bundle.Hud2NS("lobby.banned");
@@ -69,7 +71,7 @@ public class LobbyController
         };
 
         // put the level name in the lobby data so that it can be seen in the public lobbies list
-        Events.OnLoaded += () => Lobby?.SetData("level", MapMap(Tools.Scene));
+        Events.OnLoaded += () => Lobby?.SetData("level", MapMap(Scene));
         // if the player exits to the main menu, then this is equivalent to leaving the lobby
         Events.OnMainMenuLoaded += () => LeaveLobby(false);
     }
@@ -101,7 +103,7 @@ public class LobbyController
             Lobby?.SetPrivate();
             Lobby?.SetData("jaket", "true");
             Lobby?.SetData("name", $"{SteamClient.Name}'s Lobby");
-            Lobby?.SetData("level", MapMap(Tools.Scene));
+            Lobby?.SetData("level", MapMap(Scene));
             Lobby?.SetData("pvp", "True");
             Lobby?.SetData("cheats", "False");
             Lobby?.SetData("mods", "False");
@@ -125,7 +127,7 @@ public class LobbyController
         }
 
         // load the main menu if the client has left the lobby
-        if (!IsOwner && loadMainMenu) Tools.Load("Main Menu");
+        if (!IsOwner && loadMainMenu) LoadScn("Main Menu");
 
         Networking.Clear();
         Events.OnLobbyAction.Fire();

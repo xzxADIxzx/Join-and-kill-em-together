@@ -7,14 +7,14 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
 
-using Object = UnityEngine.Object;
-
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net;
 using Jaket.Net.Types;
 using Jaket.UI;
 using Jaket.UI.Dialogs;
+
+using static Tools;
 
 /// <summary> Class that works with the assets of the mod. </summary>
 public class ModAssets
@@ -64,7 +64,7 @@ public class ModAssets
         var bundle = AssetBundle.LoadFromFile(Path.Combine(Plugin.Instance.Location, "jaket-assets.bundle"));
         GameAssets.Squeaky(); // preload the sound; otherwise, it crashes .-.
 
-        void Load<T>(string name, Action<T> cons) where T : Object
+        void Load<T>(string name, Action<T> cons) where T : UnityEngine.Object
         {
             var task = bundle.LoadAssetAsync<T>(name);
             task.completed += _ => cons(task.asset as T);
@@ -140,20 +140,20 @@ public class ModAssets
         // dolls & plushies
         Load<GameObject>("Player Doll.prefab", p =>
         {
-            Tools.DontDest(Doll = p);
+            DontDest(Doll = p);
             FixMaterials(p);
         });
 
         Load<GameObject>("Player Doll Preview.prefab", p =>
         {
-            Tools.DontDest(Preview = p);
+            DontDest(Preview = p);
             FixMaterials(p);
         });
 
         Load<Texture>("V2-plushie", t =>
         {
             int i = EntityType.V2 - EntityType.ItemOffset;
-            Tools.DontDest(V2 = Items.Prefabs[i] = Tools.Inst(Items.Prefabs[i]));
+            DontDest(V2 = Items.Prefabs[i] = Inst(Items.Prefabs[i]));
 
             V2.name = "DevPlushie (V2)";
             V2.GetComponentInChildren<Renderer>().material.mainTexture = t;
@@ -163,7 +163,7 @@ public class ModAssets
         Load<Texture>("V3-plushie", t =>
         {
             int i = EntityType.V3 - EntityType.ItemOffset;
-            Tools.DontDest(V3 = Items.Prefabs[i] = Tools.Inst(Items.Prefabs[i]));
+            DontDest(V3 = Items.Prefabs[i] = Inst(Items.Prefabs[i]));
 
             V3.name = "DevPlushie (V3)";
             V3.GetComponentInChildren<Renderer>().material.mainTexture = t;
@@ -172,7 +172,7 @@ public class ModAssets
 
         Load<GameObject>("DevPlushie (xzxADIxzx).prefab", p =>
         {
-            Tools.DontDest(xzxADIxzx = Items.Prefabs[EntityType.xzxADIxzx - EntityType.ItemOffset] = p);
+            DontDest(xzxADIxzx = Items.Prefabs[EntityType.xzxADIxzx - EntityType.ItemOffset] = p);
             FixMaterials(p, new(1.3f, 1.3f, 1.3f));
 
             UIB.Component<ItemIdentifier>(p, itemId =>
@@ -189,7 +189,7 @@ public class ModAssets
 
         Load<GameObject>("DevPlushie (Sowler).prefab", p =>
         {
-            Tools.DontDest(Sowler = Items.Prefabs[EntityType.Sowler - EntityType.ItemOffset] = p);
+            DontDest(Sowler = Items.Prefabs[EntityType.Sowler - EntityType.ItemOffset] = p);
             FixMaterials(p);
 
             UIB.Component<ItemIdentifier>(p, itemId =>

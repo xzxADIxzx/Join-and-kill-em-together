@@ -6,6 +6,8 @@ using UnityEngine.AI;
 using Jaket.Content;
 using Jaket.IO;
 
+using static Tools;
+
 /// <summary> Representation of a spider body??? Who da hell gave this thing such name?! </summary>
 public class Body : Enemy
 {
@@ -23,7 +25,7 @@ public class Body : Enemy
     private void Start()
     {
         SpawnEffect();
-        Boss(Tools.Scene == "Level 0-1", 25f);
+        Boss(Scene == "Level 0-1", 25f);
 
         transform.parent.position = transform.position + Vector3.down * 10f; // teleport the spawn effect
         Events.Post2(() =>
@@ -45,7 +47,7 @@ public class Body : Enemy
         if (lastCharging != charging && (lastCharging = charging)) EnemyId.spider.Invoke("ChargeBeam", 0f);
     });
 
-    private void Cooldown(float time) => Tools.Set("beamProbability", EnemyId.spider, time);
+    private void Cooldown(float time) => Set("beamProbability", EnemyId.spider, time);
 
     #region entity
 

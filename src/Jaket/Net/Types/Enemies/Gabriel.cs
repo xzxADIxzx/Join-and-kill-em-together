@@ -5,6 +5,8 @@ using UnityEngine;
 using Jaket.Content;
 using Jaket.IO;
 
+using static Tools;
+
 /// <summary> Representation of both encounters with Gabriel. </summary>
 public class Gabriel : Enemy
 {
@@ -25,14 +27,14 @@ public class Gabriel : Enemy
     private void Start()
     {
         SpawnEffect();
-        Boss(Tools.Scene == "Level 3-2" || Tools.Scene == "Level 6-2", 100f, 2);
+        Boss(Scene == "Level 3-2" || Scene == "Level 6-2", 100f, 2);
 
         if (gabriel1) gabriel1.phaseChangeHealth = EnemyId.machine.health / 2f;
         if (gabriel2) gabriel2.phaseChangeHealth = EnemyId.machine.health / 2f;
 
-        if (gabriel2 && Tools.Scene == "Level 6-2")
+        if (gabriel2 && Scene == "Level 6-2")
         {
-            var root = Tools.ObjFind("GabrielOutroParent").transform.parent;
+            var root = ObjFind("GabrielOutroParent").transform.parent;
             GameObject Find(string name) => root.Find(name).gameObject;
 
             gabriel2.onFirstPhaseEnd.toActivateObjects = new[] { Find("HatredColors/Lighting (DarkerFade)"), Find("FogDisabler") };
@@ -51,20 +53,20 @@ public class Gabriel : Enemy
         {
             if (gabriel1) switch (lastAttack = attack)
                 {
-                    case 1: Tools.Invoke("AxeThrow", gabriel1); break;
-                    case 2: Tools.Invoke("SpearCombo", gabriel1); break;
-                    case 3: Tools.Invoke("StingerCombo", gabriel1); break;
-                    case 4: Tools.Invoke("ZweiDash", gabriel1); break;
-                    case 5: Tools.Invoke("ZweiCombo", gabriel1); break;
+                    case 1: Call("AxeThrow", gabriel1); break;
+                    case 2: Call("SpearCombo", gabriel1); break;
+                    case 3: Call("StingerCombo", gabriel1); break;
+                    case 4: Call("ZweiDash", gabriel1); break;
+                    case 5: Call("ZweiCombo", gabriel1); break;
                     default: Cooldown(4200f); break;
                 }
             if (gabriel2) switch (lastAttack = attack)
                 {
-                    case 1: Tools.Invoke("CombineSwords", gabriel2); break;
-                    case 2: Tools.Invoke("FastComboDash", gabriel2); break;
-                    case 3: Tools.Invoke("BasicCombo", gabriel2); break;
-                    case 4: Tools.Invoke("ThrowCombo", gabriel2); break;
-                    case 5: Tools.Invoke("FastCombo", gabriel2); break;
+                    case 1: Call("CombineSwords", gabriel2); break;
+                    case 2: Call("FastComboDash", gabriel2); break;
+                    case 3: Call("BasicCombo", gabriel2); break;
+                    case 4: Call("ThrowCombo", gabriel2); break;
+                    case 5: Call("FastCombo", gabriel2); break;
                     default: Cooldown(4200f); break;
                 }
         }
@@ -72,8 +74,8 @@ public class Gabriel : Enemy
 
     private void Cooldown(float time)
     {
-        if (gabriel1) Tools.Set("attackCooldown", gabriel1, time);
-        if (gabriel2) Tools.Set("attackCooldown", gabriel2, time);
+        if (gabriel1) Set("attackCooldown", gabriel1, time);
+        if (gabriel2) Set("attackCooldown", gabriel2, time);
     }
 
     #region entity
@@ -118,11 +120,11 @@ public class Gabriel : Enemy
     public override void OnDied()
     {
         base.OnDied();
-        bool l3 = Tools.Scene == "Level 3-2", l6 = Tools.Scene == "Level 6-2";
+        bool l3 = Scene == "Level 3-2", l6 = Scene == "Level 6-2";
 
         if (l3 || l6)
         {
-            var parent = Tools.ObjFind("GabrielOutroParent").transform;
+            var parent = ObjFind("GabrielOutroParent").transform;
             var outro = parent.Find("GabrielOutro").GetComponent<GabrielOutro>();
 
             outro.SetSource(transform);
@@ -133,12 +135,12 @@ public class Gabriel : Enemy
 
             if (l3)
             {
-                Tools.ObjFind("Music 3").SetActive(false);
-                Tools.ObjFind("Eyeball").GetComponent<AlwaysLookAtCamera>().ChangeOverrideTarget(parent.Find("gab_Intro4"));
+                ObjFind("Music 3").SetActive(false);
+                ObjFind("Eyeball").GetComponent<AlwaysLookAtCamera>().ChangeOverrideTarget(parent.Find("gab_Intro4"));
             }
             if (l6)
             {
-                Tools.ObjFind("BossMusic").SetActive(false);
+                ObjFind("BossMusic").SetActive(false);
 
                 outro.GetComponent<Animator>().speed = .666f; // w-what?
                 parent.parent.Find("EcstasyColors").gameObject.SetActive(false);

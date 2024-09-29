@@ -13,6 +13,8 @@ using Jaket.Net.Endpoints;
 using Jaket.Net.Types;
 using Jaket.UI.Dialogs;
 
+using static Tools;
+
 /// <summary> Class responsible for updating endpoints, transmitting packets and managing entities. </summary>
 public class Networking
 {
@@ -54,7 +56,7 @@ public class Networking
         Server.Load();
         Client.Load();
 
-        LocalPlayer = Tools.Create<LocalPlayer>("Local Player");
+        LocalPlayer = Create<LocalPlayer>("Local Player");
 
         Events.EveryTick += NetworkUpdate;
         Events.EveryDozen += Optimize;
@@ -126,7 +128,7 @@ public class Networking
             }
 
             else if (message.StartsWith("#/k") && uint.TryParse(message.Substring(3), out uint id))
-                Bundle.Msg("player.banned", Tools.Name(id));
+                Bundle.Msg("player.banned", Name(id));
 
             else if (message.StartsWith("#/s") && byte.TryParse(message.Substring(3), out byte team))
             {

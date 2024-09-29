@@ -10,6 +10,8 @@ using Jaket.Content;
 using Jaket.Net;
 using Jaket.UI.Elements;
 
+using static Tools;
+
 /// <summary> Class that manages voting for the skip of a cutscene or an option at 2-S. </summary>
 public class Votes
 {
@@ -31,14 +33,14 @@ public class Votes
     /// <summary> Initializes the vote system. </summary>
     public static void Init()
     {
-        if (Tools.Scene == "Level 2-S") Init2S();
-        Tools.ResFind<CutsceneSkip>(Tools.IsReal, cs => cs.gameObject.AddComponent<Voting>());
+        if (Scene == "Level 2-S") Init2S();
+        ResFind<CutsceneSkip>(IsReal, cs => cs.gameObject.AddComponent<Voting>());
     }
 
     /// <summary> Votes for the given option. </summary>
     public static void Vote(byte option = 0) => Networking.Send(PacketType.Vote, w =>
     {
-        w.Id(Tools.AccId);
+        w.Id(AccId);
         w.Byte(option);
     });
 
@@ -57,16 +59,16 @@ public class Votes
     /// <summary> Replaces Mirage with Virage, patches buttons and other minor stuff. </summary>
     public static void Init2S()
     {
-        var fallen = Tools.ObjFind("Canvas/PowerUpVignette/Panel/Aspect Ratio Mask/Fallen");
+        var fallen = ObjFind("Canvas/PowerUpVignette/Panel/Aspect Ratio Mask/Fallen");
         for (int i = 0; i < 4; i++)
             fallen.transform.GetChild(i).GetComponent<Image>().sprite = ModAssets.ChanFallen;
 
-        Tools.ResFind<SpritePoses>(sp => Tools.IsReal(sp) && sp.copyChangeTo.Length > 0, sp => sp.poses = ModAssets.ChanPoses);
+        ResFind<SpritePoses>(sp => IsReal(sp) && sp.copyChangeTo.Length > 0, sp => sp.poses = ModAssets.ChanPoses);
 
-        Tools.ObjFind("Canvas/PowerUpVignette/Panel/Intro/Text").AddComponent<Voting>();
-        Tools.ObjFind("Canvas/PowerUpVignette/Panel/Intro/Text (1)").AddComponent<Voting>();
+        ObjFind("Canvas/PowerUpVignette/Panel/Intro/Text").AddComponent<Voting>();
+        ObjFind("Canvas/PowerUpVignette/Panel/Intro/Text (1)").AddComponent<Voting>();
 
-        foreach (Transform act in Tools.ObjFind("Canvas/PowerUpVignette/Panel/Aspect Ratio Mask").transform)
+        foreach (Transform act in ObjFind("Canvas/PowerUpVignette/Panel/Aspect Ratio Mask").transform)
         {
             foreach (Transform dialog in act)
             {
@@ -78,7 +80,7 @@ public class Votes
             }
         }
 
-        var fix = Tools.ObjFind("Canvas/PowerUpVignette/Panel/Aspect Ratio Mask/Middle/Choices Box (1)").AddComponent<ObjectActivator>();
+        var fix = ObjFind("Canvas/PowerUpVignette/Panel/Aspect Ratio Mask/Middle/Choices Box (1)").AddComponent<ObjectActivator>();
         fix.reactivateOnEnable = true;
 
         fix.events = new() { onActivate = new() };

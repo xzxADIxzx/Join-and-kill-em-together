@@ -9,6 +9,8 @@ using Jaket.Net;
 using Jaket.UI.Dialogs;
 using Jaket.UI.Elements;
 
+using static Tools;
+
 /// <summary> Saves sprays of players and loads sprays of the local player. </summary>
 public class SprayManager
 {
@@ -35,7 +37,7 @@ public class SprayManager
         LoadSprayFiles();
         SpraySettings.Load();
 
-        Tools.ResFind<AudioClip>(clip => clip.name == "Explosion Harmless", clip => puh = clip);
+        ResFind<AudioClip>(clip => clip.name == "Explosion Harmless", clip => puh = clip);
 
         // clear the cache in offline game & upload the current spray if it was changed
         Events.OnLoaded += () =>
@@ -50,7 +52,7 @@ public class SprayManager
         {
             Uploaded = LobbyController.IsOwner;
             Cache.Clear();
-            Cache.Add(Tools.AccId, CurrentSpray);
+            Cache.Add(AccId, CurrentSpray);
         };
         Events.EverySecond += SprayDistributor.ProcessRequests;
     }
@@ -75,8 +77,8 @@ public class SprayManager
         CurrentSpray = spray;
         Uploaded = false;
 
-        Cache.Remove(Tools.AccId);
-        Cache.Add(Tools.AccId, CurrentSpray);
+        Cache.Remove(AccId);
+        Cache.Add(AccId, CurrentSpray);
     }
 
     /// <summary> Spawns someone's spray in the given position. </summary>
@@ -89,7 +91,7 @@ public class SprayManager
         }
         if (!Cache.ContainsKey(owner))
         {
-            if (owner == Tools.AccId) // seems like the player is in offline game
+            if (owner == AccId) // seems like the player is in offline game
                 Cache.Add(owner, CurrentSpray);
             else
                 SprayDistributor.Request(owner);
@@ -109,6 +111,6 @@ public class SprayManager
             Bundle.Hud("sprays.empty"); // You haven't chosen a spray. Please, choose on in settings.
             return null;
         }
-        return Spawn(Tools.AccId, position, direction);
+        return Spawn(AccId, position, direction);
     }
 }

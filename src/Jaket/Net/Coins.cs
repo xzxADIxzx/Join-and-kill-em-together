@@ -6,6 +6,8 @@ using UnityEngine;
 using Jaket.Content;
 using Jaket.Net.Types;
 
+using static Tools;
+
 /// <summary> List of all living coins and methods for finding targets. </summary>
 public class Coins
 {
@@ -53,11 +55,11 @@ public class Coins
 
             ObjectTracker.Instance.cannonballList.ForEach(b =>
             {
-                if (Tools.Within(b.transform, coin.transform, 100f)) Check(b.transform);
+                if (Within(b.transform, coin.transform, 100f)) Check(b.transform);
             });
             ObjectTracker.Instance.grenadeList.ForEach(g =>
             {
-                if (Tools.Within(g.transform, coin.transform, 100f) && !g.playerRiding && !g.enemy) Check(g.transform);
+                if (Within(g.transform, coin.transform, 100f) && !g.playerRiding && !g.enemy) Check(g.transform);
             });
             if (target) return target;
         }

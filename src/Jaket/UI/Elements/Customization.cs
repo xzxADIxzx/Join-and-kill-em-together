@@ -10,6 +10,7 @@ using Jaket.Net;
 
 using static Pal;
 using static Rect;
+using static Tools;
 
 /// <summary> Customization element located to the right of each terminal. </summary>
 public class Customization : MonoBehaviour
@@ -72,10 +73,10 @@ public class Customization : MonoBehaviour
             for (int i = 1; i < buyMenu.childCount; i++) buyMenu.GetChild(i).transform.localPosition += Vector3.back * 15f;
 
             foreach (var button in canvas.GetComponentsInChildren<Button>())
-                Tools.Dest(button.gameObject.AddComponent<ShopButton>()); // hacky
+                Dest(button.gameObject.AddComponent<ShopButton>()); // hacky
         });
 
-        preview = Tools.Inst(ModAssets.Preview, preview).transform;
+        preview = Inst(ModAssets.Preview, preview).transform;
         preview.localPosition = new(0f, -80f, -40f);
         preview.localRotation = Quaternion.Euler(0f, 180f, 0f);
         preview.localScale = Vector3.one * 80f;
@@ -159,7 +160,7 @@ public class Customization : MonoBehaviour
 
         int offset = second ? Shop.FirstJacket : 0;
 
-        for (int i = 0; i < buttons.childCount; i++) Tools.Dest(buttons.GetChild(i).gameObject);
+        for (int i = 0; i < buttons.childCount; i++) Dest(buttons.GetChild(i).gameObject);
         for (int i = 0; i < Shop.Entries.Length / 2 + (second ? -1 : 1); i++)
         {
             var rect = Shp(20f + i % 6 * 40f, -20f - i / 6 * 40f);
@@ -171,7 +172,7 @@ public class Customization : MonoBehaviour
                 button.targetGraphic = icon;
                 button.onClick.AddListener(() => OnClick(offset + j));
             });
-            Tools.Dest(icon.gameObject.AddComponent<ShopButton>()); // hacky
+            Dest(icon.gameObject.AddComponent<ShopButton>()); // hacky
         }
 
         int l = second ? Shop.SelectedJacket - offset : Shop.SelectedHat;

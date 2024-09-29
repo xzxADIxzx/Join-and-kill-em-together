@@ -5,6 +5,8 @@ using UnityEngine;
 using Jaket.Net;
 using Jaket.UI.Dialogs;
 
+using static Tools;
+
 /// <summary> Access to the mod functions through the main menu. </summary>
 public class MainMenuAccess : CanvasSingleton<MainMenuAccess>
 {
@@ -27,7 +29,7 @@ public class MainMenuAccess : CanvasSingleton<MainMenuAccess>
     /// <summary> Toggles visibility of the access table. </summary>
     public void Toggle()
     {
-        gameObject.SetActive(Shown = Tools.Scene == "Main Menu");
-        if (Shown) (menu = Tools.ObjFind("Main Menu (1)")).transform.Find("Panel").transform.localPosition = new(0f, -292f, 0f);
+        gameObject.SetActive(Shown = Scene == "Main Menu");
+        if (Shown) (menu = ObjFind("Main Menu (1)")).transform.Find("Panel").transform.localPosition = new(0f, -292f, 0f);
     }
 }

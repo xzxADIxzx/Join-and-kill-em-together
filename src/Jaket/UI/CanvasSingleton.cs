@@ -3,6 +3,8 @@ namespace Jaket.UI;
 using System;
 using UnityEngine.UI;
 
+using static Tools;
+
 /// <summary> Singleton based on canvas. Used for interface construction. </summary>
 public class CanvasSingleton<T> : MonoSingleton<T> where T : CanvasSingleton<T>
 {
@@ -23,7 +25,7 @@ public class CanvasSingleton<T> : MonoSingleton<T> where T : CanvasSingleton<T>
         hideCond ??= _ => true;
         hide ??= () => Instance.gameObject.SetActive(Shown = false);
 
-        void Check() { if (hideCond(Tools.Scene)) hide(); }
+        void Check() { if (hideCond(Scene)) hide(); }
 
         Check();
         Events.OnLoaded += Check;

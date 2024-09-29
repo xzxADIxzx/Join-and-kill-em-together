@@ -7,6 +7,8 @@ using Jaket.Content;
 using Jaket.Net;
 using Jaket.Net.Types;
 
+using static Tools;
+
 [HarmonyPatch]
 public class CommonBulletsPatch
 {
@@ -62,7 +64,7 @@ public class CommonBulletsPatch
         // if the grenade is a rocket or local, then explode it, otherwise skip the explosion because it will be synced
         if (LobbyController.Offline || __instance.rocket || __instance.name != "Net") return true;
 
-        Tools.Dest(__instance.gameObject);
+        Dest(__instance.gameObject);
         return false;
     }
 

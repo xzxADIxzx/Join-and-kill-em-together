@@ -7,6 +7,7 @@ using Jaket.World;
 
 using static Pal;
 using static Rect;
+using static Tools;
 
 /// <summary> List of all players and teams. </summary>
 public class PlayerList : CanvasSingleton<PlayerList>
@@ -47,7 +48,7 @@ public class PlayerList : CanvasSingleton<PlayerList>
     public void Rebuild()
     {
         // destroy old player list
-        if (transform.childCount > 3) Tools.Dest(transform.GetChild(3).gameObject);
+        if (transform.childCount > 3) Dest(transform.GetChild(3).gameObject);
         if (LobbyController.Offline) return;
 
         float height = LobbyController.Lobby.Value.MemberCount * 48f + 48f;

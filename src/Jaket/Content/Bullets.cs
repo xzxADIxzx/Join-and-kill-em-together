@@ -8,6 +8,8 @@ using Jaket.IO;
 using Jaket.Net;
 using Jaket.Net.Types;
 
+using static Tools;
+
 /// <summary> List of all bullets in the game and some useful methods. </summary>
 public class Bullets
 {
@@ -56,7 +58,7 @@ public class Bullets
             else
             if (weapon.TryGetComponent<ShotgunHammer>(out var hammer))
             {
-                Add(Tools.Get("overPumpExplosion", hammer) as GameObject, "SH"); // thank you, developers
+                Add(Get("overPumpExplosion", hammer) as GameObject, "SH"); // thank you, developers
             }
             else
             if (weapon.TryGetComponent<Nailgun>(out var nailgun))
@@ -75,12 +77,12 @@ public class Bullets
             {
                 Add(launcher.rocket, $"RL PRI");
                 Add(launcher.cannonBall?.gameObject, $"RL ALT");
-                Add((Tools.Get("napalmProjectile", launcher) as Rigidbody)?.gameObject, $"RL EXT");
+                Add((Get("napalmProjectile", launcher) as Rigidbody)?.gameObject, $"RL EXT");
             }
         }
 
-        Fake = Tools.Create<DeadEntity>("Fake").gameObject;
-        NetDmg = Tools.Create("Network Damage");
+        Fake = Create<DeadEntity>("Fake").gameObject;
+        NetDmg = Create("Network Damage");
     }
 
     /// <summary> Finds the bullet type by object name. </summary>
@@ -166,7 +168,7 @@ public class Bullets
     /// <summary> Synchronizes the punch or parry animation. </summary>
     public static void SyncPunch() => Networking.Send(PacketType.Punch, w =>
     {
-        w.Id(Tools.AccId);
+        w.Id(AccId);
         w.Byte(0);
 
         w.Bool(Networking.LocalPlayer.Parried);
@@ -179,7 +181,7 @@ public class Bullets
         if (LobbyController.Offline || blast?.name != "Explosion Wave(Clone)") return;
         Networking.Send(PacketType.Punch, w =>
         {
-            w.Id(Tools.AccId);
+            w.Id(AccId);
             w.Byte(1);
 
             w.Vector(blast.transform.position);
@@ -193,7 +195,7 @@ public class Bullets
         if (LobbyController.Offline || shock?.name != "PhysicalShockwavePlayer(Clone)") return;
         Networking.Send(PacketType.Punch, w =>
         {
-            w.Id(Tools.AccId);
+            w.Id(AccId);
             w.Byte(2);
 
             w.Float(force);
@@ -204,7 +206,7 @@ public class Bullets
     public static void Punch(Harpoon harpoon, bool local)
     {
         // null pointer fix
-        Tools.Set("aud", harpoon, harpoon.GetComponent<AudioSource>());
+        Set("aud", harpoon, harpoon.GetComponent<AudioSource>());
 
         // this is necessary so that only the one who created or punched the harpoon deals the damage
         harpoon.sourceWeapon = local ? null : Fake;

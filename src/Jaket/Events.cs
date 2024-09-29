@@ -4,9 +4,10 @@ using Steamworks;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 using Jaket.Net;
+
+using static Tools;
 
 /// <summary> List of events used by the mod. Some of them are combined into one for simplicity. </summary>
 public class Events : MonoSingleton<Events>
@@ -33,12 +34,12 @@ public class Events : MonoSingleton<Events>
     public static void Load()
     {
         // initialize the singleton
-        Tools.Create<Events>("Events");
+        Create<Events>("Events");
 
-        SceneManager.sceneLoaded += (scene, mode) =>
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded += (scene, mode) =>
         {
             OnLoaded.Fire();
-            if (Tools.Scene == "Main Menu") OnMainMenuLoaded.Fire();
+            if (Scene == "Main Menu") OnMainMenuLoaded.Fire();
         };
 
         SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) => Post(OnTeamChanged.Fire);
@@ -51,8 +52,8 @@ public class Events : MonoSingleton<Events>
         OnLobbyAction += () =>
         {
             // update the discord & steam activity so everyone can know I've been working hard
-            DiscordController.Instance.FetchSceneActivity(Tools.Scene);
-            SteamController.Instance.FetchSceneActivity(Tools.Scene);
+            DiscordController.Instance.FetchSceneActivity(Scene);
+            SteamController.Instance.FetchSceneActivity(Scene);
 
             // enable the ability of the game to run in the background, because multiplayer requires it
             Application.runInBackground = LobbyController.Online;

@@ -38,7 +38,7 @@ public class Tools
     public static string Pending => SceneHelper.PendingScene;
 
     /// <summary> Loads the given scene. </summary>
-    public static void Load(string scene) => SceneHelper.LoadScene(scene);
+    public static void LoadScn(string scene) => SceneHelper.LoadScene(scene);
 
     /// <summary> Whether the given object is on a scene or is it just an asset. </summary>
     public static bool IsReal(GameObject obj) => obj.scene.name != null && obj.scene.name != "DontDestroyOnLoad";
@@ -98,9 +98,9 @@ public class Tools
     public static void Set<T>(string name, T t, object value) => Field<T>(name).SetValue(t, value);
 
     /// <summary> Calls a method with the given name. </summary>
-    public static void Invoke<T>(string name, T t, params object[] args) => AccessTools.Method(typeof(T), name).Invoke(t, args);
+    public static void Call<T>(string name, T t, params object[] args) => AccessTools.Method(typeof(T), name).Invoke(t, args);
     /// <summary> Calls a method with the given name and a single boolean argument. </summary>
-    public static void Invoke<T>(string name, T t, bool arg) => AccessTools.Method(typeof(T), name, new[] { typeof(bool) }).Invoke(t, new object[] { arg });
+    public static void Call<T>(string name, T t, bool arg) => AccessTools.Method(typeof(T), name, new[] { typeof(bool) }).Invoke(t, new object[] { arg });
 
     #endregion
     #region within

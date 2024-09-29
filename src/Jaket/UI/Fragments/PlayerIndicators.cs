@@ -11,6 +11,7 @@ using Jaket.Net;
 using Jaket.Net.Types;
 
 using static Rect;
+using static Tools;
 
 /// <summary> Indicators showing the location of teammates near the cursor. </summary>
 public class PlayerIndicators : CanvasSingleton<PlayerIndicators>
@@ -42,11 +43,11 @@ public class PlayerIndicators : CanvasSingleton<PlayerIndicators>
     /// <summary> Rebuilds player indicators to match a new state. </summary>
     public void Rebuild()
     {
-        indicators.ForEach(ind => Tools.Dest(ind.gameObject));
+        indicators.ForEach(ind => Dest(ind.gameObject));
         indicators.Clear();
         targets.Clear();
 
-        if (Tools.Scene == "Level 2-S" || Tools.Scene == "Intermission1" || Tools.Scene == "Intermission2") return;
+        if (Scene == "Level 2-S" || Scene == "Intermission1" || Scene == "Intermission2") return;
         Networking.Entities.Player(AddIndicator);
         Update();
     }

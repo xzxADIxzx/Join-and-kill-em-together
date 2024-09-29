@@ -9,6 +9,8 @@ using Jaket.Assets;
 using Jaket.Net;
 using Jaket.Net.Types;
 
+using static Tools;
+
 /// <summary> List of all items in the game and some useful methods. </summary>
 public class Items
 {
@@ -74,7 +76,7 @@ public class Items
         // prefabs of fishes do not contain anything except the model of the fish
         if (fsh)
         {
-            Tools.Inst(Prefabs[type - EntityType.ItemOffset], obj.transform).transform.localPosition = Vector3.zero;
+            Inst(Prefabs[type - EntityType.ItemOffset], obj.transform).transform.localPosition = Vector3.zero;
             obj.AddComponent<FishObjectReference>();
         }
 
@@ -87,7 +89,7 @@ public class Items
         if (LobbyController.Offline || itemId == null || itemId.gameObject == null) return;
 
         // the item is already synced, the item is a book or the item is a prefab
-        if (itemId.name == "Net" || itemId.name == "Local" || itemId.name.Contains("Book") || !Tools.IsReal(itemId) || itemId.infiniteSource) return;
+        if (itemId.name == "Net" || itemId.name == "Local" || itemId.name.Contains("Book") || !IsReal(itemId) || itemId.infiniteSource) return;
         // sometimes developers just deactivate skulls instead of removing them
         if (!itemId.gameObject.activeSelf || GameAssets.ItemExceptions.Contains(itemId.name)) return;
 
@@ -97,16 +99,16 @@ public class Items
         if (LobbyController.IsOwner || single)
             itemId.gameObject.AddComponent<Item>();
         else
-            Tools.DestImmediate(itemId.gameObject);
+            DestImmediate(itemId.gameObject);
     }
 
     /// <summary> Synchronizes all items in the level. </summary>
     public static void SyncAll()
     {
-        foreach (var item in Tools.ResFind<ItemIdentifier>()) Sync(item, false);
-        foreach (var zone in Tools.ResFind<ItemPlaceZone>())
+        foreach (var item in ResFind<ItemIdentifier>()) Sync(item, false);
+        foreach (var zone in ResFind<ItemPlaceZone>())
         {
-            if (!Tools.IsReal(zone)) continue;
+            if (!IsReal(zone)) continue;
 
             zone.transform.SetParent(null);
             zone.CheckItem();

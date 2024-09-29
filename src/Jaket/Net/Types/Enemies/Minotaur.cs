@@ -6,6 +6,8 @@ using Jaket.Content;
 using Jaket.IO;
 using Jaket.World;
 
+using static Tools;
+
 /// <summary> Representation of Minotaur. </summary>
 public class Minotaur : Enemy
 {
@@ -33,9 +35,9 @@ public class Minotaur : Enemy
         if (LastAttack != Attack)
             switch (LastAttack = Attack)
             {
-                case 0: Tools.Invoke("HammerSwing", minotaur); break;
-                case 1: Tools.Invoke("MeatThrow", minotaur); break;
-                case 2: Tools.Invoke("HandSwing", minotaur); break;
+                case 0: Call("HammerSwing", minotaur); break;
+                case 1: Call("MeatThrow", minotaur); break;
+                case 2: Call("HandSwing", minotaur); break;
             }
     });
 

@@ -8,6 +8,7 @@ using Jaket.Sprays;
 using Jaket.UI.Dialogs;
 
 using static Pal;
+using static Tools;
 
 /// <summary> Player-created spray containing an image, disappears in a few seconds after appearing. </summary>
 public class Spray : MonoBehaviour
@@ -26,7 +27,7 @@ public class Spray : MonoBehaviour
 
     /// <summary> Spawns a spray at the given position. </summary>
     public static Spray Spawn(uint owner, Vector3 position, Vector3 direction) =>
-        UIB.Component<Spray>(Tools.Create("Spray"), spray =>
+        UIB.Component<Spray>(Create("Spray"), spray =>
         {
             spray.owner = owner;
             spray.position = position;
@@ -38,7 +39,7 @@ public class Spray : MonoBehaviour
         UIB.WorldCanvas("Canvas", transform, Vector3.zero, build: canvas =>
         {
             image = UIB.Image("Image", canvas, new(0f, 0f, 256f, 256f), type: Image.Type.Filled);
-            pname = UIB.Text(Tools.Name(owner), canvas, new(72f, -112f, 4200f, 4200f), size: 320);
+            pname = UIB.Text(Name(owner), canvas, new(72f, -112f, 4200f, 4200f), size: 320);
 
             pname.transform.localEulerAngles = new(0f, 0f, 7f);
             pname.transform.localScale /= 10f;
@@ -70,7 +71,7 @@ public class Spray : MonoBehaviour
         if ((Lifetime += Time.deltaTime) > 60f)
         {
             SpawnDust(1, .3f);
-            Tools.Dest(gameObject);
+            Dest(gameObject);
             return;
         }
     }
@@ -86,7 +87,7 @@ public class Spray : MonoBehaviour
         var prefab = AssetHelper.LoadPrefab("Assets/Particles/ImpactParticle.prefab");
         for (var i = 0; i < amount; i++) // make it look more cloudy
         {
-            var particle = Tools.Inst(prefab, transform.position);
+            var particle = Inst(prefab, transform.position);
             particle.transform.localScale = Vector3.one * scale;
             particle.GetComponent<AudioSource>().Stop(); // don't play the sound, we need only the particles
         }

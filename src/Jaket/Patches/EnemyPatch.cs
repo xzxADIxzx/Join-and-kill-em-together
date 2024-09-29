@@ -6,6 +6,8 @@ using UnityEngine;
 using Jaket.Content;
 using Jaket.Net;
 
+using static Tools;
+
 [HarmonyPatch(typeof(EnemyIdentifier))]
 public class EnemyPatch
 {
@@ -37,21 +39,21 @@ public class LogicPatch
     [HarmonyPatch(typeof(SwordsMachine), "Start")]
     static void OutroSM(ref bool ___bossVersion)
     {
-        if (LobbyController.Online && (Tools.Scene == "Level 0-2" || Tools.Scene == "Level 0-3" || Tools.Scene == "Level 1-3")) ___bossVersion = true;
+        if (LobbyController.Online && (Scene == "Level 0-2" || Scene == "Level 0-3" || Scene == "Level 1-3")) ___bossVersion = true;
     }
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(V2), "Start")]
     static void IntroV2(V2 __instance)
     {
-        if (LobbyController.Online && Tools.Scene == "Level 1-4") __instance.intro = __instance.longIntro = true;
+        if (LobbyController.Online && Scene == "Level 1-4") __instance.intro = __instance.longIntro = true;
     }
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(V2), "Start")]
     static void OutroV2(ref bool ___bossVersion)
     {
-        if (LobbyController.Online && (Tools.Scene == "Level 1-4" || Tools.Scene == "Level 4-4")) ___bossVersion = true;
+        if (LobbyController.Online && (Scene == "Level 1-4" || Scene == "Level 4-4")) ___bossVersion = true;
     }
 
     [HarmonyPrefix]
@@ -76,14 +78,14 @@ public class LogicPatch
     [HarmonyPatch(typeof(Gabriel), "Start")]
     static void OutroG1(ref bool ___bossVersion)
     {
-        if (LobbyController.Online && Tools.Scene == "Level 3-2") ___bossVersion = true;
+        if (LobbyController.Online && Scene == "Level 3-2") ___bossVersion = true;
     }
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(GabrielSecond), "Start")]
     static void OutroG2(ref bool ___bossVersion)
     {
-        if (LobbyController.Online && Tools.Scene == "Level 6-2") ___bossVersion = true;
+        if (LobbyController.Online && Scene == "Level 6-2") ___bossVersion = true;
     }
 
     [HarmonyPrefix]

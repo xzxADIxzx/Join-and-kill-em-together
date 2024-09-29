@@ -4,6 +4,8 @@ using UnityEngine;
 
 using Jaket.IO;
 
+using static Tools;
+
 /// <summary> Common to all enemies in the game class. Performs a small number of functions. </summary>
 public class Enemy : OwnableEntity
 {
@@ -29,7 +31,7 @@ public class Enemy : OwnableEntity
         if (layers == 0) return;
 
         // override the name of the enemy
-        if (nameOverride != null) Tools.Set("overrideFullName", EnemyId, nameOverride);
+        if (nameOverride != null) Set("overrideFullName", EnemyId, nameOverride);
 
         // create a boss bar or update the already existing one
         if (!TryGetComponent(out BossHealthBar bar)) bar = gameObject.AddComponent<BossHealthBar>();
@@ -48,7 +50,7 @@ public class Enemy : OwnableEntity
 
         transform.position = new(x.Last = x.Target, y.Last = y.Target, z.Last = z.Target);
         if (EnemyId.spawnEffect)
-            Tools.Inst(EnemyId.spawnEffect, TryGetComponent(out Collider col) ? col.bounds.center : transform.position, transform.rotation);
+            Inst(EnemyId.spawnEffect, TryGetComponent(out Collider col) ? col.bounds.center : transform.position, transform.rotation);
     }
 
     #region entity

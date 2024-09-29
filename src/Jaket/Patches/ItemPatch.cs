@@ -8,6 +8,8 @@ using Jaket.Content;
 using Jaket.Net;
 using Jaket.Net.Types;
 
+using static Tools;
+
 [HarmonyPatch(typeof(ItemIdentifier))]
 public class ItemPatch
 {
@@ -35,7 +37,7 @@ public class BinPatch
     [HarmonyPatch("OnTriggerEnter")]
     static bool Death(ItemTrigger __instance, Collider other)
     {
-        if (Tools.Scene != "CreditsMuseum2" || __instance.targetType != ItemType.CustomKey1 || !other || !other.transform.parent) return true;
+        if (Scene != "CreditsMuseum2" || __instance.targetType != ItemType.CustomKey1 || !other || !other.transform.parent) return true;
 
         if (other.transform.parent.name == "adi") return PlushieAdi(__instance, other);
         if (other.transform.parent.name == "sowler") return PlushieSowler(other);
@@ -44,11 +46,11 @@ public class BinPatch
 
     static bool PlushieAdi(ItemTrigger trigger, Collider col)
     {
-        GameObject Copy(string path) => Tools.Inst(Tools.ObjFind("SORT ME").transform.Find(path).gameObject, Vector3.zero);
+        GameObject Copy(string path) => Inst(ObjFind("SORT ME").transform.Find(path).gameObject, Vector3.zero);
 
         var black = Copy("OBJECT Activator Gianni world enemies/time of day changer");
         var white = Copy("time of day reverser");
-        var music = Tools.ObjFind("Music/Music Player");
+        var music = ObjFind("Music/Music Player");
 
         var gif = trigger.onEvent.toActivateObjects[0];
         if (gif.TryGetComponent(out RandomPitch pitch) && gif.TryGetComponent(out ObjectActivator act))
@@ -98,8 +100,8 @@ public class BinPatch
             act.events = new() { onActivate = new() };
             act.events.onActivate.AddListener(() =>
             {
-                Tools.Dest(source);
-                Tools.Dest(act);
+                Dest(source);
+                Dest(act);
             });
         });
 

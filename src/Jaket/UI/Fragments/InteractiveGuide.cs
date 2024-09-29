@@ -9,6 +9,8 @@ using Jaket.Net;
 using Jaket.UI.Dialogs;
 using Jaket.World;
 
+using static Tools;
+
 /// <summary> Small interactive guide for new players. </summary>
 public class InteractiveGuide : CanvasSingleton<InteractiveGuide>
 {
@@ -67,7 +69,7 @@ public class InteractiveGuide : CanvasSingleton<InteractiveGuide>
     /// <summary> Offers the player to go through the guide or closes it if the main menu has been loaded. </summary>
     public void OfferAssistance()
     {
-        if (Tools.Scene == "Main Menu")
+        if (Scene == "Main Menu")
         {
             foreach (Transform child in transform) child.gameObject.SetActive(false);
             index = 0; Shown = false;

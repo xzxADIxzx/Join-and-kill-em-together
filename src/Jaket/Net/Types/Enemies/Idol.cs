@@ -3,6 +3,8 @@ namespace Jaket.Net.Types;
 using Jaket.Content;
 using Jaket.IO;
 
+using static Tools;
+
 /// <summary> Representation of an idol. </summary>
 public class Idol : Enemy
 {
@@ -29,10 +31,10 @@ public class Idol : Enemy
         transform.position = new(x.Target, y.Target, z.Target);
         if (lastTargetId != target.Id)
         {
-            if (Tools.Scene == "Level 5-2") fakeFerry = Tools.ObjFind("FerrymanIntro")?.GetComponent<EnemyIdentifier>();
+            if (Scene == "Level 5-2") fakeFerry = ObjFind("FerrymanIntro")?.GetComponent<EnemyIdentifier>();
 
             lastTargetId = target.Id;
-            EnemyId.idol.ChangeOverrideTarget(fakeFerry && Tools.Within(fakeFerry.transform, transform, 100f) ? fakeFerry : target.Value?.EnemyId);
+            EnemyId.idol.ChangeOverrideTarget(fakeFerry && Within(fakeFerry.transform, transform, 100f) ? fakeFerry : target.Value?.EnemyId);
         }
     });
 

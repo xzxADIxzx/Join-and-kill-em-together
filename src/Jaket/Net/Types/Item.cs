@@ -8,6 +8,8 @@ using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
 
+using static Tools;
+
 /// <summary> Representation of all items in the game, except glasses and books. </summary>
 public class Item : OwnableEntity
 {
@@ -121,8 +123,8 @@ public class Item : OwnableEntity
         base.Kill(r);
         DeadEntity.Replace(this);
 
-        Tools.Dest(gameObject);
-        if (Type == EntityType.BombFish && r != null) Tools.Inst(GameAssets.Harmless(), transform.position);
+        Dest(gameObject);
+        if (Type == EntityType.BombFish && r != null) Inst(GameAssets.Harmless(), transform.position);
     }
 
     #endregion

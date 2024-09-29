@@ -18,6 +18,8 @@ using Jaket.UI.Elements;
 using Jaket.UI.Fragments;
 using Jaket.IO;
 
+using static Tools;
+
 /// <summary> Class responsible for additions to control and local display of emotes. </summary>
 public class Movement : MonoSingleton<Movement>
 {
@@ -33,7 +35,7 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Array containing the length of all emotes in seconds. </summary>
     private readonly float[] emoteLength = { 2.458f, 4.708f, 1.833f, 2.875f, 0f, 9.083f, -1f, 11.022f, -1f, 3.292f, 0f, -1f };
     /// <summary> Whether the death must be fake on this level. </summary>
-    private static bool fakeDeath => nm.endlessMode || Tools.Scene == "Level 0-S";
+    private static bool fakeDeath => nm.endlessMode || Scene == "Level 0-S";
 
     /// <summary> Current emote preview, can be null. </summary>
     public GameObject EmotePreview;
@@ -67,7 +69,7 @@ public class Movement : MonoSingleton<Movement>
     public static void Load()
     {
         // initialize the singleton
-        Tools.Create<Movement>("Movement");
+        Create<Movement>("Movement");
 
         Events.OnLoaded += () =>
         {
@@ -75,7 +77,7 @@ public class Movement : MonoSingleton<Movement>
             Instance.StartEmote(0xFF, false);
 
             // disable hook and jump at 0-S
-            if (Tools.Scene == "Level 0-S")
+            if (Scene == "Level 0-S")
             {
                 nm.modNoJump = LobbyController.Online;
                 HookArm.Instance.gameObject.SetActive(LobbyController.Offline);
@@ -97,7 +99,7 @@ public class Movement : MonoSingleton<Movement>
 
     private void Update()
     {
-        if (Tools.Scene == "Main Menu") return;
+        if (Scene == "Main Menu") return;
 
         if (Input.GetKeyDown(Settings.ScrollUp)) Chat.Instance.ScrollMessages(true);
         if (Input.GetKeyDown(Settings.ScrollDown)) Chat.Instance.ScrollMessages(false);
@@ -137,7 +139,7 @@ public class Movement : MonoSingleton<Movement>
 
             if (LobbyController.Online) Networking.Send(p ? PacketType.Point : PacketType.Spray, w =>
             {
-                w.Id(Tools.AccId);
+                w.Id(AccId);
                 w.Vector(hit.point);
                 w.Vector(hit.normal);
             }, size: 32);
@@ -173,21 +175,21 @@ public class Movement : MonoSingleton<Movement>
                     // major assists make it possible to dash endlessly so we need to clamp boost charge
                     if (nm.boostCharge < 0f) nm.boostCharge = 0f;
 
-                    Tools.Inst(nm.dodgeParticle, nm.transform.position, nm.transform.rotation);
+                    Inst(nm.dodgeParticle, nm.transform.position, nm.transform.rotation);
                     AudioSource.PlayClipAtPoint(nm.dodgeSound, nm.transform.position);
                 }
-                else Tools.Inst(nm.staminaFailSound);
+                else Inst(nm.staminaFailSound);
             }
 
             if (SkateboardSpeed >= 70f && !SlowsDown)
             {
                 SlowsDown = true;
-                FallParticle = Tools.Inst(nm.fallParticle, nm.transform);
+                FallParticle = Inst(nm.fallParticle, nm.transform);
             }
             if (SkateboardSpeed <= 40f && SlowsDown)
             {
                 SlowsDown = false;
-                Tools.Dest(FallParticle);
+                Dest(FallParticle);
             }
 
             // move the skateboard forward
@@ -243,7 +245,7 @@ public class Movement : MonoSingleton<Movement>
         }
 
         // ultrasoap
-        if (Tools.Scene != "Main Menu" && !nm.dead)
+        if (Scene != "Main Menu" && !nm.dead)
             nm.rb.constraints = UI.AnyDialog
                 ? RigidbodyConstraints.FreezeAll
                 : Instance.Emote == 0xFF || Instance.Emote == 0x0B // skateboard
@@ -262,7 +264,7 @@ public class Movement : MonoSingleton<Movement>
             CheatsController.Instance.cheatsEnabled = false;
             cm.transform.GetChild(0).GetChild(0).gameObject.SetActive(false);
 
-            (Tools.Get("idToCheat", cm) as Dictionary<string, ICheat>).Values.Do(cm.DisableCheat);
+            (Get("idToCheat", cm) as Dictionary<string, ICheat>).Values.Do(cm.DisableCheat);
             Bundle.Hud("lobby.cheats");
         }
 
@@ -289,14 +291,14 @@ public class Movement : MonoSingleton<Movement>
         nm.youDiedText.text = Bundle.Format("spect", alive.ToString(), EndlessGrid.Instance ? "#spect.cg" : "#spect.0s");
 
         if (alive > 0) return;
-        if (Tools.Scene == "Level 0-S") StatsManager.Instance.Restart();
+        if (Scene == "Level 0-S") StatsManager.Instance.Restart();
         else
         {
             var final = nm.GetComponentInChildren<FinalCyberRank>();
             if (final.savedTime == 0f)
             {
                 final.GameOver();
-                Tools.Dest(nm.blackScreen.gameObject);
+                Dest(nm.blackScreen.gameObject);
             }
         }
     }
@@ -329,7 +331,7 @@ public class Movement : MonoSingleton<Movement>
             GameStateManager.Instance.PopState("pit-falling");
 
         // this annoying sound makes me cry
-        Tools.ObjFind("Hellmap")?.SetActive(false);
+        ObjFind("Hellmap")?.SetActive(false);
     }
 
     /// <summary> Repeats a part of the checkpoint logic, needed in order to avoid resetting rooms. </summary>
@@ -367,7 +369,7 @@ public class Movement : MonoSingleton<Movement>
     {
         bool dialog = UI.AnyDialog, blocking = UI.AnyMovementBlocking;
 
-        ToggleCursor(dialog || Tools.Scene == "Level 2-S");
+        ToggleCursor(dialog || Scene == "Level 2-S");
         ToggleHud(Instance.Emote == 0xFF);
 
         if (nm.dead) return;
@@ -413,8 +415,8 @@ public class Movement : MonoSingleton<Movement>
         Emote = id; // save id to sync it later
 
         if (updateState) UpdateState();
-        Tools.Dest(EmotePreview);
-        Tools.Dest(FallParticle);
+        Dest(EmotePreview);
+        Dest(FallParticle);
 
         // if id is -1, then the emote was not selected
         if (id == 0xFF) return;

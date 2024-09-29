@@ -4,7 +4,6 @@ using BepInEx;
 using HarmonyLib;
 using System.IO;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 using Jaket.Assets;
 using Jaket.Content;
@@ -13,13 +12,15 @@ using Jaket.Net;
 using Jaket.Sprays;
 using Jaket.World;
 
+using static Tools;
+
 /// <summary> Bootloader class needed to avoid destroying the mod by the game. </summary>
 [BepInPlugin("xzxADIxzx.Jaket", "Jaket", Version.CURRENT)]
 public class PluginLoader : BaseUnityPlugin
 {
-    private void Awake() => SceneManager.sceneLoaded += (_, _) =>
+    private void Awake() => UnityEngine.SceneManagement.SceneManager.sceneLoaded += (_, _) =>
     {
-        if (Plugin.Instance == null) Tools.Create<Plugin>("Jaket").Location = Path.GetDirectoryName(Info.Location);
+        if (Plugin.Instance == null) Create<Plugin>("Jaket").Location = Path.GetDirectoryName(Info.Location);
     };
 }
 
@@ -33,7 +34,7 @@ public class Plugin : MonoBehaviour
     /// <summary> Path to the dll file of the mod. </summary>
     public string Location;
 
-    private void Awake() => Tools.DontDest(Instance = this); // save the instance of the mod for later use and prevent it from being destroyed by the game
+    private void Awake() => DontDest(Instance = this); // save the instance of the mod for later use and prevent it from being destroyed by the game
 
     private void Start()
     {

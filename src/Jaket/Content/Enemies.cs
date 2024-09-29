@@ -9,6 +9,8 @@ using Jaket.IO;
 using Jaket.Net;
 using Jaket.Net.Types;
 
+using static Tools;
+
 /// <summary> List of all enemies in the game and some useful methods. </summary>
 public class Enemies
 {
@@ -89,31 +91,31 @@ public class Enemies
     public static bool Sync(EnemyIdentifier enemyId)
     {
         if (LobbyController.Offline || enemyId.dead) return true;
-        if (Tools.Scene == "Endless") enemyId.spawnEffect = null;
+        if (Scene == "Endless") enemyId.spawnEffect = null;
         if (enemyId.name == "Net") return true;
 
         // levels 2-4, 5-4, 7-1 and 7-4 contain unique bosses that needs to be dealt with separately
-        if (Tools.Scene == "Level 2-4" && enemyId.name == "MinosArm")
+        if (Scene == "Level 2-4" && enemyId.name == "MinosArm")
         {
             enemyId.gameObject.AddComponent<Hand>();
             return true;
         }
         // there is no need to sync the fake, since the coins are synced
-        if (Tools.Scene == "Level 5-2" && enemyId.name == "FerrymanIntro") return true;
-        if (Tools.Scene == "Level 5-4" && enemyId.name == "Leviathan")
+        if (Scene == "Level 5-2" && enemyId.name == "FerrymanIntro") return true;
+        if (Scene == "Level 5-4" && enemyId.name == "Leviathan")
         {
             enemyId.gameObject.AddComponent<Leviathan>();
             return true;
         }
-        if (Tools.Scene == "Level 7-1" && enemyId.name == "MinotaurChase")
+        if (Scene == "Level 7-1" && enemyId.name == "MinotaurChase")
         {
             enemyId.gameObject.AddComponent<Minotaur>();
             return true;
         }
         // the security system is a complex enemy consisting of several subenemies
-        if (Tools.Scene == "Level 7-4" && enemyId.GetComponentInParent<CombinedBossBar>() != null) return true;
-        if (Tools.Scene == "Level 7-4" && enemyId.name == "KillAllEnemiesChecker") return true; // what is that?!
-        if (Tools.Scene == "Level 7-4" && enemyId.name == "Brain")
+        if (Scene == "Level 7-4" && enemyId.GetComponentInParent<CombinedBossBar>() != null) return true;
+        if (Scene == "Level 7-4" && enemyId.name == "KillAllEnemiesChecker") return true; // what is that?!
+        if (Scene == "Level 7-4" && enemyId.name == "Brain")
         {
             enemyId.gameObject.AddComponent<Brain>();
             return true;
@@ -126,7 +128,7 @@ public class Enemies
         }
         else
         {
-            Tools.DestImmediate(enemyId.name != "Body" && enemyId.name != "StatueBoss" ? enemyId.gameObject : enemyId.transform.parent.gameObject);
+            DestImmediate(enemyId.name != "Body" && enemyId.name != "StatueBoss" ? enemyId.gameObject : enemyId.transform.parent.gameObject);
             return false;
         }
     }

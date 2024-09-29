@@ -7,6 +7,8 @@ using Jaket.Content;
 using Jaket.IO;
 using Jaket.UI.Elements;
 
+using static Tools;
+
 /// <summary>
 /// Remote player that exists both on the local machine and on the remote one.
 /// Responsible for the visual part of the player, i.e. model and animation, and for logic, i.e. health and teams.
@@ -57,7 +59,7 @@ public class RemotePlayer : Entity
             // recreate the weapon if the animation is over
             if (Doll.Emote == 0xFF) LastWeapon = 0xFF;
             // or destroy it if the animation has started
-            else foreach (Transform child in Doll.Hand) Tools.Dest(child.gameObject);
+            else foreach (Transform child in Doll.Hand) Dest(child.gameObject);
         };
         Header = new(Owner = Id, transform);
         tag = "Enemy";
@@ -80,7 +82,7 @@ public class RemotePlayer : Entity
         Header.Update(Health, Typing);
         if (Animator == null) // the player is dead
         {
-            if (Health != 0) Tools.Dest(gameObject); // the player has respawned, the doll needs to be recreated
+            if (Health != 0) Dest(gameObject); // the player has respawned, the doll needs to be recreated
             return;
         }
         else if (Health == 0) GoLimp();
@@ -98,7 +100,7 @@ public class RemotePlayer : Entity
         }
         if (LastWeapon != Weapon)
         {
-            foreach (Transform child in Doll.Hand) Tools.Dest(child.gameObject);
+            foreach (Transform child in Doll.Hand) Dest(child.gameObject);
             if ((LastWeapon = Weapon) != 0xFF)
             {
                 Weapons.Instantiate(Weapon, Doll.Hand);
@@ -122,9 +124,9 @@ public class RemotePlayer : Entity
     private void GoLimp()
     {
         EnemyId.machine.GoLimp();
-        Tools.Dest(Doll.WingLight);
-        Tools.Dest(Doll.SlideParticle?.gameObject);
-        Tools.Dest(Doll.FallParticle?.gameObject);
+        Dest(Doll.WingLight);
+        Dest(Doll.SlideParticle?.gameObject);
+        Dest(Doll.FallParticle?.gameObject);
     }
 
     #region special
@@ -132,7 +134,7 @@ public class RemotePlayer : Entity
     /// <summary> Plays the punching animation and creates a shockwave as needed. </summary>
     public void Punch(Reader r)
     {
-        var field = Tools.Field<Harpoon>("target");
+        var field = Field<Harpoon>("target");
         foreach (var harpoon in FindObjectsOfType<Harpoon>())
             if ((field.GetValue(harpoon) as EnemyIdentifierIdentifier)?.eid == EnemyId) Bullets.Punch(harpoon, false);
 
@@ -142,12 +144,12 @@ public class RemotePlayer : Entity
                 Animator.SetTrigger(r.Bool() ? "parry" : "punch");
                 break;
             case 1:
-                var blast = Tools.Inst(GameAssets.Blast(), r.Vector(), Quaternion.Euler(r.Vector()));
+                var blast = Inst(GameAssets.Blast(), r.Vector(), Quaternion.Euler(r.Vector()));
                 blast.name = "Net";
                 blast.GetComponentInChildren<Explosion>().sourceWeapon = Bullets.Fake;
                 break;
             case 2:
-                var shock = Tools.Inst(NewMovement.Instance.gc.shockwave, transform.position).GetComponent<PhysicalShockwave>();
+                var shock = Inst(NewMovement.Instance.gc.shockwave, transform.position).GetComponent<PhysicalShockwave>();
                 shock.name = "Net";
                 shock.force = r.Float();
                 break;
@@ -207,8 +209,8 @@ public class RemotePlayer : Entity
 
         Header.Hide();
         GoLimp();
-        Tools.Dest(Doll.Hand.gameObject); // destroy the weapon so that the railcannon's sound doesn't play forever
-        Tools.Dest(this);
+        Dest(Doll.Hand.gameObject); // destroy the weapon so that the railcannon's sound doesn't play forever
+        Dest(this);
 
         Events.OnTeamChanged.Fire();
     }

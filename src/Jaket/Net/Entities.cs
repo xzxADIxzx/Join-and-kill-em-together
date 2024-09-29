@@ -7,6 +7,8 @@ using Jaket.Assets;
 using Jaket.Content;
 using Jaket.World;
 
+using static Tools;
+
 /// <summary> Class that provides entities by their type. </summary>
 public class Entities
 {
@@ -53,7 +55,7 @@ public class Entities
     public static GameObject Mark(GameObject prefab)
     {
         // the instance is created on these coordinates so as not to collide with anything after the spawn
-        var instance = Tools.Inst(prefab, Vector3.zero);
+        var instance = Inst(prefab, Vector3.zero);
 
         instance.name = "Net";
         return instance;
@@ -74,7 +76,7 @@ public class Entities
     /// <summary> Returns the next available id, skips ids of all existing entities. </summary>
     public static uint NextId()
     {
-        if (LastId < Tools.AccId) LastId = Tools.AccId;
+        if (LastId < AccId) LastId = AccId;
 
         LastId++;
         while (Networking.Entities.Contains(LastId)) LastId += 8192;

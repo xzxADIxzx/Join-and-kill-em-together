@@ -9,6 +9,7 @@ using Jaket.Net.Types;
 using Jaket.UI.Elements;
 
 using static Rect;
+using static Tools;
 
 /// <summary> Teammates information displayed in the bottom right corner of the screen. </summary>
 public class PlayerInfo : CanvasSingleton<PlayerInfo>
@@ -43,7 +44,7 @@ public class PlayerInfo : CanvasSingleton<PlayerInfo>
     /// <summary> Rebuilds the information table to match a new state. </summary>
     public void Rebuild()
     {
-        if (root) Tools.Dest(root.gameObject); // for some reason the operator ? doesn't work here
+        if (root) Dest(root.gameObject); // for some reason the operator ? doesn't work here
         if (!Shown || !StyleHUD.Instance) return;
 
         List<RemotePlayer> teammates = new();

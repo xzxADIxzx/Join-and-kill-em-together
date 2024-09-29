@@ -14,6 +14,7 @@ using Jaket.Net;
 using Jaket.World;
 
 using static Rect;
+using static Tools;
 
 /// <summary> Object initializing voting and completing it after some time or if a sufficient number of votes was reached. </summary>
 public class Voting : MonoBehaviour
@@ -66,7 +67,7 @@ public class Voting : MonoBehaviour
                 cutscene.onSkip.onActivate.AddListener(() =>
                 {
                     Votes.Vote();
-                    Votes.UpdateVote(Tools.AccId, 0);
+                    Votes.UpdateVote(AccId, 0);
                 });
 
                 display = UIB.Text("", cs.transform, Msg(640f), size: 16);
@@ -80,7 +81,7 @@ public class Voting : MonoBehaviour
                 dialog.onComplete.AddListener(() =>
                 {
                     Votes.Vote();
-                    Votes.UpdateVote(Tools.AccId, 0);
+                    Votes.UpdateVote(AccId, 0);
                 });
 
                 display = UIB.Text("#votes.dialog-skip", dialog.transform, Msg(640f), size: 16);
@@ -97,7 +98,7 @@ public class Voting : MonoBehaviour
                     btn.onClick.AddListener(() =>
                     {
                         Votes.Vote(option);
-                        Votes.UpdateVote(Tools.AccId, option);
+                        Votes.UpdateVote(AccId, option);
                     });
                     options[option] = UIB.Text("", btn.transform, new(-20f, 0f, 128f, 128f, new(0f, .5f)), size: 16);
                     options[option].transform.eulerAngles = new(0f, 0f, 90f);
@@ -158,7 +159,7 @@ public class Voting : MonoBehaviour
         switch (type)
         {
             case VotingType.CutsceneSkip:
-                Tools.Dest(display);
+                Dest(display);
                 goto case VotingType.DialogSkip;
             case VotingType.DialogSkip:
                 onOver(0);

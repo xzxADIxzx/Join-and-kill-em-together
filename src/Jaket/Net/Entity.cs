@@ -6,6 +6,8 @@ using UnityEngine;
 using Jaket.Content;
 using Jaket.IO;
 
+using static Tools;
+
 /// <summary> Any entity that has updatable state synchronized across the network. </summary>
 public abstract class Entity : MonoBehaviour
 {
@@ -17,7 +19,7 @@ public abstract class Entity : MonoBehaviour
     /// <summary> Id of the entity owner. </summary>
     public uint Owner;
     /// <summary> Whether the local player owns the entity. </summary>
-    public bool IsOwner => Owner == Tools.AccId;
+    public bool IsOwner => Owner == AccId;
 
     /// <summary> Last update time via snapshots. </summary>
     public float LastUpdate;
@@ -49,13 +51,13 @@ public abstract class Entity : MonoBehaviour
             if (provided == EntityType.None)
             {
                 Log.Warning($"Couldn't find the entity type of the object {name}");
-                Tools.Dest(this);
+                Dest(this);
                 return;
             }
 
             Id = Entities.NextId();
             Type = provided;
-            Owner = Tools.AccId;
+            Owner = AccId;
 
             name = "Local";
             Networking.Entities[Id] = this;

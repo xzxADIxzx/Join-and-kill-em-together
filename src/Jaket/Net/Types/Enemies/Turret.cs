@@ -3,6 +3,8 @@ namespace Jaket.Net.Types;
 using Jaket.Content;
 using Jaket.IO;
 
+using static Tools;
+
 /// <summary> Representation of a turret. </summary>
 public class Turret : Enemy
 {
@@ -40,7 +42,7 @@ public class Turret : Enemy
         }
     });
 
-    private void Cooldown(float time) => Tools.Set("cooldown", turret, time);
+    private void Cooldown(float time) => Set("cooldown", turret, time);
 
     #region entity
 

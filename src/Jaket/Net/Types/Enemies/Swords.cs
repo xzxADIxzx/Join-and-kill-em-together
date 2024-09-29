@@ -5,6 +5,8 @@ using UnityEngine;
 using Jaket.Assets;
 using Jaket.Content;
 
+using static Tools;
+
 /// <summary> Representation of a swordsmachine. </summary>
 public class Swords : SimpleEnemy
 {
@@ -24,8 +26,8 @@ public class Swords : SimpleEnemy
 
     protected override void Start()
     {
-        bool prelude = Tools.Scene == "Level 0-2" || Tools.Scene == "Level 0-3";
-        bool castleVein = Tools.Scene == "Level 1-3";
+        bool prelude = Scene == "Level 0-2" || Scene == "Level 0-3";
+        bool castleVein = Scene == "Level 1-3";
 
         SpawnEffect();
         Boss(prelude || castleVein, prelude ? 125f : 50f, castleVein || firstPhase != null ? 1 : 2, prelude
@@ -40,9 +42,9 @@ public class Swords : SimpleEnemy
 
         if (prelude)
         {
-            swords.shotgunPickUp = Tools.Inst(GameAssets.Shotgun());
+            swords.shotgunPickUp = Inst(GameAssets.Shotgun());
             swords.shotgunPickUp.SetActive(false);
-            Tools.Dest(swords.shotgunPickUp.GetComponent<KeepInBounds>());
+            Dest(swords.shotgunPickUp.GetComponent<KeepInBounds>());
         }
 
         if (castleVein)
@@ -51,10 +53,10 @@ public class Swords : SimpleEnemy
             GameAssets.SwordsMaterial(agonyOrTundra ? "SwordsMachineAgonySword" : "SwordsMachineTundraSword", transform.GetChild(0).GetChild(1).GetComponent<Renderer>());
         }
 
-        if (Tools.Scene == "Level 0-3" && transform.position.y < 0f)
+        if (Scene == "Level 0-3" && transform.position.y < 0f)
         {
             firstPhase = this; // save the object so that when you meet the enemy again, the swordsmachine has only one hand
-            swords.secondPhasePosTarget = Tools.ObjFind("EnemyTracker").transform; // no matter what to put here, this is only necessary to start animation
+            swords.secondPhasePosTarget = ObjFind("EnemyTracker").transform; // no matter what to put here, this is only necessary to start animation
         }
     }
 }

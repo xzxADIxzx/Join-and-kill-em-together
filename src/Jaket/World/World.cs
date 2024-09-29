@@ -13,6 +13,8 @@ using Jaket.Net.Types;
 
 using Version = Version;
 
+using static Tools;
+
 /// <summary> Class that manages objects in the level, such as hook points, skull cases, triggers and etc. </summary>
 public class World
 {
@@ -42,7 +44,7 @@ public class World
     {
         Events.OnLoadingStarted += () =>
         {
-            if (LobbyController.Online && LobbyController.IsOwner && Tools.Pending != "Main Menu")
+            if (LobbyController.Online && LobbyController.IsOwner && Pending != "Main Menu")
             {
                 Activated.Clear();
                 Networking.Send(PacketType.Level, WriteData, size: 256);
@@ -61,7 +63,7 @@ public class World
     /// <summary> Writes data about the world such as level, difficulty and triggers fired. </summary>
     public static void WriteData(Writer w)
     {
-        w.String(Tools.Pending ?? Tools.Scene);
+        w.String(Pending ?? Scene);
 
         // the version is needed for a warning about incompatibility
         w.String(Version.CURRENT);
@@ -74,7 +76,7 @@ public class World
     /// <summary> Reads data about the world: loads the level, sets difficulty and fires triggers. </summary>
     public static void ReadData(Reader r)
     {
-        Tools.Load(r.String());
+        LoadScn(r.String());
 
         // if the mod version doesn't match the host's one, then reading the packet is complete, as this may lead to bigger bugs
         if (r.String() != Version.CURRENT)
@@ -116,10 +118,10 @@ public class World
         });
 
         // change the layer from PlayerOnly to Invisible so that other players will be able to launch the wave
-        foreach (var trigger in Tools.ResFind<ActivateArena>()) trigger.gameObject.layer = 16;
+        foreach (var trigger in ResFind<ActivateArena>()) trigger.gameObject.layer = 16;
 
         // raise the activation trigger so that players don't get stuck on the sides
-        var act = Tools.ObjFind<PlayerActivator>();
+        var act = ObjFind<PlayerActivator>();
         if (act) act.transform.position += Vector3.up * 6f;
 
         #region trams
@@ -127,7 +129,7 @@ public class World
         void Find<T>(List<T> list) where T : Component
         {
             list.Clear();
-            Tools.ResFind<T>(Tools.IsReal, list.Add);
+            ResFind<T>(IsReal, list.Add);
 
             // sort the objects by the distance so that their order will be the same for all clients
             list.Sort((t1, t2) => t1.transform.position.sqrMagnitude.CompareTo(t2.transform.position.sqrMagnitude));
@@ -140,7 +142,7 @@ public class World
         void Sync(HookPoint point, bool hooked)
         {
             var index = (byte)HookPoints.IndexOf(point);
-            if (index != 255 && point != LastSyncedPoint && Tools.Within(point.transform, HookArm.Instance.hook.position, 9f)) SyncAction(index, hooked);
+            if (index != 255 && point != LastSyncedPoint && Within(point.transform, HookArm.Instance.hook.position, 9f)) SyncAction(index, hooked);
         }
 
         Find(HookPoints);
@@ -159,14 +161,14 @@ public class World
         // there is no need to optimize the world if remote entities are not present
         if (LobbyController.Offline) return;
 
-        bool cg = Tools.Scene == "Endless";
-        bool FarEnough(Transform t) => !Tools.Within(t, NewMovement.Instance.transform, 100f) || cg;
+        bool cg = Scene == "Endless";
+        bool FarEnough(Transform t) => !Within(t, NewMovement.Instance.transform, 100f) || cg;
 
         // clear gore zones located further than 100 units from the player
-        Tools.ResFind<GoreZone>(zone => Tools.IsReal(zone) && zone.isActiveAndEnabled && FarEnough(zone.transform), zone => zone.ResetGibs());
+        ResFind<GoreZone>(zone => IsReal(zone) && zone.isActiveAndEnabled && FarEnough(zone.transform), zone => zone.ResetGibs());
 
         // big pieces of corpses, such as arms or legs, are part of the entities
-        DeadEntity.Corpses.DoIf(corpse => corpse && FarEnough(corpse.transform), Tools.Dest);
+        DeadEntity.Corpses.DoIf(corpse => corpse && FarEnough(corpse.transform), Dest);
         DeadEntity.Corpses.Clear();
     }
 
@@ -176,7 +178,7 @@ public class World
     /// <summary> Reads an action with the remote world and applies it to the local one. </summary>
     public static void ReadAction(Reader r)
     {
-        void Find<T>(Vector3 pos, Action<T> cons) where T : Component => Tools.ResFind(t => t.transform.position == pos, cons);
+        void Find<T>(Vector3 pos, Action<T> cons) where T : Component => ResFind(t => t.transform.position == pos, cons);
 
         switch (r.Byte())
         {
@@ -234,7 +236,7 @@ public class World
     /// <summary> Synchronizes activations of the given game object. </summary>
     public static void SyncAction(GameObject obj) => EachNet(na =>
     {
-        if (!Tools.Within(obj, na.Position) || obj.name != na.Name) return;
+        if (!Within(obj, na.Position) || obj.name != na.Name) return;
 
         byte index = (byte)Actions.IndexOf(na);
         if (!Activated.Contains(index))
@@ -261,7 +263,7 @@ public class World
     /// <summary> Synchronizes the tram speed. </summary>
     public static void SyncTram(TramControl tram)
     {
-        if (LobbyController.Offline || Tools.Scene == "Level 7-1") return;
+        if (LobbyController.Offline || Scene == "Level 7-1") return;
 
         var index = (byte)Trams.IndexOf(tram);
         if (index != 255) Networking.Send(PacketType.ActivateObject, w =>

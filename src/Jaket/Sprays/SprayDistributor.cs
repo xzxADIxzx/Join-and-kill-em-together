@@ -11,6 +11,8 @@ using Jaket.IO;
 using Jaket.Net;
 using Jaket.UI.Dialogs;
 
+using static Tools;
+
 /// <summary> Class responsible for distributing sprays between clients. </summary>
 public static class SprayDistributor
 {
@@ -84,7 +86,7 @@ public static class SprayDistributor
         if (SprayManager.Uploaded || SprayManager.CurrentSpray == null) return;
         Log.Info("Uploading the current spray...");
 
-        Upload(Tools.AccId, SprayManager.CurrentSpray.Data);
+        Upload(AccId, SprayManager.CurrentSpray.Data);
         SprayManager.Uploaded = true;
     }
 
