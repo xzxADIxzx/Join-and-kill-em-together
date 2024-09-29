@@ -13,8 +13,6 @@ using Jaket.Net.Endpoints;
 using Jaket.Net.Types;
 using Jaket.UI.Dialogs;
 
-using static Tools;
-
 /// <summary> Class responsible for updating endpoints, transmitting packets and managing entities. </summary>
 public class Networking
 {

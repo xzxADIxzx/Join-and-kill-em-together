@@ -8,8 +8,6 @@ using Jaket.Content;
 using Jaket.IO;
 using Jaket.UI;
 
-using static Tools;
-
 /// <summary>
 /// Doll of a player, remote from network or local from emote.
 /// Responsible for the visual part of the player, i.e. suits and animations.

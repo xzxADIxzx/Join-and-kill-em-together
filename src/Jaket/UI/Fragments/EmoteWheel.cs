@@ -8,7 +8,6 @@ using Jaket.Assets;
 using Jaket.World;
 
 using static Rect;
-using static Tools;
 
 /// <summary> Wheel for selecting emotes that will be displayed as an animation of the player doll. </summary>
 public class EmoteWheel : CanvasSingleton<EmoteWheel>

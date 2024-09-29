@@ -5,8 +5,6 @@ using UnityEngine;
 using Jaket.Net;
 using Jaket.UI.Dialogs;
 
-using static Tools;
-
 /// <summary> Access to the mod functions through the main menu. </summary>
 public class MainMenuAccess : CanvasSingleton<MainMenuAccess>
 {

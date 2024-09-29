@@ -9,8 +9,6 @@ using Jaket.IO;
 using Jaket.Net;
 using Jaket.Net.Types;
 
-using static Tools;
-
 /// <summary> List of all enemies in the game and some useful methods. </summary>
 public class Enemies
 {

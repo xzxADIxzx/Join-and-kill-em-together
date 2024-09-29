@@ -3,8 +3,6 @@ namespace Jaket.Content;
 using System.Collections.Generic;
 using UnityEngine;
 
-using static Tools;
-
 /// <summary> List of all weapons in the game and some useful methods. </summary>
 public class Weapons
 {

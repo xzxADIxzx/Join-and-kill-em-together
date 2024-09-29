@@ -5,8 +5,6 @@ using UnityEngine;
 using Jaket.Content;
 using Jaket.IO;
 
-using static Tools;
-
 /// <summary> Representation of both encounters with Gabriel. </summary>
 public class Gabriel : Enemy
 {

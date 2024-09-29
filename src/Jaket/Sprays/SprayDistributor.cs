@@ -11,8 +11,6 @@ using Jaket.IO;
 using Jaket.Net;
 using Jaket.UI.Dialogs;
 
-using static Tools;
-
 /// <summary> Class responsible for distributing sprays between clients. </summary>
 public static class SprayDistributor
 {

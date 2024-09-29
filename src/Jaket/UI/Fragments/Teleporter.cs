@@ -6,7 +6,6 @@ using UnityEngine.UI;
 using Jaket.World;
 
 using static Pal;
-using static Tools;
 
 /// <summary> In fact, it's just a flash needed to make the teleportation look better. </summary>
 public class Teleporter : CanvasSingleton<Teleporter>

@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 using static Pal;
 using static Rect;
-using static Tools;
 
 /// <summary> Header containing nickname and health. </summary>
 public class PlayerHeader

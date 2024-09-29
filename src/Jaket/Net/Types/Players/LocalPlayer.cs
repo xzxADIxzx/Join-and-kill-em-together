@@ -9,8 +9,6 @@ using Jaket.UI;
 using Jaket.UI.Dialogs;
 using Jaket.World;
 
-using static Tools;
-
 /// <summary>
 /// Local player that exists only on the local machine.
 /// When serialized will be recorded in the same way as a remote player.

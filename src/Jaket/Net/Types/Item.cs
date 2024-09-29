@@ -8,8 +8,6 @@ using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
 
-using static Tools;
-
 /// <summary> Representation of all items in the game, except glasses and books. </summary>
 public class Item : OwnableEntity
 {

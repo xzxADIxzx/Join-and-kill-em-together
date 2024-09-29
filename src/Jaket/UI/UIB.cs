@@ -15,7 +15,6 @@ using Jaket.Net;
 
 using static Pal;
 using static Rect;
-using static Tools;
 
 /// <summary> Class that builds the entire interface of the mod. </summary>
 public class UIB

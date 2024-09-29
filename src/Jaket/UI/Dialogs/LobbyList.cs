@@ -11,7 +11,6 @@ using Jaket.World;
 
 using static Pal;
 using static Rect;
-using static Tools;
 
 /// <summary> Browser for public lobbies that receives the list via Steam API and displays it in the scrollbar. </summary>
 public class LobbyList : CanvasSingleton<LobbyList>

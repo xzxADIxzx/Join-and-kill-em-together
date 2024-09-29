@@ -8,8 +8,6 @@ using Jaket.Content;
 using Jaket.Net;
 using Jaket.Net.Types;
 
-using static Tools;
-
 [HarmonyPatch(typeof(ItemIdentifier))]
 public class ItemPatch
 {

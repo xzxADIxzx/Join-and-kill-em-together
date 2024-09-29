@@ -5,8 +5,6 @@ using UnityEngine;
 using Jaket.Content;
 using Jaket.IO;
 
-using static Tools;
-
 /// <summary> Representation of a rocket or cannonball. </summary>
 public class Bullet : OwnableEntity
 {

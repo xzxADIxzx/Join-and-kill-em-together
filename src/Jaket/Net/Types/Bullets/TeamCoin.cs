@@ -7,7 +7,6 @@ using Jaket.Content;
 using Jaket.IO;
 
 using static Jaket.UI.Pal;
-using static Tools;
 
 /// <summary> Representation of a coin that has a team and the corresponding mechanics. </summary>
 public class TeamCoin : OwnableEntity

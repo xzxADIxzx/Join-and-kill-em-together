@@ -5,8 +5,6 @@ using UnityEngine;
 using Jaket.Assets;
 using Jaket.Content;
 
-using static Tools;
-
 /// <summary> Representation of a swordsmachine. </summary>
 public class Swords : SimpleEnemy
 {

@@ -7,8 +7,6 @@ using Jaket.Assets;
 using Jaket.Content;
 using Jaket.World;
 
-using static Tools;
-
 /// <summary> Class that provides entities by their type. </summary>
 public class Entities
 {

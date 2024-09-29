@@ -7,8 +7,6 @@ using UnityEngine;
 
 using Jaket.Net;
 
-using static Tools;
-
 /// <summary> List of events used by the mod. Some of them are combined into one for simplicity. </summary>
 public class Events : MonoSingleton<Events>
 {

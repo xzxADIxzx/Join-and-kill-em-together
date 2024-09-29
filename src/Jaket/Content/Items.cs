@@ -9,8 +9,6 @@ using Jaket.Assets;
 using Jaket.Net;
 using Jaket.Net.Types;
 
-using static Tools;
-
 /// <summary> List of all items in the game and some useful methods. </summary>
 public class Items
 {

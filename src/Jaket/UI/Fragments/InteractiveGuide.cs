@@ -9,8 +9,6 @@ using Jaket.Net;
 using Jaket.UI.Dialogs;
 using Jaket.World;
 
-using static Tools;
-
 /// <summary> Small interactive guide for new players. </summary>
 public class InteractiveGuide : CanvasSingleton<InteractiveGuide>
 {

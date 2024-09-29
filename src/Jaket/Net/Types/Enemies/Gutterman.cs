@@ -2,8 +2,6 @@ namespace Jaket.Net.Types;
 
 using Jaket.Content;
 
-using static Tools;
-
 /// <summary> Representation of a gutterman. </summary>
 public class Gutterman : SimpleEnemy
 {

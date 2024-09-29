@@ -3,8 +3,6 @@ namespace Jaket.Net.Types;
 using Jaket.Content;
 using Jaket.IO;
 
-using static Tools;
-
 /// <summary> Representation of a hideous mass. </summary>
 public class Shrimp : Enemy
 {

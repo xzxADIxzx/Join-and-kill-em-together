@@ -7,8 +7,6 @@ using Jaket.Content;
 using Jaket.Net;
 using Jaket.Net.Types;
 
-using static Tools;
-
 [HarmonyPatch]
 public class CommonBulletsPatch
 {

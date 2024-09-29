@@ -10,7 +10,6 @@ using Jaket.Net;
 
 using static Pal;
 using static Rect;
-using static Tools;
 
 /// <summary> Customization element located to the right of each terminal. </summary>
 public class Customization : MonoBehaviour

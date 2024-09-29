@@ -7,8 +7,6 @@ using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
 
-using static Tools;
-
 /// <summary> Representation of an insurrectionist. </summary>
 public class Insurrectionist : Enemy
 {

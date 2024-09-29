@@ -9,7 +9,6 @@ using Jaket.Net.Types;
 using Jaket.UI.Elements;
 
 using static Rect;
-using static Tools;
 
 /// <summary> Teammates information displayed in the bottom right corner of the screen. </summary>
 public class PlayerInfo : CanvasSingleton<PlayerInfo>

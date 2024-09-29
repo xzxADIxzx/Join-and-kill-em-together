@@ -10,8 +10,6 @@ using Jaket.Content;
 using Jaket.Net;
 using Jaket.UI.Elements;
 
-using static Tools;
-
 /// <summary> Class that manages voting for the skip of a cutscene or an option at 2-S. </summary>
 public class Votes
 {

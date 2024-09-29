@@ -13,7 +13,6 @@ using Jaket.World;
 
 using static Pal;
 using static Rect;
-using static Tools;
 
 /// <summary> Global spray settings not related to the lobby. </summary>
 public class SpraySettings : CanvasSingleton<SpraySettings>

@@ -9,8 +9,6 @@ using Jaket.Net;
 using Jaket.UI.Dialogs;
 using Jaket.UI.Elements;
 
-using static Tools;
-
 /// <summary> Saves sprays of players and loads sprays of the local player. </summary>
 public class SprayManager
 {

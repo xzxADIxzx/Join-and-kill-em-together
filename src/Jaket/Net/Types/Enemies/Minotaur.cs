@@ -6,8 +6,6 @@ using Jaket.Content;
 using Jaket.IO;
 using Jaket.World;
 
-using static Tools;
-
 /// <summary> Representation of Minotaur. </summary>
 public class Minotaur : Enemy
 {

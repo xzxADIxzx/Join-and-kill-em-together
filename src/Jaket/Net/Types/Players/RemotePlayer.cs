@@ -7,8 +7,6 @@ using Jaket.Content;
 using Jaket.IO;
 using Jaket.UI.Elements;
 
-using static Tools;
-
 /// <summary>
 /// Remote player that exists both on the local machine and on the remote one.
 /// Responsible for the visual part of the player, i.e. model and animation, and for logic, i.e. health and teams.

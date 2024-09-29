@@ -6,8 +6,6 @@ using UnityEngine;
 using Jaket.Content;
 using Jaket.Net;
 
-using static Tools;
-
 [HarmonyPatch(typeof(EnemyIdentifier))]
 public class EnemyPatch
 {

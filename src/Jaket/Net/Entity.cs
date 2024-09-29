@@ -6,8 +6,6 @@ using UnityEngine;
 using Jaket.Content;
 using Jaket.IO;
 
-using static Tools;
-
 /// <summary> Any entity that has updatable state synchronized across the network. </summary>
 public abstract class Entity : MonoBehaviour
 {

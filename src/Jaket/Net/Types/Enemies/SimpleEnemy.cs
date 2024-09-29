@@ -3,8 +3,6 @@ namespace Jaket.Net.Types;
 using Jaket.Content;
 using Jaket.IO;
 
-using static Tools;
-
 /// <summary> Representation of most enemies. Synchronizes only the position of an enemy. </summary>
 public class SimpleEnemy : Enemy
 {

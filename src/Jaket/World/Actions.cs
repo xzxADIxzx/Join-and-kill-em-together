@@ -6,8 +6,6 @@ using UnityEngine;
 using Jaket.Assets;
 using Jaket.Net;
 
-using static Tools;
-
 /// <summary> Abstract action performed in the world. </summary>
 public class WorldAction
 {

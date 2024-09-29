@@ -18,8 +18,6 @@ using Jaket.UI.Elements;
 using Jaket.UI.Fragments;
 using Jaket.IO;
 
-using static Tools;
-
 /// <summary> Class responsible for additions to control and local display of emotes. </summary>
 public class Movement : MonoSingleton<Movement>
 {

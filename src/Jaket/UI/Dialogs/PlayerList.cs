@@ -7,7 +7,6 @@ using Jaket.World;
 
 using static Pal;
 using static Rect;
-using static Tools;
 
 /// <summary> List of all players and teams. </summary>
 public class PlayerList : CanvasSingleton<PlayerList>

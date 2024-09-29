@@ -8,8 +8,6 @@ using Jaket.Content;
 using Jaket.Net;
 using Jaket.UI.Dialogs;
 
-using static Tools;
-
 /// <summary> List of chat commands used by the mod. </summary>
 public class Commands
 {

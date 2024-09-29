@@ -2,8 +2,6 @@ namespace Jaket.Net.Types;
 
 using Jaket.Content;
 
-using static Tools;
-
 /// <summary> Representation of Something Wicked. </summary>
 public class Wicked : SimpleEnemy
 {

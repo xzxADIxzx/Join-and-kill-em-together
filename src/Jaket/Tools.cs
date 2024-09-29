@@ -1,3 +1,5 @@
+global using static Jaket.Tools;
+
 namespace Jaket;
 
 using HarmonyLib;

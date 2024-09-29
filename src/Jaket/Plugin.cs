@@ -12,8 +12,6 @@ using Jaket.Net;
 using Jaket.Sprays;
 using Jaket.World;
 
-using static Tools;
-
 /// <summary> Bootloader class needed to avoid destroying the mod by the game. </summary>
 [BepInPlugin("xzxADIxzx.Jaket", "Jaket", Version.CURRENT)]
 public class PluginLoader : BaseUnityPlugin

@@ -6,8 +6,6 @@ using UnityEngine.AI;
 using Jaket.Content;
 using Jaket.IO;
 
-using static Tools;
-
 /// <summary> Representation of a spider body??? Who da hell gave this thing such name?! </summary>
 public class Body : Enemy
 {

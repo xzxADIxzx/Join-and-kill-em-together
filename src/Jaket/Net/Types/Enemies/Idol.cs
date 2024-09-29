@@ -3,8 +3,6 @@ namespace Jaket.Net.Types;
 using Jaket.Content;
 using Jaket.IO;
 
-using static Tools;
-
 /// <summary> Representation of an idol. </summary>
 public class Idol : Enemy
 {

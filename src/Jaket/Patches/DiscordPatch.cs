@@ -7,8 +7,6 @@ using Jaket.Net;
 using Jaket.UI;
 using Jaket.UI.Elements;
 
-using static Tools;
-
 [HarmonyPatch]
 public class DiscordPatch
 {

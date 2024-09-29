@@ -7,7 +7,6 @@ using Jaket.Content;
 using Jaket.UI;
 
 using static Rect;
-using static Tools;
 
 /// <summary> Player-created pointer, disappears in a few seconds after appearing. </summary>
 public class Pointer : MonoBehaviour

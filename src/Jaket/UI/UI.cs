@@ -8,8 +8,6 @@ using Jaket.UI.Dialogs;
 using Jaket.UI.Fragments;
 using Jaket.World;
 
-using static Tools;
-
 /// <summary> Class that loads and manages the interface of the mod. </summary>
 public class UI
 {

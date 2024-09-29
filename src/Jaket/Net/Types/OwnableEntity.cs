@@ -6,8 +6,6 @@ using UnityEngine;
 using Jaket.IO;
 using Jaket.Content;
 
-using static Tools;
-
 /// <summary> Entity whose ownership can be transferred to another client at any time. </summary>
 public abstract class OwnableEntity : Entity
 {

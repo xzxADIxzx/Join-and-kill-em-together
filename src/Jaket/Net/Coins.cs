@@ -6,8 +6,6 @@ using UnityEngine;
 using Jaket.Content;
 using Jaket.Net.Types;
 
-using static Tools;
-
 /// <summary> List of all living coins and methods for finding targets. </summary>
 public class Coins
 {

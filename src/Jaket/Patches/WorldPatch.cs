@@ -10,8 +10,6 @@ using Jaket.Net;
 using Jaket.Net.Types;
 using Jaket.World;
 
-using static Tools;
-
 [HarmonyPatch(typeof(ActivateArena))]
 public class ArenaPatch
 {

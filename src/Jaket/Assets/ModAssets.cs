@@ -14,8 +14,6 @@ using Jaket.Net.Types;
 using Jaket.UI;
 using Jaket.UI.Dialogs;
 
-using static Tools;
-
 /// <summary> Class that works with the assets of the mod. </summary>
 public class ModAssets
 {

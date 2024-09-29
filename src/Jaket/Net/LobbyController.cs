@@ -9,8 +9,6 @@ using UnityEngine;
 using Jaket.Assets;
 using Jaket.IO;
 
-using static Tools;
-
 /// <summary> Lobby controller with several useful methods and properties. </summary>
 public class LobbyController
 {

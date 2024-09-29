@@ -11,7 +11,6 @@ using Jaket.Net;
 using Jaket.Net.Types;
 
 using static Rect;
-using static Tools;
 
 /// <summary> Indicators showing the location of teammates near the cursor. </summary>
 public class PlayerIndicators : CanvasSingleton<PlayerIndicators>

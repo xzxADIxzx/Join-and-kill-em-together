@@ -6,8 +6,6 @@ using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net;
 
-using static Tools;
-
 /// <summary> Class responsible for Cyber Grind synchronization. </summary>
 public class CyberGrind
 {

@@ -14,7 +14,6 @@ using Jaket.Net;
 using Jaket.World;
 
 using static Rect;
-using static Tools;
 
 /// <summary> Object initializing voting and completing it after some time or if a sufficient number of votes was reached. </summary>
 public class Voting : MonoBehaviour

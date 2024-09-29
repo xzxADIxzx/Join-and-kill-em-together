@@ -4,8 +4,6 @@ using UnityEngine;
 
 using Jaket.Content;
 
-using static Tools;
-
 /// <summary> Representation of both encounters with V2. </summary>
 public class V2 : SimpleEnemy
 {

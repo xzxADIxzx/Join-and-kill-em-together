@@ -15,7 +15,6 @@ using Jaket.World;
 
 using static Pal;
 using static Rect;
-using static Tools;
 
 /// <summary> Front end of the chat, back end implemented via Steamworks. </summary>
 public class Chat : CanvasSingleton<Chat>
