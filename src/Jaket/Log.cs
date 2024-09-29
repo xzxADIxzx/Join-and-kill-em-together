@@ -5,8 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-using Jaket.Net;
-
 /// <summary> Custom logger used only by the mod for convenience. </summary>
 public class Log
 {
@@ -16,7 +14,7 @@ public class Log
     public static string Time => DateTime.Now.ToString(TIME_FORMAT);
 
     /// <summary> Number of logs that will be stored in memory before being written. </summary>
-    public const int STORAGE_CAPACITY = 32;
+    public const int STORAGE_CAPACITY = 64;
     /// <summary> Logs waiting their turn to be written. </summary>
     public static List<string> ToWrite = new();
 
@@ -30,14 +28,6 @@ public class Log
     {
         Logger = new("Jaket");
         LogPath = Path.Combine(Plugin.Instance.Location, "logs", $"Log {Time.Replace(':', '.')}.txt");
-
-        Events.OnLobbyAction += () =>
-        {
-            var lobby = LobbyController.Offline ? "null" : $"{LobbyController.Lobby?.GetData("name")} ({LobbyController.Lobby.Value.Id})";
-            var owner = LobbyController.Lobby?.Owner.ToString() ?? "null";
-            Debug($"Lobby status updated: name is {lobby}, owner is {owner}");
-        };
-        Events.OnLobbyEntered += () => Debug("Entered the new lobby");
     }
 
     /// <summary> Formats and writes the msg to all output points. </summary>

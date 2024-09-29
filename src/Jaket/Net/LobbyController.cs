@@ -59,7 +59,7 @@ public class LobbyController
             if (IsMultikillLobby(lobby))
             {
                 LeaveLobby();
-                Bundle.Hud("lobby.mk");
+                Bundle.Hud2NS("lobby.mk");
             }
         };
         // and leave the lobby if the owner has left it
@@ -72,6 +72,11 @@ public class LobbyController
         Events.OnLoaded += () => Lobby?.SetData("level", MapMap(Scene));
         // if the player exits to the main menu, then this is equivalent to leaving the lobby
         Events.OnMainMenuLoaded += () => LeaveLobby(false);
+
+        // general info about the lobby
+        Events.OnLobbyAction += () => Log.Debug($"Lobby updated: name is {(Online ? Lobby?.GetData("name") : "null")}, owner is {Lobby?.Owner.ToString() ?? "null"}");
+        // entrance to a lobby
+        Events.OnLobbyEntered += () => Log.Debug("Entered a new lobby");
     }
 
     /// <summary> Is there a user with the given id among the members of the lobby. </summary>
@@ -118,6 +123,7 @@ public class LobbyController
         {
             Networking.Server.Close();
             Networking.Client.Close();
+            Networking.Clear();
             Pointers.Free();
 
             Lobby?.Leave();
@@ -127,7 +133,6 @@ public class LobbyController
         // load the main menu if the client has left the lobby
         if (!IsOwner && loadMainMenu) LoadScn("Main Menu");
 
-        Networking.Clear();
         Events.OnLobbyAction.Fire();
     }
 
@@ -150,7 +155,7 @@ public class LobbyController
                 IsOwner = false;
                 Lobby = lobby;
             }
-            else Log.Warning($"Couldn't join a lobby. Result is {task.Result}");
+            else Log.Warning($"Couldn't join the lobby. Result is {task.Result}");
         });
     }
 

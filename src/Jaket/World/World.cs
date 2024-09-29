@@ -139,7 +139,7 @@ public class World
         void Sync(HookPoint point, bool hooked)
         {
             var index = (byte)HookPoints.IndexOf(point);
-            if (index != 255 && point != LastSyncedPoint && Within(point.transform, HookArm.Instance.hook.position, 9f)) SyncAction(index, hooked);
+            if (index != 255 && point != LastSyncedPoint && Within(point.transform, HookArm.Instance.hook, 9f)) SyncAction(index, hooked);
         }
 
         Find(HookPoints);
