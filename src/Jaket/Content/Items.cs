@@ -1,6 +1,5 @@
 namespace Jaket.Content;
 
-using HarmonyLib;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -103,17 +102,17 @@ public class Items
     /// <summary> Synchronizes all items in the level. </summary>
     public static void SyncAll()
     {
-        foreach (var item in ResFind<ItemIdentifier>()) Sync(item, false);
-        foreach (var zone in ResFind<ItemPlaceZone>())
+        ResFind<ItemIdentifier>(item => Sync(item, false));
+        ResFind<ItemPlaceZone>(zone =>
         {
-            if (!IsReal(zone)) continue;
+            if (!IsReal(zone)) return;
 
             zone.transform.SetParent(null);
             zone.CheckItem();
 
-            zone.arenaStatuses.Do(s => s.currentStatus = 0);
-            zone.reverseArenaStatuses.Do(s => s.currentStatus = 0);
-        }
+            zone.arenaStatuses.Each(s => s.currentStatus = 0);
+            zone.reverseArenaStatuses.Each(s => s.currentStatus = 0);
+        });
     }
 }
 

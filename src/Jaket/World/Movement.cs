@@ -1,7 +1,6 @@
 namespace Jaket.World;
 
 using GameConsole;
-using HarmonyLib;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -262,7 +261,7 @@ public class Movement : MonoSingleton<Movement>
             CheatsController.Instance.cheatsEnabled = false;
             cm.transform.GetChild(0).GetChild(0).gameObject.SetActive(false);
 
-            (Get("idToCheat", cm) as Dictionary<string, ICheat>).Values.Do(cm.DisableCheat);
+            (Get("idToCheat", cm) as Dictionary<string, ICheat>).Values.Each(cm.DisableCheat);
             Bundle.Hud("lobby.cheats");
         }
 

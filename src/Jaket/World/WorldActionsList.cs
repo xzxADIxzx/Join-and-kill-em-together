@@ -1,6 +1,5 @@
 namespace Jaket.World;
 
-using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Content;
@@ -278,7 +277,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
 
         NetAction.Sync(l, "Activator", new(641.2f, 690f, 521.7f), obj => // boss
         {
-            obj.gameObject.scene.GetRootGameObjects().Do(o =>
+            obj.gameObject.scene.GetRootGameObjects().Each(o =>
             {
                 if (o.name == "Underwater") o.SetActive(false);
                 if (o.name == "Surface") o.SetActive(true);
@@ -414,7 +413,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         // library
         StaticAction.Find(l, "Enemies", new(88.5f, 5.75f, 701.25f), obj =>
         {
-            if (!LobbyController.IsOwner) obj.GetComponents<MonoBehaviour>().Do(Dest);
+            if (!LobbyController.IsOwner) obj.GetComponents<MonoBehaviour>().Each(Dest);
         });
         NetAction.Sync(l, "Arena Start", new(133.5f, 45.75f, 701.25f));
 
@@ -462,7 +461,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         // insides
         StaticAction.Find(l, "BrainFightTrigger", new(6.999941f, 841.5f, 610.7503f), obj => obj.GetComponent<ObjectActivator>()?.events.onActivate.AddListener(() =>
         {
-            obj.transform.parent.GetComponentsInChildren<DestroyOnCheckpointRestart>(true).Do(Dest);
+            obj.transform.parent.GetComponentsInChildren<DestroyOnCheckpointRestart>(true).Each(Dest);
             if (World.Brain) World.Brain.IsFightActive = true;
         }));
         NetAction.Sync(l, "EntryTrigger", new(0f, 458.5f, 649.75f), obj => Teleporter.Teleport(new(0f, 460f, 650f)));

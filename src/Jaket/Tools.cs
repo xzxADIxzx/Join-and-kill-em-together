@@ -17,7 +17,7 @@ using Jaket.Net;
 using Jaket.Net.Types;
 
 /// <summary> Set of different tools for simplifying life and systematization of code. </summary>
-public class Tools
+public static class Tools
 {
     #region steam
 
@@ -70,26 +70,29 @@ public class Tools
     #endregion
     #region resources
 
+    /// <summary> Returns all objects of the given type. </summary>
     public static T[] ResFind<T>() where T : Object => Resources.FindObjectsOfTypeAll<T>();
 
-    /// <summary> Iterates all objects of the type that predicate for the criterion. </summary>
+    /// <summary> Iterates all objects of the given type. </summary>
+    public static void ResFind<T>(Action<T> cons) where T : Object
+    {
+        foreach (var item in ResFind<T>()) cons(item);
+    }
+
+    /// <summary> Iterates all objects of the given type that are suitable for the given predicate. </summary>
     public static void ResFind<T>(Predicate<T> pred, Action<T> cons) where T : Object
     {
         foreach (var item in ResFind<T>()) if (pred(item)) cons(item);
     }
 
+    /// <summary> Finds object of the given type. </summary>
     public static T ObjFind<T>() where T : Object => Object.FindObjectOfType<T>();
+
+    /// <summary> Finds object with the given name. </summary>
     public static GameObject ObjFind(string name) => GameObject.Find(name);
 
-    /// <summary> Returns the event of pressing the button. </summary>
-    public static UnityEvent GetClick(GameObject btn)
-    {
-        var pointer = btn.GetComponents<MonoBehaviour>()[2]; // so much pain over the private class ControllerPointer
-        return AccessTools.Property(pointer.GetType(), "OnPressed").GetValue(pointer) as UnityEvent;
-    }
-
     #endregion
-    #region harmony
+    #region reflection
 
     /// <summary> Returns the information about a field with the given name. </summary>
     public static FieldInfo Field<T>(string name) => AccessTools.Field(typeof(T), name);
@@ -103,6 +106,28 @@ public class Tools
     public static void Call<T>(string name, T t, params object[] args) => AccessTools.Method(typeof(T), name).Invoke(t, args);
     /// <summary> Calls a method with the given name and a single boolean argument. </summary>
     public static void Call<T>(string name, T t, bool arg) => AccessTools.Method(typeof(T), name, new[] { typeof(bool) }).Invoke(t, new object[] { arg });
+
+    /// <summary> Returns the event of pressing the button. </summary>
+    public static UnityEvent GetClick(GameObject btn)
+    {
+        var pointer = btn.GetComponents<MonoBehaviour>()[2]; // so much pain over the private class ControllerPointer
+        return AccessTools.Property(pointer.GetType(), "OnPressed").GetValue(pointer) as UnityEvent;
+    }
+
+    #endregion
+    #region iteration
+
+    /// <summary> Iterates each object in the given enumerable. </summary>
+    public static void Each<T>(this System.Collections.Generic.IEnumerable<T> seq, Action<T> cons)
+    {
+        foreach (var item in seq) cons(item);
+    }
+
+    /// <summary> Iterates each object in the given enumerable that are suitable for the given predicate.. </summary>
+    public static void Each<T>(this System.Collections.Generic.IEnumerable<T> seq, Predicate<T> pred, Action<T> cons)
+    {
+        foreach (var item in seq) if (pred(item)) cons(item);
+    }
 
     #endregion
     #region within

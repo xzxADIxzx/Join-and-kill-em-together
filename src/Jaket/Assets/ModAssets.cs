@@ -1,6 +1,5 @@
 namespace Jaket.Assets;
 
-using HarmonyLib;
 using System;
 using System.IO;
 using TMPro;
@@ -241,10 +240,10 @@ public class ModAssets
     #region fixes
 
     /// <summary> Changes the colors of materials and their shaders to match the style of the game. </summary>
-    public static void FixMaterials(GameObject obj, Color? color = null) => obj.GetComponentsInChildren<Renderer>(true).Do(r =>
+    public static void FixMaterials(GameObject obj, Color? color = null) => obj.GetComponentsInChildren<Renderer>(true).Each(r =>
     {
         if (r is TrailRenderer) r.material = Additv;
-        else r.materials.Do(m =>
+        else r.materials.Each(m =>
         {
             m.color = color ?? Color.white;
             m.shader = Shader;

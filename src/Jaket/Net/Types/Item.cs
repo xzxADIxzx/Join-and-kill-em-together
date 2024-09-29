@@ -1,6 +1,5 @@
 namespace Jaket.Net.Types;
 
-using HarmonyLib;
 using System.Linq;
 using UnityEngine;
 
@@ -56,12 +55,12 @@ public class Item : OwnableEntity
         // remove from the altar
         if (!placed && ItemId.Placed())
         {
-            transform.GetComponentsInParent<ItemPlaceZone>().Do(zone => Events.Post(() => zone.CheckItem()));
+            transform.GetComponentsInParent<ItemPlaceZone>().Each(zone => Events.Post(() => zone.CheckItem()));
             transform.SetParent(null);
             ItemId.ipz = null;
         }
         // put on the altar
-        if (placed && !ItemId.Placed()) Physics.OverlapSphere(transform.position, .5f, 20971776, QueryTriggerInteraction.Collide).DoIf(
+        if (placed && !ItemId.Placed()) Physics.OverlapSphere(transform.position, .5f, 20971776, QueryTriggerInteraction.Collide).Each(
             col => col.gameObject.layer == 22,
             col =>
             {
@@ -69,7 +68,7 @@ public class Item : OwnableEntity
                 if (zones.Length > 0)
                 {
                     transform.SetParent(col.transform);
-                    zones.Do(zone => zone.CheckItem());
+                    zones.Each(zone => zone.CheckItem());
                 }
             });
     });

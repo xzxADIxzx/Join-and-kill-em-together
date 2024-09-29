@@ -1,6 +1,5 @@
 namespace Jaket.Net.Types;
 
-using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Assets;
@@ -36,7 +35,7 @@ public class Insurrectionist : Enemy
         Boss(Scene == "Level 4-2", 110f, 1);
         Boss(Scene == "Level 6-1", 100f, 1, (angryOrRude = !angryOrRude) ? "INSURRECTIONIST \"ANGRY\"" : "INSURRECTIONIST \"RUDE\"");
 
-        if (Scene == "Level 4-2") GetComponentsInChildren<SkinnedMeshRenderer>().Do(r => r.material.color = new(1f, .9f, .4f));
+        if (Scene == "Level 4-2") GetComponentsInChildren<SkinnedMeshRenderer>().Each(r => r.material.color = new(1f, .9f, .4f));
         if (Scene == "Level 6-1") GameAssets.SisyMaterial(angryOrRude ? "SisyphusRed" : "SisyphusBlue", GetComponentsInChildren<SkinnedMeshRenderer>());
 
         if (!IsOwner) Cooldown(4200f);

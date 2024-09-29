@@ -1,6 +1,5 @@
 namespace Jaket.World;
 
-using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -116,7 +115,7 @@ public class World
         });
 
         // change the layer from PlayerOnly to Invisible so that other players will be able to launch the wave
-        foreach (var trigger in ResFind<ActivateArena>()) trigger.gameObject.layer = 16;
+        ResFind<ActivateArena>(trigger => trigger.gameObject.layer = 16);
 
         // raise the activation trigger so that players don't get stuck on the sides
         var act = ObjFind<PlayerActivator>();
@@ -166,7 +165,7 @@ public class World
         ResFind<GoreZone>(zone => IsReal(zone) && zone.isActiveAndEnabled && FarEnough(zone.transform), zone => zone.ResetGibs());
 
         // big pieces of corpses, such as arms or legs, are part of the entities
-        DeadEntity.Corpses.DoIf(corpse => corpse && FarEnough(corpse.transform), Dest);
+        DeadEntity.Corpses.Each(corpse => corpse && FarEnough(corpse.transform), Dest);
         DeadEntity.Corpses.Clear();
     }
 
