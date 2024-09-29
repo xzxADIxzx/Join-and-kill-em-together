@@ -33,7 +33,7 @@ public static class SprayDistributor
         foreach (var owner in Requests.Keys)
         {
             if (SprayManager.Cache.TryGetValue(owner, out var spray))
-                Upload(owner, spray.Data, (data, size) => Requests[owner].ForEach(con => Tools.Send(con, data, size)));
+                Upload(owner, spray.Data, (data, size) => Requests[owner].ForEach(con => Networking.Send(con, data, size)));
             else
                 Log.Error($"Couldn't find the requested spray. Spray id is {owner}");
         }

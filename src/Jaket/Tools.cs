@@ -18,7 +18,7 @@ using Jaket.Net.Types;
 /// <summary> Set of different tools for simplifying life and systematization of code. </summary>
 public class Tools
 {
-    #region networking
+    #region steam
 
     /// <summary> Steam id of the local player. </summary>
     public static SteamId Id => SteamClient.SteamId;
@@ -29,19 +29,6 @@ public class Tools
     public static void CacheAccId() => AccId = Id.AccountId;
     /// <summary> Returns the name of the player with the given AccountId. </summary>
     public static string Name(uint id) => new Friend(id | 76561197960265728u).Name;
-
-    /// <summary> Shortcut needed in order to track statistics and errors. </summary>
-    public static void Send(Connection? con, IntPtr data, int size)
-    {
-        if (con == null)
-        {
-            Log.Warning("An attempt to send data to the connection equal to null.");
-            return;
-        }
-
-        con.Value.SendMessage(data, size);
-        Stats.Write += size;
-    }
 
     #endregion
     #region scene

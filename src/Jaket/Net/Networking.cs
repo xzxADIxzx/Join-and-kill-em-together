@@ -54,9 +54,8 @@ public class Networking
         Server.Load();
         Client.Load();
 
-        // create a local player to sync player data
         LocalPlayer = Tools.Create<LocalPlayer>("Local Player");
-        // update network logic every tick
+
         Events.EveryTick += NetworkUpdate;
         Events.EveryDozen += Optimize;
 
@@ -181,18 +180,12 @@ public class Networking
 
     #region tools
 
-    /// <summary> Iterates each server connection. </summary>
-    public static void EachConnection(Action<Connection> cons)
-    {
-        foreach (var con in Server.Manager?.Connected) cons(con);
-    }
-
     /// <summary> Returns the team of the given friend. </summary>
     public static Team GetTeam(Friend friend) => friend.IsMe
         ? LocalPlayer.Team
         : (Entities.TryGetValue(friend.Id.AccountId, out var entity) && entity && entity is RemotePlayer player ? player.Team : Team.Yellow);
 
-    /// <summary> Returns the hex color of the friend's team. </summary>
+    /// <summary> Returns the hex color of the team of the given friend. </summary>
     public static string GetTeamColor(Friend friend) => ColorUtility.ToHtmlStringRGBA(GetTeam(friend).Color());
 
     /// <summary> Finds a connection by id or returns null if there is no such connection. </summary>
@@ -203,18 +196,36 @@ public class Networking
         return null;
     }
 
-    /// <summary> Forwards the packet to all clients or the host. </summary>
-    public static void Redirect(IntPtr data, int size)
+    /// <summary> Iterates each server connection. </summary>
+    public static void EachConnection(Action<Connection> cons)
     {
-        if (LobbyController.IsOwner)
-            EachConnection(con => Tools.Send(con, data, size));
-        else
-            Tools.Send(Client.Manager.Connection, data, size);
+        foreach (var con in Server.Manager?.Connected) cons(con);
+    }
+
+    /// <summary> Sends the given amount of bytes from the pointer to the given connection. </summary>
+    public static void Send(Connection? con, IntPtr data, int size)
+    {
+        if (con == null)
+        {
+            Log.Warning("An attempt to send data to the connection equal to null.");
+            return;
+        }
+        con.Value.SendMessage(data, size);
+        Stats.Write += size;
     }
 
     /// <summary> Allocates memory, writes the packet there and sends it. </summary>
     public static void Send(PacketType packetType, Action<Writer> cons = null, Action<IntPtr, int> result = null, int size = 47) =>
         Writer.Write(w => { w.Enum(packetType); cons?.Invoke(w); }, result ?? Redirect, cons == null ? 1 : size + 1);
+
+    /// <summary> Forwards the packet to all clients or the host. </summary>
+    public static void Redirect(IntPtr data, int size)
+    {
+        if (LobbyController.IsOwner)
+            EachConnection(con => Send(con, data, size));
+        else
+            Send(Client.Manager.Connection, data, size);
+    }
 
     #endregion
 }

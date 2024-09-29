@@ -60,7 +60,7 @@ public class Administration
         Networking.Send(PacketType.Ban, null, (data, size) =>
         {
             var con = Networking.FindCon(id);
-            Tools.Send(con, data, size);
+            Networking.Send(con, data, size);
             con?.Flush();
             Events.Post2(() => con?.Close());
         });

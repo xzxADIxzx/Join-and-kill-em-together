@@ -36,7 +36,7 @@ public abstract class Endpoint
     /// <summary> Forwards data to clients. </summary>
     public void Redirect(Reader data, Connection ignore) => Networking.EachConnection(con =>
     {
-        if (con != ignore) Tools.Send(con, data.mem, data.Length);
+        if (con != ignore) Networking.Send(con, data.mem, data.Length);
     });
 
     /// <summary> Handles the packet and calls the corresponding listener. </summary>
