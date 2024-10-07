@@ -157,22 +157,25 @@ public static class Tools
     }
 
     #endregion
+    #region delegates
+
+    /// <summary> Performs an abstract action without any arguments or return value. </summary>
+    public delegate void Action();
+
+    /// <summary> Consumes one value. </summary>
+    public delegate void Cons<T>(T t);
+
+    /// <summary> Consumes two values. </summary>
+    public delegate void Cons<T, K>(T t, K k);
+
+    /// <summary> Predicate that consumes one value. </summary>
+    public delegate bool Pred<T>(T t);
+
+    /// <summary> Provider of one value. </summary>
+    public delegate T Prov<T>();
+
+    /// <summary> Function that consumes one value and returns another one. </summary>
+    public delegate K Func<T, K>(T t);
+
+    #endregion
 }
-
-/// <summary> Performs an abstract action without any arguments or return value. </summary>
-public delegate void Action();
-
-/// <summary> Consumes one value. </summary>
-public delegate void Cons<T>(T t);
-
-/// <summary> Consumes two values. </summary>
-public delegate void Cons<T, K>(T t, K k);
-
-/// <summary> Predicate that consumes one value. </summary>
-public delegate bool Pred<T>(T t);
-
-/// <summary> Provider of one value. </summary>
-public delegate T Prov<T>();
-
-/// <summary> Function that consumes one value and returns another one. </summary>
-public delegate K Func<T, K>(T t);
