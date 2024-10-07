@@ -1,6 +1,5 @@
 namespace Jaket.Commands;
 
-using System;
 using UnityEngine;
 
 using Jaket.Assets;

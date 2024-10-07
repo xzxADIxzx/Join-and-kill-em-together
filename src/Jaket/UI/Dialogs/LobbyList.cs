@@ -1,7 +1,6 @@
 namespace Jaket.UI.Dialogs;
 
 using Steamworks.Data;
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 

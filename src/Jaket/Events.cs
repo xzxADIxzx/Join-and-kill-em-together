@@ -1,7 +1,6 @@
 namespace Jaket;
 
 using Steamworks;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 

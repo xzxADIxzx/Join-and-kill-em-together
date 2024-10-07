@@ -39,7 +39,7 @@ public class Legacy
 
         int GetRuleByte(int mem62, int Y) => mem62 >= 37541 ? Constants.RulesSet2[mem62 - 37541 + Y] : Constants.RulesSet1[mem62 - 32000 + Y];
 
-        int mem56 = 255, mem57, mem58, mem59, mem60, mem61 = 255, mem62, mem64 = 0, mem65, mem66, mem36653;
+        int mem56 = 255, mem57, mem58, mem59, mem60, mem61 = 255, mem62, mem64 = 0, mem65, mem66;
 
         temp = new int[256];
         temp[0] = 32;
@@ -49,8 +49,8 @@ public class Legacy
         do
         {
             A = input[Y] & 127;
-            if (A >= 112) A = A & 95;
-            else if (A >= 96) A = A & 79;
+            if (A >= 112) A &= 95;
+            else if (A >= 96) A &= 79;
 
             temp[X] = A;
             Inc(ref X);
@@ -78,7 +78,7 @@ public class Legacy
                 Inc(ref X);
 
                 var copy = new int[X];
-                System.Array.Copy(input, copy, X);
+                Array.Copy(input, copy, X);
                 input = copy;
 
                 return true;
@@ -115,7 +115,6 @@ public class Legacy
     pos36654:
         input[X] = 155;
         A = mem61;
-        mem36653 = A;
         return true;
 
     pos36677:
@@ -149,7 +148,7 @@ public class Legacy
         {
             Inc(ref Y);
             A = GetRuleByte(mem62, Y);
-            A = A & 127;
+            A &= 127;
         } while (A != '=');
         mem64 = Y;
         X = mem61;
@@ -198,7 +197,7 @@ public class Legacy
 
     pos36895:
         UnknownCode1(mem59);
-        A = A & 128;
+        A &= 128;
         if (A != 0) goto pos36700;
         pos36905:
         mem59 = X;
@@ -206,13 +205,13 @@ public class Legacy
 
     pos36910:
         UnknownCode1(mem59);
-        A = A & 64;
+        A &= 64;
         if (A != 0) goto pos36905;
         goto pos36700;
 
     pos36920:
         UnknownCode1(mem59);
-        A = A & 8;
+        A &= 8;
         if (A == 0) goto pos36700;
         pos36930:
         mem59 = X;
@@ -220,7 +219,7 @@ public class Legacy
 
     pos36935:
         UnknownCode1(mem59);
-        A = A & 16;
+        A &= 16;
         if (A != 0) goto pos36930;
         A = temp[X];
         if (A != 72) goto pos36700;
@@ -231,7 +230,7 @@ public class Legacy
 
     pos36967:
         UnknownCode1(mem59);
-        A = A & 4;
+        A &= 4;
         if (A != 0) goto pos36930;
         A = temp[X];
         if (A != 72) goto pos36700;
@@ -242,7 +241,7 @@ public class Legacy
 
     pos37004:
         UnknownCode1(mem59);
-        A = A & 32;
+        A &= 32;
         if (A == 0) goto pos36700;
         pos37014:
         mem59 = X;
@@ -257,7 +256,7 @@ public class Legacy
 
     pos37040:
         UnknownCode1(mem59);
-        A = A & 32;
+        A &= 32;
         if (A == 0) goto pos36791;
         mem59 = X;
         goto pos37040;
@@ -341,7 +340,7 @@ public class Legacy
 
     pos37295:
         UnknownCode2(mem58);
-        A = A & 128;
+        A &= 128;
         if (A != 0) goto pos36700;
         pos37305:
         mem58 = X;
@@ -349,13 +348,13 @@ public class Legacy
 
     pos37310:
         UnknownCode2(mem58);
-        A = A & 64;
+        A &= 64;
         if (A != 0) goto pos37305;
         goto pos36700;
 
     pos37320:
         UnknownCode2(mem58);
-        A = A & 8;
+        A &= 8;
         if (A == 0) goto pos36700;
         pos37330:
         mem58 = X;
@@ -363,7 +362,7 @@ public class Legacy
 
     pos37335:
         UnknownCode2(mem58);
-        A = A & 16;
+        A &= 16;
         if (A != 0) goto pos37330;
         A = temp[X];
         if (A != 72) goto pos36700;
@@ -374,7 +373,7 @@ public class Legacy
 
     pos37367:
         UnknownCode2(mem58);
-        A = A & 4;
+        A &= 4;
         if (A != 0) goto pos37330;
         A = temp[X];
         if (A != 72) goto pos36700;
@@ -384,7 +383,7 @@ public class Legacy
 
     pos37404:
         UnknownCode2(mem58);
-        A = A & 32;
+        A &= 32;
         if (A == 0) goto pos36700;
         pos37414:
         mem58 = X;
@@ -399,7 +398,7 @@ public class Legacy
 
     pos37440:
         UnknownCode2(mem58);
-        A = A & 32;
+        A &= 32;
         if (A == 0) goto pos37184;
         mem58 = X;
         goto pos37440;
@@ -411,7 +410,7 @@ public class Legacy
     pos37461:
         A = GetRuleByte(mem62, Y);
         mem57 = A;
-        A = A & 127;
+        A &= 127;
         if (A != '=')
         {
             Inc(ref mem56);
@@ -480,7 +479,7 @@ public class Legacy
 
     pos48280:
         tempA = A;
-        A = A << 1;
+        A <<= 1;
         if ((tempA & 128) == 0)
         {
             X = mem53;
@@ -509,7 +508,7 @@ public class Legacy
             do
             {
                 tempA = A;
-                A = A << 1;
+                A <<= 1;
                 if ((tempA & 128) != 0)
                     Sam.Buffer.Write(3, 160);
                 else
@@ -700,7 +699,7 @@ public class Legacy
         {
             mem39 = A = sampledConsonantFlag[Y];
 
-            A = A & 248;
+            A &= 248;
             if (A != 0)
             {
                 RenderSample(ref mem66);
@@ -745,7 +744,7 @@ public class Legacy
             {
                 unknownBool = false;
                 mem44 = A = pitches[Y];
-                mem38 = A = A - (A >> 2);
+                mem38 = A -= (A >> 2);
                 phase1 = phase2 = phase3 = 0;
                 continue;
             }

@@ -1,5 +1,9 @@
 global using static Jaket.Tools;
 
+global using IntPtr = System.IntPtr;
+global using Array = System.Array;
+global using Exception = System.Exception;
+
 namespace Jaket;
 
 using HarmonyLib;

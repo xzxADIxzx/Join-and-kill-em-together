@@ -1,6 +1,5 @@
 namespace Jaket.IO;
 
-using System;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -87,7 +86,7 @@ public class Shop
     #endregion
 }
 
-[Serializable]
+[System.Serializable]
 public class ShopEntry
 {
     /// <summary> This id is assigned to a new entry once and never changes, so that purchases are not discarded after adding another entry. </summary>

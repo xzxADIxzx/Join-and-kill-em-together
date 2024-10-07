@@ -47,7 +47,7 @@ public class UIB
 
         // find all sprites
         var all = ResFind<Sprite>();
-        Sprite Find(string name) => System.Array.Find(all, s => s.name == name);
+        Sprite Find(string name) => Array.Find(all, s => s.name == name);
 
         Background = Find("UISprite");
         Shadows = Find("horizontalgradientslowfalloff");

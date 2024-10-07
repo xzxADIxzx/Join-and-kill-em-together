@@ -1,7 +1,6 @@
 namespace Jaket.Net.Endpoints;
 
 using Steamworks.Data;
-using System;
 
 using Jaket.Content;
 using Jaket.IO;

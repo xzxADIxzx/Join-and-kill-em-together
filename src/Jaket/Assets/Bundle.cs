@@ -1,11 +1,11 @@
 namespace Jaket.Assets;
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using UnityEngine;
 
 using Jaket.UI.Dialogs;
 
@@ -142,7 +142,7 @@ public class Bundle
                     bool isSize = int.TryParse(content, out var size);
 
                     types.Push(isSize);
-                    builder.Append(isSize ? "<size=" : "<color=").Append(isSize ? Math.Min(size, maxSize) : content).Append('>');
+                    builder.Append(isSize ? "<size=" : "<color=").Append(isSize ? Mathf.Min(size, maxSize) : content).Append('>');
                     pointer++;
                 }
             }

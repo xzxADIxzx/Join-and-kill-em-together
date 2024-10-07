@@ -1,7 +1,5 @@
 namespace Jaket.Net;
 
-using System;
-
 using Jaket.Net.Types;
 
 /// <summary> Simple hash map divided into four pools. Uses unsigned integers as keys and entities as values. </summary>
