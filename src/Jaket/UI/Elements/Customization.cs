@@ -1,6 +1,5 @@
 namespace Jaket.UI.Elements;
 
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 

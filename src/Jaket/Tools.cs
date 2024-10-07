@@ -4,7 +4,6 @@ namespace Jaket;
 
 using HarmonyLib;
 using Steamworks;
-using System;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.Events;
@@ -74,13 +73,13 @@ public static class Tools
     public static T[] ResFind<T>() where T : Object => Resources.FindObjectsOfTypeAll<T>();
 
     /// <summary> Iterates all objects of the given type. </summary>
-    public static void ResFind<T>(Action<T> cons) where T : Object
+    public static void ResFind<T>(Cons<T> cons) where T : Object
     {
         foreach (var item in ResFind<T>()) cons(item);
     }
 
     /// <summary> Iterates all objects of the given type that are suitable for the given predicate. </summary>
-    public static void ResFind<T>(Predicate<T> pred, Action<T> cons) where T : Object
+    public static void ResFind<T>(Pred<T> pred, Cons<T> cons) where T : Object
     {
         foreach (var item in ResFind<T>()) if (pred(item)) cons(item);
     }
@@ -118,13 +117,13 @@ public static class Tools
     #region iteration
 
     /// <summary> Iterates each object in the given enumerable. </summary>
-    public static void Each<T>(this System.Collections.Generic.IEnumerable<T> seq, Action<T> cons)
+    public static void Each<T>(this System.Collections.Generic.IEnumerable<T> seq, Cons<T> cons)
     {
         foreach (var item in seq) cons(item);
     }
 
     /// <summary> Iterates each object in the given enumerable that are suitable for the given predicate.. </summary>
-    public static void Each<T>(this System.Collections.Generic.IEnumerable<T> seq, Predicate<T> pred, Action<T> cons)
+    public static void Each<T>(this System.Collections.Generic.IEnumerable<T> seq, Pred<T> pred, Cons<T> cons)
     {
         foreach (var item in seq) if (pred(item)) cons(item);
     }
@@ -155,3 +154,21 @@ public static class Tools
 
     #endregion
 }
+
+/// <summary> Performs an abstract action without any arguments or return value. </summary>
+public delegate void Action();
+
+/// <summary> Consumes one value. </summary>
+public delegate void Cons<T>(T t);
+
+/// <summary> Consumes two values. </summary>
+public delegate void Cons<T, K>(T t, K k);
+
+/// <summary> Predicate that consumes one value. </summary>
+public delegate bool Pred<T>(T t);
+
+/// <summary> Provider of one value. </summary>
+public delegate T Prov<T>();
+
+/// <summary> Function that consumes one value and returns another one. </summary>
+public delegate K Func<T, K>(T t);

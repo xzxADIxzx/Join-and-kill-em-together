@@ -1,6 +1,5 @@
 namespace Jaket.Assets;
 
-using System;
 using System.IO;
 using TMPro;
 using UnityEngine;
@@ -61,7 +60,7 @@ public class ModAssets
         var bundle = AssetBundle.LoadFromFile(Path.Combine(Plugin.Instance.Location, "jaket-assets.bundle"));
         GameAssets.Squeaky(); // preload the sound; otherwise, it crashes .-.
 
-        void Load<T>(string name, Action<T> cons) where T : UnityEngine.Object
+        void Load<T>(string name, Cons<T> cons) where T : UnityEngine.Object
         {
             var task = bundle.LoadAssetAsync<T>(name);
             task.completed += _ => cons(task.asset as T);

@@ -57,7 +57,7 @@ public class Pools
     public void Clear() => Array.Clear(entries, 0, entries.Length);
 
     /// <summary> Iterates each entry in the hash map starting from the given value and with the given step. </summary>
-    public void Each(int start, int step, Action<Entry> cons)
+    public void Each(int start, int step, Cons<Entry> cons)
     {
         for (int i = start; i < entries.Length; i += step)
         {
@@ -71,55 +71,55 @@ public class Pools
     }
 
     /// <summary> Iterates each entry in the hash map. </summary>
-    public void Each(Action<Entry> cons) => Each(0, 1, cons);
+    public void Each(Cons<Entry> cons) => Each(0, 1, cons);
 
     /// <summary> Iterates each entity. </summary>
-    public void Entity(Action<Entity> cons) => Each(pair => cons(pair.Value));
+    public void Entity(Cons<Entity> cons) => Each(pair => cons(pair.Value));
 
     /// <summary> Iterates each entity that are suitable for the given predicate. </summary>
-    public void Entity(Predicate<Entity> pred, Action<Entity> cons) => Entity(entity =>
+    public void Entity(Pred<Entity> pred, Cons<Entity> cons) => Entity(entity =>
     {
         if (pred(entity)) cons(entity);
     });
 
     /// <summary> Iterates each alive entity. </summary>
-    public void Alive(Action<Entity> cons) => Each(pair =>
+    public void Alive(Cons<Entity> cons) => Each(pair =>
     {
         if (pair.Value && !pair.Value.Dead) cons(pair.Value);
     });
 
     /// <summary> Iterates each alive entity that are suitable for the given predicate. </summary>
-    public void Alive(Predicate<Entity> pred, Action<Entity> cons) => Alive(entity =>
+    public void Alive(Pred<Entity> pred, Cons<Entity> cons) => Alive(entity =>
     {
         if (pred(entity)) cons(entity);
     });
 
     /// <summary> Iterates each alive player. </summary>
-    public void Player(Action<RemotePlayer> cons) => Each(pair =>
+    public void Player(Cons<RemotePlayer> cons) => Each(pair =>
     {
         if (pair.Value && !pair.Value.Dead && pair.Value is RemotePlayer player) cons(player);
     });
 
     /// <summary> Iterates each alive player that are suitable for the given predicate. </summary>
-    public void Player(Predicate<RemotePlayer> pred, Action<RemotePlayer> cons) => Player(player =>
+    public void Player(Pred<RemotePlayer> pred, Cons<RemotePlayer> cons) => Player(player =>
     {
         if (pred(player)) cons(player);
     });
 
     /// <summary> Iterates each alive entity in the given pool. </summary>
-    public void Pool(int pool, Action<Entity> cons) => Each(pool, 4, pair =>
+    public void Pool(int pool, Cons<Entity> cons) => Each(pool, 4, pair =>
     {
         if (pair.Value && !pair.Value.Dead) cons(pair.Value);
     });
 
     /// <summary> Iterates each alive entity in the given pool that are suitable for the given predicate. </summary>
-    public void Pool(int pool, Predicate<Entity> pred, Action<Entity> cons) => Pool(pool, entity =>
+    public void Pool(int pool, Pred<Entity> pred, Cons<Entity> cons) => Pool(pool, entity =>
     {
         if (pred(entity)) cons(entity);
     });
 
     /// <summary> Counts the number of entries that are suitable for the given predicate. </summary>
-    public int Count(Predicate<Entry> pred)
+    public int Count(Pred<Entry> pred)
     {
         int amount = 0;
         Each(pair =>

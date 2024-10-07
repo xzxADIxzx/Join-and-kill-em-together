@@ -1,6 +1,5 @@
 namespace Jaket.Commands;
 
-using System;
 using System.Collections.Generic;
 
 /// <summary> Handler containing a list of registered commands. </summary>
@@ -31,11 +30,10 @@ public class CommandHandler
     }
 
     /// <summary> Registers a new command. </summary>
-    public void Register(string name, string args, string desc, Action<string[]> handler) =>
+    public void Register(string name, string args, string desc, Cons<string[]> handler) =>
         Commands.Add(new(name, args, desc, handler));
 
-
     /// <summary> Registers a new command with no arguments. </summary>
-    public void Register(string name, string desc, Action<string[]> handler) =>
+    public void Register(string name, string desc, Cons<string[]> handler) =>
         Commands.Add(new(name, null, desc, handler));
 }

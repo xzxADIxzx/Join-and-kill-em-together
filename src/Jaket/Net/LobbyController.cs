@@ -2,7 +2,6 @@ namespace Jaket.Net;
 
 using Steamworks;
 using Steamworks.Data;
-using System;
 using System.Linq;
 using UnityEngine;
 
@@ -39,7 +38,7 @@ public class LobbyController
     public static float PPP;
 
     /// <summary> Scales health to increase difficulty. </summary>
-    public static void ScaleHealth(ref float health) => health *= 1f + Math.Min(Lobby?.MemberCount - 1 ?? 1, 1) * PPP;
+    public static void ScaleHealth(ref float health) => health *= 1f + Mathf.Min(Lobby?.MemberCount - 1 ?? 1, 1) * PPP;
     /// <summary> Whether the given lobby is created via Multikill. </summary>
     public static bool IsMultikillLobby(Lobby lobby) => lobby.Data.Any(pair => pair.Key == "mk_lobby");
 
@@ -83,7 +82,7 @@ public class LobbyController
     public static bool Contains(uint id) => Lobby?.Members.Any(member => member.Id.AccountId == id) ?? false;
 
     /// <summary> Returns the member at the given index or null. </summary>
-    public static Friend? At(int index) => Lobby?.Members.ElementAt(Math.Min(Math.Max(index, 0), Lobby.Value.MemberCount));
+    public static Friend? At(int index) => Lobby?.Members.ElementAt(Mathf.Min(Mathf.Max(index, 0), Lobby.Value.MemberCount));
 
     /// <summary> Returns the index of the local player in the lits of members. </summary>
     public static int IndexOfLocal() => Lobby?.Members.ToList().FindIndex(member => member.IsMe) ?? 0;
@@ -180,7 +179,7 @@ public class LobbyController
     #region browser
 
     /// <summary> Asynchronously fetches a list of public lobbies. </summary>
-    public static void FetchLobbies(Action<Lobby[]> done)
+    public static void FetchLobbies(Cons<Lobby[]> done)
     {
         FetchingLobbies = true;
         SteamMatchmaking.LobbyList.RequestAsync().ContinueWith(task =>

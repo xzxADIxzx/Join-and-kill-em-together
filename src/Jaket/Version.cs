@@ -1,7 +1,6 @@
 namespace Jaket;
 
 using BepInEx.Bootstrap;
-using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -37,7 +36,7 @@ public class Version
     });
 
     /// <summary> Fetches a json file with all versions of the mod from GitHub. </summary>
-    public static void Fetch(Action<bool, string> result)
+    public static void Fetch(Cons<bool, string> result)
     {
         Log.Info("Checking for updates...");
         var request = UnityWebRequest.Get($"{GITHUB_API}/repos/{REPO}/releases");

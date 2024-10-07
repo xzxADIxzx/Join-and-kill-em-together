@@ -1,6 +1,5 @@
 namespace Jaket.IO;
 
-using System;
 using System.Diagnostics;
 
 /// <summary> Class that collects reading/writing data statistics for subsequent analysis and optimization of traffic. </summary>

@@ -1,7 +1,6 @@
 namespace Jaket.UI.Dialogs;
 
 using Steamworks;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -125,7 +124,7 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
         foreach (var member in LobbyController.Lobby?.Members) (Administration.BannedSprays.Contains(member.Id.AccountId) ? blacklist : whitelist).Add(member);
 
         float y = -20f;
-        void BuildList(string name, List<Friend> list, Color color, Action<Friend> clicked)
+        void BuildList(string name, List<Friend> list, Color color, Cons<Friend> clicked)
         {
             if (list.Count == 0) return;
             UIB.Text(name, players, Btn(y += 48f), align: TextAnchor.MiddleLeft);

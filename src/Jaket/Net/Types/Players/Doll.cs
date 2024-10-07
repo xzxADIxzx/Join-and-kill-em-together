@@ -1,6 +1,5 @@
 namespace Jaket.Net.Types;
 
-using System;
 using UnityEngine;
 
 using Jaket.Assets;

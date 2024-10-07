@@ -1,6 +1,5 @@
 namespace Jaket.World;
 
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -91,13 +90,13 @@ public class World
     #region iteration
 
     /// <summary> Iterates each static world action. </summary>
-    public static void EachStatic(Action<StaticAction> cons) => Actions.ForEach(action =>
+    public static void EachStatic(Cons<StaticAction> cons) => Actions.ForEach(action =>
     {
         if (action is StaticAction sa) cons(sa);
     });
 
     /// <summary> Iterates each net world action. </summary>
-    public static void EachNet(Action<NetAction> cons) => Actions.ForEach(action =>
+    public static void EachNet(Cons<NetAction> cons) => Actions.ForEach(action =>
     {
         if (action is NetAction sa) cons(sa);
     });
@@ -175,7 +174,7 @@ public class World
     /// <summary> Reads an action with the remote world and applies it to the local one. </summary>
     public static void ReadAction(Reader r)
     {
-        void Find<T>(Vector3 pos, Action<T> cons) where T : Component => ResFind(t => t.transform.position == pos, cons);
+        void Find<T>(Vector3 pos, Cons<T> cons) where T : Component => ResFind(t => t.transform.position == pos, cons);
 
         switch (r.Byte())
         {

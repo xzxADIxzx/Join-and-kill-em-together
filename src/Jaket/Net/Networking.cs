@@ -197,7 +197,7 @@ public class Networking
     }
 
     /// <summary> Iterates each server connection. </summary>
-    public static void EachConnection(Action<Connection> cons)
+    public static void EachConnection(Cons<Connection> cons)
     {
         foreach (var con in Server.Manager?.Connected) cons(con);
     }
@@ -215,7 +215,7 @@ public class Networking
     }
 
     /// <summary> Allocates memory, writes the packet there and sends it. </summary>
-    public static void Send(PacketType packetType, Action<Writer> cons = null, Action<IntPtr, int> result = null, int size = 47) =>
+    public static void Send(PacketType packetType, Cons<Writer> cons = null, Cons<IntPtr, int> result = null, int size = 47) =>
         Writer.Write(w => { w.Enum(packetType); cons?.Invoke(w); }, result ?? Redirect, cons == null ? 1 : size + 1);
 
     /// <summary> Forwards the packet to all clients or the host. </summary>

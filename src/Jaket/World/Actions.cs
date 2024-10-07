@@ -1,6 +1,5 @@
 namespace Jaket.World;
 
-using System;
 using UnityEngine;
 
 using Jaket.Assets;
@@ -40,7 +39,7 @@ public class StaticAction : WorldAction
     });
 
     /// <summary> Creates a static action that finds an object. </summary>
-    public static void Find(string level, string name, Vector3 position, Action<GameObject> action) => new StaticAction(level, () =>
+    public static void Find(string level, string name, Vector3 position, Cons<GameObject> action) => new StaticAction(level, () =>
     {
         ResFind(obj => IsReal(obj) && obj.transform.position == position && obj.name == name, action);
     });
@@ -63,7 +62,7 @@ public class NetAction : WorldAction
     public NetAction(string level, string name, Vector3 position, Action action) : base(level, action) { Name = name; Position = position; }
 
     /// <summary> Creates a net action that synchronizes an object activator component. </summary>
-    public static void Sync(string level, string name, Vector3 position, Action<Transform> action = null) => new NetAction(level, name, position, () =>
+    public static void Sync(string level, string name, Vector3 position, Cons<Transform> action = null) => new NetAction(level, name, position, () =>
         ResFind<ObjectActivator>(
             obj => IsReal(obj) && Within(obj.transform, position) && obj.name == name,
             obj =>
@@ -79,7 +78,7 @@ public class NetAction : WorldAction
     public static void SyncLimbo(string level, Vector3 position) => Sync(level, "GameObject", position, obj => obj.GetComponentInParent<LimboSwitch>().Pressed());
 
     /// <summary> Creates a net action that synchronizes clicks on a button. </summary>
-    public static void SyncButton(string level, string name, Vector3 position, Action<RectTransform> action = null)
+    public static void SyncButton(string level, string name, Vector3 position, Cons<RectTransform> action = null)
     {
         StaticAction.Find(level, name, position, obj => GetClick(obj).AddListener(() =>
         {

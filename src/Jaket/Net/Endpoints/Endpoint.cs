@@ -24,10 +24,10 @@ public abstract class Endpoint
     /// <summary> Adds a new listener to the endpoint. </summary>
     public void Listen(PacketType type, PacketListener listener) => listeners[(int)type] = listener;
     /// <summary> Adds a new listener to the endpoint, but without sender. </summary>
-    public void Listen(PacketType type, Action<Reader> listener) => listeners[(int)type] = (con, sender, r) => listener(r);
+    public void Listen(PacketType type, Cons<Reader> listener) => listeners[(int)type] = (con, sender, r) => listener(r);
 
     /// <summary> Adds a new listener to the endpoint that will forward data to clients. </summary>
-    public void ListenAndRedirect(PacketType type, Action<Reader> listener) => listeners[(int)type] = (con, sender, r) =>
+    public void ListenAndRedirect(PacketType type, Cons<Reader> listener) => listeners[(int)type] = (con, sender, r) =>
     {
         listener(r);
         Redirect(r, con);
