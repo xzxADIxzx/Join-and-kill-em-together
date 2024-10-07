@@ -24,7 +24,7 @@ public class Version
 
     /// <summary> List of mods compatible with Jaket. </summary>
     public static string[] Compatible = { "Jaket" };
-    /// <summary> Whether at least on incompatible mod is loaded. </summary>
+    /// <summary> Whether at least one incompatible mod is loaded. </summary>
     public static bool HasIncompatibility;
 
     #region version

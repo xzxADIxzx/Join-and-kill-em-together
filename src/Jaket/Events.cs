@@ -30,7 +30,6 @@ public class Events : MonoSingleton<Events>
     /// <summary> Subscribes to some events to fire some safe events. </summary>
     public static void Load()
     {
-        // initialize the singleton
         Create<Events>("Events");
 
         UnityEngine.SceneManagement.SceneManager.sceneLoaded += (scene, mode) =>

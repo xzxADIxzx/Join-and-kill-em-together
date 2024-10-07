@@ -36,14 +36,10 @@ public class Plugin : MonoBehaviour
 
     private void Start()
     {
-        // create output points for logs
         Log.Load();
-        // note the fact that the mod is loading
         Log.Info("Loading jaket...");
 
-        // adds an event listener to the scene loading
         Events.Load();
-        // interface components and assets bundle can only be loaded from the main menu
         Events.OnMainMenuLoaded += Init;
     }
 
@@ -63,9 +59,9 @@ public class Plugin : MonoBehaviour
 
         Commands.Commands.Load();
         Bundle.Load();
-        Enemies.Load();
         Weapons.Load();
         Bullets.Load();
+        Enemies.Load();
         Items.Load();
         ModAssets.Load();
 

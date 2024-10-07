@@ -15,7 +15,6 @@ public class CanvasSingleton<T> : MonoSingleton<T> where T : CanvasSingleton<T>
     /// <param name="dialog"> Dialogs lock the mouse and movement while fragments don't do this. </param>
     public static void Build(string name, bool woh, bool dialog, Pred<string> hideCond = null, Action hide = null)
     {
-        // initialize the singleton and create a canvas
         UIB.Canvas(name, UI.Root, woh: woh ? 0f : 1f).gameObject.AddComponent<T>();
         Instance.GetComponent<GraphicRaycaster>().enabled = Dialog = dialog;
 

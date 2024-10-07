@@ -1,9 +1,12 @@
 namespace Jaket;
 
-using plog;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using UnityEngine;
+
+using Logger = plog.Logger;
+using PL = plog.Models.Level;
 
 /// <summary> Custom logger used only by the mod for convenience. </summary>
 public class Log
@@ -23,7 +26,7 @@ public class Log
     /// <summary> Output point for long-term logging. </summary>
     public static string LogPath;
 
-    /// <summary> Creates output points for logs and subscribes to some events. </summary>
+    /// <summary> Creates output points for logs. </summary>
     public static void Load()
     {
         Logger = new("Jaket");
@@ -33,12 +36,7 @@ public class Log
     /// <summary> Formats and writes the msg to all output points. </summary>
     public static void LogLevel(Level level, string msg)
     {
-        Logger.Log(level == Level.Debug ? $"<color=#BBBBBB>{msg}</color>" : msg, level switch
-        {
-            Level.Debug or Level.Info => plog.Models.Level.Info,
-            Level.Warning => plog.Models.Level.Warning,
-            Level.Error or _ => plog.Models.Level.Error,
-        });
+        Logger.Log(level == Level.Debug ? $"<color=#BBBBBB>{msg}</color>" : msg, (PL)level);
 
         ToWrite.Add($"[{Time}] [{new[] { 'D', 'I', 'W', 'E' }[(int)level]}] {msg}");
         if (ToWrite.Count > STORAGE_CAPACITY) Flush();
@@ -49,7 +47,7 @@ public class Log
     {
         if (ToWrite.Count == 0) return;
 
-        Directory.CreateDirectory(Path.GetDirectoryName(LogPath)); // ensure that the folder is exists
+        Directory.CreateDirectory(Path.GetDirectoryName(LogPath));
         File.AppendAllLines(LogPath, ToWrite);
 
         ToWrite.Clear();
@@ -63,11 +61,14 @@ public class Log
 
     public static void Error(string msg) => LogLevel(Level.Error, msg);
 
-    public static void Error(Exception ex) => LogLevel(Level.Error, $"{ex}\nOuter:\n{UnityEngine.StackTraceUtility.ExtractStackTrace()}");
+    public static void Error(Exception ex) => LogLevel(Level.Error, $"{ex}\nOuter:\n{StackTraceUtility.ExtractStackTrace()}");
 
     /// <summary> Log importance levels. </summary>
     public enum Level
     {
-        Debug, Info, Warning, Error
+        Debug   = PL.Info,
+        Info    = PL.Info,
+        Warning = PL.Warning,
+        Error   = PL.Error
     }
 }

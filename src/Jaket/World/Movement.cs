@@ -65,7 +65,6 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Creates a singleton of movement. </summary>
     public static void Load()
     {
-        // initialize the singleton
         Create<Movement>("Movement");
 
         Events.OnLoaded += () =>
