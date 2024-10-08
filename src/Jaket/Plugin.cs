@@ -16,7 +16,7 @@ using Jaket.World;
 [BepInPlugin("xzxADIxzx.Jaket", "Jaket", Version.CURRENT)]
 public class PluginLoader : BaseUnityPlugin
 {
-    private void Awake() => UnityEngine.SceneManagement.SceneManager.sceneLoaded += (_, _) =>
+    private void Awake() => Events.InternalSceneLoaded = () =>
     {
         if (Plugin.Instance == null) Create<Plugin>("Jaket").Location = Path.GetDirectoryName(Info.Location);
     };

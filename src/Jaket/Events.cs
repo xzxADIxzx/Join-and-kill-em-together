@@ -9,18 +9,36 @@ using Jaket.Net;
 /// <summary> List of events used by the mod. Some of them are combined into one for simplicity. </summary>
 public class Events : MonoSingleton<Events>
 {
+    /// <summary> Internal event triggered after loading any scene. </summary>
+    public static Action InternalSceneLoaded { set => UnityEngine.SceneManagement.SceneManager.sceneLoaded += (scene, mode) => value(); }
+
+    #region events
+
     /// <summary> Event triggered when a loading of any scene has started. </summary>
     public static SafeEvent OnLoadingStarted = new();
-    /// <summary> Events triggered after loading any scene and the main menu. </summary>
-    public static SafeEvent OnLoaded = new(), OnMainMenuLoaded = new();
-    /// <summary> Event triggered when an action is taken on the lobby: creation, closing or connection. </summary>
+    /// <summary> Event triggered after loading any scene. </summary>
+    public static SafeEvent OnLoaded = new();
+    /// <summary> Event triggered after loading the main menu. </summary>
+    public static SafeEvent OnMainMenuLoaded = new();
+
+    /// <summary> Event triggered when an action is taken on the lobby: creation, closing, connection or modifying. </summary>
     public static SafeEvent OnLobbyAction = new();
     /// <summary> Event triggered when the local player enters a lobby. </summary>
     public static SafeEvent OnLobbyEntered = new();
+
+    /// <summary> Event triggered when someone invites you to their lobby. </summary>
+    public static SafeEvent OnLobbyInvite = new();
+    /// <summary> Event triggered when someone joins the lobby. </summary>
+    public static SafeEvent OnMemberJoin = new();
+    /// <summary> Event triggered when someone leaves the lobby. </summary>
+    public static SafeEvent OnMemberLeave = new();
+
     /// <summary> Event triggered when a team composition changes. </summary>
     public static SafeEvent OnTeamChanged = new();
     /// <summary> Event triggered when a weapon or hand changes: weapon swap, hand color change. </summary>
     public static SafeEvent OnWeaponChanged = new();
+
+    #endregion
 
     /// <summary> List of tasks that will need to be completed in the late update. </summary>
     public static Queue<Action> Tasks = new();
@@ -32,13 +50,12 @@ public class Events : MonoSingleton<Events>
     {
         Create<Events>("Events");
 
-        UnityEngine.SceneManagement.SceneManager.sceneLoaded += (scene, mode) =>
+        InternalSceneLoaded = () =>
         {
             OnLoaded.Fire();
             if (Scene == "Main Menu") OnMainMenuLoaded.Fire();
         };
 
-        SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) => Post(OnTeamChanged.Fire);
         SteamMatchmaking.OnLobbyDataChanged += lobby => OnLobbyAction.Fire();
         SteamMatchmaking.OnLobbyEntered += lobby => OnLobbyEntered.Fire();
 
@@ -79,7 +96,7 @@ public class Events : MonoSingleton<Events>
     }
 }
 
-/// <summary> Safe event that will output all exceptions to the Unity console and guarantee the execution of each listener, regardless of errors. </summary>
+/// <summary> Safe event that will output all exceptions to the console and guarantee the execution of each listener, regardless of errors. </summary>
 public class SafeEvent
 {
     /// <summary> List of all event listeners. </summary>
