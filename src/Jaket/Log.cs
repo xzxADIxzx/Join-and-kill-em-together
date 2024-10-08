@@ -19,7 +19,7 @@ public class Log
     /// <summary> Number of logs that will be stored in memory before being written. </summary>
     public const int STORAGE_CAPACITY = 64;
     /// <summary> Logs waiting their turn to be written. </summary>
-    public static List<string> ToWrite = new();
+    public static List<string> ToWrite = new(STORAGE_CAPACITY);
 
     /// <summary> Output point for Unity and in-game console. </summary>
     public static Logger Logger;
@@ -36,9 +36,16 @@ public class Log
     /// <summary> Formats and writes the msg to all output points. </summary>
     public static void LogLevel(Level level, string msg)
     {
-        Logger.Log(level == Level.Debug ? $"<color=#BBBBBB>{msg}</color>" : msg, (PL)level);
+        Logger.Log(level == Level.Debug ? $"<color=#BBBBBB>{msg}</color>" : msg, level switch
+        {
+            Level.Debug   => PL.Info,
+            Level.Info    => PL.Info,
+            Level.Warning => PL.Warning,
+            Level.Error   => PL.Error,
+            _             => PL.Off,
+        });
 
-        ToWrite.Add($"[{Time}] [{new[] { 'D', 'I', 'W', 'E' }[(int)level]}] {msg}");
+        ToWrite.Add($"[{Time}] [{(char)level}] {msg}");
         if (ToWrite.Count > STORAGE_CAPACITY) Flush();
     }
 
@@ -66,9 +73,9 @@ public class Log
     /// <summary> Log importance levels. </summary>
     public enum Level
     {
-        Debug   = PL.Info,
-        Info    = PL.Info,
-        Warning = PL.Warning,
-        Error   = PL.Error
+        Debug   = 'D',
+        Info    = 'I',
+        Warning = 'W',
+        Error   = 'E'
     }
 }
