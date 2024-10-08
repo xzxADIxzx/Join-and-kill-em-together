@@ -108,9 +108,9 @@ public class LobbyController
             Lobby?.SetData("name", $"{SteamClient.Name}'s Lobby");
             Lobby?.SetData("lobbyName", $"{SteamClient.Name}'s Lobby");
             Lobby?.SetData("level", MapMap(Tools.Scene));
-            Lobby?.SetData("pvp", "True");
+            Lobby?.SetData("pvp", "False");
             Lobby?.SetData("cheats", "False");
-            Lobby?.SetData("mods", "False");
+            Lobby?.SetData("mods", "True");
             Lobby?.SetData("heal-bosses", "True");
         });
     }

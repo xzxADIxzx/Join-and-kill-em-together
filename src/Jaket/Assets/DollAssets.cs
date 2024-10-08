@@ -21,7 +21,7 @@ public class DollAssets
     public static GameObject Doll, Preview;
 
     /// <summary> Player doll icon. </summary>
-    public static Sprite Icon;
+    public static Sprite[] Icons;
 
     /// <summary> Mixer processing Sam's voice. Used to change volume. </summary>
     public static AudioMixer Mixer;
@@ -34,7 +34,7 @@ public class DollAssets
     public static Shader Shader;
 
     /// <summary> Wing textures used to differentiate teams. </summary>
-    public static Texture[] WingTextures;
+    public static Texture[] WingTextures, RGBWings;
 
     /// <summary> Body textures used to differentiate teams. </summary>
     public static Texture[] BodyTextures;
@@ -48,6 +48,24 @@ public class DollAssets
     /// <summary> Icons for the emoji selection wheel. </summary>
     public static Sprite[] EmojiIcons, EmojiGlows;
 
+    /// <summary> Instantiates Preview with a specified skin, defaults to V3 with yellow wings </summary>
+    public static GameObject CreatePreviewWithSkin(Texture WingTex, Texture BodyTex)
+    {
+        if (!Preview) return null;
+
+        var preview = Object.Instantiate(DollAssets.Preview);
+        Object.DontDestroyOnLoad(preview);
+
+        var previewTransform = preview.transform.Find("V3");
+        var previewWingMat = previewTransform.Find("V3").GetComponent<Renderer>().materials[1];
+        var previewBodyMat = previewTransform.Find("V3").GetComponent<Renderer>().materials[0];
+
+        previewWingMat.mainTexture = WingTex;
+        previewBodyMat.mainTexture = BodyTex;
+
+        return preview;
+    }
+
     /// <summary> Loads assets bundle and other necessary stuff. </summary>
     public static void Load()
     {
@@ -58,6 +76,7 @@ public class DollAssets
         WingTextures = new Texture[(int)Team.Count];
         BodyTextures = new Texture[(int)Team.Count];
         HandTextures = new Texture[4];
+        Icons = new Sprite[3];
 
         // loading wing textures from the bundle
         for (int i = 0; i < WingTextures.Length; i++)
@@ -110,7 +129,10 @@ public class DollAssets
         });
 
         // I guess async will improve performance a little bit
-        LoadAsync<Sprite>("V3-icon", sprite => Icon = sprite);
+        LoadAsync<Sprite>("V3-icon", sprite => Icons[0] = sprite);
+        LoadAsync<Sprite>("V4-icon", sprite => Icons[1] = sprite);
+        LoadAsync<Sprite>("F1-icon", sprite => Icons[2] = sprite);
+
         LoadAsync<AudioMixer>("sam-audio", mix =>
         {
             Mixer = mix;

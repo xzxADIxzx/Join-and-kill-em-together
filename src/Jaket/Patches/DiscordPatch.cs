@@ -24,7 +24,7 @@ public class DiscordPatch
         // patch only the most common shops
         if (__instance.name != "Shop") return;
 
-        var button = UIB.DiscordButton("Join Jaket Discord", __instance.transform.GetChild(1).GetChild(1).GetChild(0));
+        var button = UIB.DiscordButton("Modded Jaket Discord", __instance.transform.GetChild(1).GetChild(1).GetChild(0));
         button.transform.localPosition = new(0f, -128f, -20f); // the button is a little stormy
 
         // add ControllerPointer so that the button can be clicked

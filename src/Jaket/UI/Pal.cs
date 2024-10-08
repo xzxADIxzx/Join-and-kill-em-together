@@ -15,7 +15,7 @@ public static class Pal
     public static string Pink = "#FF66CC";
     public static string Grey = "#BBBBBB";
     public static string Coral = "#FF7F50";
-    public static string Discord = "#5865F2";
+    public static string Discord = "#4D2699";
 
     public static Color white = Color.white;
     public static Color black = Color.black;
@@ -29,7 +29,7 @@ public static class Pal
     public static Color pink = new(1f, .4f, .8f);
     public static Color grey = new(.73f, .73f, .73f);
     public static Color coral = new(1f, .5f, .31f);
-    public static Color discord = new(.345f, .396f, .949f);
+    public static Color discord = new(0.3f, 0.15f, 0.6f);
     public static Color rainbow = new(1f, 1f, 1f);
 
     public static Color Dark(Color original) => Color.Lerp(original, black, .38f);
