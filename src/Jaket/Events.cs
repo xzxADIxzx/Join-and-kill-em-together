@@ -1,6 +1,7 @@
 namespace Jaket;
 
 using Steamworks;
+using Steamworks.Data;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -27,11 +28,11 @@ public class Events : MonoSingleton<Events>
     public static SafeEvent OnLobbyEntered = new();
 
     /// <summary> Event triggered when someone invites you to their lobby. </summary>
-    public static SafeEvent OnLobbyInvite = new();
+    public static SafeEvent<Lobby> OnLobbyInvite = new();
     /// <summary> Event triggered when someone joins the lobby. </summary>
-    public static SafeEvent OnMemberJoin = new();
+    public static SafeEvent<Friend> OnMemberJoin = new();
     /// <summary> Event triggered when someone leaves the lobby. </summary>
-    public static SafeEvent OnMemberLeave = new();
+    public static SafeEvent<Friend> OnMemberLeave = new();
 
     /// <summary> Event triggered when a team composition changes. </summary>
     public static SafeEvent OnTeamChanged = new();
@@ -58,6 +59,11 @@ public class Events : MonoSingleton<Events>
 
         SteamMatchmaking.OnLobbyDataChanged += lobby => OnLobbyAction.Fire();
         SteamMatchmaking.OnLobbyEntered += lobby => OnLobbyEntered.Fire();
+
+        SteamFriends.OnGameLobbyJoinRequested += (lobby, id) => OnLobbyInvite.Fire(lobby);
+
+        SteamMatchmaking.OnLobbyMemberJoined += (lobby, member) => OnMemberJoin.Fire(member);
+        SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) => OnMemberLeave.Fire(member);
 
         // interaction with the lobby affects many aspects of the game
         OnLobbyAction += OnTeamChanged.Fire;
@@ -94,27 +100,34 @@ public class Events : MonoSingleton<Events>
         int amount = Tasks.Count;
         for (int i = 0; i < amount; i++) Tasks.Dequeue()?.Invoke();
     }
-}
 
-/// <summary> Safe event that will output all exceptions to the console and guarantee the execution of each listener, regardless of errors. </summary>
-public class SafeEvent
-{
-    /// <summary> List of all event listeners. </summary>
-    private List<Action> listeners = new();
-
-    /// <summary> Fires the event, i.e. fires its listeners, ensuring that they all will be executed regardless of exceptions. </summary>
-    public void Fire()
+    /// <summary> Safe event that will output all exceptions to the console and guarantee the execution of each listener, regardless of errors. </summary>
+    public class SafeEvent<T>
     {
-        for (int i = 0; i < listeners.Count; i++)
+        /// <summary> List of all event listeners. </summary>
+        protected List<Cons<T>> listeners = new();
+
+        /// <summary> Fires the event, ensuring that all listeners will be executed regardless of exceptions. </summary>
+        public void Fire(T t)
         {
-            try { listeners[i](); }
-            catch (Exception ex) { Log.Error(ex); }
+            for (int i = 0; i < listeners.Count; i++)
+            {
+                try { listeners[i](t); }
+                catch (Exception ex) { Log.Error(ex); }
+            }
         }
+
+        /// <summary> Fires the event without arguments, ensuring that all listeners will be executed regardless of exceptions. </summary>
+        public void Fire() => Fire(default);
+
+        public static SafeEvent<T> operator +(SafeEvent<T> e, Cons<T> listener) { e.listeners.Add(listener); return e; }
+        public static SafeEvent<T> operator -(SafeEvent<T> e, Cons<T> listener) { e.listeners.Remove(listener); return e; }
     }
 
-    /// <summary> Subscribes to the safe event: the listener can throw exceptions safely. </summary>
-    public static SafeEvent operator +(SafeEvent e, Action listener) { e.listeners.Add(listener); return e; }
-
-    /// <summary> Unsubscribes from the safe event if it finds the listener in the list. </summary>
-    public static SafeEvent operator -(SafeEvent e, Action listener) { e.listeners.Remove(listener); return e; }
+    /// <summary> Safe event that will output all exceptions to the console and guarantee the execution of each listener, regardless of errors. </summary>
+    public class SafeEvent : SafeEvent<object>
+    {
+        public static SafeEvent operator +(SafeEvent e, Action listener) { _ = e + (_ => listener()); return e; }
+        public static SafeEvent operator -(SafeEvent e, Action listener) { _ = e - (_ => listener()); return e; }
+    }
 }

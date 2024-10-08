@@ -126,6 +126,6 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
             _ => "lobby-tab.default"
         });
 
-        transform.GetChild(3).gameObject.SetActive(LobbyController.Lobby.HasValue && LobbyController.IsOwner);
+        transform.GetChild(3).gameObject.SetActive(LobbyController.Online && LobbyController.IsOwner);
     }
 }

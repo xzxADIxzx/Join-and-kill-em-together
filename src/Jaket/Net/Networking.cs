@@ -73,9 +73,9 @@ public class Networking
         };
 
         // fires when accepting an invitation via the Steam overlay
-        SteamFriends.OnGameLobbyJoinRequested += (lobby, id) => LobbyController.JoinLobby(lobby);
+        Events.OnLobbyInvite += LobbyController.JoinLobby;
 
-        SteamMatchmaking.OnLobbyEntered += lobby =>
+        Events.OnLobbyEntered += () =>
         {
             Clear(); // destroy all entities, since the player could join from another lobby
             if (LobbyController.IsOwner)
@@ -86,23 +86,27 @@ public class Networking
             else
             {
                 // establishing a connection with the owner of the lobby
-                Client.Connect(lobby.Owner.Id);
+                Client.Connect(LobbyController.LastOwner);
                 // prevent objects from loading before the scene is loaded
                 Loading = true;
             }
         };
 
-        SteamMatchmaking.OnLobbyMemberJoined += (lobby, member) =>
+        Events.OnMemberJoin += member =>
         {
             if (!Administration.Banned.Contains(member.Id.AccountId)) Bundle.Msg("player.joined", member.Name);
         };
 
-        SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) =>
+        Events.OnMemberLeave += member =>
         {
             if (!Administration.Banned.Contains(member.Id.AccountId)) Bundle.Msg("player.left", member.Name);
+        };
+
+        Events.OnMemberLeave += member =>
+        {
+            // return the exited player's entities back to the host & close the connection
             if (!LobbyController.IsOwner) return;
 
-            // returning the exited player's entities back to the host owner & close the connection
             FindCon(member.Id.AccountId)?.Close();
             Entities.Alive(entity =>
             {
@@ -190,7 +194,7 @@ public class Networking
     /// <summary> Finds a connection by id or returns null if there is no such connection. </summary>
     public static Connection? FindCon(uint id)
     {
-        foreach (var con in Server.Manager.Connected)
+        foreach (var con in Server.Manager?.Connected)
             if (con.ConnectionName == id.ToString()) return con;
         return null;
     }
