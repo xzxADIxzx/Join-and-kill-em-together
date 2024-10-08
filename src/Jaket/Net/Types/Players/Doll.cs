@@ -144,9 +144,6 @@ public class Doll : MonoBehaviour
         {
             BodyMat.color = WingMat.color = SkateMat.color = CoinMat.color = rainbow;
             WingTrail.startColor = rainbow with { a = .5f };
-
-            WingMat.mainTexture = SkateMat.mainTexture = DollAssets.WingTextures[(int)Team.White];
-            BodyMat.mainTexture = DollAssets.BodyTextures[(int)Team.White];
         }
     });
 
@@ -156,6 +153,12 @@ public class Doll : MonoBehaviour
     {
         WingMat.mainTexture = SkateMat.mainTexture = DollAssets.WingTextures[(int)team];
         BodyMat.mainTexture = DollAssets.BodyTextures[(int)team];
+        
+        if (team == Team.RGB) // rgb team uses white team's textures
+        {
+            WingMat.mainTexture = SkateMat.mainTexture = DollAssets.WingTextures[(int)Team.White];
+            BodyMat.mainTexture = DollAssets.BodyTextures[(int)Team.White];
+        }
 
         WingMat.color = white;
         BodyMat.color = white;
