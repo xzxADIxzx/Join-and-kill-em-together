@@ -19,7 +19,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
     /// <summary> Current lobby access level: 0 - private, 1 - friends only, 2 - public. I was too lazy to create an enum. </summary>
     private int lobbyAccessLevel;
     /// <summary> Checkboxes with lobby settings. </summary>
-    private Toggle pvp, cheats, mods, bosses;
+    private Toggle pvp, cheats, mods, bosses, moddedOnly;
 
     private void Start()
     {
@@ -47,9 +47,14 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
             UIB.Button("#lobby-tab.join", table, Btn(116f), clicked: LobbyController.JoinByCode);
             UIB.Button("#lobby-tab.list", table, Btn(164f), clicked: LobbyList.Instance.Toggle);
         });
-        UIB.Table("Lobby Config", "#lobby-tab.config", transform, Tlw(384f + 422f / 2f, 422f), table =>
+        UIB.Table("Lobby Config", "#lobby-tab.config", transform, Tlw(384f + 538f / 2f, 538f), table =>
         {
-            field = UIB.Field("#lobby-tab.name", table, Tgl(64f), cons: name => LobbyController.Lobby?.SetData("name", name));
+            field = UIB.Field("#lobby-tab.name", table, Tgl(64f), cons: name =>
+            {
+                LobbyController.Lobby?.SetData("name", name);
+                LobbyController.Lobby?.SetData("lobbyName", name);
+            });
+
             field.characterLimit = 28;
 
             accessibility = UIB.Button("#lobby-tab.private", table, Btn(108f), clicked: () =>
@@ -63,22 +68,45 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
                 Rebuild();
             });
 
-            pvp = UIB.Toggle("#lobby-tab.allow-pvp", table, Tgl(152f), clicked: allow => LobbyController.Lobby?.SetData("pvp", allow.ToString()));
-            cheats = UIB.Toggle("#lobby-tab.allow-cheats", table, Tgl(192f), clicked: allow => LobbyController.Lobby?.SetData("cheats", allow.ToString()));
-            mods = UIB.Toggle("#lobby-tab.allow-mods", table, Tgl(232f), clicked: allow => LobbyController.Lobby?.SetData("mods", allow.ToString()));
+            moddedOnly = UIB.Toggle("#lobby-tab.modded", table, Tgl(152f), clicked: allow => {
+                if (allow)
+                {
+                    LobbyController.Lobby?.SetData("mk_lobby", "true");
 
-            UIB.Text("#lobby-tab.ppp-desc", table, Btn(287f) with { Height = 62f }, size: 16);
+                    // tell players why they've been kicked
+                    Chat.Instance.SendBot("This lobby has been set to modded only, as a result, everyone is being kicked");
+                    Chat.Instance.SendBot("this is done to prevent netcode errors, as modded jaket only lobbies");
+                    Chat.Instance.SendBot("have a different netcode than normal jaket lobbies");
 
-            UIB.Text("#lobby-tab.ppp-name", table, Btn(338f), align: TextAnchor.MiddleLeft);
-            var PPP = UIB.Text("0PPP", table, Btn(338f), align: TextAnchor.MiddleRight);
+                    // this is to prevent the different net code from causing bugs with normal jaket players
+                    Networking.EachPlayer(cons => Administration.Kick(cons.Id));
+                }
+                else LobbyController.Lobby?.DeleteData("mk_lobby");
+            });
 
-            UIB.Slider("Health Multiplier", table, Sld(366f), 16, value =>
+            pvp = UIB.Toggle("#lobby-tab.allow-pvp", table, Tgl(192f), clicked: allow => LobbyController.Lobby?.SetData("pvp", allow.ToString()));
+            cheats = UIB.Toggle("#lobby-tab.allow-cheats", table, Tgl(232f), clicked: allow => LobbyController.Lobby?.SetData("cheats", allow.ToString()));
+            mods = UIB.Toggle("#lobby-tab.allow-mods", table, Tgl(272f), clicked: allow => LobbyController.Lobby?.SetData("mods", allow.ToString()));
+            bosses = UIB.Toggle("#lobby-tab.heal-bosses", table, Tgl(309f), 20, allow => LobbyController.Lobby?.SetData("heal-bosses", allow.ToString()));
+
+            UIB.Text("#lobby-tab.ppp-desc", table, Btn(358f) with { Height = 62f }, size: 16);
+            UIB.Text("#lobby-tab.ppp-name", table, Btn(408f), align: TextAnchor.MiddleLeft);
+            var PPP = UIB.Text("0PPP", table, Btn(408f), align: TextAnchor.MiddleRight);
+
+            UIB.Slider("Health Multiplier", table, Sld(436f), 16, value =>
             {
                 PPP.text = $"{(int)((LobbyController.PPP = value / 8f) * 100)}PPP";
                 LobbyController.Lobby?.SetData("ppp", LobbyController.PPP.ToString());
             });
 
-            bosses = UIB.Toggle("#lobby-tab.heal-bosses", table, Tgl(398f), 20, allow => LobbyController.Lobby?.SetData("heal-bosses", allow.ToString()));
+            UIB.Text("MAX PLAYERS: ", table, Btn(476f), align: TextAnchor.MiddleLeft);
+            var MaxPlayers = UIB.Text("8", table, Btn(476f), align: TextAnchor.MiddleRight);
+            UIB.Slider("Max Players", table, Sld(504f), 16, value =>
+            {
+                var l = LobbyController.Lobby.Value;
+                l.MaxMembers = (value == 16)? ushort.MaxValue : 2 * (value + 1);
+                MaxPlayers.text = (value == 16)? "UNLIMITED" : l.MaxMembers.ToString();
+            });
         });
 
         Version.Label(transform);
@@ -102,11 +130,12 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
         // reset config
         if (LobbyController.Offline)
         {
-            lobbyAccessLevel = 0;
-            pvp.isOn = true;
+            lobbyAccessLevel = 1;
+            pvp.isOn = false;
             cheats.isOn = false;
-            mods.isOn = false;
-            bosses.isOn = true;
+            mods.isOn = true;
+            bosses.isOn = false;
+            moddedOnly.isOn = false;
         }
         else field.text = LobbyController.Lobby?.GetData("name");
 

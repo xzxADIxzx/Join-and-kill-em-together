@@ -39,7 +39,7 @@ public class LobbyController
     public static float PPP;
 
     /// <summary> whether the current lobby is a multikill lobby </summary>
-    public static bool IsLobbyMultikill = IsMultikillLobby(Lobby);
+    public static bool IsLobbyMultikill => IsMultikillLobby(Lobby);
 
     /// <summary> Scales health to increase difficulty. </summary>
     public static void ScaleHealth(ref float health) => health *= 1f + Math.Min(Lobby?.MemberCount - 1 ?? 1, 1) * PPP;
@@ -59,11 +59,11 @@ public class LobbyController
                 LeaveLobby();
                 Bundle.Hud2NS("lobby.banned");
             }
-            if (IsMultikillLobby(lobby))
-            {
-                LeaveLobby();
-                Bundle.Hud("lobby.mk");
-            }
+            // if (IsMultikillLobby(lobby))
+            // {
+            //     LeaveLobby();
+            //     Bundle.Hud("lobby.mk");
+            // }
         };
         // and leave the lobby if the owner has left it
         SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) =>
@@ -104,6 +104,7 @@ public class LobbyController
             Lobby?.SetPrivate();
             Lobby?.SetData("jaket", "true");
             Lobby?.SetData("name", $"{SteamClient.Name}'s Lobby");
+            Lobby?.SetData("lobbyName", $"{SteamClient.Name}'s Lobby");
             Lobby?.SetData("level", MapMap(Tools.Scene));
             Lobby?.SetData("pvp", "True");
             Lobby?.SetData("cheats", "False");

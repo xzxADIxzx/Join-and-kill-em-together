@@ -233,6 +233,7 @@ public class UIB
         if (team == Team.RGB)
         {
             Text(team.ToString(), img.transform, r.Text, black);
+            img.color = white; // button color override
         }
 
         return Component<Button>(img.gameObject, button =>
