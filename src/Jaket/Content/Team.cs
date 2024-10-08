@@ -29,10 +29,11 @@ public static class TeamExtensions
         Team.Pink   => new(1f, .4f, .8f),
         Team.Purple => new(.7f,  0f,  1f),
         Team.Cyan   => new( 0f,  1f,  1f),
+        // Team.White => ... // not needed because it defaults to white
         Team.V1     => new(.1f, .3f,  1f),
         Team.V2     => new( 1f,  0f, .1f),
         Team.Fraud  => new(.3f, .3f, .3f),
-        Team.RGB    => Pal.rainbow,
+        // Team.RGB => ... // not needed because it defaults to white
         _ => new(1f, 1f, 1f)
     };
 

@@ -218,7 +218,23 @@ public class UIB
     public static Button TeamButton(Team team, Transform parent, Rect r, Action clicked = null)
     {
         var img = Image(team.ToString(), parent, r, team.Color());
-        if (team == Team.Pink) Text("UwU", img.transform, r.Text, Dark(pink));
+
+        if (team == Team.Pink || team == Team.Purple) 
+        {
+            Text("UwU", img.transform, r.Text, Dark(team.Color()));
+        }
+
+        if (team == Team.V1 || team == Team.V2 || team == Team.Fraud)
+        {
+            string text = (team == Team.Fraud)? "F1" : team.ToString();
+            Text(text, img.transform, r.Text, yellow);
+        }
+
+        if (team == Team.RGB)
+        {
+            Text(team.ToString(), img.transform, r.Text, black);
+        }
+
         return Component<Button>(img.gameObject, button =>
         {
             button.targetGraphic = img;
