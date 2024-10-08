@@ -81,7 +81,15 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
                     // this is to prevent the different net code from causing bugs with normal jaket players
                     Networking.EachPlayer(cons => Administration.Kick(cons.Id));
                 }
-                else LobbyController.Lobby?.DeleteData("mk_lobby");
+                else
+                {
+                    LobbyController.Lobby?.DeleteData("mk_lobby");
+                    
+                    if (Networking.LocalPlayer.Team > Content.Team.Pink)
+                    {
+                        Networking.LocalPlayer.Team = Content.Team.White;
+                    }
+                }
             });
 
             pvp = UIB.Toggle("#lobby-tab.allow-pvp", table, Tgl(192f), clicked: allow => LobbyController.Lobby?.SetData("pvp", allow.ToString()));
