@@ -25,7 +25,7 @@ public class Commands
                 chat.Receive($"[14]/{command.Name}{(command.Args == null ? "" : $" [#BBBBBB]{command.Args}[]")} - {command.Desc}[]");
             });
         });
-        Handler.Register("hello", "Resend the tips for new players", args => chat.Hello(true));
+        Handler.Register("hello", "Resend the tips for new players", args => chat.Hello());
 
         Handler.Register("tts-volume", "\\[0-100]", "Set Sam's volume to keep your ears comfortable", args =>
         {

@@ -45,24 +45,27 @@ public class LobbyController
     /// <summary> Creates the necessary listeners for proper work. </summary>
     public static void Load()
     {
+        // general info about the lobby
+        Events.OnLobbyAction += () => Log.Debug($"Lobby updated: owner is {Lobby?.Owner.ToString() ?? "null"}, level is {Lobby?.GetData("name") ?? "null"}");
         // get the owner id when entering the lobby
-        SteamMatchmaking.OnLobbyEntered += lobby =>
+        Events.OnLobbyEntered += () =>
         {
-            if (lobby.Owner.Id != 0L) LastOwner = lobby.Owner.Id;
+            if (Offline) return;
+            Log.Debug($"Entered a lobby ({LastOwner = Lobby?.Owner.Id ?? 0L})");
 
-            if (lobby.GetData("banned").Contains(AccId.ToString()))
+            if (Lobby.Value.GetData("banned").Contains(AccId.ToString()))
             {
                 LeaveLobby();
                 Bundle.Hud2NS("lobby.banned");
             }
-            if (IsMultikillLobby(lobby))
+            if (IsMultikillLobby(Lobby.Value))
             {
                 LeaveLobby();
                 Bundle.Hud2NS("lobby.mk");
             }
         };
         // and leave the lobby if the owner has left it
-        SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) =>
+        Events.OnMemberLeave += member =>
         {
             if (member.Id == LastOwner) LeaveLobby();
         };
@@ -71,11 +74,6 @@ public class LobbyController
         Events.OnLoaded += () => Lobby?.SetData("level", MapMap(Scene));
         // if the player exits to the main menu, then this is equivalent to leaving the lobby
         Events.OnMainMenuLoaded += () => LeaveLobby(false);
-
-        // general info about the lobby
-        Events.OnLobbyAction += () => Log.Debug($"Lobby updated: name is {(Online ? Lobby?.GetData("name") : "null")}, owner is {Lobby?.Owner.ToString() ?? "null"}");
-        // entrance to a lobby
-        Events.OnLobbyEntered += () => Log.Debug("Entered a new lobby");
     }
 
     /// <summary> Is there a user with the given id among the members of the lobby. </summary>
