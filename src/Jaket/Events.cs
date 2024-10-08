@@ -58,7 +58,7 @@ public class Events : MonoSingleton<Events>
         };
 
         SteamMatchmaking.OnLobbyDataChanged += lobby => OnLobbyAction.Fire();
-        SteamMatchmaking.OnLobbyEntered += lobby => OnLobbyEntered.Fire();
+        SteamMatchmaking.OnLobbyEntered += lobby => Post(OnLobbyEntered.Fire);
 
         SteamFriends.OnGameLobbyJoinRequested += (lobby, id) => OnLobbyInvite.Fire(lobby);
 
