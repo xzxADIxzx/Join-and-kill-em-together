@@ -32,6 +32,11 @@ public class Client : Endpoint, IConnectionManager
             LobbyController.LeaveLobby();
             Assets.Bundle.Hud2NS("lobby.banned");
         });
+        Listen(PacketType.Kick, r =>
+        {
+            LobbyController.LeaveLobby();
+            Assets.Bundle.Hud2NS("lobby.kicked");
+        });
 
         Listen(PacketType.SpawnBullet, Bullets.CInstantiate);
         Listen(PacketType.DamageEntity, r =>
