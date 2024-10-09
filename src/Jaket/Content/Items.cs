@@ -14,6 +14,7 @@ public class Items
 {
     /// <summary> List of prefabs of all items. </summary>
     public static List<Transform> Prefabs = new();
+    public static readonly int FishOffset = GameAssets.Items.Length + GameAssets.Plushies.Length;
 
     /// <summary> Loads all items for future use. </summary>
     public static void Load()
@@ -26,6 +27,7 @@ public class Items
 
         foreach (var name in GameAssets.Items) Prefabs.Add(GameAssets.Item(name).transform);
         foreach (var name in GameAssets.Plushies) Prefabs.Add(GameAssets.Plushy(name).transform);
+        foreach (var name in GameAssets.Fishes) Prefabs.Add(GameAssets.Fishy(name).transform);
     }
 
     /// <summary> Finds the entity type by item class and first/last child name. </summary>

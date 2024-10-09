@@ -40,6 +40,22 @@ public class GameAssets
         "Quetzal", "John", "Pitr", "BJ", "Francis", "Vvizard", "Lucas", "Scott", "KGC", "V1"
     };
 
+    /// <summary> List of internal names of all fishes. </summary>
+    public static readonly string[] Fishes = new[]
+    {
+        "Funny Fish!!!", "pitr fish", "Trout", "Amid Efil Fish", "Dusk Chomper",
+        "Bomb Fish", "Gib Eyeball Fish", "IronLungFish", "Dope Fish", "Fish Stick",
+        "Cooked Fish", "Shark Fish", "Burnt Stuff"
+    };
+
+    /// <summary> List of internal names of all fishes. </summary>
+    public static readonly string[] FishesButReadable = new[]
+    {
+        "Friend", "Pitr", "Trout", "Metal", "Chomper",
+        "Bomb", "Eyeball", "Frog", "Dope", "Stick",
+        "Cooked", "Blahaj", "Burnt Stuff"
+    };
+
     /// <summary> Loads an enemy prefab by name. </summary>
     public static GameObject Enemy(string name) => AssetHelper.LoadPrefab($"Assets/Prefabs/Enemies/{name}.prefab");
 
@@ -51,6 +67,10 @@ public class GameAssets
     public static GameObject Plushy(string name) =>
         AssetHelper.LoadPrefab($"Assets/Prefabs/Items/DevPlushies/DevPlushie{(name.StartsWith(".") ? name.Substring(1) : $" ({name})")}.prefab");
 
+    /// <summary> Loads a dev plushy prefab by name. </summary>
+    public static GameObject Fishy(string name) =>
+        AssetHelper.LoadPrefab($"Assets/Prefabs/Fishing/Fishes/{name}.prefab");
+
     /// <summary> Loads the torch prefab. </summary>
     public static GameObject Torch() => AssetHelper.LoadPrefab("Assets/Prefabs/Levels/Interactive/Altar (Torch) Variant.prefab");
 
@@ -59,6 +79,9 @@ public class GameAssets
 
     /// <summary> Loads the shotgun pickup prefab. </summary>
     public static GameObject Shotgun() => AssetHelper.LoadPrefab("Assets/Prefabs/Weapons/Pickups/ShotgunPickUp.prefab");
+
+    /// <summary> Loads the fishy pickup prefab. </summary>
+    public static GameObject FishTemplate() => AssetHelper.LoadPrefab("Assets/Prefabs/Fishing/Fish Pickup Template.prefab");
 
     /// <summary> Loads a swordsmachine material by name. </summary>
     public static void SwordsMaterial(string name, Renderer output) =>

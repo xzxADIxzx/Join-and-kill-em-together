@@ -7,6 +7,13 @@ using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net;
 using Jaket.UI.Dialogs;
+using System.Linq;
+using Jaket.Net.Types;
+
+using Object = UnityEngine.Object;
+using System.Threading;
+using GameConsole.Commands;
+using Discord;
 
 /// <summary> List of chat commands used by the mod. </summary>
 public class Commands
@@ -23,7 +30,7 @@ public class Commands
         {
             Handler.Commands.ForEach(command =>
             {
-                chat.Receive($"[14]* /{command.Name}{(command.Args == null ? "" : $" [#BBBBBB]{command.Args}[]")} - {command.Desc}[]");
+                chat.Receive($"[14]/{command.Name}{(command.Args == null ? "" : $" [#BBBBBB]{command.Args}[]")} - {command.Desc}[]");
             });
         });
         Handler.Register("hello", "Resend the tips for new players", args => chat.Hello(true));
@@ -75,6 +82,28 @@ public class Commands
                 Tools.Instantiate(Items.Prefabs[EntityType.PlushyOffset + index - EntityType.ItemOffset].gameObject, NewMovement.Instance.transform.position);
         });
 
+        Handler.Register("fishies", "<name>", "Get a list of all fishies", args =>
+        {
+            string[] fishies = (string[])GameAssets.FishesButReadable.Clone();
+            Array.Sort(fishies); // sort alphabetically for a more presentable look
+
+            chat.Receive(string.Join(", ", fishies));
+        });
+        Handler.Register("fishy", "<name>", "Spawn a fishy by name", args =>
+        {
+            string name = args.Length == 0 ? null : string.Join(" ", args).ToLower();
+            int index = Array.FindIndex(GameAssets.FishesButReadable, plushy => plushy.ToLower() == name);
+
+            if (index == -1) chat.Receive($"[#FF341C]Fish named {name} not found.");
+            else
+            {
+                var obj = Object.Instantiate(GameAssets.FishTemplate());
+                obj.transform.position = NewMovement.Instance.transform.localPosition;
+                Tools.Instantiate(Items.Prefabs[Items.FishOffset + index].gameObject, obj.transform).transform.position = obj.transform.position;
+                obj.AddComponent<Item>();
+            }
+        });
+
         Handler.Register("level", "<layer> <level> / sandbox / cyber grind / credits museum", "Load the given level", args =>
         {
             if (args.Length == 1 && args[0].Contains("-")) args = args[0].Split('-');
@@ -84,17 +113,17 @@ public class Commands
 
             else if (args.Length >= 1 && (args[0].ToLower() == "sandbox" || args[0].ToLower() == "sand"))
             {
-                Tools.Scene = "uk_construct";
+                Tools.Scene = ("uk_construct");
                 chat.Receive("[#32CD32]Sandbox is loading.");
             }
             else if (args.Length >= 1 && (args[0].ToLower().Contains("cyber") || args[0].ToLower().Contains("grind") || args[0].ToLower() == "cg"))
             {
-                Tools.Scene = "Endless";
+                Tools.Scene = ("Endless");
                 chat.Receive("[#32CD32]The Cyber Grind is loading.");
             }
             else if (args.Length >= 1 && (args[0].ToLower().Contains("credits") || args[0].ToLower() == "museum"))
             {
-                Tools.Scene = "CreditsMuseum2";
+                Tools.Scene = ("CreditsMuseum2");
                 chat.Receive("[#32CD32]The Credits Museum is loading.");
             }
             else if (args.Length < 2)
@@ -103,15 +132,15 @@ public class Commands
             (
                 int.TryParse(args[0], out int layer) && layer >= 0 && layer <= 7 &&
                 int.TryParse(args[1], out int level) && level >= 1 && level <= 5 &&
-                (level == 5 ? layer == 0 : true) && (layer == 3 || layer == 6 ? level <= 2 : true)
+                (level != 5 || layer == 0) && (layer != 3 && layer != 6 || level <= 2)
             )
             {
-                Tools.Scene = $"Level {layer}-{level}";
+                Tools.Scene = ($"Level {layer}-{level}");
                 chat.Receive($"[#32CD32]Level {layer}-{level} is loading.");
             }
             else if (args[1].ToUpper() == "S" && int.TryParse(args[0], out level) && level >= 0 && level <= 7 && level != 3 && level != 6)
             {
-                Tools.Scene = $"Level {level}-S";
+                Tools.Scene = ($"Level {level}-S");
                 chat.Receive($"[#32CD32]Secret level {level}-S is loading.");
             }
             else if (args[0].ToUpper() == "P" && int.TryParse(args[1], out level) && level >= 1 && level <= 2)
@@ -148,12 +177,10 @@ public class Commands
         });
         Handler.Register("support", "Support the author by buying him a coffee", args => Application.OpenURL("https://www.buymeacoffee.com/adidev"));
 
-        
-        Handler.Register("difficulty", "\\[val]", "get/set the current difficulty", args => 
+        Handler.Register("difficulty", "\\[val]", "Get/Set the current difficulty (applies after level change/level restart)", args => 
         {
-            void Msg(string msg) => chat.Receive($"[14]{msg}[]");
-
-            string GetDifficulty() => Tools.Difficulty switch
+            void SetDifficulty(int val) => PrefsManager.Instance.SetInt("difficulty", val);
+            string GetDifficulty() => PrefsManager.Instance.GetInt("difficulty") switch
             {
                 0 => "Harmless",
                 1 => "Lenient",
@@ -161,26 +188,30 @@ public class Commands
                 3 => "Violent",
                 4 => "Brutal",
                 5 => "UKMD", // Not synced or able to be set, but still implemented for people with patched uk
-                _ => "???",
+                _ => null,
             };
 
             if (args.Length == 0)
             {
                 string difficulty = GetDifficulty();
-                Msg($"Current difficulty is {difficulty}");
-                if (difficulty == "???" || difficulty == "UKMD")
+                chat.Receive($"Current difficulty is {difficulty}");
+                if (difficulty == null || difficulty == "UKMD")
                 {
-                    Msg("[#FFE600]Congrats Mr. Hackerman, unfortunately for you, this doesn't sync.[]");
+                    chat.Receive($"[{UI.Pal.Yellow}]Congrats Mr. Hackerman, unfortunately for you, this doesn't sync.[]");
                 }
             }
             else if (int.TryParse(args[0], out int difficulty) && 0 <= difficulty && difficulty <= 4)
             {
-                Tools.Difficulty = difficulty;
-                Msg($"Difficulty set to {GetDifficulty()}");
+                if (!LobbyController.IsOwner) chat.Receive($"[{UI.Pal.Red}]Only the lobby owner can set difficulty[]");
+                else
+                {
+                    SetDifficulty(difficulty);
+                    chat.Receive($"Difficulty set to {GetDifficulty()}");
+                }
             }
             else
             {
-                Msg("[#FF341C]Val should either be left blank to get difficulty or should be an integer from 0-4 to set difficulty");
+                chat.Receive($"[{UI.Pal.Red}]Val should either be left blank to get difficulty or should be an integer from 0-4 to set difficulty");
             }
         });
 
@@ -190,6 +221,49 @@ public class Commands
             {
                 chat.Receive("[1]\\ []");
             }
+        });
+
+        Handler.Register("tag", "\\[color] \\[value]", "set/get message tag", args =>
+        {
+            PrefsManager pm = PrefsManager.Instance;
+ 
+            if (args.Length == 0)
+            {
+                string color  = pm.GetString("YetAnotherJaketFork.msgPrefixCol");
+                string tag = pm.GetString("YetAnotherJaketFork.msgPrefix");
+                tag = Tools.TruncateStr(tag, chat.PrefixMaxLen);
+                
+                if (tag == null) chat.Receive("No tag has been set");
+                else if (color == null) chat.Receive($"Current tag: {tag}");
+                else chat.Receive($"Current tag: [{color}]\\[{tag.Replace("[", "\\[")}][]");
+            }
+            else if (args.Length < 2)
+            {
+                chat.Receive($"[{UI.Pal.Red}]Insufficient number of arguments.");
+            }
+            else
+            {
+                string color  = (args[0] == "null") ? null : args[0];
+                string tag = Tools.TruncateStr(string.Join(" ", args.Skip(1)), color == null ? int.MaxValue : chat.PrefixMaxLen);
+                
+                if (color == null)
+                {
+                    pm.SetString("YetAnotherJaketFork.msgPrefix", tag);
+                    chat.Receive($"Set tag to {tag}");
+                    chat.Receive($"[{UI.Pal.Yellow}]Warning: raw prefixes are unsafe! Use at your own risk!");
+                }
+                else
+                {
+                    tag = $"[{color}]\\[{tag.Replace("[", "\\[")}][]";
+                    pm.SetString("YetAnotherJaketFork.msgPrefix", tag);
+                    chat.Receive("Set tag to " + tag);
+                }
+            }
+        });
+        Handler.Register("cleartag", "remove the current tag", args =>
+        {
+            PrefsManager pm = PrefsManager.Instance;
+            pm.DeleteKey("YetAnotherJaketFork.msgPrefix");
         });
     }
 }

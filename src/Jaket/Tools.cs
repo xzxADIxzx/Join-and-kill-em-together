@@ -27,6 +27,13 @@ public class Tools
     /// <summary> Returns the name of the player with the given AccountId. </summary>
     public static string Name(uint id) => new Friend(id | 76561197960265728u).Name;
 
+    /// <summary> truncate a string to have a length <= to the specified one </summary>
+    public static string TruncateStr(string s, int length)
+    {
+        if (string.IsNullOrEmpty(s)) return s;
+        return s.Substring(0, Math.Min(s.Length, length));
+    }
+
     /// <summary> Shortcut needed in order to track statistics and errors. </summary>
     public static void Send(Connection? con, IntPtr data, int size)
     {

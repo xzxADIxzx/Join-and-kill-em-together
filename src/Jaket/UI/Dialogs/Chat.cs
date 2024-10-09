@@ -15,6 +15,8 @@ using Jaket.World;
 
 using static Pal;
 using static Rect;
+using BepInEx;
+using System.Threading;
 
 /// <summary> Front end of the chat, back end implemented via Steamworks. </summary>
 public class Chat : CanvasSingleton<Chat>
@@ -25,9 +27,9 @@ public class Chat : CanvasSingleton<Chat>
     public const string TTS_PREFIX = "[#FF7F50][14]\\[TTS][][]";
 
     /// <summary> Maximum length of chat message. </summary>
-    public const int MAX_MESSAGE_LENGTH = 128;
+    public const int MAX_MESSAGE_LENGTH = 200;
     /// <summary> How many messages at a time will be shown. </summary>
-    public const int MESSAGES_SHOWN = 14;
+    public const int MESSAGES_SHOWN = 16;
     /// <summary> Chat width in pixels. </summary>
     public const float WIDTH = 640f;
 
@@ -55,6 +57,11 @@ public class Chat : CanvasSingleton<Chat>
     private List<string> messages = new();
     /// <summary> Index of the current message in the list. </summary>
     private int messageIndex;
+    /// <summary> Custom Player-Defined Message Prefix </summary>
+    private string MsgPrefix => PrefsManager.Instance.GetString("YetAnotherJaketFork.msgPrefix");
+
+    /// <summary> Maximum length for message tag </summary>
+    public readonly int PrefixMaxLen = 20;
 
     private void Start()
     {
@@ -140,7 +147,13 @@ public class Chat : CanvasSingleton<Chat>
         // if the message is not empty, then send it to other players and remember it
         if (Bundle.CutColors(msg).Trim() != "")
         {
-            if (!Commands.Handler.Handle(msg)) LobbyController.Lobby?.SendChatString(AutoTTS ? "/tts " + msg : msg);
+            if (!Commands.Handler.Handle(msg))
+            {
+                string msgTagged = (MsgPrefix == null)? msg : MsgPrefix + " " + msg;
+                msgTagged = Tools.TruncateStr(msgTagged, MAX_MESSAGE_LENGTH);
+                LobbyController.Lobby?.SendChatString(AutoTTS ? "/tts " + msgTagged : msgTagged);
+            }
+
             messages.Insert(0, msg);
         }
 
@@ -149,9 +162,9 @@ public class Chat : CanvasSingleton<Chat>
         Events.Post(Toggle);
     }
 
-    /// <summary> Sends a message to all other players as a bot. </summary>
+    /// <summary> Sends a bot message to all other players. </summary>
     public void SendBot(string msg) =>
-        LobbyController.Lobby?.SendChatString($"<b>{BOT_PREFIX}[#FF7F50]:[]</b> {msg}");
+        LobbyController.Lobby?.SendChatString(BOT_PREFIX + " " + msg.Trim());
 
     /// <summary> Toggles visibility of the chat. </summary>
     public void Toggle()
@@ -245,9 +258,8 @@ public class Chat : CanvasSingleton<Chat>
     {
         // if the last owner of the lobby is not equal to 0, then the lobby is not created for the first time
         if (LobbyController.LastOwner != 0L && !force) return;
-
-        void Msg(string msg) => Receive("0096FF", BOT_PREFIX + "xzxADIxzx", msg);
-        void Tip(string tip) => Msg($"[14]* {tip}[]");
+        void Msg(string msg, string name = "xzxADIxzx", string color = "0096FF") => Receive(color, BOT_PREFIX + name, msg);
+        void Tip(string tip, string name = "xzxADIxzx", string color = "0096FF") => Msg($"[14]* {tip}[]", name, color);
 
         Msg("Hello, it's me, the main developer of Jaket.");
         Msg("I just wanted to give you some tips:");
@@ -255,9 +267,13 @@ public class Chat : CanvasSingleton<Chat>
         Tip($"Hold [#FFA500]{Settings.EmojiWheel}[] to open the emote wheel");
         Tip("Try typing [#FFA500]/help[] in the chat");
         Tip("Take a look at the bestiary, there's a [#FF66CC]surprise[] :3");
-        Tip("If you have an issue, tell us in our [#5865F2]Discord[] server");
+        Tip($"If you have an issue, tell us in the [{Discord}]<i>Modded Jaket</i> Discord[] server", "whyis2plus2", "FFFFFF");
 
         Msg("Cheers~ ♡");
+
+        Tip("I added custom commands, do /help to see what they are!", "whyis2plus2", "FFFFFF");
+        Tip("Credits for F1 and lore for white team are in the terminal", "whyis2plus2", "FFFFFF");
+        Tip("Custom teams other than white only work in singleplayer and modded only lobbies", "whyis2plus2", "FFFFFF");
     }
 
     #endregion
