@@ -22,7 +22,7 @@ public class Teleporter : CanvasSingleton<Teleporter>
         decor.sprite = null;
         decor.transform.localEulerAngles = new(0f, 0f, -25f);
 
-        Tools.ResFind<AudioClip>(clip => clip.name == "Click1", clip => click = clip);
+        ResFind<AudioClip>(clip => clip.name == "Click1", clip => click = clip);
     }
 
     private void Update()
@@ -51,6 +51,6 @@ public class Teleporter : CanvasSingleton<Teleporter>
         Instance.Flash();
 
         // load the necessary locations so that the player doesn't get into the out of bounds
-        if (Tools.Scene == "Level 7-4") Tools.ObjFind(insideEarthmover ? "InsideActivator" : "OutsideActivator").GetComponent<ObjectActivator>().Activate();
+        if (Scene == "Level 7-4") ObjFind(insideEarthmover ? "InsideActivator" : "OutsideActivator").GetComponent<ObjectActivator>().Activate();
     }
 }

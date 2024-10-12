@@ -47,7 +47,7 @@ public class PlayerList : CanvasSingleton<PlayerList>
     public void Rebuild()
     {
         // destroy old player list
-        if (transform.childCount > 3) Destroy(transform.GetChild(3).gameObject);
+        if (transform.childCount > 3) Dest(transform.GetChild(3).gameObject);
         if (LobbyController.Offline) return;
 
         float height = LobbyController.Lobby.Value.MemberCount * 48f + 48f;

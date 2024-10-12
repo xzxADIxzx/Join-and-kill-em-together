@@ -28,7 +28,7 @@ public class Pointer : MonoBehaviour
 
     /// <summary> Spawns a pointer at the given position. </summary>
     public static Pointer Spawn(Team team, Vector3 position, Vector3 direction, Transform player = null) =>
-        UIB.Component<Pointer>(Tools.Create("Pointer"), pointer =>
+        UIB.Component<Pointer>(Create("Pointer"), pointer =>
         {
             pointer.color = team.Color();
             pointer.color.a = .85f;
@@ -73,7 +73,7 @@ public class Pointer : MonoBehaviour
 
     private void Update()
     {
-        if ((Lifetime += Time.deltaTime) > 5f) Destroy(gameObject);
+        if ((Lifetime += Time.deltaTime) > 5f) Dest(gameObject);
 
         float scale = Lifetime < .5f ? Lifetime * 2f : Lifetime > 4.5f ? (5f - Lifetime) * 2f : 1f;
         float time = Time.time * 3f;

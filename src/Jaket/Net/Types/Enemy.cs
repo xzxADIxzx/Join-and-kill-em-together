@@ -29,7 +29,7 @@ public class Enemy : OwnableEntity
         if (layers == 0) return;
 
         // override the name of the enemy
-        if (nameOverride != null) Tools.Set("overrideFullName", EnemyId, nameOverride);
+        if (nameOverride != null) Set("overrideFullName", EnemyId, nameOverride);
 
         // create a boss bar or update the already existing one
         if (!TryGetComponent(out BossHealthBar bar)) bar = gameObject.AddComponent<BossHealthBar>();
@@ -48,7 +48,7 @@ public class Enemy : OwnableEntity
 
         transform.position = new(x.Last = x.Target, y.Last = y.Target, z.Last = z.Target);
         if (EnemyId.spawnEffect)
-            Instantiate(EnemyId.spawnEffect, TryGetComponent(out Collider col) ? col.bounds.center : transform.position, transform.rotation);
+            Inst(EnemyId.spawnEffect, TryGetComponent(out Collider col) ? col.bounds.center : transform.position, transform.rotation);
     }
 
     #region entity
@@ -60,7 +60,11 @@ public class Enemy : OwnableEntity
     }
 
     /// <summary> This method is called after the death of the enemy, local or caused remotely. </summary>
-    public virtual void OnDied() => base.Kill(null);
+    public virtual void OnDied()
+    {
+        base.Kill(null);
+        DeadEntity.Replace(this);
+    }
 
     /// <summary> This method is called only after the remote death of the enemy. </summary>
     public virtual void Kill() => EnemyId.InstaKill();

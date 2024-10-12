@@ -1,6 +1,5 @@
 namespace Jaket.UI.Fragments;
 
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,7 +12,7 @@ using Jaket.World;
 public class InteractiveGuide : CanvasSingleton<InteractiveGuide>
 {
     /// <summary> List with the conditions for completing each of the stages of the guide. </summary>
-    public List<Func<bool>> Conditions = new();
+    public List<Prov<bool>> Conditions = new();
 
     /// <summary> Whether the player was asked to complete the guide. </summary>
     private bool offered;
@@ -50,7 +49,7 @@ public class InteractiveGuide : CanvasSingleton<InteractiveGuide>
     }
 
     /// <summary> Adds a new part to the guide. </summary>
-    public void Add(float x, float y, Func<bool> completed, KeyCode arg = KeyCode.None)
+    public void Add(float x, float y, Prov<bool> completed, KeyCode arg = KeyCode.None)
     {
         var guide = Bundle.Format("guide." + Conditions.Count, Settings.KeyName(arg));
         var width = Bundle.CutColors(guide).Length * 14f + 16f;
@@ -67,7 +66,7 @@ public class InteractiveGuide : CanvasSingleton<InteractiveGuide>
     /// <summary> Offers the player to go through the guide or closes it if the main menu has been loaded. </summary>
     public void OfferAssistance()
     {
-        if (Tools.Scene == "Main Menu")
+        if (Scene == "Main Menu")
         {
             foreach (Transform child in transform) child.gameObject.SetActive(false);
             index = 0; Shown = false;

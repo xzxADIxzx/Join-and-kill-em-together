@@ -1,49 +1,69 @@
 namespace Jaket;
 
 using Steamworks;
-using System;
+using Steamworks.Data;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 using Jaket.Net;
 
 /// <summary> List of events used by the mod. Some of them are combined into one for simplicity. </summary>
 public class Events : MonoSingleton<Events>
 {
+    /// <summary> Internal event triggered after loading any scene. </summary>
+    public static Action InternalSceneLoaded { set => UnityEngine.SceneManagement.SceneManager.sceneLoaded += (scene, mode) => value(); }
+
+    #region events
+
     /// <summary> Event triggered when a loading of any scene has started. </summary>
     public static SafeEvent OnLoadingStarted = new();
-    /// <summary> Events triggered after loading any scene and the main menu. </summary>
-    public static SafeEvent OnLoaded = new(), OnMainMenuLoaded = new();
-    /// <summary> Event triggered when an action is taken on the lobby: creation, closing or connection. </summary>
+    /// <summary> Event triggered after loading any scene. </summary>
+    public static SafeEvent OnLoaded = new();
+    /// <summary> Event triggered after loading the main menu. </summary>
+    public static SafeEvent OnMainMenuLoaded = new();
+
+    /// <summary> Event triggered when an action is taken on the lobby: creation, closing, connection or modifying. </summary>
     public static SafeEvent OnLobbyAction = new();
     /// <summary> Event triggered when the local player enters a lobby. </summary>
     public static SafeEvent OnLobbyEntered = new();
+
+    /// <summary> Event triggered when someone invites you to their lobby. </summary>
+    public static SafeEvent<Lobby> OnLobbyInvite = new();
+    /// <summary> Event triggered when someone joins the lobby. </summary>
+    public static SafeEvent<Friend> OnMemberJoin = new();
+    /// <summary> Event triggered when someone leaves the lobby. </summary>
+    public static SafeEvent<Friend> OnMemberLeave = new();
+
     /// <summary> Event triggered when a team composition changes. </summary>
     public static SafeEvent OnTeamChanged = new();
     /// <summary> Event triggered when a weapon or hand changes: weapon swap, hand color change. </summary>
     public static SafeEvent OnWeaponChanged = new();
 
+    #endregion
+
     /// <summary> List of tasks that will need to be completed in the late update. </summary>
     public static Queue<Action> Tasks = new();
-    /// <summary> Events that fire every net tick, second and dozen seconds. </summary>
+    /// <summary> Events that fire every subtick, second and dozen seconds. </summary>
     public static SafeEvent EveryTick = new(), EverySecond = new(), EveryDozen = new();
 
     /// <summary> Subscribes to some events to fire some safe events. </summary>
     public static void Load()
     {
-        // initialize the singleton
-        Tools.Create<Events>("Events");
+        Create<Events>("Events");
 
-        SceneManager.sceneLoaded += (scene, mode) =>
+        InternalSceneLoaded = () =>
         {
             OnLoaded.Fire();
-            if (Tools.Scene == "Main Menu") OnMainMenuLoaded.Fire();
+            if (Scene == "Main Menu") OnMainMenuLoaded.Fire();
         };
 
-        SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) => Post(OnTeamChanged.Fire);
         SteamMatchmaking.OnLobbyDataChanged += lobby => OnLobbyAction.Fire();
-        SteamMatchmaking.OnLobbyEntered += lobby => OnLobbyEntered.Fire();
+        SteamMatchmaking.OnLobbyEntered += lobby => Post(OnLobbyEntered.Fire);
+
+        SteamFriends.OnGameLobbyJoinRequested += (lobby, id) => OnLobbyInvite.Fire(lobby);
+
+        SteamMatchmaking.OnLobbyMemberJoined += (lobby, member) => OnMemberJoin.Fire(member);
+        SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) => OnMemberLeave.Fire(member);
 
         // interaction with the lobby affects many aspects of the game
         OnLobbyAction += OnTeamChanged.Fire;
@@ -51,8 +71,8 @@ public class Events : MonoSingleton<Events>
         OnLobbyAction += () =>
         {
             // update the discord & steam activity so everyone can know I've been working hard
-            DiscordController.Instance.FetchSceneActivity(Tools.Scene);
-            SteamController.Instance.FetchSceneActivity(Tools.Scene);
+            DiscordController.Instance.FetchSceneActivity(Scene);
+            SteamController.Instance.FetchSceneActivity(Scene);
 
             // enable the ability of the game to run in the background, because multiplayer requires it
             Application.runInBackground = LobbyController.Online;
@@ -72,7 +92,7 @@ public class Events : MonoSingleton<Events>
     {
         InvokeRepeating("Dozen", 1f, 12f);
         InvokeRepeating("Second", 1f, 1f);
-        InvokeRepeating("Tick", 1f, Networking.SNAPSHOTS_SPACING);
+        InvokeRepeating("Tick", 1f, 1f / Networking.TICKS_PER_SECOND / Networking.SUBTICKS_PER_TICK);
     }
 
     private void LateUpdate()
@@ -80,27 +100,34 @@ public class Events : MonoSingleton<Events>
         int amount = Tasks.Count;
         for (int i = 0; i < amount; i++) Tasks.Dequeue()?.Invoke();
     }
-}
 
-/// <summary> Safe event that will output all exceptions to the Unity console and guarantee the execution of each listener, regardless of errors. </summary>
-public class SafeEvent
-{
-    /// <summary> List of all event listeners. </summary>
-    private List<Action> listeners = new();
-
-    /// <summary> Fires the event, i.e. fires its listeners, ensuring that they all will be executed regardless of exceptions. </summary>
-    public void Fire()
+    /// <summary> Safe event that will output all exceptions to the console and guarantee the execution of each listener, regardless of errors. </summary>
+    public class SafeEvent<T>
     {
-        for (int i = 0; i < listeners.Count; i++)
+        /// <summary> List of all event listeners. </summary>
+        protected List<Cons<T>> listeners = new();
+
+        /// <summary> Fires the event, ensuring that all listeners will be executed regardless of exceptions. </summary>
+        public void Fire(T t)
         {
-            try { listeners[i](); }
-            catch (Exception ex) { Log.Error(ex); }
+            for (int i = 0; i < listeners.Count; i++)
+            {
+                try { listeners[i](t); }
+                catch (Exception ex) { Log.Error(ex); }
+            }
         }
+
+        /// <summary> Fires the event without arguments, ensuring that all listeners will be executed regardless of exceptions. </summary>
+        public void Fire() => Fire(default);
+
+        public static SafeEvent<T> operator +(SafeEvent<T> e, Cons<T> listener) { e.listeners.Add(listener); return e; }
+        public static SafeEvent<T> operator -(SafeEvent<T> e, Cons<T> listener) { e.listeners.Remove(listener); return e; }
     }
 
-    /// <summary> Subscribes to the safe event: the listener can throw exceptions safely. </summary>
-    public static SafeEvent operator +(SafeEvent e, Action listener) { e.listeners.Add(listener); return e; }
-
-    /// <summary> Unsubscribes from the safe event if it finds the listener in the list. </summary>
-    public static SafeEvent operator -(SafeEvent e, Action listener) { e.listeners.Remove(listener); return e; }
+    /// <summary> Safe event that will output all exceptions to the console and guarantee the execution of each listener, regardless of errors. </summary>
+    public class SafeEvent : SafeEvent<object>
+    {
+        public static SafeEvent operator +(SafeEvent e, Action listener) { _ = e + (_ => listener()); return e; }
+        public static SafeEvent operator -(SafeEvent e, Action listener) { _ = e - (_ => listener()); return e; }
+    }
 }

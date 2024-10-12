@@ -1,6 +1,5 @@
 namespace Jaket.World;
 
-using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Content;
@@ -115,7 +114,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         #region 1-4
         l = "Level 1-4";
 
-        StaticAction.Find(l, "Cube", new(0f, 11f, 612f), obj => Tools.Destroy(obj.GetComponent<DoorController>()));
+        StaticAction.Find(l, "Cube", new(0f, 11f, 612f), obj => Dest(obj.GetComponent<DoorController>()));
 
         NetAction.Sync(l, "Cube", new(0f, -19f, 612f)); // boss
 
@@ -204,7 +203,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         NetAction.Sync(l, "BossOutro", new(117.5f, 663.5f, 323f));
         NetAction.Sync(l, "ExitBuilding Raise", new(1027f, 261f, 202.5f), obj =>
         {
-            var next = Tools.ObjFind("TutorialMessage").transform.Find("DeactivateMessage").gameObject;
+            var next = ObjFind("TutorialMessage").transform.Find("DeactivateMessage").gameObject;
             if (next.activeSelf) return;
             next.SetActive(true);
 
@@ -238,10 +237,10 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
             uwu.onFull = new();
             uwu.onFull.AddListener(() =>
             {
-                Tools.Destroy(obj);
-                Tools.Destroy(Tools.ObjFind("Jakito Huge"));
+                Dest(obj);
+                Dest(ObjFind("Jakito Huge"));
 
-                var sea = Tools.ObjFind("Sea").transform;
+                var sea = ObjFind("Sea").transform;
                 sea.Find("SeaAmbiance").gameObject.SetActive(true);
                 sea.Find("SeaAmbiance (Waves)").gameObject.SetActive(true);
 
@@ -278,7 +277,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
 
         NetAction.Sync(l, "Activator", new(641.2f, 690f, 521.7f), obj => // boss
         {
-            obj.gameObject.scene.GetRootGameObjects().Do(o =>
+            obj.gameObject.scene.GetRootGameObjects().Each(o =>
             {
                 if (o.name == "Underwater") o.SetActive(false);
                 if (o.name == "Surface") o.SetActive(true);
@@ -356,7 +355,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         // other world
         void Fill(string text, int size, TextAnchor align, Transform canvas)
         {
-            for (int i = 3; i < canvas.childCount; i++) Tools.Destroy(canvas.GetChild(i).gameObject);
+            for (int i = 3; i < canvas.childCount; i++) Dest(canvas.GetChild(i).gameObject);
             UIB.Text(text, canvas, Size(964f, 964f), null, size, align).transform.localScale /= 8f;
         }
         StaticAction.Find(l, "Intro -> Outdoors", new(-115f, 55f, 419.5f), obj =>
@@ -374,18 +373,18 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
             if (obj.transform.parent.name == "9 Nonstuff") return;
 
             // open all of the doors
-            for (int i = 1; i < obj.transform.childCount; i++) Tools.Destroy(obj.transform.GetChild(i).gameObject);
+            for (int i = 1; i < obj.transform.childCount; i++) Dest(obj.transform.GetChild(i).gameObject);
 
             // disable the Gate Control Terminal™
-            Fill(string.Format(BASEMENT_TERMILA_TEXT, Tools.AccId), 64, TextAnchor.UpperLeft, obj.transform.Find("PuzzleScreen/Canvas"));
+            Fill(string.Format(BASEMENT_TERMILA_TEXT, AccId), 64, TextAnchor.UpperLeft, obj.transform.Find("PuzzleScreen/Canvas"));
         });
         StaticAction.Find(l, "PuzzleScreen (1)", new(-230.5f, 31.75f, 813.5f), obj => Fill("UwU", 256, TextAnchor.MiddleCenter, obj.transform.Find("Canvas")));
 
-        StaticAction.Find(l, "Trigger", new(-218.5f, 65f, 836.5f), obj => Tools.Destroy(obj.GetComponent<ObjectActivator>()));
+        StaticAction.Find(l, "Trigger", new(-218.5f, 65f, 836.5f), obj => Dest(obj.GetComponent<ObjectActivator>()));
         StaticAction.Find(l, "BayDoor", new(-305.75f, 49.75f, 600.5f), obj =>
         {
             ObjectActivator trigger;
-            obj.GetComponent<Door>().activatedRooms = new[] { (trigger = Tools.Create<ObjectActivator>("Trigger", obj.transform)).gameObject };
+            obj.GetComponent<Door>().activatedRooms = new[] { (trigger = Create<ObjectActivator>("Trigger", obj.transform)).gameObject };
 
             trigger.gameObject.SetActive(false);
             trigger.reactivateOnEnable = true;
@@ -414,7 +413,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         // library
         StaticAction.Find(l, "Enemies", new(88.5f, 5.75f, 701.25f), obj =>
         {
-            if (!LobbyController.IsOwner) obj.GetComponents<MonoBehaviour>().Do(Tools.Destroy);
+            if (!LobbyController.IsOwner) obj.GetComponents<MonoBehaviour>().Each(Dest);
         });
         NetAction.Sync(l, "Arena Start", new(133.5f, 45.75f, 701.25f));
 
@@ -423,7 +422,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         l = "Level 7-3";
 
         // why is there a torch???
-        StaticAction.Find(l, "1 - Dark Path", new(0f, -10f, 300f), obj => Tools.Destroy(obj.transform.Find("Altar (Torch) Variant/Cube").gameObject));
+        StaticAction.Find(l, "1 - Dark Path", new(0f, -10f, 300f), obj => Dest(obj.transform.Find("Altar (Torch) Variant/Cube").gameObject));
 
         StaticAction.Find(l, "Door 1", new(-55.5f, -2.5f, 618.5f), obj => obj.GetComponent<Door>().Unlock());
         StaticAction.Find(l, "Door 2", new(-75.5f, -12.5f, 568.5f), obj => obj.GetComponent<Door>().Unlock());
@@ -433,14 +432,14 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
             // teleport players to the final room once the door is opened
             obj.GetComponent<ObjectActivator>().events.onActivate.AddListener(() => Teleporter.Teleport(new(-189f, -33.5f, 483.75f)));
         });
-        StaticAction.Find(l, "ViolenceHallDoor", new(-148f, 7.5f, 276.25f), obj => Tools.Destroy(obj.GetComponent<Collider>()));
+        StaticAction.Find(l, "ViolenceHallDoor", new(-148f, 7.5f, 276.25f), obj => Dest(obj.GetComponent<Collider>()));
 
         StaticAction.Destroy(l, "Door 2", new(-95.5f, 7.5f, 298.75f));
         StaticAction.Destroy(l, "ViolenceHallDoor (1)", new(-188f, 7.5f, 316.25f));
 
         NetAction.Sync(l, "Trigger", new(-145.5f, 5f, 483.75f), obj => Teleporter.Teleport(new(-131f, -14.5f, 483.75f)));
         NetAction.Sync(l, "Opener", new(-170.5f, 0.5f, 480.75f));
-        NetAction.Sync(l, "Opener", new(-170.5f, 0.5f, 490.75f), obj => Tools.ObjFind("Outdoors Areas/6 - Interior Garden/NightSkyActivator").SetActive(true));
+        NetAction.Sync(l, "Opener", new(-170.5f, 0.5f, 490.75f), obj => ObjFind("Outdoors Areas/6 - Interior Garden/NightSkyActivator").SetActive(true));
         NetAction.Sync(l, "BigDoorOpener", new(-145.5f, -10f, 483.75f), obj => obj.transform.parent.gameObject.SetActive(true));
 
         #endregion
@@ -462,7 +461,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         // insides
         StaticAction.Find(l, "BrainFightTrigger", new(6.999941f, 841.5f, 610.7503f), obj => obj.GetComponent<ObjectActivator>()?.events.onActivate.AddListener(() =>
         {
-            obj.transform.parent.GetComponentsInChildren<DestroyOnCheckpointRestart>(true).Do(Tools.Destroy);
+            obj.transform.parent.GetComponentsInChildren<DestroyOnCheckpointRestart>(true).Each(Dest);
             if (World.Brain) World.Brain.IsFightActive = true;
         }));
         NetAction.Sync(l, "EntryTrigger", new(0f, 458.5f, 649.75f), obj => Teleporter.Teleport(new(0f, 460f, 650f)));
@@ -515,7 +514,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         {
             obj.transform.parent.Find("Cube (2)").gameObject.SetActive(false);
 
-            Tools.ObjFind("Music 3").SetActive(false);
+            ObjFind("Music 3").SetActive(false);
             obj.transform.parent.Find("Lights").gameObject.SetActive(false);
 
             StatsManager.Instance.StopTimer();
@@ -525,9 +524,9 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         {
             obj.transform.parent.Find("Backwall").gameObject.SetActive(false);
 
-            Tools.ObjFind("BossMusics/Sisyphus").SetActive(false);
-            Tools.ObjFind("IntroObjects/Decorations").SetActive(false);
-            Tools.ObjFind("Rain").SetActive(false);
+            ObjFind("BossMusics/Sisyphus").SetActive(false);
+            ObjFind("IntroObjects/Decorations").SetActive(false);
+            ObjFind("Rain").SetActive(false);
 
             StatsManager.Instance.StopTimer();
         });

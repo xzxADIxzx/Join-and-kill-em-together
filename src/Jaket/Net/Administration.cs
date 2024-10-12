@@ -1,6 +1,5 @@
 namespace Jaket.Net;
 
-using HarmonyLib;
 using System.Collections.Generic;
 
 using Jaket.Content;
@@ -40,7 +39,7 @@ public class Administration
             if (LobbyController.IsOwner) return;
 
             Banned.Clear();
-            LobbyController.Lobby?.GetData("banned").Split(' ').Do(sid =>
+            LobbyController.Lobby?.GetData("banned").Split(' ').Each(sid =>
             {
                 if (uint.TryParse(sid, out var id)) Banned.Add(id);
             });
@@ -60,7 +59,7 @@ public class Administration
         Networking.Send(PacketType.Ban, null, (data, size) =>
         {
             var con = Networking.FindCon(id);
-            Tools.Send(con, data, size);
+            Networking.Send(con, data, size);
             con?.Flush();
             Events.Post2(() => con?.Close());
         });

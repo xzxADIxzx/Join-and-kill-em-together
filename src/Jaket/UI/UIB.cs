@@ -1,7 +1,6 @@
 namespace Jaket.UI;
 
 using Steamworks;
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
@@ -47,7 +46,7 @@ public class UIB
         fix();
 
         // find all sprites
-        var all = Tools.ResFind<Sprite>();
+        var all = ResFind<Sprite>();
         Sprite Find(string name) => Array.Find(all, s => s.name == name);
 
         Background = Find("UISprite");
@@ -65,7 +64,7 @@ public class UIB
     #region base
 
     /// <summary> Adds a component to the given object and returns it. Just for convenience. </summary>
-    public static T Component<T>(GameObject obj, Action<T> cons) where T : Component
+    public static T Component<T>(GameObject obj, Cons<T> cons) where T : Component
     {
         var c = obj.AddComponent<T>();
         cons(c);
@@ -73,7 +72,7 @@ public class UIB
     }
 
     /// <summary> Gets and optionally sets renderer properties. </summary>
-    public static void Properties(Renderer renderer, Action<MaterialPropertyBlock> cons, bool set = false)
+    public static void Properties(Renderer renderer, Cons<MaterialPropertyBlock> cons, bool set = false)
     {
         renderer.GetPropertyBlock(block);
         cons(block);
@@ -82,7 +81,7 @@ public class UIB
 
     /// <summary> Adds a rect at the specified position with the given size and anchor. </summary>
     public static RectTransform Rect(string name, Transform parent, Rect r) =>
-        Component<RectTransform>(Tools.Create(name, parent), rect =>
+        Component<RectTransform>(Create(name, parent), rect =>
         {
             rect.anchorMin = r.Min;
             rect.anchorMax = r.Max;
@@ -91,7 +90,7 @@ public class UIB
         });
 
     /// <summary> Adds a translucent black image, that's it. </summary>
-    public static Image Table(string name, Transform parent, Rect r, Action<Transform> build = null)
+    public static Image Table(string name, Transform parent, Rect r, Cons<Transform> build = null)
     {
         var image = Image(name, parent, r, new(0f, 0f, 0f, .5f));
         build?.Invoke(image.transform);
@@ -99,7 +98,7 @@ public class UIB
     }
 
     /// <summary> Adds a table with a title. </summary>
-    public static Image Table(string name, string title, Transform parent, Rect r, Action<Transform> build = null) =>
+    public static Image Table(string name, string title, Transform parent, Rect r, Cons<Transform> build = null) =>
         Table(name, parent, r, table =>
         {
             Text(title, table, Btn(24f) with { Width = 640f }, size: 32);
@@ -112,7 +111,7 @@ public class UIB
     /// <summary> Creates a canvas that is drawn on top of the camera. </summary>
     public static Transform Canvas(string name, Transform parent, int sort = 1000, float woh = 0f, RenderMode renderMode = RenderMode.ScreenSpaceOverlay, ScaleMode scaleMode = ScaleMode.ScaleWithScreenSize)
     {
-        var obj = Tools.Create(name, parent);
+        var obj = Create(name, parent);
         Component<Canvas>(obj, canvas =>
         {
             canvas.renderMode = renderMode;
@@ -128,7 +127,7 @@ public class UIB
     }
 
     /// <summary> Creates a canvas that is drawn in world space. </summary>
-    public static Transform WorldCanvas(string name, Transform parent, Vector3 position, float scale = .02f, Action<Transform> build = null)
+    public static Transform WorldCanvas(string name, Transform parent, Vector3 position, float scale = .02f, Cons<Transform> build = null)
     {
         var canvas = Canvas(name, parent, 0, 0f, RenderMode.WorldSpace, ScaleMode.ConstantPixelSize);
         canvas.localPosition = position;
@@ -141,6 +140,7 @@ public class UIB
     #endregion
     #region text
 
+    /// <summary> Adds a label with the given text. </summary>
     public static Text Text(string name, Transform parent, Rect r, Color? color = null, int size = 24, TextAnchor align = TextAnchor.MiddleCenter) =>
         Component<Text>(Rect("Text", parent, r).gameObject, text =>
         {
@@ -279,7 +279,8 @@ public class UIB
     #endregion
     #region toggle
 
-    public static Toggle Toggle(string name, Transform parent, Rect r, int size = 24, Action<bool> clicked = null) =>
+    /// <summary> Adds a toggle with the given callback. </summary>
+    public static Toggle Toggle(string name, Transform parent, Rect r, int size = 24, Cons<bool> clicked = null) =>
         Component<Toggle>(Text(name, parent, r, size: size, align: TextAnchor.MiddleLeft).gameObject, toggle =>
         {
             toggle.onValueChanged.AddListener(_ => clicked(_));
@@ -311,7 +312,7 @@ public class UIB
         });
 
     /// <summary> Adds a slider with a handle. </summary>
-    public static Slider Slider(string name, Transform parent, Rect r, int max, Action<int> cons = null) =>
+    public static Slider Slider(string name, Transform parent, Rect r, int max, Cons<int> cons = null) =>
         Component<Slider>(Table(name, parent, r).gameObject, slider =>
         {
             slider.fillRect = Image("Fill", slider.transform, new(0f, 0f, 0f, 0f)).rectTransform;
@@ -326,7 +327,8 @@ public class UIB
     #endregion
     #region field
 
-    public static InputField Field(string name, Transform parent, Rect r, int size = 24, Action<string> cons = null)
+    /// <summary> Adds a singleline input field. </summary>
+    public static InputField Field(string name, Transform parent, Rect r, int size = 24, Cons<string> cons = null)
     {
         var tr = new Rect(8f, 1f, r.Width, r.Height);
         var img = Table("Field", parent, r);
@@ -364,7 +366,7 @@ public class UIB
 
     /// <summary> Adds a line renderer, the size of which will always be equals to the screen. </summary>
     public static UILineRenderer Line(string name, Transform parent, Color? color = null) =>
-        Component<UILineRenderer>(Rect(name, parent, new(8f, 8f, 0f, 0f, Vector2.zero, Vector2.zero)).gameObject, line => line.color = color ?? white);
+        Component<UILineRenderer>(Rect(name, parent, new(8f, 8f, 0f, 0f, Vector2.zero)).gameObject, line => line.color = color ?? white);
 
     #endregion
 }

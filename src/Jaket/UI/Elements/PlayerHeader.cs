@@ -23,7 +23,7 @@ public class PlayerHeader
 
     public PlayerHeader(uint id, Transform parent)
     {
-        Name = Tools.Name(id);
+        Name = Name(id);
 
         float width = Name.Length * 14f + 16f;
         canvas = UIB.WorldCanvas("Header", parent, new(0f, 5f, 0f), build: canvas =>

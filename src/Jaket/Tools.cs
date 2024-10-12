@@ -1,9 +1,13 @@
+global using static Jaket.Tools;
+
+global using IntPtr = System.IntPtr;
+global using Array = System.Array;
+global using Exception = System.Exception;
+
 namespace Jaket;
 
 using HarmonyLib;
 using Steamworks;
-using Steamworks.Data;
-using System;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.Events;
@@ -16,9 +20,9 @@ using Jaket.Net;
 using Jaket.Net.Types;
 
 /// <summary> Set of different tools for simplifying life and systematization of code. </summary>
-public class Tools
+public static class Tools
 {
-    #region networking
+    #region steam
 
     /// <summary> Steam id of the local player. </summary>
     public static SteamId Id => SteamClient.SteamId;
@@ -30,19 +34,6 @@ public class Tools
     /// <summary> Returns the name of the player with the given AccountId. </summary>
     public static string Name(uint id) => new Friend(id | 76561197960265728u).Name;
 
-    /// <summary> Shortcut needed in order to track statistics and errors. </summary>
-    public static void Send(Connection? con, IntPtr data, int size)
-    {
-        if (con == null)
-        {
-            Log.Warning("An attempt to send data to the connection equal to null.");
-            return;
-        }
-
-        con.Value.SendMessage(data, size);
-        Stats.Write += size;
-    }
-
     #endregion
     #region scene
 
@@ -52,7 +43,7 @@ public class Tools
     public static string Pending => SceneHelper.PendingScene;
 
     /// <summary> Loads the given scene. </summary>
-    public static void Load(string scene) => SceneHelper.LoadScene(scene);
+    public static void LoadScn(string scene) => SceneHelper.LoadScene(scene);
 
     /// <summary> Whether the given object is on a scene or is it just an asset. </summary>
     public static bool IsReal(GameObject obj) => obj.scene.name != null && obj.scene.name != "DontDestroyOnLoad";
@@ -71,35 +62,40 @@ public class Tools
     /// <summary> Creates a new game object and adds a component of the given type to it. </summary>
     public static T Create<T>(string name, Transform parent = null) where T : Component => Create(name, parent).AddComponent<T>();
 
-    public static GameObject Instantiate(GameObject obj, Transform parent) => Object.Instantiate(obj, parent);
-    public static GameObject Instantiate(GameObject obj, Vector3 position, Quaternion? rotation = null) => Object.Instantiate(obj, position, rotation ?? Quaternion.identity);
+    public static GameObject Inst(GameObject obj) => Object.Instantiate(obj);
+    public static GameObject Inst(GameObject obj, Transform parent) => Object.Instantiate(obj, parent);
+    public static GameObject Inst(GameObject obj, Vector3 position, Quaternion? rotation = null) => Object.Instantiate(obj, position, rotation ?? Quaternion.identity);
 
-    public static void Destroy(Object obj) => Object.Destroy(obj);
-    public static void DestroyImmediate(Object obj) => Object.DestroyImmediate(obj);
+    public static void Dest(Object obj) => Object.Destroy(obj);
+    public static void DestImmediate(Object obj) => Object.DestroyImmediate(obj);
+    public static void DontDest(Object obj) => Object.DontDestroyOnLoad(obj);
 
     #endregion
     #region resources
 
+    /// <summary> Returns all objects of the given type. </summary>
     public static T[] ResFind<T>() where T : Object => Resources.FindObjectsOfTypeAll<T>();
 
-    /// <summary> Iterates all objects of the type that predicate for the criterion. </summary>
-    public static void ResFind<T>(Predicate<T> pred, Action<T> cons) where T : Object
+    /// <summary> Iterates all objects of the given type. </summary>
+    public static void ResFind<T>(Cons<T> cons) where T : Object
+    {
+        foreach (var item in ResFind<T>()) cons(item);
+    }
+
+    /// <summary> Iterates all objects of the given type that are suitable for the given predicate. </summary>
+    public static void ResFind<T>(Pred<T> pred, Cons<T> cons) where T : Object
     {
         foreach (var item in ResFind<T>()) if (pred(item)) cons(item);
     }
 
+    /// <summary> Finds object of the given type. </summary>
     public static T ObjFind<T>() where T : Object => Object.FindObjectOfType<T>();
+
+    /// <summary> Finds object with the given name. </summary>
     public static GameObject ObjFind(string name) => GameObject.Find(name);
 
-    /// <summary> Returns the event of pressing the button. </summary>
-    public static UnityEvent GetClick(GameObject btn)
-    {
-        var pointer = btn.GetComponents<MonoBehaviour>()[2]; // so much pain over the private class ControllerPointer
-        return AccessTools.Property(pointer.GetType(), "OnPressed").GetValue(pointer) as UnityEvent;
-    }
-
     #endregion
-    #region harmony
+    #region reflection
 
     /// <summary> Returns the information about a field with the given name. </summary>
     public static FieldInfo Field<T>(string name) => AccessTools.Field(typeof(T), name);
@@ -110,9 +106,31 @@ public class Tools
     public static void Set<T>(string name, T t, object value) => Field<T>(name).SetValue(t, value);
 
     /// <summary> Calls a method with the given name. </summary>
-    public static void Invoke<T>(string name, T t, params object[] args) => AccessTools.Method(typeof(T), name).Invoke(t, args);
+    public static void Call<T>(string name, T t, params object[] args) => AccessTools.Method(typeof(T), name).Invoke(t, args);
     /// <summary> Calls a method with the given name and a single boolean argument. </summary>
-    public static void Invoke<T>(string name, T t, bool arg) => AccessTools.Method(typeof(T), name, new[] { typeof(bool) }).Invoke(t, new object[] { arg });
+    public static void Call<T>(string name, T t, bool arg) => AccessTools.Method(typeof(T), name, new[] { typeof(bool) }).Invoke(t, new object[] { arg });
+
+    /// <summary> Returns the event of pressing the button. </summary>
+    public static UnityEvent GetClick(GameObject btn)
+    {
+        var pointer = btn.GetComponents<MonoBehaviour>()[2]; // so much pain over the private class ControllerPointer
+        return AccessTools.Property(pointer.GetType(), "OnPressed").GetValue(pointer) as UnityEvent;
+    }
+
+    #endregion
+    #region iteration
+
+    /// <summary> Iterates each object in the given enumerable. </summary>
+    public static void Each<T>(this System.Collections.Generic.IEnumerable<T> seq, Cons<T> cons)
+    {
+        foreach (var item in seq) cons(item);
+    }
+
+    /// <summary> Iterates each object in the given enumerable that are suitable for the given predicate.. </summary>
+    public static void Each<T>(this System.Collections.Generic.IEnumerable<T> seq, Pred<T> pred, Cons<T> cons)
+    {
+        foreach (var item in seq) if (pred(item)) cons(item);
+    }
 
     #endregion
     #region within
@@ -137,6 +155,27 @@ public class Tools
 
         return dummy;
     }
+
+    #endregion
+    #region delegates
+
+    /// <summary> Performs an abstract action without any arguments or return value. </summary>
+    public delegate void Action();
+
+    /// <summary> Consumes one value. </summary>
+    public delegate void Cons<T>(T t);
+
+    /// <summary> Consumes two values. </summary>
+    public delegate void Cons<T, K>(T t, K k);
+
+    /// <summary> Predicate that consumes one value. </summary>
+    public delegate bool Pred<T>(T t);
+
+    /// <summary> Provider of one value. </summary>
+    public delegate T Prov<T>();
+
+    /// <summary> Function that consumes one value and returns another one. </summary>
+    public delegate K Func<T, K>(T t);
 
     #endregion
 }

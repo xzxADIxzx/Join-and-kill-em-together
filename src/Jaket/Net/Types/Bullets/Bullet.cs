@@ -37,7 +37,7 @@ public class Bullet : OwnableEntity
         });
         TryGetComponent(out grenade);
         TryGetComponent(out ball);
-        Destroy(GetComponent<FloatingPointErrorPreventer>());
+        Dest(GetComponent<FloatingPointErrorPreventer>());
 
         x = new(); y = new(); z = new();
         rx = new(); ry = new(); rz = new();
@@ -65,7 +65,7 @@ public class Bullet : OwnableEntity
         }
     });
 
-    private void Exploded(bool value) => Tools.Set("exploded", grenade, value);
+    private void Exploded(bool value) => Set("exploded", grenade, value);
 
     #region entity
 
@@ -101,11 +101,11 @@ public class Bullet : OwnableEntity
     public override void Kill(Reader r)
     {
         base.Kill(r);
-        DeadBullet.Replace(this);
+        DeadEntity.Replace(this);
 
         if (r == null)
         {
-            Destroy(gameObject);
+            Dest(gameObject);
             return;
         }
 

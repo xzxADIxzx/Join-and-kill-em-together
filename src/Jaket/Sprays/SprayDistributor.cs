@@ -1,7 +1,6 @@
 namespace Jaket.Sprays;
 
 using Steamworks.Data;
-using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
@@ -33,7 +32,7 @@ public static class SprayDistributor
         foreach (var owner in Requests.Keys)
         {
             if (SprayManager.Cache.TryGetValue(owner, out var spray))
-                Upload(owner, spray.Data, (data, size) => Requests[owner].ForEach(con => Tools.Send(con, data, size)));
+                Upload(owner, spray.Data, (data, size) => Requests[owner].ForEach(con => Networking.Send(con, data, size)));
             else
                 Log.Error($"Couldn't find the requested spray. Spray id is {owner}");
         }
@@ -58,7 +57,7 @@ public static class SprayDistributor
     #region networking
 
     /// <summary> Uploads the given spray to the clients or server. </summary>
-    public static void Upload(uint owner, byte[] data, Action<IntPtr, int> result = null)
+    public static void Upload(uint owner, byte[] data, Cons<IntPtr, int> result = null)
     {
         // initialize a new stream
         Networking.Send(PacketType.ImageChunk, w =>
@@ -84,7 +83,7 @@ public static class SprayDistributor
         if (SprayManager.Uploaded || SprayManager.CurrentSpray == null) return;
         Log.Info("Uploading the current spray...");
 
-        Upload(Tools.AccId, SprayManager.CurrentSpray.Data);
+        Upload(AccId, SprayManager.CurrentSpray.Data);
         SprayManager.Uploaded = true;
     }
 

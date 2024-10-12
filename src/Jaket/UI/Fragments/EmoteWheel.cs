@@ -75,7 +75,7 @@ public class EmoteWheel : CanvasSingleton<EmoteWheel>
         if (lastSelected != selected)
         {
             lastSelected = selected;
-            Instantiate(WeaponWheel.Instance.clickSound);
+            Inst(WeaponWheel.Instance.clickSound);
 
             holdTime = 0f;
         }

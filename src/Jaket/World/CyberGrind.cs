@@ -49,14 +49,14 @@ public class CyberGrind
     public static void LoadPattern(ArenaPattern pattern)
     {
         // start a new wave with the synced pattern
-        Tools.Invoke("NextWave", grid);
+        Call("NextWave", grid);
 
         // do not reset any value if it is the first load
         var col = grid.GetComponent<Collider>();
         if (col.enabled)
         {
             col.enabled = false; // start the timer and the music
-            Tools.ObjFind("Everything").transform.Find("Timer").gameObject.SetActive(true);
+            ObjFind("Everything").transform.Find("Timer").gameObject.SetActive(true);
             return;
         }
 

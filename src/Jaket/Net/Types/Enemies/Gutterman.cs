@@ -17,15 +17,20 @@ public class Gutterman : SimpleEnemy
     protected override void Start()
     {
         SpawnEffect();
-        Boss(Tools.Scene == "Level 7-2" && transform.position.z < 400f, 30f);
+        Boss(Scene == "Level 7-2" && transform.position.z < 400f, 30f);
     }
 
     #region entity
 
+    public override void OnDied() => Dead = true;
+
     public override void Kill()
     {
         if (toBreakCorpse)
+        {
+            DeadEntity.Replace(this);
             GetComponent<global::Gutterman>().Explode();
+        }
         else
         {
             EnemyId.InstaKill();

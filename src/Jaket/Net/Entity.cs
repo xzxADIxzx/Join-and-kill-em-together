@@ -1,6 +1,5 @@
 namespace Jaket.Net;
 
-using System;
 using UnityEngine;
 
 using Jaket.Content;
@@ -17,7 +16,7 @@ public abstract class Entity : MonoBehaviour
     /// <summary> Id of the entity owner. </summary>
     public uint Owner;
     /// <summary> Whether the local player owns the entity. </summary>
-    public bool IsOwner => Owner == Tools.AccId;
+    public bool IsOwner => Owner == AccId;
 
     /// <summary> Last update time via snapshots. </summary>
     public float LastUpdate;
@@ -49,13 +48,13 @@ public abstract class Entity : MonoBehaviour
             if (provided == EntityType.None)
             {
                 Log.Warning($"Couldn't find the entity type of the object {name}");
-                Destroy(this);
+                Dest(this);
                 return;
             }
 
             Id = Entities.NextId();
             Type = provided;
-            Owner = Tools.AccId;
+            Owner = AccId;
 
             name = "Local";
             Networking.Entities[Id] = this;
@@ -110,10 +109,10 @@ public abstract class Entity : MonoBehaviour
         public void Read(Reader r) => Set(r.Float());
 
         /// <summary> Returns an intermediate value. </summary>
-        public float Get(float lastUpdate) => Mathf.Lerp(Last, Target, (Time.time - lastUpdate) / Networking.SNAPSHOTS_SPACING);
+        public float Get(float lastUpdate) => Mathf.Lerp(Last, Target, (Time.time - lastUpdate) * Networking.TICKS_PER_SECOND);
 
         /// <summary> Returns the intermediate value of the angle. </summary>
-        public float GetAngel(float lastUpdate) => Mathf.LerpAngle(Last, Target, (Time.time - lastUpdate) / Networking.SNAPSHOTS_SPACING);
+        public float GetAngel(float lastUpdate) => Mathf.LerpAngle(Last, Target, (Time.time - lastUpdate) * Networking.TICKS_PER_SECOND);
     }
 
     /// <summary> Class for finding entities according to their ID. </summary>

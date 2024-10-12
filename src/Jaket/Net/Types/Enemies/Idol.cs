@@ -29,10 +29,10 @@ public class Idol : Enemy
         transform.position = new(x.Target, y.Target, z.Target);
         if (lastTargetId != target.Id)
         {
-            if (Tools.Scene == "Level 5-2") fakeFerry = Tools.ObjFind("FerrymanIntro")?.GetComponent<EnemyIdentifier>();
+            if (Scene == "Level 5-2") fakeFerry = ObjFind("FerrymanIntro")?.GetComponent<EnemyIdentifier>();
 
             lastTargetId = target.Id;
-            EnemyId.idol.ChangeOverrideTarget(fakeFerry && Tools.Within(fakeFerry.transform, transform, 100f) ? fakeFerry : target.Value?.EnemyId);
+            EnemyId.idol.ChangeOverrideTarget(fakeFerry && Within(fakeFerry.transform, transform, 100f) ? fakeFerry : target.Value?.EnemyId);
         }
     });
 
@@ -66,12 +66,6 @@ public class Idol : Enemy
         }
         else
             target.Id = r.Id();
-    }
-
-    public override void OnDied()
-    {
-        base.OnDied(); // after the death of the idol, its game object is destroyed
-        DeadBullet.Replace(this);
     }
 
     #endregion

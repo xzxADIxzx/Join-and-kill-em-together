@@ -1,6 +1,5 @@
 namespace Jaket.Content;
 
-using HarmonyLib;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -74,7 +73,7 @@ public class Items
         // prefabs of fishes do not contain anything except the model of the fish
         if (fsh)
         {
-            Tools.Instantiate(Prefabs[type - EntityType.ItemOffset], obj.transform).transform.localPosition = Vector3.zero;
+            Inst(Prefabs[type - EntityType.ItemOffset], obj.transform).transform.localPosition = Vector3.zero;
             obj.AddComponent<FishObjectReference>();
         }
 
@@ -87,7 +86,7 @@ public class Items
         if (LobbyController.Offline || itemId == null || itemId.gameObject == null) return;
 
         // the item is already synced, the item is a book or the item is a prefab
-        if (itemId.name == "Net" || itemId.name == "Local" || itemId.name.Contains("Book") || !Tools.IsReal(itemId) || itemId.infiniteSource) return;
+        if (itemId.name == "Net" || itemId.name == "Local" || itemId.name.Contains("Book") || !IsReal(itemId) || itemId.infiniteSource) return;
         // sometimes developers just deactivate skulls instead of removing them
         if (!itemId.gameObject.activeSelf || GameAssets.ItemExceptions.Contains(itemId.name)) return;
 
@@ -97,23 +96,23 @@ public class Items
         if (LobbyController.IsOwner || single)
             itemId.gameObject.AddComponent<Item>();
         else
-            Tools.DestroyImmediate(itemId.gameObject);
+            DestImmediate(itemId.gameObject);
     }
 
     /// <summary> Synchronizes all items in the level. </summary>
     public static void SyncAll()
     {
-        foreach (var item in Tools.ResFind<ItemIdentifier>()) Sync(item, false);
-        foreach (var zone in Tools.ResFind<ItemPlaceZone>())
+        ResFind<ItemIdentifier>(item => Sync(item, false));
+        ResFind<ItemPlaceZone>(zone =>
         {
-            if (!Tools.IsReal(zone)) continue;
+            if (!IsReal(zone)) return;
 
             zone.transform.SetParent(null);
             zone.CheckItem();
 
-            zone.arenaStatuses.Do(s => s.currentStatus = 0);
-            zone.reverseArenaStatuses.Do(s => s.currentStatus = 0);
-        }
+            zone.arenaStatuses.Each(s => s.currentStatus = 0);
+            zone.reverseArenaStatuses.Each(s => s.currentStatus = 0);
+        });
     }
 }
 

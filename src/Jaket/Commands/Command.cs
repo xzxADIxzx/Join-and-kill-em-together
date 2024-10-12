@@ -1,19 +1,19 @@
 namespace Jaket.Commands;
 
-using System;
-
 /// <summary> Command that has a name, parameters, a description, and a handler that accepts arguments. </summary>
 public class Command
 {
     /// <summary> Basic command parameters displayed by the help command. </summary>
     public string Name, Args, Desc;
     /// <summary> Handler for receiving command arguments. </summary>
-    public Action<string[]> Handler;
+    public Cons<string[]> Handler;
 
-    public Command(string name, string args, string desc, Action<string[]> handler)
+    public Command(string name, string args, string desc, Cons<string[]> handler)
     {
-        this.Name = name; this.Args = args; this.Desc = desc;
-        this.Handler = handler;
+        Name = name;
+        Args = args;
+        Desc = desc;
+        Handler = handler;
     }
 
     /// <summary> Handles the command call and its arguments. </summary>

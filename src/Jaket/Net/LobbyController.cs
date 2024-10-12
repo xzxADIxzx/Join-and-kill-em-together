@@ -2,7 +2,6 @@ namespace Jaket.Net;
 
 using Steamworks;
 using Steamworks.Data;
-using System;
 using System.Linq;
 using UnityEngine;
 
@@ -39,37 +38,40 @@ public class LobbyController
     public static float PPP;
 
     /// <summary> Scales health to increase difficulty. </summary>
-    public static void ScaleHealth(ref float health) => health *= 1f + Math.Min(Lobby?.MemberCount - 1 ?? 1, 1) * PPP;
+    public static void ScaleHealth(ref float health) => health *= 1f + Mathf.Min(Lobby?.MemberCount - 1 ?? 1, 1) * PPP;
     /// <summary> Whether the given lobby is created via Multikill. </summary>
     public static bool IsMultikillLobby(Lobby lobby) => lobby.Data.Any(pair => pair.Key == "mk_lobby");
 
     /// <summary> Creates the necessary listeners for proper work. </summary>
     public static void Load()
     {
+        // general info about the lobby
+        Events.OnLobbyAction += () => Log.Debug($"Lobby updated: owner is {Lobby?.Owner.ToString() ?? "null"}, level is {Lobby?.GetData("level") ?? "null"}");
         // get the owner id when entering the lobby
-        SteamMatchmaking.OnLobbyEntered += lobby =>
+        Events.OnLobbyEntered += () =>
         {
-            if (lobby.Owner.Id != 0L) LastOwner = lobby.Owner.Id;
+            if (Offline) return;
+            Log.Debug($"Entered a lobby ({LastOwner = Lobby?.Owner.Id ?? 0L})");
 
-            if (lobby.GetData("banned").Contains(Tools.AccId.ToString()))
+            if (Lobby.Value.GetData("banned").Contains(AccId.ToString()))
             {
                 LeaveLobby();
                 Bundle.Hud2NS("lobby.banned");
             }
-            if (IsMultikillLobby(lobby))
+            if (IsMultikillLobby(Lobby.Value))
             {
                 LeaveLobby();
-                Bundle.Hud("lobby.mk");
+                Bundle.Hud2NS("lobby.mk");
             }
         };
         // and leave the lobby if the owner has left it
-        SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) =>
+        Events.OnMemberLeave += member =>
         {
             if (member.Id == LastOwner) LeaveLobby();
         };
 
         // put the level name in the lobby data so that it can be seen in the public lobbies list
-        Events.OnLoaded += () => Lobby?.SetData("level", MapMap(Tools.Scene));
+        Events.OnLoaded += () => Lobby?.SetData("level", MapMap(Scene));
         // if the player exits to the main menu, then this is equivalent to leaving the lobby
         Events.OnMainMenuLoaded += () => LeaveLobby(false);
     }
@@ -78,7 +80,7 @@ public class LobbyController
     public static bool Contains(uint id) => Lobby?.Members.Any(member => member.Id.AccountId == id) ?? false;
 
     /// <summary> Returns the member at the given index or null. </summary>
-    public static Friend? At(int index) => Lobby?.Members.ElementAt(Math.Min(Math.Max(index, 0), Lobby.Value.MemberCount));
+    public static Friend? At(int index) => Lobby?.Members.ElementAt(Mathf.Min(Mathf.Max(index, 0), Lobby.Value.MemberCount));
 
     /// <summary> Returns the index of the local player in the lits of members. </summary>
     public static int IndexOfLocal() => Lobby?.Members.ToList().FindIndex(member => member.IsMe) ?? 0;
@@ -101,7 +103,7 @@ public class LobbyController
             Lobby?.SetPrivate();
             Lobby?.SetData("jaket", "true");
             Lobby?.SetData("name", $"{SteamClient.Name}'s Lobby");
-            Lobby?.SetData("level", MapMap(Tools.Scene));
+            Lobby?.SetData("level", MapMap(Scene));
             Lobby?.SetData("pvp", "True");
             Lobby?.SetData("cheats", "False");
             Lobby?.SetData("mods", "False");
@@ -118,6 +120,7 @@ public class LobbyController
         {
             Networking.Server.Close();
             Networking.Client.Close();
+            Networking.Clear();
             Pointers.Free();
 
             Lobby?.Leave();
@@ -125,9 +128,8 @@ public class LobbyController
         }
 
         // load the main menu if the client has left the lobby
-        if (!IsOwner && loadMainMenu) Tools.Load("Main Menu");
+        if (!IsOwner && loadMainMenu) LoadScn("Main Menu");
 
-        Networking.Clear();
         Events.OnLobbyAction.Fire();
     }
 
@@ -150,7 +152,7 @@ public class LobbyController
                 IsOwner = false;
                 Lobby = lobby;
             }
-            else Log.Warning($"Couldn't join a lobby. Result is {task.Result}");
+            else Log.Warning($"Couldn't join the lobby. Result is {task.Result}");
         });
     }
 
@@ -175,7 +177,7 @@ public class LobbyController
     #region browser
 
     /// <summary> Asynchronously fetches a list of public lobbies. </summary>
-    public static void FetchLobbies(Action<Lobby[]> done)
+    public static void FetchLobbies(Cons<Lobby[]> done)
     {
         FetchingLobbies = true;
         SteamMatchmaking.LobbyList.RequestAsync().ContinueWith(task =>

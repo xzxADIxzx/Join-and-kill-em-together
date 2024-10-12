@@ -24,10 +24,10 @@ public class Debugging : CanvasSingleton<Debugging>
     {
         Events.OnLobbyAction += () =>
         {
-            if (LobbyController.Offline)
-                readText.text = writeText.text = readTimeText.text = writeTimeText.text =
-                entityText.text = targetText.text =
-                entities.text = owner.text = loading.text = impact.text = "-";
+            if (LobbyController.Online) new[]
+            {
+                readText, writeText, readTimeText, writeTimeText, entityText, targetText, entities, owner, loading, impact
+            }.Each(t => t.text = "-");
         };
         Events.EverySecond += UpdateGraph;
 
@@ -39,31 +39,31 @@ public class Debugging : CanvasSingleton<Debugging>
 
         UIB.Table("Graph", transform, Msg(1888f) with { y = 114f, Height = 196f }, table =>
         {
-            target.Graph = UIB.Line("Target Update", table, Dark(blue));
-            entity.Graph = UIB.Line("Entity Update", table, blue);
+            target.Graph    = UIB.Line("Target Update", table, Dark(blue));
+            entity.Graph    = UIB.Line("Entity Update", table, blue);
             writeTime.Graph = UIB.Line("Write Time", table, Dark(orange));
-            readTime.Graph = UIB.Line("Read Time", table, orange);
-            write.Graph = UIB.Line("Write", table, Dark(green));
-            read.Graph = UIB.Line("Read", table, green);
+            readTime.Graph  = UIB.Line("Read Time", table, orange);
+            write.Graph     = UIB.Line("Write", table, Dark(green));
+            read.Graph      = UIB.Line("Read", table, green);
         });
         UIB.Table("Stats", transform, Deb(0), table =>
         {
-            readText = DoubleText(table, "READ:", 20f, green);
-            writeText = DoubleText(table, "WRITE:", 52f, Dark(green));
-            readTimeText = DoubleText(table, "READ TIME:", 84f, orange);
-            writeTimeText = DoubleText(table, "WRITE TIME:", 116f, Dark(orange));
+            readText        = DoubleText(table, "READ:", 20f, green);
+            writeText       = DoubleText(table, "WRITE:", 52f, Dark(green));
+            readTimeText    = DoubleText(table, "READ TIME:", 84f, orange);
+            writeTimeText   = DoubleText(table, "WRITE TIME:", 116f, Dark(orange));
         });
-        UIB.Table("Also Stats", transform, Deb(1), table =>
+        UIB.Table("Stats", transform, Deb(1), table =>
         {
-            entityText = DoubleText(table, "ENTITY UPDATE:", 20f, blue);
-            targetText = DoubleText(table, "TARGET UPDATE:", 52f, Dark(blue));
+            entityText      = DoubleText(table, "ENTITY UPDATE:", 20f, blue);
+            targetText      = DoubleText(table, "TARGET UPDATE:", 52f, Dark(blue));
         });
         UIB.Table("Networking", transform, Deb(2), table =>
         {
-            entities = DoubleText(table, "ENTITIES:", 20f);
-            owner = DoubleText(table, "IS OWNER:", 52f);
-            loading = DoubleText(table, "LOADING:", 84f);
-            impact = DoubleText(table, "IMPACT ON FPS:", 116f, red);
+            entities        = DoubleText(table, "ENTITIES:", 20f);
+            owner           = DoubleText(table, "IS OWNER:", 52f);
+            loading         = DoubleText(table, "LOADING:", 84f);
+            impact          = DoubleText(table, "IMPACT ON FPS:", 116f, red);
         });
     }
 
@@ -73,7 +73,7 @@ public class Debugging : CanvasSingleton<Debugging>
 
         #region graph
 
-        read.Enqueue(Stats.LastRead); readTime.Enqueue(Stats.LastReadTime); entity.Enqueue(Stats.LastEntityUpdate);
+        read.Enqueue(Stats.LastRead);   readTime.Enqueue(Stats.LastReadTime);   entity.Enqueue(Stats.LastEntityUpdate);
         write.Enqueue(Stats.LastWrite); writeTime.Enqueue(Stats.LastWriteTime); target.Enqueue(Stats.LastTargetUpdate);
 
         float peak = Mathf.Max(2048, read.Max(), write.Max());
@@ -118,7 +118,7 @@ public class Debugging : CanvasSingleton<Debugging>
     public void Toggle() => gameObject.SetActive(Shown = !Shown);
 
     /// <summary> Clears the graph. </summary>
-    public void Clear() { read.Clear(); write.Clear(); readTime.Clear(); writeTime.Clear(); }
+    public void Clear() { read.Clear(); write.Clear(); readTime.Clear(); writeTime.Clear(); entity.Clear(); target.Clear(); }
 
     /// <summary> Constatnt size queue. </summary>
     private class Data : Queue<float>

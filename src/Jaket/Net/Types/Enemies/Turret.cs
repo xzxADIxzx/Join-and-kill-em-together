@@ -40,7 +40,7 @@ public class Turret : Enemy
         }
     });
 
-    private void Cooldown(float time) => Tools.Set("cooldown", turret, time);
+    private void Cooldown(float time) => Set("cooldown", turret, time);
 
     #region entity
 

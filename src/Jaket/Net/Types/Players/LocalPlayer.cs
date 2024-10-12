@@ -40,7 +40,7 @@ public class LocalPlayer : Entity
 
     private void Awake()
     {
-        Owner = Id = Tools.AccId;
+        Owner = Id = AccId;
         Type = EntityType.Player;
 
         Voice = gameObject.AddComponent<AudioSource>(); // add a 2D audio source that will be heard from everywhere
@@ -92,7 +92,7 @@ public class LocalPlayer : Entity
     public void UpdateWeapons()
     {
         weapon = Weapons.Type();
-        is44 = Tools.Scene == "Level 4-4";
+        is44 = Scene == "Level 4-4";
 
         if (LobbyController.Online) SyncSuit();
 

@@ -23,7 +23,7 @@ public class Body : Enemy
     private void Start()
     {
         SpawnEffect();
-        Boss(Tools.Scene == "Level 0-1", 25f);
+        Boss(Scene == "Level 0-1", 25f);
 
         transform.parent.position = transform.position + Vector3.down * 10f; // teleport the spawn effect
         Events.Post2(() =>
@@ -45,7 +45,7 @@ public class Body : Enemy
         if (lastCharging != charging && (lastCharging = charging)) EnemyId.spider.Invoke("ChargeBeam", 0f);
     });
 
-    private void Cooldown(float time) => Tools.Set("beamProbability", EnemyId.spider, time);
+    private void Cooldown(float time) => Set("beamProbability", EnemyId.spider, time);
 
     #region entity
 
@@ -69,11 +69,13 @@ public class Body : Enemy
         }
     }
 
+    public override void OnDied() => Dead = true;
+
     public override void Kill()
     {
         if (toBreakCorpse)
         {
-            DeadBullet.Replace(this);
+            DeadEntity.Replace(this);
             EnemyId.spider.BreakCorpse();
         }
         else

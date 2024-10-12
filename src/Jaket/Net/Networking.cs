@@ -1,9 +1,7 @@
 namespace Jaket.Net;
 
-using HarmonyLib;
 using Steamworks;
 using Steamworks.Data;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,9 +16,9 @@ using Jaket.UI.Dialogs;
 public class Networking
 {
     /// <summary> Number of snapshots to be sent per second. </summary>
-    public const int SNAPSHOTS_PER_SECOND = 16;
-    /// <summary> Number of seconds between snapshots. </summary>
-    public const float SNAPSHOTS_SPACING = 1f / SNAPSHOTS_PER_SECOND;
+    public const int TICKS_PER_SECOND = 15;
+    /// <summary> Number of subticks in a tick, i.e. each tick is divided into equal gaps in which snapshots of equal number of entities are written. </summary>
+    public const int SUBTICKS_PER_TICK = 4;
 
     /// <summary> Server endpoint. Will be updated by the owner of the lobby. </summary>
     public static Server Server = new();
@@ -55,9 +53,8 @@ public class Networking
         Server.Load();
         Client.Load();
 
-        // create a local player to sync player data
-        LocalPlayer = Tools.Create<LocalPlayer>("Local Player");
-        // update network logic every tick
+        LocalPlayer = Create<LocalPlayer>("Local Player");
+
         Events.EveryTick += NetworkUpdate;
         Events.EveryDozen += Optimize;
 
@@ -66,7 +63,7 @@ public class Networking
 
         Events.OnLoadingStarted += () =>
         {
-            if (LobbyController.Online) SceneHelper.SetLoadingSubtext(UnityEngine.Random.value < .042f ? "I love you" : "/// MULTIPLAYER VIA JAKET ///");
+            if (LobbyController.Online) SceneHelper.SetLoadingSubtext(Random.value < .042f ? "I love you" : "/// MULTIPLAYER VIA JAKET ///");
             Loading = true;
         };
         Events.OnLoaded += () =>
@@ -76,9 +73,9 @@ public class Networking
         };
 
         // fires when accepting an invitation via the Steam overlay
-        SteamFriends.OnGameLobbyJoinRequested += (lobby, id) => LobbyController.JoinLobby(lobby);
+        Events.OnLobbyInvite += LobbyController.JoinLobby;
 
-        SteamMatchmaking.OnLobbyEntered += lobby =>
+        Events.OnLobbyEntered += () =>
         {
             Clear(); // destroy all entities, since the player could join from another lobby
             if (LobbyController.IsOwner)
@@ -89,23 +86,27 @@ public class Networking
             else
             {
                 // establishing a connection with the owner of the lobby
-                Client.Connect(lobby.Owner.Id);
+                Client.Connect(LobbyController.LastOwner);
                 // prevent objects from loading before the scene is loaded
                 Loading = true;
             }
         };
 
-        SteamMatchmaking.OnLobbyMemberJoined += (lobby, member) =>
+        Events.OnMemberJoin += member =>
         {
             if (!Administration.Banned.Contains(member.Id.AccountId)) Bundle.Msg("player.joined", member.Name);
         };
 
-        SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) =>
+        Events.OnMemberLeave += member =>
         {
             if (!Administration.Banned.Contains(member.Id.AccountId)) Bundle.Msg("player.left", member.Name);
+        };
+
+        Events.OnMemberLeave += member =>
+        {
+            // return the exited player's entities back to the host & close the connection
             if (!LobbyController.IsOwner) return;
 
-            // returning the exited player's entities back to the host owner & close the connection
             FindCon(member.Id.AccountId)?.Close();
             Entities.Alive(entity =>
             {
@@ -123,12 +124,12 @@ public class Networking
                 Bundle.Msg("player.died", member.Name);
                 if (LobbyController.HealBosses) Entities.Alive(entity =>
                 {
-                    if (entity is Enemy enemy && enemy.IsBoss && !enemy.Dead) enemy.HealBoss();
+                    if (entity is Enemy enemy && enemy.IsBoss) enemy.HealBoss();
                 });
             }
 
             else if (message.StartsWith("#/k") && uint.TryParse(message.Substring(3), out uint id))
-                Bundle.Msg("player.banned", Tools.Name(id));
+                Bundle.Msg("player.banned", Name(id));
 
             else if (message.StartsWith("#/s") && byte.TryParse(message.Substring(3), out byte team))
             {
@@ -154,7 +155,7 @@ public class Networking
     }
 
     /// <summary> Core network logic should have been here, but in fact it is located in the server and client classes. </summary>
-    private static void NetworkUpdate()
+    public static void NetworkUpdate()
     {
         // the player isn't connected to the lobby and the logic doesn't need to be updated
         if (LobbyController.Offline) return;
@@ -167,58 +168,67 @@ public class Networking
     }
 
     /// <summary> Optimizes the network by removing the dead entities from the global list. </summary>
-    private static void Optimize()
+    public static void Optimize()
     {
         // there is no need to optimize the network if no one uses it
-        if (LobbyController.Offline) return;
+        if (LobbyController.Offline || DeadEntity.Instance.LastUpdate > Time.time - 1f) return;
 
         List<uint> toRemove = new();
-
-        Entities.Entity(e => e == null || (e.Dead && e.LastUpdate < Time.time - 1f && !e.gameObject.activeSelf), e => toRemove.Add(e.Id));
-        if (DeadBullet.Instance.LastUpdate < Time.time - 1f) Entities.Each(pair =>
+        Entities.Each(pair =>
         {
-            if (pair.Value == DeadBullet.Instance) toRemove.Add(pair.Key);
+            if (pair.Value == DeadEntity.Instance) toRemove.Add(pair.Key);
         });
-
         toRemove.ForEach(Entities.Remove);
     }
 
     #region tools
-
-    /// <summary> Iterates each server connection. </summary>
-    public static void EachConnection(Action<Connection> cons)
-    {
-        foreach (var con in Server.Manager?.Connected) cons(con);
-    }
 
     /// <summary> Returns the team of the given friend. </summary>
     public static Team GetTeam(Friend friend) => friend.IsMe
         ? LocalPlayer.Team
         : (Entities.TryGetValue(friend.Id.AccountId, out var entity) && entity && entity is RemotePlayer player ? player.Team : Team.Yellow);
 
-    /// <summary> Returns the hex color of the friend's team. </summary>
+    /// <summary> Returns the hex color of the team of the given friend. </summary>
     public static string GetTeamColor(Friend friend) => ColorUtility.ToHtmlStringRGBA(GetTeam(friend).Color());
 
     /// <summary> Finds a connection by id or returns null if there is no such connection. </summary>
     public static Connection? FindCon(uint id)
     {
-        foreach (var con in Server.Manager.Connected)
+        foreach (var con in Server.Manager?.Connected)
             if (con.ConnectionName == id.ToString()) return con;
         return null;
     }
+
+    /// <summary> Iterates each server connection. </summary>
+    public static void EachConnection(Cons<Connection> cons)
+    {
+        foreach (var con in Server.Manager?.Connected) cons(con);
+    }
+
+    /// <summary> Sends the given amount of bytes from the pointer to the given connection. </summary>
+    public static void Send(Connection? con, IntPtr data, int size)
+    {
+        if (con == null)
+        {
+            Log.Warning("An attempt to send data to the connection equal to null.");
+            return;
+        }
+        con.Value.SendMessage(data, size);
+        Stats.Write += size;
+    }
+
+    /// <summary> Allocates memory, writes the packet there and sends it. </summary>
+    public static void Send(PacketType packetType, Cons<Writer> cons = null, Cons<IntPtr, int> result = null, int size = 47) =>
+        Writer.Write(w => { w.Enum(packetType); cons?.Invoke(w); }, result ?? Redirect, cons == null ? 1 : size + 1);
 
     /// <summary> Forwards the packet to all clients or the host. </summary>
     public static void Redirect(IntPtr data, int size)
     {
         if (LobbyController.IsOwner)
-            EachConnection(con => Tools.Send(con, data, size));
+            EachConnection(con => Send(con, data, size));
         else
-            Tools.Send(Client.Manager.Connection, data, size);
+            Send(Client.Manager.Connection, data, size);
     }
-
-    /// <summary> Allocates memory, writes the packet there and sends it. </summary>
-    public static void Send(PacketType packetType, Action<Writer> cons = null, Action<IntPtr, int> result = null, int size = 47) =>
-        Writer.Write(w => { w.Enum(packetType); cons?.Invoke(w); }, result ?? Redirect, cons == null ? 1 : size + 1);
 
     #endregion
 }

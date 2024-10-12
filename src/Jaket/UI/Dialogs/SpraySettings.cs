@@ -1,7 +1,6 @@
 namespace Jaket.UI.Dialogs;
 
 using Steamworks;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -86,7 +85,7 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
     {
         #region left side
 
-        for (int i = 3; i < sprays.childCount; i++) Destroy(sprays.GetChild(i).gameObject);
+        for (int i = 3; i < sprays.childCount; i++) Dest(sprays.GetChild(i).gameObject);
         for (int i = 0; i < Mathf.Min(6, SprayManager.Loaded.Count); i++)
         {
             var spray = SprayManager.Loaded[i];
@@ -114,7 +113,7 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
         #endregion
         #region right side
 
-        for (int i = 1; i < players.childCount; i++) Destroy(players.GetChild(i).gameObject);
+        for (int i = 1; i < players.childCount; i++) Dest(players.GetChild(i).gameObject);
         if ((LobbyController.Lobby?.MemberCount ?? 0) <= 1)
         {
             UIB.Text("#sprays.alone", players, Size(320f, 48f), grey);
@@ -125,7 +124,7 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
         foreach (var member in LobbyController.Lobby?.Members) (Administration.BannedSprays.Contains(member.Id.AccountId) ? blacklist : whitelist).Add(member);
 
         float y = -20f;
-        void BuildList(string name, List<Friend> list, Color color, Action<Friend> clicked)
+        void BuildList(string name, List<Friend> list, Color color, Cons<Friend> clicked)
         {
             if (list.Count == 0) return;
             UIB.Text(name, players, Btn(y += 48f), align: TextAnchor.MiddleLeft);

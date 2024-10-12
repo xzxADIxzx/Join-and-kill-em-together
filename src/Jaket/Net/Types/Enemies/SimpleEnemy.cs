@@ -15,18 +15,18 @@ public class SimpleEnemy : Enemy
     protected virtual void Start()
     {
         SpawnEffect();
-        Boss(Type == EntityType.Cerberus && Tools.Scene == "Level 0-5", 80f, 1, "CERBERUS, GUARDIAN OF HELL");
+        Boss(Type == EntityType.Cerberus && Scene == "Level 0-5", 80f, 1, "CERBERUS, GUARDIAN OF HELL");
         Boss(Type == EntityType.TheCorpseOfKingMinos, 160f, 2);
-        Boss(Type == EntityType.Ferryman && Tools.Scene == "Level 5-2", 90f, 2);
-        Boss(Type == EntityType.Minotaur && Tools.Scene == "Level 7-1", 80f, 1);
+        Boss(Type == EntityType.Ferryman && Scene == "Level 5-2", 90f, 2);
+        Boss(Type == EntityType.Minotaur && Scene == "Level 7-1", 80f, 1);
 
         if (Type == EntityType.TheCorpseOfKingMinos)
         {
             // update the original health so that the transition to the second phase happens exactly in its half
-            Tools.Set("originalHealth", GetComponent<MinosBoss>(), EnemyId.statue.health);
+            Set("originalHealth", GetComponent<MinosBoss>(), EnemyId.statue.health);
             if (!LobbyController.IsOwner) transform.localEulerAngles = new(0f, 90f, 0f);
         }
-        if (Type == EntityType.Ferryman) Tools.Set("phaseChangeHealth", GetComponent<Ferryman>(), EnemyId.machine.health / 2f);
+        if (Type == EntityType.Ferryman) Set("phaseChangeHealth", GetComponent<Ferryman>(), EnemyId.machine.health / 2f);
     }
 
     private void Update() => Stats.MTE(() =>
@@ -49,12 +49,6 @@ public class SimpleEnemy : Enemy
         if (IsOwner) return;
 
         x.Read(r); y.Read(r); z.Read(r);
-    }
-
-    public override void OnDied()
-    {
-        base.OnDied();
-        if (Type == EntityType.Virtue) DeadBullet.Replace(this);
     }
 
     #endregion

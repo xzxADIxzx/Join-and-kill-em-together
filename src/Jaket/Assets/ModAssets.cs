@@ -1,13 +1,9 @@
 namespace Jaket.Assets;
 
-using HarmonyLib;
-using System;
 using System.IO;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
-
-using Object = UnityEngine.Object;
 
 using Jaket.Content;
 using Jaket.IO;
@@ -42,9 +38,9 @@ public class ModAssets
     /// <summary> Hand textures used by local player. </summary>
     public static Texture[] HandTextures;
 
-    /// <summary> Image of the fallen Virage. </summary>
-    public static Sprite ChanFallen;
-    /// <summary> Different poses of Virage. </summary>
+    /// <summary> Image of the fallen Vermicelli. </summary>
+    public static Sprite ChanFallen, ChanBackground;
+    /// <summary> Different poses of Vermicelli. </summary>
     public static Sprite[] ChanPoses;
     /// <summary> Icons for the emote selection wheel. </summary>
     public static Sprite[] EmoteIcons, EmoteGlows;
@@ -64,7 +60,7 @@ public class ModAssets
         var bundle = AssetBundle.LoadFromFile(Path.Combine(Plugin.Instance.Location, "jaket-assets.bundle"));
         GameAssets.Squeaky(); // preload the sound; otherwise, it crashes .-.
 
-        void Load<T>(string name, Action<T> cons) where T : Object
+        void Load<T>(string name, Cons<T> cons) where T : UnityEngine.Object
         {
             var task = bundle.LoadAssetAsync<T>(name);
             task.completed += _ => cons(task.asset as T);
@@ -104,6 +100,7 @@ public class ModAssets
         EmoteGlows = new Sprite[12];
 
         Load<Sprite>("V3-chan-fallen", s => ChanFallen = s);
+        Load<Sprite>("V3-chan-background", s => ChanBackground = s);
 
         for (int i = 0; i < 7; i++)
         {
@@ -140,20 +137,20 @@ public class ModAssets
         // dolls & plushies
         Load<GameObject>("Player Doll.prefab", p =>
         {
-            Object.DontDestroyOnLoad(Doll = p);
+            DontDest(Doll = p);
             FixMaterials(p);
         });
 
         Load<GameObject>("Player Doll Preview.prefab", p =>
         {
-            Object.DontDestroyOnLoad(Preview = p);
+            DontDest(Preview = p);
             FixMaterials(p);
         });
 
         Load<Texture>("V2-plushie", t =>
         {
             int i = EntityType.V2 - EntityType.ItemOffset;
-            Object.DontDestroyOnLoad(V2 = Items.Prefabs[i] = Object.Instantiate(Items.Prefabs[i]));
+            DontDest(V2 = Items.Prefabs[i] = Inst(Items.Prefabs[i]));
 
             V2.name = "DevPlushie (V2)";
             V2.GetComponentInChildren<Renderer>().material.mainTexture = t;
@@ -163,7 +160,7 @@ public class ModAssets
         Load<Texture>("V3-plushie", t =>
         {
             int i = EntityType.V3 - EntityType.ItemOffset;
-            Object.DontDestroyOnLoad(V3 = Items.Prefabs[i] = Object.Instantiate(Items.Prefabs[i]));
+            DontDest(V3 = Items.Prefabs[i] = Inst(Items.Prefabs[i]));
 
             V3.name = "DevPlushie (V3)";
             V3.GetComponentInChildren<Renderer>().material.mainTexture = t;
@@ -172,7 +169,7 @@ public class ModAssets
 
         Load<GameObject>("DevPlushie (xzxADIxzx).prefab", p =>
         {
-            Object.DontDestroyOnLoad(xzxADIxzx = Items.Prefabs[EntityType.xzxADIxzx - EntityType.ItemOffset] = p);
+            DontDest(xzxADIxzx = Items.Prefabs[EntityType.xzxADIxzx - EntityType.ItemOffset] = p);
             FixMaterials(p, new(1.3f, 1.3f, 1.3f));
 
             UIB.Component<ItemIdentifier>(p, itemId =>
@@ -189,7 +186,7 @@ public class ModAssets
 
         Load<GameObject>("DevPlushie (Sowler).prefab", p =>
         {
-            Object.DontDestroyOnLoad(Sowler = Items.Prefabs[EntityType.Sowler - EntityType.ItemOffset] = p);
+            DontDest(Sowler = Items.Prefabs[EntityType.Sowler - EntityType.ItemOffset] = p);
             FixMaterials(p);
 
             UIB.Component<ItemIdentifier>(p, itemId =>
@@ -243,10 +240,10 @@ public class ModAssets
     #region fixes
 
     /// <summary> Changes the colors of materials and their shaders to match the style of the game. </summary>
-    public static void FixMaterials(GameObject obj, Color? color = null) => obj.GetComponentsInChildren<Renderer>(true).Do(r =>
+    public static void FixMaterials(GameObject obj, Color? color = null) => obj.GetComponentsInChildren<Renderer>(true).Each(r =>
     {
         if (r is TrailRenderer) r.material = Additv;
-        else r.materials.Do(m =>
+        else r.materials.Each(m =>
         {
             m.color = color ?? Color.white;
             m.shader = Shader;

@@ -23,11 +23,11 @@ public class Sam
 
     public Sam(int speed = 64, int pitch = 64, int mouth = 128, int throat = 128)
     {   // default settings with changed speed
-        this.Speed = speed;
-        this.Pitch = pitch;
-        this.Mouth = mouth;
-        this.Throat = throat;
-        this.Legacy = new(this);
+        Speed = speed;
+        Pitch = pitch;
+        Mouth = mouth;
+        Throat = throat;
+        Legacy = new(this);
     }
 
     /// <summary> Translates the given text from Cyrillic to Latin. </summary>

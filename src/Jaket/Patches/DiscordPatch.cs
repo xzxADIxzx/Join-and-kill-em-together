@@ -29,12 +29,12 @@ public class DiscordPatch
         button.transform.localPosition = new(0f, -128f, -20f); // the button is a little stormy
 
         // add ControllerPointer so that the button can be clicked
-        Tools.Destroy(button.gameObject.AddComponent<ShopButton>()); // hacky
+        Dest(button.gameObject.AddComponent<ShopButton>()); // hacky
 
         // add a customization element to allow players to choose their appearance
         if (__instance.transform.up.x == 0 && __instance.transform.up.z == 0) __instance.transform.Find("Canvas").gameObject.AddComponent<Customization>();
 
         // simplify the use of the customization element
-        Tools.Set("angleLimit", __instance, 90f);
+        Set("angleLimit", __instance, 90f);
     }
 }

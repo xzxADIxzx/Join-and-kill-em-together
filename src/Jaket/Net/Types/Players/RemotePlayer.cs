@@ -57,7 +57,7 @@ public class RemotePlayer : Entity
             // recreate the weapon if the animation is over
             if (Doll.Emote == 0xFF) LastWeapon = 0xFF;
             // or destroy it if the animation has started
-            else foreach (Transform child in Doll.Hand) Destroy(child.gameObject);
+            else foreach (Transform child in Doll.Hand) Dest(child.gameObject);
         };
         Header = new(Owner = Id, transform);
         tag = "Enemy";
@@ -80,7 +80,7 @@ public class RemotePlayer : Entity
         Header.Update(Health, Typing);
         if (Animator == null) // the player is dead
         {
-            if (Health != 0) Destroy(gameObject); // the player has respawned, the doll needs to be recreated
+            if (Health != 0) Dest(gameObject); // the player has respawned, the doll needs to be recreated
             return;
         }
         else if (Health == 0) GoLimp();
@@ -98,7 +98,7 @@ public class RemotePlayer : Entity
         }
         if (LastWeapon != Weapon)
         {
-            foreach (Transform child in Doll.Hand) Destroy(child.gameObject);
+            foreach (Transform child in Doll.Hand) Dest(child.gameObject);
             if ((LastWeapon = Weapon) != 0xFF)
             {
                 Weapons.Instantiate(Weapon, Doll.Hand);
@@ -122,9 +122,9 @@ public class RemotePlayer : Entity
     private void GoLimp()
     {
         EnemyId.machine.GoLimp();
-        Destroy(Doll.WingLight);
-        Destroy(Doll.SlideParticle?.gameObject);
-        Destroy(Doll.FallParticle?.gameObject);
+        Dest(Doll.WingLight);
+        Dest(Doll.SlideParticle?.gameObject);
+        Dest(Doll.FallParticle?.gameObject);
     }
 
     #region special
@@ -132,7 +132,7 @@ public class RemotePlayer : Entity
     /// <summary> Plays the punching animation and creates a shockwave as needed. </summary>
     public void Punch(Reader r)
     {
-        var field = Tools.Field<Harpoon>("target");
+        var field = Field<Harpoon>("target");
         foreach (var harpoon in FindObjectsOfType<Harpoon>())
             if ((field.GetValue(harpoon) as EnemyIdentifierIdentifier)?.eid == EnemyId) Bullets.Punch(harpoon, false);
 
@@ -142,12 +142,12 @@ public class RemotePlayer : Entity
                 Animator.SetTrigger(r.Bool() ? "parry" : "punch");
                 break;
             case 1:
-                var blast = Instantiate(GameAssets.Blast(), r.Vector(), Quaternion.Euler(r.Vector()));
+                var blast = Inst(GameAssets.Blast(), r.Vector(), Quaternion.Euler(r.Vector()));
                 blast.name = "Net";
                 blast.GetComponentInChildren<Explosion>().sourceWeapon = Bullets.Fake;
                 break;
             case 2:
-                var shock = Instantiate(NewMovement.Instance.gc.shockwave, transform.position, Quaternion.identity).GetComponent<PhysicalShockwave>();
+                var shock = Inst(NewMovement.Instance.gc.shockwave, transform.position).GetComponent<PhysicalShockwave>();
                 shock.name = "Net";
                 shock.force = r.Float();
                 break;
@@ -202,11 +202,14 @@ public class RemotePlayer : Entity
 
     public override void Kill(Reader r = null)
     {
-        GoLimp();
-        Header.Hide();
+        base.Kill(r);
+        DeadEntity.Replace(this);
 
-        Destroy(Doll.Hand.gameObject); // destroy the weapon so that the railcannon's sound doesn't play forever
-        DestroyImmediate(this); // destroy the entity so that the indicators no longer point to it
+        Header.Hide();
+        GoLimp();
+        Dest(Doll.Hand.gameObject); // destroy the weapon so that the railcannon's sound doesn't play forever
+        Dest(this);
+
         Events.OnTeamChanged.Fire();
     }
 

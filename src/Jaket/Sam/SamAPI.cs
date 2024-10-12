@@ -1,6 +1,5 @@
 namespace Jaket.Sam;
 
-using System;
 using UnityEngine;
 
 using Jaket.Assets;

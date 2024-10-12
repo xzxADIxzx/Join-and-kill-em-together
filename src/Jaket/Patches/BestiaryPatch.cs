@@ -1,7 +1,6 @@
 namespace Jaket.Patches;
 
 using HarmonyLib;
-using System;
 using UnityEngine;
 
 using Jaket.Assets;
@@ -37,7 +36,7 @@ public class BestiaryPatch
     }
 }
 
-[Serializable]
+[System.Serializable]
 public class BestiaryEntry
 {
     /// <summary> Bestiary entry fields displayed in terminal. </summary>

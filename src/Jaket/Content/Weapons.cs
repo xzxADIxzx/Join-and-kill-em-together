@@ -46,26 +46,26 @@ public class Weapons
     /// <summary> Spawns a weapon with the given type and assigns its parent transform. </summary>
     public static void Instantiate(byte type, Transform parent)
     {
-        var obj = Tools.Instantiate(Prefabs[type], parent);
+        var obj = Inst(Prefabs[type], parent);
 
         // weapon prefabs are disabled and located in the AlwaysOnTop layer
         obj.SetActive(true);
         FixLayer(obj.transform);
 
         // destroy revolver's and shotgun's hand
-        Tools.Destroy(obj.transform.GetChild(0).Find("RightArm")?.gameObject);
-        if (obj.transform.childCount == 3) Tools.Destroy(obj.transform.GetChild(2).Find("RightArm")?.gameObject);
+        Dest(obj.transform.GetChild(0).Find("RightArm")?.gameObject);
+        if (obj.transform.childCount == 3) Dest(obj.transform.GetChild(2).Find("RightArm")?.gameObject);
 
         // destroy weapon's components
-        Tools.Destroy(obj.GetComponent<Revolver>());
-        Tools.Destroy(obj.GetComponent<Shotgun>());
-        Tools.Destroy(obj.GetComponent<ShotgunHammer>());
-        Tools.Destroy(obj.GetComponent<Nailgun>());
-        Tools.Destroy(obj.GetComponent<Railcannon>());
-        Tools.Destroy(obj.GetComponent<RocketLauncher>());
+        Dest(obj.GetComponent<Revolver>());
+        Dest(obj.GetComponent<Shotgun>());
+        Dest(obj.GetComponent<ShotgunHammer>());
+        Dest(obj.GetComponent<Nailgun>());
+        Dest(obj.GetComponent<Railcannon>());
+        Dest(obj.GetComponent<RocketLauncher>());
 
         // make these annoying sounds quieter
-        Tools.Destroy(obj.transform.Find("ImpactHammer/Armature/Root/MotorSpinner/SpinSprite")?.gameObject);
+        Dest(obj.transform.Find("ImpactHammer/Armature/Root/MotorSpinner/SpinSprite")?.gameObject);
         foreach (var source in obj.GetComponentsInChildren<AudioSource>())
         {
             source.spatialBlend = 1f;

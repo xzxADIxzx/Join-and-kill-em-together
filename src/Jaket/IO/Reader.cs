@@ -21,7 +21,7 @@ public class Reader
     public Reader(IntPtr memory, int length) { mem = memory; Length = length; }
 
     /// <summary> Reads data from the given memory via reader. </summary>
-    public static void Read(IntPtr memory, int length, Action<Reader> cons) => cons(new(memory, length));
+    public static void Read(IntPtr memory, int length, Cons<Reader> cons) => cons(new(memory, length));
 
     /// <summary> Converts integer to float. </summary>
     public static unsafe float Int2Float(int value) => *(float*)&value;

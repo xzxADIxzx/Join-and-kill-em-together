@@ -1,6 +1,5 @@
 namespace Jaket.Net.Types;
 
-using System;
 using UnityEngine;
 
 using Jaket.IO;
@@ -30,7 +29,7 @@ public abstract class OwnableEntity : Entity
         if (IsOwner) return;
 
         if (Enemies.Debug) Log.Debug($"Ownership of {Id} transferred from {Owner} to the local player");
-        Owner = Tools.AccId;
+        Owner = AccId;
         OnTransferred();
     }
 
