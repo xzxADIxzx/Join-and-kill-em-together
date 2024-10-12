@@ -155,7 +155,7 @@ public class Networking
     }
 
     /// <summary> Core network logic should have been here, but in fact it is located in the server and client classes. </summary>
-    private static void NetworkUpdate()
+    public static void NetworkUpdate()
     {
         // the player isn't connected to the lobby and the logic doesn't need to be updated
         if (LobbyController.Offline) return;
@@ -168,7 +168,7 @@ public class Networking
     }
 
     /// <summary> Optimizes the network by removing the dead entities from the global list. </summary>
-    private static void Optimize()
+    public static void Optimize()
     {
         // there is no need to optimize the network if no one uses it
         if (LobbyController.Offline || DeadEntity.Instance.LastUpdate > Time.time - 1f) return;

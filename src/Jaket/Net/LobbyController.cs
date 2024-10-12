@@ -46,7 +46,7 @@ public class LobbyController
     public static void Load()
     {
         // general info about the lobby
-        Events.OnLobbyAction += () => Log.Debug($"Lobby updated: owner is {Lobby?.Owner.ToString() ?? "null"}, level is {Lobby?.GetData("name") ?? "null"}");
+        Events.OnLobbyAction += () => Log.Debug($"Lobby updated: owner is {Lobby?.Owner.ToString() ?? "null"}, level is {Lobby?.GetData("level") ?? "null"}");
         // get the owner id when entering the lobby
         Events.OnLobbyEntered += () =>
         {
