@@ -140,6 +140,7 @@ public class UIB
     #endregion
     #region text
 
+    /// <summary> Adds a label with the given text. </summary>
     public static Text Text(string name, Transform parent, Rect r, Color? color = null, int size = 24, TextAnchor align = TextAnchor.MiddleCenter) =>
         Component<Text>(Rect("Text", parent, r).gameObject, text =>
         {
@@ -278,6 +279,7 @@ public class UIB
     #endregion
     #region toggle
 
+    /// <summary> Adds a toggle with the given callback. </summary>
     public static Toggle Toggle(string name, Transform parent, Rect r, int size = 24, Cons<bool> clicked = null) =>
         Component<Toggle>(Text(name, parent, r, size: size, align: TextAnchor.MiddleLeft).gameObject, toggle =>
         {
@@ -325,6 +327,7 @@ public class UIB
     #endregion
     #region field
 
+    /// <summary> Adds a singleline input field. </summary>
     public static InputField Field(string name, Transform parent, Rect r, int size = 24, Cons<string> cons = null)
     {
         var tr = new Rect(8f, 1f, r.Width, r.Height);
@@ -363,7 +366,7 @@ public class UIB
 
     /// <summary> Adds a line renderer, the size of which will always be equals to the screen. </summary>
     public static UILineRenderer Line(string name, Transform parent, Color? color = null) =>
-        Component<UILineRenderer>(Rect(name, parent, new(8f, 8f, 0f, 0f, Vector2.zero, Vector2.zero)).gameObject, line => line.color = color ?? white);
+        Component<UILineRenderer>(Rect(name, parent, new(8f, 8f, 0f, 0f, Vector2.zero)).gameObject, line => line.color = color ?? white);
 
     #endregion
 }
