@@ -68,19 +68,18 @@ public class Client : Endpoint, IConnectionManager
 
     public override void Update()
     {
-        Stats.MeasureTime(ref Stats.ReadTime, () => Manager.Receive(256));
+        Stats.MeasureTime(ref Stats.ReadTime, () => Manager.Receive(64));
         Stats.MeasureTime(ref Stats.WriteTime, () =>
         {
             if (Networking.Loading) return;
-            ents.Alive(entity => entity.IsOwner, entity => Networking.Send(PacketType.Snapshot, w =>
+            ents.Pool(pool = ++pool % 4, e => e.IsOwner, e => Networking.Send(PacketType.Snapshot, w =>
             {
-                w.Id(entity.Id);
-                w.Enum(entity.Type);
-                entity.Write(w);
+                w.Id(e.Id);
+                w.Enum(e.Type);
+                e.Write(w);
             }));
         });
 
-        // flush data
         Manager.Connection.Flush();
         Pointers.Free();
     }

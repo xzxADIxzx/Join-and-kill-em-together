@@ -86,7 +86,7 @@ public class Item : OwnableEntity
         // a special feature of my dev plushie
         if (Type == EntityType.xzxADIxzx)
             for (int i = 0; i <= 16; i++)
-                Invoke(i == 16 ? "Return" : "Rotate", i * Networking.SNAPSHOTS_SPACING);
+                Invoke(i == 16 ? "Return" : "Rotate", i / Networking.TICKS_PER_SECOND);
     }
 
     private void Rotate() => transform.Find("adi/Head").localEulerAngles = new(90f * Random.Range(0, 3), 90f * Random.Range(0, 3), 90f * Random.Range(0, 3));

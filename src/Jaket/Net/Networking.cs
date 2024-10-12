@@ -16,9 +16,9 @@ using Jaket.UI.Dialogs;
 public class Networking
 {
     /// <summary> Number of snapshots to be sent per second. </summary>
-    public const int SNAPSHOTS_PER_SECOND = 16;
-    /// <summary> Number of seconds between snapshots. </summary>
-    public const float SNAPSHOTS_SPACING = 1f / SNAPSHOTS_PER_SECOND;
+    public const int TICKS_PER_SECOND = 15;
+    /// <summary> Number of subticks in a tick, i.e. each tick is divided into equal gaps in which snapshots of equal number of entities are written. </summary>
+    public const int SUBTICKS_PER_TICK = 4;
 
     /// <summary> Server endpoint. Will be updated by the owner of the lobby. </summary>
     public static Server Server = new();

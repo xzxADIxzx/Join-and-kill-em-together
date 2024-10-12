@@ -109,10 +109,10 @@ public abstract class Entity : MonoBehaviour
         public void Read(Reader r) => Set(r.Float());
 
         /// <summary> Returns an intermediate value. </summary>
-        public float Get(float lastUpdate) => Mathf.Lerp(Last, Target, (Time.time - lastUpdate) / Networking.SNAPSHOTS_SPACING);
+        public float Get(float lastUpdate) => Mathf.Lerp(Last, Target, (Time.time - lastUpdate) * Networking.TICKS_PER_SECOND);
 
         /// <summary> Returns the intermediate value of the angle. </summary>
-        public float GetAngel(float lastUpdate) => Mathf.LerpAngle(Last, Target, (Time.time - lastUpdate) / Networking.SNAPSHOTS_SPACING);
+        public float GetAngel(float lastUpdate) => Mathf.LerpAngle(Last, Target, (Time.time - lastUpdate) * Networking.TICKS_PER_SECOND);
     }
 
     /// <summary> Class for finding entities according to their ID. </summary>

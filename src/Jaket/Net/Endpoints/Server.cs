@@ -134,20 +134,19 @@ public class Server : Endpoint, ISocketManager
 
     public override void Update()
     {
-        Stats.MeasureTime(ref Stats.ReadTime, () => Manager.Receive(512));
+        Stats.MeasureTime(ref Stats.ReadTime, () => Manager.Receive(64));
         Stats.MeasureTime(ref Stats.WriteTime, () =>
         {
             if (Networking.Loading) return;
-            ents.Alive(entity => Networking.Send(PacketType.Snapshot, w =>
+            ents.Pool(pool = ++pool % 4, e => Networking.Send(PacketType.Snapshot, w =>
             {
-                w.Id(entity.Id);
-                w.Enum(entity.Type);
-                entity.Write(w);
+                w.Id(e.Id);
+                w.Enum(e.Type);
+                e.Write(w);
             }));
         });
 
-        // flush data
-        foreach (var con in Manager.Connected) con.Flush();
+        Manager.Connected.Each(con => con.Flush());
         Pointers.Free();
     }
 

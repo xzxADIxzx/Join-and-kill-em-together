@@ -12,6 +12,8 @@ public abstract class Endpoint
 
     /// <summary> List of packet listeners by packet types. </summary>
     protected PacketListener[] listeners = new PacketListener[32];
+    /// <summary> Pool, the entities of which will be written in the current subtick. </summary>
+    protected int pool;
 
     /// <summary> Loads endpoint listeners and other stuff. </summary>
     public abstract void Load();

@@ -43,7 +43,7 @@ public class Events : MonoSingleton<Events>
 
     /// <summary> List of tasks that will need to be completed in the late update. </summary>
     public static Queue<Action> Tasks = new();
-    /// <summary> Events that fire every net tick, second and dozen seconds. </summary>
+    /// <summary> Events that fire every subtick, second and dozen seconds. </summary>
     public static SafeEvent EveryTick = new(), EverySecond = new(), EveryDozen = new();
 
     /// <summary> Subscribes to some events to fire some safe events. </summary>
@@ -92,7 +92,7 @@ public class Events : MonoSingleton<Events>
     {
         InvokeRepeating("Dozen", 1f, 12f);
         InvokeRepeating("Second", 1f, 1f);
-        InvokeRepeating("Tick", 1f, Networking.SNAPSHOTS_SPACING);
+        InvokeRepeating("Tick", 1f, 1f / Networking.TICKS_PER_SECOND / Networking.SUBTICKS_PER_TICK);
     }
 
     private void LateUpdate()
