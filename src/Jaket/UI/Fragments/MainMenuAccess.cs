@@ -15,6 +15,8 @@ public class MainMenuAccess : CanvasSingleton<MainMenuAccess>
 
     private void Start()
     {
+        GetComponent<UnityEngine.UI.CanvasScaler>().screenMatchMode = UnityEngine.UI.CanvasScaler.ScreenMatchMode.Expand;
+
         table = UIB.Rect("Access Table", transform, new(0f, -364f, 720f, 40f));
         table.gameObject.AddComponent<HudOpenEffect>();
 
