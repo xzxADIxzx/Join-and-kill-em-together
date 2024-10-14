@@ -38,6 +38,8 @@ This modification made by [me](https://github.com/xzxADIxzx) and my team adds su
    * Synchronization of different triggers at levels
    * Synchronization of the Cyber Grind
    * Synchronization of 2-S and 5-S
+* New plushies of V2, V3 and Jaket developers
+* New arts for the ~~ALL IMPERFECT LOVE SONG~~ level
 * Translation into many languages
    * Arabic        by Iyad
    * Portuguese    by Poyozit
