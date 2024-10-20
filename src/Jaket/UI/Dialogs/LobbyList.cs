@@ -77,6 +77,11 @@ public class LobbyList : CanvasSingleton<LobbyList>
 
             var name = " " + lobby.GetData("name");
             var r = Btn(y += 48f) with { Width = 624f };
+            string level = lobby.GetData("level");
+
+            // this can happen if the host of a lobby crashes in a very specific way
+            // these lobbies can't be joined, so they also get hidden
+            if (level == "Main Menu") continue;
 
             if (search != "")
             {
@@ -88,7 +93,7 @@ public class LobbyList : CanvasSingleton<LobbyList>
             var b = UIB.Button(name, content, r, align: TextAnchor.MiddleLeft, clicked: () => LobbyController.JoinLobby(lobby));
 
             var full = lobby.MemberCount <= 2 ? Green : lobby.MemberCount <= 4 ? Orange : Red;
-            var info = $"<color=#BBBBBB>{lobby.GetData("level")}</color> <color={full}>{lobby.MemberCount}/{lobby.MaxMembers}</color> ";
+            var info = $"<color=#BBBBBB>{LobbyController.MapMap(level)}</color> <color={full}>{lobby.MemberCount}/{lobby.MaxMembers}</color> ";
             UIB.Text(info, b.transform, r.Text, align: TextAnchor.MiddleRight);
         }
     }
