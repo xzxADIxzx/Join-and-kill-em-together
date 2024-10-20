@@ -69,19 +69,20 @@ public class LobbyList : CanvasSingleton<LobbyList>
         float y = -24f;
         foreach (var lobby in lobbies)
         {
+            string level = lobby.GetData("level");
+
             // hide non-jaket lobbies
             if (!LobbyController.IsJaketLobby(lobby)) continue;
 
             // hide lobbies the player was banned from
             if (lobby.GetData("banned").Contains(AccId.ToString())) continue;
 
-            var name = " " + lobby.GetData("name");
-            var r = Btn(y += 48f) with { Width = 624f };
-            string level = lobby.GetData("level");
-
             // this can happen if the host of a lobby crashes in a very specific way
             // these lobbies can't be joined, so they also get hidden
             if (level == "Main Menu") continue;
+
+            var name = " " + lobby.GetData("name");
+            var r = Btn(y += 48f) with { Width = 624f };
 
             if (search != "")
             {
