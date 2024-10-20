@@ -103,7 +103,7 @@ public class LobbyController
             Lobby?.SetPrivate();
             Lobby?.SetData("jaket", "true");
             Lobby?.SetData("name", $"{SteamClient.Name}'s Lobby");
-            Lobby?.SetData("level", MapMap(Scene));
+            Lobby?.SetData("level", Scene);
             Lobby?.SetData("pvp", "True");
             Lobby?.SetData("cheats", "False");
             Lobby?.SetData("mods", "False");
