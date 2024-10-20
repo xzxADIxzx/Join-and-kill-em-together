@@ -68,7 +68,7 @@ public class LobbyList : CanvasSingleton<LobbyList>
 
         float y = -24f;
         foreach (var lobby in lobbies)
-            if (LobbyController.IsMultikillLobby(lobby))
+            if (!LobbyController.IsJaketLobby(lobby))
             {
                 var name = " [MULTIKILL] " + lobby.GetData("lobbyName");
                 var r = Btn(y += 48f) with { Width = 624f };
