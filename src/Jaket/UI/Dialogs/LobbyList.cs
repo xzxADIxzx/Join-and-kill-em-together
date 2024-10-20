@@ -68,31 +68,29 @@ public class LobbyList : CanvasSingleton<LobbyList>
 
         float y = -24f;
         foreach (var lobby in lobbies)
-            if (!LobbyController.IsJaketLobby(lobby))
+        {
+            // hide non-jaket lobbies
+            if (!LobbyController.IsJaketLobby(lobby)) continue;
+
+            // hide lobbies the player was banned from
+            if (lobby.GetData("banned").Contains(AccId.ToString())) continue;
+
+            var name = " " + lobby.GetData("name");
+            var r = Btn(y += 48f) with { Width = 624f };
+
+            if (search != "")
             {
-                var name = " [MULTIKILL] " + lobby.GetData("lobbyName");
-                var r = Btn(y += 48f) with { Width = 624f };
-
-                UIB.Button(name, content, r, red, 24, TextAnchor.MiddleLeft, () => Bundle.Hud("lobby.mk"));
+                int index = name.ToLower().IndexOf(search);
+                name = name.Insert(index, "<color=#FFA500>");
+                name = name.Insert(index + "<color=#FFA500>".Length + search.Length, "</color>");
             }
-            else
-            {
-                var name = " " + lobby.GetData("name");
-                var r = Btn(y += 48f) with { Width = 624f };
 
-                if (search != "")
-                {
-                    int index = name.ToLower().IndexOf(search);
-                    name = name.Insert(index, "<color=#FFA500>");
-                    name = name.Insert(index + "<color=#FFA500>".Length + search.Length, "</color>");
-                }
+            var b = UIB.Button(name, content, r, align: TextAnchor.MiddleLeft, clicked: () => LobbyController.JoinLobby(lobby));
 
-                var b = UIB.Button(name, content, r, align: TextAnchor.MiddleLeft, clicked: () => LobbyController.JoinLobby(lobby));
-
-                var full = lobby.MemberCount <= 2 ? Green : lobby.MemberCount <= 4 ? Orange : Red;
-                var info = $"<color=#BBBBBB>{lobby.GetData("level")}</color> <color={full}>{lobby.MemberCount}/{lobby.MaxMembers}</color> ";
-                UIB.Text(info, b.transform, r.Text, align: TextAnchor.MiddleRight);
-            }
+            var full = lobby.MemberCount <= 2 ? Green : lobby.MemberCount <= 4 ? Orange : Red;
+            var info = $"<color=#BBBBBB>{lobby.GetData("level")}</color> <color={full}>{lobby.MemberCount}/{lobby.MaxMembers}</color> ";
+            UIB.Text(info, b.transform, r.Text, align: TextAnchor.MiddleRight);
+        }
     }
 
     /// <summary> Updates the list of public lobbies and rebuilds the menu. </summary>
