@@ -9,5 +9,6 @@
     "HUD Config",
     "PluginConfigurator",
     "AngryLevelLoader",
-    "DoomahLevelLoader"
+    "DoomahLevelLoader",
+    "Archipelago"
 ]
