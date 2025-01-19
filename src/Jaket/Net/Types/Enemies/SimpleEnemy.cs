@@ -20,6 +20,11 @@ public class SimpleEnemy : Enemy
         Boss(Type == EntityType.Ferryman && Scene == "Level 5-2", 90f, 2);
         Boss(Type == EntityType.Minotaur && Scene == "Level 7-1", 80f, 1);
 
+        Boss(Type == EntityType.MinosPrime && Tools.Scene == "Level P-1", 130f, 1);
+        Boss(Type == EntityType.SisyphusPrime && Tools.Scene == "Level P-2", 200f, 2);
+        Boss(Type == EntityType.FleshPrison && Tools.Scene == "Level P-1", 100f, 1);
+        Boss(Type == EntityType.FleshPanopticon && Tools.Scene == "Level P-2", 300f, 2);
+
         if (Type == EntityType.TheCorpseOfKingMinos)
         {
             // update the original health so that the transition to the second phase happens exactly in its half
