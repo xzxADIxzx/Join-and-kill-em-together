@@ -40,7 +40,7 @@ public class LobbyController
     /// <summary> Scales health to increase difficulty. </summary>
     public static void ScaleHealth(ref float health) => health *= 1f + Mathf.Min(Lobby?.MemberCount - 1 ?? 1, 1) * PPP;
     /// <summary> Whether the given lobby is created via Multikill. </summary>
-    public static bool IsMultikillLobby(Lobby lobby) => lobby.Data.Any(pair => pair.Key == "mk_lobby");
+    public static bool IsJaketLobby(Lobby lobby) => lobby.Data.Any(pair => pair.Key == "jaket");
 
     /// <summary> Creates the necessary listeners for proper work. </summary>
     public static void Load()
@@ -58,7 +58,7 @@ public class LobbyController
                 LeaveLobby();
                 Bundle.Hud2NS("lobby.banned");
             }
-            if (IsMultikillLobby(Lobby.Value))
+            if (!IsJaketLobby(Lobby.Value))
             {
                 LeaveLobby();
                 Bundle.Hud2NS("lobby.mk");
@@ -71,7 +71,7 @@ public class LobbyController
         };
 
         // put the level name in the lobby data so that it can be seen in the public lobbies list
-        Events.OnLoaded += () => Lobby?.SetData("level", MapMap(Scene));
+        Events.OnLoaded += () => Lobby?.SetData("level", Scene);
         // if the player exits to the main menu, then this is equivalent to leaving the lobby
         Events.OnMainMenuLoaded += () => LeaveLobby(false);
     }
@@ -103,7 +103,7 @@ public class LobbyController
             Lobby?.SetPrivate();
             Lobby?.SetData("jaket", "true");
             Lobby?.SetData("name", $"{SteamClient.Name}'s Lobby");
-            Lobby?.SetData("level", MapMap(Scene));
+            Lobby?.SetData("level", Scene);
             Lobby?.SetData("pvp", "True");
             Lobby?.SetData("cheats", "False");
             Lobby?.SetData("mods", "False");
