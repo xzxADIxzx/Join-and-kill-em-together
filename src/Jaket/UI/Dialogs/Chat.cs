@@ -20,9 +20,9 @@ using static Rect;
 public class Chat : CanvasSingleton<Chat>
 {
     /// <summary> Prefix that will be added to bot messages. </summary>
-    public const string BOT_PREFIX = "[#FF7F50][14]\\[BOT][][]";
+    public const string BOT_PREFIX = "[#F85][14]\\[BOT][][]";
     /// <summary> Prefix that will be added to TTS messages. </summary>
-    public const string TTS_PREFIX = "[#FF7F50][14]\\[TTS][][]";
+    public const string TTS_PREFIX = "[#F85][14]\\[TTS][][]";
 
     /// <summary> Maximum length of chat message. </summary>
     public const int MAX_MESSAGE_LENGTH = 128;
