@@ -12,6 +12,9 @@ public class Weapons
     /// <summary> Loads all weapons for future use. </summary>
     public static void Load()
     {
+        Events.OnLoaded += () => {
+        if (GunSetter.Instance == null || Prefabs.Count > 0) return;
+
         Prefabs.AddRange(GunSetter.Instance.revolverPierce.ToAssets());
         Prefabs.AddRange(GunSetter.Instance.revolverRicochet.ToAssets());
         Prefabs.AddRange(GunSetter.Instance.revolverTwirl.ToAssets());
@@ -31,7 +34,7 @@ public class Weapons
         Prefabs.AddRange(GunSetter.Instance.rocketBlue.ToAssets());
         Prefabs.AddRange(GunSetter.Instance.rocketGreen.ToAssets());
         Prefabs.AddRange(GunSetter.Instance.rocketRed.ToAssets());
-    }
+    }; }
 
     /// <summary> Finds the weapon type by object name. </summary>
     public static byte Type()
