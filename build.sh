@@ -29,5 +29,5 @@ echo -e "=>$b Deploying the builded project...$n"
 
 
 
-mv "bin/Debug/netstandard2.1/$project.dll" $1
-cp "assets/bundles/*.properties" $1
+mv bin/Debug/netstandard2.1/$project.dll $3
+cp assets/bundles/*.properties $3
