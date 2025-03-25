@@ -1,23 +1,26 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>latest</LangVersion>
+
     <AssemblyName>Jaket</AssemblyName>
     <Description>Multikill is still in development, so I created my own multiplayer mod for Ultrakill</Description>
     <Version>1.3.42</Version>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <LangVersion>latest</LangVersion>
+
     <RestoreAdditionalProjectSources>
       https://api.nuget.org/v3/index.json;
       https://nuget.bepinex.dev/v3/index.json;
       https://nuget.samboy.dev/v3/index.json
     </RestoreAdditionalProjectSources>
+
     <RootNamespace>Jaket</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <NoWarn>IDE0028, IDE0044, IDE0062, IDE0130, IDE0290, IDE0300, IDE1006</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="UnityEngine.Modules" Version="2019.4.40" IncludeAssets="compile" />
+    <PackageReference Include="UnityEngine.Modules" Version="2022.3.29" IncludeAssets="compile" />
 
     <Reference Include="lib\BepInEx.dll" />
     <Reference Include="lib\0Harmony.dll" />
@@ -33,7 +36,4 @@
     <Reference Include="lib\UnityUIExtensions.dll" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
-  </ItemGroup>
 </Project>
