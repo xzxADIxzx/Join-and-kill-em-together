@@ -85,7 +85,7 @@ public class Movement : MonoSingleton<Movement>
                 CanvasController.Instance.transform.Find("PauseMenu/Restart Mission").GetComponent<Button>().interactable = LobbyController.Offline || LobbyController.IsOwner;
 
                 // disable text override component
-                nm.youDiedText.GetComponents<MonoBehaviour>()[1].enabled = false;
+                // nm.youDiedText.GetComponents<MonoBehaviour>()[1].enabled = false; TODO fix revamp
             }
         };
 
@@ -272,11 +272,13 @@ public class Movement : MonoSingleton<Movement>
         }
 
         // fake Cyber Grind///0-S death
+        /* TODO fix revamp
         if (nm.dead && nm.blackScreen.color.a < .4f && fakeDeath)
         {
             nm.blackScreen.color = nm.blackScreen.color with { a = nm.blackScreen.color.a + .75f * Time.deltaTime };
             nm.youDiedText.color = nm.youDiedText.color with { a = nm.blackScreen.color.a * 1.25f };
         }
+        */
     }
 
     private void GridUpdate()
@@ -284,7 +286,7 @@ public class Movement : MonoSingleton<Movement>
         if (LobbyController.Offline || !fakeDeath) return;
 
         int alive = CyberGrind.PlayersAlive();
-        nm.youDiedText.text = Bundle.Format("spect", alive.ToString(), EndlessGrid.Instance ? "#spect.cg" : "#spect.0s");
+        // nm.youDiedText.text = Bundle.Format("spect", alive.ToString(), EndlessGrid.Instance ? "#spect.cg" : "#spect.0s"); TODO fix revamp
 
         if (alive > 0) return;
         if (Scene == "Level 0-S") StatsManager.Instance.Restart();
@@ -294,7 +296,7 @@ public class Movement : MonoSingleton<Movement>
             if (final.savedTime == 0f)
             {
                 final.GameOver();
-                Dest(nm.blackScreen.gameObject);
+                // Dest(nm.blackScreen.gameObject); TODO fix revamp
             }
         }
     }
@@ -306,9 +308,9 @@ public class Movement : MonoSingleton<Movement>
         {
             StartThirdPerson();
             nm.endlessMode = true; // take the death screen under control
-
-            nm.blackScreen.gameObject.SetActive(true);
-            nm.blackScreen.transform.Find("LaughingSkull").gameObject.SetActive(false);
+            // TODO fix revamp
+            // nm.blackScreen.gameObject.SetActive(true);
+            // nm.blackScreen.transform.Find("LaughingSkull").gameObject.SetActive(false);
             nm.screenHud.SetActive(false);
         });
     }

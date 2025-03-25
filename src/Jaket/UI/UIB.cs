@@ -34,7 +34,7 @@ public class UIB
         Events.OnLoaded += fix = () => Events.Post(() =>
         {
             HudMessageReceiver.Instance.text.font = ModAssets.FontTMP;
-            NewMovement.Instance.youDiedText.font = ModAssets.Font;
+            // NewMovement.Instance.youDiedText.font = ModAssets.Font; TODO fix revamp
 
             // fix the sorting order to display hud messages on top of other interface fragments
             if (!HudMessageReceiver.Instance.TryGetComponent<Canvas>(out _)) Component<Canvas>(HudMessageReceiver.Instance.gameObject, canvas =>

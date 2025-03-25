@@ -28,10 +28,10 @@ public class PlayerInfo : CanvasSingleton<PlayerInfo>
     }
 
     private void UpdateMaterials()
-    {
+    {/* TODO fix this *sigh*
         foreach (var img in root.GetComponentsInChildren<Image>()) img.material = HUDOptions.Instance.hudMaterial;
         foreach (var txt in root.GetComponentsInChildren<Text>()) txt.material = HUDOptions.Instance.hudMaterial;
-    }
+    */}
 
     /// <summary> Toggles visibility of the information table. </summary>
     public void Toggle()

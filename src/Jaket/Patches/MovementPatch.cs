@@ -54,7 +54,7 @@ public class CommonPatch
     static bool CheatsMenu() => Cheats();
 
     [HarmonyPrefix]
-    [HarmonyPatch(typeof(Noclip), nameof(Noclip.Update))]
+    [HarmonyPatch(typeof(Noclip), "UpdateTick")]
     static bool CheatsNoclip() => Cheats();
 
     [HarmonyPrefix]
