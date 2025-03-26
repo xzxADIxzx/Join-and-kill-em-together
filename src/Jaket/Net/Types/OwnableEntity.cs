@@ -11,10 +11,10 @@ public abstract class OwnableEntity : Entity
     /// <summary> Time of last transfer of the entity from one client to another. </summary>
     public float LastTransferTime { get; protected set; }
     /// <summary> Event triggered when the ownership of the entity is transferred. </summary>
-    public Action OnTransferred;
+    public Runnable OnTransferred;
 
     /// <summary> Initializes the event of the transfer of the right to own the object. </summary>
-    protected void InitTransfer(Action on = null) => OnTransferred = () =>
+    protected void InitTransfer(Runnable on = null) => OnTransferred = () =>
     {
         LastTransferTime = Time.time;
         on?.Invoke();

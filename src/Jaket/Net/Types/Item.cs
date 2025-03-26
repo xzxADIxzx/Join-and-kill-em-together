@@ -38,7 +38,7 @@ public class Item : OwnableEntity
     private void Start()
     {
         if (Type.IsFish() && TryGetComponent(out FishObjectReference fish))
-            fm.UnlockFish(fish.fishObject = fm.recognizedFishes.Keys.ElementAt(Type - EntityType.FishOffset - 2));
+            fm.UnlockFish(fish.fishObject = fm.recognizedFishes.Keys.ElementAt(Type - EntityType.FunnyStupidFish));
     }
 
     private void Update() => Stats.MTE(() =>

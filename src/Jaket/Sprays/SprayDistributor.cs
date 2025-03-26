@@ -57,7 +57,7 @@ public static class SprayDistributor
     #region networking
 
     /// <summary> Uploads the given spray to the clients or server. </summary>
-    public static void Upload(uint owner, byte[] data, Cons<IntPtr, int> result = null)
+    public static void Upload(uint owner, byte[] data, Cons<Ptr, int> result = null)
     {
         // initialize a new stream
         Networking.Send(PacketType.ImageChunk, w =>

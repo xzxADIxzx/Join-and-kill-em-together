@@ -28,7 +28,7 @@ public class Customization : MonoBehaviour
     private Image buyIcon;
     private Text buyText;
     private Button buyButton;
-    private Action buyAction;
+    private Runnable buyAction;
 
     private void Start()
     {

@@ -88,7 +88,7 @@ public class Voting : MonoBehaviour
                 break;
 
             case VotingType.Choice:
-                Action Patch(char button, byte option)
+                Runnable Patch(char button, byte option)
                 {
                     var btn = transform.Find($"Button ({button})").GetComponent<Button>();
                     var ori = btn.onClick;
@@ -103,7 +103,7 @@ public class Voting : MonoBehaviour
 
                     return ori.Invoke;
                 }
-                Action[] originals = { Patch('A', 0), Patch('B', 1), Patch('C', 2) };
+                Runnable[] originals = { Patch('A', 0), Patch('B', 1), Patch('C', 2) };
 
                 display = UIB.Text("#votes.choice", transform, Msg(640f) with { y = 20f }, size: 16);
 

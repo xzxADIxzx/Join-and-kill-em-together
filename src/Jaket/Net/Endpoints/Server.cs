@@ -31,7 +31,7 @@ public class Server : Endpoint, ISocketManager
                 if (!LobbyController.CheatsAllowed && (type.IsEnemy() || type.IsItem())) return;
 
                 // client cannot create special enemies
-                if (type.IsEnemy() && !type.IsCommonEnemy()) return;
+                if (type.IsEnemy() /* && !type.IsCommonEnemy() */) return;
 
                 Administration.Handle(sender, ents[id] = Entities.Get(id, type));
             }
@@ -207,7 +207,7 @@ public class Server : Endpoint, ISocketManager
         if (ents.TryGetValue(info.Identity.SteamId.AccountId, out var entity) && entity is RemotePlayer player) player?.NetKill();
     }
 
-    public void OnMessage(Connection con, NetIdentity id, IntPtr data, int size, long msg, long time, int channel)
+    public void OnMessage(Connection con, NetIdentity id, Ptr data, int size, long msg, long time, int channel)
     {
         var accId = id.SteamId.AccountId;
 

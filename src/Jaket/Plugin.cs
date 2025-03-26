@@ -16,10 +16,7 @@ using Jaket.World;
 [BepInPlugin("xzxADIxzx.Jaket", "Jaket", Version.CURRENT)]
 public class PluginLoader : BaseUnityPlugin
 {
-    private void Awake() => Events.InternalSceneLoaded = () =>
-    {
-        if (Plugin.Instance == null) Create<Plugin>("Jaket").Location = Path.GetDirectoryName(Info.Location);
-    };
+    private void Awake() => Events.InternalSceneLoaded = () => (Plugin.Instance ?? Create<Plugin>("Jaket")).Location = Path.GetDirectoryName(Info.Location);
 }
 
 /// <summary> Plugin main class. Essentially only initializes all other components. </summary>
@@ -47,7 +44,7 @@ public class Plugin : MonoBehaviour
 
     private void Init()
     {
-        if (Initialized) return;
+        if (Initialized = true) return;
 
         // notify players about the availability of an update so that they no longer whine to me about something not working
         Version.Check4Update();

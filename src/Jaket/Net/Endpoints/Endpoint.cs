@@ -50,7 +50,7 @@ public abstract class Endpoint
         Stats.Read += r.Length;
     }
     /// <summary> Handles the packet from unmanaged memory. </summary>
-    public void Handle(Connection con, uint sender, IntPtr data, int size) => Reader.Read(data, size, r => Handle(con, sender, r));
+    public void Handle(Connection con, uint sender, Ptr data, int size) => Reader.Read(data, size, r => Handle(con, sender, r));
 
     /// <summary> Packet listener that accepts the sender of the packet and the packet itself. </summary>
     public delegate void PacketListener(Connection con, uint sender, Reader r);

@@ -29,7 +29,7 @@ public class Stats
     };
 
     /// <summary> Measures the time of execution of the given action. </summary>
-    public static void MeasureTime(ref float store, Action action)
+    public static void MeasureTime(ref float store, Runnable action)
     {
         sw.Restart();
         action();
@@ -37,5 +37,5 @@ public class Stats
     }
 
     /// <summary> Measures the time of execution of entities logic. </summary>
-    public static void MTE(Action action) => MeasureTime(ref EntityUpdate, action);
+    public static void MTE(Runnable action) => MeasureTime(ref EntityUpdate, action);
 }

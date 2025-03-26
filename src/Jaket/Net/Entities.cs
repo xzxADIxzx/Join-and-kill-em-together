@@ -33,7 +33,7 @@ public class Entities
         for (var type = EntityType.SecuritySystem_Main; type <= EntityType.SecuritySystem_Tower_; type++)
         {
             var sucks = type;
-            Providers.Add(sucks, () => World.SecuritySystem[sucks - EntityType.SecuritySystemOffset]);
+            Providers.Add(sucks, () => World.SecuritySystem[sucks - EntityType.SecuritySystem_Main]);
         }
 
         Providers.Add(EntityType.Brain, () => World.Brain);

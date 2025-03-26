@@ -11,9 +11,9 @@ public class WorldAction
     /// <summary> Level for which the action is intended. </summary>
     public readonly string Level;
     /// <summary> The action itself. </summary>
-    public readonly Action Action;
+    public readonly Runnable Action;
 
-    public WorldAction(string level, Action action) { Level = level; Action = action; World.Actions.Add(this); }
+    public WorldAction(string level, Runnable action) { Level = level; Action = action; World.Actions.Add(this); }
 
     /// <summary> Runs the action if the level matches the desired one. </summary>
     public void Run()
@@ -25,7 +25,7 @@ public class WorldAction
 /// <summary> Action that runs immediately when a level is loaded. </summary>
 public class StaticAction : WorldAction
 {
-    public StaticAction(string level, Action action) : base(level, action) { }
+    public StaticAction(string level, Runnable action) : base(level, action) { }
 
     /// <summary> Creates a static action that duplicates torches. </summary>
     public static void PlaceTorches(string level, Vector3 pos, float radius) => new StaticAction(level, () =>
@@ -59,7 +59,7 @@ public class NetAction : WorldAction
     /// <summary> Position of the object used to find it. </summary>
     public Vector3 Position;
 
-    public NetAction(string level, string name, Vector3 position, Action action) : base(level, action) { Name = name; Position = position; }
+    public NetAction(string level, string name, Vector3 position, Runnable action) : base(level, action) { Name = name; Position = position; }
 
     /// <summary> Creates a net action that synchronizes an object activator component. </summary>
     public static void Sync(string level, string name, Vector3 position, Cons<Transform> action = null) => new NetAction(level, name, position, () =>

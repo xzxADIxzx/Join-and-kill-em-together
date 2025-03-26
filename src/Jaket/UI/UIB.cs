@@ -30,7 +30,7 @@ public class UIB
     public static void Load()
     {
         // replace the font in a few in-game fragments
-        Action fix;
+        Runnable fix;
         Events.OnLoaded += fix = () => Events.Post(() =>
         {
             HudMessageReceiver.Instance.text.font = ModAssets.FontTMP;
@@ -186,7 +186,7 @@ public class UIB
     #region button
 
     /// <summary> Adds a regular button that calls the given action. </summary>
-    public static Button Button(string name, Transform parent, Rect r, Color? color = null, int size = 24, TextAnchor align = TextAnchor.MiddleCenter, Action clicked = null)
+    public static Button Button(string name, Transform parent, Rect r, Color? color = null, int size = 24, TextAnchor align = TextAnchor.MiddleCenter, Runnable clicked = null)
     {
         var img = Image(name, parent, r, color, fill: false);
         Text(name, img.transform, r.Text, color, size, align);
@@ -199,7 +199,7 @@ public class UIB
     }
 
     /// <summary> Adds a square button with a char-icon. </summary>
-    public static Button IconButton(string icon, Transform parent, Rect r, Color? color = null, Vector3? offset = null, Action clicked = null)
+    public static Button IconButton(string icon, Transform parent, Rect r, Color? color = null, Vector3? offset = null, Runnable clicked = null)
     {
         var btn = Button(icon, parent, r, color, 40, clicked: clicked);
         btn.transform.GetChild(0).localPosition = offset ?? new(.5f, 2f);
@@ -207,7 +207,7 @@ public class UIB
     }
 
     /// <summary> Adds a command button with the appropriate color. </summary>
-    public static Button TeamButton(Team team, Transform parent, Rect r, Action clicked = null)
+    public static Button TeamButton(Team team, Transform parent, Rect r, Runnable clicked = null)
     {
         var img = Image(team.ToString(), parent, r, team.Color());
         if (team == Team.Pink) Text("UwU", img.transform, r.Text, Dark(pink));
@@ -240,7 +240,7 @@ public class UIB
     }
 
     /// <summary> Adds a button corresponding to the shop style. </summary>
-    public static Button ShopButton(string name, Transform parent, Rect r, Action clicked)
+    public static Button ShopButton(string name, Transform parent, Rect r, Runnable clicked)
     {
         var img = Image(name, parent, r, shopc, fill: false);
         Text(name, img.transform, Huge, size: 280).transform.localScale /= 10f;

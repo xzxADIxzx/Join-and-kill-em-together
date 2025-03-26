@@ -40,12 +40,12 @@ public class Items
             if (id.name.Contains("(Clone)")) id.name = id.name.Substring(0, id.name.IndexOf("(Clone)")).Trim();
 
             int index = Prefabs.FindIndex(prefab => prefab.name == id.name);
-            return index == -1 ? EntityType.None : (EntityType.ItemOffset + index);
+            return index == -1 ? EntityType.None : (EntityType.BlueSkull + index);
         }
         if (id.TryGetComponent(out FishObjectReference fish))
         {
             int index = FishManager.Instance.recognizedFishes.Keys.ToList().IndexOf(fish.fishObject);
-            return index == -1 ? EntityType.BurntStuff : (EntityType.FishOffset + index + 2);
+            return index == -1 ? EntityType.BurntStuff : (EntityType.FunnyStupidFish + index);
         }
         return id.transform.GetChild(0).name switch
         {
@@ -68,12 +68,12 @@ public class Items
         var fsh = type.IsFish() && type != EntityType.AppleBait && type != EntityType.SkullBait;
         var obj = fsh
             ? Entities.Mark(GameAssets.FishTemplate())
-            : Entities.Mark(Prefabs[type - EntityType.ItemOffset]);
+            : Entities.Mark(Prefabs[type - EntityType.BlueSkull]);
 
         // prefabs of fishes do not contain anything except the model of the fish
         if (fsh)
         {
-            Inst(Prefabs[type - EntityType.ItemOffset], obj.transform).transform.localPosition = Vector3.zero;
+            Inst(Prefabs[type - EntityType.BlueSkull], obj.transform).transform.localPosition = Vector3.zero;
             obj.AddComponent<FishObjectReference>();
         }
 

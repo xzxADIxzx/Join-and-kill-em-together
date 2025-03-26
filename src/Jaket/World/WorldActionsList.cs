@@ -451,7 +451,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         {
             var b = obj.transform.parent.GetComponentInChildren<CombinedBossBar>(true);
             for (int i = 0; i < b.enemies.Length; i++)
-                (World.SecuritySystem[i] = b.enemies[i].gameObject.AddComponent<SecuritySystem>()).Type = EntityType.SecuritySystemOffset + i;
+                (World.SecuritySystem[i] = b.enemies[i].gameObject.AddComponent<SecuritySystem>()).Type = EntityType.SecuritySystem_Main + i;
         }));
         NetAction.Sync(l, "Trigger", new(0f, 495.25f, 713.25f), obj => Teleporter.Teleport(new(0f, 472f, 745f), false));
         NetAction.Sync(l, "ShieldDeactivator", new(0f, 477.5f, 724.25f));

@@ -206,7 +206,7 @@ public class Networking
     }
 
     /// <summary> Sends the given amount of bytes from the pointer to the given connection. </summary>
-    public static void Send(Connection? con, IntPtr data, int size)
+    public static void Send(Connection? con, Ptr data, int size)
     {
         if (con == null)
         {
@@ -218,11 +218,11 @@ public class Networking
     }
 
     /// <summary> Allocates memory, writes the packet there and sends it. </summary>
-    public static void Send(PacketType packetType, Cons<Writer> cons = null, Cons<IntPtr, int> result = null, int size = 47) =>
+    public static void Send(PacketType packetType, Cons<Writer> cons = null, Cons<Ptr, int> result = null, int size = 47) =>
         Writer.Write(w => { w.Enum(packetType); cons?.Invoke(w); }, result ?? Redirect, cons == null ? 1 : size + 1);
 
     /// <summary> Forwards the packet to all clients or the host. </summary>
-    public static void Redirect(IntPtr data, int size)
+    public static void Redirect(Ptr data, int size)
     {
         if (LobbyController.IsOwner)
             EachConnection(con => Send(con, data, size));

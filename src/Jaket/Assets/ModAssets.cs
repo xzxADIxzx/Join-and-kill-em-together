@@ -67,8 +67,8 @@ public class ModAssets
         };
 
         // general
-        Shader = Enemies.Prefabs[EntityType.V2_RedArm - EntityType.EnemyOffset].GetComponent<global::V2>().smr.material.shader;
-        Additv = Enemies.Prefabs[EntityType.V2_RedArm - EntityType.EnemyOffset].GetComponentInChildren<TrailRenderer>().material;
+        Shader = Enemies.Prefabs[EntityType.V2_RedArm - EntityType.Filth].GetComponent<global::V2>().smr.material.shader;
+        Additv = Enemies.Prefabs[EntityType.V2_RedArm - EntityType.Filth].GetComponentInChildren<TrailRenderer>().material;
 
         Load<Sprite>("V3-icon", s => Icon = s);
         Load<TextAsset>("V3-bestiary-entry", f => Desc = f.text);
@@ -149,7 +149,7 @@ public class ModAssets
 
         Load<Texture>("V2-plushie", t =>
         {
-            int i = EntityType.V2 - EntityType.ItemOffset;
+            int i = EntityType.V2 - EntityType.BlueSkull;
             DontDest(V2 = Items.Prefabs[i] = Inst(Items.Prefabs[i]));
 
             V2.name = "DevPlushie (V2)";
@@ -159,7 +159,7 @@ public class ModAssets
 
         Load<Texture>("V3-plushie", t =>
         {
-            int i = EntityType.V3 - EntityType.ItemOffset;
+            int i = EntityType.V3 - EntityType.BlueSkull;
             DontDest(V3 = Items.Prefabs[i] = Inst(Items.Prefabs[i]));
 
             V3.name = "DevPlushie (V3)";
@@ -169,7 +169,7 @@ public class ModAssets
 
         Load<GameObject>("DevPlushie (xzxADIxzx).prefab", p =>
         {
-            DontDest(xzxADIxzx = Items.Prefabs[EntityType.xzxADIxzx - EntityType.ItemOffset] = p);
+            DontDest(xzxADIxzx = Items.Prefabs[EntityType.xzxADIxzx - EntityType.BlueSkull] = p);
             FixMaterials(p, new(1.3f, 1.3f, 1.3f));
 
             UIB.Component<ItemIdentifier>(p, itemId =>
@@ -186,7 +186,7 @@ public class ModAssets
 
         Load<GameObject>("DevPlushie (Sowler).prefab", p =>
         {
-            DontDest(Sowler = Items.Prefabs[EntityType.Sowler - EntityType.ItemOffset] = p);
+            DontDest(Sowler = Items.Prefabs[EntityType.Sowler - EntityType.BlueSkull] = p);
             FixMaterials(p);
 
             UIB.Component<ItemIdentifier>(p, itemId =>

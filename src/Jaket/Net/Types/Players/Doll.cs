@@ -21,7 +21,7 @@ public class Doll : MonoBehaviour
     /// <summary> Emote that plays at the moment. </summary>
     public byte Emote, LastEmote = 0xFF, Rps;
     /// <summary> Event triggered after the start of emote. </summary>
-    public Action OnEmoteStart = () => { };
+    public Runnable OnEmoteStart = () => { };
 
     /// <summary> Hat and jacket that the doll wears. </summary>
     public int Hat, Jacket;

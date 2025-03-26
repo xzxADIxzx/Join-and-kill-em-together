@@ -13,7 +13,7 @@ public class CanvasSingleton<T> : MonoSingleton<T> where T : CanvasSingleton<T>
     /// <summary> Creates an instance of this singleton. </summary>
     /// <param name="woh"> Width or height will be used to scale the canvas. True - width, false - height. </param>
     /// <param name="dialog"> Dialogs lock the mouse and movement while fragments don't do this. </param>
-    public static void Build(string name, bool dialog, Prov<bool> cond = null, Action hide = null, bool woh = false)
+    public static void Build(string name, bool dialog, Prov<bool> cond = null, Runnable hide = null, bool woh = false)
     {
         UIB.Canvas(name, UI.Root, woh: woh ? 0f : 1f).gameObject.AddComponent<T>();
         Instance.GetComponent<GraphicRaycaster>().enabled = Dialog = dialog;
