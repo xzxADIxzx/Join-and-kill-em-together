@@ -218,4 +218,37 @@ public static class Tools
     public delegate K Func<T, K>(T t);
 
     #endregion
+    #region entities
+
+    /// <summary> Whether the type is a player. </summary>
+    public static bool IsPlayer(this EntityType type) => type == EntityType.Player;
+
+
+
+    /// <summary> Whether the type is an enemy. </summary>
+    public static bool IsEnemy(this EntityType type) => type >= EntityType.Filth && type <= EntityType.Brain;
+
+    /// <summary> Whether the type is an enemy and can be spawn only once. </summary>
+    public static bool IsHuge(this EntityType type) => type >= EntityType.FleshPrison && type <= EntityType.SisyphusPrime;
+
+    /// <summary> Whether the type is an enemy and can be shot by a coin. </summary>
+    public static bool IsTargetable(this EntityType type) => IsEnemy(type) && type != EntityType.Idol && type != EntityType.CancerousRodent;
+
+
+
+    /// <summary> Whether the type is an item. </summary>
+    public static bool IsItem(this EntityType type) => type >= EntityType.BlueSkull && type <= EntityType.Sowler;
+
+    /// <summary> Whether the type is a bait or fish. </summary>
+    public static bool IsFish(this EntityType type) => type >= EntityType.AppleBait && type <= EntityType.BurntStuff;
+
+    /// <summary> Whether the type is a plushie. </summary>
+    public static bool IsPlushie(this EntityType type) => type >= EntityType.Hakita && type <= EntityType.Sowler;
+
+
+
+    /// <summary> Whether the type is a bullet. </summary>
+    public static bool IsBullet(this EntityType type) => type >= EntityType.Coin;
+
+    #endregion
 }
