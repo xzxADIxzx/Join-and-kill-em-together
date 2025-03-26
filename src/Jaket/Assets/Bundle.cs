@@ -1,5 +1,6 @@
 namespace Jaket.Assets;
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -56,7 +57,7 @@ public class Bundle
         #endregion
 
         var locale = PrefsManager.Instance.GetString("jaket.locale", "en");
-        int localeId = Array.IndexOf(Codes, locale);
+        int localeId = Codes.IndexOf(locale);
 
         if (localeId == 255)
         {

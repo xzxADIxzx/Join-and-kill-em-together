@@ -11,7 +11,7 @@ public class BestiaryPatch
     static void Prefix(ref SpawnableObjectsDatabase ___objects)
     {
         // there is no point in adding V3 twice
-        if (Array.Exists(___objects.enemies, obj => obj.identifier == "jaket.v3")) return;
+        if (___objects.enemies.Any(e => e.identifier == "jaket.v3")) return;
 
         var v3 = ScriptableObject.CreateInstance<SpawnableObject>();
         var entry = BestiaryEntry.Load();

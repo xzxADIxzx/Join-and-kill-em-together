@@ -220,7 +220,7 @@ public class Bullets
     /// <summary> Synchronizes damage dealt to the enemy. </summary>
     public static void SyncDamage(uint enemyId, string hitter, float damage, float crit)
     {
-        var type = (byte)Array.IndexOf(Types, hitter);
+        var type = (byte)Types.IndexOf(hitter);
         if (type != 0xFF) Networking.Send(PacketType.DamageEntity, w =>
         {
             w.Id(enemyId);

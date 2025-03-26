@@ -1,8 +1,5 @@
 global using static Jaket.Tools;
-
-global using IntPtr = System.IntPtr;
-global using Array = System.Array;
-global using Exception = System.Exception;
+global using Ptr = System.IntPtr;
 
 namespace Jaket;
 
@@ -12,8 +9,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.Events;
-
-using Object = UnityEngine.Object;
 
 using Jaket.Assets;
 using Jaket.Content;
@@ -31,7 +26,7 @@ public static class Tools
     /// <summary> Account id of the local player. </summary>
     public static uint AccId;
 
-    /// <summary> How could I know that Steamworks do not cache this value? </summary>
+    /// <summary> How could I know that Steamworks does not cache this value? </summary>
     public static void CacheAccId() => AccId = Id.AccountId;
     /// <summary> Returns the name of the player with the given AccountId. </summary>
     public static string Name(uint id) => new Friend(id | 76561197960265728u).Name;
@@ -47,7 +42,6 @@ public static class Tools
     /// <summary> Loads the given scene. </summary>
     public static void LoadScn(string scene) => SceneHelper.LoadScene(scene);
 
-    /// <summary> Whether the given object is on a scene or is it just an asset. </summary>
     public static bool IsReal(GameObject obj) => obj.scene.name != null && obj.scene.name != "DontDestroyOnLoad";
     public static bool IsReal(Component comp) => IsReal(comp.gameObject);
 
