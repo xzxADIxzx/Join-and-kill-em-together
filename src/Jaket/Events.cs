@@ -2,51 +2,52 @@ namespace Jaket;
 
 using Steamworks;
 using Steamworks.Data;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 using Jaket.Net;
 
-/// <summary> List of events used by the mod. Some of them are combined into one for simplicity. </summary>
-public class Events : MonoSingleton<Events>
+/// <summary> List of project events, an important part of the internal logic. </summary>
+public class Events : MonoBehaviour
 {
     /// <summary> Internal event triggered after loading any scene. </summary>
-    public static Action InternalSceneLoaded { set => UnityEngine.SceneManagement.SceneManager.sceneLoaded += (scene, mode) => value(); }
+    public static Runnable InternalSceneLoaded { set => UnityEngine.SceneManagement.SceneManager.sceneLoaded += (scene, mode) => value(); }
 
     #region events
 
-    /// <summary> Event triggered when a loading of any scene has started. </summary>
+    /// <summary> Triggered when a loading of any scene has started. </summary>
     public static SafeEvent OnLoadingStarted = new();
-    /// <summary> Event triggered after loading any scene. </summary>
+    /// <summary> Triggered when a loading any scene has finished. </summary>
     public static SafeEvent OnLoaded = new();
-    /// <summary> Event triggered after loading the main menu. </summary>
+    /// <summary> Triggered when a loading the main menu has finished. </summary>
     public static SafeEvent OnMainMenuLoaded = new();
 
-    /// <summary> Event triggered when an action is taken on the lobby: creation, closing, connection or modifying. </summary>
+    /// <summary> Triggered when an action is performed on a lobby: creation, closure or modification. </summary>
     public static SafeEvent OnLobbyAction = new();
-    /// <summary> Event triggered when the local player enters a lobby. </summary>
+    /// <summary> Triggered when the local player enters a lobby. </summary>
     public static SafeEvent OnLobbyEntered = new();
 
-    /// <summary> Event triggered when someone invites you to their lobby. </summary>
+    /// <summary> Triggered when someone invites you to their lobby. </summary>
     public static SafeEvent<Lobby> OnLobbyInvite = new();
-    /// <summary> Event triggered when someone joins the lobby. </summary>
+    /// <summary> Triggered when someone joins the lobby. </summary>
     public static SafeEvent<Friend> OnMemberJoin = new();
-    /// <summary> Event triggered when someone leaves the lobby. </summary>
+    /// <summary> Triggered when someone leaves the lobby. </summary>
     public static SafeEvent<Friend> OnMemberLeave = new();
 
-    /// <summary> Event triggered when a team composition changes. </summary>
+    /// <summary> Triggered when a team composition changes. </summary>
     public static SafeEvent OnTeamChanged = new();
-    /// <summary> Event triggered when a weapon or hand changes: weapon swap, hand color change. </summary>
+    /// <summary> Triggered when a weapon or hand changes: weapon swap, hand color change. </summary>
     public static SafeEvent OnWeaponChanged = new();
 
     #endregion
 
-    /// <summary> List of tasks that will need to be completed in the late update. </summary>
-    public static Queue<Action> Tasks = new();
-    /// <summary> Events that fire every subtick, second and dozen seconds. </summary>
+    /// <summary> List of tasks that will be completed on the next frame. </summary>
+    public static Queue<Runnable> Tasks = new();
+    /// <summary> Events that are fired every subtick, second and dozen of seconds. </summary>
     public static SafeEvent EveryTick = new(), EverySecond = new(), EveryDozen = new();
 
-    /// <summary> Subscribes to some events to fire some safe events. </summary>
+    /// <summary> Subscribes to some internal events. </summary>
     public static void Load()
     {
         Create<Events>("Events");
@@ -57,7 +58,7 @@ public class Events : MonoSingleton<Events>
             if (Scene == "Main Menu") OnMainMenuLoaded.Fire();
         };
 
-        SteamMatchmaking.OnLobbyDataChanged += lobby => OnLobbyAction.Fire();
+        SteamMatchmaking.OnLobbyDataChanged += lobby => Post(OnLobbyAction.Fire);
         SteamMatchmaking.OnLobbyEntered += lobby => Post(OnLobbyEntered.Fire);
 
         SteamFriends.OnGameLobbyJoinRequested += (lobby, id) => OnLobbyInvite.Fire(lobby);
@@ -80,19 +81,19 @@ public class Events : MonoSingleton<Events>
     }
 
     /// <summary> Posts the task for execution in the late update. </summary>
-    public static void Post(Action task) => Tasks.Enqueue(task);
+    public static void Post(Runnable task) => Tasks.Enqueue(task);
     /// <summary> Posts the task for execution in the next frame. </summary>
-    public static void Post2(Action task) => Post(() => Post(task));
+    public static void Post2(Runnable task) => Post(() => Post(task));
 
-    private void Dozen() => EveryDozen.Fire();
-    private void Second() => EverySecond.Fire();
     private void Tick() => EveryTick.Fire();
+    private void Second() => EverySecond.Fire();
+    private void Dozen() => EveryDozen.Fire();
 
     private void Start()
     {
-        InvokeRepeating("Dozen", 1f, 12f);
-        InvokeRepeating("Second", 1f, 1f);
         InvokeRepeating("Tick", 1f, 1f / Networking.TICKS_PER_SECOND / Networking.SUBTICKS_PER_TICK);
+        InvokeRepeating("Second", 1f, 1f);
+        InvokeRepeating("Dozen", 1f, 12f);
     }
 
     private void LateUpdate()
@@ -110,7 +111,8 @@ public class Events : MonoSingleton<Events>
         /// <summary> Fires the event, ensuring that all listeners will be executed regardless of exceptions. </summary>
         public void Fire(T t)
         {
-            for (int i = 0; i < listeners.Count; i++)
+            int amount = listeners.Count;
+            for (int i = 0; i < amount; i++)
             {
                 try { listeners[i](t); }
                 catch (Exception ex) { Log.Error(ex); }
@@ -127,7 +129,7 @@ public class Events : MonoSingleton<Events>
     /// <summary> Safe event that will output all exceptions to the console and guarantee the execution of each listener, regardless of errors. </summary>
     public class SafeEvent : SafeEvent<object>
     {
-        public static SafeEvent operator +(SafeEvent e, Action listener) { _ = e + (_ => listener()); return e; }
-        public static SafeEvent operator -(SafeEvent e, Action listener) { _ = e - (_ => listener()); return e; }
+        public static SafeEvent operator +(SafeEvent e, Runnable listener) { _ = e + (_ => listener()); return e; }
+        public static SafeEvent operator -(SafeEvent e, Runnable listener) { _ = e - (_ => listener()); return e; }
     }
 }
