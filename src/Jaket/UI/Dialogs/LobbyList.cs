@@ -61,7 +61,7 @@ public class LobbyList : CanvasSingleton<LobbyList>
         if (Lobbies == null) return;
 
         // look for the lobby using the search string
-        var lobbies = search == "" ? Lobbies : Array.FindAll(Lobbies, lobby => lobby.GetData("name").ToLower().Contains(search));
+        var lobbies = search == "" ? Lobbies : System.Array.FindAll(Lobbies, lobby => lobby.GetData("name").ToLower().Contains(search));
 
         float height = lobbies.Length * 48;
         content.sizeDelta = new(624f, height);

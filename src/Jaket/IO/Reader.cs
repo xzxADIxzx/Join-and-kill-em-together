@@ -15,13 +15,13 @@ public class Reader
     /// <summary> Allocated memory length. </summary>
     public readonly int Length;
     /// <summary> Pointer to the allocated memory. </summary>
-    public readonly IntPtr mem;
+    public readonly Ptr mem;
 
     /// <summary> Creates a reader with the given memory. </summary>
-    public Reader(IntPtr memory, int length) { mem = memory; Length = length; }
+    public Reader(Ptr memory, int length) { mem = memory; Length = length; }
 
     /// <summary> Reads data from the given memory via reader. </summary>
-    public static void Read(IntPtr memory, int length, Cons<Reader> cons) => cons(new(memory, length));
+    public static void Read(Ptr memory, int length, Cons<Reader> cons) => cons(new(memory, length));
 
     /// <summary> Converts integer to float. </summary>
     public static unsafe float Int2Float(int value) => *(float*)&value;

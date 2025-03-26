@@ -1,6 +1,7 @@
 namespace Jaket.Patches;
 
 using HarmonyLib;
+using System;
 using UnityEngine;
 
 using Jaket.Assets;

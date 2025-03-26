@@ -1,5 +1,6 @@
 namespace Jaket.Sam;
 
+using System;
 using UnityEngine;
 
 /// <summary>

@@ -190,6 +190,16 @@ public static class Tools
         return false;
     }
 
+    /// <summary> Returns the object in the given enumerable that is suitable for the given predicate or default. </summary>
+    public static T Find<T>(this IEnumerable<T> seq, Pred<T> pred, Prov<T> defaultProv = null)
+    {
+        foreach (var item in seq) if (pred(item)) return item;
+        return defaultProv == null ? default : defaultProv();
+    }
+
+    /// <summary> Clears the given enumerable array by filling it with default values. </summary>
+    public static void Clear<T>(this T[] seq) => System.Array.Clear(seq, 0, seq.Length);
+
     #endregion
     #region delegates
 

@@ -15,13 +15,13 @@ public class Writer
     /// <summary> Allocated memory length. </summary>
     public readonly int Length;
     /// <summary> Pointer to the allocated memory. </summary>
-    public readonly IntPtr mem;
+    public readonly Ptr mem;
 
     /// <summary> Creates a writer with the given memory. </summary>
-    public Writer(IntPtr memory, int length) { mem = memory; Length = length; }
+    public Writer(Ptr memory, int length) { mem = memory; Length = length; }
 
     /// <summary> Allocates memory and writes data there. </summary>
-    public static void Write(Cons<Writer> cons, Cons<IntPtr, int> result, int memoryAmount)
+    public static void Write(Cons<Writer> cons, Cons<Ptr, int> result, int memoryAmount)
     {
         Writer instance = new(Pointers.Allocate(memoryAmount), memoryAmount);
         cons(instance);

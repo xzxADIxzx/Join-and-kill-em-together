@@ -10,7 +10,7 @@ public class Pointers
     public const int RESERVED = 256 * 1024;
 
     /// <summary> Pointer to the beginning of the memory reserved for writing data. </summary>
-    private static IntPtr pointer;
+    private static Ptr pointer;
     /// <summary> Amount of bytes allocated for writers. </summary>
     private static int offset;
 
@@ -18,7 +18,7 @@ public class Pointers
     public static void Allocate() => pointer = Marshal.AllocHGlobal(RESERVED);
 
     /// <summary> Allocates the given amount of bytes on the reserved memory. </summary>
-    public static IntPtr Allocate(int bytes)
+    public static Ptr Allocate(int bytes)
     {
         var alloc = pointer + offset;
 

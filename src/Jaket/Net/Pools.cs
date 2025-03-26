@@ -52,7 +52,7 @@ public class Pools
     }
 
     /// <summary> Removes all entries from the hash map. </summary>
-    public void Clear() => Array.Clear(entries, 0, entries.Length);
+    public void Clear() => entries.Clear();
 
     /// <summary> Iterates each entry in the hash map starting from the given value and with the given step. </summary>
     public void Each(int start, int step, Cons<Entry> cons)
