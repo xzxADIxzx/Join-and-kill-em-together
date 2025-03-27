@@ -63,14 +63,6 @@ public class UIB
 
     #region base
 
-    /// <summary> Adds a component to the given object and returns it. Just for convenience. </summary>
-    public static T Component<T>(GameObject obj, Cons<T> cons) where T : Component
-    {
-        var c = obj.AddComponent<T>();
-        cons(c);
-        return c;
-    }
-
     /// <summary> Gets and optionally sets renderer properties. </summary>
     public static void Properties(Renderer renderer, Cons<MaterialPropertyBlock> cons, bool set = false)
     {

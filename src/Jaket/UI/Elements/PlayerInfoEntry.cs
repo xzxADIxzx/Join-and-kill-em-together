@@ -22,7 +22,7 @@ public class PlayerInfoEntry : MonoBehaviour
 
     /// <summary> Creates an entry with the given parent. </summary>
     public static PlayerInfoEntry Build(RemotePlayer player, Transform parent) =>
-        UIB.Component<PlayerInfoEntry>(parent.gameObject, entry => entry.player = player);
+        Component<PlayerInfoEntry>(parent.gameObject, entry => entry.player = player);
 
     private void Start()
     {

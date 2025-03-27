@@ -46,7 +46,7 @@ public static class Tools
     public static bool IsReal(Component comp) => IsReal(comp.gameObject);
 
     #endregion
-    #region create, instantiate & destroy
+    #region build
 
     /// <summary> Creates a new game object and assigns it to the given transform. </summary>
     public static GameObject Create(string name, Transform parent = null)
@@ -55,8 +55,20 @@ public static class Tools
         obj.transform.SetParent(parent ?? Plugin.Instance?.transform, false);
         return obj;
     }
+
     /// <summary> Creates a new game object and adds a component of the given type to it. </summary>
     public static T Create<T>(string name, Transform parent = null) where T : Component => Create(name, parent).AddComponent<T>();
+
+    /// <summary> Adds a component of the given type to the given game object and returns it. </summary>
+    public static T Component<T>(GameObject obj, Cons<T> cons) where T : Component
+    {
+        var t = obj.AddComponent<T>();
+        cons(t);
+        return t;
+    }
+
+    #endregion
+    #region instantiate & destroy
 
     public static GameObject Inst(GameObject obj) => Object.Instantiate(obj);
     public static GameObject Inst(GameObject obj, Transform parent) => Object.Instantiate(obj, parent);
@@ -73,13 +85,13 @@ public static class Tools
     public static T[] ResFind<T>() where T : Object => Resources.FindObjectsOfTypeAll<T>();
 
     /// <summary> Iterates all objects of the given type. </summary>
-    public static void ResFind<T>(Cons<T> cons) where T : Object
+    public static void ResFind<T>(Cons<T> cons) where T : Object // TODO remove as it's deprecated and replace with enumerable methods
     {
         foreach (var item in ResFind<T>()) cons(item);
     }
 
     /// <summary> Iterates all objects of the given type that are suitable for the given predicate. </summary>
-    public static void ResFind<T>(Pred<T> pred, Cons<T> cons) where T : Object
+    public static void ResFind<T>(Pred<T> pred, Cons<T> cons) where T : Object // TODO remove as it's deprecated and replace with enumerable methods
     {
         foreach (var item in ResFind<T>()) if (pred(item)) cons(item);
     }
@@ -138,7 +150,7 @@ public static class Tools
     }
 
     #endregion
-    #region enumerables
+    #region enumerable
 
     /// <summary> Returns the index of the object in the given enumerable. </summary>
     public static int IndexOf<T>(this IEnumerable<T> seq, T obj)

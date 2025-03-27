@@ -9,7 +9,6 @@ using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net;
 using Jaket.Net.Types;
-using Jaket.UI;
 using Jaket.UI.Dialogs;
 
 /// <summary> Class that works with the assets of the mod. </summary>
@@ -172,7 +171,7 @@ public class ModAssets
             DontDest(xzxADIxzx = Items.Prefabs[EntityType.xzxADIxzx - EntityType.BlueSkull] = p);
             FixMaterials(p, new(1.3f, 1.3f, 1.3f));
 
-            UIB.Component<ItemIdentifier>(p, itemId =>
+            Component<ItemIdentifier>(p, itemId =>
             {
                 itemId.itemType = ItemType.CustomKey1;
                 itemId.pickUpSound = GameAssets.Squeaky();
@@ -189,7 +188,7 @@ public class ModAssets
             DontDest(Sowler = Items.Prefabs[EntityType.Sowler - EntityType.BlueSkull] = p);
             FixMaterials(p);
 
-            UIB.Component<ItemIdentifier>(p, itemId =>
+            Component<ItemIdentifier>(p, itemId =>
             {
                 itemId.itemType = ItemType.CustomKey1;
                 itemId.pickUpSound = GameAssets.Squeaky();

@@ -28,7 +28,7 @@ public class Pointer : MonoBehaviour
 
     /// <summary> Spawns a pointer at the given position. </summary>
     public static Pointer Spawn(Team team, Vector3 position, Vector3 direction, Transform player = null) =>
-        UIB.Component<Pointer>(Create("Pointer"), pointer =>
+        Component<Pointer>(Create("Pointer"), pointer =>
         {
             pointer.color = team.Color();
             pointer.color.a = .85f;
@@ -40,7 +40,7 @@ public class Pointer : MonoBehaviour
 
     private void Start()
     {
-        if (player != null) line = UIB.Component<LineRenderer>(gameObject, line =>
+        if (player != null) line = Component<LineRenderer>(gameObject, line =>
         {
             line.material.shader = ModAssets.Shader;
             line.startColor = line.endColor = color;

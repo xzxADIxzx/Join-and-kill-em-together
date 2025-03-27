@@ -165,7 +165,7 @@ public class Customization : MonoBehaviour
             var icon = UIB.Image("Button", buttons, rect, Shop.IsUnlocked(offset + i) ? white : black, Shop.Icon(offset + i));
 
             int j = i;
-            UIB.Component<Button>(icon.gameObject, button =>
+            Component<Button>(icon.gameObject, button =>
             {
                 button.targetGraphic = icon;
                 button.onClick.AddListener(() => OnClick(offset + j));

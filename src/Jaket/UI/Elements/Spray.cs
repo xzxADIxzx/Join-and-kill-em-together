@@ -26,7 +26,7 @@ public class Spray : MonoBehaviour
 
     /// <summary> Spawns a spray at the given position. </summary>
     public static Spray Spawn(uint owner, Vector3 position, Vector3 direction) =>
-        UIB.Component<Spray>(Create("Spray"), spray =>
+        Component<Spray>(Create("Spray"), spray =>
         {
             spray.owner = owner;
             spray.position = position;
@@ -43,7 +43,7 @@ public class Spray : MonoBehaviour
             pname.transform.localEulerAngles = new(0f, 0f, 7f);
             pname.transform.localScale /= 10f;
 
-            UIB.Component<Outline>(pname.gameObject, outline =>
+            Component<Outline>(pname.gameObject, outline =>
             {
                 outline.effectColor = black;
                 outline.effectDistance = Vector2.one * 12f;

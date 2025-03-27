@@ -62,7 +62,7 @@ public class Chat : CanvasSingleton<Chat>
         AutoTTS = Settings.AutoTTS;
 
         list = UIB.Table("List", transform, Blh(WIDTH)).rectTransform;
-        listBg = UIB.Component<CanvasGroup>(list.gameObject, group => group.blocksRaycasts = false); // disable the chat collision so it doesn't interfere with other buttons
+        listBg = Component<CanvasGroup>(list.gameObject, group => group.blocksRaycasts = false); // disable the chat collision so it doesn't interfere with other buttons
 
         typingBg = UIB.Table("Typing", transform, Blh(0f)).rectTransform;
         typing = UIB.Text("", typingBg, Blh(4200f).Text);

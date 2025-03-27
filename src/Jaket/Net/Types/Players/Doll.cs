@@ -48,7 +48,7 @@ public class Doll : MonoBehaviour
 
     /// <summary> Spawns a preview of the given emote. </summary>
     public static Doll Spawn(Transform parent, Team team, int hat, int jacket, byte emote, byte rps) =>
-        UIB.Component<Doll>(Inst(ModAssets.Preview, parent), doll =>
+        Component<Doll>(Inst(ModAssets.Preview, parent), doll =>
         {
             doll.transform.localPosition = new(0f, -1.5f);
             doll.transform.localScale = Vector3.one * 2.18f;
