@@ -3,11 +3,11 @@ namespace Jaket.UI.Lib;
 using UnityEngine;
 
 /// <summary> List of textures used to build the interface. </summary>
-public class Tex
+public static class Tex
 {
     /// <summary> Backgrounds with cut corners and dashes. </summary>
     public static Sprite Fill, Back;
-    /// <summary> Borders with cut corners and different width. </summary>
+    /// <summary> Borders with cut corners and different size. </summary>
     public static Sprite Small, Large;
     /// <summary> Horizontal and vertical slider handle. </summary>
     public static Sprite Hort, Vert;
