@@ -67,6 +67,16 @@ public static class Tools
         return t;
     }
 
+    /// <summary> Gets and optionally sets material properties. </summary>
+    public static void Properties(this Renderer renderer, Cons<MaterialPropertyBlock> cons, bool set = false)
+    {
+        MaterialPropertyBlock block = new();
+        renderer.GetPropertyBlock(block);
+
+        cons(block);
+        if (set) renderer.SetPropertyBlock(block);
+    }
+
     #endregion
     #region instantiate & destroy
 

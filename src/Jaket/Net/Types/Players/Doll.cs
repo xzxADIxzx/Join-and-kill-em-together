@@ -170,7 +170,7 @@ public class Doll : MonoBehaviour
             if (CustomColors)
             {
                 renderer.materials = getter.coloredMaterials;
-                UIB.Properties(renderer, block =>
+                renderer.Properties(block =>
                 {
                     block.SetColor("_CustomColor1", Color1);
                     block.SetColor("_CustomColor2", Color2);

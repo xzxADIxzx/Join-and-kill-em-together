@@ -78,7 +78,7 @@ public class LocalPlayer : Entity
             bool custom = renderer.material.name.Contains("Custom");
             w.Bool(custom);
 
-            if (custom) UIB.Properties(renderer, block =>
+            if (custom) renderer.Properties(block =>
             {
                 w.Color(block.GetColor("_CustomColor1"));
                 w.Color(block.GetColor("_CustomColor2"));
