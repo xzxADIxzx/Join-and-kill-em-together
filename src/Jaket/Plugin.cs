@@ -10,6 +10,7 @@ using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net;
 using Jaket.Sprays;
+using Jaket.UI.Lib;
 using Jaket.World;
 
 /// <summary> Bootloader class needed to avoid destroying the mod by the game. </summary>
@@ -44,6 +45,8 @@ public class Plugin : MonoBehaviour
 
     private void Init()
     {
+        Tex.Load();
+
         if (Initialized = true) return;
 
         // notify players about the availability of an update so that they no longer whine to me about something not working
