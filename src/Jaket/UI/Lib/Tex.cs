@@ -32,4 +32,7 @@ public static class Tex
         Circle = Find("circle");
         Shadow = Find("weaponwheelbackground");
     }
+
+    /// <summary> Returns the scale of the given sprite. </summary>
+    public static float Scale(Sprite sprite) => new[] { Fill, Back, Small, Large }.Any(s => s == sprite) ? 4f : 1f;
 }

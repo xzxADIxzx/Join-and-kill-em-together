@@ -31,7 +31,7 @@ public static class Pal
     BMaC    = "#FFDD00";
 
     /// <summary> Int variants of the colors. </summary>
-    public static Color32
+    public static Color
 
     clear   = new(),
     black   = From(0x000000),
@@ -57,7 +57,7 @@ public static class Pal
     bmac    = From(0xFFDD00);
 
     /// <summary> Returns int version of the given hex color. </summary>
-    public static Color32 From(int hex) => new((byte)(hex >> 4 & 0xFF), (byte)(hex >> 2 & 0xFF), (byte)(hex >> 0 & 0xFF), 0xFF);
+    public static Color32 From(int hex) => new((byte)(hex >> 16 & 0xFF), (byte)(hex >> 8 & 0xFF), (byte)(hex >> 0 & 0xFF), 0xFF);
 
     /// <summary> Returns darker version of the given color. </summary>
     public static Color Darker(Color original) => Color.Lerp(original, black, .38f);
