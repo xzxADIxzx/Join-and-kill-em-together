@@ -30,8 +30,15 @@ public static class Builder
     };
 
     /// <summary> Creates a rect with the specified position, size and alignment. </summary>
-    public static RectTransform Rect(string name, Transform parent, Rect rect) =>
-        Component<RectTransform>(Create(name, parent), rect.Apply);
+    public static RectTransform Rect(string name, Transform parent, Rect rect) => Component<RectTransform>(Create(name, parent), rect.Apply);
+
+    /// <summary> Creates a mask that cuts off a part of the interface. </summary>
+    public static Mask Mask(Transform rect, Sprite sprite) =>
+        Component<Mask>(rect.gameObject, m =>
+        {
+            m.showMaskGraphic = false;
+            Image(rect, sprite, white, ImageType.Sliced);
+        });
 
     /// <summary> Creates a label with the given text, size, color and alignment. </summary>
     public static Text Text(Transform rect, string text, int size, Color color, TextAnchor align) =>
@@ -123,6 +130,36 @@ public static class Builder
             t.onValueChanged.AddListener(callback.Invoke);
 
             Text(rect, text, size, color, TextAnchor.MiddleLeft).alignByGeometry = true;
+        });
+
+    #endregion
+    #region slider
+
+    /// <summary> Creates a slider with the given range, color and callback. </summary>
+    public static Slider Slider(Transform rect, int min, int max, Color color, Cons<int> callback) =>
+        Component<Slider>(rect.gameObject, s =>
+        {
+            var area = Rect("Area", rect, new(-16f, 0f, -48f, -16f, Vector2.zero, Vector2.one));
+            var mask = Rect("Mask", area, Lib.Rect.Fill);
+            var fill = Rect("Fill", mask, Lib.Rect.Fill);
+
+            Mask(mask, Tex.Mask);
+            Image(fill, Tex.Dash, dark, ImageType.Tiled);
+            s.fillRect = mask;
+
+            var zone = Rect("Zone", rect, new(0f, 0f, -48f, -16f, Vector2.zero, Vector2.one));
+            var hand = Rect("Hand", zone, Lib.Rect.Fill with { Width = 32f });
+
+            s.targetGraphic = Image(hand, Tex.Hort, color, ImageType.Sliced);
+            s.colors = Colors;
+            s.handleRect = hand;
+
+            s.wholeNumbers = true;
+            s.minValue = min;
+            s.maxValue = max;
+            s.onValueChanged.AddListener(_ => callback((int)_));
+
+            Image(rect, Tex.Large, color, ImageType.Sliced);
         });
 
     #endregion
