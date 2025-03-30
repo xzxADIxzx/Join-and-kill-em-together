@@ -11,7 +11,7 @@ using Jaket.Assets;
 public class Shop
 {
     /// <summary> Path to the file in which the purchases are saved. </summary>
-    public static string SavePath => Path.Combine(GameProgressSaver.SavePath, "customization.bepis");
+    public static string SavePath => Files.GetFile(GameProgressSaver.SavePath, "customization.bepis");
     /// <summary> The first jacket is approximately in the middle of the list, but not exactly, because there are two more hats. </summary>
     public static int FirstJacket => Entries.Length / 2 + 1;
 
@@ -43,14 +43,13 @@ public class Shop
     /// <summary> Saves the purchases to this save file. </summary>
     public static void SavePurchases()
     {
-        if (File.Exists(SavePath)) File.Delete(SavePath);
-
-        using var fs = File.OpenWrite(SavePath);
-        BinaryWriter bw = new(fs);
-
-        bw.Write(SelectedHat);
-        bw.Write(SelectedJacket);
-        bw.Write(Unlocked);
+        Files.Delete(SavePath);
+        Files.Write(SavePath, w =>
+        {
+            w.Write(SelectedHat);
+            w.Write(SelectedJacket);
+            w.Write(Unlocked);
+        });
     }
 
     /// <summary> Loads the purchases made in this save file. </summary>
@@ -60,15 +59,12 @@ public class Shop
         SelectedJacket = FirstJacket;
         Unlocked = 0L;
 
-        if (File.Exists(SavePath))
+        if (Files.Exists(SavePath)) Files.Read(SavePath, r =>
         {
-            using var fs = File.OpenRead(SavePath);
-            BinaryReader br = new(fs);
-
-            SelectedHat = br.ReadInt32();
-            SelectedJacket = br.ReadInt32();
-            Unlocked = br.ReadUInt64();
-        }
+            SelectedHat = r.ReadInt32();
+            SelectedJacket = r.ReadInt32();
+            Unlocked = r.ReadUInt64();
+        });
     }
 
     #endregion

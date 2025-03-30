@@ -38,10 +38,13 @@ public static class Files
         File.Delete(dest);
         File.Move(f, dest);
 
-    }, destination, patterns);
+    }, source, patterns);
 
     /// <summary> Returns the size of the given file in bytes. </summary>
     public static long Size(string file) => new FileInfo(file).Length;
+
+    /// <summary> Deletes the given file. </summary>
+    public static void Delete(string file) => File.Delete(file);
 
     /// <summary> Asynchronously appends the lines to the given file. </summary>
     public static void Append(string file, IEnumerable<string> lines) => File.AppendAllLinesAsync(file, lines);
@@ -51,4 +54,18 @@ public static class Files
 
     /// <summary> Synchronously reads all lines from the given file. </summary>
     public static string[] ReadLines(string file) => File.ReadAllLines(file);
+
+    /// <summary> Opens a file stream and creates a binary writer. </summary>
+    public static void Write(string file, Cons<BinaryWriter> w)
+    {
+        using var stream = File.OpenWrite(file);
+        w(new BinaryWriter(stream));
+    }
+
+    /// <summary> Opens a file stream and creates a binary reader. </summary>
+    public static void Read(string file, Cons<BinaryReader> r)
+    {
+        using var stream = File.OpenRead(file);
+        r(new BinaryReader(stream));
+    }
 }
