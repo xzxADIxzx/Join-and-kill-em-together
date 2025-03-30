@@ -34,7 +34,7 @@ public static class SprayDistributor
             if (SprayManager.Cache.TryGetValue(owner, out var spray))
                 Upload(owner, spray.Data, (data, size) => Requests[owner].ForEach(con => Networking.Send(con, data, size)));
             else
-                Log.Error($"Couldn't find the requested spray. Spray id is {owner}");
+                Log.Error($"[SPRY] Couldn't find the requested spray; the spray id is {owner}");
         }
 
         Requests.Clear(); // clear all requests, because they are processed
@@ -81,7 +81,7 @@ public static class SprayDistributor
     {
         // there is no point in sending the spray to the distributor if you haven't changed it
         if (SprayManager.Uploaded || SprayManager.CurrentSpray == null) return;
-        Log.Info("Uploading the current spray...");
+        Log.Info("[SPRY] Uploading the current spray...");
 
         Upload(AccId, SprayManager.CurrentSpray.Data);
         SprayManager.Uploaded = true;
@@ -97,10 +97,10 @@ public static class SprayDistributor
         {
             if (Streams.TryGetValue(id, out var stream))
             {
-                Log.Warning("Overriding the old stream");
+                Log.Warning("[SPRY] Overriding the old stream");
                 Marshal.FreeHGlobal(stream.mem);
             }
-            Log.Info("Downloading spray#" + id);
+            Log.Info("[SPRY] Downloading spray#" + id);
 
             int length = r.Int();
             Streams[id] = new(Marshal.AllocHGlobal(length), length);
@@ -109,7 +109,7 @@ public static class SprayDistributor
         {
             if (!Streams.TryGetValue(id, out var stream))
             {
-                Log.Error("Stream's initial packet was lost!");
+                Log.Error("[SPRY] Stream's initial packet was lost!");
                 return;
             }
 
@@ -122,7 +122,7 @@ public static class SprayDistributor
                 Marshal.FreeHGlobal(stream.mem);
                 Streams.Remove(id);
             }
-            if (Debug) Log.Debug($"Downloaded {100f * stream.Position / stream.Length:0.00}%");
+            if (Debug) Log.Debug($"[SPRY] Downloaded {100f * stream.Position / stream.Length:0.00}%");
         }
     }
 

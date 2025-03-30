@@ -46,7 +46,7 @@ public class Bundle
 
         if (localeId == 255)
         {
-            Log.Error($"Couldn't find the bundle for {locale} language code!");
+            Log.Error($"[BNDL] Couldn't find the bundle for {locale} language code!");
             return;
         }
 
@@ -58,7 +58,7 @@ public class Bundle
         }
         catch (Exception ex)
         {
-            Log.Error(new Exception($"Couldn't find the bundle file; the path is {file}", ex));
+            Log.Error($"[BNDL] Couldn't find the bundle file; the path is {file}", ex);
             return;
         }
 
@@ -72,7 +72,7 @@ public class Bundle
         }
 
         LoadedLocale = localeId;
-        Log.Info($"Loaded {props.Count} lines of {Locales[localeId]} ({locale}) locale");
+        Log.Info($"[BNDL] Loaded {props.Count} lines of {Locales[localeId]} ({locale}) locale");
     }
 
     #region parsing

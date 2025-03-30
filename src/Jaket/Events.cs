@@ -115,7 +115,7 @@ public class Events : MonoBehaviour
             for (int i = 0; i < amount; i++)
             {
                 try { listeners[i](t); }
-                catch (Exception ex) { Log.Error(ex); }
+                catch (Exception ex) { Log.Error("[EVNT] Caught an exception in a secure event", ex); }
             }
         }
 
