@@ -90,12 +90,12 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
         for (int i = 0; i < Mathf.Min(6, SprayManager.Loaded.Count); i++)
         {
             var spray = SprayManager.Loaded[i];
-            var n = " " + spray.ShortName();
+            var n = " " + spray.Short;
             var r = Btn(28f + 48f * i);
 
             if (spray.Name == SprayManager.CurrentSpray?.Name)
                 UIB.Button(n, sprays, r, green, align: TextAnchor.MiddleLeft);
-            else if (spray.IsValid())
+            else if (spray.Valid)
                 UIB.Button(n, sprays, r, align: TextAnchor.MiddleLeft, clicked: () =>
                 {
                     SprayManager.SetSpray(spray);
