@@ -10,6 +10,7 @@ using Jaket.UI;
 
 using static Jaket.UI.Rect;
 
+// TODO docs
 public class Version
 {
     /// <summary> Current version of the mod installed by the player. </summary>
