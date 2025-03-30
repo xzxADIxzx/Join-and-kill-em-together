@@ -3,7 +3,7 @@
 using System.IO;
 using UnityEditor;
 
-/// <summary> utility for packing the required assets into bundles. </summary>
+/// <summary> Utility for packing the required assets into bundles. </summary>
 public class BundleBuilder
 {
     /// <summary> Directory to store bundles in. </summary>

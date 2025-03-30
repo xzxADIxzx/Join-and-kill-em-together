@@ -2,13 +2,15 @@ namespace Jaket;
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using UnityEngine;
 
 using Logger = plog.Logger;
-using PL = plog.Models.Level;
+using PLevel = plog.Models.Level;
 
-/// <summary> Logger used by the mod for convenience. </summary>
+using Jaket.IO;
+
+using static Jaket.UI.Lib.Pal;
+
+/// <summary> Logger used in the project for convenience. </summary>
 public class Log
 {
     /// <summary> Time format used by the logger. </summary>
@@ -24,29 +26,29 @@ public class Log
     /// <summary> Output point for Unity and in-game console. </summary>
     public static Logger Logger;
     /// <summary> Output point for long-term logging. </summary>
-    public static string LogPath;
+    public static string File;
 
     /// <summary> Creates output points for logs. </summary>
     public static void Load()
     {
         Logger = new("Jaket");
-        LogPath = Path.Combine(Plugin.Instance.Location, "logs", $"Log {Time.Replace(':', '.')}.txt");
+        File = Files.GetFile(Files.Logs, $"Logs of {Time.Replace(':', '.')}.log");
     }
 
-    /// <summary> Formats and writes the message to all output points. </summary>
+    /// <summary> Formats and writes the message to the output points. </summary>
     public static void LogLevel(Level level, string msg)
     {
-        Logger.Record(level == Level.Debug ? $"<color=#BBBBBB>{msg}</color>" : msg, level switch
+        Logger.Record(level == Level.Debug ? $"<color={Gray}>{msg}</color>" : msg, level switch
         {
-            Level.Debug   => PL.Info,
-            Level.Info    => PL.Info,
-            Level.Warning => PL.Warning,
-            Level.Error   => PL.Error,
-            _             => PL.Off,
+            Level.Debug   => PLevel.Info,
+            Level.Info    => PLevel.Info,
+            Level.Warning => PLevel.Warning,
+            Level.Error   => PLevel.Error,
+            _             => PLevel.Off,
         });
 
         ToWrite.Add($"[{Time}] [{(char)level}] {msg}");
-        if (ToWrite.Count > STORAGE_CAPACITY) Flush();
+        if (ToWrite.Count >= STORAGE_CAPACITY) Flush();
     }
 
     /// <summary> Flushes all logs to a file; creates a folder if it doesn't exist. </summary>
@@ -54,8 +56,8 @@ public class Log
     {
         if (ToWrite.Count == 0) return;
 
-        Directory.CreateDirectory(Path.GetDirectoryName(LogPath));
-        File.AppendAllLines(LogPath, ToWrite);
+        Files.MakeSureExists(Files.Logs);
+        Files.Append(File, ToWrite);
 
         ToWrite.Clear();
     }
@@ -68,7 +70,7 @@ public class Log
 
     public static void Error(string msg) => LogLevel(Level.Error, msg);
 
-    public static void Error(Exception ex) => LogLevel(Level.Error, $"{ex}\nOuter:\n{StackTraceUtility.ExtractStackTrace()}");
+    public static void Error(string msg, Exception ex) => LogLevel(Level.Error, $"{msg}\n{ex}");
 
     /// <summary> Log importance levels. </summary>
     public enum Level
