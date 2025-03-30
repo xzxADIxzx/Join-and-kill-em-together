@@ -2,13 +2,13 @@ namespace Jaket.Assets;
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
 using Jaket.UI.Dialogs;
+using Jaket.IO;
 
 /// <summary> Class that loads translations from files in the bundles folder and returns translated lines by keys. </summary>
 public class Bundle
@@ -18,7 +18,7 @@ public class Bundle
     /// <summary> Displayed language name so that everyone can find out their own even without knowledge of English. </summary>
     public static readonly string[] Locales = { "عربي", "Português brasileiro", "English", "Filipino", "Français", "Italiano", "Polski", "Русский", "Español", "Українська" };
     /// <summary> File names containing localization. </summary>
-    public static readonly string[] Files = { "arabic", "brazilianportuguese", "english", "filipino", "french", "italian", "polish", "russian", "spanish", "ukrainian" };
+    public static readonly string[] Content = { "arabic", "brazilianportuguese", "english", "filipino", "french", "italian", "polish", "russian", "spanish", "ukrainian" };
 
     /// <summary> Id of loaded localization. -1 if the localization is not loaded yet. </summary>
     public static int LoadedLocale = -1;
@@ -30,22 +30,6 @@ public class Bundle
     /// <summary> Loads the translation specified in the settings. </summary>
     public static void Load()
     {
-        #region r2mm fix
-
-        var bundles = Path.Combine(Plugin.Instance.Location, "bundles");
-        if (!Directory.Exists(bundles)) Directory.CreateDirectory(bundles);
-
-        foreach (var prop in Directory.EnumerateFiles(Plugin.Instance.Location, "*.properties"))
-        {
-            var dest = Path.Combine(bundles, Path.GetFileName(prop));
-
-            File.Delete(dest);
-            File.Move(prop, dest);
-        }
-
-        #endregion
-        #region 2NS
-
         Events.OnLoaded += () =>
         {
             if (text2Show == null) return;
@@ -54,7 +38,8 @@ public class Bundle
             text2Show = null;
         };
 
-        #endregion
+        Files.MakeSureExists(Files.Bundles);
+        Files.MoveAll(Files.Root, Files.Bundles, "*.properties");
 
         var locale = PrefsManager.Instance.GetString("jaket.locale", "en");
         int localeId = Codes.IndexOf(locale);
@@ -65,15 +50,15 @@ public class Bundle
             return;
         }
 
-        var file = Path.Combine(bundles, $"{Files[localeId]}.properties");
+        string file = Files.GetFile(Files.Bundles, $"{Content[localeId]}.properties");
         string[] lines;
         try
         {
-            lines = File.ReadAllLines(file);
+            lines = Files.ReadLines(file);
         }
         catch (Exception ex)
         {
-            Log.Error(new IOException($"Couldn't find the bundle file; path is {file}", ex));
+            Log.Error(new Exception($"Couldn't find the bundle file; the path is {file}", ex));
             return;
         }
 

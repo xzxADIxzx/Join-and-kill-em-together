@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using Jaket.Assets;
+using Jaket.IO;
 using Jaket.Net;
 using Jaket.Sprays;
 using Jaket.World;
@@ -66,7 +67,7 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
         Rebuild();
     }
 
-    private void OpenFolder() => Application.OpenURL($"file://{SprayManager.Folder.Replace("\\", "/")}");
+    private void OpenFolder() => Application.OpenURL($"file://{Files.Sprays.Replace("\\", "/")}");
 
     // <summary> Toggles visibility of the spray settings. </summary>
     public void Toggle()

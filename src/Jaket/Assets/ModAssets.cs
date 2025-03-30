@@ -1,6 +1,5 @@
 namespace Jaket.Assets;
 
-using System.IO;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -56,7 +55,7 @@ public class ModAssets
     /// <summary> Loads the assets bundle and other necessary stuff. </summary>
     public static void Load()
     {
-        var bundle = AssetBundle.LoadFromFile(Path.Combine(Plugin.Instance.Location, "jaket-assets.bundle"));
+        var bundle = AssetBundle.LoadFromFile(Files.GetFile(Files.Root, "jaket-assets.bundle"));
         GameAssets.Squeaky(); // preload the sound; otherwise, it crashes .-.
 
         void Load<T>(string name, Cons<T> cons) where T : UnityEngine.Object

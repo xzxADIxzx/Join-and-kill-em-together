@@ -1,13 +1,13 @@
 namespace Jaket.Sprays;
 
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 
 using Jaket.Assets;
 using Jaket.Net;
 using Jaket.UI.Dialogs;
 using Jaket.UI.Elements;
+using Jaket.IO;
 
 /// <summary> Saves sprays of players and loads sprays of the local player. </summary>
 public class SprayManager
@@ -16,8 +16,6 @@ public class SprayManager
     public static SprayFile CurrentSpray;
     /// <summary> Other sprays located in the sprays folder. </summary>
     public static List<SprayFile> Loaded = new();
-    /// <summary> Folder containing the local sprays. </summary>
-    public static string Folder => Path.Combine(Plugin.Instance.Location, "sprays");
     /// <summary> Whether the current spray has been uploaded. </summary>
     public static bool Uploaded;
 
@@ -60,11 +58,8 @@ public class SprayManager
     {
         Loaded.Clear();
 
-        var folder = Folder;
-        if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
-
-        else foreach (var file in Directory.EnumerateFiles(folder))
-                if (SprayFile.SUPPORTED.Contains(Path.GetExtension(file))) Loaded.Add(new(file));
+        Files.MakeSureExists(Files.Sprays);
+        Files.IterAll(f => Loaded.Add(new(f)), Files.Sprays, SprayFile.SUPPORTED.Split('#'));
 
         Log.Info($"Loaded {Loaded.Count} sprays: {string.Join(", ", Loaded.ConvertAll(s => s.Name))}");
     }

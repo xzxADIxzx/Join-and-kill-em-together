@@ -2,7 +2,6 @@
 
 using BepInEx;
 using HarmonyLib;
-using System.IO;
 using UnityEngine;
 
 using Jaket.Assets;
@@ -17,7 +16,7 @@ using Jaket.World;
 [BepInPlugin("xzxADIxzx.Jaket", "Jaket", Version.CURRENT)]
 public class PluginLoader : BaseUnityPlugin
 {
-    private void Awake() => Events.InternalSceneLoaded = () => (Plugin.Instance ?? Create<Plugin>("Jaket")).Location = Path.GetDirectoryName(Info.Location);
+    private void Awake() => Events.InternalSceneLoaded = () => (Plugin.Instance ?? Create<Plugin>("Jaket")).Location = Info.Location;
 }
 
 /// <summary> Plugin main class. Essentially only initializes all other components. </summary>
