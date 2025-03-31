@@ -1,8 +1,9 @@
-[![Discord](https://img.shields.io/badge/discord-server-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/USpt3hCBgn)
-[![Support](https://img.shields.io/badge/Buy%20Me%20a-Coffee-FFDD00?style=for-the-badge&logo=buymeacoffee)](https://www.buymeacoffee.com/adithedev)
+[![Discord](https://img.shields.io/badge/discord-server-5865F2?style=for-the-badge&logoColor=white&logo=discord)](https://discord.gg/USpt3hCBgn)
+[![PayPal ](https://img.shields.io/badge/support%20on-paypal-003087?style=for-the-badge&logoColor=white&logo=paypal)](https://www.paypal.com/donate/?hosted_button_id=U5T68JC5LWEMU)
+[![Coffee ](https://img.shields.io/badge/buy%20me%20a-coffee-FFDD00?style=for-the-badge&logoColor=white&logo=buymeacoffee)](https://www.buymeacoffee.com/adithedev)
 [![License](https://img.shields.io/github/license/xzxADIxzx/Join-and-kill-em-together?style=for-the-badge)](https://github.com/xzxADIxzx/Join-and-kill-em-together/blob/main/LICENSE)
-[![Stars](https://img.shields.io/github/stars/xzxADIxzx/Join-and-kill-em-together?style=for-the-badge&logo=githubsponsors&color=EA4AAA)](https://github.com/xzxADIxzx/Join-and-kill-em-together)
-[![Devlogs](https://img.shields.io/badge/dev-logs-FF0000?style=for-the-badge&logo=youtube)](https://www.youtube.com/playlist?list=PLcTAO30JMDuRpoBTAkvu2ELKDM74j43Tz)
+[![Stars  ](https://img.shields.io/github/stars/xzxADIxzx/Join-and-kill-em-together?style=for-the-badge&color=EA4AAA)](https://github.com/xzxADIxzx/Join-and-kill-em-together)
+[![DevLogs](https://img.shields.io/badge/dev-logs-FF0033?style=for-the-badge&logoColor=white&logo=youtube)](https://www.youtube.com/playlist?list=PLcTAO30JMDuRpoBTAkvu2ELKDM74j43Tz)
 
 # Join and kill 'em together
 This modification made by [me](https://github.com/xzxADIxzx) and my team adds support for multiplayer via Steamworks to ULTRAKILL. The idea to create this project came to me immediately after completing the game in a week, and since MULTIKILL is still in development, nothing stopped me from speedrunning programming.

@@ -92,7 +92,7 @@ public class Bar : MonoBehaviour
         FillButton(text, paypal, () => Application.OpenURL("https://www.paypal.com/donate/?hosted_button_id=U5T68JC5LWEMU"));
 
     /// <summary> Adds a button that corresponds to the style of Buy Me a Coffee. </summary>
-    public Button BMaCButton(string text) =>
+    public Button CoffeeButton(string text) =>
         FillButton(text, bmac, () => Application.OpenURL("https://www.buymeacoffee.com/adithedev"));
 
     #endregion
