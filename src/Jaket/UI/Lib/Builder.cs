@@ -55,13 +55,13 @@ public static class Builder
     #region image
 
     /// <summary> Creates an image with the given sprite, color and type. </summary>
-    public static Image Image(Transform rect, Sprite sprite, Color color, ImageType type) =>
+    public static Image Image(Transform rect, Sprite sprite, Color color, ImageType type, float? multiplier = null) =>
         Component<Image>(rect.gameObject, i =>
         {
             i.sprite = sprite;
             i.color = color;
             i.type = type;
-            i.pixelsPerUnitMultiplier = Tex.Scale(sprite);
+            i.pixelsPerUnitMultiplier = multiplier ?? Tex.Scale(sprite);
         });
 
     /// <summary> Creates a circular image with the given parameters. </summary>

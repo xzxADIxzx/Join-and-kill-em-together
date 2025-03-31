@@ -8,6 +8,8 @@ public static class Pal
     /// <summary> Hex variants of the colors. </summary>
     public static string
 
+    Clear   = "#00000000",
+    Semi    = "#000000C7",
     Black   = "#000000",
     Dark    = "#424242",
     Gray    = "#727272",
@@ -34,6 +36,7 @@ public static class Pal
     public static Color
 
     clear   = new(),
+    semi    = new(0f, 0f, 0f, .78f),
     black   = From(0x000000),
     dark    = From(0x424242),
     gray    = From(0x727272),
