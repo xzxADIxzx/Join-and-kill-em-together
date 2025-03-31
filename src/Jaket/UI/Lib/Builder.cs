@@ -163,4 +163,31 @@ public static class Builder
         });
 
     #endregion
+    #region scroll
+
+    /// <summary> Creates a scroller with the given content size and scroll direction. Does not assign sliders or create any. </summary>
+    public static ScrollRect Scroll(Transform rect, float width, float height, bool horizontal, bool vertical) =>
+        Component<ScrollRect>(rect.gameObject, s =>
+        {
+            s.horizontal = horizontal;
+            s.vertical = vertical;
+
+            s.viewport = Mask(rect, null).rectTransform;
+            s.content = Rect("Content", s.viewport, new(0f, 0f, width, height));
+        });
+
+    #endregion
+    #region field
+
+    /// <summary> Creates a singleline input field with the given sprite, color, placeholder, size and callback. </summary>
+    public static InputField Field(Transform rect, Sprite sprite, Color color, string ph, int size, Cons<string> callback) =>
+        Component<InputField>(rect.gameObject, f =>
+        {
+            f.targetGraphic = Image(rect, sprite, color, ImageType.Sliced);
+            f.textComponent = Text(Rect("Text", rect, Lib.Rect.Fill with { X = 8f }), "", size, white, TextAnchor.MiddleLeft);
+            f.placeholder = Text(Rect("Holder", rect, Lib.Rect.Fill with { X = 8f }), ph, size, light, TextAnchor.MiddleLeft);
+            f.onEndEdit.AddListener(callback.Invoke);
+        });
+
+    #endregion
 }
