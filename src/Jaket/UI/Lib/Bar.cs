@@ -3,6 +3,8 @@ namespace Jaket.UI.Lib;
 using UnityEngine;
 using UnityEngine.UI;
 
+using ImageType = UnityEngine.UI.Image.Type;
+
 using Jaket.Content;
 
 using static Pal;
@@ -69,6 +71,17 @@ public class Bar : MonoBehaviour
         Builder.Text(Resolve("Text", spc), text, size, color ?? white, align);
 
     #endregion
+    #region other
+
+    /// <summary> Adds an image with the given sprite, rarely used. </summary>
+    public Image Image(Sprite sprite, float spc, Color? color = null, ImageType type = ImageType.Sliced, float? multiplier = null) =>
+        Builder.Image(Resolve("Image", spc), sprite, color ?? white, type, multiplier);
+
+    /// <summary> Adds a toggle also known as checkbox, pretty useful. </summary>
+    public Toggle Toggle(string text, Cons<bool> callback) =>
+        Builder.Toggle(Resolve("Toggle", 32f), text, 24, white, callback);
+
+    #endregion
     #region button
 
     /// <summary> Adds a text button, the most basic kind of buttons. </summary>
@@ -76,11 +89,11 @@ public class Bar : MonoBehaviour
         Builder.TextButton(Resolve("TextButton", 40f), Tex.Large, color ?? white, text, 24, align, callback);
 
     /// <summary> Adds a text button, but it's filled with the color. </summary>
-    public Button FillButton(string text, Color color, Runnable callback = null) =>
+    public Button FillButton(string text, Color color, Runnable callback) =>
         Builder.TextButton(Resolve("FillButton", 40f), Tex.Fill, color, text, 24, TextAnchor.MiddleCenter, callback);
 
     /// <summary> Adds a text button, but it's filled with the color of the given team. </summary>
-    public Button TeamButton(Team team, Runnable callback = null) =>
+    public Button TeamButton(Team team, Runnable callback) =>
         Builder.TextButton(Resolve("TeamButton", 80f), Tex.Fill, team.Color(), team == Team.Pink ? "UwU" : "", 24, TextAnchor.MiddleCenter, callback);
 
     /// <summary> Adds a button that corresponds to the style of Discord. </summary>
