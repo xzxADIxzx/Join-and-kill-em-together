@@ -70,6 +70,13 @@ public class Bar : MonoBehaviour
     public Text Text(string text, float spc, int size = 24, Color? color = null, TextAnchor align = TextAnchor.MiddleCenter) =>
         Builder.Text(Resolve("Text", spc), text, size, color ?? white, align);
 
+    /// <summary> Adds a pair of labels with different alignment, horizontal only. </summary>
+    public void Text(string text, float spc, out Text display, int size = 24, Color? color = null)
+    {
+        var txt = Builder.Text(Resolve("Pair", spc),                  text, size, color ?? white, TextAnchor.MiddleLeft).transform;
+        display = Builder.Text(Builder.Rect("Display", txt, Rect.Fill), "", size, color ?? white, TextAnchor.MiddleRight);
+    }
+
     #endregion
     #region other
 
@@ -107,6 +114,24 @@ public class Bar : MonoBehaviour
     /// <summary> Adds a button that corresponds to the style of Buy Me a Coffee. </summary>
     public Button CoffeeButton(string text) =>
         FillButton(text, bmac, () => Application.OpenURL("https://www.buymeacoffee.com/adithedev"));
+
+    #endregion
+    #region slider
+
+    /// <summary> Adds a slider, it has no means to display its value. </summary>
+    public Slider Slider(int min, int max, Cons<int> callback) =>
+        Builder.Slider(Resolve("Slider", 40f), min, max, white, callback);
+
+    /// <summary> Adds a slider, also builds a pair of labels to display the slider value. </summary>
+    public Slider Slider(int min, int max, Cons<int> callback, string text, Func<int, string> format)
+    {
+        Text(text, 32f, out var display);
+        return Slider(min, max, value =>
+        {
+            display.text = format(value);
+            callback(value);
+        });
+    }
 
     #endregion
 }
