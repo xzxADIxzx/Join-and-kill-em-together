@@ -194,7 +194,7 @@ public static class Builder
 
     /// <summary> Creates a canvas that is drawn on top of the main camera. </summary>
     public static Canvas Canvas(Transform rect, bool woh, bool touchable) =>
-        Component<Canvas>(rect.gameObject, c => Component<CanvasScaler>(rect.gameObject, s =>
+        Component<Canvas>(rect.gameObject, c => Component<CanvasScaler>((rect = c.transform).gameObject, s =>
         {
             c.renderMode = RenderMode.ScreenSpaceOverlay;
             s.uiScaleMode = ScaleMode.ScaleWithScreenSize;
@@ -208,7 +208,7 @@ public static class Builder
 
     /// <summary> Creates a canvas that is drawn in the world space. </summary>
     public static Canvas WorldCanvas(Transform rect, Vector3 position, Cons<Transform> cons) =>
-        Component<Canvas>(rect.gameObject, c => Component<CanvasScaler>(rect.gameObject, s =>
+        Component<Canvas>(rect.gameObject, c => Component<CanvasScaler>((rect = c.transform).gameObject, s =>
         {
             c.renderMode = RenderMode.WorldSpace;
             s.uiScaleMode = ScaleMode.ConstantPixelSize;

@@ -48,7 +48,6 @@ public class Plugin : MonoBehaviour
 
         Log.Info("[INIT] Loading content...");
         Tex.Load();
-        ModAssets.Load();
 
         Log.Info("[INIT] Initializing network components...");
         // TODO obviously

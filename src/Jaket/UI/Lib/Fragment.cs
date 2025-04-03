@@ -21,7 +21,7 @@ public class Fragment
 
     public Fragment(Transform root, string name, bool dialog, bool woh = false, Prov<bool> cond = null, Runnable hide = null)
     {
-        Builder.Canvas(Content = Create(name, root).transform, woh, Dialog = dialog);
+        Content = Builder.Canvas(Create(name, root).transform, woh, Dialog = dialog).transform;
 
         cond ??= () => true;
         hide ??= () => Content.gameObject.SetActive(Shown = false);
