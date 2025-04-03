@@ -190,4 +190,33 @@ public static class Builder
         });
 
     #endregion
+    #region canvas
+
+    /// <summary> Creates a canvas that is drawn on top of the main camera. </summary>
+    public static Canvas Canvas(Transform rect, bool woh, bool touchable) =>
+        Component<Canvas>(rect.gameObject, c => Component<CanvasScaler>(rect.gameObject, s =>
+        {
+            c.renderMode = RenderMode.ScreenSpaceOverlay;
+            s.uiScaleMode = ScaleMode.ScaleWithScreenSize;
+
+            c.sortingOrder = 4200; // move the canvas up, otherwise it won't be visible
+            s.matchWidthOrHeight = woh ? 0f : 1f;
+            s.referenceResolution = new(1920f, 1080f);
+
+            if (touchable) rect.gameObject.AddComponent<GraphicRaycaster>();
+        }));
+
+    /// <summary> Creates a canvas that is drawn in the world space. </summary>
+    public static Canvas WorldCanvas(Transform rect, Vector3 position, Cons<Transform> cons) =>
+        Component<Canvas>(rect.gameObject, c => Component<CanvasScaler>(rect.gameObject, s =>
+        {
+            c.renderMode = RenderMode.WorldSpace;
+            s.uiScaleMode = ScaleMode.ConstantPixelSize;
+
+            rect.localPosition = position;
+            rect.localScale = Vector2.one * .02f;
+            cons(rect);
+        }));
+
+    #endregion
 }

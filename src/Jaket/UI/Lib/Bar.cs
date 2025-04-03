@@ -88,6 +88,10 @@ public class Bar : MonoBehaviour
     public Toggle Toggle(string text, Cons<bool> callback) =>
         Builder.Toggle(Resolve("Toggle", 32f), text, 24, white, callback);
 
+    /// <summary> Adds an input field with simple background, although its design is debatable. </summary>
+    public InputField Field(string text, Cons<string> callback) =>
+        Builder.Field(Resolve("Field", 32f), Tex.Fill, semi, text, 24, callback);
+
     #endregion
     #region button
 
