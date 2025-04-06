@@ -77,11 +77,18 @@ public class Bar : MonoBehaviour
     }
 
     #endregion
-    #region other
+    #region image
 
     /// <summary> Adds an image with the given sprite, rarely used. </summary>
     public Image Image(Sprite sprite, float spc, Color? color = null, ImageType type = ImageType.Sliced, float? multiplier = null) =>
         Builder.Image(Resolve("Image", spc), sprite, color ?? white, type, multiplier);
+
+    /// <summary> Adds an image separator, rarely used. </summary>
+    public Image Separator() =>
+        Builder.Image(Resolve("Separator", 16f), Tex.Dash, red, ImageType.Tiled, 2f);
+
+    #endregion
+    #region other
 
     /// <summary> Adds a toggle also known as checkbox, pretty useful. </summary>
     public Toggle Toggle(string text, Cons<bool> callback) =>

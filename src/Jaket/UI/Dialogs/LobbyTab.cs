@@ -8,13 +8,17 @@ using Jaket.Net;
 using Jaket.UI.Lib;
 using Jaket.World;
 
+using static Jaket.UI.Lib.Pal;
+
 /// <summary> Dialog that is responsible for lobby management. </summary>
 public class LobbyTab : Fragment
 {
     /// <summary> Buttons that control the lobby and its config. </summary>
     private Button create, invite, copy, join, list, accessibility;
     /// <summary> Toggles that control the lobby and its config. </summary>
-    private Toggle pvp, cheats, mods, bosses;
+    private Toggle pvp, mod, bosses;
+    /// <summary> Sliders that control the lobby and its config. </summary>
+    private Slider ppp;
 
     /// <summary> Field that displays the name of the lobby. </summary>
     private InputField name;
@@ -50,13 +54,13 @@ public class LobbyTab : Fragment
             join = b.TextButton("#lobby-tab.join", callback: LobbyController.JoinByCode);
             list = b.TextButton("#lobby-tab.list", callback: LobbyList.Instance.Toggle);
         });
-        Bar(416f, b =>
+        Bar(518f, b =>
         {
             b.Setup(true);
             b.Text("#lobby-tab.config", 32f, 32);
 
             name = b.Field("#lobby-tab.name", s => LobbyController.Lobby?.SetData("name", s));
-            name.characterLimit = 32; // TODO adjust
+            name.characterLimit = 30;
 
             accessibility = b.TextButton("", callback: () =>
             {
@@ -69,12 +73,11 @@ public class LobbyTab : Fragment
                 Rebuild();
             });
 
-            pvp    = b.Toggle("#lobby-tab.allow-pvp",    b => LobbyController.Lobby?.SetData("pvp",    b.ToString()));
-            cheats = b.Toggle("#lobby-tab.allow-cheats", b => LobbyController.Lobby?.SetData("cheats", b.ToString()));
-            mods   = b.Toggle("#lobby-tab.allow-mods",   b => LobbyController.Lobby?.SetData("mods",   b.ToString()));
+            pvp = b.Toggle("#lobby-tab.allow-pvp", b => LobbyController.Lobby?.SetData("pvp", b.ToString()));
+            mod = b.Toggle("#lobby-tab.allow-mod", b => LobbyController.Lobby?.SetData("mod", b.ToString()));
 
-            b.Text("#lobby-tab.ppp-desc", 64f, 16);
-            b.Slider(0, 16, i =>
+            b.Text("#lobby-tab.ppp-desc", 46f, 16, light, TextAnchor.MiddleLeft).alignByGeometry = true;
+            ppp = b.Slider(0, 16, i =>
             {
                 LobbyController.PPP = i / 8f;
                 LobbyController.Lobby?.SetData("ppp", i.ToString());
@@ -82,10 +85,12 @@ public class LobbyTab : Fragment
             }, "#lobby-tab.ppp-name", i => $"{(int)(i / 8f * 100f)}PPP");
 
             bosses = b.Toggle("#lobby-tab.heal-bosses", b => LobbyController.Lobby?.SetData("heal-bosses", b.ToString()));
-        });
 
+            b.Separator();
+            b.TextButton("#lobby-tab.gamemode", red, callback: () => { });
+            b.TextButton("#lobby-tab.cheats",   red, callback: () => { });
+        });
         // Version.Label(Content); TODO update the version class
-        Rebuild();
     }
 
     public override void Toggle() // TODO update UI hide
@@ -100,33 +105,46 @@ public class LobbyTab : Fragment
 
     public override void Rebuild()
     {
+        create.GetComponentInChildren<Text>().text = Bundle.Get
+        (
+            LobbyController.CreatingLobby
+            ? "lobby-tab.creating" :
+            LobbyController.Offline
+            ? "lobby-tab.create" :
+            LobbyController.IsOwner
+            ? "lobby-tab.close"
+            : "lobby-tab.leave"
+        );
+        invite.interactable = copy.interactable = LobbyController.Online;
+
+        // the third bar shouldn't be visible at all if the lobby is null
+        Sidebar.transform.GetChild(2).gameObject.SetActive(LobbyController.Online);
+
         if (LobbyController.Offline)
         {
             accessLevel = 0;
-            pvp.isOn = true;
-            cheats.isOn = false;
-            mods.isOn = false;
-            bosses.isOn = true;
+            return;
         }
-        else name.text = LobbyController.Lobby?.GetData("name");
 
-        create.GetComponentInChildren<Text>().text = Bundle.Get(LobbyController.CreatingLobby
-            ? "lobby-tab.creating"
-            : LobbyController.Offline
-                ? "lobby-tab.create"
-                : LobbyController.IsOwner ? "lobby-tab.close" : "lobby-tab.leave");
-
-        invite.interactable = copy.interactable = LobbyController.Online;
-
-        accessibility.GetComponentInChildren<Text>().text = Bundle.Get(accessLevel switch
+        name.text = LobbyController.Lobby?.GetData("name");
+        accessibility.GetComponentInChildren<Text>().text = Bundle.Get((LobbyController.IsOwner ? accessLevel : -1) switch
         {
             0 => "lobby-tab.private",
             1 => "lobby-tab.fr-only",
             2 => "lobby-tab.public",
             _ => "lobby-tab.default"
         });
+        name.interactable = accessibility.interactable = LobbyController.IsOwner;
 
-        // TODO make everything unusable instead
-        Content.GetChild(3).gameObject.SetActive(LobbyController.Online && LobbyController.IsOwner);
+        pvp.isOn = LobbyController.Lobby?.GetData("pvp") == "True";
+        mod.isOn = LobbyController.Lobby?.GetData("mod") == "True";
+        bosses.isOn = LobbyController.Lobby?.GetData("heal-bosses") == "True";
+
+        foreach (var toggle in new Selectable[] { pvp, mod, bosses, ppp })
+        {
+            toggle.interactable = LobbyController.IsOwner;
+            toggle.GetComponentInChildren<Image>().color = LobbyController.IsOwner ? white : dark;
+        }
+        if (int.TryParse(LobbyController.Lobby?.GetData("ppp"), out int i)) ppp.value = i;
     }
 }
