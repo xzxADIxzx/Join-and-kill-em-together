@@ -103,7 +103,7 @@ public class Movement : MonoSingleton<Movement>
         if (UI.Focused || Settings.Instance.Rebinding) return;
 
         if (Input.GetKeyDown(Settings.Chat)) Chat.Instance.Toggle();
-        if (Input.GetKeyDown(Settings.LobbyTab)) LobbyTab.Instance.Toggle();
+        if (Input.GetKeyDown(Settings.LobbyTab)) UI.lobbyTab.Toggle();
         if (Input.GetKeyDown(Settings.PlayerList)) PlayerList.Instance.Toggle();
         if (Input.GetKeyDown(Settings.Settingz)) Settings.Instance.Toggle();
         if (Input.GetKeyDown(KeyCode.F4)) Debugging.Instance.Toggle();

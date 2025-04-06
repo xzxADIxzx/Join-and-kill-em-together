@@ -23,11 +23,10 @@ public class Bar : MonoBehaviour
     /// <summary> Rectangle that contains this element. </summary>
     private RectTransform rect;
 
-    private void Awake() => TryGetComponent(out rect);
-
     /// <summary> Sets up the basic options of the bar. </summary>
     public void Setup(bool voh, float margin = 8f, float padding = 8f)
     {
+        TryGetComponent(out rect);
         this.voh = voh;
         this.margin = margin;
         this.padding = padding;
