@@ -5,110 +5,110 @@ using UnityEngine.UI;
 
 using Jaket.Assets;
 using Jaket.Net;
+using Jaket.UI.Lib;
 using Jaket.World;
 
-using static Rect;
-
-/// <summary> Tab responsible for lobby management. </summary>
-public class LobbyTab : CanvasSingleton<LobbyTab>
+/// <summary> Dialog that is responsible for lobby management. </summary>
+public class LobbyTab : Fragment
 {
-    /// <summary> Lobby control buttons. </summary>
-    private Button create, invite, copy, accessibility;
-    /// <summary> Input field with lobby name. </summary>
-    private InputField field;
-    /// <summary> Current lobby access level: 0 - private, 1 - friends only, 2 - public. I was too lazy to create an enum. </summary>
-    private int lobbyAccessLevel;
-    /// <summary> Checkboxes with lobby settings. </summary>
+    /// <summary> Buttons that control the lobby and its config. </summary>
+    private Button create, invite, copy, join, list, accessibility;
+    /// <summary> Toggles that control the lobby and its config. </summary>
     private Toggle pvp, cheats, mods, bosses;
 
-    private void Start()
+    /// <summary> Field that displays the name of the lobby. </summary>
+    private InputField name;
+    /// <summary> Current access level of the lobby: private, friends only or public. </summary>
+    private int accessLevel;
+
+    public LobbyTab(Transform root) : base(root, "LobbyTab", true)
     {
         Events.OnLobbyAction += Rebuild;
 
-        UIB.Shadow(transform);
-        UIB.Table("Lobby Control", "#lobby-tab.lobby", transform, Tlw(16f + 144f / 2f, 144f), table =>
+        Bar(144f, b =>
         {
-            create = UIB.Button("#lobby-tab.create", table, Btn(68f), clicked: () =>
+            b.Setup(true);
+            b.Text("#lobby-tab.lobby", 32f, 32);
+
+            create = b.TextButton("#lobby-tab.create", callback: () =>
             {
                 if (LobbyController.Offline)
-                    // create a new lobby if not already created
                     LobbyController.CreateLobby();
                 else
-                    // or leave if already connected to a lobby
                     LobbyController.LeaveLobby();
 
                 Rebuild();
             });
-            invite = UIB.Button("#lobby-tab.invite", table, Btn(116f), clicked: LobbyController.InviteFriend);
+            invite = b.TextButton("#lobby-tab.invite", callback: LobbyController.InviteFriend);
         });
-        UIB.Table("Lobby Codes", "#lobby-tab.codes", transform, Tlw(176f + 192f / 2f, 192f), table =>
+        Bar(192f, b =>
         {
-            copy = UIB.Button("#lobby-tab.copy", table, Btn(68f), clicked: LobbyController.CopyCode);
-            UIB.Button("#lobby-tab.join", table, Btn(116f), clicked: LobbyController.JoinByCode);
-            UIB.Button("#lobby-tab.list", table, Btn(164f), clicked: LobbyList.Instance.Toggle);
-        });
-        UIB.Table("Lobby Config", "#lobby-tab.config", transform, Tlw(384f + 422f / 2f, 422f), table =>
-        {
-            field = UIB.Field("#lobby-tab.name", table, Tgl(64f), cons: name => LobbyController.Lobby?.SetData("name", name));
-            field.characterLimit = 28;
+            b.Setup(true);
+            b.Text("#lobby-tab.codes", 32f, 32);
 
-            accessibility = UIB.Button("#lobby-tab.private", table, Btn(108f), clicked: () =>
+            copy = b.TextButton("#lobby-tab.copy", callback: LobbyController.CopyCode);
+            join = b.TextButton("#lobby-tab.join", callback: LobbyController.JoinByCode);
+            list = b.TextButton("#lobby-tab.list", callback: LobbyList.Instance.Toggle);
+        });
+        Bar(416f, b =>
+        {
+            b.Setup(true);
+            b.Text("#lobby-tab.config", 32f, 32);
+
+            name = b.Field("#lobby-tab.name", s => LobbyController.Lobby?.SetData("name", s));
+            name.characterLimit = 32; // TODO adjust
+
+            accessibility = b.TextButton("", callback: () =>
             {
-                switch (lobbyAccessLevel = ++lobbyAccessLevel % 3)
+                switch (accessLevel = ++accessLevel % 3)
                 {
-                    case 0: LobbyController.Lobby?.SetPrivate(); break;
+                    case 0: LobbyController.Lobby?.SetPrivate();     break;
                     case 1: LobbyController.Lobby?.SetFriendsOnly(); break;
-                    case 2: LobbyController.Lobby?.SetPublic(); break;
+                    case 2: LobbyController.Lobby?.SetPublic();      break;
                 }
                 Rebuild();
             });
 
-            pvp = UIB.Toggle("#lobby-tab.allow-pvp", table, Tgl(152f), clicked: allow => LobbyController.Lobby?.SetData("pvp", allow.ToString()));
-            cheats = UIB.Toggle("#lobby-tab.allow-cheats", table, Tgl(192f), clicked: allow => LobbyController.Lobby?.SetData("cheats", allow.ToString()));
-            mods = UIB.Toggle("#lobby-tab.allow-mods", table, Tgl(232f), clicked: allow => LobbyController.Lobby?.SetData("mods", allow.ToString()));
+            pvp    = b.Toggle("#lobby-tab.allow-pvp",    b => LobbyController.Lobby?.SetData("pvp",    b.ToString()));
+            cheats = b.Toggle("#lobby-tab.allow-cheats", b => LobbyController.Lobby?.SetData("cheats", b.ToString()));
+            mods   = b.Toggle("#lobby-tab.allow-mods",   b => LobbyController.Lobby?.SetData("mods",   b.ToString()));
 
-            UIB.Text("#lobby-tab.ppp-desc", table, Btn(287f) with { Height = 62f }, size: 16);
-
-            UIB.Text("#lobby-tab.ppp-name", table, Btn(338f), align: TextAnchor.MiddleLeft);
-            var PPP = UIB.Text("0PPP", table, Btn(338f), align: TextAnchor.MiddleRight);
-
-            UIB.Slider("Health Multiplier", table, Sld(366f), 16, value =>
+            b.Text("#lobby-tab.ppp-desc", 64f, 16);
+            b.Slider(0, 16, i =>
             {
-                PPP.text = $"{(int)((LobbyController.PPP = value / 8f) * 100)}PPP";
-                LobbyController.Lobby?.SetData("ppp", LobbyController.PPP.ToString());
-            });
+                LobbyController.PPP = i / 8f;
+                LobbyController.Lobby?.SetData("ppp", i.ToString());
 
-            bosses = UIB.Toggle("#lobby-tab.heal-bosses", table, Tgl(398f), 20, allow => LobbyController.Lobby?.SetData("heal-bosses", allow.ToString()));
+            }, "#lobby-tab.ppp-name", i => $"{(int)(i / 8f * 100f)}PPP");
+
+            bosses = b.Toggle("#lobby-tab.heal-bosses", b => LobbyController.Lobby?.SetData("heal-bosses", b.ToString()));
         });
 
-        Version.Label(transform);
+        // Version.Label(Content); TODO update the version class
         Rebuild();
     }
 
-    /// <summary> Toggles visibility of the lobby tab. </summary>
-    public void Toggle()
+    public override void Toggle() // TODO update UI hide
     {
         if (!Shown) UI.HideLeftGroup();
 
-        gameObject.SetActive(Shown = !Shown);
+        base.Toggle();
         Movement.UpdateState();
 
-        if (Shown && transform.childCount > 0) Rebuild();
+        if (Shown) Rebuild();
     }
 
-    /// <summary> Rebuilds the lobby tab to update control buttons. </summary>
-    public void Rebuild()
+    public override void Rebuild()
     {
-        // reset config
         if (LobbyController.Offline)
         {
-            lobbyAccessLevel = 0;
+            accessLevel = 0;
             pvp.isOn = true;
             cheats.isOn = false;
             mods.isOn = false;
             bosses.isOn = true;
         }
-        else field.text = LobbyController.Lobby?.GetData("name");
+        else name.text = LobbyController.Lobby?.GetData("name");
 
         create.GetComponentInChildren<Text>().text = Bundle.Get(LobbyController.CreatingLobby
             ? "lobby-tab.creating"
@@ -118,7 +118,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
 
         invite.interactable = copy.interactable = LobbyController.Online;
 
-        accessibility.GetComponentInChildren<Text>().text = Bundle.Get(lobbyAccessLevel switch
+        accessibility.GetComponentInChildren<Text>().text = Bundle.Get(accessLevel switch
         {
             0 => "lobby-tab.private",
             1 => "lobby-tab.fr-only",
@@ -126,6 +126,7 @@ public class LobbyTab : CanvasSingleton<LobbyTab>
             _ => "lobby-tab.default"
         });
 
-        transform.GetChild(3).gameObject.SetActive(LobbyController.Online && LobbyController.IsOwner);
+        // TODO make everything unusable instead
+        Content.GetChild(3).gameObject.SetActive(LobbyController.Online && LobbyController.IsOwner);
     }
 }

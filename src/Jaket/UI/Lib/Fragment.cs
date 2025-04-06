@@ -32,6 +32,12 @@ public class Fragment
         Events.OnLoaded += Check;
     }
 
+    /// <summary> Toggles visibility of the fragment. </summary>
+    public virtual void Toggle() => Content.gameObject.SetActive(Shown = !Shown);
+
+    /// <summary> Rebuilds the fragment if possible. </summary>
+    public virtual void Rebuild() { }
+
     /// <summary> Adds a bar, it is located on the left and has a constant width. </summary>
     protected void Bar(float height, Cons<Bar> cons)
     {
