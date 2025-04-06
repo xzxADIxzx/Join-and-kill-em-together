@@ -65,8 +65,10 @@ public class ModAssets
         };
 
         // general
+        /*
         Shader = Enemies.Prefabs[EntityType.V2_RedArm - EntityType.Filth].GetComponent<global::V2>().smr.material.shader;
         Additv = Enemies.Prefabs[EntityType.V2_RedArm - EntityType.Filth].GetComponentInChildren<TrailRenderer>().material;
+        */
 
         Load<Sprite>("V3-icon", s => Icon = s);
         Load<TextAsset>("V3-bestiary-entry", f => Desc = f.text);

@@ -47,7 +47,11 @@ public class Plugin : MonoBehaviour
         if (Initialized) return;
 
         Log.Info("[INIT] Loading content...");
+
+        // Pal.Load();
         Tex.Load();
+
+        Bundle.Load();
 
         Log.Info("[INIT] Initializing network components...");
         // TODO obviously
