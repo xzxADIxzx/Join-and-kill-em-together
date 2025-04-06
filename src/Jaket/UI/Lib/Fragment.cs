@@ -41,12 +41,14 @@ public class Fragment
     /// <summary> Adds a bar, it is located on the left and has a constant width. </summary>
     protected void Bar(float height, Cons<Bar> cons)
     {
-        Sidebar ??= Component<Bar>(Builder.Rect("Sidebar", Content, new(240f, 0f, 480f, 0f, new(0f, 0f), new(0f, 1f))).gameObject, b => b.Setup(true, 16f, 16f));
+        Sidebar ??= Component<Bar>(Builder.Rect("Sidebar", Content, new(256f, 0f, 480f, 0f, new(0f, 0f), new(0f, 1f))).gameObject, b => b.Setup(true, 16f, 16f));
 
         var img = Sidebar.Image(Sidebar.transform.childCount == 0 ? Tex.Back : Tex.Fill, height, semi, multiplier: 2f).gameObject;
 
         Component(img, cons);
-        Component<HudOpenEffect>(img, e => e.originalSpeed = 40f - Sidebar.transform.childCount * 8f);
+        Component<HudOpenEffect>(img, e => e.speed = 38f - Sidebar.transform.childCount * 6f);
+
+        if (Content.Find("Deco") == null) Builder.Image(Builder.Rect("Deco", Content, new(0f, 0f, 32f, 0f, new(0f, 0f), new(0f, 1f))), Tex.Dash, semi, ImageType.Tiled, 2f);
     }
 
     /// <summary> Adds a bar, it is located in the center and has the given size. </summary>
@@ -55,6 +57,8 @@ public class Fragment
         var img = Builder.Image(Builder.Rect("Centerbar", Content, new(width, height)), Tex.Back, semi, ImageType.Sliced, 2f).gameObject;
 
         Component(img, cons);
-        Component<HudOpenEffect>(img, e => e.originalSpeed = 32f);
+        Component<HudOpenEffect>(img, e => e.speed = 32f);
+
+        if (Content.Find("Deco") == null) Builder.Image(Builder.Rect("Deco", Content, new(width + 24f, height + 24f)), Tex.Large, semi, ImageType.Sliced, 2f);
     }
 }
