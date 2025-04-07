@@ -50,6 +50,7 @@ public class Plugin : MonoBehaviour
 
         // Pal.Load();
         Tex.Load();
+        ModAssets.Load();
 
         Bundle.Load();
         UI.UI.Build();

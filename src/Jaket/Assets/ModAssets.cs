@@ -56,9 +56,11 @@ public class ModAssets
     public static void Load()
     {
         var bundle = AssetBundle.LoadFromFile(Files.GetFile(Files.Root, "jaket-assets.bundle"));
+        /*
         GameAssets.Squeaky(); // preload the sound; otherwise, it crashes .-.
+        */
 
-        void Load<T>(string name, Cons<T> cons) where T : UnityEngine.Object
+        void Load<T>(string name, Cons<T> cons) where T : Object
         {
             var task = bundle.LoadAssetAsync<T>(name);
             task.completed += _ => cons(task.asset as T);
@@ -72,10 +74,12 @@ public class ModAssets
 
         Load<Sprite>("V3-icon", s => Icon = s);
         Load<TextAsset>("V3-bestiary-entry", f => Desc = f.text);
+        /*
         Load<AudioMixer>("sam-audio", m =>
         {
             Events.Post(() => Networking.LocalPlayer.Voice.outputAudioMixerGroup = (Mixer = m).FindMatchingGroups("Master")[0]);
         });
+        */
 
         // textures
         WingTextures = new Texture[5];
@@ -91,8 +95,10 @@ public class ModAssets
 
         Load<Texture>("V3-hand", t => HandTextures[1] = t);
         Load<Texture>("V3-blast", t => HandTextures[3] = t);
+        /*
         HandTextures[0] = FistControl.Instance.blueArm.ToAsset().GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture;
         HandTextures[2] = FistControl.Instance.redArm.ToAsset().GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture;
+        */
 
         // sprites
         ChanPoses = new Sprite[7];
