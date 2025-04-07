@@ -6,7 +6,6 @@ using UnityEngine.UI;
 using Jaket.Assets;
 using Jaket.Net;
 using Jaket.UI.Lib;
-using Jaket.World;
 
 using static Jaket.UI.Lib.Pal;
 
@@ -93,14 +92,14 @@ public class LobbyTab : Fragment
         // Version.Label(Content); TODO update the version class
     }
 
-    public override void Toggle() // TODO update UI hide
+    public override void Toggle()
     {
-        if (!Shown) UI.HideLeftGroup();
-
         base.Toggle();
-        Movement.UpdateState();
-
-        if (Shown) Rebuild();
+        if (Shown)
+        {
+            UI.Hide(UI.LeftGroup, this);
+            Rebuild();
+        }
     }
 
     public override void Rebuild()
