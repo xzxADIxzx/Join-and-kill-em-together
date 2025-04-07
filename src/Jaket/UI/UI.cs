@@ -62,6 +62,5 @@ public static class UI
             OptionsManager.Instance.UnPause();
             WeaponWheel.Instance.gameObject.SetActive(false);
         }
-        Movement.UpdateState();
     }
 }
