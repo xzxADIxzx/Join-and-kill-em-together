@@ -58,15 +58,15 @@ public class Networking
         Events.EveryTick += NetworkUpdate;
         Events.EveryDozen += Optimize;
 
-        Events.OnLoaded += () => WasMultiplayerUsed = LobbyController.Online;
+        Events.OnLoad += () => WasMultiplayerUsed = LobbyController.Online;
         Events.OnLobbyAction += () => WasMultiplayerUsed |= LobbyController.Online;
 
-        Events.OnLoadingStarted += () =>
+        Events.OnLoadingStart += () =>
         {
             if (LobbyController.Online) SceneHelper.SetLoadingSubtext(Random.value < .042f ? "I love you" : "/// MULTIPLAYER VIA JAKET ///");
             Loading = true;
         };
-        Events.OnLoaded += () =>
+        Events.OnLoad += () =>
         {
             Clear();
             Loading = false;
@@ -75,7 +75,7 @@ public class Networking
         // fires when accepting an invitation via the Steam overlay
         Events.OnLobbyInvite += LobbyController.JoinLobby;
 
-        Events.OnLobbyEntered += () =>
+        Events.OnLobbyEnter += () =>
         {
             Clear(); // destroy all entities, since the player could join from another lobby
             if (LobbyController.IsOwner)

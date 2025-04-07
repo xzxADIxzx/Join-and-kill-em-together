@@ -29,7 +29,7 @@ public class Fragment
         void Check() { if (cond()) hide(); }
 
         Check();
-        Events.OnLoaded += Check;
+        Events.OnLoad += Check;
     }
 
     /// <summary> Toggles visibility of the fragment. </summary>

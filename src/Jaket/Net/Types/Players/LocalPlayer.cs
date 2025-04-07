@@ -45,9 +45,9 @@ public class LocalPlayer : Entity
 
         Voice = gameObject.AddComponent<AudioSource>(); // add a 2D audio source that will be heard from everywhere
 
-        Events.OnLoaded += () => Invoke("UpdateWeapons", .4f);
-        Events.OnWeaponChanged += () => Events.Post(UpdateWeapons);
-        Events.OnTeamChanged += () =>
+        Events.OnLoad += () => Invoke("UpdateWeapons", .4f);
+        Events.OnHandChange += () => Events.Post(UpdateWeapons);
+        Events.OnTeamChange += () =>
         {
             var light = nm.transform.Find("Point Light");
             if (light) light.GetComponent<Light>().color = LobbyController.Offline ? Color.white : Team.Color();

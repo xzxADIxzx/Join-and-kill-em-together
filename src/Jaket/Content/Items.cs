@@ -17,11 +17,11 @@ public class Items
     /// <summary> Loads all items for future use. </summary>
     public static void Load()
     {
-        Events.OnLoaded += () =>
+        Events.OnLoad += () =>
         {
             if (LobbyController.Online) Events.Post2(SyncAll);
         };
-        Events.OnLobbyEntered += () => Events.Post2(SyncAll);
+        Events.OnLobbyEnter += () => Events.Post2(SyncAll);
 
         foreach (var name in GameAssets.Items) Prefabs.Add(GameAssets.Item(name));
         foreach (var name in GameAssets.Baits) Prefabs.Add(GameAssets.Bait(name));

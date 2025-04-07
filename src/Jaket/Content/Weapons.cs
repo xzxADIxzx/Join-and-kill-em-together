@@ -12,7 +12,7 @@ public class Weapons
     /// <summary> Loads all weapons for future use. </summary>
     public static void Load()
     {
-        Events.OnLoaded += () => {
+        Events.OnLoad += () => {
         if (GunSetter.Instance == null || Prefabs.Count > 0) return;
 
         Prefabs.AddRange(GunSetter.Instance.revolverPierce.ToAssets());

@@ -38,7 +38,7 @@ public class World
     /// <summary> Creates a singleton of world. </summary>
     public static void Load()
     {
-        Events.OnLoadingStarted += () =>
+        Events.OnLoadingStart += () =>
         {
             if (LobbyController.Online && LobbyController.IsOwner && Pending != "Main Menu")
             {
@@ -46,11 +46,11 @@ public class World
                 Networking.Send(PacketType.Level, WriteData, size: 256);
             }
         };
-        Events.OnLoaded += () =>
+        Events.OnLoad += () =>
         {
             if (LobbyController.Online) Restore();
         };
-        Events.OnLobbyEntered += Restore;
+        Events.OnLobbyEnter += Restore;
         Events.EveryDozen += Optimize;
     }
 

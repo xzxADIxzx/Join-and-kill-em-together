@@ -18,8 +18,8 @@ public class PlayerInfo : CanvasSingleton<PlayerInfo>
 
     private void Start()
     {
-        Events.OnLobbyEntered += () => { if (!Shown) Toggle(); };
-        Events.OnTeamChanged += Rebuild;
+        Events.OnLobbyEnter += () => { if (!Shown) Toggle(); };
+        Events.OnTeamChange += Rebuild;
     }
 
     private void Update()

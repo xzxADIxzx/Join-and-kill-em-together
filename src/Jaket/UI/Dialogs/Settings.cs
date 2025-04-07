@@ -205,7 +205,7 @@ public class Settings : CanvasSingleton<Settings>
         knkl.GetComponentInChildren<Text>().text = Mode(KnuckleColor);
 
         // update the color of the feedbacker and knuckleblaster
-        Events.OnWeaponChanged.Fire();
+        Events.OnHandChange.Fire();
     }
 
     // <summary> Starts rebinding the given key. </summary>

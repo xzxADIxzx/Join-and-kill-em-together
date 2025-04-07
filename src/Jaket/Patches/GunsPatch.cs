@@ -13,11 +13,11 @@ public class GunsPatch
 {
     [HarmonyPostfix]
     [HarmonyPatch(typeof(GunControl), nameof(GunControl.SwitchWeapon), typeof(int), typeof(List<GameObject>), typeof(bool), typeof(bool), typeof(bool), typeof(bool))]
-    static void GunSwitch() => Events.OnWeaponChanged.Fire();
+    static void GunSwitch() => Events.OnHandChange.Fire();
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(GunControl), nameof(GunControl.ForceWeapon))]
-    static void GunForce() => Events.OnWeaponChanged.Fire();
+    static void GunForce() => Events.OnHandChange.Fire();
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(GunColorGetter), nameof(GunColorGetter.UpdateColor))]

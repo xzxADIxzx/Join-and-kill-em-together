@@ -58,7 +58,7 @@ public class Chat : CanvasSingleton<Chat>
 
     private void Start()
     {
-        Events.OnLobbyEntered += Hello; // send some useful information to the chat so that players know about the mod's features
+        Events.OnLobbyEnter += Hello; // send some useful information to the chat so that players know about the mod's features
         AutoTTS = Settings.AutoTTS;
 
         list = UIB.Table("List", transform, Blh(WIDTH)).rectTransform;

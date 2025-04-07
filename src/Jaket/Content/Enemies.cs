@@ -23,7 +23,7 @@ public class Enemies
     /// <summary> Loads all enemies for future use. </summary>
     public static void Load()
     {
-        Events.OnLoaded += () =>
+        Events.OnLoad += () =>
         {
             int length = GameAssets.Enemies.Length; // custom enemy was added to the prefabs list
             if (Prefabs.Count != length) Prefabs.RemoveRange(length, Prefabs.Count - length);

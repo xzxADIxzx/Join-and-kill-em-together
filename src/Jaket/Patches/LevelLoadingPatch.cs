@@ -13,11 +13,11 @@ public class LevelLoadingPatch
 {
     [HarmonyPostfix]
     [HarmonyPatch(typeof(SceneHelper), nameof(SceneHelper.LoadScene))]
-    static void Load() => Events.OnLoadingStarted.Fire();
+    static void Load() => Events.OnLoadingStart.Fire();
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(SceneHelper), nameof(SceneHelper.RestartScene))]
-    static void Rest() => Events.OnLoadingStarted.Fire();
+    static void Rest() => Events.OnLoadingStart.Fire();
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(FinalRank), nameof(FinalRank.LevelChange))]

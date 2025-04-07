@@ -22,7 +22,7 @@ public class PlayerList : CanvasSingleton<PlayerList>
             foreach (Team team in System.Enum.GetValues(typeof(Team))) UIB.TeamButton(team, table, new(x += 64f, -130f, 56f, 56f, new(0f, 1f)), () =>
             {
                 Networking.LocalPlayer.Team = team;
-                Events.OnTeamChanged.Fire();
+                Events.OnTeamChange.Fire();
 
                 Rebuild();
             });

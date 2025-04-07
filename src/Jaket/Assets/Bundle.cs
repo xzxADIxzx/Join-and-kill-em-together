@@ -30,7 +30,7 @@ public class Bundle
     /// <summary> Loads the translation specified in the settings. </summary>
     public static void Load()
     {
-        Events.OnLoaded += () =>
+        Events.OnLoad += () =>
         {
             if (text2Show == null) return;
 

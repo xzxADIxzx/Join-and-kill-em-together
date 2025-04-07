@@ -21,11 +21,11 @@ public class Votes
     /// <summary> Loads the vote system. </summary>
     public static void Load()
     {
-        Events.OnLoaded += () =>
+        Events.OnLoad += () =>
         {
             if (LobbyController.Online) Init();
         };
-        Events.OnLobbyEntered += Init;
+        Events.OnLobbyEnter += Init;
     }
 
     /// <summary> Initializes the vote system. </summary>

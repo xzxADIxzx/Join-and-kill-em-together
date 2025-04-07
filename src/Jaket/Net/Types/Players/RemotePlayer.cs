@@ -94,7 +94,7 @@ public class RemotePlayer : Entity
         if (LastTeam != Team)
         {
             Doll.ApplyTeam(LastTeam = Team);
-            Events.OnTeamChanged.Fire();
+            Events.OnTeamChange.Fire();
         }
         if (LastWeapon != Weapon)
         {
@@ -210,7 +210,7 @@ public class RemotePlayer : Entity
         Dest(Doll.Hand.gameObject); // destroy the weapon so that the railcannon's sound doesn't play forever
         Dest(this);
 
-        Events.OnTeamChanged.Fire();
+        Events.OnTeamChange.Fire();
     }
 
     #endregion

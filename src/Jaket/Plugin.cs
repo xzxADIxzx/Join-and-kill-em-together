@@ -37,7 +37,7 @@ public class Plugin : MonoBehaviour
         Log.Info("[INIT] Jaket bootloader has been created");
 
         Events.Load();
-        Events.OnMainMenuLoaded += Init;
+        Events.OnMainMenuLoad += Init;
     }
 
     private void OnApplicationQuit() => Log.Flush();

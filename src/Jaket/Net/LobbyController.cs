@@ -48,7 +48,7 @@ public class LobbyController
         // general info about the lobby
         Events.OnLobbyAction += () => Log.Debug($"Lobby updated: owner is {Lobby?.Owner.ToString() ?? "null"}, level is {Lobby?.GetData("level") ?? "null"}");
         // get the owner id when entering the lobby
-        Events.OnLobbyEntered += () =>
+        Events.OnLobbyEnter += () =>
         {
             if (Offline) return;
             Log.Debug($"Entered a lobby ({LastOwner = Lobby?.Owner.Id ?? 0L})");
@@ -71,9 +71,9 @@ public class LobbyController
         };
 
         // put the level name in the lobby data so that it can be seen in the public lobbies list
-        Events.OnLoaded += () => Lobby?.SetData("level", MapMap(Scene));
+        Events.OnLoad += () => Lobby?.SetData("level", MapMap(Scene));
         // if the player exits to the main menu, then this is equivalent to leaving the lobby
-        Events.OnMainMenuLoaded += () => LeaveLobby(false);
+        Events.OnMainMenuLoad += () => LeaveLobby(false);
     }
 
     /// <summary> Is there a user with the given id among the members of the lobby. </summary>

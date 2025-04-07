@@ -44,7 +44,7 @@ public class Administration
                 if (uint.TryParse(sid, out var id)) Banned.Add(id);
             });
         };
-        Events.OnLobbyEntered += () => { Banned.Clear(); entityBullets.Clear(); entities.Clear(); plushies.Clear(); };
+        Events.OnLobbyEnter += () => { Banned.Clear(); entityBullets.Clear(); entities.Clear(); plushies.Clear(); };
         Events.EverySecond += spam.Clear;
         Events.EverySecond += commonBullets.Clear;
         Events.EveryDozen += warnings.Clear;

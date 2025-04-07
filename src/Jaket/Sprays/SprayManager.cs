@@ -36,7 +36,7 @@ public class SprayManager
         ResFind<AudioClip>(clip => clip.name == "Explosion Harmless", clip => puh = clip);
 
         // clear the cache in offline game & upload the current spray if it was changed
-        Events.OnLoaded += () =>
+        Events.OnLoad += () =>
         {
             if (LobbyController.Offline) Cache.Clear();
             else SprayDistributor.UploadLocal();
@@ -44,7 +44,7 @@ public class SprayManager
             foreach (var spray in Sprays.Values)
                 if (spray != null) spray.Lifetime = 60f;
         };
-        Events.OnLobbyEntered += () =>
+        Events.OnLobbyEnter += () =>
         {
             Uploaded = LobbyController.IsOwner;
             Cache.Clear();

@@ -67,7 +67,7 @@ public class Movement : MonoSingleton<Movement>
     {
         Create<Movement>("Movement");
 
-        Events.OnLoaded += () =>
+        Events.OnLoad += () =>
         {
             // interrupt emote to prevent some bugs
             Instance.StartEmote(0xFF, false);
