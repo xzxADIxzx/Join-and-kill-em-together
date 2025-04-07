@@ -6,66 +6,61 @@ using UnityEngine.UI;
 
 using Jaket.UI.Dialogs;
 using Jaket.UI.Fragments;
+using Jaket.UI.Lib;
 using Jaket.World;
 
 /// <summary> Class that loads and manages the interface of the mod. </summary>
-public class UI
+public static class UI
 {
-    /// <summary> Whether the player is focused on a input field. </summary>
-    public static bool Focused => Focus != null && Focus.TryGetComponent<InputField>(out var f) && f.isActiveAndEnabled;
-    /// <summary> Whether the player is in any of Jaket dialog. </summary>
-    public static bool AnyDialog => Chat.Shown || lobbyTab.Shown || LobbyList.Shown || PlayerList.Shown || Settings.Shown || SpraySettings.Shown || (OptionsManager.Instance?.paused ?? false);
-    /// <summary> Whether any interface that blocks movement is currently visible. </summary>
-    public static bool AnyMovementBlocking => AnyDialog || NewMovement.Instance.dead || Movement.Instance.Emote != 0xFF;
-
-    /// <summary> Object on which the player is focused. </summary>
+    /// <summary> Object the player is focused on. </summary>
     public static GameObject Focus => EventSystem.current?.currentSelectedGameObject;
-    /// <summary> Object containing the entire interface. </summary>
-    public static Transform Root;
+    /// <summary> Whether the player is focused on a input field. </summary>
+    public static bool Focused => Focus && Focus.TryGetComponent<InputField>(out var f) && f.isActiveAndEnabled;
+
+    /// <summary> Whether any dialog is visible. </summary>
+    public static bool AnyDialog => Dialogs.Any(d => d.Shown) || (OptionsManager.Instance?.paused ?? false);
+    /// <summary> Whether any dialog that blocks movement is visible. </summary>
+    public static bool AnyMovementBlocking => AnyDialog || NewMovement.Instance.dead || Movement.Instance.Emote != 0xFF;
 
     #region dialogs
 
     public static LobbyTab lobbyTab;
 
     #endregion
+    #region groups
 
-    /// <summary> Creates singleton instances of fragments and dialogs. </summary>
-    public static void Load()
+    /// <summary> Group containing all of the dialogs. </summary>
+    public static Fragment[] Dialogs;
+    /// <summary> Group containing all of the fragments. </summary>
+    public static Fragment[] Fragments;
+    /// <summary> Group containing elements located on the left side of the screen. </summary>
+    public static Fragment[] LeftGroup;
+    /// <summary> Group containing elements located in the center of the screen. </summary>
+    public static Fragment[] MidlGroup;
+
+    #endregion
+
+    /// <summary> Builds all of the interface elements: fragments, dialogs and so on. </summary>
+    public static void Build()
     {
-        Root = Create("UI").transform;
-        Settings.Load(); // settings must be loaded before building the interface
+        var root = Create("UI").transform;
 
-        Chat.Build("Chat", true, hide: () => Chat.Instance.Field?.gameObject.SetActive(Chat.Shown = false), woh: true);
-        lobbyTab = new(Root);
-        LobbyList.Build("Lobby List", true);
-        PlayerList.Build("Player List", true);
-        Settings.Build("Settings", true);
-        SpraySettings.Build("Spray Settings", true);
-        Debugging.Build("Debugging Menu", false);
+        lobbyTab = new(root);
 
-        PlayerIndicators.Build("Player Indicators", false, () => Scene == "Main Menu");
-        PlayerInfo.Build("Player Information", false, () => Scene == "Main Menu", () => { if (PlayerInfo.Shown) PlayerInfo.Instance.Toggle(); });
-        EmoteWheel.Build("Emote Wheel", false);
-        Skateboard.Build("Skateboard", false);
-        MainMenuAccess.Build("Main Menu Access", true, hide: () => MainMenuAccess.Instance.Toggle());
-        InteractiveGuide.Build("Interactive Guide", false, hide: () => InteractiveGuide.Instance.OfferAssistance());
-        Teleporter.Build("Teleporter", false, hide: () => { });
+        Dialogs = new[] { lobbyTab };
+        Fragments = new[] { lobbyTab }; // TODO temp
+        LeftGroup = new[] { lobbyTab };
+        MidlGroup = new[] { lobbyTab }; // TODO temp
     }
 
-    /// <summary> Hides the interface of the left group. </summary>
-    public static void HideLeftGroup()
+    /// <summary> Hides all of the elements in the given group except the fragment. </summary>
+    public static void Hide(Fragment[] group, Fragment frag)
     {
-        if (lobbyTab.Shown) lobbyTab.Toggle();
-        if (PlayerList.Shown) PlayerList.Instance.Toggle();
-        if (Settings.Shown) Settings.Instance.Toggle();
-    }
-
-    /// <summary> Hides the interface of the central group. </summary>
-    public static void HideCentralGroup()
-    {
-        if (LobbyList.Shown) LobbyList.Instance.Toggle();
-        if (SpraySettings.Shown) SpraySettings.Instance.Toggle();
-        if (EmoteWheel.Shown) EmoteWheel.Instance.Hide();
-        if (OptionsManager.Instance.paused) OptionsManager.Instance.UnPause();
+        group.Each(f => f.Shown && f != frag, f => f.Toggle());
+        if (group == MidlGroup)
+        {
+            OptionsManager.Instance.UnPause();
+            WeaponWheel.Instance.gameObject.SetActive(false);
+        }
     }
 }

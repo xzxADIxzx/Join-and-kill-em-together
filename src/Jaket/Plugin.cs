@@ -52,6 +52,7 @@ public class Plugin : MonoBehaviour
         Tex.Load();
 
         Bundle.Load();
+        UI.UI.Build();
 
         Log.Info("[INIT] Initializing network components...");
         // TODO obviously
