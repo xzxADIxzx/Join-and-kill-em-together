@@ -24,7 +24,7 @@ public static class UI
 
     #region dialogs
 
-    public static LobbyTab lobbyTab;
+    public static LobbyTab LobbyTab;
 
     #endregion
     #region groups
@@ -45,12 +45,12 @@ public static class UI
     {
         var root = Create("UI").transform;
 
-        lobbyTab = new(root);
+        LobbyTab = new(root);
 
-        Dialogs = new[] { lobbyTab };
-        Fragments = new[] { lobbyTab }; // TODO temp
-        LeftGroup = new[] { lobbyTab };
-        MidlGroup = new[] { lobbyTab }; // TODO temp
+        Dialogs = new[] { LobbyTab };
+        Fragments = new[] { LobbyTab }; // TODO temp
+        LeftGroup = new[] { LobbyTab };
+        MidlGroup = new[] { LobbyTab }; // TODO temp
     }
 
     /// <summary> Hides all of the elements in the given group except the fragment. </summary>
