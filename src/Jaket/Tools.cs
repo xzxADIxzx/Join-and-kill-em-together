@@ -219,6 +219,14 @@ public static class Tools
         return defaultProv == null ? default : defaultProv();
     }
 
+    /// <summary> Returns the amount of objects in the given enumerable that are suitable for the given predicate. </summary>
+    public static int Count<T>(this IEnumerable<T> seq, Pred<T> pred)
+    {
+        int amount = 0;
+        foreach (var item in seq) if (pred(item)) amount++;
+        return amount;
+    }
+
     /// <summary> Clears the given enumerable array by filling it with default values. </summary>
     public static void Clear<T>(this T[] seq) => System.Array.Clear(seq, 0, seq.Length);
 

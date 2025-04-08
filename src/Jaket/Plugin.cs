@@ -45,6 +45,7 @@ public class Plugin : MonoBehaviour
     private void Init()
     {
         if (Initialized) return;
+        Initialized = true; // even if the plugin fails to load, it should not try again
 
         Log.Info("[INIT] Loading content...");
 
@@ -59,16 +60,14 @@ public class Plugin : MonoBehaviour
         // TODO obviously
 
         Log.Info("[INIT] Running postinit hooks...");
-        // TODO Harmony & Version goes here
 
-        Initialized = true;
+        Version.Check4Updates();
+        Version.FetchCompatible();
+        // TODO Harmony goes here
+
         Log.Info("[INIT] Jaket has been initialized");
 
         if (true) return;
-
-        // notify players about the availability of an update so that they no longer whine to me about something not working
-        Version.Check4Update();
-        Version.FetchCompatible();
 
         Pointers.Allocate();
         Stats.StartRecord();
@@ -93,14 +92,7 @@ public class Plugin : MonoBehaviour
         Movement.Load();
         SprayManager.Load();
 
-        UI.UIB.Load();
-        UI.UI.Load();
-
         // initialize harmony and patch all the necessary classes
         new Harmony("Should I write something here?").PatchAll();
-
-        // mark the plugin as initialized and log a message about it
-        Initialized = true;
-        Log.Info("Jaket initialized!");
     }
 }
