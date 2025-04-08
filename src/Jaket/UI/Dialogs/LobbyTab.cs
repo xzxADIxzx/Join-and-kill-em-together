@@ -90,7 +90,7 @@ public class LobbyTab : Fragment
             b.TextButton("#lobby-tab.gamemode", red, callback: () => { });
             b.TextButton("#lobby-tab.cheats",   red, callback: () => { });
         });
-        // Version.Label(Content); TODO update the version class
+        VersionBar();
     }
 
     public override void Toggle()

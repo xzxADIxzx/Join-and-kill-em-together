@@ -61,4 +61,14 @@ public class Fragment
 
         if (Content.Find("Deco") == null) Builder.Image(Builder.Rect("Deco", Content, new(width + 24f, height + 24f)), Tex.Large, semi, ImageType.Sliced, 2f);
     }
+
+    /// <summary> Adds a bar, it displays the current version of the project. </summary>
+    protected void VersionBar()
+    {
+        var bar = Builder.Rect("Version", Sidebar.transform, new(0f, 36f, 480f - 36f, 40f, new(.5f, 0f)));
+        var txt = Builder.Rect("Text", bar, Rect.Fill);
+
+        Builder.Image(bar, Tex.Fill, semi, ImageType.Sliced);
+        Builder.Text(txt, $"Jaket version is {Version.CURRENT}{(Version.DEBUG ? "-beta" : "")}", 24, gray, TextAnchor.MiddleCenter).alignByGeometry = true;
+    }
 }

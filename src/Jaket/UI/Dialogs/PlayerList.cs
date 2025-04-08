@@ -28,7 +28,7 @@ public class PlayerList : CanvasSingleton<PlayerList>
             });
         });
 
-        Version.Label(transform);
+        // Version.Label(transform);
         Rebuild();
     }
 

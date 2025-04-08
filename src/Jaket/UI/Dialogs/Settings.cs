@@ -150,7 +150,7 @@ public class Settings : CanvasSingleton<Settings>
                 UIB.KeyButton(Keybinds[i], CurrentKeys[i], table, Tgl(112f + i * 40f));
         });
 
-        Version.Label(transform);
+        // Version.Label(transform);
         Rebuild();
     }
 
