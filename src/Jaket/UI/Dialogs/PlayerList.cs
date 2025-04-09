@@ -1,76 +1,50 @@
 namespace Jaket.UI.Dialogs;
 
+using UnityEngine;
+
 using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net;
+using Jaket.UI.Lib;
 using Jaket.World;
 
-using static Pal;
-using static Rect;
+using static Jaket.UI.Lib.Pal;
 
-/// <summary> List of all players and teams. </summary>
-public class PlayerList : CanvasSingleton<PlayerList>
+/// <summary> Dialog that displays all players and teams. </summary>
+public class PlayerList : Fragment
 {
-    private void Start()
+    public PlayerList(Transform root) : base(root, "PlayerList", true) => Events.OnTeamChange += () => { if (Shown) Rebuild(); };
+
+    public override void Toggle()
     {
-        UIB.Shadow(transform);
-        UIB.Table("Teams", "#player-list.team", transform, Tlw(16f + 166f / 2f, 166f), table =>
+        base.Toggle();
+        if (Shown)
         {
-            UIB.Text("#player-list.info", table, Btn(71f) with { Height = 46f }, size: 16);
+            UI.Hide(UI.LeftGroup, this);
+            Rebuild();
+        }
+        Movement.UpdateState();
+    }
 
-            float x = -24f;
-            foreach (Team team in System.Enum.GetValues(typeof(Team))) UIB.TeamButton(team, table, new(x += 64f, -130f, 56f, 56f, new(0f, 1f)), () =>
+    public override void Rebuild()
+    {
+        Sidebar?.Clear();
+        Bar(166f, b =>
+        {
+            b.Setup(true);
+            b.Text("#player-list.team", 32f, 32);
+
+            b.Text("#player-list.info", 62f, 16, light, TextAnchor.MiddleLeft).alignByGeometry = true;
+            b.Subbar(40f, s =>
             {
-                Networking.LocalPlayer.Team = team;
-                Events.OnTeamChange.Fire();
-
-                Rebuild();
+                s.Setup(false, 0f);
+                for (Team i = Team.Yellow; i <= Team.Pink; i++) s.TeamButton(i, () =>
+                {
+                    Networking.LocalPlayer.Team = i;
+                    Events.OnTeamChange.Fire();
+                });
             });
         });
-
-        // Version.Label(transform);
-        Rebuild();
-    }
-
-    // <summary> Toggles visibility of the player list. </summary>
-    public void Toggle()
-    {
-        // if (!Shown) UI.HideLeftGroup();
-
-        gameObject.SetActive(Shown = !Shown);
-        Movement.UpdateState();
-
-        if (Shown && transform.childCount > 0) Rebuild();
-    }
-
-    /// <summary> Rebuilds the player list to add new players or remove players left the lobby. </summary>
-    public void Rebuild()
-    {
-        // destroy old player list
-        if (transform.childCount > 3) Dest(transform.GetChild(3).gameObject);
-        if (LobbyController.Offline) return;
-
-        float height = LobbyController.Lobby.Value.MemberCount * 48f + 48f;
-        UIB.Table("List", "#player-list.list", transform, Tlw(198f + height / 2f, height), table =>
-        {
-            float y = 20f;
-            foreach (var member in LobbyController.Lobby?.Members)
-            {
-                if (LobbyController.LastOwner == member.Id)
-                {
-                    UIB.ProfileButton(member, table, Stn(y += 48f, -48f));
-                    UIB.IconButton("★", table, Icon(140f, y), new(1f, .7f, .1f), new(1f, 4f), () => Bundle.Hud("player-list.owner"));
-                }
-                else
-                {
-                    if (LobbyController.IsOwner)
-                    {
-                        UIB.ProfileButton(member, table, Stn(y += 48f, -48f));
-                        UIB.IconButton("X", table, Icon(140f, y), red, clicked: () => Administration.Ban(member.Id.AccountId));
-                    }
-                    else UIB.ProfileButton(member, table, Btn(y += 48f));
-                }
-            }
-        });
+        VersionBar();
     }
 }

@@ -27,7 +27,7 @@ public class LobbyTab : Fragment
 
     public LobbyTab(Transform root) : base(root, "LobbyTab", true)
     {
-        Events.OnLobbyAction += Rebuild;
+        Events.OnLobbyAction += () => { if (Shown) Rebuild(); };
 
         Bar(144f, b =>
         {
