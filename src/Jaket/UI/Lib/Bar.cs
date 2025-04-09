@@ -32,6 +32,13 @@ public class Bar : MonoBehaviour
         this.padding = padding;
     }
 
+    /// <summary> Clears the bar by destroying children of it. </summary>
+    public void Clear()
+    {
+        foreach (Transform child in rect) Dest(child.gameObject);
+        filled = 0f;
+    }
+
     private void Update() => update?.Invoke();
 
     /// <summary> Schedules the given runnable to be done in the update loop. </summary>
@@ -64,6 +71,10 @@ public class Bar : MonoBehaviour
         filled += size / (voh ? -2f : 2f);
         return result;
     }
+
+    /// <summary> Adds a subbar, does not configure it. </summary>
+    public void Subbar(float size, Cons<Bar> cons) =>
+        Component(Resolve("Subbar", size).gameObject, cons);
 
     /// <summary> Adds a label with the given text, simple yet elegant. </summary>
     public Text Text(string text, float spc, int size = 24, Color? color = null, TextAnchor align = TextAnchor.MiddleCenter) =>
