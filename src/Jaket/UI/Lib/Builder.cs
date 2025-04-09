@@ -193,14 +193,14 @@ public static class Builder
     #region canvas
 
     /// <summary> Creates a canvas that is drawn on top of the main camera. </summary>
-    public static Canvas Canvas(Transform rect, bool woh, bool touchable) =>
+    public static Canvas Canvas(Transform rect, bool touchable) =>
         Component<Canvas>(rect.gameObject, c => Component<CanvasScaler>((rect = c.transform).gameObject, s =>
         {
             c.renderMode = RenderMode.ScreenSpaceOverlay;
             s.uiScaleMode = ScaleMode.ScaleWithScreenSize;
 
             c.sortingOrder = 4200; // move the canvas up, otherwise it won't be visible
-            s.matchWidthOrHeight = woh ? 0f : 1f;
+            s.matchWidthOrHeight = 1f;
             s.referenceResolution = new(1920f, 1080f);
 
             if (touchable) rect.gameObject.AddComponent<GraphicRaycaster>();

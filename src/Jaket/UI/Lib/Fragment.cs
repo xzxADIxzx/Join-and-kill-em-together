@@ -19,9 +19,9 @@ public class Fragment
     /// <summary> Vertical bar located on the left side of the fragment. </summary>
     public Bar Sidebar;
 
-    public Fragment(Transform root, string name, bool dialog, bool woh = false, Prov<bool> cond = null, Runnable hide = null)
+    public Fragment(Transform root, string name, bool dialog, Prov<bool> cond = null, Runnable hide = null)
     {
-        Content = Builder.Canvas(Create(name, root).transform, woh, Dialog = dialog).transform;
+        Content = Builder.Canvas(Create(name, root).transform, Dialog = dialog).transform;
 
         cond ??= () => true;
         hide ??= () => Content.gameObject.SetActive(Shown = false);
