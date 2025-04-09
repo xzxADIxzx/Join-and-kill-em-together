@@ -108,7 +108,7 @@ public class EmoteWheel : CanvasSingleton<EmoteWheel>
     /// <summary> Shows the wheel and resets the selected segment. </summary>
     public void Show()
     {
-        if (!Shown) UI.HideCentralGroup();
+        // if (!Shown) UI.HideCentralGroup();
 
         gameObject.SetActive(Shown = true);
         Movement.UpdateState();

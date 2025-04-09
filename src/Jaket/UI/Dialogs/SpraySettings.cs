@@ -72,7 +72,7 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
     // <summary> Toggles visibility of the spray settings. </summary>
     public void Toggle()
     {
-        if (!Shown) UI.HideCentralGroup();
+        // if (!Shown) UI.HideCentralGroup();
 
         gameObject.SetActive(Shown = !Shown);
         Movement.UpdateState();
