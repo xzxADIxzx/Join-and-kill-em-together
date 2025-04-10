@@ -79,6 +79,7 @@ public static class Pal
         Put("black",   Black);
         Put("dark",    Dark);
         Put("gray",    Gray);
+        Put("grey",    Gray);
         Put("light",   Light);
         Put("white",   White);
         Put("red",     Red);

@@ -147,7 +147,7 @@ public static class Bundle
                     else if (tag.Length > 3 && tag[0] == '#')
                     {
                         types.Push(0);
-                        builder.Append("<color=").Append(tag[1..]).Append(">");
+                        builder.Append("<color=").Append(tag).Append(">");
                     }
                     else if (tag.Length > 3 && Colors[Hash(tag)] != null)
                     {
