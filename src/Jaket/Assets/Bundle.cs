@@ -2,29 +2,30 @@ namespace Jaket.Assets;
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-using Jaket.UI.Dialogs;
 using Jaket.IO;
+using Jaket.UI.Dialogs;
 
-/// <summary> Class that loads translations from files in the bundles folder and returns translated lines by keys. </summary>
-public class Bundle
+using static Jaket.UI.Lib.Pal;
+
+/// <summary> I18n bundle that loads translated lines from a property file corresponding to the selected language. </summary>
+public static class Bundle
 {
-    /// <summary> Language codes used in settings. </summary>
+    /// <summary> Language codes for internal use. </summary>
     public static readonly string[] Codes = { "ar", "pt", "en", "fl", "fr", "it", "pl", "ru", "es", "uk" };
-    /// <summary> Displayed language name so that everyone can find out their own even without knowledge of English. </summary>
+    /// <summary> Language names to display. </summary>
     public static readonly string[] Locales = { "عربي", "Português brasileiro", "English", "Filipino", "Français", "Italiano", "Polski", "Русский", "Español", "Українська" };
-    /// <summary> File names containing localization. </summary>
+    /// <summary> Property files containing localization. </summary>
     public static readonly string[] Content = { "arabic", "brazilianportuguese", "english", "filipino", "french", "italian", "polish", "russian", "spanish", "ukrainian" };
 
-    /// <summary> Id of loaded localization. -1 if the localization is not loaded yet. </summary>
-    public static int LoadedLocale = -1;
-    /// <summary> Dictionary with all lines of loaded localization. </summary>
-    private static Dictionary<string, string> props = new();
-    /// <summary> Text that will be shown in the hud after scene loading. </summary>
+    /// <summary> Identifier of the loaded localization or -1 if the bundle is not loaded yet. </summary>
+    public static int Loaded = -1;
+    /// <summary> Map of translated lines by their keys. </summary>
+    private static Dictionary<string, string> lines = new();
+    /// <summary> Text to show in the hud after scene loading. </summary>
     private static string text2Show;
 
     /// <summary> Loads the translation specified in the settings. </summary>
@@ -41,20 +42,21 @@ public class Bundle
         Files.MakeSureExists(Files.Bundles);
         Files.MoveAll(Files.Root, Files.Bundles, "*.properties");
 
-        var locale = PrefsManager.Instance.GetString("jaket.locale", "en");
+        var locale = PrefsManager.Instance?.GetString("jaket.locale", "en");
         int localeId = Codes.IndexOf(locale);
 
-        if (localeId == 255)
+        if (localeId == -1)
         {
-            Log.Error($"[BNDL] Couldn't find the bundle for {locale} language code!");
+            Log.Error($"[BNDL] Couldn't find a bundle for the {locale} language code");
             return;
         }
 
         string file = Files.GetFile(Files.Bundles, $"{Content[localeId]}.properties");
-        string[] lines;
+        string[] content;
+
         try
         {
-            lines = Files.ReadLines(file);
+            content = Files.ReadLines(file);
         }
         catch (Exception ex)
         {
@@ -62,17 +64,17 @@ public class Bundle
             return;
         }
 
-        foreach (var line in lines)
+        foreach (var line in content)
         {
             // skip comments and blank lines
-            if (line == "" || line.StartsWith("#")) continue;
+            if (string.IsNullOrWhiteSpace(line) || line[0] == '#') continue;
 
             var pair = line.Split('=');
-            props.Add(pair[0].Trim(), locale == "ar" ? ParseArabic(pair[1].Trim()) : ParseColors(pair[1].Trim()));
+            lines.Add(pair[0].Trim(), ParseColors(pair[1].Trim()));
         }
 
-        LoadedLocale = localeId;
-        Log.Info($"[BNDL] Loaded {props.Count} lines of {Locales[localeId]} ({locale}) locale");
+        Loaded = localeId;
+        Log.Info($"[BNDL] Loaded {lines.Count} lines of {Locales[localeId]} ({locale}) locale");
     }
 
     #region parsing
@@ -140,34 +142,32 @@ public class Bundle
         return builder.ToString().Substring(1);
     }
 
-    /// <summary> Reverses the string because Arabic is right-to-left language. </summary>
-    public static string ParseArabic(string original) => new(original.Replace("\\n", "\n").Replace('{', '#').Replace('}', '{').Replace('#', '}').Reverse().ToArray());
-
     #endregion
     #region usage
 
     /// <summary> Returns a localized line by the key. </summary>
-    public static string Get(string key, string fallback = "OH NO") => props.TryGetValue(key, out var line) ? line : fallback;
+    public static string Get(string key, string fallback = "OH NO") => lines.TryGetValue(key, out var line) ? line : fallback;
 
     /// <summary> Returns a localized & formatted line by the key. </summary>
     public static string Format(string key, params string[] args)
     {
         for (int i = 0; i < args.Length; i++)
-            if (args[i].StartsWith("#")) args[i] = Get(args[i].Substring(1), args[i]);
-
+        {
+            if (args[i][0] == '#') args[i] = Get(args[i][1..], args[i]);
+        }
         return string.Format(Get(key), args);
     }
 
-    /// <summary> Sends a localized message to the HUD. </summary>
+    /// <summary> Sends a localized message to the hud. </summary>
     public static void Hud(string key, bool silent = false) => HudMessageReceiver.Instance?.SendHudMessage(Get(key), silent: silent);
 
-    /// <summary> Sends a localized & formatted message to the HUD. </summary>
+    /// <summary> Sends a localized & formatted message to the hud. </summary>
     public static void Hud(string key, bool silent, params string[] args) => HudMessageReceiver.Instance?.SendHudMessage(Format(key, args), silent: silent);
 
-    /// <summary> Sends a localized message to the HUD after scene loading. </summary>
+    /// <summary> Sends a localized message to the hud after scene loading. </summary>
     public static void Hud2NS(string key) => text2Show = Get(key);
 
-    /// <summary> Sends a localized & formatted message to the HUD after scene loading. </summary>
+    /// <summary> Sends a localized & formatted message to the hud after scene loading. </summary>
     public static void Hud2NS(string key, params string[] args) => text2Show = Format(key, args);
 
     /// <summary> Sends a localized message to the chat. </summary>

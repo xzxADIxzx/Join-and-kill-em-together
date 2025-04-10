@@ -87,7 +87,7 @@ public class Settings : CanvasSingleton<Settings>
     /// <summary> Loads and applies all settings. </summary>
     public static void Load()
     {
-        Language = Bundle.LoadedLocale;
+        Language = Bundle.Loaded;
         FeedColor = pm.GetInt("jaket.feed-color");
         KnuckleColor = pm.GetInt("jaket.knkl-color");
         DisableFreezeFrames = pm.GetBool("jaket.disable-freeze", true);
@@ -223,7 +223,7 @@ public class Settings : CanvasSingleton<Settings>
 
     private void ResetGeneral()
     {
-        pm.SetString("jaket.locale", Bundle.Codes[Bundle.LoadedLocale]);
+        pm.SetString("jaket.locale", Bundle.Codes[Bundle.Loaded]);
         pm.DeleteKey("jaket.feed-color");
         pm.DeleteKey("jaket.knkl-color");
         pm.DeleteKey("jaket.disable-freeze");
