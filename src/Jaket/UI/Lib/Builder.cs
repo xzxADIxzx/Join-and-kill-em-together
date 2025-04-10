@@ -102,10 +102,18 @@ public static class Builder
             b.colors = Colors;
             b.onClick.AddListener(callback.Invoke);
 
-            var subrect = Rect("Text", rect, Lib.Rect.Fill);
-            var textclr = sprite == Tex.Fill ? white : color;
+            Text(Rect("Text", rect, Lib.Rect.Fill), text, size, sprite == Tex.Fill ? white : color, align).alignByGeometry = true;
+        });
 
-            Text(subrect, text, size, textclr, align).alignByGeometry = true;
+    /// <summary> Creates a button with the given sprite, color, icon and callback. </summary>
+    public static Button IconButton(Transform rect, Sprite sprite, Color color, Sprite icon, Runnable callback) =>
+        Component<Button>(rect.gameObject, b =>
+        {
+            b.targetGraphic = Image(rect, sprite, color, ImageType.Sliced);
+            b.colors = Colors;
+            b.onClick.AddListener(callback.Invoke);
+
+            Image(Rect("Icon", rect, new(24f, 24f)), icon, sprite == Tex.Fill ? white : color, ImageType.Simple);
         });
 
     #endregion

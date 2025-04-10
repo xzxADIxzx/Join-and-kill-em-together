@@ -1,11 +1,13 @@
 namespace Jaket.UI.Lib;
 
+using Steamworks;
 using UnityEngine;
 using UnityEngine.UI;
 
 using ImageType = UnityEngine.UI.Image.Type;
 
 using Jaket.Content;
+using Jaket.Net;
 
 using static Pal;
 
@@ -116,13 +118,25 @@ public class Bar : MonoBehaviour
     public Button TextButton(string text, Color? color = null, TextAnchor align = TextAnchor.MiddleCenter, Runnable callback = null) =>
         Builder.TextButton(Resolve("TextButton", 40f), Tex.Large, color ?? white, text, 24, align, callback);
 
+    /// <summary> Adds an icon button, the most minimalistic kind of buttons. </summary>
+    public Button IconButton(Sprite icon, Color? color = null, Runnable callback = null) =>
+        Builder.IconButton(Resolve("IconButton", 40f), Tex.Large, color ?? white, icon, callback);
+
     /// <summary> Adds a text button, but it's filled with the color. </summary>
     public Button FillButton(string text, Color color, Runnable callback) =>
-        Builder.TextButton(Resolve("FillButton", 40f), Tex.Fill, color, text, 24, TextAnchor.MiddleCenter, callback);
+        Builder.TextButton(Resolve("TextButton", 40f), Tex.Fill, color, text, 24, TextAnchor.MiddleCenter, callback);
+
+    /// <summary> Adds an icon button, but it's filled with the color. </summary>
+    public Button FillButton(Sprite icon, Color color, Runnable callback) =>
+        Builder.IconButton(Resolve("IconButton", 40f), Tex.Fill, color, icon, callback);
 
     /// <summary> Adds a text button, but it's filled with the color of the given team. </summary>
     public Button TeamButton(Team team, Runnable callback) =>
         Builder.TextButton(Resolve("TeamButton", 80f), Tex.Fill, team.Color(), team == Team.Pink ? "UwU" : "", 24, TextAnchor.MiddleCenter, callback);
+
+    /// <summary> Adds a text button, it opens the profile of the given member. </summary>
+    public Button ProfileButton(Friend member, bool full) =>
+        Builder.TextButton(Resolve("Profile", full ? 432f : 384f), Tex.Large, Networking.GetTeam(member).Color(), member.Name, 24, TextAnchor.MiddleCenter, () => SteamFriends.OpenUserOverlay(member.Id, "steamid"));
 
     /// <summary> Adds a button that corresponds to the style of Discord. </summary>
     public Button DiscordButton(string text) =>
