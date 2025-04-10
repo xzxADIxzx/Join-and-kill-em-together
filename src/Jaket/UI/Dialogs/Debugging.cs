@@ -9,7 +9,7 @@ using UnityEngine.UI.Extensions;
 using Jaket.IO;
 using Jaket.Net;
 
-using static Pal;
+using static Jaket.UI.Lib.Pal;
 using static Rect;
 
 /// <summary> Tab containing different information about the load on the network. </summary>
@@ -39,24 +39,24 @@ public class Debugging : CanvasSingleton<Debugging>
 
         UIB.Table("Graph", transform, Msg(1888f) with { y = 114f, Height = 196f }, table =>
         {
-            target.Graph    = UIB.Line("Target Update", table, Dark(blue));
+            target.Graph    = UIB.Line("Target Update", table, Darker(blue));
             entity.Graph    = UIB.Line("Entity Update", table, blue);
-            writeTime.Graph = UIB.Line("Write Time", table, Dark(orange));
+            writeTime.Graph = UIB.Line("Write Time", table, Darker(orange));
             readTime.Graph  = UIB.Line("Read Time", table, orange);
-            write.Graph     = UIB.Line("Write", table, Dark(green));
+            write.Graph     = UIB.Line("Write", table, Darker(green));
             read.Graph      = UIB.Line("Read", table, green);
         });
         UIB.Table("Stats", transform, Deb(0), table =>
         {
             readText        = DoubleText(table, "READ:", 20f, green);
-            writeText       = DoubleText(table, "WRITE:", 52f, Dark(green));
+            writeText       = DoubleText(table, "WRITE:", 52f, Darker(green));
             readTimeText    = DoubleText(table, "READ TIME:", 84f, orange);
-            writeTimeText   = DoubleText(table, "WRITE TIME:", 116f, Dark(orange));
+            writeTimeText   = DoubleText(table, "WRITE TIME:", 116f, Darker(orange));
         });
         UIB.Table("Stats", transform, Deb(1), table =>
         {
             entityText      = DoubleText(table, "ENTITY UPDATE:", 20f, blue);
-            targetText      = DoubleText(table, "TARGET UPDATE:", 52f, Dark(blue));
+            targetText      = DoubleText(table, "TARGET UPDATE:", 52f, Darker(blue));
         });
         UIB.Table("Networking", transform, Deb(2), table =>
         {

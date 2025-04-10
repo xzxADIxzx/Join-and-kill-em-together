@@ -138,9 +138,9 @@ public class Voting : MonoBehaviour
             for (byte i = 0; i < 3; i++)
             {
                 options[i].text = Bundle.Format("votes.amount", Votes.Count(i).ToString());
-                options[i].color = Pal.red;
+                options[i].color = Lib.Pal.red;
             }
-            options[best].color = Pal.green;
+            options[best].color = Lib.Pal.green;
         }
     }
 

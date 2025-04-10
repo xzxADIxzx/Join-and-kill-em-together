@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using Jaket.Net.Types;
 using Jaket.UI;
 
-using static Pal;
+using static Jaket.UI.Lib.Pal;
 using static Rect;
 
 /// <summary> Interface element displaying information about the player such as name, health and railgun charge. </summary>

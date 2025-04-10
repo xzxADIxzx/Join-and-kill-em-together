@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using Jaket.Assets;
 using Jaket.World;
 
-using static Pal;
+using static Jaket.UI.Lib.Pal;
 using static Rect;
 
 /// <summary> Global mod settings not related to the lobby. </summary>

@@ -7,7 +7,7 @@ using Jaket.Net;
 using Jaket.Sprays;
 using Jaket.UI.Dialogs;
 
-using static Pal;
+using static Jaket.UI.Lib.Pal;
 
 /// <summary> Player-created spray containing an image, disappears in a few seconds after appearing. </summary>
 public class Spray : MonoBehaviour

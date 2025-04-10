@@ -8,7 +8,7 @@ using Jaket.Assets;
 using Jaket.Net;
 using Jaket.World;
 
-using static Pal;
+using static Jaket.UI.Lib.Pal;
 using static Rect;
 
 /// <summary> Browser for public lobbies that receives the list via Steam API and displays it in the scrollbar. </summary>

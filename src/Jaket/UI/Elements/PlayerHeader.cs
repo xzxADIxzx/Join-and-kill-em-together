@@ -3,7 +3,7 @@ namespace Jaket.UI.Elements;
 using UnityEngine;
 using UnityEngine.UI;
 
-using static Pal;
+using static Jaket.UI.Lib.Pal;
 using static Rect;
 
 /// <summary> Header containing nickname and health. </summary>

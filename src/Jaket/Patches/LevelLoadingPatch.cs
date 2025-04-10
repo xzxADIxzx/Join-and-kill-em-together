@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using Jaket.Assets;
 using Jaket.Net;
 
-using static Jaket.UI.Pal;
+using static Jaket.UI.Lib.Pal;
 
 [HarmonyPatch]
 public class LevelLoadingPatch

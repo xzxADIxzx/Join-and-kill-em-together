@@ -7,7 +7,7 @@ using Jaket.Assets;
 using Jaket.IO;
 using Jaket.Net;
 
-using static Pal;
+using static Jaket.UI.Lib.Pal;
 using static Rect;
 
 /// <summary> Customization element located to the right of each terminal. </summary>
@@ -37,8 +37,8 @@ public class Customization : MonoBehaviour
             canvas.localPosition = new(510f, 0f, -140f);
             canvas.localRotation = Quaternion.Euler(0f, 35f, 0f);
 
-            UIB.Image("Border", canvas, Fill, shopc, fill: false); // no offset
-            UIB.Image("Border", canvas, Fill, shopc, fill: false); // 15 units offset
+            UIB.Image("Border", canvas, Fill, semi, fill: false); // no offset
+            UIB.Image("Border", canvas, Fill, semi, fill: false); // 15 units offset
 
             UIB.Text("#custom.support", canvas, new(0f, -32f, 4200f, 4200f, new(.5f, 1f)), size: 320).transform.localScale /= 10f;
             UIB.BMaCButton("Buy Me a Coffee", canvas).transform.localPosition = new(0f, 190f, 0f);
@@ -46,10 +46,10 @@ public class Customization : MonoBehaviour
             UIB.Table("Button", canvas, new(-111f, 48f, 206f, 64f, new(.5f, 0f)), b => UIB.ShopButton("#custom.hats", b, Fill, () => Switch(false)));
             UIB.Table("Button", canvas, new(+111f, 48f, 206f, 64f, new(.5f, 0f)), b => UIB.ShopButton("#custom.jackets", b, Fill, () => Switch(true)));
 
-            selection = UIB.Image("Selection", canvas, new(0f, 48f, 206f, 64f, new(.5f, 0f)), shopc, fill: false).transform;
+            selection = UIB.Image("Selection", canvas, new(0f, 48f, 206f, 64f, new(.5f, 0f)), semi, fill: false).transform;
             selection.localPosition += Vector3.back * 15f;
 
-            preview = UIB.Image("Preview", canvas, new(96f, 216f, 160f, 240f, new(0f, 0f)), shopc, fill: false).transform;
+            preview = UIB.Image("Preview", canvas, new(96f, 216f, 160f, 240f, new(0f, 0f)), semi, fill: false).transform;
             buttons = UIB.Rect("Buttons", canvas, new(-136f, 216f, 240f, 240f, new(1f, 0f)));
 
             UIB.Table("Buy Menu", canvas, Fill, table =>
@@ -57,7 +57,7 @@ public class Customization : MonoBehaviour
                 buyMenu = table;
                 buyMenu.localPosition = buyMenu.localPosition with { z = -30f };
 
-                UIB.Image("Border", table, Fill, shopc, fill: false);
+                UIB.Image("Border", table, Fill, semi, fill: false);
 
                 buyIcon = UIB.Image("Icon", table, new(0f, 80f, 96f, 96f));
                 buyText = UIB.Text("Message", table, Huge, size: 280);
@@ -174,7 +174,7 @@ public class Customization : MonoBehaviour
         }
 
         int l = second ? Shop.SelectedJacket - offset : Shop.SelectedHat;
-        UIB.Image("Selection", buttons, Shp(20f + l % 6 * 40f, -20f - l / 6 * 40f), shopc, fill: false).transform.localPosition += Vector3.back * 10f;
+        UIB.Image("Selection", buttons, Shp(20f + l % 6 * 40f, -20f - l / 6 * 40f), semi, fill: false).transform.localPosition += Vector3.back * 10f;
 
         #endregion
     }

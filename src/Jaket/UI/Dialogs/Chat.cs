@@ -13,7 +13,7 @@ using Jaket.Net.Types;
 using Jaket.Sam;
 using Jaket.World;
 
-using static Pal;
+using static Jaket.UI.Lib.Pal;
 using static Rect;
 
 /// <summary> Front end of the chat, back end implemented via Steamworks. </summary>

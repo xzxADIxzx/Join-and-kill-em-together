@@ -11,7 +11,7 @@ using Jaket.Net;
 using Jaket.Sprays;
 using Jaket.World;
 
-using static Pal;
+using static Jaket.UI.Lib.Pal;
 using static Rect;
 
 /// <summary> Global spray settings not related to the lobby. </summary>
@@ -106,7 +106,7 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
             else
                 UIB.Button(n, sprays, r, red, align: TextAnchor.MiddleLeft, clicked: () => Bundle.Hud("sprays.invalid"));
         }
-        if (SprayManager.Loaded.Count < 6) UIB.Button("+", sprays, Btn(28f + 48f * SprayManager.Loaded.Count), grey, clicked: OpenFolder);
+        if (SprayManager.Loaded.Count < 6) UIB.Button("+", sprays, Btn(28f + 48f * SprayManager.Loaded.Count), gray, clicked: OpenFolder);
 
         preview.sprite = SprayManager.CurrentSpray != null ? SprayManager.CurrentSpray.Sprite : UIB.Checkmark;
         preview.preserveAspect = true;
@@ -117,7 +117,7 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
         for (int i = 1; i < players.childCount; i++) Dest(players.GetChild(i).gameObject);
         if ((LobbyController.Lobby?.MemberCount ?? 0) <= 1)
         {
-            UIB.Text("#sprays.alone", players, Size(320f, 48f), grey);
+            UIB.Text("#sprays.alone", players, Size(320f, 48f), gray);
             return;
         }
 
