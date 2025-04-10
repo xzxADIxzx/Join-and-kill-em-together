@@ -40,7 +40,11 @@ public class Plugin : MonoBehaviour
         Events.OnMainMenuLoad += Init;
     }
 
-    private void OnApplicationQuit() => Log.Flush();
+    private void OnApplicationQuit()
+    {
+        Log.Info("[INIT] Received an application shutdown notification");
+        Log.Flush();
+    }
 
     private void Init()
     {
@@ -49,7 +53,7 @@ public class Plugin : MonoBehaviour
 
         Log.Info("[INIT] Loading content...");
 
-        // Pal.Load();
+        Pal.Load();
         Tex.Load();
         ModAssets.Load();
 
