@@ -4,26 +4,31 @@ using UnityEngine;
 
 using Jaket.Net;
 
-/// <summary> All teams. Teams needed for PvP mechanics. </summary>
+using static Jaket.UI.Lib.Pal;
+
+/// <summary> All teams. They are required by versus mechanics. </summary>
 public enum Team
 {
     Yellow, Red, Green, Blue, Pink
 }
 
-/// <summary> Extension class that allows you to get team data. </summary>
-public static class TeamExtensions
+/// <summary> Set of different tools for working with teams. </summary>
+public static class Teams
 {
-    /// <summary> Returns the team color, used only in the interface. </summary>
+    /// <summary> List of all of the teams that is used for iterating. </summary>
+    public static Team[] All = { Team.Yellow, Team.Red, Team.Green, Team.Blue, Team.Pink };
+
+    /// <summary> Returns the color of the team. </summary>
     public static Color Color(this Team team) => team switch
     {
-        Team.Yellow => new(1f, .8f, .3f),
-        Team.Red    => new(1f, .2f, .1f),
-        Team.Green  => new(0f, .9f, .4f),
-        Team.Blue   => new(0f, .5f,  1f),
-        Team.Pink   => new(1f, .4f, .8f),
-        _ => new(1f, 1f, 1f)
+        Team.Yellow => yellow,
+        Team.Red    => red,
+        Team.Green  => green,
+        Team.Blue   => blue,
+        Team.Pink   => pink,
+        _           => white
     };
 
-    /// <summary> Whether this team is allied with the player. </summary>
+    /// <summary> Whether the team is allied with the local player. </summary>
     public static bool Ally(this Team team) => team == Networking.LocalPlayer.Team || !LobbyController.PvPAllowed;
 }

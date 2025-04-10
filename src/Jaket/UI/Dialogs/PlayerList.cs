@@ -45,11 +45,11 @@ public class PlayerList : Fragment
             b.Subbar(40f, s =>
             {
                 s.Setup(false, 0f);
-                for (Team i = Team.Yellow; i <= Team.Pink; i++) s.TeamButton(i, () =>
+                Teams.All.Each(t => s.TeamButton(t, () =>
                 {
-                    Networking.LocalPlayer.Team = i;
+                    Networking.LocalPlayer.Team = t;
                     Events.OnTeamChange.Fire();
-                });
+                }));
             });
         });
         if (LobbyController.Online) Bar(120f + (LobbyController.Lobby?.MemberCount ?? 0f) * 48f, b =>
