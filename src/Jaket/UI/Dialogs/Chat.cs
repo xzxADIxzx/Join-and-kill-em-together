@@ -200,7 +200,7 @@ public class Chat : CanvasSingleton<Chat>
     public void Receive(string msg, bool format = true)
     {
         // add the given message to the list
-        if (format) msg = Bundle.ParseColors(msg);
+        if (format) msg = Bundle.Parse(msg);
         var text = UIB.Text(msg, list, Msg(WIDTH - 16f), null, 16, TextAnchor.MiddleLeft);
 
         float height = text.preferredHeight + 4f;
@@ -220,7 +220,7 @@ public class Chat : CanvasSingleton<Chat>
     }
 
     /// <summary> Writes a message to the chat, formatting it beforehand. </summary>
-    public void Receive(string color, string author, string msg) => Receive($"<b>[#{color}]{author}[][#FF7F50]:[]</b> {Bundle.CutDangerous(msg)}");
+    public void Receive(string color, string author, string msg) => Receive($"<b>[#{color}]{author}[][#FF7F50]:[]</b> {Bundle.CutDanger(msg)}");
 
     /// <summary> Speaks the message before writing it. </summary>
     public void ReceiveTTS(string color, Friend author, string msg)

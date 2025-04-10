@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
-using UnityEngine;
 
 using Jaket.IO;
 using Jaket.UI.Dialogs;
@@ -70,7 +69,7 @@ public static class Bundle
             if (string.IsNullOrWhiteSpace(line) || line[0] == '#') continue;
 
             var pair = line.Split('=');
-            lines.Add(pair[0].Trim(), ParseColors(pair[1].Trim()));
+            lines.Add(pair[0].Trim(), Parse(pair[1].Trim()));
         }
 
         Loaded = localeId;
@@ -83,33 +82,35 @@ public static class Bundle
     public static string CutColors(string original) => Regex.Replace(original, "<.*?>|\\[.*?\\]", string.Empty);
 
     // <summary> Returns a string without the tags that can cause lags. </summary>
-    public static string CutDangerous(string original) => Regex.Replace(original, "</?size.*?>|</?quad.*?>|</?material.*?>", string.Empty).Replace('\n', ' ');
+    public static string CutDanger(string original) => Regex.Replace(original, "</?size.*?>|</?quad.*?>|</?material.*?>", string.Empty).Replace('\n', ' ');
 
-    /// <summary> Parses the colors in the given string so that Unity could understand them. </summary>
-    public static string ParseColors(string original, int maxSize = 64)
+    /// <summary> Parses the formatting tags in the given string so that Unity can understand them. </summary>
+    public static string Parse(string original, int maxSize = 64)
     {
-        Stack<bool> types = new(); // true - font size, false - color
+        Stack<int> types = new();
+        string Closing() => types.Pop() switch { 0 => "</color>", 1 => "</size>", 2 => "</b>", _ => "</i>" };
+
         StringBuilder builder = new(original.Length);
         int pointer = 0;
 
-        // \n is read as a regular text, so it must be manually replaced with a transfer char
-        // space and \ are needed to prevent OutOfBounds
+        // backslash-ns are read as regular text, so they must be manually replaced with the newline character
+        // the space and backslash are needed to prevent out of bounds
         original = $" {original.Replace("\\n", "\n")}\\";
 
         while (pointer < original.Length)
         {
-            // find the index of the next special char
+            // find the index of the next special character
             int old = pointer;
             pointer = original.IndexOfAny(new[] { '\\', '[' }, pointer);
 
-            // save a piece of the original line without special characters
-            builder.Append(original.Substring(old, pointer - old));
+            // save the piece between the previous pointer and the special character
+            builder.Append(original[old..pointer]);
 
             // process the special char
             char c = original[pointer];
 
             if (c == '\\') pointer++;
-            else if (c == '[')
+            if (c == '[')
             {
                 if (original[pointer - 1] == '\\')
                 {
@@ -118,7 +119,7 @@ public static class Bundle
                 }
                 else if (original[pointer + 1] == ']')
                 {
-                    builder.Append(types.Pop() ? "</size>" : "</color>");
+                    builder.Append(types.Count > 0 ? Closing() : "[]");
                     pointer += 2;
                 }
                 else
@@ -126,20 +127,41 @@ public static class Bundle
                     old = ++pointer;
                     pointer = original.IndexOf(']', pointer);
 
-                    var content = original.Substring(old, pointer - old);
-                    bool isSize = int.TryParse(content, out var size);
+                    var tag = original[old..pointer++];
 
-                    types.Push(isSize);
-                    builder.Append(isSize ? "<size=" : "<color=").Append(isSize ? Mathf.Min(size, maxSize) : content).Append('>');
-                    pointer++;
+                    if (int.TryParse(tag, out int size))
+                    {
+                        types.Push(1);
+                        builder.Append("<size=").Append(Math.Min(size, maxSize)).Append(">");
+                    }
+                    else if (tag == "b" || tag == "bold")
+                    {
+                        types.Push(2);
+                        builder.Append("<b>");
+                    }
+                    else if (tag == "i" || tag == "italic")
+                    {
+                        types.Push(3);
+                        builder.Append("<i>");
+                    }
+                    else if (tag.Length > 3 && tag[0] == '#')
+                    {
+                        types.Push(0);
+                        builder.Append("<color=").Append(tag[1..]).Append(">");
+                    }
+                    else if (tag.Length > 3 && Colors[Hash(tag)] != null)
+                    {
+                        types.Push(0);
+                        builder.Append("<color=").Append(Colors[Hash(tag)]).Append(">");
+                    }
                 }
             }
         }
 
-        // just in case
-        foreach (var size in types) builder.Append(size ? "</size>" : "</color>");
+        // close the remaining tags
+        while (types.Count > 0) builder.Append(Closing());
 
-        return builder.ToString().Substring(1);
+        return builder.ToString()[1..];
     }
 
     #endregion
