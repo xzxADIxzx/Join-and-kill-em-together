@@ -13,7 +13,14 @@ using static Jaket.UI.Lib.Pal;
 /// <summary> Dialog that displays all players and teams. </summary>
 public class PlayerList : Fragment
 {
-    public PlayerList(Transform root) : base(root, "PlayerList", true) => Events.OnTeamChange += () => { if (Shown) Rebuild(); };
+    public PlayerList(Transform root) : base(root, "PlayerList", true) => Events.OnTeamChange += () =>
+    {
+        if (Shown)
+        {
+            Rebuild();
+            foreach (Transform child in Sidebar.transform) child.localScale = Vector3.one;
+        }
+    };
 
     public override void Toggle()
     {
@@ -44,6 +51,31 @@ public class PlayerList : Fragment
                     Events.OnTeamChange.Fire();
                 });
             });
+        });
+        if (LobbyController.Online) Bar(120f + (LobbyController.Lobby?.MemberCount ?? 0f) * 48f, b =>
+        {
+            b.Setup(true);
+            b.Text("#player-list.list", 32f, 32);
+
+            LobbyController.Lobby?.Members.Each(m => b.Subbar(40f, s =>
+            {
+                // TODO add sprites of crown and ban hammer + clear ban list features
+                s.Setup(false, 0f);
+                if (LobbyController.LastOwner == m.Id)
+                {
+                    s.ProfileButton(m, false);
+                    s.FillButton(ModAssets.ChanFallen, yellow, () => Bundle.Hud("player-list.owner"));
+                }
+                else if (LobbyController.IsOwner)
+                {
+                    s.ProfileButton(m, false);
+                    s.FillButton(ModAssets.ChanFallen, red, () => Administration.Ban(m.Id.AccountId));
+                }
+                else s.ProfileButton(m, true);
+            }));
+
+            b.Separator();
+            b.TextButton("#player-list.clear", red, callback: () => { });
         });
         VersionBar();
     }

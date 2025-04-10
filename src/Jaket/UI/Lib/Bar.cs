@@ -25,6 +25,9 @@ public class Bar : MonoBehaviour
     /// <summary> Rectangle that contains this element. </summary>
     private RectTransform rect;
 
+    /// <summary> Whether the bar is empty or has children. </summary>
+    public bool Empty => filled == 0f;
+
     /// <summary> Sets up the basic options of the bar. </summary>
     public void Setup(bool voh, float margin = 8f, float padding = 8f)
     {

@@ -43,7 +43,7 @@ public class Fragment
     {
         Sidebar ??= Component<Bar>(Builder.Rect("Sidebar", Content, new(256f, 0f, 480f, 0f, new(0f, 0f), new(0f, 1f))).gameObject, b => b.Setup(true, 16f, 16f));
 
-        var img = Sidebar.Image(Sidebar.transform.childCount == 0 ? Tex.Back : Tex.Fill, height, semi, multiplier: 2f).gameObject;
+        var img = Sidebar.Image(Sidebar.Empty ? Tex.Back : Tex.Fill, height, semi, multiplier: 2f).gameObject;
 
         Component(img, cons);
         Component<HudOpenEffect>(img, e => e.speed = 38f - Sidebar.transform.childCount * 6f);
