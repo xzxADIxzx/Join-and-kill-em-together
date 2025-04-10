@@ -2,7 +2,7 @@ namespace Jaket.UI.Lib;
 
 using UnityEngine;
 
-/// <summary> Color pallette that I find appealing. </summary>
+/// <summary> Color palette that I find appealing. </summary>
 public static class Pal
 {
     /// <summary> Hex variants of the colors. </summary>
@@ -58,6 +58,42 @@ public static class Pal
     discord = From(0x5865F2),
     paypal  = From(0x003087),
     bmac    = From(0xFFDD00);
+
+    /// <summary> Hash map containing hex variants of the colors. </summary>
+    public static string[] Colors;
+
+    /// <summary> Fills the hash map with basic colors. </summary>
+    public static void Load()
+    {
+        void Put(string name, string color)
+        {
+            Colors ??= new string[byte.MaxValue + 1];
+            var hash = Hash(name);
+
+            if (Colors[hash] == null)
+                Colors[hash] = color;
+            else
+                Log.Warning($"[PALE] Hash collision has occurred, the hash of {name} is {hash}");
+        }
+
+        Put("black",   Black);
+        Put("dark",    Dark);
+        Put("gray",    Gray);
+        Put("light",   Light);
+        Put("white",   White);
+        Put("red",     Red);
+        Put("orange",  Orange);
+        Put("yellow",  Yellow);
+        Put("green",   Green);
+        Put("blue",    Blue);
+        Put("pink",    Pink);
+        Put("purple",  Purple);
+        Put("coral",   Coral);
+        Put("discord", Discord);
+    }
+
+    /// <summary> Returns the hash of the given color name. </summary>
+    public static byte Hash(string str) => (byte)(str[0] * 2 + str[1] * 4 + str[2] * 8);
 
     /// <summary> Returns int version of the given hex color. </summary>
     public static Color32 From(int hex) => new((byte)(hex >> 16 & 0xFF), (byte)(hex >> 8 & 0xFF), (byte)(hex >> 0 & 0xFF), 0xFF);
