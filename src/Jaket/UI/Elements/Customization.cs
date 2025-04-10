@@ -145,7 +145,7 @@ public class Customization : MonoBehaviour
 
         #region preview
 
-        foreach (Transform suit in preview) suit.gameObject.SetActive(false);
+        preview.Each(s => s.gameObject.SetActive(false));
 
         int hat = Shop.Entries[Shop.SelectedHat].hierarchyId;
         if (hat != -1) preview.GetChild(hat).gameObject.SetActive(true);

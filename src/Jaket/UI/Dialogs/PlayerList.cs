@@ -18,7 +18,7 @@ public class PlayerList : Fragment
         if (Shown)
         {
             Rebuild();
-            foreach (Transform child in Sidebar.transform) child.localScale = Vector3.one;
+            Sidebar.transform.Each(c => c.localScale = Vector3.one);
         }
     };
 

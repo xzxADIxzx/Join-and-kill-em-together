@@ -156,7 +156,7 @@ public class Doll : MonoBehaviour
 
     public void ApplySuit()
     {
-        foreach (Transform suit in Suits) suit.gameObject.SetActive(false);
+        Suits.Each(s => s.gameObject.SetActive(false));
 
         int hat = Shop.Entries[Hat].hierarchyId;
         if (hat != -1) Suits.GetChild(hat).gameObject.SetActive(true);

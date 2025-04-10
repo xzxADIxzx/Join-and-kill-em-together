@@ -57,7 +57,7 @@ public class RemotePlayer : Entity
             // recreate the weapon if the animation is over
             if (Doll.Emote == 0xFF) LastWeapon = 0xFF;
             // or destroy it if the animation has started
-            else foreach (Transform child in Doll.Hand) Dest(child.gameObject);
+            else Doll.Hand.Each(Dest);
         };
         Header = new(Owner = Id, transform);
         tag = "Enemy";
@@ -98,7 +98,7 @@ public class RemotePlayer : Entity
         }
         if (LastWeapon != Weapon)
         {
-            foreach (Transform child in Doll.Hand) Dest(child.gameObject);
+            Doll.Hand.Each(Dest);
             if ((LastWeapon = Weapon) != 0xFF)
             {
                 Weapons.Instantiate(Weapon, Doll.Hand);

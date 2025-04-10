@@ -126,7 +126,7 @@ public class Enemies
         }
         else
         {
-            DestImmediate(enemyId.name != "Body" && enemyId.name != "StatueBoss" ? enemyId.gameObject : enemyId.transform.parent.gameObject);
+            Imdt(enemyId.name != "Body" && enemyId.name != "StatueBoss" ? enemyId.gameObject : enemyId.transform.parent.gameObject);
             return false;
         }
     }

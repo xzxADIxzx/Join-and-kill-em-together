@@ -96,7 +96,7 @@ public class Items
         if (LobbyController.IsOwner || single)
             itemId.gameObject.AddComponent<Item>();
         else
-            DestImmediate(itemId.gameObject);
+            Imdt(itemId.gameObject);
     }
 
     /// <summary> Synchronizes all items in the level. </summary>

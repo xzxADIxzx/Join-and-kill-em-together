@@ -29,7 +29,7 @@ public class Plugin : MonoBehaviour
     /// <summary> Path to the dll file of the mod. </summary>
     public string Location;
 
-    private void Awake() => DontDest(Instance = this); // save the instance of the mod for later use and prevent it from being destroyed by the game
+    private void Awake() => Keep(Instance = this); // save the instance of the mod for later use and prevent it from being destroyed by the game
 
     private void Start()
     {

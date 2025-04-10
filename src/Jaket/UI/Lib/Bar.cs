@@ -40,7 +40,7 @@ public class Bar : MonoBehaviour
     /// <summary> Clears the bar by destroying children of it. </summary>
     public void Clear()
     {
-        foreach (Transform child in rect) Dest(child.gameObject);
+        rect.Each(Dest);
         filled = 0f;
     }
 

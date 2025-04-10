@@ -143,20 +143,20 @@ public class ModAssets
         // dolls & plushies
         Load<GameObject>("Player Doll.prefab", p =>
         {
-            DontDest(Doll = p);
+            Keep(Doll = p);
             FixMaterials(p);
         });
 
         Load<GameObject>("Player Doll Preview.prefab", p =>
         {
-            DontDest(Preview = p);
+            Keep(Preview = p);
             FixMaterials(p);
         });
 
         Load<Texture>("V2-plushie", t =>
         {
             int i = EntityType.V2 - EntityType.BlueSkull;
-            DontDest(V2 = Items.Prefabs[i] = Inst(Items.Prefabs[i]));
+            Keep(V2 = Items.Prefabs[i] = Inst(Items.Prefabs[i]));
 
             V2.name = "DevPlushie (V2)";
             V2.GetComponentInChildren<Renderer>().material.mainTexture = t;
@@ -166,7 +166,7 @@ public class ModAssets
         Load<Texture>("V3-plushie", t =>
         {
             int i = EntityType.V3 - EntityType.BlueSkull;
-            DontDest(V3 = Items.Prefabs[i] = Inst(Items.Prefabs[i]));
+            Keep(V3 = Items.Prefabs[i] = Inst(Items.Prefabs[i]));
 
             V3.name = "DevPlushie (V3)";
             V3.GetComponentInChildren<Renderer>().material.mainTexture = t;
@@ -175,7 +175,7 @@ public class ModAssets
 
         Load<GameObject>("DevPlushie (xzxADIxzx).prefab", p =>
         {
-            DontDest(xzxADIxzx = Items.Prefabs[EntityType.xzxADIxzx - EntityType.BlueSkull] = p);
+            Keep(xzxADIxzx = Items.Prefabs[EntityType.xzxADIxzx - EntityType.BlueSkull] = p);
             FixMaterials(p, new(1.3f, 1.3f, 1.3f));
 
             Component<ItemIdentifier>(p, itemId =>
@@ -192,7 +192,7 @@ public class ModAssets
 
         Load<GameObject>("DevPlushie (Sowler).prefab", p =>
         {
-            DontDest(Sowler = Items.Prefabs[EntityType.Sowler - EntityType.BlueSkull] = p);
+            Keep(Sowler = Items.Prefabs[EntityType.Sowler - EntityType.BlueSkull] = p);
             FixMaterials(p);
 
             Component<ItemIdentifier>(p, itemId =>

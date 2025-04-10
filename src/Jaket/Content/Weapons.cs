@@ -80,6 +80,6 @@ public class Weapons
     public static void FixLayer(Transform transform)
     {
         transform.gameObject.layer = 25;
-        foreach (Transform child in transform) FixLayer(child);
+        transform.Each(FixLayer);
     }
 }

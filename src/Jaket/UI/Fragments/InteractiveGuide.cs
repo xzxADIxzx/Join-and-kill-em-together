@@ -68,7 +68,7 @@ public class InteractiveGuide : CanvasSingleton<InteractiveGuide>
     {
         if (Scene == "Main Menu")
         {
-            foreach (Transform child in transform) child.gameObject.SetActive(false);
+            transform.Each(c => c.gameObject.SetActive(false));
             index = 0; Shown = false;
         }
         else if (!offered) Bundle.Hud("guide.offer", offered = true);
@@ -77,7 +77,7 @@ public class InteractiveGuide : CanvasSingleton<InteractiveGuide>
     /// <summary> Launches the guide. </summary>
     public void Launch()
     {
-        foreach (Transform child in transform) child.gameObject.SetActive(false);
+        transform.Each(c => c.gameObject.SetActive(false));
         transform.GetChild(index = 0).gameObject.SetActive(Shown = true);
         Movement.UpdateState();
     }

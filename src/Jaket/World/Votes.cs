@@ -66,17 +66,17 @@ public class Votes
         ObjFind("Canvas/PowerUpVignette/Panel/Intro/Text").AddComponent<Voting>();
         ObjFind("Canvas/PowerUpVignette/Panel/Intro/Text (1)").AddComponent<Voting>();
 
-        foreach (Transform act in ObjFind("Canvas/PowerUpVignette/Panel/Aspect Ratio Mask").transform)
+        ObjFind("Canvas/PowerUpVignette/Panel/Aspect Ratio Mask").transform.Each(act =>
         {
-            foreach (Transform dialog in act)
+            act.Each(dialog =>
             {
                 if (dialog.name.Contains("Dialogue"))
                     dialog.transform.GetChild(0).gameObject.AddComponent<Voting>();
 
                 if (dialog.name.Contains("Choices"))
                     dialog.gameObject.AddComponent<Voting>();
-            }
-        }
+            });
+        });
 
         var fix = ObjFind("Canvas/PowerUpVignette/Panel/Aspect Ratio Mask/Middle/Choices Box (1)").AddComponent<ObjectActivator>();
         fix.reactivateOnEnable = true;
