@@ -28,6 +28,11 @@ public static class UI
     public static PlayerList PlayerList;
 
     #endregion
+    #region fragments
+
+    public static MainMenuAccess Access;
+
+    #endregion
     #region groups
 
     /// <summary> Group containing all of the dialogs. </summary>
@@ -49,8 +54,10 @@ public static class UI
         LobbyTab = new(root);
         PlayerList = new(root);
 
+        Access = new(root);
+
         Dialogs = new Fragment[] { LobbyTab, PlayerList };
-        Fragments = new Fragment[] { };
+        Fragments = new Fragment[] { Access };
         LeftGroup = new Fragment[] { LobbyTab, PlayerList };
         MidlGroup = new Fragment[] { };
     }

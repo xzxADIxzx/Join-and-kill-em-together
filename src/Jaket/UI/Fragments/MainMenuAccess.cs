@@ -3,34 +3,30 @@ namespace Jaket.UI.Fragments;
 using UnityEngine;
 using UnityEngine.UI;
 
+using ImageType = UnityEngine.UI.Image.Type;
+
 using Jaket.Net;
 using Jaket.UI.Dialogs;
+using Jaket.UI.Lib;
 
-/// <summary> Access to the mod functions through the main menu. </summary>
-public class MainMenuAccess : CanvasSingleton<MainMenuAccess>
+using static Jaket.UI.Lib.Pal;
+
+/// <summary> Fragment that provides access to lobbies through the main menu. </summary>
+public class MainMenuAccess : Fragment
 {
-    /// <summary> Table containing the access buttons. </summary>
-    private Transform table;
-    /// <summary> Main menu table. </summary>
-    private GameObject menu;
-
-    private void Start()
+    public MainMenuAccess(Transform root) : base(root, "MainMenuAccess", true, hide: UI.Access.Toggle)
     {
-        GetComponent<CanvasScaler>().screenMatchMode = CanvasScaler.ScreenMatchMode.Expand;
+        Content.GetComponent<CanvasScaler>().screenMatchMode = CanvasScaler.ScreenMatchMode.Expand;
 
-        table = UIB.Rect("Access Table", transform, new(0f, -364f, 720f, 40f));
-        table.gameObject.AddComponent<HudOpenEffect>();
+        var col = Random.value < .1f ? pink : green;
+        var drk = Darker(col);
 
-        UIB.Button("#lobby-tab.join", table, new(-182f, 0f, 356f, 40f), clicked: LobbyController.JoinByCode).targetGraphic.color = new(1f, .1f, .9f);
-        UIB.Button("#lobby-tab.list", table, new(182f, 0f, 356f, 40f), clicked: LobbyList.Instance.Toggle).targetGraphic.color = new(1f, .4f, .8f);
-    }
+        Builder.Image(Rect("Line", new(645f, -255f, 570f, 3f)), null, col, ImageType.Simple);
+        Builder.Image(Rect("Line", new(645f, -428f, 570f, 3f)), null, drk, ImageType.Simple);
 
-    private void Update() => table.gameObject.SetActive(menu.activeSelf);
+        Builder.TextButton(Rect("Button", new(645f, -300f, 570f, 75f)), Tex.Large, col, "#lobby-tab.list", 36, TextAnchor.MiddleCenter, LobbyList.Instance.Toggle);
+        Builder.TextButton(Rect("Button", new(645f, -384f, 570f, 75f)), Tex.Large, drk, "#lobby-tab.join", 36, TextAnchor.MiddleCenter, LobbyController.JoinByCode);
 
-    /// <summary> Toggles visibility of the access table. </summary>
-    public void Toggle()
-    {
-        gameObject.SetActive(Shown = Scene == "Main Menu");
-        if (Shown) (menu = ObjFind("Main Menu (1)")).transform.Find("Panel").transform.localPosition = new(0f, -292f, 0f);
+        Builder.Text(Rect("Tip", new(645f, -490f, 620f, 40f)), "#access", 21, white, TextAnchor.MiddleCenter);
     }
 }

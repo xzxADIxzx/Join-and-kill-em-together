@@ -55,7 +55,7 @@ public class ModAssets
     /// <summary> Loads the assets bundle and other necessary stuff. </summary>
     public static void Load()
     {
-        var bundle = AssetBundle.LoadFromFile(Files.GetFile(Files.Root, "jaket-assets.bundle"));
+        var bundle = AssetBundle.LoadFromFile(Files.GetFile(Files.Root, "assets.bundle"));
         /*
         GameAssets.Squeaky(); // preload the sound; otherwise, it crashes .-.
         */
