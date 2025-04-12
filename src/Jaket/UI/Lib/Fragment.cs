@@ -38,35 +38,38 @@ public class Fragment
     /// <summary> Rebuilds the fragment if possible. </summary>
     public virtual void Rebuild() { }
 
+    /// <summary> Adds a rectangle, it is not preconfigured. </summary>
+    protected RectTransform Rect(string name, Rect rect) => Builder.Rect(name, Content, rect);
+
     /// <summary> Adds a bar, it is located on the left and has a constant width. </summary>
     protected void Bar(float height, Cons<Bar> cons)
     {
-        Sidebar ??= Component<Bar>(Builder.Rect("Sidebar", Content, new(256f, 0f, 480f, 0f, new(0f, 0f), new(0f, 1f))).gameObject, b => b.Setup(true, 16f, 16f));
+        Sidebar ??= Component<Bar>(Rect("Sidebar", new(256f, 0f, 480f, 0f, new(0f, 0f), new(0f, 1f))).gameObject, b => b.Setup(true, 16f, 16f));
 
         var img = Sidebar.Image(Sidebar.Empty ? Tex.Back : Tex.Fill, height, semi, multiplier: 2f).gameObject;
 
         Component(img, cons);
         Component<HudOpenEffect>(img, e => e.speed = 38f - Sidebar.transform.childCount * 6f);
 
-        if (Content.Find("Deco") == null) Builder.Image(Builder.Rect("Deco", Content, new(0f, 0f, 32f, 0f, new(0f, 0f), new(0f, 1f))), Tex.Dash, semi, ImageType.Tiled, 2f);
+        if (Content.Find("Deco") == null) Builder.Image(Rect("Deco", new(0f, 0f, 32f, 0f, new(0f, 0f), new(0f, 1f))), Tex.Dash, semi, ImageType.Tiled, 2f);
     }
 
     /// <summary> Adds a bar, it is located in the center and has the given size. </summary>
     protected void Bar(float width, float height, Cons<Bar> cons)
     {
-        var img = Builder.Image(Builder.Rect("Centerbar", Content, new(width, height)), Tex.Back, semi, ImageType.Sliced, 2f).gameObject;
+        var img = Builder.Image(Rect("Centerbar", new(width, height)), Tex.Back, semi, ImageType.Sliced, 2f).gameObject;
 
         Component(img, cons);
         Component<HudOpenEffect>(img, e => e.speed = 32f);
 
-        if (Content.Find("Deco") == null) Builder.Image(Builder.Rect("Deco", Content, new(width + 24f, height + 24f)), Tex.Large, semi, ImageType.Sliced, 2f);
+        if (Content.Find("Deco") == null) Builder.Image(Rect("Deco", new(width + 24f, height + 24f)), Tex.Large, semi, ImageType.Sliced, 2f);
     }
 
     /// <summary> Adds a bar, it displays the current version of the project. </summary>
     protected void VersionBar()
     {
         var bar = Builder.Rect("Version", Sidebar.transform, new(0f, 36f, 480f - 36f, 40f, new(.5f, 0f)));
-        var txt = Builder.Rect("Text", bar, Rect.Fill);
+        var txt = Builder.Rect("Text", bar, Lib.Rect.Fill);
 
         Builder.Image(bar, Tex.Fill, semi, ImageType.Sliced);
         Builder.Text(txt, $"Jaket version is {Version.CURRENT}{(Version.DEBUG ? "-beta" : "")}", 24, gray, TextAnchor.MiddleCenter).alignByGeometry = true;
