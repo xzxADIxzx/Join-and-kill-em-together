@@ -9,8 +9,10 @@
     "Hydraxous.ULTRAKILL.Configgy",
     "com.eternalUnion.pluginConfigurator",
     "com.eternalUnion.angryLevelLoader",
+    "envyandspite.ultrakill.envylevelloader",
 
     // qol and customization
+    "Hydraxous.ULTRAKILL.Ultracam",
     "eternalUnion.ultrakill.styleEditor",
     "dev.flazhik.handpaint",
     "dev.flazhik.jukebox",
