@@ -94,7 +94,7 @@ public static class Pal
     }
 
     /// <summary> Returns the hash of the given color name. </summary>
-    public static byte Hash(string str) => (byte)(str.Length ^ (str[0] - 96) << 1 + (str[1] - 96) << 2 + (str[2] - 96) << 3);
+    public static byte Hash(string str) => (byte)(str.Length ^ (str[0] - 96 << 1) + (str[1] - 96 << 2) + (str[2] - 96 << 3));
 
     /// <summary> Returns int version of the given hex color. </summary>
     public static Color32 From(int hex) => new((byte)(hex >> 16 & 0xFF), (byte)(hex >> 8 & 0xFF), (byte)(hex >> 0 & 0xFF), 0xFF);
