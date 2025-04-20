@@ -64,7 +64,7 @@ public class LobbyList : Fragment
 
     public override void Rebuild()
     {
-        refresh.GetComponentInChildren<Text>().text = Bundle.Get(LobbyController.FetchingLobbies ? "lobby-list.wait" : "lobby-list.refresh");
+        refresh.GetComponentInChildren<Text>().text = Bundle.Get(LobbyController.FetchingLobbies ? "lobby-list.refreshing" : "lobby-list.refresh");
         content.Clear();
 
         if (lobbies == null) return;
@@ -72,6 +72,7 @@ public class LobbyList : Fragment
         var empty = string.IsNullOrWhiteSpace(search);
         int count = empty ? lobbies.Length : lobbies.Count(l => l.GetData("name").ToLower().Contains(search));
 
+        (content.transform as RectTransform).pivot = new(.5f, 1f);
         (content.transform as RectTransform).sizeDelta = new(856f, count * 48f - 8f);
 
         lobbies.Each(l => empty || l.GetData("name").ToLower().Contains(search), l =>
