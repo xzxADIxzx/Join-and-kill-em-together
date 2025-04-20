@@ -27,7 +27,7 @@ public class MainMenuAccess : Fragment
         var col = Random.value < .1f ? pink : green;
         var drk = Darker(col);
 
-        Component<Bar>(Rect("Content", new(-315f, -341.5f, 570f, 176f, new(1f, 0.5f))).gameObject, b =>
+        Component<Bar>(Rect("Content", new(-315f, -341.5f, 570f, 176f, new(1f, .5f))).gameObject, b =>
         {
             b.Setup(true, 0f, 6f);
             b.Update(() =>
@@ -43,9 +43,9 @@ public class MainMenuAccess : Fragment
                 addition[1] = s.MenuButton("#lobby-tab.list", col, LobbyList.Instance.Toggle).gameObject;
                 addition[2] = s.MenuButton("#lobby-tab.join", drk, LobbyController.JoinByCode).gameObject;
             });
-            addition[3] = b.Image(null, 3f, col, ImageType.Simple).gameObject;
+            addition[3] = b.Image(null, 3f, drk, ImageType.Simple).gameObject;
         });
-        addition[4] = Builder.Text(Rect("Tip", new(645f, -490f, 620f, 40f)), "#access", 21, white, TextAnchor.MiddleCenter).gameObject;
+        addition[4] = Builder.Text(Rect("Tip", new(-315f, 50f, 620f, 40f, new(1f, 0f))), "#access", 21, white, TextAnchor.MiddleCenter).gameObject;
 
         Content.GetComponentsInChildren<Image>().Each(i => i.pixelsPerUnitMultiplier = 4f / 1.5f);
     }
