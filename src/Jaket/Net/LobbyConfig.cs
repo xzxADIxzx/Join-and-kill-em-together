@@ -1,6 +1,7 @@
 namespace Jaket.Net;
 
 using Steamworks;
+using System.Collections.Generic;
 
 /// <summary> Class responsible for configuring the lobby. </summary>
 public static class LobbyConfig
@@ -57,6 +58,24 @@ public static class LobbyConfig
     {
         get => Get("heal-bosses") == bool.TrueString;
         set => Set("heal-bosses", value.ToString());
+    }
+    /// <summary> Fraction of the initial health that is added to bosses for each player. </summary>
+    public static float PPP
+    {
+        get => int.TryParse(Get("ppp"), out int ppp) ? ppp / 8f : 0f;
+        set => Set("ppp", ((int)value).ToString());
+    }
+    /// <summary> List of privileged players, they can use cheats. </summary>
+    public static IEnumerable<string> Privileged
+    {
+        get => Get("privileged").Split(' ');
+        set => Set("privileged", string.Join(' ', value));
+    }
+    /// <summary> List of banned players, account ids to be accurate. </summary>
+    public static IEnumerable<string> Banned
+    {
+        get => Get("banned").Split(' ');
+        set => Set("banned", string.Join(' ', value));
     }
 
     /// <summary> Resets the lobby config to its default value. </summary>
