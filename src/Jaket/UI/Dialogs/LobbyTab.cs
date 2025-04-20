@@ -59,7 +59,7 @@ public class LobbyTab : Fragment
             b.Setup(true);
             b.Text("#lobby-tab.config", 32f, 32);
 
-            name = b.Field("#lobby-tab.name", s => LobbyController.Lobby?.SetData("name", s));
+            name = b.Field("#lobby-tab.name", s => LobbyConfig.Name = s);
             name.characterLimit = 30;
 
             accessibility = b.TextButton("", callback: () =>
@@ -73,18 +73,13 @@ public class LobbyTab : Fragment
                 Rebuild();
             });
 
-            pvp = b.Toggle("#lobby-tab.allow-pvp", b => LobbyController.Lobby?.SetData("pvp", b.ToString()));
-            mod = b.Toggle("#lobby-tab.allow-mod", b => LobbyController.Lobby?.SetData("mod", b.ToString()));
+            pvp = b.Toggle("#lobby-tab.allow-pvp", b => LobbyConfig.PvPAllowed = b);
+            mod = b.Toggle("#lobby-tab.allow-mod", b => LobbyConfig.ModsAllowed = b);
 
             b.Text("#lobby-tab.ppp-desc", 46f, 16, light, TextAnchor.MiddleLeft).alignByGeometry = true;
-            ppp = b.Slider(0, 16, i =>
-            {
-                LobbyController.PPP = i / 8f;
-                LobbyController.Lobby?.SetData("ppp", i.ToString());
+            ppp = b.Slider(0, 16, i => LobbyConfig.PPP = i, "#lobby-tab.ppp-name", i => $"{(int)(i / 8f * 100f)}PPP");
 
-            }, "#lobby-tab.ppp-name", i => $"{(int)(i / 8f * 100f)}PPP");
-
-            bosses = b.Toggle("#lobby-tab.heal-bosses", b => LobbyController.Lobby?.SetData("heal-bosses", b.ToString()));
+            bosses = b.Toggle("#lobby-tab.heal-bosses", b => LobbyConfig.HealBosses = b);
 
             b.Separator();
             b.TextButton("#lobby-tab.gamemode", red, callback: () => { });
@@ -127,7 +122,7 @@ public class LobbyTab : Fragment
             return;
         }
 
-        name.text = LobbyController.Lobby?.GetData("name");
+        name.text = LobbyConfig.Name;
         accessibility.GetComponentInChildren<Text>().text = Bundle.Get((LobbyController.IsOwner ? accessLevel : -1) switch
         {
             0 => "lobby-tab.private",
@@ -137,15 +132,15 @@ public class LobbyTab : Fragment
         });
         name.interactable = accessibility.interactable = LobbyController.IsOwner;
 
-        pvp.isOn = LobbyController.Lobby?.GetData("pvp") == "True";
-        mod.isOn = LobbyController.Lobby?.GetData("mod") == "True";
-        bosses.isOn = LobbyController.Lobby?.GetData("heal-bosses") == "True";
+        pvp.isOn = LobbyConfig.PvPAllowed;
+        mod.isOn = LobbyConfig.ModsAllowed;
+        bosses.isOn = LobbyConfig.HealBosses;
+        ppp.value = LobbyConfig.PPP * 8f;
 
         foreach (var toggle in new Selectable[] { pvp, mod, bosses, ppp })
         {
             toggle.interactable = LobbyController.IsOwner;
             toggle.GetComponentInChildren<Image>().color = LobbyController.IsOwner ? white : dark;
         }
-        if (int.TryParse(LobbyController.Lobby?.GetData("ppp"), out int i)) ppp.value = i;
     }
 }
