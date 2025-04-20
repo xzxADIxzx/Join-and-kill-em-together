@@ -133,6 +133,10 @@ public class Bar : MonoBehaviour
     public Button FillButton(Sprite icon, Color color, Runnable callback) =>
         Builder.IconButton(Resolve("IconButton", 40f), Tex.Fill, color, icon, callback);
 
+    /// <summary> Adds a text button, but it's made to match the main menu style. </summary>
+    public Button MenuButton(string text, Color color, Runnable callback) =>
+        Builder.TextButton(Resolve("MenuButton", 75f), Tex.Large, color, text, 36, TextAnchor.MiddleCenter, callback);
+
     /// <summary> Adds a text button, but it's filled with the color of the given team. </summary>
     public Button TeamButton(Team team, Runnable callback) =>
         Builder.TextButton(Resolve("TeamButton", 80f), Tex.Fill, team.Color(), team == Team.Pink ? "UwU" : "", 24, TextAnchor.MiddleCenter, callback);
