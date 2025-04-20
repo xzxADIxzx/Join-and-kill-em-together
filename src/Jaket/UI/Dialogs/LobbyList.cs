@@ -56,7 +56,7 @@ public class LobbyList : Fragment
         base.Toggle();
         if (Shown)
         {
-            UI.Hide(UI.LeftGroup, this);
+            UI.Hide(UI.MidlGroup, this);
             Refresh();
         }
         Movement.UpdateState();

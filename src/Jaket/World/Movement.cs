@@ -112,7 +112,7 @@ public class Movement : MonoSingleton<Movement>
         if (Input.GetKeyDown(Settings.PlayerIndicators)) PlayerIndicators.Instance.Toggle();
         if (Input.GetKeyDown(Settings.PlayerInfo)) PlayerInfo.Instance.Toggle();
 
-        if (Input.GetKey(Settings.EmoteWheel) && !LobbyList.Shown && !WeaponWheel.Instance.gameObject.activeSelf)
+        if (Input.GetKey(Settings.EmoteWheel) && !UI.LobbyList.Shown && !WeaponWheel.Instance.gameObject.activeSelf)
         {
             HoldTime += Time.deltaTime;
             if (!EmoteWheel.Shown && HoldTime > .25f) EmoteWheel.Instance.Show();

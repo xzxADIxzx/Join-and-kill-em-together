@@ -3,11 +3,9 @@ namespace Jaket.UI.Fragments;
 using UnityEngine;
 using UnityEngine.UI;
 
-using Array = System.Array;
 using ImageType = UnityEngine.UI.Image.Type;
 
 using Jaket.Net;
-using Jaket.UI.Dialogs;
 using Jaket.UI.Lib;
 
 using static Jaket.UI.Lib.Pal;
@@ -32,7 +30,7 @@ public class MainMenuAccess : Fragment
             b.Setup(true, 0f, 6f);
             b.Update(() =>
             {
-                if (!original.activeInHierarchy) addition.Each(e => e.SetActive(false));
+                if (!original?.activeInHierarchy ?? false) addition.Each(e => e.SetActive(false));
             });
 
             addition[0] = b.Image(null, 3f, col, ImageType.Simple).gameObject;
@@ -40,7 +38,7 @@ public class MainMenuAccess : Fragment
             {
                 s.Setup(true, 0f);
 
-                addition[1] = s.MenuButton("#lobby-tab.list", col, LobbyList.Instance.Toggle).gameObject;
+                addition[1] = s.MenuButton("#lobby-tab.list", col, UI.LobbyList.Toggle).gameObject;
                 addition[2] = s.MenuButton("#lobby-tab.join", drk, LobbyController.JoinByCode).gameObject;
             });
             addition[3] = b.Image(null, 3f, drk, ImageType.Simple).gameObject;

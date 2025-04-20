@@ -25,6 +25,7 @@ public static class UI
     #region dialogs
 
     public static LobbyTab LobbyTab;
+    public static LobbyList LobbyList;
     public static PlayerList PlayerList;
 
     #endregion
@@ -52,14 +53,15 @@ public static class UI
         var root = Create("UI").transform;
 
         LobbyTab = new(root);
+        LobbyList = new(root);
         PlayerList = new(root);
 
         Access = new(root);
 
-        Dialogs = new Fragment[] { LobbyTab, PlayerList };
+        Dialogs = new Fragment[] { LobbyTab, LobbyList, PlayerList };
         Fragments = new Fragment[] { Access };
         LeftGroup = new Fragment[] { LobbyTab, PlayerList };
-        MidlGroup = new Fragment[] { };
+        MidlGroup = new Fragment[] { LobbyList };
 
         Log.Info($"[FACE] Builded {Dialogs.Length} dialogs and {Fragments.Length} fragments");
     }

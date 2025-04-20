@@ -52,7 +52,7 @@ public class LobbyTab : Fragment
 
             copy = b.TextButton("#lobby-tab.copy", callback: LobbyController.CopyCode);
             join = b.TextButton("#lobby-tab.join", callback: LobbyController.JoinByCode);
-            list = b.TextButton("#lobby-tab.list", callback: LobbyList.Instance.Toggle);
+            list = b.TextButton("#lobby-tab.list", callback: () => UI.LobbyList.Toggle());
         });
         Bar(518f, b =>
         {
