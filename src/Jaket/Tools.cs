@@ -233,6 +233,16 @@ public static class Tools
         return amount;
     }
 
+    /// <summary> Inserts objects into the given enumerable array at the specified index. </summary>
+    public static void Insert<T>(ref T[] seq, int index, params T[] obj)
+    {
+        if (index == -1) index = seq.Length;
+
+        System.Array.Resize(ref seq, seq.Length + obj.Length);
+        System.Array.Copy(seq, index, seq, index + obj.Length, seq.Length - obj.Length - index);
+        System.Array.Copy(obj, 0, seq, index, obj.Length);
+    }
+
     /// <summary> Clears the given enumerable array by filling it with default values. </summary>
     public static void Clear<T>(this T[] seq) => System.Array.Clear(seq, 0, seq.Length);
 

@@ -52,12 +52,6 @@ public class MainMenuAccess : Fragment
 
     public override void Toggle()
     {
-        if (Scene == "Main Menu" && original.TryGetComponent(out ObjectActivateInSequence seq))
-        {
-            int startIndex = seq.objectsToActivate.Length;
-            Array.Resize(ref seq.objectsToActivate, startIndex + 5);
-
-            for (int i = 0; i < addition.Length; i++) seq.objectsToActivate[startIndex + i] = addition[i];
-        }
+        if (Scene == "Main Menu" && original.TryGetComponent(out ObjectActivateInSequence seq)) Insert(ref seq.objectsToActivate, -1, addition);
     }
 }
