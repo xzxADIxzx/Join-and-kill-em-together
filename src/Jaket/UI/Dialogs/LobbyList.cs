@@ -6,103 +6,103 @@ using UnityEngine.UI;
 
 using Jaket.Assets;
 using Jaket.Net;
+using Jaket.UI.Lib;
 using Jaket.World;
 
 using static Jaket.UI.Lib.Pal;
-using static Rect;
 
-/// <summary> Browser for public lobbies that receives the list via Steam API and displays it in the scrollbar. </summary>
-public class LobbyList : CanvasSingleton<LobbyList>
+/// <summary> Dialog that displays the list of public lobbies acquired via Steam Matchmaking. </summary>
+public class LobbyList : Fragment
 {
-    /// <summary> List of lobbies currently displayed. </summary>
-    public Lobby[] Lobbies;
-    /// <summary> Button that updates the lobby list. </summary>
+    /// <summary> List of lobbies received after the last refresh. </summary>
+    private Lobby[] lobbies;
+    /// <summary> Button that refreshes the list of public lobbies. </summary>
     private Button refresh;
-    /// <summary> String by which the lobby will be searched. </summary>
-    private string search = "";
+    /// <summary> Content of the search bar. </summary>
+    private string search;
     /// <summary> Content of the lobby list. </summary>
-    private RectTransform content;
+    private Bar content;
 
-    private void Start()
+    public LobbyList(Transform root) : base(root, "LobbyList", true)
     {
-        UIB.Table("List", "#lobby-list.name", transform, Size(640f, 640f), table =>
+        Bar(920f, 520f, b =>
         {
-            refresh = UIB.Button("", table, new(100f, -68f, 184f, 40f, new(0f, 1f)), clicked: Refresh);
-            UIB.Field("#lobby-list.search", table, new(392f, -68f, 384f, 40f, new(0f, 1f)), cons: text =>
+            b.Setup(true);
+            b.Text("#lobby-list.name", 32f, 32);
+
+            b.Subbar(40f, s =>
             {
-                search = text.Trim().ToLower();
-                Rebuild();
+                s.Setup(false, 0f);
+                refresh = s.TextButton("", spc: 256f, callback: Refresh);
+                s.Field("#lobby-list.search", t =>
+                {
+                    search = t.Trim().ToLower();
+                    Rebuild();
+                }, 640f);
             });
 
-            UIB.IconButton("X", table, Icon(292f, 68f), red, clicked: Toggle);
-            content = UIB.Scroll("List", table, new(0f, 272f, 624f, 544f, new(.5f, 0f), new(.5f, 0f))).content;
+            b.Subbar(424f, s =>
+            {
+                s.Setup(false, 0f);
+                content = Component<Bar>(s.ScrollV(0f, 856f).content.gameObject, b => b.Setup(true, 0f));
+
+                // TODO scrollbar
+            });
         });
-        Refresh();
     }
 
-    // <summary> Toggles visibility of the lobby list. </summary>
-    public void Toggle()
+    public override void Toggle()
     {
-        // if (!Shown) UI.HideCentralGroup();
-
-        gameObject.SetActive(Shown = !Shown);
+        base.Toggle();
+        if (Shown)
+        {
+            UI.Hide(UI.LeftGroup, this);
+            Refresh();
+        }
         Movement.UpdateState();
-
-        if (Shown && transform.childCount > 0) Refresh();
     }
 
-    /// <summary> Rebuilds the lobby list to match the list on Steam servers. </summary>
-    public void Rebuild()
+    public override void Rebuild()
     {
         refresh.GetComponentInChildren<Text>().text = Bundle.Get(LobbyController.FetchingLobbies ? "lobby-list.wait" : "lobby-list.refresh");
+        content.Clear();
 
-        // destroy old lobby entries if the search is completed
-        if (!LobbyController.FetchingLobbies) content.Each(Dest);
-        if (Lobbies == null) return;
+        if (lobbies == null) return;
 
-        // look for the lobby using the search string
-        var lobbies = search == "" ? Lobbies : System.Array.FindAll(Lobbies, lobby => lobby.GetData("name").ToLower().Contains(search));
+        var empty = string.IsNullOrWhiteSpace(search);
+        int count = empty ? lobbies.Length : lobbies.Count(l => l.GetData("name").ToLower().Contains(search));
 
-        float height = lobbies.Length * 48;
-        content.sizeDelta = new(624f, height);
+        (content.transform as RectTransform).sizeDelta = new(856f, count * 48f - 8f);
 
-        float y = -24f;
-        foreach (var lobby in lobbies)
-            if (LobbyController.IsMultikillLobby(lobby))
+        lobbies.Each(l => empty || l.GetData("name").ToLower().Contains(search), l =>
+        {
+            var name = " " + Bundle.CutColors(l.GetData("name"));
+            if (!empty)
             {
-                var name = " [MULTIKILL] " + lobby.GetData("lobbyName");
-                var r = Btn(y += 48f) with { Width = 624f };
+                int s = name.ToLower().IndexOf(search),
+                    e = search.Length + s;
 
-                UIB.Button(name, content, r, red, 24, TextAnchor.MiddleLeft, () => Bundle.Hud("lobby.mk"));
+                name = Bundle.Parse($"{name[..s]}<color={Orange}>{name[s..e]}</color>{name[e..]}");
             }
-            else
-            {
-                var name = " " + lobby.GetData("name");
-                var r = Btn(y += 48f) with { Width = 624f };
 
-                if (search != "")
-                {
-                    int index = name.ToLower().IndexOf(search);
-                    name = name.Insert(index, "<color=#FFA500>");
-                    name = name.Insert(index + "<color=#FFA500>".Length + search.Length, "</color>");
-                }
+            var cont = content.TextButton(name, align: TextAnchor.MiddleLeft, callback: () => LobbyController.JoinLobby(l));
+            var rect = Builder.Rect("Info", cont.transform, Lib.Rect.Fill);
 
-                var b = UIB.Button(name, content, r, align: TextAnchor.MiddleLeft, clicked: () => LobbyController.JoinLobby(lobby));
+            var full = l.MemberCount <= 2 ? Green : l.MemberCount <= 4 ? Orange : Red;
+            var info = $"<color={Gray}>{l.GetData("level")}</color> <color={full}>{l.MemberCount}/{l.MaxMembers}</color> ";
 
-                var full = lobby.MemberCount <= 2 ? Green : lobby.MemberCount <= 4 ? Orange : Red;
-                var info = $"<color=#BBBBBB>{lobby.GetData("level")}</color> <color={full}>{lobby.MemberCount}/{lobby.MaxMembers}</color> ";
-                UIB.Text(info, b.transform, r.Text, align: TextAnchor.MiddleRight);
-            }
+            Builder.Text(rect, info, 24, white, TextAnchor.MiddleRight);
+        });
     }
 
-    /// <summary> Updates the list of public lobbies and rebuilds the menu. </summary>
     public void Refresh()
     {
-        LobbyController.FetchLobbies(lobbies =>
+        LobbyController.FetchLobbies(l =>
         {
-            Lobbies = lobbies;
+            lobbies = l;
             Rebuild();
         });
+        lobbies = null;
         Rebuild();
     }
 }

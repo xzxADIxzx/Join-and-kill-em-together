@@ -107,19 +107,19 @@ public class Bar : MonoBehaviour
     #region other
 
     /// <summary> Adds a toggle also known as checkbox, pretty useful. </summary>
-    public Toggle Toggle(string text, Cons<bool> callback) =>
-        Builder.Toggle(Resolve("Toggle", 32f), text, 24, white, callback);
+    public Toggle Toggle(string text, Cons<bool> callback, float spc = 32f) =>
+        Builder.Toggle(Resolve("Toggle", spc), text, 24, white, callback);
 
     /// <summary> Adds an input field with simple background, although its design is debatable. </summary>
-    public InputField Field(string text, Cons<string> callback) =>
-        Builder.Field(Resolve("Field", 32f), Tex.Fill, semi, text, 24, callback);
+    public InputField Field(string text, Cons<string> callback, float spc = 32f) =>
+        Builder.Field(Resolve("Field", spc), Tex.Fill, semi, text, 24, callback);
 
     #endregion
     #region button
 
     /// <summary> Adds a text button, the most basic kind of buttons. </summary>
-    public Button TextButton(string text, Color? color = null, TextAnchor align = TextAnchor.MiddleCenter, Runnable callback = null) =>
-        Builder.TextButton(Resolve("TextButton", 40f), Tex.Large, color ?? white, text, 24, align, callback);
+    public Button TextButton(string text, Color? color = null, TextAnchor align = TextAnchor.MiddleCenter, Runnable callback = null, float spc = 40f) =>
+        Builder.TextButton(Resolve("TextButton", spc), Tex.Large, color ?? white, text, 24, align, callback);
 
     /// <summary> Adds an icon button, the most minimalistic kind of buttons. </summary>
     public Button IconButton(Sprite icon, Color? color = null, Runnable callback = null) =>
