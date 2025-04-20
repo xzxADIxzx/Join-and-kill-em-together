@@ -17,6 +17,12 @@ public static class LobbyConfig
         get => Get("name");
         set => Set("name", value ?? $"{SteamClient.Name}'s lobby");
     }
+    /// <summary> Mode of the lobby, gamemodes are used to make fun. </summary>
+    public static string Mode
+    {
+        get => Get("mode");
+        set => Set("mode", value ?? "campaign");
+    }
     /// <summary> Mission that is loaded in the lobby. </summary>
     public static string Level
     {
@@ -33,6 +39,37 @@ public static class LobbyConfig
             "CreditsMuseum2" => "Museum",
             _ => value[6..]
         });
+    }
+    /// <summary> Whether versus aka pure chaos is allowed. </summary>
+    public static bool PvPAllowed
+    {
+        get => Get("allow-pvp") == bool.TrueString;
+        set => Set("allow-pvp", value.ToString());
+    }
+    /// <summary> Whether client-side mods are allowed. </summary>
+    public static bool ModsAllowed
+    {
+        get => Get("allow-mods") == bool.TrueString;
+        set => Set("allow-mods", value.ToString());
+    }
+    /// <summary> Whether bosses are to be healed after player death. </summary>
+    public static bool HealBosses
+    {
+        get => Get("heal-bosses") == bool.TrueString;
+        set => Set("heal-bosses", value.ToString());
+    }
+
+    /// <summary> Resets the lobby config to its default value. </summary>
+    public static void Reset()
+    {
+        Client = "jaket";
+        Name = null;
+        Mode = null;
+        Level = Scene;
+
+        PvPAllowed = true;
+        ModsAllowed = false;
+        HealBosses = true;
     }
 
     /// <summary> Sets lobby data by the given key to the given value. </summary>
