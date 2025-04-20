@@ -14,7 +14,7 @@ using static Jaket.UI.Lib.Pal;
 public class MainMenuAccess : Fragment
 {
     /// <summary> Vanilla element containing difficulty selection. </summary>
-    private GameObject original => CanvasController.Instance.transform.Find("Difficulty Select (1)/Interactables").gameObject;
+    private GameObject original => CanvasController.Instance.transform.Find("Difficulty Select (1)/Interactables")?.gameObject;
     /// <summary> Additional elements to display in the difficulty selection element. </summary>
     private GameObject[] addition = new GameObject[5];
 

@@ -62,7 +62,7 @@ public class Fragment
         Component(img, cons);
         Component<HudOpenEffect>(img, e => e.speed = 32f);
 
-        if (Content.Find("Deco") == null) Builder.Image(Rect("Deco", new(width + 24f, height + 24f)), Tex.Large, semi, ImageType.Sliced, 2f);
+        if (Content.Find("Deco") == null) Builder.Image(Rect("Deco", new(width + 24f, height + 24f)), Tex.Large, semi, ImageType.Sliced, 2f).raycastTarget = false;
     }
 
     /// <summary> Adds a bar, it displays the current version of the project. </summary>
