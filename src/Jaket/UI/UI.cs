@@ -60,6 +60,8 @@ public static class UI
         Fragments = new Fragment[] { Access };
         LeftGroup = new Fragment[] { LobbyTab, PlayerList };
         MidlGroup = new Fragment[] { };
+
+        Log.Info($"[FACE] Builded {Dialogs.Length} dialogs and {Fragments.Length} fragments");
     }
 
     /// <summary> Hides all of the elements in the given group except the fragment. </summary>
