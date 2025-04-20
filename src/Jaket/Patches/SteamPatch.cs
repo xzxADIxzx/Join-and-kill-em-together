@@ -22,7 +22,7 @@ public class SteamPatch
         // check out https://wiki.facepunch.com/steamworks/Grouping_Friends and https://partner.steamgames.com/doc/api/ISteamFriends#SetRichPresence
         else
         {
-            SteamFriends.SetRichPresence("steam_player_group", LobbyController.Lobby?.GetData("name"));
+            SteamFriends.SetRichPresence("steam_player_group", LobbyConfig.Name);
             SteamFriends.SetRichPresence("steam_player_group_size", LobbyController.Lobby?.MemberCount.ToString());
         }
     }

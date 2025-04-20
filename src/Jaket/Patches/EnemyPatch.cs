@@ -90,7 +90,7 @@ public class LogicPatch
     [HarmonyPatch(typeof(Wicked), "Update")]
     static void WickedLogic(EnemyIdentifier ___eid)
     {
-        if (LobbyController.Online) ___eid.totalSpeedModifier = 1f + LobbyController.PPP;
+        if (LobbyController.Online) ___eid.totalSpeedModifier = 1f + LobbyConfig.PPP;
     }
 }
 

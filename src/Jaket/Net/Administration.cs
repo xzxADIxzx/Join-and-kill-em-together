@@ -39,7 +39,7 @@ public class Administration
             if (LobbyController.IsOwner) return;
 
             Banned.Clear();
-            LobbyController.Lobby?.GetData("banned").Split(' ').Each(sid =>
+            LobbyConfig.Banned.Each(sid =>
             {
                 if (uint.TryParse(sid, out var id)) Banned.Add(id);
             });
@@ -66,7 +66,7 @@ public class Administration
 
         Banned.Add(id);
         LobbyController.Lobby?.SendChatString("#/k" + id);
-        LobbyController.Lobby?.SetData("banned", string.Join(" ", Banned));
+        LobbyConfig.Banned = Banned.ConvertAll(i => i.ToString());
     }
 
     /// <summary> Whether the player is sending a large amount of data. </summary>

@@ -61,7 +61,7 @@ public class Coins
             });
             if (target) return target;
         }
-        if (LobbyController.PvPAllowed)
+        if (LobbyConfig.PvPAllowed)
         {
             Networking.Entities.Player(p =>
             {

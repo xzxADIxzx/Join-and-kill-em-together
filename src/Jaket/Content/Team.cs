@@ -30,5 +30,5 @@ public static class Teams
     };
 
     /// <summary> Whether the team is allied with the local player. </summary>
-    public static bool Ally(this Team team) => team == Networking.LocalPlayer.Team || !LobbyController.PvPAllowed;
+    public static bool Ally(this Team team) => team == Networking.LocalPlayer.Team || !LobbyConfig.PvPAllowed;
 }

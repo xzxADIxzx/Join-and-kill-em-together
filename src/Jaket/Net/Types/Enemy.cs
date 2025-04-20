@@ -19,8 +19,8 @@ public class Enemy : OwnableEntity
     protected void Boss(bool cond, float bossHealth, int layers = 1, string nameOverride = null)
     {
         if (!(IsBoss = cond)) return;
-        if (!LobbyController.IsOwner) float.TryParse(LobbyController.Lobby?.GetData("ppp"), out LobbyController.PPP);
-        LobbyController.ScaleHealth(ref bossHealth);
+
+        bossHealth *= 1f + LobbyConfig.PPP * (LobbyController.Lobby?.MemberCount - 1 ?? 1);
 
         // boss health can be very different from the health of its prefab
         SetHealth(InitialHealth = bossHealth);
