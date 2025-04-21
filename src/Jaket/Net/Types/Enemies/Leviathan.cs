@@ -23,7 +23,7 @@ public class Leviathan : Enemy
         Init(_ => EntityType.Leviathan);
         TryGetComponent(out leviathan);
 
-        Owner = LobbyController.LastOwner.AccountId;
+        Owner = LobbyController.LastOwner;
         World.Leviathan = this;
     }
 

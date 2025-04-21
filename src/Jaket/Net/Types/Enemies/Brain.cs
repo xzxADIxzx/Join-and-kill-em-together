@@ -21,7 +21,7 @@ public class Brain : Enemy
     {
         Init(_ => EntityType.Brain);
 
-        Owner = LobbyController.LastOwner.AccountId;
+        Owner = LobbyController.LastOwner;
         World.Brain = this;
     }
 

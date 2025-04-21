@@ -221,7 +221,7 @@ public class Movement : MonoSingleton<Movement>
             nm.rb.useGravity = true;
 
             var cam = cc.cam.transform;
-            var player = nm.dead && Networking.Entities.TryGetValue(LobbyController.At(targetPlayer)?.Id.AccountId ?? 0, out var rp) && rp != Networking.LocalPlayer
+            var player = nm.dead && Networking.Entities.TryGetValue(/*LobbyController.At(targetPlayer)?.Id.AccountId ??*/ 0, out var rp) && rp != Networking.LocalPlayer
                 ? rp.transform.position + Vector3.up * 2.5f
                 : nm.transform.position + Vector3.up;
 
@@ -255,7 +255,7 @@ public class Movement : MonoSingleton<Movement>
         if (Settings.DisableFreezeFrames || UI.AnyDialog) Time.timeScale = 1f;
 
         // disable cheats if they are prohibited in the lobby
-        if (CheatsController.Instance.cheatsEnabled && !LobbyController.IsOwner && !LobbyController.CheatsAllowed)
+        if (CheatsController.Instance.cheatsEnabled && !LobbyController.IsOwner && !Administration.CheatsAllowed)
         {
             CheatsController.Instance.cheatsEnabled = false;
             cm.transform.GetChild(0).GetChild(0).gameObject.SetActive(false);
@@ -403,7 +403,7 @@ public class Movement : MonoSingleton<Movement>
     {
         rotation = new(cc.rotationY, cc.rotationX + 90f);
         position = new();
-        targetPlayer = LobbyController.IndexOfLocal();
+        // targetPlayer = LobbyController.IndexOfLocal();
     }
 
     /// <summary> Triggers an emote with the given id. </summary>

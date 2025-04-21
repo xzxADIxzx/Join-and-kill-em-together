@@ -103,7 +103,7 @@ public class LobbyTab : Fragment
     {
         create.GetComponentInChildren<Text>().text = Bundle.Get
         (
-            LobbyController.CreatingLobby
+            LobbyController.Creating
             ? "lobby-tab.creating" :
             LobbyController.Offline
             ? "lobby-tab.create" :

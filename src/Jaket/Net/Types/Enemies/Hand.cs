@@ -16,7 +16,7 @@ public class Hand : Enemy
     {
         Init(_ => EntityType.Hand, true);
 
-        Owner = LobbyController.LastOwner.AccountId;
+        Owner = LobbyController.LastOwner;
         World.Hand = this;
     }
 

@@ -31,6 +31,8 @@ public class Administration
     private static Tree entities = new();
     private static Tree plushies = new();
 
+    public static bool CheatsAllowed => false; // TODO yeah uh bruh
+
     /// <summary> Subscribes to events to clear lists. </summary>
     public static void Load()
     {

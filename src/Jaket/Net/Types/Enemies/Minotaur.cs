@@ -19,7 +19,7 @@ public class Minotaur : Enemy
         Init(_ => EntityType.Minotaur_Chase);
         TryGetComponent(out minotaur);
 
-        Owner = LobbyController.LastOwner.AccountId;
+        Owner = LobbyController.LastOwner;
         World.Minotaur = this;
     }
 

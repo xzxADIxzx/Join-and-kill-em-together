@@ -61,7 +61,7 @@ public class PlayerList : Fragment
             {
                 // TODO add sprites of crown and ban hammer + clear ban list features
                 s.Setup(false, 0f);
-                if (LobbyController.LastOwner == m.Id)
+                if (LobbyController.LastOwner == m.Id.AccountId)
                 {
                     s.ProfileButton(m, false);
                     s.FillButton(ModAssets.ChanFallen, yellow, () => Bundle.Hud("player-list.owner"));

@@ -86,7 +86,7 @@ public class Networking
             else
             {
                 // establishing a connection with the owner of the lobby
-                Client.Connect(LobbyController.LastOwner);
+                Client.Connect(LobbyController.Lobby.Value.Owner.Id);
                 // prevent objects from loading before the scene is loaded
                 Loading = true;
             }
@@ -152,6 +152,15 @@ public class Networking
         Entities.Player(player => player.Kill());
         Entities.Clear();
         Entities[LocalPlayer.Id] = LocalPlayer;
+    }
+
+    // TODO docs
+    public static void Close()
+    {
+        Server.Close();
+        Client.Close();
+        Clear();
+        Pointers.Free();
     }
 
     /// <summary> Core network logic should have been here, but in fact it is located in the server and client classes. </summary>

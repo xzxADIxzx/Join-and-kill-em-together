@@ -28,7 +28,7 @@ public class Server : Endpoint, ISocketManager
             if (ents[id] == null)
             {
                 // double-check on cheats just in case of any custom multiplayer clients existence
-                if (!LobbyController.CheatsAllowed && (type.IsEnemy() || type.IsItem())) return;
+                if (!Administration.CheatsAllowed && (type.IsEnemy() || type.IsItem())) return;
 
                 // client cannot create special enemies
                 if (type.IsEnemy() /* && !type.IsCommonEnemy() */) return;

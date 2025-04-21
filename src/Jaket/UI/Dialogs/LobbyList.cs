@@ -64,7 +64,7 @@ public class LobbyList : Fragment
 
     public override void Rebuild()
     {
-        refresh.GetComponentInChildren<Text>().text = Bundle.Get(LobbyController.FetchingLobbies ? "lobby-list.refreshing" : "lobby-list.refresh");
+        refresh.GetComponentInChildren<Text>().text = Bundle.Get(LobbyController.Fetching ? "lobby-list.refreshing" : "lobby-list.refresh");
         content.Clear();
 
         if (lobbies == null) return;
