@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+using Jaket.Assets;
 using Jaket.UI.Dialogs;
 using Jaket.UI.Fragments;
 using Jaket.UI.Lib;
@@ -50,6 +51,18 @@ public static class UI
     /// <summary> Builds all of the interface elements: fragments, dialogs and so on. </summary>
     public static void Build()
     {
+        void Fix()
+        {
+            HudMessageReceiver.Instance.text.font = ModAssets.FontTMP;
+            Component<Canvas>(HudMessageReceiver.Instance.gameObject, c =>
+            {
+                c.overrideSorting = true;
+                c.sortingOrder = 4200 + 1;
+            });
+        }
+        Fix();
+        Events.OnLoad += Fix;
+
         var root = Create("UI").transform;
 
         LobbyTab = new(root);
