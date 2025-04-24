@@ -174,8 +174,8 @@ public static class Builder
     public static Scrollbar Slider(Transform rect, Color color, ScrollRect scroll) =>
         Component<Scrollbar>(rect.gameObject, s =>
         {
-            var zone = Rect("Zone", rect, new(0f, 0f, -48f, -16f, Vector2.zero, Vector2.one));
-            var hand = Rect("Hand", zone, Lib.Rect.Fill with { Width = 32f });
+            var zone = Rect("Zone", rect, new(0f, 0f, -16f, -48f, Vector2.zero, Vector2.one));
+            var hand = Rect("Hand", zone, Lib.Rect.Fill with { Height = 32f });
 
             s.targetGraphic = Image(hand, Tex.Vert, color, ImageType.Sliced);
             s.colors = Colors;

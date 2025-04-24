@@ -181,7 +181,7 @@ public class Bar : MonoBehaviour
 
     /// <summary> Adds a slider, it controls the scroll rect containing the given content. </summary>
     public Scrollbar Slider(Transform content) =>
-        Builder.Slider(Resolve("Slider", 40f), white, content.GetComponentInParent<ScrollRect>());
+        Builder.Slider(Resolve("Slider", 40f), white, content.GetComponentInParent<ScrollRect>(true));
 
     #endregion
     #region scroll

@@ -36,5 +36,5 @@ public static class Tex
     }
 
     /// <summary> Returns the scale of the given sprite. </summary>
-    public static float Scale(Sprite sprite) => sprite == Mask ? 5f : new[] { Fill, Back, Dash, Small, Large }.Any(s => s == sprite) ? 4f : 1f;
+    public static float Scale(Sprite sprite) => sprite == Mask ? 5f : new[] { Fill, Back, Dash, Small, Large, Vert }.Any(s => s == sprite) ? 4f : 1f;
 }
