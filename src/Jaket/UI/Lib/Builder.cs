@@ -170,6 +170,21 @@ public static class Builder
             Image(rect, Tex.Large, color, ImageType.Sliced);
         });
 
+    /// <summary> Creates a slider with the given color and scroll rect to control. </summary>
+    public static Scrollbar Slider(Transform rect, Color color, ScrollRect scroll) =>
+        Component<Scrollbar>(rect.gameObject, s =>
+        {
+            var zone = Rect("Zone", rect, new(0f, 0f, -48f, -16f, Vector2.zero, Vector2.one));
+            var hand = Rect("Hand", zone, Lib.Rect.Fill with { Width = 32f });
+
+            s.targetGraphic = Image(hand, Tex.Vert, color, ImageType.Sliced);
+            s.colors = Colors;
+            s.handleRect = hand;
+            scroll.verticalScrollbar = s;
+
+            Image(rect, Tex.Large, color, ImageType.Sliced);
+        });
+
     #endregion
     #region scroll
 

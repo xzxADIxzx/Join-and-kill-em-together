@@ -45,8 +45,7 @@ public class LobbyList : Fragment
             {
                 s.Setup(false, 0f);
                 content = Component<Bar>(s.ScrollV(0f, 856f).content.gameObject, b => b.Setup(true, 0f));
-
-                // TODO scrollbar
+                s.Slider(content.transform);
             });
         });
     }

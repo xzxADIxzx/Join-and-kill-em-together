@@ -175,6 +175,14 @@ public class Bar : MonoBehaviour
         });
     }
 
+    /// <summary> Adds a slider, it controls the given scroll rect. </summary>
+    public Scrollbar Slider(ScrollRect scroll) =>
+        Builder.Slider(Resolve("Slider", 40f), white, scroll);
+
+    /// <summary> Adds a slider, it controls the scroll rect containing the given content. </summary>
+    public Scrollbar Slider(Transform content) =>
+        Builder.Slider(Resolve("Slider", 40f), white, content.GetComponentInParent<ScrollRect>());
+
     #endregion
     #region scroll
 
