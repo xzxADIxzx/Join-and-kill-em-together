@@ -184,7 +184,7 @@ public class Bar : MonoBehaviour
 
     /// <summary> Adds a scroller, horizontal one. </summary>
     public ScrollRect ScrollH(float innerspc, float outerspc) =>
-        Builder.Scroll(Resolve("Scroll", outerspc), outerspc, voh ? outerspc : rect.sizeDelta.y - margin * 2f, true, false);
+        Builder.Scroll(Resolve("Scroll", outerspc), innerspc, voh ? outerspc : rect.sizeDelta.y - margin * 2f, true, false);
 
     #endregion
 }
