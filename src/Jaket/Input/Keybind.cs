@@ -1,0 +1,95 @@
+namespace Jaket.Input;
+
+using UnityEngine;
+
+using Jaket.Assets;
+
+/// <summary> List of all keybinds of the mod, including serious ones and those that need for a joke. </summary>
+public class Keybind
+{
+    static PrefsManager pm => PrefsManager.Instance;
+
+    /// <summary> List itself. </summary>
+    public static Keybind
+
+    LobbyTab   = new("lobby-tab",            KeyCode.F1),
+    PlayerList = new("player-list",          KeyCode.F2),
+    Settings   = new("settings",             KeyCode.F3),
+    PlayerInds = new("player-indicators",    KeyCode.Z),
+    PlayerInfo = new("player-information",   KeyCode.X),
+    Pointer    = new("pointer",              KeyCode.Mouse2),
+    Spray      = new("spray",                KeyCode.T),
+    Chat       = new("chat",                 KeyCode.Return),
+    ScrollUp   = new("scroll-messages-up",   KeyCode.UpArrow),
+    ScrollDown = new("scroll-messages-down", KeyCode.DownArrow),
+    EmoteWheel = new("emote-wheel",          KeyCode.B),
+    SelfDest   = new("self-destruction",     KeyCode.K);
+
+    /// <summary> List of all keybinds used for loading, conflict resolving and so on. </summary>
+    public static Keybind[] all = { LobbyTab, PlayerList, Settings, PlayerInds, PlayerInfo, Pointer, Spray, Chat, ScrollUp, ScrollDown, EmoteWheel, SelfDest };
+
+    /// <summary> Internal name of the keybind. </summary>
+    public readonly string name;
+    /// <summary> Default value of the keybind that is assigned in the constructor. </summary>
+    public readonly KeyCode defaultKey;
+
+    /// <summary> Primary key of the keybind. </summary>
+    private KeyCode key;
+
+    private Keybind(string name, KeyCode key)
+    {
+        this.name = name;
+        this.defaultKey = key;
+    }
+
+    /// <summary> Returns formatted name of the keybind. </summary>
+    public string FormatName() => Bundle.Get($"keybind.{name}", name);
+
+    /// <summary> Returns formatted value of the keybind. </summary>
+    public string FormatValue() => key switch
+    {
+        KeyCode.LeftAlt => "LEFT ALT",
+        KeyCode.RightAlt => "RIGHT ALT",
+        KeyCode.LeftShift => "LEFT SHIFT",
+        KeyCode.RightShift => "RIGHT SHIFT",
+        KeyCode.LeftControl => "LEFT CONTROL",
+        KeyCode.RightControl => "RIGHT CONTROL",
+        KeyCode.UpArrow => "UP",
+        KeyCode.DownArrow => "DOWN",
+        KeyCode.RightArrow => "RIGHT",
+        KeyCode.LeftArrow => "LEFT",
+        _ => key.ToString().Replace("Alpha", "").Replace("Keypad", "").ToUpper()
+    };
+
+    #region state
+
+    /// <summary> Whether the bind is held down. </summary>
+    public bool Down() => Input.GetKey(key);
+
+    /// <summary> Whether the bind was just pressed. </summary>
+    public bool Tap() => Input.GetKeyDown(key);
+
+    /// <summary> Whether the bind was just released. </summary>
+    public bool Release() => Input.GetKeyUp(key);
+
+    #endregion
+    #region rebinding
+
+    /// <summary> Saves the bind in preferences. </summary>
+    public void Save() => pm.SetInt($"jaket.binds.{name}", (int)key);
+
+    /// <summary> Loads the bind from preferences. </summary>
+    public void Load() => key = (KeyCode)pm.GetInt($"jaket.binds.{name}", (int)defaultKey);
+
+    /// <summary> Resets the bind to its default value. </summary>
+    public void Reset()
+    {
+        pm.DeleteKey($"jaket.binds.{name}");
+        key = defaultKey;
+    }
+
+    /// <summary> Changes the primary key of the bind. </summary>
+    public void Rebind(KeyCode key) => this.key = key;
+
+    #endregion
+}
