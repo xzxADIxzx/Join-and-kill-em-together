@@ -7,7 +7,6 @@ using UnityEngine.UI;
 using Jaket.Assets;
 using Jaket.Net;
 using Jaket.UI.Lib;
-using Jaket.World;
 
 using static Jaket.UI.Lib.Pal;
 
@@ -53,12 +52,7 @@ public class LobbyList : Fragment
     public override void Toggle()
     {
         base.Toggle();
-        if (Shown)
-        {
-            UI.Hide(UI.MidlGroup, this);
-            Refresh();
-        }
-        Movement.UpdateState();
+        UI.Hide(UI.MidlGroup, this, Refresh);
     }
 
     public override void Rebuild()

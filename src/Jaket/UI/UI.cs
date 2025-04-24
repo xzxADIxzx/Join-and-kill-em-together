@@ -89,4 +89,15 @@ public static class UI
             WeaponWheel.Instance.gameObject.SetActive(false);
         }
     }
+
+    /// <summary> Hides all of the elements in the given group and runs particular callbacks. </summary>
+    public static void Hide(Fragment[] group, Fragment frag, Runnable shown)
+    {
+        if (frag.Shown)
+        {
+            Hide(group, frag);
+            shown();
+        }
+        Movement.UpdateState();
+    }
 }

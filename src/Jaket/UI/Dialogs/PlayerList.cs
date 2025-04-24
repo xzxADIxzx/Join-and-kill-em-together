@@ -6,7 +6,6 @@ using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net;
 using Jaket.UI.Lib;
-using Jaket.World;
 
 using static Jaket.UI.Lib.Pal;
 
@@ -25,12 +24,7 @@ public class PlayerList : Fragment
     public override void Toggle()
     {
         base.Toggle();
-        if (Shown)
-        {
-            UI.Hide(UI.LeftGroup, this);
-            Rebuild();
-        }
-        Movement.UpdateState();
+        UI.Hide(UI.LeftGroup, this, Rebuild);
     }
 
     public override void Rebuild()
