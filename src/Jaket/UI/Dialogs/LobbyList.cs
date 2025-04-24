@@ -25,7 +25,7 @@ public class LobbyList : Fragment
 
     public LobbyList(Transform root) : base(root, "LobbyList", true)
     {
-        Bar(920f, 520f, b =>
+        Bar(920f, 528f, b =>
         {
             b.Setup(true);
             b.Text("#lobby-list.name", 32f, 32);

@@ -51,7 +51,7 @@ public static class UI
     /// <summary> Builds all of the interface elements: fragments, dialogs and so on. </summary>
     public static void Build()
     {
-        void Fix()
+        void Fix() => Events.Post(() =>
         {
             HudMessageReceiver.Instance.text.font = ModAssets.FontTMP;
             Component<Canvas>(HudMessageReceiver.Instance.gameObject, c =>
@@ -59,7 +59,7 @@ public static class UI
                 c.overrideSorting = true;
                 c.sortingOrder = 4200 + 1;
             });
-        }
+        });
         Fix();
         Events.OnLoad += Fix;
 

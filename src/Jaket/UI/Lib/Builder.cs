@@ -180,6 +180,7 @@ public static class Builder
             s.targetGraphic = Image(hand, Tex.Vert, color, ImageType.Sliced);
             s.colors = Colors;
             s.handleRect = hand;
+            s.direction = Scrollbar.Direction.BottomToTop;
             scroll.verticalScrollbar = s;
 
             Image(rect, Tex.Large, color, ImageType.Sliced);
