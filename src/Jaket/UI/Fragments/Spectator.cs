@@ -15,6 +15,9 @@ using static Jaket.UI.Lib.Pal;
 /// <summary> Fragment that is displayed when the player is dead. </summary>
 public class Spectator : Fragment
 {
+    /// <summary> Whether the current scene has a special info text. </summary>
+    public static bool Special => Scene == "Endless" || Scene == "Level 0-S";
+
     /// <summary> Information about keybindings that are usable at the moment. </summary>
     private Text info;
     /// <summary> Flash that displays the I See You texture. </summary>
@@ -40,19 +43,11 @@ public class Spectator : Fragment
     public override void Toggle()
     {
         Content.gameObject.SetActive(Shown = NewMovement.Instance.dead);
-        if (Shown)
-        {
-            bool
-                cg = Scene == "Endless",
-                zs = Scene == "Level 0-S";
 
-            info.text = Bundle.Format("spect",
-                Keybind.SpectNext.FormatValue(),
-                Keybind.SpectPrev.FormatValue(),
-                cg || zs
-                    ? Bundle.Format("spect.special", cg ? "#spect.cg" : "#spect.zs")
-                    : "#spect.default");
-        }
+        if (Shown) info.text = Bundle.Format("spect",
+            Keybind.SpectNext.FormatValue(),
+            Keybind.SpectPrev.FormatValue(),
+            Special ? Bundle.Format("spect.special", Scene == "Endless" ? "#spect.cg" : "#spect.zs") : "#spect.default");
     }
 
     #region harmony
