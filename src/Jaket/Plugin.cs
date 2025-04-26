@@ -38,12 +38,17 @@ public class Plugin : MonoBehaviour
 
         Events.Load();
         Events.OnMainMenuLoad += Init;
+        Application.wantsToQuit += Quit;
     }
 
-    private void OnApplicationQuit()
+    private bool Quit()
     {
         Log.Info("[INIT] Received an application shutdown notification");
         Log.Flush();
+
+        Events.InternalFlushFinish = Application.Quit;
+        Application.wantsToQuit -= Quit;
+        return false;
     }
 
     private void Init()

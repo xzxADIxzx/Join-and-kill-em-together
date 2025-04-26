@@ -47,7 +47,7 @@ public static class Files
     public static void Delete(string file) => File.Delete(file);
 
     /// <summary> Asynchronously appends the lines to the given file. </summary>
-    public static void Append(string file, IEnumerable<string> lines) => File.AppendAllLinesAsync(file, lines);
+    public static void Append(string file, IEnumerable<string> lines) => File.AppendAllLinesAsync(file, lines).ContinueWith(_ => Events.InternalFlushFinish());
 
     /// <summary> Synchronously reads all bytes from the given file. </summary>
     public static byte[] ReadBytes(string file) => File.ReadAllBytes(file);

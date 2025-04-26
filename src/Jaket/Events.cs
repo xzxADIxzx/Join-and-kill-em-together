@@ -13,6 +13,8 @@ public class Events : MonoBehaviour
 {
     /// <summary> Internal event triggered after loading any scene. </summary>
     public static Runnable InternalSceneLoaded { set => UnityEngine.SceneManagement.SceneManager.sceneLoaded += (scene, mode) => value(); }
+    /// <summary> Internal event triggered after finishing any flush operation. </summary>
+    public static Runnable InternalFlushFinish = () => { };
 
     #region events
 
