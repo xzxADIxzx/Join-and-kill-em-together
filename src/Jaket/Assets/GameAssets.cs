@@ -6,6 +6,12 @@ using UnityEngine.AddressableAssets;
 /// <summary> Class that works with the assets of the game. </summary>
 public class GameAssets
 {
+    #region loading
+
+    /// <summary> Loads a sound by the given path. </summary>
+    public static void Sound(string path, Cons<AudioClip> cons) => Addressables.LoadAssetAsync<AudioClip>($"Assets/Sounds/{path}").Task.ContinueWith(t => cons(t.Result));
+
+    #endregion
     #region content
 
     /// <summary> List of items that mustn't be synchronized, because they are not items at all. </summary>
@@ -61,8 +67,6 @@ public class GameAssets
 
     private static void Material(string name, Cons<Material> cons) => Addressables.LoadAssetAsync<Material>($"Assets/Models/{name}.mat").Task.ContinueWith(t => cons(t.Result));
 
-    private static void Sound(string name, Cons<AudioClip> cons) => Addressables.LoadAssetAsync<AudioClip>($"Assets/Sounds/{name}.ogg").Task.ContinueWith(t => cons(t.Result));
-
     #endregion
     #region loading
 
@@ -101,7 +105,7 @@ public class GameAssets
     public static void SisyMaterial(string name, Renderer[] output) => Material($"Enemies/Sisyphus/{name}", mat => output[0].material = output[1].material = mat);
 
     /// <summary> Loads a Gabriel voice line by name. </summary>
-    public static void GabLine(string name, Cons<AudioClip> output) => Sound($"Voices/Gabriel/{name}", output);
+    public static void GabLine(string name, Cons<AudioClip> output) => Sound($"Voices/Gabriel/{name}.ogg", output);
 
     #endregion
 }

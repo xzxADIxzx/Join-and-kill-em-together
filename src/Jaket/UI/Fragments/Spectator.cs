@@ -30,6 +30,11 @@ public class Spectator : Fragment
             e.reverse = true;
             e.YFirst = true;
         });
+        GameAssets.Sound("UI/TV Off.wav", c =>
+        {
+            Component<AudioSource>(info.gameObject, a => a.clip = c);
+            Component<AudioSource>(dead.gameObject, a => a.clip = c);
+        });
     }
 
     public override void Toggle()
