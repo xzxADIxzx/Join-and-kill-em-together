@@ -192,6 +192,22 @@ public static class Tools
         return -1;
     }
 
+    /// <summary> Returns the amount of objects in the given enumerable. </summary>
+    public static int Count<T>(this IEnumerable<T> seq)
+    {
+        int amount = 0;
+        foreach (var item in seq) amount++;
+        return amount;
+    }
+
+    /// <summary> Returns the amount of objects in the given enumerable that are suitable for the given predicate. </summary>
+    public static int Count<T>(this IEnumerable<T> seq, Pred<T> pred)
+    {
+        int amount = 0;
+        foreach (var item in seq) if (pred(item)) amount++;
+        return amount;
+    }
+
     /// <summary> Iterates each object in the given enumerable. </summary>
     public static void Each<T>(this IEnumerable<T> seq, Cons<T> cons)
     {
@@ -223,14 +239,6 @@ public static class Tools
     {
         foreach (var item in seq) if (pred(item)) return item;
         return defaultProv == null ? default : defaultProv();
-    }
-
-    /// <summary> Returns the amount of objects in the given enumerable that are suitable for the given predicate. </summary>
-    public static int Count<T>(this IEnumerable<T> seq, Pred<T> pred)
-    {
-        int amount = 0;
-        foreach (var item in seq) if (pred(item)) amount++;
-        return amount;
     }
 
     /// <summary> Inserts objects into the given enumerable array at the specified index. </summary>
