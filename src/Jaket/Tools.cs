@@ -94,28 +94,8 @@ public static class Tools
     }
     public static void Dest(Transform transform) => Dest(transform.gameObject);
 
-    #endregion
-    #region resources
-
-    /// <summary> Returns all objects of the given type. </summary>
     public static T[] ResFind<T>() where T : Object => Resources.FindObjectsOfTypeAll<T>();
-
-    /// <summary> Iterates all objects of the given type. </summary>
-    public static void ResFind<T>(Cons<T> cons) where T : Object // TODO remove as it's deprecated and replace with enumerable methods
-    {
-        foreach (var item in ResFind<T>()) cons(item);
-    }
-
-    /// <summary> Iterates all objects of the given type that are suitable for the given predicate. </summary>
-    public static void ResFind<T>(Pred<T> pred, Cons<T> cons) where T : Object // TODO remove as it's deprecated and replace with enumerable methods
-    {
-        foreach (var item in ResFind<T>()) if (pred(item)) cons(item);
-    }
-
-    /// <summary> Finds object of the given type. </summary>
-    public static T ObjFind<T>() where T : Object => Object.FindObjectOfType<T>();
-
-    /// <summary> Finds object with the given name. </summary>
+    public static T   ObjFind<T>() where T : Object => Object.FindObjectOfType<T>();
     public static GameObject ObjFind(string name) => GameObject.Find(name);
 
     #endregion

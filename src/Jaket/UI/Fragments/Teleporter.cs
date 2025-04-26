@@ -22,7 +22,7 @@ public class Teleporter : CanvasSingleton<Teleporter>
         decor.sprite = null;
         decor.transform.localEulerAngles = new(0f, 0f, -25f);
 
-        ResFind<AudioClip>(clip => clip.name == "Click1", clip => click = clip);
+        ResFind<AudioClip>().Each(clip => clip.name == "Click1", clip => click = clip);
     }
 
     private void Update()

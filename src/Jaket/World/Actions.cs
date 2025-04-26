@@ -41,7 +41,7 @@ public class StaticAction : WorldAction
     /// <summary> Creates a static action that finds an object. </summary>
     public static void Find(string level, string name, Vector3 position, Cons<GameObject> action) => new StaticAction(level, () =>
     {
-        ResFind(obj => IsReal(obj) && obj.transform.position == position && obj.name == name, action);
+        ResFind<GameObject>().Each(obj => IsReal(obj) && obj.transform.position == position && obj.name == name, action);
     });
     /// <summary> Creates a static action that adds a component to an object. </summary>
     public static void Patch(string level, string name, Vector3 position) => Find(level, name, position, obj => obj.AddComponent<ObjectActivator>().events = new());
@@ -63,7 +63,7 @@ public class NetAction : WorldAction
 
     /// <summary> Creates a net action that synchronizes an object activator component. </summary>
     public static void Sync(string level, string name, Vector3 position, Cons<Transform> action = null) => new NetAction(level, name, position, () =>
-        ResFind<ObjectActivator>(
+        ResFind<ObjectActivator>().Each(
             obj => IsReal(obj) && Within(obj.transform, position) && obj.name == name,
             obj =>
             {
@@ -84,7 +84,7 @@ public class NetAction : WorldAction
         {
             if (LobbyController.Online) World.SyncAction(obj);
         }));
-        new NetAction(level, name, position, () => ResFind<RectTransform>(
+        new NetAction(level, name, position, () => ResFind<RectTransform>().Each(
             obj => IsReal(obj) && Within(obj, position) && obj.name == name,
             obj =>
             {

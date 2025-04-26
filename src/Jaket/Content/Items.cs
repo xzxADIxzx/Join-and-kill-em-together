@@ -102,8 +102,8 @@ public class Items
     /// <summary> Synchronizes all items in the level. </summary>
     public static void SyncAll()
     {
-        ResFind<ItemIdentifier>(item => Sync(item, false));
-        ResFind<ItemPlaceZone>(zone =>
+        ResFind<ItemIdentifier>().Each(item => Sync(item, false));
+        ResFind<ItemPlaceZone>().Each(zone =>
         {
             if (!IsReal(zone)) return;
 

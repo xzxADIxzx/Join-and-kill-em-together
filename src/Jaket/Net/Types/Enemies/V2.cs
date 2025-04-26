@@ -60,7 +60,7 @@ public class V2 : SimpleEnemy
             ObjFind("AltarStuff").transform.Find("Altar").gameObject.SetActive(true);
             ObjFind("BigJohnatronMusic").SetActive(false);
 
-            ResFind<ItemPlaceZone>(zone => zone.transform.Find("Book") != null, zone => zone.transform.position += Vector3.up * 3f);
+            ResFind<ItemPlaceZone>().Each(zone => zone.transform.Find("Book") != null, zone => zone.transform.position += Vector3.up * 3f);
         }
     }
 

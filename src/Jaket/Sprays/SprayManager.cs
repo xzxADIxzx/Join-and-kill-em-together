@@ -33,7 +33,7 @@ public class SprayManager
         LoadSprayFiles();
         SpraySettings.Load();
 
-        ResFind<AudioClip>(clip => clip.name == "Explosion Harmless", clip => puh = clip);
+        ResFind<AudioClip>().Each(clip => clip.name == "Explosion Harmless", clip => puh = clip);
 
         // clear the cache in offline game & upload the current spray if it was changed
         Events.OnLoad += () =>

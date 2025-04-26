@@ -32,7 +32,7 @@ public class Votes
     public static void Init()
     {
         if (Scene == "Level 2-S") Init2S();
-        ResFind<CutsceneSkip>(IsReal, cs => cs.gameObject.AddComponent<Voting>());
+        ResFind<CutsceneSkip>().Each(IsReal, cs => cs.gameObject.AddComponent<Voting>());
     }
 
     /// <summary> Votes for the given option. </summary>
@@ -61,7 +61,7 @@ public class Votes
         for (int i = 0; i < 4; i++)
             fallen.transform.GetChild(i).GetComponent<Image>().sprite = ModAssets.ChanFallen;
 
-        ResFind<SpritePoses>(sp => IsReal(sp) && sp.copyChangeTo.Length > 0, sp => sp.poses = ModAssets.ChanPoses);
+        ResFind<SpritePoses>().Each(sp => IsReal(sp) && sp.copyChangeTo.Length > 0, sp => sp.poses = ModAssets.ChanPoses);
 
         ObjFind("Canvas/PowerUpVignette/Panel/Intro/Text").AddComponent<Voting>();
         ObjFind("Canvas/PowerUpVignette/Panel/Intro/Text (1)").AddComponent<Voting>();

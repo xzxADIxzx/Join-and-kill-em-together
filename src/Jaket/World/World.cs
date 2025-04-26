@@ -114,7 +114,7 @@ public class World
         });
 
         // change the layer from PlayerOnly to Invisible so that other players will be able to launch the wave
-        ResFind<ActivateArena>(trigger => trigger.gameObject.layer = 16);
+        ResFind<ActivateArena>().Each(t => t.gameObject.layer = 16);
 
         // raise the activation trigger so that players don't get stuck on the sides
         var act = ObjFind<PlayerActivator>();
@@ -125,7 +125,7 @@ public class World
         void Find<T>(List<T> list) where T : Component
         {
             list.Clear();
-            ResFind<T>(IsReal, list.Add);
+            ResFind<T>().Each(IsReal, list.Add);
 
             // sort the objects by the distance so that their order will be the same for all clients
             list.Sort((t1, t2) => t1.transform.position.sqrMagnitude.CompareTo(t2.transform.position.sqrMagnitude));
@@ -161,7 +161,7 @@ public class World
         bool FarEnough(Transform t) => !Within(t, NewMovement.Instance.transform, 100f) || cg;
 
         // clear gore zones located further than 100 units from the player
-        ResFind<GoreZone>(zone => IsReal(zone) && zone.isActiveAndEnabled && FarEnough(zone.transform), zone => zone.ResetGibs());
+        ResFind<GoreZone>().Each(zone => IsReal(zone) && zone.isActiveAndEnabled && FarEnough(zone.transform), zone => zone.ResetGibs());
 
         // big pieces of corpses, such as arms or legs, are part of the entities
         DeadEntity.Corpses.Each(corpse => corpse && FarEnough(corpse.transform), Dest);
@@ -174,7 +174,7 @@ public class World
     /// <summary> Reads an action with the remote world and applies it to the local one. </summary>
     public static void ReadAction(Reader r)
     {
-        void Find<T>(Vector3 pos, Cons<T> cons) where T : Component => ResFind(t => t.transform.position == pos, cons);
+        void Find<T>(Vector3 pos, Cons<T> cons) where T : Component => ResFind<T>().Each(t => t.transform.position == pos, cons);
 
         switch (r.Byte())
         {
