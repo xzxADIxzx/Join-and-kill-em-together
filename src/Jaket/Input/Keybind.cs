@@ -19,14 +19,16 @@ public class Keybind
     PlayerInfo = new("player-information",   KeyCode.X),
     Pointer    = new("pointer",              KeyCode.Mouse2),
     Spray      = new("spray",                KeyCode.T),
-    Chat       = new("chat",                 KeyCode.Return),
-    ScrollUp   = new("scroll-messages-up",   KeyCode.UpArrow),
-    ScrollDown = new("scroll-messages-down", KeyCode.DownArrow),
     EmoteWheel = new("emote-wheel",          KeyCode.B),
-    SelfDest   = new("self-destruction",     KeyCode.K);
+    Chat       = new("chat",                 KeyCode.Return),
+    ScrollUp   = new("chat-scroll-up",       KeyCode.UpArrow),
+    ScrollDown = new("chat-scroll-down",     KeyCode.DownArrow),
+    Spectate   = new("spectate",             KeyCode.K),
+    SpectNext  = new("spectate-next",        KeyCode.Mouse0),
+    SpectPrev  = new("spectate-prev",        KeyCode.Mouse1);
 
     /// <summary> List of all keybinds used for loading, conflict resolving and so on. </summary>
-    public static Keybind[] all = { LobbyTab, PlayerList, Settings, PlayerInds, PlayerInfo, Pointer, Spray, Chat, ScrollUp, ScrollDown, EmoteWheel, SelfDest };
+    public static Keybind[] all = { LobbyTab, PlayerList, Settings, PlayerInds, PlayerInfo, Pointer, Spray, EmoteWheel, Chat, ScrollUp, ScrollDown, Spectate, SpectNext, SpectPrev };
 
     /// <summary> Internal name of the keybind. </summary>
     public readonly string name;
