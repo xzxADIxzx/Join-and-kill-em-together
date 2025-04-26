@@ -11,9 +11,6 @@ public class Coins
 {
     static Transform cc => CameraController.Instance.transform;
 
-    /// <summary> Environmental mask needed to ray cast targets. </summary>
-    private static readonly int mask = LayerMaskDefaults.Get(LMD.Environment);
-
     /// <summary> All alive coins that can be used during a search for targets for ricochet. </summary>
     public static List<TeamCoin> Alive = new();
 
@@ -28,7 +25,7 @@ public class Coins
             var dif = t.position - coin.transform.position;
             var newDst = dif.sqrMagnitude;
             if (newDst < dst
-                && (!Physics.Raycast(coin.transform.position, dif, out var hit, Mathf.Sqrt(newDst) - .5f, mask) || hit.transform == t)
+                && (!Physics.Raycast(coin.transform.position, dif, out var hit, Mathf.Sqrt(newDst) - .5f, EnvMask) || hit.transform == t)
                 && (!ccc || !ccc.beenHit.Contains(t.gameObject)))
             {
                 target = t;
@@ -101,7 +98,7 @@ public class Coins
     }
 
     /// <summary> Finds the position to which the player sent a coin by punching it. </summary>
-    public static bool Punchcast(out RaycastHit hit) => Physics.Raycast(cc.position, cc.forward, out hit, float.PositiveInfinity, mask);
+    public static bool Punchcast(out RaycastHit hit) => Physics.Raycast(cc.position, cc.forward, out hit, float.PositiveInfinity, EnvMask);
 
     /// <summary> Paints the given revolver beam in the color of the given team. This must only be used with RV1 PRI. </summary>
     public static void PaintBeam(GameObject beam, Team team)

@@ -95,7 +95,7 @@ public class Spectator : Fragment
             StatsManager.Instance.Restart();
         }
 
-        rotation += InputManager.Instance.InputSource.Look.ReadValue<Vector2>() / 8f;
+        rotation += InputManager.Instance.InputSource.Look.ReadValue<Vector2>() * 2f;
         rotation.y = Mathf.Clamp(rotation.y, 0f, 180f);
 
         if (Keybind.SpectNext.Tap()) targetPlayer++;
