@@ -50,6 +50,9 @@ public class Keybind
     /// <summary> Returns formatted value of the keybind. </summary>
     public string FormatValue() => key switch
     {
+        KeyCode.Mouse0 => "LMB",
+        KeyCode.Mouse1 => "RMB",
+        KeyCode.Mouse2 => "MMB",
         KeyCode.LeftAlt => "LEFT ALT",
         KeyCode.RightAlt => "RIGHT ALT",
         KeyCode.LeftShift => "LEFT SHIFT",
