@@ -23,6 +23,11 @@ public static class Log
     /// <summary> Logs waiting their turn to be written. </summary>
     public static List<string> ToWrite = new(STORAGE_CAPACITY);
 
+    /// <summary> Whether the previous flush operation has been finished. </summary>
+    public static bool Ready = true;
+    /// <summary> Logs that are being written at the moment. </summary>
+    public static List<string> Writing;
+
     /// <summary> Output point for Unity and in-game console. </summary>
     public static Logger Logger;
     /// <summary> Output point for long-term logging. </summary>
@@ -31,6 +36,9 @@ public static class Log
     /// <summary> Creates output points for logs. </summary>
     public static void Load()
     {
+        Events.InternalFlushFinish = () => Ready = true;
+        Events.EveryDozen += Flush;
+
         Logger = new("Jaket");
         File = Files.GetFile(Files.Logs, $"Logs of {Time.Replace(':', '.')}.log");
     }
@@ -54,12 +62,13 @@ public static class Log
     /// <summary> Flushes all logs to a file; creates a folder if it doesn't exist. </summary>
     public static void Flush()
     {
-        if (ToWrite.Count == 0) return;
+        if (ToWrite.Count == 0 || !Ready) return;
 
         Files.MakeSureExists(Files.Logs);
-        Files.Append(File, ToWrite);
+        Files.Append(File, Writing = ToWrite);
 
-        ToWrite.Clear();
+        ToWrite = new(STORAGE_CAPACITY);
+        Ready = false;
     }
 
     public static void Debug(string msg) => LogLevel(Level.Debug, msg);
