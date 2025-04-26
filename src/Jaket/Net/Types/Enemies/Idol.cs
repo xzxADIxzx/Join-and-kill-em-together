@@ -32,7 +32,7 @@ public class Idol : Enemy
             if (Scene == "Level 5-2") fakeFerry = ObjFind("FerrymanIntro")?.GetComponent<EnemyIdentifier>();
 
             lastTargetId = target.Id;
-            EnemyId.idol.ChangeOverrideTarget(fakeFerry && Within(fakeFerry.transform, transform, 100f) ? fakeFerry : target.Value?.EnemyId);
+            EnemyId.idol.ChangeOverrideTarget(fakeFerry && Within(fakeFerry, this, 100f) ? fakeFerry : target.Value?.EnemyId);
         }
     });
 

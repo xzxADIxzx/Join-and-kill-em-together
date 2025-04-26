@@ -53,11 +53,11 @@ public class Coins
 
             ObjectTracker.Instance.cannonballList.ForEach(b =>
             {
-                if (Within(b.transform, coin.transform, 100f)) Check(b.transform);
+                if (Within(b, coin, 100f)) Check(b.transform);
             });
             ObjectTracker.Instance.grenadeList.ForEach(g =>
             {
-                if (Within(g.transform, coin.transform, 100f) && !g.playerRiding && !g.enemy) Check(g.transform);
+                if (Within(g, coin, 100f) && !g.playerRiding && !g.enemy) Check(g.transform);
             });
             if (target) return target;
         }

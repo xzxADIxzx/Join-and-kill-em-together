@@ -138,7 +138,7 @@ public class World
         void Sync(HookPoint point, bool hooked)
         {
             var index = (byte)HookPoints.IndexOf(point);
-            if (index != 255 && point != LastSyncedPoint && Within(point.transform, HookArm.Instance.hook, 9f)) SyncAction(index, hooked);
+            if (index != 255 && point != LastSyncedPoint && Within(point, HookArm.Instance.hook, 9f)) SyncAction(index, hooked);
         }
 
         Find(HookPoints);
@@ -158,7 +158,7 @@ public class World
         if (LobbyController.Offline) return;
 
         bool cg = Scene == "Endless";
-        bool FarEnough(Transform t) => !Within(t, NewMovement.Instance.transform, 100f) || cg;
+        bool FarEnough(Transform t) => !Within(t, NewMovement.Instance, 100f) || cg;
 
         // clear gore zones located further than 100 units from the player
         ResFind<GoreZone>().Each(zone => IsReal(zone) && zone.isActiveAndEnabled && FarEnough(zone.transform), zone => zone.ResetGibs());
@@ -232,7 +232,7 @@ public class World
     /// <summary> Synchronizes activations of the given game object. </summary>
     public static void SyncAction(GameObject obj) => EachNet(na =>
     {
-        if (!Within(obj, na.Position) || obj.name != na.Name) return;
+        if (!Within(obj.transform, na.Position) || obj.name != na.Name) return;
 
         byte index = (byte)Actions.IndexOf(na);
         if (!Activated.Contains(index))

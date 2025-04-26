@@ -10,11 +10,7 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.Events;
 
-using Jaket.Assets;
 using Jaket.Content;
-using Jaket.IO;
-using Jaket.Net;
-using Jaket.Net.Types;
 
 /// <summary> Set of different tools for simplifying life and systematization of code. </summary>
 public static class Tools
@@ -99,6 +95,22 @@ public static class Tools
     public static GameObject ObjFind(string name) => GameObject.Find(name);
 
     #endregion
+    #region world
+
+    /// <summary> Default environment raycast mask. </summary>
+    public static readonly int EnvMask = LayerMaskDefaults.Get(LMD.Environment);
+
+    public static bool Within(Vector3 a,   Vector3 b,   float dst = 1f) => (a - b).sqrMagnitude < dst * dst;
+    public static bool Within(Vector3 a,   Transform b, float dst = 1f) => Within(a, b.position, dst);
+    public static bool Within(Vector3 a,   Component b, float dst = 1f) => Within(a, b.transform.position, dst);
+    public static bool Within(Transform a, Vector3 b,   float dst = 1f) => Within(a.position, b, dst);
+    public static bool Within(Transform a, Transform b, float dst = 1f) => Within(a.position, b.position, dst);
+    public static bool Within(Transform a, Component b, float dst = 1f) => Within(a.position, b.transform.position, dst);
+    public static bool Within(Component a, Vector3 b,   float dst = 1f) => Within(a.transform.position, b, dst);
+    public static bool Within(Component a, Transform b, float dst = 1f) => Within(a.transform.position, b.position, dst);
+    public static bool Within(Component a, Component b, float dst = 1f) => Within(a.transform.position, b.transform.position, dst);
+
+    #endregion
     #region reflection
 
     /// <summary> Returns the information about a field with the given name. </summary>
@@ -119,30 +131,6 @@ public static class Tools
     {
         var pointer = btn.GetComponents<MonoBehaviour>()[2]; // so much pain over the private class ControllerPointer
         return AccessTools.Property(pointer.GetType(), "OnPressed").GetValue(pointer) as UnityEvent;
-    }
-
-    #endregion
-    #region within
-
-    public static bool Within(Vector3 a, Vector3 b, float dst = 1f) => (a - b).sqrMagnitude < dst * dst;
-    public static bool Within(Transform a, Vector3 b, float dst = 1f) => Within(a.position, b, dst);
-    public static bool Within(Transform a, Transform b, float dst = 1f) => Within(a.position, b.position, dst);
-    public static bool Within(GameObject a, Vector3 b, float dst = 1f) => Within(a.transform.position, b, dst);
-    public static bool Within(GameObject a, GameObject b, float dst = 1f) => Within(a.transform.position, b.transform.position, dst);
-
-    #endregion
-    #region debug
-
-    /// <summary> Spawns a dummy at the position of the local player. </summary>
-    public static RemotePlayer Dummy()
-    {
-        var dummy = ModAssets.CreateDoll();
-        dummy.name = "Dummy";
-
-        // pass the data of the local player to the dummy
-        Writer.Write(Networking.LocalPlayer.Write, (data, size) => Reader.Read(data, size, dummy.Read), 48);
-
-        return dummy;
     }
 
     #endregion

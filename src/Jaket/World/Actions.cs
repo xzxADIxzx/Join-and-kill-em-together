@@ -64,7 +64,7 @@ public class NetAction : WorldAction
     /// <summary> Creates a net action that synchronizes an object activator component. </summary>
     public static void Sync(string level, string name, Vector3 position, Cons<Transform> action = null) => new NetAction(level, name, position, () =>
         ResFind<ObjectActivator>().Each(
-            obj => IsReal(obj) && Within(obj.transform, position) && obj.name == name,
+            obj => IsReal(obj) && Within(obj, position) && obj.name == name,
             obj =>
             {
                 obj.gameObject.SetActive(true);
