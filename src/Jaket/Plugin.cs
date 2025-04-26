@@ -1,11 +1,11 @@
 ﻿namespace Jaket;
 
 using BepInEx;
-using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Assets;
 using Jaket.Content;
+using Jaket.Harmony;
 using Jaket.IO;
 using Jaket.Net;
 using Jaket.Sprays;
@@ -67,7 +67,7 @@ public class Plugin : MonoBehaviour
 
         Version.Check4Updates();
         Version.FetchCompatible();
-        // TODO Harmony goes here
+        Patches.Load();
 
         Log.Info("[INIT] Jaket has been initialized");
 
@@ -95,8 +95,5 @@ public class Plugin : MonoBehaviour
         Votes.Load();
         Movement.Load();
         SprayManager.Load();
-
-        // initialize harmony and patch all the necessary classes
-        new Harmony("Should I write something here?").PatchAll();
     }
 }
