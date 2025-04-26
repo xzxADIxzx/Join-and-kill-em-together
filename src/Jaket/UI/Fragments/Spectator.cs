@@ -49,4 +49,20 @@ public class Spectator : Fragment
                     : "#spect.default");
         }
     }
+
+    #region harmony
+
+    [HarmonyPatch(typeof(StatsManager), nameof(StatsManager.Restart))]
+    [HarmonyPrefix]
+    static bool Restart() => !UI.Spectator.Shown && !Dialogs.Chat.Shown;
+
+    [HarmonyPatch(typeof(DeathSequence), nameof(DeathSequence.EndSequence))]
+    [HarmonyPostfix]
+    static void Sequence(DeathSequence __instance)
+    {
+        __instance.gameObject.SetActive(false);
+        UI.Spectator.Toggle();
+    }
+
+    #endregion
 }

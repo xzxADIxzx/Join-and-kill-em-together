@@ -33,6 +33,7 @@ public static class UI
     #region fragments
 
     public static MainMenuAccess Access;
+    public static Spectator Spectator;
 
     #endregion
     #region groups
@@ -70,9 +71,10 @@ public static class UI
         PlayerList = new(root);
 
         Access = new(root);
+        Spectator = new(root);
 
         Dialogs = new Fragment[] { LobbyTab, LobbyList, PlayerList };
-        Fragments = new Fragment[] { Access };
+        Fragments = new Fragment[] { Access, Spectator };
         LeftGroup = new Fragment[] { LobbyTab, PlayerList };
         MidlGroup = new Fragment[] { LobbyList };
 
