@@ -38,8 +38,13 @@ public class Fragment
     /// <summary> Rebuilds the fragment if possible. </summary>
     public virtual void Rebuild() { }
 
+    #region building
+
     /// <summary> Adds a rectangle, it is not preconfigured. </summary>
     protected RectTransform Rect(string name, Rect rect) => Builder.Rect(name, Content, rect);
+
+    /// <summary> Adds a rectangle, it fills the fragment. </summary>
+    protected RectTransform Fill(string name) => Builder.Rect(name, Content, Lib.Rect.Fill);
 
     /// <summary> Adds a bar, it is located on the left and has a constant width. </summary>
     protected void Bar(float height, Cons<Bar> cons)
@@ -74,4 +79,6 @@ public class Fragment
         Builder.Image(bar, Tex.Fill, semi, ImageType.Sliced);
         Builder.Text(txt, $"Jaket version is {Version.CURRENT}{(Version.DEBUG ? "-beta" : "")}", 24, gray, TextAnchor.MiddleCenter).alignByGeometry = true;
     }
+
+    #endregion
 }

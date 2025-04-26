@@ -15,6 +15,8 @@ public static class Tex
     public static Sprite Mark, Mask;
     /// <summary> Hollow circle and circular shadow. </summary>
     public static Sprite Circle, Shadow;
+    /// <summary> I see you. </summary>
+    public static Sprite Dead;
 
     /// <summary> Loads the textures from memory. </summary>
     public static void Load()
@@ -33,6 +35,7 @@ public static class Tex
         Mask = Find("Round_SliderFill");
         Circle = Find("circle");
         Shadow = Find("weaponwheelbackground");
+        Dead = Find("ISeeYou");
     }
 
     /// <summary> Returns the scale of the given sprite. </summary>
