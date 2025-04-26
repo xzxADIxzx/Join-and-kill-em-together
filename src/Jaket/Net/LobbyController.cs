@@ -63,6 +63,13 @@ public static class LobbyController
     /// <summary> Whether there is a player with the given id among the members of the lobby. </summary>
     public static bool Contains(uint id) => Lobby?.Members.Any(m => m.Id.AccountId == id) ?? false;
 
+    /// <summary> Returns identifier of the member with the given index. </summary>
+    public static uint MemberId(int index)
+    {
+        foreach (var member in Lobby?.Members) if (index-- <= 0) return member.Id.AccountId;
+        return 0u;
+    }
+
     #region control
 
     /// <summary> Creates a new lobby and connects to it. </summary>
