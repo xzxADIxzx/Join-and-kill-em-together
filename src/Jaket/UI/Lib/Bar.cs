@@ -118,7 +118,7 @@ public class Bar : MonoBehaviour
     #region button
 
     /// <summary> Adds a text button, the most basic kind of buttons. </summary>
-    public Button TextButton(string text, Color? color = null, TextAnchor align = TextAnchor.MiddleCenter, Runnable callback = null, float spc = 40f) =>
+    public Button TextButton(string text, Color? color = null, Runnable callback = null, TextAnchor align = TextAnchor.MiddleCenter, float spc = 40f) =>
         Builder.TextButton(Resolve("TextButton", spc), Tex.Large, color ?? white, text, 24, align, callback);
 
     /// <summary> Adds an icon button, the most minimalistic kind of buttons. </summary>

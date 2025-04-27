@@ -69,7 +69,7 @@ public class PlayerList : Fragment
             }));
 
             b.Separator();
-            b.TextButton("#player-list.clear", red, callback: () => { });
+            b.TextButton("#player-list.clear", red, () => { });
         });
         VersionBar();
     }
