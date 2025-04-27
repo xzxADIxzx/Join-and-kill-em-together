@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Jaket.Assets;
+using Jaket.Input;
 using Jaket.Net;
 using Jaket.UI.Dialogs;
 using Jaket.World;
@@ -21,17 +22,17 @@ public class InteractiveGuide : CanvasSingleton<InteractiveGuide>
 
     private void Start()
     {
-        Add(0f, 0f, () => UI.LobbyTab.Shown, Settings.LobbyTab);
+        Add(0f, 0f, () => UI.LobbyTab.Shown, Keybind.LobbyTab);
         Add(-256f, 456f, () => LobbyController.Online);
         Add(-256f, 408f, () => LobbyController.Lobby?.MemberCount > 1);
-        Add(0f, 0f, () => !UI.LobbyTab.Shown, Settings.LobbyTab);
+        Add(0f, 0f, () => !UI.LobbyTab.Shown, Keybind.LobbyTab);
 
-        Add(0f, 0f, () => Chat.Shown, Settings.Chat);
+        Add(0f, 0f, () => Chat.Shown, Keybind.Chat);
         Add(0f, -444f, () => !Chat.Shown);
 
-        Add(0f, 0f, () => Settings.Shown, Settings.Settingz);
+        Add(0f, 0f, () => UI.Settings.Shown, Keybind.Settings);
         Add(-256f, -252f, () => false);
-        Add(0f, 0f, () => !Settings.Shown);
+        Add(0f, 0f, () => !UI.Settings.Shown);
     }
 
     private void Update()
@@ -49,9 +50,9 @@ public class InteractiveGuide : CanvasSingleton<InteractiveGuide>
     }
 
     /// <summary> Adds a new part to the guide. </summary>
-    public void Add(float x, float y, Prov<bool> completed, KeyCode arg = KeyCode.None)
+    public void Add(float x, float y, Prov<bool> completed, Keybind arg = null)
     {
-        var guide = Bundle.Format("guide." + Conditions.Count, Settings.KeyName(arg));
+        var guide = Bundle.Format("guide." + Conditions.Count, arg?.FormatValue());
         var width = Bundle.CutColors(guide).Length * 14f + 16f;
 
         UIB.Table("Guide " + Conditions.Count, transform, new(x, y, width, 60f), table =>
