@@ -28,6 +28,7 @@ public static class UI
     public static LobbyTab LobbyTab;
     public static LobbyList LobbyList;
     public static PlayerList PlayerList;
+    public static Settings Settings;
 
     #endregion
     #region fragments
@@ -69,13 +70,14 @@ public static class UI
         LobbyTab = new(root);
         LobbyList = new(root);
         PlayerList = new(root);
+        Settings = new(root);
 
         Access = new(root);
         Spectator = new(root);
 
-        Dialogs = new Fragment[] { LobbyTab, LobbyList, PlayerList };
+        Dialogs = new Fragment[] { LobbyTab, LobbyList, PlayerList, Settings };
         Fragments = new Fragment[] { Access, Spectator };
-        LeftGroup = new Fragment[] { LobbyTab, PlayerList };
+        LeftGroup = new Fragment[] { LobbyTab, PlayerList, Settings };
         MidlGroup = new Fragment[] { LobbyList };
 
         Log.Info($"[FACE] Builded {Dialogs.Length} dialogs and {Fragments.Length} fragments");
@@ -85,7 +87,7 @@ public static class UI
     public static void Hide(Fragment[] group, Fragment frag)
     {
         group.Each(f => f.Shown && f != frag, f => f.Toggle());
-        if (group == MidlGroup)
+        if (group == MidlGroup && Scene != "Main Menu")
         {
             OptionsManager.Instance.UnPause();
             WeaponWheel.Instance.gameObject.SetActive(false);

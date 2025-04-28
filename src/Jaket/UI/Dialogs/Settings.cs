@@ -4,61 +4,44 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using Jaket.Assets;
-using Jaket.World;
+using Jaket.Input;
+using Jaket.UI.Lib;
 
 using static Jaket.UI.Lib.Pal;
-using static Rect;
 
-/// <summary> Global mod settings not related to the lobby. </summary>
-public class Settings : CanvasSingleton<Settings>
+/// <summary> Dialog that is responsible for options and keybinds. </summary>
+public class Settings : Fragment
 {
     static PrefsManager pm => PrefsManager.Instance;
 
-    #region general
+    #region options
 
-    /// <summary> Id of the currently selected language. </summary>
-    public static int Language;
-    /// <summary> 0 - default (depending on whether the player is in the lobby or not), 1 - always green, 2 - always blue/red. </summary>
-    public static int FeedColor, KnuckleColor;
-    /// <summary> Whether freeze frames are disabled. </summary>
-    public static bool DisableFreezeFrames;
-
-    #endregion
-    #region controls
-
-    /// <summary> List of internal names of all key bindings. </summary>
-    public static readonly string[] Keybinds =
-    { "chat", "scroll-messages-up", "scroll-messages-down", "lobby-tab", "player-list", "settings", "player-indicators", "player-information", "emote-wheel", "pointer", "spray", "self-destruction" };
-
-    /// <summary> Array with current control settings. </summary>
-    public static KeyCode[] CurrentKeys => new[]
-    { Chat, ScrollUp, ScrollDown, LobbyTab, PlayerList, Settingz, PlayerIndicators, PlayerInfo, EmoteWheel, Pointer, Spray, SelfDestruction };
-
-    /// <summary> List of all key bindings in the mod. </summary>
-    public static KeyCode Chat, ScrollUp, ScrollDown, LobbyTab, PlayerList, Settingz, PlayerIndicators, PlayerInfo, EmoteWheel, Pointer, Spray, SelfDestruction;
-
-    /// <summary> Gets the key binding value from its path. </summary>
-    public static KeyCode GetKey(string path, KeyCode def) => (KeyCode)pm.GetInt($"jaket.binds.{path}", (int)def);
-
-    /// <summary> Returns the name of the given key. </summary>
-    public static string KeyName(KeyCode key) => key switch
+    /// <summary> Identifier of the selected localization. </summary>
+    public static string Locale
     {
-        KeyCode.LeftAlt => "LEFT ALT",
-        KeyCode.RightAlt => "RIGHT ALT",
-        KeyCode.LeftShift => "LEFT SHIFT",
-        KeyCode.RightShift => "RIGHT SHIFT",
-        KeyCode.LeftControl => "LEFT CONTROL",
-        KeyCode.RightControl => "RIGHT CONTROL",
-        KeyCode.Return => "ENTER",
-        KeyCode.CapsLock => "CAPS LOCK",
-        _ => key.ToString().Replace("Alpha", "").Replace("Keypad", "Num ").ToUpper()
-    };
-
-    #endregion
-    #region tts
-
-    // <summary> Sam's voice volume. Limited by interval from 0 to 100. </summary>
-    public static int TTSVolume
+        get => pm.GetString("jaket.locale", "en");
+        set => pm.SetString("jaket.locale", value);
+    }
+    /// <summary> Color of the feedbacker: default, green or blue. </summary>
+    public static int FeedColor
+    {
+        get => pm.GetInt("jaket.feed-color");
+        set => pm.SetInt("jaket.feed-color", value % 3);
+    }
+    /// <summary> Color of the knuckleblaster: default, green or red. </summary>
+    public static int KnklColor
+    {
+        get => pm.GetInt("jaket.knkl-color");
+        set => pm.SetInt("jaket.knkl-color", value % 3);
+    }
+    /// <summary> Whether freeze frames aka hitstops are disabled. </summary>
+    public static bool DisableFreezeFrames
+    {
+        get => pm.GetBool("jaket.disable-freeze", true);
+        set => pm.SetBool("jaket.disable-freeze", value);
+    }
+    // <summary> Percentage volume of the Sam's voice. </summary>
+    public static int Volume
     {
         get => pm.GetInt("jaket.tts.volume", 60);
         set
@@ -67,8 +50,7 @@ public class Settings : CanvasSingleton<Settings>
             pm.SetInt("jaket.tts.volume", value);
         }
     }
-
-    /// <summary> Whether auto TTS is enabled. </summary>
+    /// <summary> Whether auto text-to-speech is enabled. </summary>
     public static bool AutoTTS
     {
         get => pm.GetBool("jaket.tts.auto");
@@ -77,122 +59,75 @@ public class Settings : CanvasSingleton<Settings>
 
     #endregion
 
-    /// <summary> Whether a binding is being reassigned right now. </summary>
-    public bool Rebinding;
-    /// <summary> Components of a key button and the path to the keybind. </summary>
-    private string path; Text text; Image background;
-    /// <summary> General settings buttons. </summary>
+    /// <summary> Buttons that controls the language and colors of the feedbacker and knuckleblaster. </summary>
     private Button lang, feed, knkl;
+    /// <summary> Content of the keybind list. </summary>
+    private Bar keylist;
 
-    /// <summary> Loads and applies all settings. </summary>
-    public static void Load()
+    /// <summary> Whether a keybind is being reassigned right now. </summary>
+    public bool Rebinding;
+    /// <summary> Keybind to reassign once any key is pressed. </summary>
+    public Keybind Keybind;
+
+    public Settings(Transform root) : base(root, "Settings", true)
     {
-        Language = Bundle.Loaded;
-        FeedColor = pm.GetInt("jaket.feed-color");
-        KnuckleColor = pm.GetInt("jaket.knkl-color");
-        DisableFreezeFrames = pm.GetBool("jaket.disable-freeze", true);
-
-        Chat = GetKey("chat", KeyCode.Return);
-        ScrollUp = GetKey("scroll-messages-up", KeyCode.UpArrow);
-        ScrollDown = GetKey("scroll-messages-down", KeyCode.DownArrow);
-        LobbyTab = GetKey("lobby-tab", KeyCode.F1);
-        PlayerList = GetKey("player-list", KeyCode.F2);
-        Settingz = GetKey("settings", KeyCode.F3);
-        PlayerIndicators = GetKey("player-indicators", KeyCode.Z);
-        PlayerInfo = GetKey("player-information", KeyCode.X);
-        EmoteWheel = GetKey("emote-wheel", KeyCode.B);
-        Pointer = GetKey("pointer", KeyCode.Mouse2);
-        Spray = GetKey("spray", KeyCode.T);
-        SelfDestruction = GetKey("self-destruction", KeyCode.K);
-
-        ModAssets.Mixer?.SetFloat("Volume", TTSVolume / 2f - 30f);
-    }
-
-    private void Start()
-    {
-        UIB.Shadow(transform);
-        UIB.Table("General", "#settings.general", transform, Tlw(16f + 328f / 2f, 328f), table =>
+        Bar(352f, b =>
         {
-            UIB.Button("#settings.reset", table, Btn(68f), clicked: ResetGeneral);
+            b.Setup(true);
+            b.Text("#settings.general", 32f, 32);
 
-            lang = UIB.Button("", table, Btn(116f), clicked: () =>
+            b.FillButton("#settings.reset", red, ResetGeneral);
+            b.Separator();
+
+            lang = b.TextButton("", callback: () =>
             {
-                pm.SetString("jaket.locale", Bundle.Codes[Language = ++Language % Bundle.Codes.Length]);
+                Locale = Bundle.Codes[(Bundle.Codes.IndexOf(Locale) + 1) % Bundle.Codes.Length];
                 Rebuild();
             });
 
-            UIB.Text("FEEDBACKER:", table, Btn(164f), align: TextAnchor.MiddleLeft);
-            feed = UIB.Button("", table, Stn(164f, 160f), clicked: () =>
+            feed = b.OffsetButton("FEEDBACKER:", () =>
             {
-                pm.SetInt("jaket.feed-color", FeedColor = ++FeedColor % 3);
+                FeedColor++;
                 Rebuild();
             });
 
-            UIB.Text("KNUCKLE:", table, Btn(212f), align: TextAnchor.MiddleLeft);
-            knkl = UIB.Button("", table, Stn(212f, 160f), clicked: () =>
+            knkl = b.OffsetButton("KNUCKLEBLASTER:", () =>
             {
-                pm.SetInt("jaket.knkl-color", KnuckleColor = ++KnuckleColor % 3);
+                KnklColor++;
                 Rebuild();
             });
 
-            UIB.Toggle("#settings.freeze", table, Tgl(256f), 20, _ =>
-            {
-                pm.SetBool("jaket.disable-freeze", DisableFreezeFrames = _);
-            }).isOn = DisableFreezeFrames;
-
-            UIB.Button("#settings.sprays", table, Btn(300f), clicked: SpraySettings.Instance.Toggle);
+            b.Toggle("#settings.freeze", b => DisableFreezeFrames = b);
+            b.TextButton("#settings.sprays", callback: () => SpraySettings.Instance.Toggle());
         });
-        UIB.Table("Controls", "#settings.controls", transform, Tlw(360f + 576f / 2f, 576f), table =>
+        Bar(552f, b =>
         {
-            UIB.Button("#settings.reset", table, Btn(68f), clicked: ResetControls);
+            b.Setup(true);
+            b.Text("#settings.controls", 32f, 32);
 
-            for (int i = 0; i < Keybinds.Length; i++)
-                UIB.KeyButton(Keybinds[i], CurrentKeys[i], table, Tgl(112f + i * 40f));
+            b.FillButton("#settings.reset", red, ResetControls);
+            b.Separator();
+
+            b.Subbar(424f, s =>
+            {
+                s.Setup(false, 0f);
+                keylist = Component<Bar>(s.ScrollV(664f, 384f).content.gameObject, b => b.Setup(true, 0f));
+                s.Slider(keylist.transform);
+            });
         });
-
-        // Version.Label(transform);
-        Rebuild();
+        VersionBar();
+        Load(); // TODO remove after remaking the ModAssets
     }
 
-    private void OnGUI()
+    public override void Toggle()
     {
-        if (!Rebinding) return;
-
-        var current = Event.current; // receive the event and check whether any key is pressed
-        if (!current.isKey && !current.isMouse && !current.shift) return;
-
-        background.color = new(0f, 0f, 0f, .5f);
-        Rebinding = false;
-
-        // cancel key binding remapping
-        if (current.keyCode == KeyCode.Escape || (current.isMouse && current.button == 0)) return;
-
-        KeyCode key = current.isKey
-            ? current.keyCode
-            : current.isMouse
-                ? KeyCode.Mouse0 + current.button
-                : Input.GetKeyDown(KeyCode.LeftShift)
-                    ? KeyCode.LeftShift
-                    : KeyCode.RightShift;
-
-        text.text = KeyName(key);
-        pm.SetInt($"jaket.binds.{path}", (int)key);
-        Load();
+        base.Toggle();
+        UI.Hide(UI.LeftGroup, this, Rebuild);
     }
 
-    // <summary> Toggles visibility of the settings. </summary>
-    public void Toggle()
+    public override void Rebuild()
     {
-        // if (!Shown) UI.HideLeftGroup();
-
-        gameObject.SetActive(Shown = !Shown);
-        Movement.UpdateState();
-    }
-
-    /// <summary> Rebuilds the settings to update some labels. </summary>
-    public void Rebuild()
-    {
-        string Mode(int mode) => Bundle.Get(mode switch
+        static string Mode(int mode) => Bundle.Get(mode switch
         {
             0 => "settings.default",
             1 => "settings.green",
@@ -200,46 +135,77 @@ public class Settings : CanvasSingleton<Settings>
             _ => "lobby-tab.default"
         });
 
-        lang.GetComponentInChildren<Text>().text = Bundle.Locales[Language];
+        lang.GetComponentInChildren<Text>().text = Bundle.Locales[Bundle.Codes.IndexOf(Locale)];
         feed.GetComponentInChildren<Text>().text = Mode(FeedColor);
-        knkl.GetComponentInChildren<Text>().text = Mode(KnuckleColor);
+        knkl.GetComponentInChildren<Text>().text = Mode(KnklColor);
 
-        // update the color of the feedbacker and knuckleblaster
+        // update the toggle of the freeze frames
+        Content.GetChild(0).GetChild(0).GetChild(6).GetComponent<Toggle>().isOn = DisableFreezeFrames;
+
+        // update the colors of the feedbacker and knuckleblaster
         Events.OnHandChange.Fire();
+
+        keylist.Clear();
+        Keybind.All.Each(bind => keylist.RebindButton(bind, () => Rebind(bind)));
     }
 
-    // <summary> Starts rebinding the given key. </summary>
-    public void Rebind(string path, Text text, Image background)
+    #region load & reset
+
+    /// <summary> Loads and applies all settings. </summary>
+    public static void Load()
     {
-        this.path = path;
-        this.text = text;
-        this.background = background;
-
-        background.color = orange;
-        Rebinding = true;
+        Keybind.All.Each(b => b.Load());
+        Volume = Volume;
     }
 
-    #region reset
-
+    /// <summary> Resets options. </summary>
     private void ResetGeneral()
     {
-        pm.SetString("jaket.locale", Bundle.Codes[Bundle.Loaded]);
+        Locale = Bundle.Codes[Bundle.Loaded];
         pm.DeleteKey("jaket.feed-color");
         pm.DeleteKey("jaket.knkl-color");
         pm.DeleteKey("jaket.disable-freeze");
-
-        Load();
         Rebuild();
-        transform.GetChild(1).GetChild(7).GetComponent<Toggle>().isOn = DisableFreezeFrames;
     }
 
+    /// <summary> Resets keybinds. </summary>
     private void ResetControls()
     {
-        foreach (var name in Keybinds) pm.DeleteKey($"jaket.binds.{name}");
+        Keybind.All.Each(b => b.Reset());
+        Rebuild();
+    }
 
-        Load();
-        for (int i = 0; i < Keybinds.Length; i++)
-            transform.GetChild(2).GetChild(i + 2).GetChild(0).GetChild(0).GetComponent<Text>().text = KeyName(CurrentKeys[i]);
+    #endregion
+    #region rebinding
+
+    /// <summary> Starts the process of rebinding. </summary>
+    private void Rebind(Keybind bind)
+    {
+        Rebinding = true;
+        Keybind = bind;
+        Rebuild();
+    }
+
+    private void OnGUI()
+    {
+        if (!Rebinding) return;
+
+        var current = Event.current;
+        if (current.isKey || current.isMouse)
+        {
+            Rebinding = false;
+            if (current.keyCode == KeyCode.Escape || (current.isMouse && Keybind.Dangerous.Any(b => b == Keybind))) return;
+
+            var key = current.isKey
+                ? current.keyCode
+                : current.isMouse
+                    ? KeyCode.Mouse0 + current.button
+                    : KeyCode.None;
+
+            Keybind.Rebind(key);
+            Keybind.Save();
+            Rebuild();
+        }
     }
 
     #endregion
