@@ -189,10 +189,12 @@ public class Settings : Fragment
         var current = Event.current;
         if (current.isKey || current.isMouse)
         {
-            var keybind = Rebinding;
-            Rebinding = null;
+            if (current.isMouse && Keybind.Dangerous.Any(b => b == Rebinding)) return;
 
-            if (current.keyCode == KeyCode.Escape || (current.isMouse && Keybind.Dangerous.Any(b => b == keybind))) return;
+            Events.Post(() => Rebinding = null);
+            Events.Post(Rebuild);
+
+            if (current.keyCode == KeyCode.Escape) return;
 
             var key = current.isKey
                 ? current.keyCode
@@ -200,9 +202,10 @@ public class Settings : Fragment
                     ? KeyCode.Mouse0 + current.button
                     : KeyCode.None;
 
-            keybind.Rebind(key);
-            keybind.Save();
-            Rebuild();
+            if (key == KeyCode.None) return;
+
+            Rebinding.Rebind(key);
+            Rebinding.Save();
         }
     }
 
