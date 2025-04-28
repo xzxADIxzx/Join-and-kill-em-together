@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using ImageType = UnityEngine.UI.Image.Type;
 
 using Jaket.Content;
+using Jaket.Input;
 using Jaket.Net;
 
 using static Pal;
@@ -156,6 +157,23 @@ public class Bar : MonoBehaviour
     /// <summary> Adds a button that corresponds to the style of Buy Me a Coffee. </summary>
     public Button CoffeeButton(string text) =>
         FillButton(text, bmac, () => Application.OpenURL("https://www.buymeacoffee.com/adithedev"));
+
+    /// <summary> Adds a button, it has a label on the left. </summary>
+    public Button OffsetButton(string text, Runnable callback, int size = 24, string value = "")
+    {
+        Button button = null;
+        Subbar(40f, s =>
+        {
+            s.Setup(false, 0f, 0f);
+            s.Text(text, s.rect.sizeDelta.x - 120f, size, align: TextAnchor.MiddleLeft);
+            button = s.TextButton(value, spc: 120f, callback: callback);
+        });
+        return button;
+    }
+
+    /// <summary> Adds a button, it displays and rebinds the given keybind.</summary>
+    public Button RebindButton(Keybind bind, Runnable callback) =>
+        OffsetButton(bind.FormatName(), callback, 22, UI.Settings.Rebinding == bind ? "..." : bind.FormatValue());
 
     #endregion
     #region slider
