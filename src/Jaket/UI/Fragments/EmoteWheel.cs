@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI.Extensions;
 
 using Jaket.Assets;
+using Jaket.Input;
 using Jaket.World;
 
 using static Rect;
@@ -127,8 +128,8 @@ public class EmoteWheel : CanvasSingleton<EmoteWheel>
         Movement.UpdateState();
 
         // randomize RPS index if RPS emote is selected
-        if (selected == 3) Movement.Instance.Rps = (byte)Random.Range(0, 3);
+        if (selected == 3) Emotes.Rps = (byte)Random.Range(0, 3);
         // play emote if the selected segment is not a page transition
-        if (selected != 4) Movement.Instance.StartEmote((byte)(Second ? selected + 6 : selected));
+        if (selected != 4) Emotes.Instance.Play((byte)(Second ? selected + 6 : selected));
     }
 }

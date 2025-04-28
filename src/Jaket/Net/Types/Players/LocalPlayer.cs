@@ -4,10 +4,9 @@ using UnityEngine;
 
 using Jaket.Assets;
 using Jaket.Content;
+using Jaket.Input;
 using Jaket.IO;
-using Jaket.UI;
 using Jaket.UI.Dialogs;
-using Jaket.World;
 
 /// <summary>
 /// Local player that exists only on the local machine.
@@ -121,7 +120,7 @@ public class LocalPlayer : Entity
 
         w.Byte((byte)nm.hp);
         w.Byte((byte)Mathf.Floor(WeaponCharges.Instance.raicharge * 2.5f));
-        w.Player(Team, weapon, Movement.Instance.Emote, Movement.Instance.Rps, Chat.Shown);
+        w.Player(Team, weapon, Emotes.Current, Emotes.Rps, Chat.Shown);
         w.Bools(
             nm.walking,
             nm.sliding || (is44 && nm.transform.position.y > 610f && nm.transform.position.y < 611f),

@@ -35,7 +35,7 @@ public class World
     public static SecuritySystem[] SecuritySystem = new SecuritySystem[7];
     public static Brain Brain;
 
-    /// <summary> Creates a singleton of world. </summary>
+    /// <summary> Subscribes to several events for proper work. </summary>
     public static void Load()
     {
         Events.OnLoadingStart += () =>

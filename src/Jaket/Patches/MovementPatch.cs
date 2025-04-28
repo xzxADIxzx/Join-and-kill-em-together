@@ -5,12 +5,12 @@ using ULTRAKILL.Cheats;
 using UnityEngine;
 
 using Jaket.Content;
+using Jaket.Input;
 using Jaket.Net;
 using Jaket.Net.Types;
 using Jaket.UI;
 using Jaket.UI.Dialogs;
 using Jaket.UI.Fragments;
-using Jaket.World;
 
 [HarmonyPatch(typeof(NewMovement))]
 public class MovementPatch
@@ -37,7 +37,7 @@ public class MovementPatch
             LobbyController.Lobby?.SendChatString("#/d");
 
             Chat.Instance.Field.gameObject.SetActive(false);
-            Movement.Instance.OnDied();
+            Emotes.Instance.Play(0xFF);
         }
     }
 }
