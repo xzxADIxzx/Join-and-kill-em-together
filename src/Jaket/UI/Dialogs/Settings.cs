@@ -64,10 +64,8 @@ public class Settings : Fragment
     /// <summary> Content of the keybind list. </summary>
     private Bar keylist;
 
-    /// <summary> Whether a keybind is being reassigned right now. </summary>
-    public bool Rebinding;
-    /// <summary> Keybind to reassign once any key is pressed. </summary>
-    public Keybind Keybind;
+    /// <summary> Keybind that is being reassigned at the moment. </summary>
+    public Keybind Rebinding;
 
     public Settings(Transform root) : base(root, "Settings", true)
     {
@@ -179,22 +177,22 @@ public class Settings : Fragment
     #region rebinding
 
     /// <summary> Starts the process of rebinding. </summary>
-    private void Rebind(Keybind bind)
+    public void Rebind(Keybind bind)
     {
-        Rebinding = true;
-        Keybind = bind;
+        Rebinding = bind;
         Rebuild();
     }
 
-    private void OnGUI()
+    /// <summary> Checks whether any key is pressed. </summary>
+    public void RebindUpdate()
     {
-        if (!Rebinding) return;
-
         var current = Event.current;
         if (current.isKey || current.isMouse)
         {
-            Rebinding = false;
-            if (current.keyCode == KeyCode.Escape || (current.isMouse && Keybind.Dangerous.Any(b => b == Keybind))) return;
+            var keybind = Rebinding;
+            Rebinding = null;
+
+            if (current.keyCode == KeyCode.Escape || (current.isMouse && Keybind.Dangerous.Any(b => b == keybind))) return;
 
             var key = current.isKey
                 ? current.keyCode
@@ -202,8 +200,8 @@ public class Settings : Fragment
                     ? KeyCode.Mouse0 + current.button
                     : KeyCode.None;
 
-            Keybind.Rebind(key);
-            Keybind.Save();
+            keybind.Rebind(key);
+            keybind.Save();
             Rebuild();
         }
     }
