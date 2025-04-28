@@ -6,6 +6,7 @@ using UnityEngine;
 using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Harmony;
+using Jaket.Input;
 using Jaket.IO;
 using Jaket.Net;
 using Jaket.Sprays;
@@ -66,7 +67,9 @@ public class Plugin : MonoBehaviour
         UI.UI.Build();
 
         Log.Info("[INIT] Initializing network components...");
-        // TODO obviously
+
+        Create<Emotes>("Emotes");
+        Create<Movement>("Movement");
 
         Log.Info("[INIT] Running postinit hooks...");
 
@@ -98,7 +101,6 @@ public class Plugin : MonoBehaviour
         World.World.Load();
         WorldActionsList.Load();
         Votes.Load();
-        Movement.Load();
         SprayManager.Load();
     }
 }
