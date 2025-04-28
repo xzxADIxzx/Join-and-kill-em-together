@@ -41,7 +41,7 @@ public static class Bundle
         Files.MakeSureExists(Files.Bundles);
         Files.MoveAll(Files.Root, Files.Bundles, "*.properties");
 
-        var locale = PrefsManager.Instance?.GetString("jaket.locale", "en");
+        var locale = Settings.Locale;
         int localeId = Codes.IndexOf(locale);
 
         if (localeId == -1)

@@ -30,11 +30,11 @@ public class Commands
         Handler.Register("tts-volume", "\\[0-100]", "Set Sam's volume to keep your ears comfortable", args =>
         {
             if (args.Length == 0)
-                chat.Receive($"[#FFA500]TTS volume is {Settings.TTSVolume}.");
+                chat.Receive($"[#FFA500]TTS volume is {Settings.Volume}.");
             else if (int.TryParse(args[0], out int value))
             {
                 int clamped = Mathf.Clamp(value, 0, 100);
-                Settings.TTSVolume = clamped;
+                Settings.Volume = clamped;
 
                 chat.Receive($"[#32CD32]TTS volume is set to {clamped}.");
             }

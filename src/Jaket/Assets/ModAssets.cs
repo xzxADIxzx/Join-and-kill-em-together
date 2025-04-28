@@ -78,6 +78,7 @@ public class ModAssets
         Load<AudioMixer>("sam-audio", m =>
         {
             Events.Post(() => Networking.LocalPlayer.Voice.outputAudioMixerGroup = (Mixer = m).FindMatchingGroups("Master")[0]);
+            load settings
         });
         */
 
@@ -239,7 +240,7 @@ public class ModAssets
     /// <summary> Returns the hand texture currently in use. Depends on whether the player is in the lobby or not. </summary>
     public static Texture HandTexture(bool feedbacker = true)
     {
-        var s = feedbacker ? Settings.FeedColor : Settings.KnuckleColor;
+        var s = feedbacker ? Settings.FeedColor : Settings.KnklColor;
         return HandTextures[(feedbacker ? 0 : 2) + (s == 0 ? (LobbyController.Offline ? 0 : 1) : s == 1 ? 1 : 0)];
     }
 

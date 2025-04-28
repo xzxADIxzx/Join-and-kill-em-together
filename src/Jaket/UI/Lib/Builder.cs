@@ -120,7 +120,7 @@ public static class Builder
     #region toggle
 
     /// <summary> Creates a color block with transparency based on the given toggle state. </summary>
-    public static ColorBlock GetColor(bool active) => Colors with { colorMultiplier = active ? 1f : .1f };
+    public static ColorBlock GetColor(bool active) => Colors with { colorMultiplier = active ? 1f : .3f };
 
     /// <summary> Creates a toggle with the given text, size, color and callback. </summary>
     public static Toggle Toggle(Transform rect, string text, int size, Color color, Cons<bool> callback) =>
