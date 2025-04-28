@@ -17,7 +17,7 @@ public class Keybind
     Settings   = new("settings",             KeyCode.F3),
     PlayerInds = new("player-indicators",    KeyCode.Z),
     PlayerInfo = new("player-information",   KeyCode.X),
-    Pointer    = new("pointer",              KeyCode.Mouse2),
+    Point      = new("point",                KeyCode.Mouse2),
     Spray      = new("spray",                KeyCode.T),
     EmoteWheel = new("emote-wheel",          KeyCode.B),
     Chat       = new("chat",                 KeyCode.Return),
@@ -28,12 +28,14 @@ public class Keybind
     SpectPrev  = new("spectate-prev",        KeyCode.Mouse1);
 
     /// <summary> List of all keybinds used for loading, conflict resolving and so on. </summary>
-    public static Keybind[] all = { LobbyTab, PlayerList, Settings, PlayerInds, PlayerInfo, Pointer, Spray, EmoteWheel, Chat, ScrollUp, ScrollDown, Spectate, SpectNext, SpectPrev };
+    public static Keybind[] All = { LobbyTab, PlayerList, Settings, PlayerInds, PlayerInfo, Point, Spray, EmoteWheel, Chat, ScrollUp, ScrollDown, Spectate, SpectNext, SpectPrev };
+    /// <summary> List of all keybinds that cannot be assigned to a mouse key. </summary>
+    public static Keybind[] Dangerous = { LobbyTab, PlayerList, Settings, Chat };
 
     /// <summary> Internal name of the keybind. </summary>
-    public readonly string name;
+    private readonly string name;
     /// <summary> Default value of the keybind that is assigned in the constructor. </summary>
-    public readonly KeyCode defaultKey;
+    private readonly KeyCode defaultKey;
 
     /// <summary> Primary key of the keybind. </summary>
     private KeyCode key;
