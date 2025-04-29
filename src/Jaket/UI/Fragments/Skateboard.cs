@@ -2,68 +2,124 @@ namespace Jaket.UI.Fragments;
 
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UI.Extensions;
 
 using ImageType = UnityEngine.UI.Image.Type;
 
 using Jaket.Assets;
-using Jaket.World;
+using Jaket.Input;
+using Jaket.UI.Lib;
 
-using static Rect;
+using static Jaket.UI.Lib.Pal;
 
-/// <summary> Skateboard stamina and speed. </summary>
-public class Skateboard : CanvasSingleton<Skateboard>
+/// <summary> Fragment that is displayed when the player is riding a skateboard. </summary>
+public class Skateboard : Fragment
 {
-    static Movement mm => Movement.Instance;
     static NewMovement nm => NewMovement.Instance;
     static ColorBlindSettings cb => ColorBlindSettings.Instance;
 
-    /// <summary> Slider filler showing stamina. </summary>
-    private Image fill;
-    /// <summary> Text with stamina percentages. </summary>
-    private Text stamina;
-
-    /// <summary> Gradient along which the speed color changes. </summary>
-    private Gradient gradient = new();
+    /// <summary> Bars that display the current stamina level. </summary>
+    private UICircle[] bars = new UICircle[3];
     /// <summary> Text with speedometer and info about dashes. </summary>
-    private Text speed;
+    private Text speedometer;
+    /// <summary> Gradient along which the text color changes. </summary>
+    private UnityEngine.Gradient gradient = new();
 
-    private void Start()
+    /// <summary> Speed at which the skateboard moves. </summary>
+    private float speed;
+    /// <summary> Boost charge used to dash forward. </summary>
+    private float boost
     {
-        // stamina
-        var s = Size(320f, 320f) with { x = -32f };
-        var color = cb.staminaChargingColor with { a = .8f };
+        get => nm.boostCharge;
+        set => nm.boostCharge = value;
+    }
+    /// <summary> When the maximum speed is exceeded, deceleration is activated. </summary>
+    private bool decelerates;
+    /// <summary> Falling particles are used to show deceleration. </summary>
+    private GameObject particles;
 
-        var background = UIB.Image("Background", transform, s, color, UIB.Circle, type: ImageType.Filled);
-        background.transform.eulerAngles = new(0f, 0f, -30f);
-        background.fillAmount = 1f / 3f;
+    public Skateboard(Transform root) : base(root, "Skateboard", false)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            bars[i] = Builder.Circle(Rect("StaminaBar", new(512f, 512f)), .1f, -56 + 38 * i, 8f);
+            bars[i].color = clear;
+        }
 
-        fill = UIB.Image("Fill", transform, s, color, UIB.Circle, type: ImageType.Filled);
-        fill.transform.eulerAngles = new(0f, 0f, -30f);
-        stamina = UIB.Text("Stamina", transform, s, align: TextAnchor.MiddleRight);
+        var backgrd = Builder.Image(Rect("Speedometer", new(-512f, -128f, 290f, 74f)), Tex.Back, semi, ImageType.Sliced);
+        speedometer = Builder.Text(Builder.Rect("Text", backgrd.transform, Lib.Rect.Fill), "", 24, white, TextAnchor.MiddleLeft);
 
-        // speed
         gradient.SetKeys(new GradientColorKey[]
         {
-            new(new(0f, .9f, .4f), 0f),
-            new(new(1f, .8f, .3f),.5f),
-            new(new(1f, .2f, .1f), 1f),
+            new(green,  20f / 80f),
+            new(orange, 50f / 80f),
+            new(red,    80f / 80f),
         }, new GradientAlphaKey[0]);
-        UIB.Table("Speed", transform, new(-400f, -100f, 258f, 56f), table => speed = UIB.Text("", table, Size(252f, 56f), align: TextAnchor.MiddleLeft));
     }
 
-    private void Update()
+    public override void Toggle()
     {
-        // stamina
-        fill.fillAmount = nm.boostCharge / 900f;
-        fill.color = nm.boostCharge >= 100f ? cb.staminaColor : cb.staminaEmptyColor;
-
-        stamina.text = $"{(int)(nm.boostCharge / 3f)}%";
-        stamina.color = fill.color;
-
-        float angle = 4f * Mathf.PI / 3f - fill.fillAmount * 2f * Mathf.PI;
-        stamina.transform.localPosition = new(Mathf.Cos(angle) * 160f - 210f, Mathf.Sin(angle) * 160f, 0f);
-
-        // speed
-        speed.text = Bundle.Format("skateboard", ColorUtility.ToHtmlStringRGB(gradient.Evaluate(mm.SkateboardSpeed / 60f)), ((int)mm.SkateboardSpeed).ToString());
+        Content.gameObject.SetActive(Shown = Emotes.Current == 0x0B);
+        speed = 0f;
+        Dest(particles);
     }
+
+    #region vehicle
+
+    public void UpdateVehicle()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            bars[i].ProgressColor = boost < 100f ? cb.staminaEmptyColor : boost < 100f * (i + 1) ? cb.staminaChargingColor : cb.staminaColor;
+            bars[i].SetProgress((boost - 100f * i) / 100f);
+        }
+        speedometer.text = Bundle.Format("skateboard", ((int)speed).ToString(), ColorUtility.ToHtmlStringRGB(gradient.Evaluate(speed / 80f)));
+
+        speed = Mathf.MoveTowards(speed, 20f, (decelerates ? 28f : 14f) * Time.deltaTime);
+        boost = Mathf.MoveTowards(boost, 300f, 70f * Time.deltaTime);
+
+        if (speed >= 80f && !decelerates)
+        {
+            decelerates = true;
+            particles = Inst(nm.fallParticle, nm.transform);
+        }
+        if (speed <= 40f && decelerates)
+        {
+            decelerates = false;
+            Dest(particles);
+        }
+
+        var player = nm.transform;
+        nm.rb.velocity = (player.forward * speed) with { y = nm.rb.velocity.y };
+
+        // prevent the front and rear wheels from falling underground
+        void Check(Vector3 pos)
+        {
+            if (Physics.Raycast(pos, Vector3.down, out var hit, 1.5f, EnvMask) && hit.distance > .8f) player.position = player.position with { y = hit.point.y + 1.5f };
+        }
+        Check(player.position + player.forward * 1.2f);
+        Check(player.position - player.forward * 1.2f);
+    }
+
+    public void UpdateInput()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            if (boost >= 100f || (AssistController.Instance.majorEnabled && AssistController.Instance.infiniteStamina))
+            {
+                speed += 20f;
+                boost -= 100f;
+
+                // major assists make it possible to dash endlessly, that's why boost charge must be clamped
+                if (boost < 0f) boost = 0f;
+
+                Inst(nm.dodgeParticle, nm.transform.position, nm.transform.rotation);
+                AudioSource.PlayClipAtPoint(nm.dodgeSound, nm.transform.position);
+            }
+            else Inst(nm.staminaFailSound);
+        }
+        nm.transform.Rotate(Vector3.up * InputManager.Instance.InputSource.Move.ReadValue<Vector2>().x * 120f * Time.deltaTime);
+    }
+
+    #endregion
 }

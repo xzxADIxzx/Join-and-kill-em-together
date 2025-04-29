@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 using Jaket.Assets;
+using Jaket.Input;
 using Jaket.UI.Dialogs;
 using Jaket.UI.Fragments;
 using Jaket.UI.Lib;
@@ -21,7 +22,7 @@ public static class UI
     /// <summary> Whether any dialog is visible. </summary>
     public static bool AnyDialog => Dialogs.Any(d => d.Shown) || (OptionsManager.Instance?.paused ?? false);
     /// <summary> Whether any dialog that blocks movement is visible. </summary>
-    public static bool AnyMovementBlocking => AnyDialog || NewMovement.Instance.dead || Movement.Instance.Emote != 0xFF;
+    public static bool AnyMovementBlocking => AnyDialog || NewMovement.Instance.dead || Emotes.Current != 0xFF;
 
     #region dialogs
 
@@ -34,6 +35,7 @@ public static class UI
     #region fragments
 
     public static MainMenuAccess Access;
+    public static Skateboard Skateboard;
     public static Spectator Spectator;
 
     #endregion
@@ -73,10 +75,11 @@ public static class UI
         Settings = new(root);
 
         Access = new(root);
+        Skateboard = new(root);
         Spectator = new(root);
 
         Dialogs = new Fragment[] { LobbyTab, LobbyList, PlayerList, Settings };
-        Fragments = new Fragment[] { Access, Spectator };
+        Fragments = new Fragment[] { Access, Skateboard, Spectator };
         LeftGroup = new Fragment[] { LobbyTab, PlayerList, Settings };
         MidlGroup = new Fragment[] { LobbyList };
 
