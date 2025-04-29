@@ -45,10 +45,11 @@ public class Emotes : MonoSingleton<Emotes>
         Current = emote;
         StartTime = Time.time;
 
+        Dest(Preview);
         Movement.UpdateState();
 
-        Dest(Preview);
-        Dest(Movement.Instance.FallParticle);
+        UI.Spectator.Reset();
+        UI.Skateboard.Toggle();
 
         if (emote == 0xFF) return;
 
@@ -58,10 +59,6 @@ public class Emotes : MonoSingleton<Emotes>
         // stop sliding to prevent preview from falling underground
         nm.playerCollider.height = 3.5f;
         nm.gc.transform.localPosition = new(0f, -1.256f, 0f);
-
-        // rotate the third person camera in the same direction as the first person camera
-        UI.Spectator.Reset();
-        Movement.Instance.SkateboardSpeed = 0f;
 
         // restart the coroutine if the emote is not infinite
         StopCoroutine("ClearEmote");
