@@ -144,12 +144,12 @@ public static class Bundle
                         types.Push(3);
                         builder.Append("<i>");
                     }
-                    else if (tag.Length > 3 && tag[0] == '#')
+                    else if (tag.Length >= 3 && tag[0] == '#')
                     {
                         types.Push(0);
                         builder.Append("<color=").Append(tag).Append(">");
                     }
-                    else if (tag.Length > 3 && Colors[Hash(tag)] != null)
+                    else if (tag.Length >= 3 && Colors[Hash(tag)] != null)
                     {
                         types.Push(0);
                         builder.Append("<color=").Append(Colors[Hash(tag)]).Append(">");
