@@ -134,13 +134,13 @@ public class Spectator : Fragment
 
     [HarmonyPatch(typeof(DeathSequence), nameof(DeathSequence.EndSequence))]
     [HarmonyPostfix]
-    static void Sequence(DeathSequence __instance)
+    static void Sequence(DeathSequence __instance) => Events.Post(() =>
     {
         __instance.gameObject.SetActive(false);
 
         UI.Spectator.Toggle();
         UI.Spectator.Reset();
-    }
+    });
 
     #endregion
 }
