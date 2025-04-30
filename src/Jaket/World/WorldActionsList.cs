@@ -126,7 +126,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         {
             obj.GetComponent<ObjectActivator>().events.onActivate.AddListener(() =>
             {
-                Teleporter.Teleport(new(500f, 14f, 570f));
+                Teleporter.Tp(new(500f, 14f, 570f));
             });
         });
         StaticAction.Destroy(l, "Cube", new(130f, 13f, 702f));
@@ -152,7 +152,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
 
         StaticAction.Destroy(l, "Door", new(-10f, -161f, 955f));
 
-        NetAction.Sync(l, "Cube", new(-5f, -121f, 965f), obj => Teleporter.Teleport(new(-5f, -159.5f, 970f))); // boss
+        NetAction.Sync(l, "Cube", new(-5f, -121f, 965f), obj => Teleporter.Tp(new(-5f, -159.5f, 970f))); // boss
 
         #endregion
         #region 4-1
@@ -282,7 +282,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
                 if (o.name == "Underwater") o.SetActive(false);
                 if (o.name == "Surface") o.SetActive(true);
             });
-            Teleporter.Teleport(new(641.25f, 691.5f, 522f));
+            Teleporter.Tp(new(641.25f, 691.5f, 522f));
         });
 
         #endregion
@@ -327,7 +327,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
 
         NetAction.Sync(l, "Closer", new(0f, 20f, 579f), obj =>
         {
-            if (NewMovement.Instance.transform.position.z < 470f) Teleporter.Teleport(new(0f, 5.5f, 485f));
+            if (NewMovement.Instance.transform.position.z < 470f) Teleporter.Tp(new(0f, 5.5f, 485f));
         });
         NetAction.SyncLimbo(l, new(96.75f, 26f, 545f));
         NetAction.Sync(l, "RedSkullPickedUp", new(-23.4f, -4.7f, 581.6f));
@@ -338,7 +338,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         NetAction.SyncButton(l, "Forward Button", new(-242.5f, -112.675f, 310.2799f), obj =>
         {
             obj.parent.parent.parent.parent.parent.parent.parent.parent.gameObject.SetActive(true);
-            Teleporter.Teleport(new(-242.5f, -112.5f, 314f));
+            Teleporter.Tp(new(-242.5f, -112.5f, 314f));
         });
         NetAction.Sync(l, "Wave 2", new(-242.5f, 0f, 0f));
         NetAction.Sync(l, "Wave 3", new(-242.5f, 0f, 0f));
@@ -430,14 +430,14 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         StaticAction.Find(l, "12 - Grand Hall", new(-212.5f, -35f, 483.75f), obj =>
         {
             // teleport players to the final room once the door is opened
-            obj.GetComponent<ObjectActivator>().events.onActivate.AddListener(() => Teleporter.Teleport(new(-189f, -33.5f, 483.75f)));
+            obj.GetComponent<ObjectActivator>().events.onActivate.AddListener(() => Teleporter.Tp(new(-189f, -33.5f, 483.75f)));
         });
         StaticAction.Find(l, "ViolenceHallDoor", new(-148f, 7.5f, 276.25f), obj => Dest(obj.GetComponent<Collider>()));
 
         StaticAction.Destroy(l, "Door 2", new(-95.5f, 7.5f, 298.75f));
         StaticAction.Destroy(l, "ViolenceHallDoor (1)", new(-188f, 7.5f, 316.25f));
 
-        NetAction.Sync(l, "Trigger", new(-145.5f, 5f, 483.75f), obj => Teleporter.Teleport(new(-131f, -14.5f, 483.75f)));
+        NetAction.Sync(l, "Trigger", new(-145.5f, 5f, 483.75f), obj => Teleporter.Tp(new(-131f, -14.5f, 483.75f)));
         NetAction.Sync(l, "Opener", new(-170.5f, 0.5f, 480.75f));
         NetAction.Sync(l, "Opener", new(-170.5f, 0.5f, 490.75f), obj => ObjFind("Outdoors Areas/6 - Interior Garden/NightSkyActivator").SetActive(true));
         NetAction.Sync(l, "BigDoorOpener", new(-145.5f, -10f, 483.75f), obj => obj.transform.parent.gameObject.SetActive(true));
@@ -453,7 +453,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
             for (int i = 0; i < b.enemies.Length; i++)
                 (World.SecuritySystem[i] = b.enemies[i].gameObject.AddComponent<SecuritySystem>()).Type = EntityType.SecuritySystem_Main + i;
         }));
-        NetAction.Sync(l, "Trigger", new(0f, 495.25f, 713.25f), obj => Teleporter.Teleport(new(0f, 472f, 745f), false));
+        NetAction.Sync(l, "Trigger", new(0f, 495.25f, 713.25f), obj => Teleporter.Tp(new(0f, 472f, 745f), insideEarthmover: false));
         NetAction.Sync(l, "ShieldDeactivator", new(0f, 477.5f, 724.25f));
         NetAction.Sync(l, "DeathSequence", new(-2.5f, 472.5f, 724.25f));
         NetAction.SyncButton(l, "Button", new(0f, 476.5f, 717.15f));
@@ -464,9 +464,9 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
             obj.transform.parent.GetComponentsInChildren<DestroyOnCheckpointRestart>(true).Each(Dest);
             if (World.Brain) World.Brain.IsFightActive = true;
         }));
-        NetAction.Sync(l, "EntryTrigger", new(0f, 458.5f, 649.75f), obj => Teleporter.Teleport(new(0f, 460f, 650f)));
+        NetAction.Sync(l, "EntryTrigger", new(0f, 458.5f, 649.75f), obj => Teleporter.Tp(new(0f, 460f, 650f)));
         NetAction.Sync(l, "Deactivator", new(0.75f, 550.5f, 622.75f));
-        NetAction.Sync(l, "BrainFightTrigger", new(6.999941f, 841.5f, 610.7503f), obj => Teleporter.Teleport(new(0f, 826.5f, 610f)));
+        NetAction.Sync(l, "BrainFightTrigger", new(6.999941f, 841.5f, 610.7503f), obj => Teleporter.Tp(new(0f, 826.5f, 610f)));
         NetAction.Sync(l, "DelayedIdolSpawner", new(14.49993f, 914.25f, 639.7503f), obj =>
         {
             obj.transform.parent.gameObject.SetActive(true);
