@@ -1,0 +1,212 @@
+namespace Jaket.Input;
+
+using GameConsole;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+using Jaket.Assets;
+using Jaket.Content;
+using Jaket.Net;
+using Jaket.Sprays;
+using Jaket.UI;
+using Jaket.UI.Dialogs;
+using Jaket.UI.Elements;
+using Jaket.UI.Fragments;
+using Jaket.World;
+
+/// <summary> Class responsible for additions to control and local display of emotes. </summary>
+public class Movement : MonoSingleton<Movement>
+{
+    static NewMovement nm => NewMovement.Instance;
+    static FistControl fc => FistControl.Instance;
+    static GunControl gc => GunControl.Instance;
+    static CameraController cc => CameraController.Instance;
+    static CheatsController ch => CheatsController.Instance;
+    static CheatsManager cm => CheatsManager.Instance;
+
+    /// <summary> Last point created by the player. </summary>
+    private Pointer point;
+    /// <summary> Last spray created by the player. </summary>
+    private Spray spray;
+    /// <summary> Hold time of the emote wheel key. </summary>
+    private float holdTime;
+
+    private void Start()
+    {
+        Events.OnLoad += () =>
+        {
+            if (Scene == "Level 0-S") nm.modNoJump = LobbyController.Online;
+            if (Scene == "Level 0-S" || Scene == "Endless")
+            {
+                CanvasController.Instance.transform.Find("PauseMenu/Restart Mission").GetComponent<Button>().interactable = LobbyController.Offline || LobbyController.IsOwner;
+            }
+            Events.Post(UpdateState);
+        };
+    }
+
+    private void Update()
+    {
+        if (Scene == "Main Menu") return;
+
+        if (Keybind.ScrollUp.Tap()) Chat.Instance.ScrollMessages(true);
+        if (Keybind.ScrollDown.Tap()) Chat.Instance.ScrollMessages(false);
+
+        if (UI.Focused || UI.Settings.Rebinding != null) return;
+
+        if (Keybind.LobbyTab.Tap()) UI.LobbyTab.Toggle();
+        if (Keybind.PlayerList.Tap()) UI.PlayerList.Toggle();
+        if (Keybind.Settings.Tap()) UI.Settings.Toggle();
+        if (Keybind.PlayerInds.Tap()) PlayerIndicators.Instance.Toggle();
+        if (Keybind.PlayerInfo.Tap()) PlayerInfo.Instance.Toggle();
+
+        if ((Keybind.Point.Tap() || Keybind.Spray.Tap()) && Physics.Raycast(cc.transform.position, cc.transform.forward, out var hit, float.MaxValue, EnvMask))
+        {
+            if (Keybind.Point.Tap())
+            {
+                if (point) point.Lifetime = 4.5f;
+                point = Pointer.Spawn(Networking.LocalPlayer.Team, hit.point, hit.normal);
+            }
+            if (Keybind.Spray.Tap())
+            {
+                if (spray) spray.Lifetime = 58f;
+                spray = SprayManager.Spawn(hit.point, hit.normal);
+            }
+            if (LobbyController.Online) Networking.Send(Keybind.Point.Tap() ? PacketType.Point : PacketType.Spray, w =>
+            {
+                w.Id(AccId);
+                w.Vector(hit.point);
+                w.Vector(hit.normal);
+            }, size: 28);
+        }
+
+        if (Keybind.EmoteWheel.Down() && !WeaponWheel.Instance.gameObject.activeSelf)
+        {
+            holdTime += Time.deltaTime;
+            if (!EmoteWheel.Shown && holdTime > .25f) EmoteWheel.Instance.Show();
+        }
+        else
+        {
+            holdTime = 0f;
+            if (EmoteWheel.Shown) EmoteWheel.Instance.Hide();
+        }
+
+        if (Keybind.Chat.Tap()) Chat.Instance.Toggle();
+        if (Keybind.Spectate.Tap()) Suicide();
+
+        if (Input.GetKeyDown(KeyCode.F4)) Debugging.Instance.Toggle();
+        if (Input.GetKeyDown(KeyCode.C) && Debugging.Shown) Debugging.Instance.Clear();
+        if (Input.GetKeyDown(KeyCode.F11)) InteractiveGuide.Instance.Launch();
+    }
+
+    private void LateUpdate()
+    {
+        if (Scene == "Main Menu") return;
+
+        if (UI.Skateboard.Shown && !UI.AnyDialog)
+        {
+            UI.Skateboard.UpdateInput();
+            UI.Skateboard.UpdateVehicle();
+        }
+
+        if (Emotes.Current != 0xFF || (LobbyController.Online && nm.dead))
+        {
+            UI.Spectator.UpdateInput();
+            UI.Spectator.UpdateCamera(!nm.dead && Emotes.Ends);
+
+            // turn on gravity, because if the taunt was launched on the ground, then it is disabled by default
+            nm.rb.useGravity = true;
+        }
+
+        if (!nm.dead) nm.rb.constraints = UI.AnyDialog
+            ? RigidbodyConstraints.FreezeAll
+            : Emotes.Current == 0xFF || Emotes.Current == 0x0B
+                ? RigidbodyConstraints.FreezeRotation
+                : RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
+
+        // all of the following changes are related to the online part of the game and shouldn't affect the offline one
+        if (LobbyController.Offline) return;
+
+        if (Settings.DisableFreezeFrames || UI.AnyDialog) Time.timeScale = 1f;
+
+        if (ch.cheatsEnabled && !Administration.CheatsAllowed)
+        {
+            ch.cheatsEnabled = false;
+            cm.transform.GetChild(0).GetChild(0).gameObject.SetActive(false);
+
+            (Get("idToCheat", cm) as Dictionary<string, ICheat>).Values.Each(cm.DisableCheat);
+            Bundle.Hud("lobby.cheats");
+        }
+
+        if (Version.HasIncompatibility && !LobbyController.IsOwner && !LobbyConfig.ModsAllowed)
+        {
+            LobbyController.LeaveLobby();
+            Bundle.Hud2NS("lobby.mods");
+        }
+    }
+
+    private void OnGUI()
+    {
+        if (UI.Settings.Rebinding != null) UI.Settings.RebindUpdate();
+    }
+
+    #region control
+
+    /// <summary> Updates the state machine: toggles movement, cursor, hud and weapons. </summary>
+    public static void UpdateState()
+    {
+        static void ToggleCursor(bool enable)
+        {
+            Cursor.visible = enable;
+            Cursor.lockState = enable ? CursorLockMode.None : CursorLockMode.Locked;
+        }
+        static void ToggleHud(bool enable)
+        {
+            nm.screenHud.SetActive(enable);
+            gc.gameObject.SetActive(enable);
+        }
+        bool
+            dialog = UI.AnyDialog,
+            locked = dialog || Emotes.Current != 0xFF || (LobbyController.Offline && GameStateManager.Instance.IsStateActive("pit-falling"));
+
+        ToggleCursor(dialog || Scene == "Level 2-S");
+        ToggleHud(Emotes.Current == 0xFF && !nm.dead);
+
+        if (nm.dead) return;
+
+        nm.activated = fc.activated = gc.activated = !locked;
+        cc.activated = !locked && !EmoteWheel.Shown;
+
+        if (!locked) fc.YesFist();
+
+        OptionsManager.Instance.frozen = Emotes.Current != 0xFF || InteractiveGuide.Shown;
+        Console.Instance.enabled = Emotes.Current == 0xFF;
+    }
+
+    /// <summary> Respawns the player at the given position with the given rotation. </summary>
+    public static void Respawn(Vector3 position, float rotation, bool flash = false)
+    {
+        Teleporter.Tp(position, flash);
+
+        nm.Respawn();
+        nm.GetHealth(0, true);
+        nm.ActivatePlayer();
+
+        cc.ResetCamera(rotation);
+        cc.StopShake();
+
+        // TODO move checkpoints instead of doing this
+        // the player is currently fighting the Minotaur in the tunnel, the security system or the brain in the Earthmover
+        if (World.TunnelRoomba) nm.transform.position = World.TunnelRoomba.position with { y = -112.5f };
+        if (World.SecuritySystem[0]) nm.transform.position = new(0f, 472f, 745f);
+        if (World.Brain && World.Brain.IsFightActive) nm.transform.position = new(0f, 826.5f, 610f);
+    }
+
+    /// <summary> Respawns Cyber Grind players and flashes the screen. </summary>
+    public static void CyberRespawn() => Respawn(new(0f, 80f, 62.5f), 0f, true);
+
+    /// <summary> Kills the player immediately. </summary>
+    public static void Suicide() => nm.GetHurt(nm.hp, true, 0f, instablack: true, ignoreInvincibility: true);
+
+    #endregion
+}
