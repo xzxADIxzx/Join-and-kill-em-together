@@ -37,6 +37,7 @@ public static class UI
     public static MainMenuAccess Access;
     public static Skateboard Skateboard;
     public static Spectator Spectator;
+    public static Teleporter Teleporter;
 
     #endregion
     #region groups
@@ -77,9 +78,10 @@ public static class UI
         Access = new(root);
         Skateboard = new(root);
         Spectator = new(root);
+        Teleporter = new(root);
 
         Dialogs = new Fragment[] { LobbyTab, LobbyList, PlayerList, Settings };
-        Fragments = new Fragment[] { Access, Skateboard, Spectator };
+        Fragments = new Fragment[] { Access, Skateboard, Spectator, Teleporter };
         LeftGroup = new Fragment[] { LobbyTab, PlayerList, Settings };
         MidlGroup = new Fragment[] { LobbyList };
 
