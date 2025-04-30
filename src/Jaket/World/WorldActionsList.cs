@@ -3,6 +3,7 @@ namespace Jaket.World;
 using UnityEngine;
 
 using Jaket.Content;
+using Jaket.Input;
 using Jaket.Net;
 using Jaket.Net.Types;
 using Jaket.UI;
@@ -89,7 +90,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
 
         NetAction.Sync(l, "Cube", new(-56.6f, -21.4f, -5.9f), obj =>
         {
-            if (NewMovement.Instance.dead) Movement.Instance.Respawn(new(-60f, -8.5f, 30f), 180f);
+            if (NewMovement.Instance.dead) Movement.Respawn(new(-60f, -8.5f, 30f), 180f);
         });
 
         #endregion

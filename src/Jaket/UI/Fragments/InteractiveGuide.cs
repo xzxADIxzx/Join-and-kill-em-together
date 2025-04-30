@@ -7,7 +7,6 @@ using Jaket.Assets;
 using Jaket.Input;
 using Jaket.Net;
 using Jaket.UI.Dialogs;
-using Jaket.World;
 
 /// <summary> Small interactive guide for new players. </summary>
 public class InteractiveGuide : CanvasSingleton<InteractiveGuide>

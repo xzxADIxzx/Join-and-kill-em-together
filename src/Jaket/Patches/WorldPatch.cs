@@ -6,6 +6,7 @@ using ULTRAKILL.Cheats;
 using UnityEngine;
 using UnityEngine.UI;
 
+using Jaket.Input;
 using Jaket.Net;
 using Jaket.Net.Types;
 using Jaket.World;
@@ -66,8 +67,7 @@ public class RoomPatch
             __instance.onRestart?.Invoke();
             __instance.toActivate?.SetActive(true);
 
-            var trn = __instance.transform;
-            Movement.Instance.Respawn(trn.position + trn.right * .1f + Vector3.up * 1.25f, trn.eulerAngles.y);
+            Movement.Respawn(__instance.transform.position + Vector3.up * 1.25f, __instance.transform.eulerAngles.y);
         }
     }
 }

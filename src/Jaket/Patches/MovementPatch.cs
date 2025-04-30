@@ -47,7 +47,7 @@ public class CommonPatch
 {
     [HarmonyPrefix]
     [HarmonyPatch(typeof(CheatsManager), nameof(CheatsManager.HandleCheatBind))]
-    static bool Cheats() => !UI.AnyMovementBlocking;
+    static bool Cheats() => !UI.AnyDialog && !NewMovement.Instance.dead && Emotes.Current == 0xFF;
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(CheatsController), nameof(CheatsController.Update))]

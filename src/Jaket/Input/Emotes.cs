@@ -8,7 +8,6 @@ using Jaket.IO;
 using Jaket.Net;
 using Jaket.Net.Types;
 using Jaket.UI;
-using Jaket.World;
 
 /// <summary> Class responsible for playing emotes. </summary>
 public class Emotes : MonoSingleton<Emotes>

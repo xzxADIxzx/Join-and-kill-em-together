@@ -3,6 +3,7 @@
 using HarmonyLib;
 using UnityEngine.UI;
 
+using Jaket.Input;
 using Jaket.Net;
 using Jaket.World;
 
@@ -24,7 +25,7 @@ public class CyberGrindPatch
             pattern = CyberGrind.CurrentPattern;
 
         // respawn the host
-        if (LobbyController.IsOwner && NewMovement.Instance.dead) Movement.Instance.CyberRespawn();
+        if (LobbyController.IsOwner && NewMovement.Instance.dead) Movement.CyberRespawn();
     }
 
     [HarmonyPrefix]

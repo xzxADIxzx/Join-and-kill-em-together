@@ -6,8 +6,8 @@ using UnityEngine.UI;
 using ImageType = UnityEngine.UI.Image.Type;
 
 using Jaket.Assets;
+using Jaket.Input;
 using Jaket.UI.Lib;
-using Jaket.World;
 
 using static Jaket.UI.Lib.Pal;
 

@@ -9,7 +9,6 @@ using Jaket.Input;
 using Jaket.UI.Dialogs;
 using Jaket.UI.Fragments;
 using Jaket.UI.Lib;
-using Jaket.World;
 
 /// <summary> Class that loads and manages the interface of the mod. </summary>
 public static class UI
@@ -21,8 +20,6 @@ public static class UI
 
     /// <summary> Whether any dialog is visible. </summary>
     public static bool AnyDialog => Dialogs.Any(d => d.Shown) || (OptionsManager.Instance?.paused ?? false);
-    /// <summary> Whether any dialog that blocks movement is visible. </summary>
-    public static bool AnyMovementBlocking => AnyDialog || NewMovement.Instance.dead || Emotes.Current != 0xFF;
 
     #region dialogs
 

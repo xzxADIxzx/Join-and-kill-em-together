@@ -6,7 +6,6 @@ using UnityEngine.UI.Extensions;
 
 using Jaket.Assets;
 using Jaket.Input;
-using Jaket.World;
 
 using static Rect;
 
