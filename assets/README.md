@@ -7,6 +7,11 @@ Small tips and instructions on how to correctly import assets into a Unity proje
 2. Create a subfolder called `Editor` inside the assets folder.
 3. Copy the **BundleBuilder.cs** into the new folder.
 
+## Common
+1. Copy the font file.
+2. Copy the shop and bestiary entries.
+3. Add to the bundle via the bottom window.
+
 ## Chan
 1. Copy the corresponding folder.
 2. Configure all of the textures:
@@ -27,6 +32,14 @@ Small tips and instructions on how to correctly import assets into a Unity proje
 3. Configure all of the shop icons:
    * Set the filter mode to `Point`
    * Set the compression to `None`
+
+## Plushies
+1. Export the corresponding models as fbx.
+2. Configure all of the textures:
+   * Set the texture type to `Default`
+   * Set the maximum size to `1024`
+   * Set the filter mode to `Point`
+   * Set the compression to `High Quality`
 
 ## Variants
 1. Copy the corresponding folder.
