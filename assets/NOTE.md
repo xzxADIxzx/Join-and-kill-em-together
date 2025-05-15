@@ -2,11 +2,6 @@
 Notes-instructions on how to correctly import assets into Unity will be listed here.   
 *P.S. Textures use sRGB color profile.*
 
-## Bundle
-
-* Create a folder named "Editor"
-* Copy the BundleBuilder.cs into it
-
 ## Entry and font
 
 * Copy to the root folder
@@ -15,22 +10,6 @@ Notes-instructions on how to correctly import assets into Unity will be listed h
 ## Prefabs and sam-audio
 
 * Move prefabs to a separate folder (optional)
-* Add to the assets bundle (via the bottom menu)
-
-## Icons
-
-* Texture Type: Sprite
-* Max Size: 1024
-* Add to the assets bundle (via the bottom menu)
-
-### Shop icons
-* Filter Mode: Point
-* Compression: None
-
-## Chan
-
-* Texture Type: Sprite
-* Max Size: 2048
 * Add to the assets bundle (via the bottom menu)
 
 ## Model
