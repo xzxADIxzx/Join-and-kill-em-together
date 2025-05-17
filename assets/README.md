@@ -21,6 +21,15 @@ Small tips and instructions on how to correctly import assets into a Unity proje
    * Set the compression to `High Quality`
    * Add to the bundle via the bottom window.
 
+## Doll
+1. Export the corresponding model as fbx.
+2. Configure all of the textures:
+   * Set the texture type to `Default`
+   * Set the maximum size to `1024`
+   * Set the filter mode to `Point`
+   * Set the compression to `High Quality`
+3. Replace the corresponding meta file.
+
 ## Icons
 1. Copy the corresponding folder.
 2. Configure all of the textures:
@@ -40,6 +49,7 @@ Small tips and instructions on how to correctly import assets into a Unity proje
    * Set the maximum size to `1024`
    * Set the filter mode to `Point`
    * Set the compression to `High Quality`
+3. Replace the corresponding meta files.
 
 ## Variants
 1. Copy the corresponding folder.
