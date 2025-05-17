@@ -5,10 +5,9 @@ using UnityEngine;
 using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
-using Jaket.UI;
 
 /// <summary>
-/// Doll of a player, remote from network or local from emote.
+/// Doll of a player, remote from network or local from emotes.
 /// Responsible for the visual part of the player, i.e. suits and animations.
 /// </summary>
 public class Doll : MonoBehaviour
