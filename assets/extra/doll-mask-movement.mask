@@ -6,12 +6,14 @@ AvatarMask:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: V3-default-mask
+  m_Name: doll-mask-movement
   m_Mask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
   m_Elements:
   - m_Path: 
     m_Weight: 1
-  - m_Path: V3
+  - m_Path: Coin
+    m_Weight: 1
+  - m_Path: Doll
     m_Weight: 1
   - m_Path: Metarig
     m_Weight: 1
@@ -255,37 +257,31 @@ AvatarMask:
     m_Weight: 1
   - m_Path: Metarig/Right Thigh/Right Knee/Right Ankle/Right Foot/Right Foot_end
     m_Weight: 1
-  - m_Path: Metarig/Coin 1
+  - m_Path: Metarig/Coin
     m_Weight: 0
-  - m_Path: Metarig/Coin 1/Coin_end
+  - m_Path: Metarig/Coin/Coin_end
     m_Weight: 0
-  - m_Path: Metarig/Skateboard 1
+  - m_Path: Metarig/Skateboard
     m_Weight: 0
-  - m_Path: Metarig/Skateboard 1/Front Wheels
+  - m_Path: Metarig/Skateboard/Front Wheels
     m_Weight: 0
-  - m_Path: Metarig/Skateboard 1/Front Wheels/Front Left Wheel
+  - m_Path: Metarig/Skateboard/Front Wheels/Front Left Wheel
     m_Weight: 0
-  - m_Path: Metarig/Skateboard 1/Front Wheels/Front Left Wheel/Front Left Wheel_end
+  - m_Path: Metarig/Skateboard/Front Wheels/Front Left Wheel/Front Left Wheel_end
     m_Weight: 0
-  - m_Path: Metarig/Skateboard 1/Front Wheels/Front Right Wheel
+  - m_Path: Metarig/Skateboard/Front Wheels/Front Right Wheel
     m_Weight: 0
-  - m_Path: Metarig/Skateboard 1/Front Wheels/Front Right Wheel/Front Right Wheel_end
+  - m_Path: Metarig/Skateboard/Front Wheels/Front Right Wheel/Front Right Wheel_end
     m_Weight: 0
-  - m_Path: Metarig/Skateboard 1/Rear Wheels
+  - m_Path: Metarig/Skateboard/Rear Wheels
     m_Weight: 0
-  - m_Path: Metarig/Skateboard 1/Rear Wheels/Rear Left Wheel
+  - m_Path: Metarig/Skateboard/Rear Wheels/Rear Left Wheel
     m_Weight: 0
-  - m_Path: Metarig/Skateboard 1/Rear Wheels/Rear Left Wheel/Rear Left Wheel_end
+  - m_Path: Metarig/Skateboard/Rear Wheels/Rear Left Wheel/Rear Left Wheel_end
     m_Weight: 0
-  - m_Path: Metarig/Skateboard 1/Rear Wheels/Rear Right Wheel
+  - m_Path: Metarig/Skateboard/Rear Wheels/Rear Right Wheel
     m_Weight: 0
-  - m_Path: Metarig/Skateboard 1/Rear Wheels/Rear Right Wheel/Rear Right Wheel_end
+  - m_Path: Metarig/Skateboard/Rear Wheels/Rear Right Wheel/Rear Right Wheel_end
     m_Weight: 0
   - m_Path: Skateboard
-    m_Weight: 1
-  - m_Path: Coin
-    m_Weight: 1
-  - m_Path: Suits
-    m_Weight: 1
-  - m_Path: Suits/Ears
     m_Weight: 1
