@@ -1,3 +1,4 @@
+# Mod is currently being updated for ULTRA_REVAMP update, please do not make issues regarding this.
 [![Discord](https://img.shields.io/badge/discord-server-5865F2?style=for-the-badge&logoColor=white&logo=discord)](https://discord.gg/USpt3hCBgn)
 [![PayPal ](https://img.shields.io/badge/support%20on-paypal-003087?style=for-the-badge&logoColor=white&logo=paypal)](https://www.paypal.com/donate/?hosted_button_id=U5T68JC5LWEMU)
 [![Coffee ](https://img.shields.io/badge/buy%20me%20a-coffee-FFDD00?style=for-the-badge&logoColor=white&logo=buymeacoffee)](https://www.buymeacoffee.com/adithedev)
