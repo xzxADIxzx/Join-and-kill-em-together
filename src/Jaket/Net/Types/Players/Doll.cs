@@ -29,14 +29,14 @@ public class Doll : MonoBehaviour
     /// <summary> Custom weapon colors themselves. </summary>
     public Color32 Color1, Color2, Color3;
 
-    /// <summary> Transforms of different parts of the body. </summary>
+    /// <summary> Transforms of different parts of the doll. </summary>
     public Transform Head, Hand, Hook, HookRoot, Throne, Coin, Skateboard, Suits;
     /// <summary> Sliding and slaming particles transforms. </summary>
     public Transform SlidParticle, SlamParticle;
     /// <summary> Position in which the doll holds an item. </summary>
     public Vector3 HoldPosition => Hooking ? Hook.position : HookRoot.position;
 
-    /// <summary> Materials of the wings, coin, skateboard and big ears. </summary>
+    /// <summary> Materials of the wings, coin, skateboard and ears. </summary>
     public Material WingMat, CoinMat, SkateMat, EarsMat;
     /// <summary> Trail of the wings. </summary>
     public TrailRenderer WingTrail;
@@ -64,25 +64,29 @@ public class Doll : MonoBehaviour
     private void Awake()
     {
         Animator = GetComponentInChildren<Animator>();
-        Transform V3 = transform.Find("V3"), rig = V3.Find("Metarig");
+        Transform
+            mod = transform.Find("Model"),
+            rig = transform.Find("Model/Metarig");
 
-        Head = rig.Find("Spine 0/Spine 1/Spine 2");
-        Hand = rig.Find("Spine 0/Right Shoulder/Right Elbow/Right Wrist");
+        Head       = rig.Find("Spine 0/Spine 1/Spine 2");
+        Hand       = rig.Find("Spine 0/Right Shoulder/Right Elbow/Right Wrist");
+        Hook       = rig.Find("Hook");
+        HookRoot   = rig.Find("Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm");
+        Throne     = rig.Find("Throne");
+        Coin       = mod.Find("Coin");
+        Skateboard = mod.Find("Skateboard");
+        Suits      = mod.Find("Suits");
+
+        // parameters of the hand transform are overwritten on weapon swap
         Hand = Create("Weapons Root", Hand).transform;
-        Hook = rig.Find("Hook");
-        HookRoot = rig.Find("Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm");
-        Throne = rig.Find("Throne");
-        Coin = V3.Find("Coin");
-        Skateboard = V3.Find("Skateboard");
-        Suits = V3.Find("Suits");
 
-        WingMat = V3.Find("V3").GetComponent<Renderer>().materials[1];
-        CoinMat = Coin.GetComponent<Renderer>().material;
-        SkateMat = Skateboard.GetComponent<Renderer>().material;
-        EarsMat = Suits.Find("Big Ears").GetComponent<Renderer>().material;
-        WingTrail = GetComponentInChildren<TrailRenderer>();
-        WingLight = GetComponentInChildren<Light>();
-        HookWinch = GetComponentInChildren<LineRenderer>(true);
+        WingMat    = mod.Find("Doll").GetComponent<Renderer>().materials[1];
+        CoinMat    = Coin.GetComponent<Renderer>().material;
+        SkateMat   = Skateboard.GetComponent<Renderer>().material;
+        EarsMat    = Suits.Find("Big Ears").GetComponent<Renderer>().material;
+        WingTrail  = GetComponentInChildren<TrailRenderer>();
+        WingLight  = GetComponentInChildren<Light>();
+        HookWinch  = GetComponentInChildren<LineRenderer>(true);
     }
 
     private void Update() => Stats.MTE(() =>
@@ -98,10 +102,10 @@ public class Doll : MonoBehaviour
         Animator.SetBool("shopping", Shopping);
 
         if (WasFalling != Falling && (WasFalling = Falling)) Animator.SetTrigger("jump");
-        if (WasHooking != Hooking && (WasHooking = Hooking))
+        if (WasHooking != Hooking)
         {
             Hook.position = HookRoot.position;
-            Hook.gameObject.SetActive(Hooking);
+            Hook.gameObject.SetActive(WasHooking = Hooking);
         }
 
         if (LastEmote != Emote)
@@ -121,33 +125,35 @@ public class Doll : MonoBehaviour
         if (Sliding && SlidParticle == null)
         {
             SlidParticle = Inst(NewMovement.Instance.slideParticle, transform).transform;
-            SlidParticle.localPosition = new(0f, 0f, 3.5f);
-            SlidParticle.localEulerAngles = new(0f, 180f, 0f);
-            SlidParticle.localScale = new(1.5f, 1f, .8f);
+            SlidParticle.localPosition    = new(0f,     0f, 3.5f);
+            SlidParticle.localEulerAngles = new(0f,   180f,   0f);
+            SlidParticle.localScale       = new(1.5f,   1f,  .8f);
         }
         else if (!Sliding && SlidParticle != null) Dest(SlidParticle.gameObject);
 
         if (Slaming && SlamParticle == null)
         {
             SlamParticle = Inst(NewMovement.Instance.fallParticle, transform).transform;
-            SlamParticle.localPosition = new(0f, 6f, 0f);
-            SlamParticle.localEulerAngles = new(90f, 0f, 0f);
-            SlamParticle.localScale = new(1.2f, .6f, 1f);
+            SlamParticle.localPosition    = new(0f,     6f,   0f);
+            SlamParticle.localEulerAngles = new(90f,    0f,   0f);
+            SlamParticle.localScale       = new(1.2f,  .6f,   1f);
         }
         else if (!Slaming && SlamParticle != null) Dest(SlamParticle.gameObject);
     });
 
     #region apply
 
+    /// <summary> Applies the given team to the doll. </summary>
     public void ApplyTeam(Team team)
     {
         WingMat.mainTexture = SkateMat.mainTexture = EarsMat.mainTexture = ModAssets.WingTextures[(int)team];
         CoinMat.color = team.Color();
 
         if (WingTrail) WingTrail.startColor = team.Color() with { a = .5f };
-        if (WingLight) WingLight.color = team.Color();
+        if (WingLight) WingLight.color      = team.Color();
     }
 
+    /// <summary> Applies the saved suit to the doll. </summary>
     public void ApplySuit()
     {
         Suits.Each(s => s.gameObject.SetActive(false));
@@ -158,21 +164,21 @@ public class Doll : MonoBehaviour
         int jacket = Shop.Entries[Jacket].hierarchyId;
         if (jacket != -1) Suits.GetChild(jacket).gameObject.SetActive(true);
 
-        foreach (var getter in Hand.GetComponentsInChildren<GunColorGetter>())
+        Hand.GetComponentsInChildren<GunColorGetter>().Each(g =>
         {
-            var renderer = getter.GetComponent<Renderer>();
+            var renderer = g.GetComponent<Renderer>();
             if (CustomColors)
             {
-                renderer.materials = getter.coloredMaterials;
-                renderer.Properties(block =>
+                renderer.materials = g.coloredMaterials;
+                renderer.Properties(b =>
                 {
-                    block.SetColor("_CustomColor1", Color1);
-                    block.SetColor("_CustomColor2", Color2);
-                    block.SetColor("_CustomColor3", Color3);
+                    b.SetColor("_CustomColor1", Color1);
+                    b.SetColor("_CustomColor2", Color2);
+                    b.SetColor("_CustomColor3", Color3);
                 }, true);
             }
-            else renderer.materials = getter.defaultMaterials;
-        }
+            else renderer.materials = g.defaultMaterials;
+        });
     }
 
     #endregion
