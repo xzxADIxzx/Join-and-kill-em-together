@@ -31,7 +31,157 @@ ModelImporter:
     animationWrapMode: 0
     extraExposedTransformPaths: []
     extraUserProperties: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: emote-absolute-machine
+      takeName: Metarig|Absolute Machine
+      internalID: -6873238133137190769
+      lastFrame: 23
+      loopTime: 1
+    - serializedVersion: 16
+      name: emote-bow
+      takeName: Metarig|Bow
+      internalID: 1250703801029017042
+      lastFrame: 59
+      loopTime: 0
+    - serializedVersion: 16
+      name: emote-dance
+      takeName: Metarig|Dance
+      internalID: -5847914897542320727
+      lastFrame: 218
+      loopTime: 0
+    - serializedVersion: 16
+      name: doll-dash
+      takeName: Metarig|Dash
+      internalID: 7013284073640473031
+      lastFrame: 13
+      loopTime: 1
+    - serializedVersion: 16
+      name: doll-fall
+      takeName: Metarig|Fall
+      internalID: 920934947348179337
+      lastFrame: 23
+      loopTime: 1
+    - serializedVersion: 16
+      name: doll-idle
+      takeName: Metarig|Idle
+      internalID: 1694128141616201386
+      lastFrame: 23
+      loopTime: 1
+    - serializedVersion: 16
+      name: doll-jump
+      takeName: Metarig|Jump
+      internalID: -5266772329961766744
+      lastFrame: 13
+      loopTime: 0
+    - serializedVersion: 16
+      name: emote-paper
+      takeName: Metarig|Paper
+      internalID: -2905875359256489280
+      lastFrame: 69
+      loopTime: 0
+    - serializedVersion: 16
+      name: doll-parry
+      takeName: Metarig|Parry
+      internalID: -5866522523570320802
+      lastFrame: 21
+      loopTime: 0
+    - serializedVersion: 16
+      name: doll-punch
+      takeName: Metarig|Punch
+      internalID: -7691626799882138099
+      lastFrame: 12
+      loopTime: 0
+    - serializedVersion: 16
+      name: doll-raise
+      takeName: Metarig|Raise
+      internalID: 2976033968769849980
+      lastFrame: 13
+      loopTime: 0
+    - serializedVersion: 16
+      name: doll-ride
+      takeName: Metarig|Ride
+      internalID: -1402878580996894364
+      lastFrame: 23
+      loopTime: 1
+    - serializedVersion: 16
+      name: emote-rock
+      takeName: Metarig|Rock
+      internalID: -7929941199016024591
+      lastFrame: 69
+      loopTime: 0
+    - serializedVersion: 16
+      name: doll-root
+      takeName: Metarig|Root
+      internalID: 5494251300674092608
+      lastFrame: 0
+      loopTime: 0
+    - serializedVersion: 16
+      name: emote-schadenfreude
+      takeName: Metarig|Schadenfreude
+      internalID: -5997418034036114675
+      lastFrame: 79
+      loopTime: 0
+    - serializedVersion: 16
+      name: emote-scissors
+      takeName: Metarig|Scissors
+      internalID: 728137977183072573
+      lastFrame: 69
+      loopTime: 0
+    - serializedVersion: 16
+      name: doll-shopping
+      takeName: Metarig|Shopping
+      internalID: 5289379595600960079
+      lastFrame: 99
+      loopTime: 1
+    - serializedVersion: 16
+      name: emote-skateboard
+      takeName: Metarig|Skateboard
+      internalID: 647100973828287764
+      lastFrame: 164
+      loopTime: 1
+    - serializedVersion: 16
+      name: doll-slide
+      takeName: Metarig|Slide
+      internalID: -3019686998599853237
+      lastFrame: 23
+      loopTime: 1
+    - serializedVersion: 16
+      name: emote-stretch
+      takeName: Metarig|Stretch
+      internalID: -4536694337470928398
+      lastFrame: 113
+      loopTime: 0
+    - serializedVersion: 16
+      name: emote-throne
+      takeName: Metarig|Throne
+      internalID: -6511423334541815955
+      lastFrame: 23
+      loopTime: 1
+    - serializedVersion: 16
+      name: doll-throw
+      takeName: Metarig|Throw
+      internalID: -3191304400034965695
+      lastFrame: 23
+      loopTime: 1
+    - serializedVersion: 16
+      name: emote-tricks
+      takeName: Metarig|Tricks
+      internalID: 7061082534046219323
+      lastFrame: 291
+      loopTime: 0
+    - serializedVersion: 16
+      name: doll-walk
+      takeName: Metarig|Walk
+      internalID: 1693702656368521793
+      lastFrame: 23
+      loopTime: 1
+    - serializedVersion: 16
+      name: emote-waving
+      takeName: Metarig|Waving
+      internalID: -2795141076089166364
+      lastFrame: 44
+      loopTime: 0
     isReadable: 0
   meshes:
     lODScreenPercentages: []
