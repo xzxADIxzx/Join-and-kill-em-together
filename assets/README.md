@@ -33,6 +33,10 @@ Small tips and instructions on how to correctly import assets into a Unity proje
    * Set the non-power-of-two option to `None`
 4. Replace the corresponding meta file.
 
+## Extra
+1. Copy the corresponding folder.
+2. Add to the bundle via the bottom window.
+
 ## Icons
 1. Copy the corresponding folder.
 2. Configure all of the textures:
@@ -62,3 +66,7 @@ Small tips and instructions on how to correctly import assets into a Unity proje
    * Set the filter mode to `Point`
    * Set the compression to `High Quality`
    * Add to the bundle via the bottom window.
+
+## Assembly
+1. Press `Assets`, then `Build Bundle` and wait for it to finish.
+2. The builded asset bundle will be located in the `Assets/Bundles` folder.
