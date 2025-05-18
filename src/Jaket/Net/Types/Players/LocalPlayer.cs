@@ -124,8 +124,8 @@ public class LocalPlayer : Entity
         w.Bools(
             nm.walking,
             nm.sliding || (is44 && nm.transform.position.y > 610f && nm.transform.position.y < 611f),
-            nm.gc.heavyFall,
             !nm.gc.onGround,
+            nm.gc.heavyFall,
             nm.boost && !nm.sliding,
             nm.ridingRocket != null,
             Hook != Vector3.zero,

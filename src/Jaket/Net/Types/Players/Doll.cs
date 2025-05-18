@@ -183,9 +183,9 @@ public class Doll : MonoBehaviour
     #endregion
     #region entity
 
-    public void WriteAnim(Writer w) => w.Bools(Walking, Sliding, Falling, InAir, Dashing, Riding, Hooking, Shopping);
+    public void WriteAnim(Writer w) => w.Bools(Walking, Sliding, InAir, Falling, Dashing, Riding, Hooking, Shopping);
 
-    public void ReadAnim(Reader r) => r.Bools(out Walking, out Sliding, out Falling, out InAir, out Dashing, out Riding, out Hooking, out Shopping);
+    public void ReadAnim(Reader r) => r.Bools(out Walking, out Sliding, out InAir, out Falling, out Dashing, out Riding, out Hooking, out Shopping);
 
     public void ReadSuit(Reader r)
     {
