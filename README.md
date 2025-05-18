@@ -59,17 +59,17 @@ Before installing, it's important to know that the mod requires **BepInEx** to w
 Without it, nothing will make a *beep-beep* sound.
 
 ### Install patch 15d
-#### METHOD ONLY WORKS IF YOU OWN THE GAME ON STEAM,
-1. Press "Win+R" and type "steam://open/console"
-It should open steam with a new console tab, which probably looks empty with only a bar to write commands
+#### METHOD ONLY WORKS IF YOU OWN THE GAME ON STEAM.
+1. Press "Win+R" and type "steam://open/console".
+It should open steam with a new console tab, which probably looks empty with only a bar to write commands.
 
-2. Copy paste or write on the box "download_depot 1229490 1229491 6666720363269022893". You will know it has finished downloading when the console shows "Depot download complete" along with the path of the downgraded game
+2. Copy-paste or write on the box "download_depot 1229490 1229491 6666720363269022893". You will know it has finished downloading when the console shows "Depot download complete" along with the path of the downgraded game.
 (Note: Doing this should not replace your normal ULTRAKILL install)
 
-3. Navigate to the folder with the downgraded game (use the path that the console gives along with telling you that it downloaded successfully)
-In most cases, if you haven't changed the steam directory, it should be C:\Program Files (x86)\Steam\steamapps\content\app_1229490\depot_1229491
+3. Navigate to the folder with the downgraded game (use the path that the console gives along with telling you that it downloaded successfully).
+In most cases, if you haven't changed the steam directory, it should be C:\Program Files (x86)\Steam\steamapps\content\app_1229490\depot_1229491.
 
-Now you may install jaket directly on that folder or copy its content to downpatch your normal ULTRAKILL to 15d
+Now you may install jaket directly on that folder or copy its content to downpatch your normal ULTRAKILL to 15d.
 
 ### Mod manager
 Your mod manager will do everything itself, that's what mod managers are for.  
