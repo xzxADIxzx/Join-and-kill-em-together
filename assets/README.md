@@ -28,7 +28,10 @@ Small tips and instructions on how to correctly import assets into a Unity proje
    * Set the maximum size to `1024`
    * Set the filter mode to `Point`
    * Set the compression to `High Quality`
-3. Replace the corresponding meta file.
+3. Configure the throne hieroglyphs texture:
+   * Find a group called `Advanced`
+   * Set the non-power-of-two option to `None`
+4. Replace the corresponding meta file.
 
 ## Icons
 1. Copy the corresponding folder.
