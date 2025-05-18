@@ -1,4 +1,4 @@
-# Mod is currently being updated for ULTRA_REVAMP update, please do not make issues regarding this.
+# Mod is currently being updated for ULTRA_REVAMP update, please do not make issues regarding this. Read the [Installation](#installation) section below for instructions on how to install patch 15d in order to play the mod.
 [![Discord](https://img.shields.io/badge/discord-server-5865F2?style=for-the-badge&logoColor=white&logo=discord)](https://discord.gg/USpt3hCBgn)
 [![PayPal ](https://img.shields.io/badge/support%20on-paypal-003087?style=for-the-badge&logoColor=white&logo=paypal)](https://www.paypal.com/donate/?hosted_button_id=U5T68JC5LWEMU)
 [![Coffee ](https://img.shields.io/badge/buy%20me%20a-coffee-FFDD00?style=for-the-badge&logoColor=white&logo=buymeacoffee)](https://www.buymeacoffee.com/adithedev)
@@ -57,6 +57,19 @@ This modification made by [me](https://github.com/xzxADIxzx) and my team adds su
 ## Installation
 Before installing, it's important to know that the mod requires **BepInEx** to work.  
 Without it, nothing will make a *beep-beep* sound.
+
+### Install patch 15d
+#### METHOD ONLY WORKS IF YOU OWN THE GAME ON STEAM,
+1. Press "Win+R" and type "steam://open/console"
+It should open steam with a new console tab, which probably looks empty with only a bar to write commands
+
+2. Copy paste or write on the box "download_depot 1229490 1229491 6666720363269022893". You will know it has finished downloading when the console shows "Depot download complete" along with the path of the downgraded game
+(Note: Doing this should not replace your normal ULTRAKILL install)
+
+3. Navigate to the folder with the downgraded game (use the path that the console gives along with telling you that it downloaded successfully)
+In most cases, if you haven't changed the steam directory, it should be C:\Program Files (x86)\Steam\steamapps\content\app_1229490\depot_1229491
+
+Now you may install jaket directly on that folder or copy its content to downpatch your normal ULTRAKILL to 15d
 
 ### Mod manager
 Your mod manager will do everything itself, that's what mod managers are for.  
