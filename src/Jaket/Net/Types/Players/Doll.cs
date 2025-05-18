@@ -12,19 +12,19 @@ using Jaket.IO;
 /// </summary>
 public class Doll : MonoBehaviour
 {
-    /// <summary> Component rendering animations of the doll. </summary>
+    /// <summary> Animation controller of the doll. </summary>
     public Animator Animator;
-    /// <summary> Animator states that affect which animation will be played. </summary>
+    /// <summary> Animation booleans that affect the state machine. </summary>
     public bool Walking, Sliding, Falling, Slaming, Dashing, Riding, Hooking, Shopping, WasFalling, WasHooking;
 
-    /// <summary> Emote that plays at the moment. </summary>
+    /// <summary> Emote that is playing at the moment. </summary>
     public byte Emote, LastEmote = 0xFF, Rps;
-    /// <summary> Event triggered after the start of emote. </summary>
-    public Runnable OnEmoteStart = () => { };
+    /// <summary> Event that is triggered when emote changes. </summary>
+    public Runnable OnEmote = () => { };
 
-    /// <summary> Hat and jacket that the doll wears. </summary>
+    /// <summary> Hat and jacket that are worn by the doll. </summary>
     public int Hat, Jacket;
-    /// <summary> Whether the player uses custom weapon colors. </summary>
+    /// <summary> Whether custom weapon colors are used. </summary>
     public bool CustomColors;
     /// <summary> Custom weapon colors themselves. </summary>
     public Color32 Color1, Color2, Color3;
@@ -46,16 +46,16 @@ public class Doll : MonoBehaviour
     public LineRenderer HookWinch;
 
     /// <summary> Spawns a preview of the given emote. </summary>
-    public static Doll Spawn(Transform parent, Team team, int hat, int jacket, byte emote, byte rps) =>
+    public static Doll Spawn(Transform parent, Team team, byte emote, byte rps, int hat, int jacket) =>
         Component<Doll>(Inst(ModAssets.Preview, parent), doll =>
         {
             doll.transform.localPosition = new(0f, -1.5f);
             doll.transform.localScale = Vector3.one * 2.18f;
 
-            doll.Hat = hat;
-            doll.Jacket = jacket;
             doll.Emote = emote;
             doll.Rps = rps;
+            doll.Hat = hat;
+            doll.Jacket = jacket;
 
             doll.ApplyTeam(team);
             doll.ApplySuit();
@@ -115,7 +115,7 @@ public class Doll : MonoBehaviour
             Skateboard.gameObject.SetActive(Emote == 11);
             if (Emote == 8) Head.localEulerAngles = new(-20f, 0f);
 
-            OnEmoteStart();
+            OnEmote();
         }
 
         if (Sliding && SlidParticle == null)

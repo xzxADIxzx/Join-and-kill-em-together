@@ -52,7 +52,7 @@ public class RemotePlayer : Entity
     private void Start()
     {
         Doll = gameObject.AddComponent<Doll>();
-        Doll.OnEmoteStart += () =>
+        Doll.OnEmote += () =>
         {
             // recreate the weapon if the animation is over
             if (Doll.Emote == 0xFF) LastWeapon = 0xFF;

@@ -52,7 +52,7 @@ public class Emotes : MonoSingleton<Emotes>
 
         if (emote == 0xFF) return;
 
-        Preview = Doll.Spawn(nm.transform, Networking.LocalPlayer.Team, Shop.SelectedHat, Shop.SelectedJacket, emote, Rps).gameObject;
+        Preview = Doll.Spawn(nm.transform, Networking.LocalPlayer.Team, emote, Rps, Shop.SelectedHat, Shop.SelectedJacket).gameObject;
         Bundle.Hud("emote", true);
 
         // stop sliding to prevent preview from falling underground
