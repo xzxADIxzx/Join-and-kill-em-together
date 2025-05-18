@@ -46,7 +46,7 @@ public class Settings : Fragment
         get => pm.GetInt("jaket.tts.volume", 60);
         set
         {
-            ModAssets.Mixer?.SetFloat("Volume", value / 2f - 30f); // the value should be between -30 and 20 decibels
+            ModAssets.Mixer?.SetFloat("volume", value / 2f - 30f); // the value should be between -30 and 20 decibels
             pm.SetInt("jaket.tts.volume", value);
         }
     }

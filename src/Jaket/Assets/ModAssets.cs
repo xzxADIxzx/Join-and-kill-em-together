@@ -77,7 +77,7 @@ public class ModAssets
         /*
         Load<AudioMixer>("sam-audio", m =>
         {
-            Events.Post(() => Networking.LocalPlayer.Voice.outputAudioMixerGroup = (Mixer = m).FindMatchingGroups("Master")[0]);
+            Events.Post(() => Networking.LocalPlayer.Voice.outputAudioMixerGroup = (Mixer = m).FindMatchingGroups("master")[0]);
             load settings
         });
         */
