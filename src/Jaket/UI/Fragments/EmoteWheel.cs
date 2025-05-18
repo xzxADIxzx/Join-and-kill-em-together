@@ -21,7 +21,7 @@ public class EmoteWheel : CanvasSingleton<EmoteWheel>
     public bool Second;
 
     /// <summary> Id of the selected segment, it will be highlighted in red. </summary>
-    private int lastSelected, selected;
+    private int selected, lastSelected;
     /// <summary> Cursor direction relative to wheel center. </summary>
     private Vector2 direction;
 

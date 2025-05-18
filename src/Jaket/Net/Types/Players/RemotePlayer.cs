@@ -123,8 +123,8 @@ public class RemotePlayer : Entity
     {
         EnemyId.machine.GoLimp();
         Dest(Doll.WingLight);
-        Dest(Doll.SlideParticle?.gameObject);
-        Dest(Doll.FallParticle?.gameObject);
+        Dest(Doll.SlidParticle?.gameObject);
+        Dest(Doll.SlamParticle?.gameObject);
     }
 
     #region special

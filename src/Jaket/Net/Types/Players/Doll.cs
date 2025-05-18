@@ -15,7 +15,7 @@ public class Doll : MonoBehaviour
     /// <summary> Component rendering animations of the doll. </summary>
     public Animator Animator;
     /// <summary> Animator states that affect which animation will be played. </summary>
-    public bool Walking, Sliding, Falling, InAir, WasInAir, Dashing, WasDashing, Riding, WasRiding, Hooking, WasHooking, Shopping, WasShopping;
+    public bool Walking, Sliding, Falling, Slaming, Dashing, Riding, Hooking, Shopping, WasFalling, WasHooking;
 
     /// <summary> Emote that plays at the moment. </summary>
     public byte Emote, LastEmote = 0xFF, Rps;
@@ -31,8 +31,8 @@ public class Doll : MonoBehaviour
 
     /// <summary> Transforms of different parts of the body. </summary>
     public Transform Head, Hand, Hook, HookRoot, Throne, Coin, Skateboard, Suits;
-    /// <summary> Slide and fall particles transforms. </summary>
-    public Transform SlideParticle, FallParticle;
+    /// <summary> Sliding and slaming particles transforms. </summary>
+    public Transform SlidParticle, SlamParticle;
     /// <summary> Position in which the doll holds an item. </summary>
     public Vector3 HoldPosition => Hooking ? Hook.position : HookRoot.position;
 
@@ -91,28 +91,23 @@ public class Doll : MonoBehaviour
 
         Animator.SetBool("walking", Walking);
         Animator.SetBool("sliding", Sliding);
-        Animator.SetBool("in-air", InAir);
+        Animator.SetBool("falling", Falling);
         Animator.SetBool("dashing", Dashing);
         Animator.SetBool("riding", Riding);
         Animator.SetBool("hooking", Hooking);
         Animator.SetBool("shopping", Shopping);
 
-        if (WasInAir != InAir && (WasInAir = InAir)) Animator.SetTrigger("jump");
-        if (WasRiding != Riding && (WasRiding = Riding)) Animator.SetTrigger("ride");
-        if (WasDashing != Dashing && (WasDashing = Dashing)) Animator.SetTrigger("dash");
-        if (WasHooking != Hooking)
+        if (WasFalling != Falling && (WasFalling = Falling)) Animator.SetTrigger("jump");
+        if (WasHooking != Hooking && (WasHooking = Hooking))
         {
-            if (WasHooking = Hooking) Animator.SetTrigger("hook");
-
             Hook.position = HookRoot.position;
             Hook.gameObject.SetActive(Hooking);
         }
-        if (WasShopping != Shopping && (WasShopping = Shopping)) Animator.SetTrigger("open-shop");
 
         if (LastEmote != Emote)
         {
-            Animator.SetTrigger("show-emoji");
-            Animator.SetInteger("emoji", LastEmote = Emote);
+            Animator.SetTrigger("show-emote");
+            Animator.SetInteger("emote", LastEmote = Emote);
             Animator.SetInteger("rps", Rps);
 
             Throne.gameObject.SetActive(Emote == 6);
@@ -123,23 +118,23 @@ public class Doll : MonoBehaviour
             OnEmoteStart();
         }
 
-        if (Sliding && SlideParticle == null)
+        if (Sliding && SlidParticle == null)
         {
-            SlideParticle = Inst(NewMovement.Instance.slideParticle, transform).transform;
-            SlideParticle.localPosition = new(0f, 0f, 3.5f);
-            SlideParticle.localEulerAngles = new(0f, 180f, 0f);
-            SlideParticle.localScale = new(1.5f, 1f, .8f);
+            SlidParticle = Inst(NewMovement.Instance.slideParticle, transform).transform;
+            SlidParticle.localPosition = new(0f, 0f, 3.5f);
+            SlidParticle.localEulerAngles = new(0f, 180f, 0f);
+            SlidParticle.localScale = new(1.5f, 1f, .8f);
         }
-        else if (!Sliding && SlideParticle != null) Dest(SlideParticle.gameObject);
+        else if (!Sliding && SlidParticle != null) Dest(SlidParticle.gameObject);
 
-        if (Falling && FallParticle == null)
+        if (Slaming && SlamParticle == null)
         {
-            FallParticle = Inst(NewMovement.Instance.fallParticle, transform).transform;
-            FallParticle.localPosition = new(0f, 6f, 0f);
-            FallParticle.localEulerAngles = new(90f, 0f, 0f);
-            FallParticle.localScale = new(1.2f, .6f, 1f);
+            SlamParticle = Inst(NewMovement.Instance.fallParticle, transform).transform;
+            SlamParticle.localPosition = new(0f, 6f, 0f);
+            SlamParticle.localEulerAngles = new(90f, 0f, 0f);
+            SlamParticle.localScale = new(1.2f, .6f, 1f);
         }
-        else if (!Falling && FallParticle != null) Dest(FallParticle.gameObject);
+        else if (!Slaming && SlamParticle != null) Dest(SlamParticle.gameObject);
     });
 
     #region apply
@@ -183,9 +178,9 @@ public class Doll : MonoBehaviour
     #endregion
     #region entity
 
-    public void WriteAnim(Writer w) => w.Bools(Walking, Sliding, InAir, Falling, Dashing, Riding, Hooking, Shopping);
+    public void WriteAnim(Writer w) => w.Bools(Walking, Sliding, Falling, Slaming, Dashing, Riding, Hooking, Shopping);
 
-    public void ReadAnim(Reader r) => r.Bools(out Walking, out Sliding, out InAir, out Falling, out Dashing, out Riding, out Hooking, out Shopping);
+    public void ReadAnim(Reader r) => r.Bools(out Walking, out Sliding, out Falling, out Slaming, out Dashing, out Riding, out Hooking, out Shopping);
 
     public void ReadSuit(Reader r)
     {
