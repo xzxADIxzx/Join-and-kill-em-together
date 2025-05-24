@@ -45,7 +45,7 @@ Small tips and instructions on how to correctly import assets into a Unity proje
    * Set the filter mode to `Bilinear`
    * Set the compression to `High Quality`
    * Add to the bundle via the bottom window.
-3. Configure all of the shop icons:
+3. Configure all of the shop and lobby icons:
    * Set the filter mode to `Point`
    * Set the compression to `None`
 
