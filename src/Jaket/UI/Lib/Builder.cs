@@ -106,14 +106,14 @@ public static class Builder
         });
 
     /// <summary> Creates a button with the given sprite, color, icon and callback. </summary>
-    public static Button IconButton(Transform rect, Sprite sprite, Color color, Sprite icon, Runnable callback) =>
+    public static Button IconButton(Transform rect, Sprite sprite, Color color, Sprite icon, int size, Runnable callback) =>
         Component<Button>(rect.gameObject, b =>
         {
             b.targetGraphic = Image(rect, sprite, color, ImageType.Sliced);
             b.colors = Colors;
             b.onClick.AddListener(callback.Invoke);
 
-            Image(Rect("Icon", rect, new(24f, 24f)), icon, sprite == Tex.Fill ? white : color, ImageType.Simple);
+            Image(Rect("Icon", rect, new(size, size)), icon, sprite == Tex.Fill ? white : color, ImageType.Simple);
         });
 
     #endregion

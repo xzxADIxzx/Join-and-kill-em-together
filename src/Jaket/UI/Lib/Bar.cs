@@ -124,7 +124,7 @@ public class Bar : MonoBehaviour
 
     /// <summary> Adds an icon button, the most minimalistic kind of buttons. </summary>
     public Button IconButton(Sprite icon, Color? color = null, Runnable callback = null) =>
-        Builder.IconButton(Resolve("IconButton", 40f), Tex.Large, color ?? white, icon, callback);
+        Builder.IconButton(Resolve("IconButton", 40f), Tex.Large, color ?? white, icon, 24, callback);
 
     /// <summary> Adds a text button, but it's filled with the color. </summary>
     public Button FillButton(string text, Color color, Runnable callback) =>
@@ -132,7 +132,7 @@ public class Bar : MonoBehaviour
 
     /// <summary> Adds an icon button, but it's filled with the color. </summary>
     public Button FillButton(Sprite icon, Color color, Runnable callback) =>
-        Builder.IconButton(Resolve("IconButton", 40f), Tex.Fill, color, icon, callback);
+        Builder.IconButton(Resolve("IconButton", 40f), Tex.Fill, color, icon, 24, callback);
 
     /// <summary> Adds a text button, but it's made to match the main menu style. </summary>
     public Button MenuButton(string text, Color color, Runnable callback) =>
