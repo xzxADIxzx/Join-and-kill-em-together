@@ -1,8 +1,9 @@
 namespace Jaket.Assets;
 
-using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
+
+using FontAsset = TMPro.TMP_FontAsset;
 
 using Jaket.Content;
 using Jaket.IO;
@@ -10,150 +11,89 @@ using Jaket.Net;
 using Jaket.Net.Types;
 using Jaket.UI.Dialogs;
 
-/// <summary> Class that works with the assets of the mod. </summary>
-public class ModAssets
+/// <summary> Loader that manages the assets of the project. </summary>
+public static class ModAssets
 {
-    /// <summary> Player doll and its preview prefabs. </summary>
-    public static GameObject Doll, Preview;
-    /// <summary> Jaket plushies. </summary>
-    public static GameObject V2, V3, xzxADIxzx, Sowler;
-
-    /// <summary> Player doll icon. </summary>
-    public static Sprite Icon;
-    /// <summary> Bestiary description. </summary>
-    public static string Desc;
-    /// <summary> Shader used by the game for materials. </summary>
-    public static Shader Shader;
-    /// <summary> Material used by the game for wing trails. </summary>
-    public static Material Additv;
-    /// <summary> Mixer processing Sam's voice. Used to change volume. </summary>
-    public static AudioMixer Mixer;
-
-    /// <summary> Coin texture used by team coins. </summary>
-    public static Texture CoinTexture;
-    /// <summary> Wing textures used to differentiate teams. </summary>
-    public static Texture[] WingTextures;
-    /// <summary> Hand textures used by local player. </summary>
-    public static Texture[] HandTextures;
-
-    /// <summary> Image of the fallen Vermicelli. </summary>
+    /// <summary> Fallen Vermicelli and her background. </summary>
     public static Sprite ChanFallen, ChanBackground;
     /// <summary> Different poses of Vermicelli. </summary>
     public static Sprite[] ChanPoses;
-    /// <summary> Icons for the emote selection wheel. </summary>
-    public static Sprite[] EmoteIcons, EmoteGlows;
 
-    /// <summary> Text file that contains the description of cosmetic trinkets. </summary>
-    public static string ShopEntries;
-    /// <summary> Icons for the customization element in the shop. </summary>
+    /// <summary> Coin texture required by the team coins. </summary>
+    public static Texture CoinTexture;
+    /// <summary> Wing textures used to differentiate teams. </summary>
+    public static Texture[] WingTextures;
+    /// <summary> Hand textures used to differentiate machines. </summary>
+    public static Texture[] HandTextures;
+
+    /// <summary> Prefabs of the player doll and its preview. </summary>
+    public static GameObject Doll, DollPreview;
+    /// <summary> Additional plushies presented in the project. </summary>
+    public static GameObject V2, V3, xzxADIxzx, Sowler;
+    /// <summary> Audio mixer processing the voice of Sam. </summary>
+    public static AudioMixer Mixer;
+
+    /// <summary> Icons of the doll, crown and ban hammer. </summary>
+    public static Sprite BestiaryIcon, LobbyOwner, LobbyBan;
+    /// <summary> Icons of the emotes and their glows. </summary>
+    public static Sprite[] EmoteIcons, EmoteGlows;
+    /// <summary> Icons of the customization elements. </summary>
     public static Sprite[] ShopIcons;
 
-    /// <summary> Font used by the mod. Differs from the original in support of Cyrillic alphabet. </summary>
-    public static Font Font;
-    public static TMP_FontAsset FontTMP;
+    /// <summary> This font differs from the original one in support of Cyrillic alphabet. </summary>
+    public static Font DefFont;
+    /// <summary> Text mesh pro version of the font. </summary>
+    public static FontAsset TmpFont;
 
-    /// <summary> Loads the assets bundle and other necessary stuff. </summary>
+    /// <summary> Shader used in most of the materials. </summary>
+    public static Shader Master;
+    /// <summary> Material used in wing trails. </summary>
+    public static Material Additv;
+
+    /// <summary> Loads the asset bundle and its content required by the project. </summary>
     public static void Load()
     {
         var bundle = AssetBundle.LoadFromFile(Files.GetFile(Files.Root, "assets.bundle"));
-        /*
-        GameAssets.Squeaky(); // preload the sound; otherwise, it crashes .-.
-        */
 
         void Load<T>(string name, Cons<T> cons) where T : Object
         {
-            var task = bundle.LoadAssetAsync<T>(name);
-            task.completed += _ => cons(task.asset as T);
-        };
-
-        // general
-        /*
-        Shader = Enemies.Prefabs[EntityType.V2_RedArm - EntityType.Filth].GetComponent<global::V2>().smr.material.shader;
-        Additv = Enemies.Prefabs[EntityType.V2_RedArm - EntityType.Filth].GetComponentInChildren<TrailRenderer>().material;
-        */
-
-        Load<Sprite>("V3-icon", s => Icon = s);
-        Load<TextAsset>("V3-bestiary-entry", f => Desc = f.text);
-        /*
-        Load<AudioMixer>("sam-audio", m =>
-        {
-            Events.Post(() => Networking.LocalPlayer.Voice.outputAudioMixerGroup = (Mixer = m).FindMatchingGroups("master")[0]);
-            load settings
-        });
-        */
-
-        // textures
-        WingTextures = new Texture[5];
-        HandTextures = new Texture[4];
-
-        Load<Texture>("coin", t => CoinTexture = t);
-
-        for (int i = 0; i < 5; i++)
-        {
-            int j = i;
-            Load<Texture>("V3-wings-" + (Team)i, t => WingTextures[j] = t);
+            var r = bundle.LoadAssetAsync<T>(name);
+            r.completed += _ => cons(r.asset as T);
         }
 
-        Load<Texture>("V3-hand", t => HandTextures[1] = t);
-        Load<Texture>("V3-blast", t => HandTextures[3] = t);
-        /*
-        HandTextures[0] = FistControl.Instance.blueArm.ToAsset().GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture;
-        HandTextures[2] = FistControl.Instance.redArm.ToAsset().GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture;
-        */
-
-        // sprites
-        ChanPoses = new Sprite[7];
-        EmoteIcons = new Sprite[12];
-        EmoteGlows = new Sprite[12];
-
-        Load<Sprite>("V3-chan-fallen", s => ChanFallen = s);
-        Load<Sprite>("V3-chan-background", s => ChanBackground = s);
-
-        for (int i = 0; i < 7; i++)
+        void LoadAll<T>(Func<int, string> name, T[] array) where T : Object
         {
-            int j = i;
-            Load<Sprite>("V3-chan-" + i, s => ChanPoses[j] = s);
+            for (int i = 0; i < array.Length; i++)
+            {
+                int j = i;
+                Load<T>(name(j), r => array[j] = r);
+            }
         }
 
-        for (int i = 0; i < 12; i++)
-        {
-            var j = i;
-            Load<Sprite>("V3-emoji-" + i, s => EmoteIcons[j] = s);
-            Load<Sprite>("V3-emoji-" + i + "-glow", s => EmoteGlows[j] = s);
-        }
+        Load<Sprite>("chan-fallen", s => ChanFallen     = s);
+        Load<Sprite>("chan-bg",     s => ChanBackground = s);
+        LoadAll(i => "chan-" + i, ChanPoses = new Sprite[7]);
 
-        // shop
-        ShopIcons = new Sprite[10];
+        LoadAll(i => "doll-wings-" + Teams.All[i], WingTextures = new Texture[5]);
+        HandTextures = new Texture[6];
 
-        for (int i = 0; i < 10; i++)
-        {
-            int j = i;
-            Load<Sprite>("shop-" + i, s => ShopIcons[j] = s);
-        }
+        Load<Texture>("coin",               t => CoinTexture     = t);
+        Load<Texture>("arm-main",           t => HandTextures[1] = t);
+        Load<Texture>("arm-feedbacker",     t => HandTextures[3] = t);
+        Load<Texture>("arm-knuckleblaster", t => HandTextures[5] = t);
 
-        Load<TextAsset>("shop-entries", f =>
-        {
-            Shop.Load(ShopEntries = f.text);
-            Shop.LoadPurchases();
-        });
+        // TODO load vanilla textures from game assets
 
-        // fonts
-        Font = bundle.LoadAsset<Font>("font.ttf");
-        FontTMP = TMP_FontAsset.CreateFontAsset(Font);
-
-        // dolls & plushies
-        Load<GameObject>("Player Doll.prefab", p =>
+        Load<GameObject>("Doll", p =>
         {
             Keep(Doll = p);
             FixMaterials(p);
         });
-
-        Load<GameObject>("Player Doll Preview.prefab", p =>
+        Load<GameObject>("Doll Preview", p =>
         {
-            Keep(Preview = p);
+            Keep(DollPreview = p);
             FixMaterials(p);
         });
-
         Load<Texture>("V2-plushie", t =>
         {
             int i = EntityType.V2 - EntityType.BlueSkull;
@@ -163,7 +103,6 @@ public class ModAssets
             V2.GetComponentInChildren<Renderer>().material.mainTexture = t;
             V2.GetComponent<Rigidbody>().isKinematic = true;
         });
-
         Load<Texture>("V3-plushie", t =>
         {
             int i = EntityType.V3 - EntityType.BlueSkull;
@@ -173,40 +112,64 @@ public class ModAssets
             V3.GetComponentInChildren<Renderer>().material.mainTexture = t;
             V3.GetComponent<Rigidbody>().isKinematic = true;
         });
-
-        Load<GameObject>("DevPlushie (xzxADIxzx).prefab", p =>
+        Load<GameObject>("DevPlushie (xzxADIxzx)", p =>
         {
             Keep(xzxADIxzx = Items.Prefabs[EntityType.xzxADIxzx - EntityType.BlueSkull] = p);
             FixMaterials(p, new(1.3f, 1.3f, 1.3f));
 
-            Component<ItemIdentifier>(p, itemId =>
+            Component<ItemIdentifier>(p, i =>
             {
-                itemId.itemType = ItemType.CustomKey1;
-                itemId.pickUpSound = GameAssets.Squeaky();
+                i.itemType = ItemType.CustomKey1;
+                i.pickUpSound = GameAssets.Squeaky();
 
-                itemId.reverseTransformSettings = true;
+                i.reverseTransformSettings = true;
 
-                itemId.putDownRotation = new(0f, 120f, 90f);
-                itemId.putDownScale = new(.5f, .5f, .5f);
+                i.putDownRotation = new(  0f, 120f,  90f);
+                i.putDownScale    = new( .5f,  .5f,  .5f);
             });
         });
-
-        Load<GameObject>("DevPlushie (Sowler).prefab", p =>
+        Load<GameObject>("DevPlushie (Sowler)", p =>
         {
             Keep(Sowler = Items.Prefabs[EntityType.Sowler - EntityType.BlueSkull] = p);
             FixMaterials(p);
 
-            Component<ItemIdentifier>(p, itemId =>
+            Component<ItemIdentifier>(p, i =>
             {
-                itemId.itemType = ItemType.CustomKey1;
-                itemId.pickUpSound = GameAssets.Squeaky();
+                i.itemType = ItemType.CustomKey1;
+                i.pickUpSound = GameAssets.Squeaky();
 
-                itemId.reverseTransformSettings = true;
+                i.reverseTransformSettings = true;
 
-                itemId.putDownRotation = new(-15f, 120f, 95f);
-                itemId.putDownScale = new(.45f, .45f, .45f);
+                i.putDownRotation = new(-15f, 120f,  95f);
+                i.putDownScale    = new(.45f, .45f, .45f);
             });
         });
+        Load<AudioMixer>("sam-audio", m => Events.Post(() =>
+        {
+            Networking.LocalPlayer.Voice.outputAudioMixerGroup = (Mixer = m).FindMatchingGroups("master")[0];
+            Settings.Load();
+        }));
+
+        Load<Sprite>("V3-bestiary-icon",     s => BestiaryIcon = s);
+        Load<Sprite>("lobby-owner",          s => LobbyOwner   = s);
+        Load<Sprite>("lobby-ban",            s => LobbyBan     = s);
+        LoadAll(i => "emote-" + i,           EmoteIcons = new Sprite[12]);
+        LoadAll(i => "emote-" + i + "-glow", EmoteGlows = new Sprite[12]);
+        LoadAll(i => "shop-"  + i,           ShopIcons  = new Sprite[12]);
+
+        Load<TextAsset>("shop-entries", t => BestiaryEntry.Load(t.text));
+        Load<TextAsset>("V3-bestiary-entry", t =>
+        {
+            Shop.Load(t.text);
+            Shop.LoadPurchases();
+        });
+
+        DefFont = bundle.LoadAsset<Font>("font.ttf");
+        TmpFont = FontAsset.CreateFontAsset(DefFont);
+        /*
+        Shader = Enemies.Prefabs[EntityType.V2_RedArm - EntityType.Filth].GetComponent<global::V2>().smr.material.shader;
+        Additv = Enemies.Prefabs[EntityType.V2_RedArm - EntityType.Filth].GetComponentInChildren<TrailRenderer>().material;
+        */
     }
 
     /// <summary> Creates a new player doll from the prefab. </summary>
@@ -253,7 +216,7 @@ public class ModAssets
         else r.materials.Each(m =>
         {
             m.color = color ?? Color.white;
-            m.shader = Shader;
+            m.shader = Master;
         });
     });
 

@@ -62,7 +62,6 @@ public class Plugin : MonoBehaviour
         Pal.Load();
         Tex.Load();
         ModAssets.Load();
-
         Bundle.Load();
         UI.UI.Build();
 
@@ -91,7 +90,6 @@ public class Plugin : MonoBehaviour
         Bullets.Load();
         Enemies.Load();
         Items.Load();
-        ModAssets.Load();
 
         Administration.Load();
         LobbyController.Load();
