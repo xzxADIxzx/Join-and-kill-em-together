@@ -1,8 +1,6 @@
 namespace Jaket.World;
 
 using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
 using UnityEngine.UI;
 
 using Jaket.Assets;

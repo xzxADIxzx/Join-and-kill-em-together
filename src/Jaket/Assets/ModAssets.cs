@@ -10,6 +10,7 @@ using Jaket.IO;
 using Jaket.Net;
 using Jaket.Net.Types;
 using Jaket.UI.Dialogs;
+using Jaket.UI.Elements;
 
 /// <summary> Loader that manages the assets of the project. </summary>
 public static class ModAssets
@@ -157,7 +158,7 @@ public static class ModAssets
         LoadAll(i => "emote-" + i + "-glow", EmoteGlows = new Sprite[12]);
         LoadAll(i => "shop-"  + i,           ShopIcons  = new Sprite[12]);
 
-        Load<TextAsset>("shop-entries", t => BestiaryEntry.Load(t.text));
+        Load<TextAsset>("shop-entries",      t => BestiaryEntry.Load(t.text, 15));
         Load<TextAsset>("V3-bestiary-entry", t =>
         {
             Shop.Load(t.text);
