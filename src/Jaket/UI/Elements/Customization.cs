@@ -74,7 +74,7 @@ public class Customization : MonoBehaviour
                 Dest(button.gameObject.AddComponent<ShopButton>()); // hacky
         });
 
-        preview = Inst(ModAssets.Preview, preview).transform;
+        preview = Inst(ModAssets.DollPreview, preview).transform;
         preview.localPosition = new(0f, -80f, -40f);
         preview.localRotation = Quaternion.Euler(0f, 180f, 0f);
         preview.localScale = Vector3.one * 80f;

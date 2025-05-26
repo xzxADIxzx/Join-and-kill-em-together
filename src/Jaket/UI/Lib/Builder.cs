@@ -45,7 +45,7 @@ public static class Builder
         Component<Text>(rect.gameObject, t =>
         {
             t.text = text == string.Empty || text[0] != '#' ? text : Bundle.Get(text[1..]);
-            t.font = ModAssets.Font;
+            t.font = ModAssets.DefFont;
             t.fontSize = size;
             t.color = color;
             t.alignment = align;

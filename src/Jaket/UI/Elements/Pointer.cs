@@ -42,7 +42,7 @@ public class Pointer : MonoBehaviour
     {
         if (player != null) line = Component<LineRenderer>(gameObject, line =>
         {
-            line.material.shader = ModAssets.Shader;
+            line.material.shader = ModAssets.Master; // TODO additv shader, perhaps?
             line.startColor = line.endColor = color;
             line.widthMultiplier = 0f;
         });

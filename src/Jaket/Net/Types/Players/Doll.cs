@@ -47,7 +47,7 @@ public class Doll : MonoBehaviour
 
     /// <summary> Spawns a preview of the given emote. </summary>
     public static Doll Spawn(Transform parent, Team team, byte emote, byte rps, int hat, int jacket) =>
-        Component<Doll>(Inst(ModAssets.Preview, parent), doll =>
+        Component<Doll>(Inst(ModAssets.DollPreview, parent), doll =>
         {
             doll.transform.localPosition = new(0f, -1.5f);
             doll.transform.localScale = Vector3.one * 2.18f;

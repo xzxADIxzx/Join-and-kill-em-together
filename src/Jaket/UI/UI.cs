@@ -55,7 +55,7 @@ public static class UI
     {
         void Fix() => Events.Post(() =>
         {
-            HudMessageReceiver.Instance.text.font = ModAssets.FontTMP;
+            HudMessageReceiver.Instance.text.font = ModAssets.TmpFont;
             Component<Canvas>(HudMessageReceiver.Instance.gameObject, c =>
             {
                 c.overrideSorting = true;

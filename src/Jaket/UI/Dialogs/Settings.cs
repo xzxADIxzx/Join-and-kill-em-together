@@ -114,7 +114,6 @@ public class Settings : Fragment
             });
         });
         VersionBar();
-        Load(); // TODO remove after remaking the ModAssets
     }
 
     public override void Toggle()

@@ -58,12 +58,12 @@ public class PlayerList : Fragment
                 if (LobbyController.LastOwner == m.Id.AccountId)
                 {
                     s.ProfileButton(m, false);
-                    s.FillButton(ModAssets.ChanFallen, yellow, () => Bundle.Hud("player-list.owner"));
+                    s.FillButton(ModAssets.LobbyOwner, yellow, () => Bundle.Hud("player-list.owner"));
                 }
                 else if (LobbyController.IsOwner)
                 {
                     s.ProfileButton(m, false);
-                    s.FillButton(ModAssets.ChanFallen, red, () => Administration.Ban(m.Id.AccountId));
+                    s.FillButton(ModAssets.LobbyBan, red, () => Administration.Ban(m.Id.AccountId));
                 }
                 else s.ProfileButton(m, true);
             }));
