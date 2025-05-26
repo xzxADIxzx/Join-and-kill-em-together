@@ -4,6 +4,7 @@ using HarmonyLib;
 using System;
 
 using Jaket.Net;
+using Jaket.UI.Elements;
 using Jaket.UI.Fragments;
 
 /// <summary> Class responsible for managing the harmony patches. </summary>
@@ -16,6 +17,7 @@ public static class Patches
 
     public static Type[] Types =
     {
+        typeof(BestiaryEntry),
         typeof(Spectator)
     };
 
