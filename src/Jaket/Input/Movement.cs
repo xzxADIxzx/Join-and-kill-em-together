@@ -43,7 +43,7 @@ public class Movement : MonoSingleton<Movement>
             {
                 CanvasController.Instance.transform.Find("PauseMenu/Restart Mission").GetComponent<Button>().interactable = LobbyController.Offline || LobbyController.IsOwner;
             }
-            Events.Post(UpdateState);
+            UpdateState(true);
         };
     }
 
@@ -155,7 +155,7 @@ public class Movement : MonoSingleton<Movement>
     #region control
 
     /// <summary> Updates the state machine: toggles movement, cursor, hud and weapons. </summary>
-    public static void UpdateState()
+    public static void UpdateState(bool falling = false)
     {
         static void ToggleCursor(bool enable)
         {
@@ -169,7 +169,7 @@ public class Movement : MonoSingleton<Movement>
         }
         bool
             dialog = UI.AnyDialog,
-            locked = dialog || Emotes.Current != 0xFF || (LobbyController.Offline && GameStateManager.Instance.IsStateActive("pit-falling"));
+            locked = dialog || Emotes.Current != 0xFF || (LobbyController.Offline && falling);
 
         ToggleCursor(dialog || Scene == "Level 2-S");
         ToggleHud(Emotes.Current == 0xFF && !nm.dead);
@@ -239,7 +239,7 @@ public class Movement : MonoSingleton<Movement>
     [HarmonyPrefix]
     static bool CheatNoclip() => CheatBind();
 
-    [HarmonyPatch(typeof(ULTRAKILL.Cheats.Noclip), "Update")]
+    [HarmonyPatch(typeof(ULTRAKILL.Cheats.Flight), "Update")]
     [HarmonyPrefix]
     static bool CheatFlight() => CheatBind();
 
