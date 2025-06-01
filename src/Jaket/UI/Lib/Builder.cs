@@ -65,9 +65,11 @@ public static class Builder
         });
 
     /// <summary> Creates a circular image with the given parameters. </summary>
-    public static UICircle Circle(Transform rect, float arc, int rotation, float thickness) =>
+    public static UICircle Circle(Transform rect, float arc, int rotation, float thickness, Sprite sprite = null, Color? color = null) =>
         Component<UICircle>(rect.gameObject, i =>
         {
+            i.sprite = sprite;
+            i.color = color ?? white;
             i.Arc = arc;
             i.ArcRotation = rotation;
             i.Thickness = thickness;

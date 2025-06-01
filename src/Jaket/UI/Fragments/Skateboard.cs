@@ -41,10 +41,7 @@ public class Skateboard : Fragment
     public Skateboard(Transform root) : base(root, "Skateboard", false)
     {
         for (int i = 0; i < 3; i++)
-        {
-            bars[i] = Builder.Circle(Rect("StaminaBar", new(512f, 512f)), .1f, -56 + 38 * i, 8f);
-            bars[i].color = clear;
-        }
+            bars[i] = Builder.Circle(Rect("StaminaBar", new(512f, 512f)), .1f, -56 + 38 * i, 8f, color: clear);
 
         var backgrd = Builder.Image(Rect("Speedometer", new(-512f, -128f, 290f, 74f)), Tex.Back, semi, ImageType.Sliced);
         speedometer = Builder.Text(Builder.Rect("Text", backgrd.transform, Lib.Rect.Fill), "", 24, white, TextAnchor.MiddleLeft);
