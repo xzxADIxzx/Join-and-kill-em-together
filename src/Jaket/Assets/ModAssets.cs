@@ -180,23 +180,29 @@ public static class ModAssets
         var machine = obj.AddComponent<Machine>();
 
         enemyId.enemyClass = EnemyClass.Machine;
-        enemyId.enemyType = EnemyType.V2;
-        enemyId.dontCountAsKills = true;
+        enemyId.enemyType  = EnemyType.V2;
+        enemyId.dontUnlockBestiary = true;
+        enemyId.dontCountAsKills   = true;
 
         enemyId.weaknesses = new string[0];
-        enemyId.burners = new();
+        enemyId.burners    = new();
         enemyId.flammables = new();
         enemyId.activateOnDeath = new GameObject[0];
-        machine.destroyOnDeath = new GameObject[0];
-        machine.hurtSounds = new AudioClip[0];
+        machine.destroyOnDeath  = new GameObject[0];
+        machine.hurtSounds      = new  AudioClip[0];
 
-        // add enemy identifiers to doll parts to make the doll hitable
+        // make body parts of the doll hittable and resolve the mismatch of their tags
         foreach (var rb in obj.transform.GetChild(0).GetComponentsInChildren<Rigidbody>())
         {
             rb.gameObject.AddComponent<EnemyIdentifierIdentifier>();
-            rb.tag = MapTag(rb.tag);
+            rb.tag = rb.tag switch
+            {
+                "RoomManager" => "Body",
+                "Body"        => "Limb",
+                "Forward"     => "Head",
+                _             => rb.tag
+            };
         }
-
         return obj.AddComponent<RemotePlayer>();
     }
 
