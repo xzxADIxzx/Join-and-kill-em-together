@@ -75,6 +75,7 @@ public class Plugin : MonoBehaviour
         Version.Check4Updates();
         Version.FetchCompatible();
         Patches.Load();
+        Patches.LoadStatic();
 
         Log.Info("[INIT] Jaket has been initialized");
 

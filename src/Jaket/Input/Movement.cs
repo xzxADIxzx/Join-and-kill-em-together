@@ -239,7 +239,7 @@ public class Movement : MonoSingleton<Movement>
     [HarmonyPrefix]
     static bool CheatNoclip() => CheatBind();
 
-    [HarmonyPatch(typeof(ULTRAKILL.Cheats.Noclip), "UpdateTick")]
+    [HarmonyPatch(typeof(ULTRAKILL.Cheats.Noclip), "Update")]
     [HarmonyPrefix]
     static bool CheatFlight() => CheatBind();
 
