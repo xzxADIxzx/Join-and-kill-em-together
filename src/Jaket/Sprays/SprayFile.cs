@@ -7,7 +7,7 @@ using Jaket.IO;
 /// <summary> Represents a spray stored in either memory or a local file. </summary>
 public class SprayFile
 {
-    /// <summary> Max size of the image in bytes. If the image is bigger, it will not be loaded. </summary>
+    /// <summary> Maximum size in bytes. If the image is bigger, it won't be loaded. </summary>
     public const int MAX_IMAGE_SIZE = 512 * 1024;
     /// <summary> List of supported image extensions. </summary>
     public const string SUPPORTED = "*.png#*.jpg#*.jpeg";
@@ -17,7 +17,7 @@ public class SprayFile
 
     /// <summary> Short version of the file name. </summary>
     public string Short => Name.Length < 22 ? Name : $"{Name[..18]}...";
-    /// <summary> Whether the image fits the max size. </summary>
+    /// <summary> Whether the image fits the maximum size. </summary>
     public bool Valid => Files.Exists(Path) && Files.Size(Path) < MAX_IMAGE_SIZE;
 
     private byte[] data;
