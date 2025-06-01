@@ -97,13 +97,13 @@ public class LocalPlayer : Entity
 
         // according to the lore, the player plays for V3, so we need to paint the hands
         var punch = fc.transform.Find("Arm Blue(Clone)");
-        if (punch) punch.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = ModAssets.HandTexture();
+        if (punch) punch.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = ModAssets.HandTexture(1);
 
         var right = cw?.transform.GetChild(0).Find("RightArm");
-        if (right) right.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = ModAssets.HandTexture();
+        if (right) right.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = ModAssets.HandTexture(0);
 
         var knuckle = fc.transform.Find("Arm Red(Clone)");
-        if (knuckle) knuckle.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = ModAssets.HandTexture(false);
+        if (knuckle) knuckle.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = ModAssets.HandTexture(2);
     }
 
     #endregion

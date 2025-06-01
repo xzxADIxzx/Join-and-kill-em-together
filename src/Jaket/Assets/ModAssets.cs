@@ -88,12 +88,12 @@ public static class ModAssets
         Load<GameObject>("Doll", p =>
         {
             Keep(Doll = p);
-            FixMaterials(p);
+            UpdtMaterials(p);
         });
         Load<GameObject>("Doll Preview", p =>
         {
             Keep(DollPreview = p);
-            FixMaterials(p);
+            UpdtMaterials(p);
         });
         Load<Texture>("V2-plushie", t =>
         {
@@ -116,7 +116,7 @@ public static class ModAssets
         Load<GameObject>("DevPlushie (xzxADIxzx)", p =>
         {
             Keep(xzxADIxzx = Items.Prefabs[EntityType.xzxADIxzx - EntityType.BlueSkull] = p);
-            FixMaterials(p, new(1.3f, 1.3f, 1.3f));
+            UpdtMaterials(p, new(1.3f, 1.3f, 1.3f));
 
             Component<ItemIdentifier>(p, i =>
             {
@@ -132,7 +132,7 @@ public static class ModAssets
         Load<GameObject>("DevPlushie (Sowler)", p =>
         {
             Keep(Sowler = Items.Prefabs[EntityType.Sowler - EntityType.BlueSkull] = p);
-            FixMaterials(p);
+            UpdtMaterials(p);
 
             Component<ItemIdentifier>(p, i =>
             {
@@ -200,17 +200,19 @@ public static class ModAssets
         return obj.AddComponent<RemotePlayer>();
     }
 
-    /// <summary> Returns the hand texture currently in use. Depends on whether the player is in the lobby or not. </summary>
-    public static Texture HandTexture(bool feedbacker = true)
+    #region replacement
+
+    /// <summary> Returns the texture of the hand with the given type. </summary>
+    public static Texture HandTexture(int type)
     {
-        var s = feedbacker ? Settings.FeedColor : Settings.KnklColor;
-        return HandTextures[(feedbacker ? 0 : 2) + (s == 0 ? (LobbyController.Offline ? 0 : 1) : s == 1 ? 1 : 0)];
+        int color = type < 2 ? Settings.FeedColor : Settings.KnklColor;
+        int index = type * 2 + color == 0 ? (LobbyController.Online ? 1 : 0) : color == 1 ? 1 : 0;
+
+        return HandTextures[index];
     }
 
-    #region fixes
-
     /// <summary> Changes the colors of materials and their shaders to match the style of the game. </summary>
-    public static void FixMaterials(GameObject obj, Color? color = null) => obj.GetComponentsInChildren<Renderer>(true).Each(r =>
+    public static void UpdtMaterials(GameObject obj, Color? color = null) => obj.GetComponentsInChildren<Renderer>(true).Each(r =>
     {
         if (r is TrailRenderer) r.material.shader = Additv;
         else r.materials.Each(m =>
