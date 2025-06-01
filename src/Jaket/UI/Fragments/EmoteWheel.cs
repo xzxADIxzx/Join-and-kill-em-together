@@ -1,134 +1,130 @@
 namespace Jaket.UI.Fragments;
 
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI.Extensions;
 
+using ImageType = UnityEngine.UI.Image.Type;
+
 using Jaket.Assets;
 using Jaket.Input;
+using Jaket.UI.Lib;
 
-using static Rect;
+using static Jaket.UI.Lib.Pal;
 
-/// <summary> Wheel for selecting emotes that will be displayed as an animation of the player doll. </summary>
-public class EmoteWheel : CanvasSingleton<EmoteWheel>
+/// <summary> Fragment that provides the ability to choose emotes. </summary>
+public class EmoteWheel : Fragment
 {
-    /// <summary> Array containing the rotations of all segments in degrees. </summary>
-    public readonly static float[] SegmentRotations = { -30f, 0f, 30f, -30f, 0f, 30f };
-    /// <summary> List of wheel segments. Needed to change the color of the elements and store icons. </summary>
-    public readonly WheelSegment[] Segments = new WheelSegment[6];
-
+    /// <summary> Storage of the interface elements and icons. </summary>
+    private WheelSegment[] segments = new WheelSegment[6];
     /// <summary> Whether the second page of the wheel is open. </summary>
-    public bool Second;
+    private bool second;
 
-    /// <summary> Id of the selected segment, it will be highlighted in red. </summary>
+    /// <summary> Index of the selected segment, it is painted in red. </summary>
     private int selected, lastSelected;
-    /// <summary> Cursor direction relative to wheel center. </summary>
+    /// <summary> Cursor direction relative to the center of the wheel. </summary>
     private Vector2 direction;
 
-    /// <summary> Circle filling the 5th segment. </summary>
+    /// <summary> Image filling the 5th segment. </summary>
     private UICircle fill;
-    /// <summary> How long is the current segment selected. </summary>
+    /// <summary> Hold time of the 5th segment. </summary>
     private float holdTime;
 
-    private void Start()
+    public EmoteWheel(Transform root) : base(root, "EmoteWheel", true)
     {
-        UIB.CircleShadow(transform);
-        fill = UIB.CircleImage("Fill", transform, Size(0f, 0f), 1f / 6f, 240, 0f);
-        UIB.CircleImage("White", transform, Size(154f, 154f), 1f, 0, 12f);
+        Builder.Circle(Rect("Shadow", new(640f, 640f)), 1f, 0, 245f, Tex.Shadow, black);
+        Builder.Circle(Rect("Center", new(154f, 154f)), 1f, 0, 12f);
+
+        fill = Builder.Circle(Rect("Fill", new(0f, 0f)), 1f / 6f, 240, 0f);
 
         for (int i = 0; i < 6; i++)
         {
-            float rot = (150f - i * 60f) * Mathf.Deg2Rad;
+            var rot = (150f - i * 60f) * Mathf.Deg2Rad;
             var pos = new Vector2(Mathf.Cos(rot), Mathf.Sin(rot)) * 200f;
 
-            var segment = Segments[i] = new WheelSegment
+            var segment = segments[i] = new WheelSegment
             {
-                segment = UIB.CircleImage("Segment " + i, transform, Size(150f, 150f), 1f / 6f, i * 60, 8f),
-                divider = UIB.CircleImage("Divider " + i, transform, Size(640f, 640f), 2f / 360f, i * 60 - 1, 255f),
+                segment = Builder.Circle(Rect("Segment", new(150f, 150f)), 1f /   6f, i * 60,       8f),
+                divider = Builder.Circle(Rect("Divider", new(640f, 640f)), 2f / 360f, i * 60 - 1, 255f),
 
-                iconGlow = UIB.Image("Glow", transform, new(pos.x, pos.y, 284f, 150f)),
-                icon = UIB.Image("Icon", transform, new(pos.x, pos.y, 284f, 150f)),
+                iconGlow = Builder.Image(Rect("Glow", new(pos.x, pos.y, 284f, 150f)), null, white, ImageType.Sliced),
+                icon     = Builder.Image(Rect("Icon", new(pos.x, pos.y, 284f, 150f)), null, white, ImageType.Sliced),
             };
 
-            segment.icon.transform.localEulerAngles = segment.iconGlow.transform.localEulerAngles = new(0f, 0f, SegmentRotations[i]);
+            segment.icon.transform.localEulerAngles = segment.iconGlow.transform.localEulerAngles = new(0f, 0f, 30f * (i % 3) - 30f);
             segment.SetActive(false);
         }
-    }
 
-    private void Update()
-    {
-        // some code from the weapon wheel that I don't understand
-        direction = Vector2.ClampMagnitude(direction + InputManager.Instance.InputSource.WheelLook.ReadValue<Vector2>() / 12f, 1f);
-        float num = Mathf.Repeat(Mathf.Atan2(direction.x, direction.y) * Mathf.Rad2Deg + 90f, 360f);
-        selected = direction.sqrMagnitude > .9f ? (int)(num / 60f) : selected;
-
-        for (int i = 0; i < Segments.Length; i++) Segments[i].SetActive(i == selected);
-
-        // progress of the transition to the next page
-        float progress = holdTime >= 0f && selected == 4 ? holdTime * 2.5f : 0f, size = 150f + progress * 500f;
-
-        fill.Thickness = progress * 250f;
-        fill.color = new(1f, 0f, 0f, 1f - progress);
-        fill.rectTransform.sizeDelta = new(size, size);
-
-        // play sound
-        if (lastSelected != selected)
+        Component<Bar>(Content.gameObject, b => b.Update(() =>
         {
-            lastSelected = selected;
-            Inst(WeaponWheel.Instance.clickSound);
+            // some code from the weapon wheel that I don't understand
+            direction = Vector2.ClampMagnitude(direction + InputManager.Instance.InputSource.WheelLook.ReadValue<Vector2>() / 12f, 1f);
+            float num = Mathf.Repeat(Mathf.Atan2(direction.x, direction.y) * Mathf.Rad2Deg + 90f, 360f);
 
-            holdTime = 0f;
-        }
-        else holdTime += Time.deltaTime;
+            if (direction.sqrMagnitude > .9f) selected = (int)(num / 60f);
 
-        // turn page
-        if (holdTime > .4f && selected == 4)
-        {
-            holdTime = -60f;
+            for (int i = 0; i < segments.Length; i++) segments[i].SetActive(i == selected);
 
-            Second = !Second;
-            UpdateIcons();
-        }
-    }
+            // transition to the next page
+            holdTime      += Time.deltaTime;
+            float progress = holdTime >= 0f && selected == 4 ? holdTime * 2.5f : 0f;
 
-    private void UpdateIcons()
-    {
-        if (ModAssets.EmoteIcons.All(t => t != null) && ModAssets.EmoteGlows.All(t => t != null))
-        {
-            for (int i = 0; i < 6; i++)
+            fill.Thickness = progress * (640f - 154f) / 2f;
+            fill.color = new(1f, 0f, 0f, 1f - progress);
+            fill.rectTransform.sizeDelta = Vector2.one * (154f + progress * 486f);
+
+            if (lastSelected != selected)
             {
-                int j = Second ? i + 6 : i;
-                Segments[i].icon.sprite = ModAssets.EmoteIcons[j];
-                Segments[i].iconGlow.sprite = ModAssets.EmoteGlows[j];
+                lastSelected = selected;
+
+                holdTime = 0f;
+                Inst(WeaponWheel.Instance.clickSound);
             }
+            if (holdTime >= .4f && selected == 4)
+            {
+                holdTime = -60f;
+
+                second = !second;
+                Rebuild();
+            }
+        }));
+    }
+
+    public override void Rebuild()
+    {
+        if (ModAssets.EmoteIcons.Any(t => t == null) && ModAssets.EmoteGlows.Any(t => t == null))
+        {
+            Events.Post2(Rebuild);
+            return;
         }
-        else Invoke("UpdateIcons", 5f);
+        for (int i = 0; i < 6; i++)
+        {
+            segments[i].icon.sprite     = ModAssets.EmoteIcons[second ? i + 6 : i];
+            segments[i].iconGlow.sprite = ModAssets.EmoteGlows[second ? i + 6 : i];
+        }
     }
 
     /// <summary> Shows the wheel and resets the selected segment. </summary>
     public void Show()
     {
-        // if (!Shown) UI.HideCentralGroup();
+        Content.gameObject.SetActive(Shown = true);
+        UI.Hide(UI.MidlGroup, this, () => { });
 
-        gameObject.SetActive(Shown = true);
-        Movement.UpdateState();
-
-        Second = false;
-        Events.Post(UpdateIcons);
+        second = false;
+        Rebuild();
 
         lastSelected = selected = -1;
         direction = Vector2.zero;
     }
 
-    /// <summary> Hides the wheel and starts the selected animation. </summary>
+    /// <summary> Hides the wheel and plays the selected emote. </summary>
     public void Hide()
     {
-        gameObject.SetActive(Shown = false);
-        Movement.UpdateState();
+        Content.gameObject.SetActive(Shown = false);
+        UI.Hide(UI.MidlGroup, this, () => { });
 
-        // randomize RPS index if RPS emote is selected
+        // randomize RPS index if the corresponding emote is selected
         if (selected == 3) Emotes.Rps = (byte)Random.Range(0, 3);
         // play emote if the selected segment is not a page transition
-        if (selected != 4) Emotes.Instance.Play((byte)(Second ? selected + 6 : selected));
+        if (selected != 4) Emotes.Instance.Play((byte)(second ? selected + 6 : selected));
     }
 }

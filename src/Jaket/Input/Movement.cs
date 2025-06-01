@@ -85,12 +85,12 @@ public class Movement : MonoSingleton<Movement>
         if (Keybind.EmoteWheel.Down() && !WeaponWheel.Instance.gameObject.activeSelf)
         {
             holdTime += Time.deltaTime;
-            if (!EmoteWheel.Shown && holdTime > .25f) EmoteWheel.Instance.Show();
+            if (!UI.Emote.Shown && holdTime > .25f) UI.Emote.Show();
         }
         else
         {
             holdTime = 0f;
-            if (EmoteWheel.Shown) EmoteWheel.Instance.Hide();
+            if (UI.Emote.Shown) UI.Emote.Hide();
         }
 
         if (Keybind.Chat.Tap()) Chat.Instance.Toggle();
@@ -177,7 +177,7 @@ public class Movement : MonoSingleton<Movement>
         if (nm.dead) return;
 
         nm.activated = fc.activated = gc.activated = !locked;
-        cc.activated = !locked && !EmoteWheel.Shown;
+        cc.activated = !locked && !UI.Emote.Shown;
 
         if (!locked) fc.YesFist();
 
@@ -251,7 +251,7 @@ public class Movement : MonoSingleton<Movement>
     [HarmonyPrefix]
     static void Superiority()
     {
-        if (EmoteWheel.Shown) WeaponWheel.Instance.gameObject.SetActive(false);
+        if (UI.Emote.Shown) WeaponWheel.Instance.gameObject.SetActive(false);
     }
 
     [HarmonyPatch(typeof(CameraFrustumTargeter), "CurrentTarget", MethodType.Setter)]

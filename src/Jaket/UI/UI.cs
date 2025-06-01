@@ -31,6 +31,7 @@ public static class UI
     #endregion
     #region fragments
 
+    public static EmoteWheel Emote;
     public static MainMenuAccess Access;
     public static Skateboard Skateboard;
     public static Spectator Spectator;
@@ -72,6 +73,7 @@ public static class UI
         PlayerList = new(root);
         Settings = new(root);
 
+        Emote = new(root);
         Access = new(root);
         Skateboard = new(root);
         Spectator = new(root);
