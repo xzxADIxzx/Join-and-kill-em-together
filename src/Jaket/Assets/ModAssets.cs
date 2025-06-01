@@ -48,8 +48,8 @@ public static class ModAssets
 
     /// <summary> Shader used in most of the materials. </summary>
     public static Shader Master;
-    /// <summary> Material used in wing trails. </summary>
-    public static Material Additv;
+    /// <summary> Shader used in wing trails materials. </summary>
+    public static Shader Additv;
 
     /// <summary> Loads the asset bundle and its content required by the project. </summary>
     public static void Load()
@@ -167,10 +167,9 @@ public static class ModAssets
 
         DefFont = bundle.LoadAsset<Font>("font.ttf");
         TmpFont = FontAsset.CreateFontAsset(DefFont);
-        /*
-        Shader = Enemies.Prefabs[EntityType.V2_RedArm - EntityType.Filth].GetComponent<global::V2>().smr.material.shader;
-        Additv = Enemies.Prefabs[EntityType.V2_RedArm - EntityType.Filth].GetComponentInChildren<TrailRenderer>().material;
-        */
+
+        GameAssets.Shader("MasterShader/ULTRAKILL-Standard.shader",       s => Master = s);
+        GameAssets.Shader("Transparent/ULTRAKILL-simple-additive.shader", s => Additv = s);
     }
 
     /// <summary> Creates a new player doll from the prefab. </summary>
@@ -213,7 +212,7 @@ public static class ModAssets
     /// <summary> Changes the colors of materials and their shaders to match the style of the game. </summary>
     public static void FixMaterials(GameObject obj, Color? color = null) => obj.GetComponentsInChildren<Renderer>(true).Each(r =>
     {
-        if (r is TrailRenderer) r.material = Additv;
+        if (r is TrailRenderer) r.material.shader = Additv;
         else r.materials.Each(m =>
         {
             m.color = color ?? Color.white;
