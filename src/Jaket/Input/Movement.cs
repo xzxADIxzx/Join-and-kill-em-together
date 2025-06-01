@@ -54,9 +54,9 @@ public class Movement : MonoSingleton<Movement>
 
         if (UI.Focused || UI.Settings.Rebinding != null) return;
 
-        if (Keybind.LobbyTab.Tap()) UI.LobbyTab.Toggle();
+        if (Keybind.LobbyTab.Tap())   UI.LobbyTab.Toggle();
         if (Keybind.PlayerList.Tap()) UI.PlayerList.Toggle();
-        if (Keybind.Settings.Tap()) UI.Settings.Toggle();
+        if (Keybind.Settings.Tap())   UI.Settings.Toggle();
         if (Keybind.PlayerInds.Tap()) PlayerIndicators.Instance.Toggle();
         if (Keybind.PlayerInfo.Tap()) PlayerInfo.Instance.Toggle();
 

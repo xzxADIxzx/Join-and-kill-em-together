@@ -149,7 +149,7 @@ public class Doll : MonoBehaviour
         WingMat.mainTexture = SkateMat.mainTexture = EarsMat.mainTexture = ModAssets.WingTextures[(int)team];
         CoinMat.color = team.Color();
 
-        if (WingTrail) WingTrail.startColor = team.Color() with { a = .5f };
+        if (WingTrail) WingTrail.startColor = team.Color() with { a = .2f };
         if (WingLight) WingLight.color      = team.Color();
     }
 
