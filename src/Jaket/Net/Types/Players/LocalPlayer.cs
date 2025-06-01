@@ -14,9 +14,9 @@ using Jaket.UI.Dialogs;
 /// </summary>
 public class LocalPlayer : Entity
 {
-    private NewMovement nm => NewMovement.Instance;
-    private FistControl fc => FistControl.Instance;
-    private GameObject cw => GunControl.Instance.currentWeapon;
+    static NewMovement nm => NewMovement.Instance;
+    static FistControl fc => FistControl.Instance;
+    static GameObject cw => GunControl.Instance.currentWeapon;
 
     /// <summary> Team can be changed through the players list. </summary>
     public Team Team;
