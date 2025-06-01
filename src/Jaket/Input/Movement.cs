@@ -1,6 +1,7 @@
 namespace Jaket.Input;
 
 using GameConsole;
+using HarmonyLib;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,6 +9,7 @@ using UnityEngine.UI;
 using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net;
+using Jaket.Net.Types;
 using Jaket.Sprays;
 using Jaket.UI;
 using Jaket.UI.Dialogs;
@@ -132,7 +134,7 @@ public class Movement : MonoSingleton<Movement>
         if (ch.cheatsEnabled && !Administration.CheatsAllowed)
         {
             ch.cheatsEnabled = false;
-            cm.transform.GetChild(0).GetChild(0).gameObject.SetActive(false);
+            cm.transform.Find("Cheats Overlay").Each(c => c.gameObject.SetActive(false));
 
             (Get("idToCheat", cm) as Dictionary<string, ICheat>).Values.Each(cm.DisableCheat);
             Bundle.Hud("lobby.cheats");
@@ -180,7 +182,7 @@ public class Movement : MonoSingleton<Movement>
         if (!locked) fc.YesFist();
 
         OptionsManager.Instance.frozen = Emotes.Current != 0xFF || InteractiveGuide.Shown;
-        Console.Instance.enabled = Emotes.Current == 0xFF;
+        Console.Instance.enabled       = Emotes.Current == 0xFF;
     }
 
     /// <summary> Respawns the player at the given position with the given rotation. </summary>
@@ -207,6 +209,57 @@ public class Movement : MonoSingleton<Movement>
 
     /// <summary> Kills the player immediately. </summary>
     public static void Suicide() => nm.GetHurt(nm.hp, true, 0f, instablack: true, ignoreInvincibility: true);
+
+    #endregion
+    #region harmony
+
+    [HarmonyPatch(typeof(NewMovement), nameof(NewMovement.GetHurt))]
+    [HarmonyPrefix]
+    static void Death(NewMovement __instance, int damage, bool invincible, bool ignoreInvincibility)
+    {
+        if (invincible && __instance.gameObject.layer == 15 && !ignoreInvincibility) return;
+        if (ULTRAKILL.Cheats.Invincibility.Enabled) return;
+
+        if (__instance.hp > 0 && __instance.hp - damage <= 0)
+        {
+            LobbyController.Lobby?.SendChatString("#/d");
+            Emotes.Instance.Play(0xFF);
+        }
+    }
+
+    [HarmonyPatch(typeof(CheatsManager), nameof(CheatsManager.HandleCheatBind))]
+    [HarmonyPrefix]
+    static bool CheatBind() => !(UI.AnyDialog || Emotes.Current != 0xFF || nm.dead);
+
+    [HarmonyPatch(typeof(CheatsController), nameof(CheatsController.Update))]
+    [HarmonyPrefix]
+    static bool CheatMenu() => CheatBind();
+
+    [HarmonyPatch(typeof(ULTRAKILL.Cheats.Noclip), "UpdateTick")]
+    [HarmonyPrefix]
+    static bool CheatNoclip() => CheatBind();
+
+    [HarmonyPatch(typeof(ULTRAKILL.Cheats.Noclip), "UpdateTick")]
+    [HarmonyPrefix]
+    static bool CheatFlight() => CheatBind();
+
+    [HarmonyPatch(typeof(Grenade), "Update")]
+    [HarmonyPrefix]
+    static bool GrenadeRide() => CheatBind();
+
+    [HarmonyPatch(typeof(WeaponWheel), "OnEnable")]
+    [HarmonyPrefix]
+    static void Superiority()
+    {
+        if (EmoteWheel.Shown) WeaponWheel.Instance.gameObject.SetActive(false);
+    }
+
+    [HarmonyPatch(typeof(CameraFrustumTargeter), "CurrentTarget", MethodType.Setter)]
+    [HarmonyPrefix]
+    static void LoosersLove(ref Collider value)
+    {
+        if (value != null && value.TryGetComponent(out RemotePlayer player) && player.Team.Ally()) value = null;
+    }
 
     #endregion
 }
