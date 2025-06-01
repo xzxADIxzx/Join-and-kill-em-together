@@ -54,7 +54,7 @@ public class Fragment
         var img = Sidebar.Image(Sidebar.Empty ? Tex.Back : Tex.Fill, height, semi, multiplier: 2f).gameObject;
 
         Component(img, cons);
-        Component<HudOpenEffect>(img, e => e.speed = 38f - Sidebar.transform.childCount * 6f);
+        Component<HudOpenEffect>(img, e => e.speed = 38f - height / 24f);
 
         if (Content.Find("Deco") == null) Builder.Image(Rect("Deco", new(0f, 0f, 32f, 0f, new(0f, 0f), new(0f, 1f))), Tex.Dash, semi, ImageType.Tiled, 2f);
     }
