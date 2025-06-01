@@ -212,24 +212,23 @@ public static class ModAssets
     }
 
     /// <summary> Changes the colors of materials and their shaders to match the style of the game. </summary>
-    public static void UpdtMaterials(GameObject obj, Color? color = null) => obj.GetComponentsInChildren<Renderer>(true).Each(r =>
+    public static void UpdtMaterials(GameObject prefab, Color? color = null)
     {
-        if (r is TrailRenderer) r.material.shader = Additv;
-        else r.materials.Each(m =>
+        if (Master == null || Additv == null)
         {
-            m.color = color ?? Color.white;
-            m.shader = Master;
+            Events.Post2(() => UpdtMaterials(prefab, color));
+            return;
+        }
+        prefab.GetComponentsInChildren<Renderer>(true).Each(r =>
+        {
+            if (r is TrailRenderer) r.material.shader = Additv;
+            else r.materials.Each(m =>
+            {
+                m.color = color ?? Color.white;
+                m.shader = Master;
+            });
         });
-    });
-
-    /// <summary> Tags after loading from a bundle changes due to the mismatch in the tags list, this method returns everything to its place. </summary>
-    public static string MapTag(string tag) => tag switch
-    {
-        "RoomManager" => "Body",
-        "Body" => "Limb",
-        "Forward" => "Head",
-        _ => tag
-    };
+    }
 
     #endregion
 }

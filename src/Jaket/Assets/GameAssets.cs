@@ -8,14 +8,11 @@ public class GameAssets
 {
     #region loading
 
-    /// <summary> Synchronously loads an asset by the given path. </summary>
-    public static void LoadSync<T>(string path, Cons<T> cons) => cons(Addressables.LoadAssetAsync<T>(path).WaitForCompletion());
-
     /// <summary> Asynchronously loads an asset by the given path. </summary>
     public static void LoadAsync<T>(string path, Cons<T> cons) => Addressables.LoadAssetAsync<T>(path).Task.ContinueWith(t => cons(t.Result));
 
     /// <summary> Loads a shader by the given path. </summary>
-    public static void Shader(string path, Cons<Shader> cons) => LoadSync($"Assets/Shaders/{path}", cons);
+    public static void Shader(string path, Cons<Shader> cons) => LoadAsync($"Assets/Shaders/{path}", cons);
 
     /// <summary> Loads a sound by the given path. </summary>
     public static void Sound(string path, Cons<AudioClip> cons) => LoadAsync($"Assets/Sounds/{path}", cons);
