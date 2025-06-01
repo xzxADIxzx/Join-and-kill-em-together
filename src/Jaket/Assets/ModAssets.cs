@@ -83,7 +83,9 @@ public static class ModAssets
         Load<Texture>("arm-feedbacker",     t => HandTextures[3] = t);
         Load<Texture>("arm-knuckleblaster", t => HandTextures[5] = t);
 
-        // TODO load vanilla textures from game assets
+        GameAssets.Texture("V1/Arms/T_MainArm.png",    t => HandTextures[0] = t);
+        GameAssets.Texture("V1/Arms/T_Feedbacker.png", t => HandTextures[2] = t);
+        GameAssets.Texture("V1/v2_armtex.png",         t => HandTextures[4] = t);
 
         Load<GameObject>("Doll", p =>
         {

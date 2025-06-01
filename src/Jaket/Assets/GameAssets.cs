@@ -11,6 +11,12 @@ public class GameAssets
     /// <summary> Asynchronously loads an asset by the given path. </summary>
     public static void LoadAsync<T>(string path, Cons<T> cons) => Addressables.LoadAssetAsync<T>(path).Task.ContinueWith(t => cons(t.Result));
 
+    /// <summary> Loads a material by the given path. </summary>
+    public static void Material(string path, Cons<Material> cons) => LoadAsync($"Assets/Models/{path}", cons);
+
+    /// <summary> Loads a texture by the given path. </summary>
+    public static void Texture(string path, Cons<Texture> cons) => LoadAsync($"Assets/Models/{path}", cons);
+
     /// <summary> Loads a shader by the given path. </summary>
     public static void Shader(string path, Cons<Shader> cons) => LoadAsync($"Assets/Shaders/{path}", cons);
 
@@ -71,7 +77,6 @@ public class GameAssets
 
     private static GameObject Prefab(string name) => AssetHelper.LoadPrefab($"Assets/Prefabs/{name}.prefab");
 
-    private static void Material(string name, Cons<Material> cons) => Addressables.LoadAssetAsync<Material>($"Assets/Models/{name}.mat").Task.ContinueWith(t => cons(t.Result));
 
     #endregion
     #region loading
@@ -105,10 +110,10 @@ public class GameAssets
     public static GameObject FishTemplate() => Prefab("Fishing/Fish Pickup Template");
 
     /// <summary> Loads a swordsmachine material by name. </summary>
-    public static void SwordsMaterial(string name, Renderer output) => Material($"Enemies/SwordsMachine/{name}", mat => output.material = mat);
+    public static void SwordsMaterial(string name, Renderer output) => Material($"Enemies/SwordsMachine/{name}.mat", mat => output.material = mat);
 
     /// <summary> Loads an insurrectionist material by name. </summary>
-    public static void SisyMaterial(string name, Renderer[] output) => Material($"Enemies/Sisyphus/{name}", mat => output[0].material = output[1].material = mat);
+    public static void SisyMaterial(string name, Renderer[] output) => Material($"Enemies/Sisyphus/{name}.mat", mat => output[0].material = output[1].material = mat);
 
     /// <summary> Loads a Gabriel voice line by name. </summary>
     public static void GabLine(string name, Cons<AudioClip> output) => Sound($"Voices/Gabriel/{name}.ogg", output);
