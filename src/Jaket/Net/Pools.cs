@@ -5,7 +5,7 @@ using Jaket.Net.Types;
 /// <summary> Simple hash map divided into four pools. Uses unsigned integers as keys and entities as values. </summary>
 public class Pools
 {
-    /// <summary> Each fourth entry belongs to one pool. </summary>
+    /// <summary> Each fourth entry belongs to the same pool. </summary>
     private Entry[] entries;
 
     public Pools() => entries = new Entry[1024];

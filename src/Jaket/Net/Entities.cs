@@ -11,7 +11,7 @@ using Jaket.World;
 public class Entities
 {
     /// <summary> Dictionary of entity types to their providers. </summary>
-    public static Dictionary<EntityType, Prov> Providers = new();
+    public static Dictionary<EntityType, Prov> Providers = new(); // TODO replace with array
     /// <summary> Last used id, next id's are guaranteed to be greater than it. </summary>
     public static uint LastId;
 
