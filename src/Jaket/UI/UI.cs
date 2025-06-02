@@ -33,6 +33,7 @@ public static class UI
 
     public static EmoteWheel Emote;
     public static MainMenuAccess Access;
+    public static PlayerIndicators PlayerInds;
     public static Skateboard Skateboard;
     public static Spectator Spectator;
     public static Teleporter Teleporter;
@@ -75,6 +76,7 @@ public static class UI
 
         Emote = new(root);
         Access = new(root);
+        PlayerInds = new(root);
         Skateboard = new(root);
         Spectator = new(root);
         Teleporter = new(root);

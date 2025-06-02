@@ -2,89 +2,70 @@ namespace Jaket.UI.Fragments;
 
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-
-using ImageType = UnityEngine.UI.Image.Type;
+using UnityEngine.UI.Extensions;
 
 using Jaket.Content;
 using Jaket.Net;
 using Jaket.Net.Types;
+using Jaket.UI.Lib;
 
-using static Rect;
-
-/// <summary> Indicators showing the location of teammates near the cursor. </summary>
-public class PlayerIndicators : CanvasSingleton<PlayerIndicators>
+/// <summary> Fragment that displays the location of all teammates. </summary>
+public class PlayerIndicators : Fragment
 {
     /// <summary> List of all indicator targets. </summary>
-    private List<Transform> targets = new();
+    private List<Transform> targets = new(8);
     /// <summary> List of indicators themselves. </summary>
-    private List<Image> indicators = new();
+    private List<UICircle> indicators = new(8);
 
-    protected override void Awake()
+    public PlayerIndicators(Transform root) : base(root, "PlayerIndicators", true, cond: () => Scene == "Main Menu")
     {
         Events.OnLobbyEnter += () => { if (!Shown) Toggle(); };
         Events.OnTeamChange += Rebuild;
+
+        Component<Bar>(Content.gameObject, b => b.Update(() =>
+        {
+            // update indicators so that they always point to their respective targets
+            for (int i = 0; i < targets.Count; i++) Update(targets[i], indicators[i]);
+        }));
     }
 
-    private void Update()
+    public override void Toggle()
     {
-        // update all indicators, nothing else to do huh
-        for (int i = 0; i < targets.Count; i++) UpdateIndicator(targets[i], indicators[i]);
-    }
-
-    /// <summary> Toggles visibility of indicators. </summary>
-    public void Toggle()
-    {
-        gameObject.SetActive(Shown = !Shown);
+        base.Toggle();
         if (Shown) Rebuild();
     }
 
-    /// <summary> Rebuilds player indicators to match a new state. </summary>
-    public void Rebuild()
+    public override void Rebuild()
     {
-        indicators.ForEach(ind => Dest(ind.gameObject));
-        indicators.Clear();
+        Content.Each(Dest);
         targets.Clear();
+        indicators.Clear();
 
-        if (Scene == "Level 2-S" || Scene == "Intermission1" || Scene == "Intermission2") return;
-        Networking.Entities.Player(AddIndicator);
-        Update();
+        if (Scene != "Level 2-S" && Scene != "Intermission1" && Scene != "Intermission2") Networking.Entities.Player(p => p.Team.Ally(), Add);
     }
 
-    /// <summary> Adds a new indicator pointing to the player. </summary>
-    public void AddIndicator(RemotePlayer player)
+    /// <summary> Adds a new indicator pointing to the given player. </summary>
+    public void Add(RemotePlayer player)
     {
-        // indicators should only point to teammates, so you can even play hide and seek
-        if (!player.Team.Ally()) return;
-
         targets.Add(player.transform);
-        indicators.Add(UIB.Image(player.Header.Name, transform, Size(88f, 88f), player.Team.Color(), UIB.Circle, type: ImageType.Filled));
+        indicators.Add(Builder.Circle(Rect("Indicator", new(88f, 88f)), 0f, 0, 4f, color: player.Team.Color()));
     }
 
-    /// <summary> Updates the size and rotation of the indicator. </summary>
-    public void UpdateIndicator(Transform target, Image indicator)
+    /// <summary> Updates the size and rotation of the given indicator. </summary>
+    public void Update(Transform target, UICircle indicator)
     {
-        // the target can be removed by the game, so just in case, let it be
         if (target == null || indicator == null) return;
 
-        // change indicator size based on distance
         var dst = Vector3.Distance(NewMovement.Instance.transform.position, target.position);
-        indicator.fillAmount = Mathf.Clamp(100f - dst, 5f, 100f) * .006f;
-
-        // change indicator color based on distance
-        var clr = indicator.color;
-        clr.a = 1f - indicator.fillAmount * 1.5f;
-        indicator.color = clr;
-
-        // find the direction from the player to the target
         var cam = CameraController.Instance.transform;
-        var dir = target.position + new Vector3(0f, 2.5f, 0f) - cam.position;
+        var dir = target.position - cam.position + Vector3.up * 2.5f;
 
-        // project this direction onto the camera plane, after which find the angle between the camera's up direction and the projected vector
-        var projected = Vector3.ProjectOnPlane(dir, cam.forward);
-        var angle = Vector3.SignedAngle(projected, cam.up, cam.forward);
+        indicator.Arc   = Mathf.Clamp(100f - dst, 5f, 100f) * .006f;
+        indicator.color = indicator.color with { a = 1f - indicator.Arc * 1.5f };
 
-        // turn the indicator towards the target
-        indicator.rectTransform.localEulerAngles = new Vector3(0f, 0f, 180f - angle + indicator.fillAmount * 180f);
+        var projection  = Vector3.ProjectOnPlane(dir, cam.forward);
+        var angle       = Vector3.SignedAngle(projection, cam.up, cam.forward);
+
+        indicator.rectTransform.localEulerAngles = new(0f, 0f, 270f - angle + indicator.Arc * 180f);
     }
 }

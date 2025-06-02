@@ -59,7 +59,7 @@ public class Movement : MonoSingleton<Movement>
         if (Keybind.LobbyTab.Tap())   UI.LobbyTab.Toggle();
         if (Keybind.PlayerList.Tap()) UI.PlayerList.Toggle();
         if (Keybind.Settings.Tap())   UI.Settings.Toggle();
-        if (Keybind.PlayerInds.Tap()) PlayerIndicators.Instance.Toggle();
+        if (Keybind.PlayerInds.Tap()) UI.PlayerInds.Toggle();
         if (Keybind.PlayerInfo.Tap()) PlayerInfo.Instance.Toggle();
 
         if ((Keybind.Point.Tap() || Keybind.Spray.Tap()) && Physics.Raycast(cc.transform.position, cc.transform.forward, out var hit, float.MaxValue, EnvMask))
