@@ -38,7 +38,7 @@ public static class Bundle
             text2Show = null;
         };
 
-        Files.MakeSureExists(Files.Bundles);
+        Files.MakeDir(Files.Bundles);
         Files.MoveAll(Files.Root, Files.Bundles, "*.properties");
 
         var locale = Settings.Locale;
@@ -50,7 +50,7 @@ public static class Bundle
             return;
         }
 
-        string file = Files.GetFile(Files.Bundles, $"{Content[localeId]}.properties");
+        string file = Files.Join(Files.Bundles, $"{Content[localeId]}.properties");
         string[] content;
 
         try

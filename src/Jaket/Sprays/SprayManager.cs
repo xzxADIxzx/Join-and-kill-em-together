@@ -58,7 +58,7 @@ public class SprayManager
     {
         Loaded.Clear();
 
-        Files.MakeSureExists(Files.Sprays);
+        Files.MakeDir(Files.Sprays);
         Files.IterAll(f => Loaded.Add(new(f)), Files.Sprays, SprayFile.SUPPORTED.Split('#'));
 
         Log.Info($"Loaded {Loaded.Count} sprays: {string.Join(", ", Loaded.ConvertAll(s => s.Name))}");

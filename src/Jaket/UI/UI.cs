@@ -82,7 +82,7 @@ public static class UI
         Teleporter = new(root);
 
         Dialogs = new Fragment[] { LobbyTab, LobbyList, PlayerList, Settings };
-        Fragments = new Fragment[] { Access, Skateboard, Spectator, Teleporter };
+        Fragments = new Fragment[] { Emote, Access, PlayerInds, Skateboard, Spectator, Teleporter };
         LeftGroup = new Fragment[] { LobbyTab, PlayerList, Settings };
         MidlGroup = new Fragment[] { LobbyList };
 

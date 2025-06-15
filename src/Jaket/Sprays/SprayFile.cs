@@ -36,7 +36,7 @@ public class SprayFile
 
     public SprayFile(string path)
     {
-        Name = Files.GetName(path);
+        Name = Files.Name(path);
         Path = path;
     }
 

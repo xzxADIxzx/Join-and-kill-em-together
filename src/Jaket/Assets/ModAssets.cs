@@ -54,7 +54,7 @@ public static class ModAssets
     /// <summary> Loads the asset bundle and its content required by the project. </summary>
     public static void Load()
     {
-        var bundle = AssetBundle.LoadFromFile(Files.GetFile(Files.Root, "assets.bundle"));
+        var bundle = AssetBundle.LoadFromFile(Files.Join(Files.Root, "assets.bundle"));
 
         void Load<T>(string name, Cons<T> cons) where T : Object
         {

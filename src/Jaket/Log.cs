@@ -40,7 +40,7 @@ public static class Log
         Events.EveryDozen += Flush;
 
         Logger = new("Jaket");
-        File = Files.GetFile(Files.Logs, $"Logs of {Time.Replace(':', '.')}.log");
+        File = Files.Join(Files.Logs, $"Logs of {Time.Replace(':', '.')}.log");
     }
 
     /// <summary> Formats and writes the message to the output points. </summary>
@@ -64,7 +64,7 @@ public static class Log
     {
         if (ToWrite.Count == 0 || !Ready) return;
 
-        Files.MakeSureExists(Files.Logs);
+        Files.MakeDir(Files.Logs);
         Files.Append(File, Writing = ToWrite);
 
         ToWrite = new(STORAGE_CAPACITY);

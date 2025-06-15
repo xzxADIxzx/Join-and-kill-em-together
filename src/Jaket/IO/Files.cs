@@ -15,17 +15,17 @@ public static class Files
     /// <summary> Path to the sprays directory. </summary>
     public static string Sprays => Path.Combine(Root, "../../sprays");
 
-    /// <summary> Returns the path to the file in the given directory. </summary>
-    public static string GetFile(string dir, string file) => Path.Combine(dir, file);
+    /// <summary> Returns the path of the file in the given directory. </summary>
+    public static string Join(string dir, string file) => Path.Combine(dir, file);
 
     /// <summary> Returns the name of the file without extension. </summary>
-    public static string GetName(string file) => Path.GetFileNameWithoutExtension(file);
+    public static string Name(string file) => Path.GetFileNameWithoutExtension(file);
 
-    /// <summary> Returns whether the given file exists. </summary>
+    /// <summary> Whether the given file exists. </summary>
     public static bool Exists(string file) => File.Exists(file);
 
     /// <summary> Makes sure that the given directory exists. </summary>
-    public static void MakeSureExists(string dir) => Directory.CreateDirectory(dir);
+    public static void MakeDir(string dir) => Directory.CreateDirectory(dir);
 
     /// <summary> Iterates all files that match the given patterns in the directory. </summary>
     public static void IterAll(Cons<string> cons, string dir, params string[] patterns) => patterns.Each(p => Directory.EnumerateFiles(dir, p).Each(cons));
@@ -33,7 +33,7 @@ public static class Files
     /// <summary> Moves all files that match the given patterns from the source to the destination directory. </summary>
     public static void MoveAll(string source, string destination, params string[] patterns) => IterAll(f =>
     {
-        var dest = GetFile(destination, Path.GetFileName(f));
+        var dest = Join(destination, Path.GetFileName(f));
 
         File.Delete(dest);
         File.Move(f, dest);
