@@ -53,7 +53,6 @@ public class PlayerList : Fragment
 
             LobbyController.Lobby?.Members.Each(m => b.Subbar(40f, s =>
             {
-                // TODO add sprites of crown and ban hammer + clear ban list features
                 s.Setup(false, 0f);
                 if (LobbyController.LastOwner == m.Id.AccountId)
                 {
@@ -67,9 +66,10 @@ public class PlayerList : Fragment
                 }
                 else s.ProfileButton(m, true);
             }));
+            if (!LobbyController.IsOwner) return;
 
             b.Separator();
-            b.TextButton("#player-list.clear", red, () => { });
+            b.TextButton("#player-list.clear", red, () => LobbyConfig.Banned = new string[0]);
         });
         VersionBar();
     }
