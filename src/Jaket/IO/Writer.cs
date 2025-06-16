@@ -1,66 +1,72 @@
 namespace Jaket.IO;
 
 using System;
-using System.Runtime.InteropServices;
 using System.Text;
 using UnityEngine;
 
 using Jaket.Content;
 
-/// <summary> Wrapper over Marshal for convenience and the ability to write floating point numbers. </summary>
-public class Writer
+/// <summary>
+/// Widely used structure that writes both basic and complex data types into unmanaged memory.
+/// Be <b>extremely careful</b> as there is no memory bounds checking. 
+/// </summary>
+public unsafe struct Writer
 {
-    /// <summary> Current cursor position. </summary>
-    public int Position;
-    /// <summary> Allocated memory length. </summary>
-    public readonly int Length;
-    /// <summary> Pointer to the allocated memory. </summary>
-    public readonly Ptr mem;
+    /// <summary> Pointer to the beginning of the allocated memory. </summary>
+    public readonly Ptr Memory;
+    /// <summary> Number of bytes written, often the memory is not fully utilized. </summary>
+    public int Position { get; private set; }
 
-    /// <summary> Creates a writer with the given memory. </summary>
-    public Writer(Ptr memory, int length) { mem = memory; Length = length; }
+    /// <summary> Wraps the given memory into a writer. </summary>
+    public Writer(Ptr memory) => Memory = memory;
 
     /// <summary> Allocates memory and writes data there. </summary>
-    public static void Write(Cons<Writer> cons, Cons<Ptr, int> result, int memoryAmount)
+    public static void Write(Refw cons, Cons<Ptr, int> result, int bytesCount)
     {
-        Writer instance = new(Pointers.Allocate(memoryAmount), memoryAmount);
-        cons(instance);
-        result(instance.mem, instance.Position); // 64 bytes are allocated in memory by default, which is enough for each entity, but not all of this memory is used
+        Writer instance = new(Pointers.Allocate(bytesCount));
+        cons(ref instance);
+        result(instance.Memory, instance.Position);
     }
 
-    /// <summary> Converts float to integer. </summary>
-    public static unsafe int Float2Int(float value) => *(int*)&value;
-    /// <summary> Converts uint to int. </summary>
-    public static unsafe int Uint2int(uint value) => *(int*)&value;
-
-    /// <summary> Moves the cursor by a given number of bytes and returns the old cursor position. </summary>
-    public int Inc(int amount)
+    /// <summary> Moves the position by the given number of bytes. </summary>
+    public void* Inc(int bytesCount)
     {
-        if (Position < 0) throw new IndexOutOfRangeException("Attempt to write data at a negative index.");
-        Position += amount;
-
-        if (Position > Length) throw new IndexOutOfRangeException("Attempt to write more bytes than were allocated in memory.");
-        return Position - amount;
+        Position += bytesCount;
+        return (Memory + Position - bytesCount).ToPointer();
     }
 
-    #region types
+    #region basic
 
-    public void Bool(bool value) => Marshal.WriteByte(mem, Inc(1), (byte)(value ? 0xFF : 0x00));
+    public void Bool(bool value)   => *(byte*)Inc(1)  = value ? byte.MaxValue : byte.MinValue;
 
-    public void Bools(bool v0 = false, bool v1 = false, bool v2 = false, bool v3 = false, bool v4 = false, bool v5 = false, bool v6 = false, bool v7 = false) =>
-        Byte((byte)((v0 ? 1 : 0) | (v1 ? 1 << 1 : 0) | (v2 ? 1 << 2 : 0) | (v3 ? 1 << 3 : 0) | (v4 ? 1 << 4 : 0) | (v5 ? 1 << 5 : 0) | (v6 ? 1 << 6 : 0) | (v7 ? 1 << 7 : 0)));
+    public void Byte(byte value)   => *(byte*)Inc(1)  = value;
 
-    public void Byte(byte value) => Marshal.WriteByte(mem, Inc(1), value);
+    public void Id(uint value)     => *(uint*)Inc(4)  = value;
+
+    public void Int(int value)     => *(int*)Inc(4)   = value;
+
+    public void Float(float value) => *(float*)Inc(4) = value;
+
+    #endregion
+    #region complex
+
+    public void Bools(bool v0 = false, bool v1 = false, bool v2 = false, bool v3 = false, bool v4 = false, bool v5 = false, bool v6 = false, bool v7 = false) => Byte((byte)(
+        (v0 ? 1 << 0 : 0) |
+        (v1 ? 1 << 1 : 0) |
+        (v2 ? 1 << 2 : 0) |
+        (v3 ? 1 << 3 : 0) |
+        (v4 ? 1 << 4 : 0) |
+        (v5 ? 1 << 5 : 0) |
+        (v6 ? 1 << 6 : 0) |
+        (v7 ? 1 << 7 : 0)
+    ));
+
+    public void Bytes(byte[] value, int start, int length)
+    {
+        for (int i = start; i < length; i++) Byte(value[i]);
+    }
 
     public void Bytes(byte[] value) => Bytes(value, 0, value.Length);
-
-    public void Bytes(byte[] value, int start, int length) => Marshal.Copy(value, start, mem + Inc(length), length);
-
-    public void Int(int value) => Marshal.WriteInt32(mem, Inc(4), value);
-
-    public void Float(float value) => Marshal.WriteInt32(mem, Inc(4), Float2Int(value));
-
-    public void Id(uint value) => Marshal.WriteInt32(mem, Inc(4), Uint2int(value));
 
     public void String(string value)
     {
@@ -83,10 +89,13 @@ public class Writer
     public void Player(Team team, byte weapon, byte emote, byte rps, bool typing)
     {
         if (weapon == 0xFF) weapon = 0b111111;
-        if (emote == 0xFF) emote = 0b1111; // null emote is recorded as 255, but only 4 bits stand out under emote
+        if (emote == 0xFF)  emote  = 0b1111;
 
-        Marshal.WriteInt16(mem, Inc(2), (short)((weapon << 10) | (Convert.ToByte(team) << 7) | (emote << 3) | (rps << 1) | (typing ? 1 : 0)));
+        *(short*)Inc(2) = (short)((weapon << 10) | (Convert.ToByte(team) << 7) | (emote << 3) | (rps << 1) | (typing ? 1 : 0));
     }
 
     #endregion
+
+    /// <summary> Consumer, but the argument is a reference. </summary>
+    public delegate void Refw(ref Writer w);
 }
