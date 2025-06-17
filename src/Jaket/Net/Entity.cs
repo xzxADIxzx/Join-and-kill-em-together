@@ -89,7 +89,7 @@ public abstract class Entity : MonoBehaviour
     public void NetKill()
     {
         Kill(null);
-        Networking.Send(PacketType.KillEntity, w => w.Id(Id), size: 4);
+        Networking.Send(PacketType.KillEntity, 4, w => w.Id(Id));
     }
 
     /// <summary> Class for interpolating floating point values. </summary>

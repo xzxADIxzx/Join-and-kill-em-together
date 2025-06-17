@@ -124,7 +124,7 @@ public class Bullets
             var type = CType(bullet.name);
             if (type == 0xFF) return; // how? these are probably enemy projectiles
 
-            Networking.Send(PacketType.SpawnBullet, w =>
+            Networking.Send(PacketType.SpawnBullet, hasRigidbody ? 37 : 26, w =>
             {
                 w.Byte(type);
                 w.Vector(bullet.transform.position + (applyOffset ? bullet.transform.forward * 2f : Vector3.zero));
@@ -132,7 +132,7 @@ public class Bullets
 
                 if (type == 0 && team != byte.MaxValue) w.Byte(team);
                 if (hasRigidbody) w.Vector(bullet.GetComponent<Rigidbody>().velocity);
-            }, size: hasRigidbody ? 37 : 26);
+            });
         }
         else bullet.AddComponent(bullet.name == "Coin(Clone)" ? typeof(TeamCoin) : typeof(Bullet));
     }
@@ -152,51 +152,51 @@ public class Bullets
         if (bullet.TryGetComponent<Entity>(out var entity) && entity.IsOwner)
         {
             DeadEntity.Replace(entity);
-            Networking.Send(PacketType.KillEntity, w =>
+            Networking.Send(PacketType.KillEntity, harmless ? 4 : 5, w =>
             {
                 w.Id(entity.Id);
                 if (!harmless) w.Bool(big);
-            }, size: harmless ? 4 : 5);
+            });
         }
     }
 
     #region special
 
     /// <summary> Synchronizes the punch or parry animation. </summary>
-    public static void SyncPunch() => Networking.Send(PacketType.Punch, w =>
+    public static void SyncPunch() => Networking.Send(PacketType.Punch, 6, w =>
     {
         w.Id(AccId);
         w.Byte(0);
 
         w.Bool(Networking.LocalPlayer.Parried);
         Networking.LocalPlayer.Parried = false;
-    }, size: 6);
+    });
 
     /// <summary> Synchronizes the explosion of the knuckleblaster. </summary>
     public static void SyncBlast(GameObject blast)
     {
         if (LobbyController.Offline || blast?.name != "Explosion Wave(Clone)") return;
-        Networking.Send(PacketType.Punch, w =>
+        Networking.Send(PacketType.Punch, 29, w =>
         {
             w.Id(AccId);
             w.Byte(1);
 
             w.Vector(blast.transform.position);
             w.Vector(blast.transform.localEulerAngles);
-        }, size: 29);
+        });
     }
 
     /// <summary> Synchronizes the shockwave of the player. </summary>
     public static void SyncShock(GameObject shock, float force)
     {
         if (LobbyController.Offline || shock?.name != "PhysicalShockwavePlayer(Clone)") return;
-        Networking.Send(PacketType.Punch, w =>
+        Networking.Send(PacketType.Punch, 9, w =>
         {
             w.Id(AccId);
             w.Byte(2);
 
             w.Float(force);
-        }, size: 9);
+        });
     }
 
     /// <summary> Turns the harpoon 180 degrees and then punches it. </summary>
@@ -221,7 +221,7 @@ public class Bullets
     public static void SyncDamage(uint enemyId, string hitter, float damage, float crit)
     {
         var type = (byte)Types.IndexOf(hitter);
-        if (type != 0xFF) Networking.Send(PacketType.DamageEntity, w =>
+        if (type != 0xFF) Networking.Send(PacketType.DamageEntity, 11, w =>
         {
             w.Id(enemyId);
             w.Enum(Networking.LocalPlayer.Team);
@@ -229,7 +229,7 @@ public class Bullets
 
             w.Float(damage);
             w.Bool(crit == 0f);
-        }, size: 14);
+        });
     }
 
     /// <summary> Deals bullet damage to the enemy. </summary>

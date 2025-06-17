@@ -107,7 +107,7 @@ public class Networking
             // return the exited player's entities back to the host & close the connection
             if (!LobbyController.IsOwner) return;
 
-            FindCon(member.Id.AccountId)?.Close();
+            Find(member.Id.AccountId).Close();
             Entities.Alive(entity =>
             {
                 if (entity is OwnableEntity oe && oe.Owner == member.Id.AccountId) oe.TakeOwnage();

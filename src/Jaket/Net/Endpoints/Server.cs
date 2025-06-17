@@ -167,7 +167,7 @@ public class Server : Endpoint, ISocketManager
         var accId = identity.SteamId.AccountId;
 
         // multiple connections are prohibited
-        if (identity.IsSteamId && Networking.FindCon(accId).HasValue)
+        if (identity.IsSteamId && Networking.Find(accId).Id != 0u)
         {
             Log.Debug("[Server] Connection is rejected: already connected");
             con.Close();

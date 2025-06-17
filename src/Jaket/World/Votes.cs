@@ -34,7 +34,7 @@ public class Votes
     }
 
     /// <summary> Votes for the given option. </summary>
-    public static void Vote(byte option = 0) => Networking.Send(PacketType.Vote, w =>
+    public static void Vote(byte option = 0) => Networking.Send(PacketType.Vote, 5, w =>
     {
         w.Id(AccId);
         w.Byte(option);

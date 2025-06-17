@@ -234,25 +234,25 @@ public class World
 
         byte index = (byte)Actions.IndexOf(na);
         if (!Activated.Contains(index))
-            Networking.Send(PacketType.ActivateObject, w =>
+            Networking.Send(PacketType.ActivateObject, 2, w =>
             {
                 Activated.Add(index);
                 w.Byte(0);
                 w.Byte(index);
 
                 Log.Debug($"[World] Sent the activation of the object {na.Name} in {na.Level}");
-            }, size: 2);
+            });
     });
 
     /// <summary> Synchronizes the state of a hook point. </summary>
-    public static void SyncAction(byte index, bool hooked) => Networking.Send(PacketType.ActivateObject, w =>
+    public static void SyncAction(byte index, bool hooked) => Networking.Send(PacketType.ActivateObject, 3, w =>
     {
         w.Byte(1);
         w.Byte(index);
         w.Bool(hooked);
 
         Log.Debug($"[World] Sent the new state of point#{index}: {hooked}");
-    }, size: 3);
+    });
 
     /// <summary> Synchronizes the tram speed. </summary>
     public static void SyncTram(TramControl tram)
@@ -260,22 +260,22 @@ public class World
         if (LobbyController.Offline || Scene == "Level 7-1") return;
 
         var index = (byte)Trams.IndexOf(tram);
-        if (index != 255) Networking.Send(PacketType.ActivateObject, w =>
+        if (index != 255) Networking.Send(PacketType.ActivateObject, 6, w =>
         {
             w.Byte(2);
             w.Byte(index);
             w.Int(tram.currentSpeedStep);
 
             Log.Debug($"[World] Sent the new speed of tram#{index} {tram.currentSpeedStep}");
-        }, size: 6);
+        });
     }
 
     /// <summary> Synchronizes actions characterized only by position: opening doors, activation of a stature or tree. </summary>
-    public static void SyncAction(Component t, byte type) => Networking.Send(PacketType.ActivateObject, w =>
+    public static void SyncAction(Component t, byte type) => Networking.Send(PacketType.ActivateObject, 13, w =>
     {
         w.Byte(type);
         w.Vector(t.transform.position);
-    }, size: 13);
+    });
 
     #endregion
 }

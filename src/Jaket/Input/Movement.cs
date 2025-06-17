@@ -74,12 +74,12 @@ public class Movement : MonoSingleton<Movement>
                 if (spray) spray.Lifetime = 58f;
                 spray = SprayManager.Spawn(hit.point, hit.normal);
             }
-            if (LobbyController.Online) Networking.Send(Keybind.Point.Tap() ? PacketType.Point : PacketType.Spray, w =>
+            if (LobbyController.Online) Networking.Send(Keybind.Point.Tap() ? PacketType.Point : PacketType.Spray, 28, w =>
             {
                 w.Id(AccId);
                 w.Vector(hit.point);
                 w.Vector(hit.normal);
-            }, size: 28);
+            });
         }
 
         if (Keybind.EmoteWheel.Down() && !WeaponWheel.Instance.gameObject.activeSelf)

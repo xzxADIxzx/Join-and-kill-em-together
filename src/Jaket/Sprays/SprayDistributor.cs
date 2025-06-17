@@ -51,7 +51,7 @@ public static class SprayDistributor
     }
 
     /// <summary> Requests someone's spray from the host. </summary>
-    public static void Request(uint owner) => Networking.Send(PacketType.RequestImage, w => w.Id(owner), size: 4);
+    public static void Request(uint owner) => Networking.Send(PacketType.RequestImage, 4, w => w.Id(owner));
 
     #endregion
     #region networking
@@ -60,20 +60,20 @@ public static class SprayDistributor
     public static void Upload(uint owner, byte[] data, Cons<Ptr, int> result = null)
     {
         // initialize a new stream
-        Networking.Send(PacketType.ImageChunk, w =>
+        Networking.Send(PacketType.ImageChunk, 9, w =>
         {
             w.Id(owner);
             w.Bool(true);
             w.Int(data.Length);
-        }, result, 9);
+        }, result);
 
         // send data over the stream
-        for (int i = 0; i < data.Length; i += CHUNK_SIZE) Networking.Send(PacketType.ImageChunk, w =>
+        for (int i = 0; i < data.Length; i += CHUNK_SIZE) Networking.Send(PacketType.ImageChunk, CHUNK_SIZE + 5, w =>
         {
             w.Id(owner);
             w.Bool(false);
             w.Bytes(data, i, Mathf.Min(CHUNK_SIZE, data.Length - i));
-        }, result, CHUNK_SIZE + 5);
+        }, result);
     }
 
     /// <summary> Uploads the current spray to the server. </summary>

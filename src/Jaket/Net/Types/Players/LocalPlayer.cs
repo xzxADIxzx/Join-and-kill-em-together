@@ -65,14 +65,14 @@ public class LocalPlayer : Entity
     #region special
 
     /// <summary> Synchronizes the suit of the local player. </summary>
-    public void SyncSuit() => Networking.Send(PacketType.Style, w =>
+    public void SyncSuit() => Networking.Send(PacketType.Style, 25 /* TODO predict more accurate */, w =>
     {
         w.Id(Id);
 
         w.Int(Shop.SelectedHat);
         w.Int(Shop.SelectedJacket);
 
-        if (cw?.GetComponentInChildren<GunColorGetter>()?.TryGetComponent<Renderer>(out var renderer) ?? false)
+        if (cw?.GetComponentInChildren<GunColorGetter>().TryGetComponent(out Renderer renderer) ?? false)
         {
             bool custom = renderer.material.name.Contains("Custom");
             w.Bool(custom);
@@ -85,7 +85,7 @@ public class LocalPlayer : Entity
             });
         }
         else w.Bool(false);
-    }, size: 25);
+    });
 
     /// <summary> Caches the id of the current weapon and paints the hands of the local player. </summary>
     public void UpdateWeapons()
