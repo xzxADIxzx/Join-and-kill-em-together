@@ -47,6 +47,18 @@ public class Networking
         }
     }
 
+    /// <summary> Returns the list of all connections. </summary>
+    public static IEnumerable<Connection> Connections
+    {
+        get
+        {
+            if (Server.Manager != null) foreach (var con in Server.Manager.Connected) yield return con;
+            if (Client.Manager != null) yield return Client.Manager.Connection;
+        }
+    }
+
+    #region general
+
     /// <summary> Loads server, client and event listeners. </summary>
     public static void Load()
     {
@@ -190,6 +202,7 @@ public class Networking
         toRemove.ForEach(Entities.Remove);
     }
 
+    #endregion
     #region tools
 
     /// <summary> Sends the packet to the given connection and updates statistics. </summary>
