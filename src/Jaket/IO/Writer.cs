@@ -63,7 +63,7 @@ public unsafe struct Writer
     public void String(string value)
     {
         value ??= "";
-        Int(value.Length * 2);
+        Byte((byte)(value.Length * 2));
         Bytes(Encoding.Unicode.GetBytes(value));
     }
 

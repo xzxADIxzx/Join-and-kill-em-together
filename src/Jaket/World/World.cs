@@ -41,7 +41,7 @@ public class World
             if (LobbyController.Online && LobbyController.IsOwner && Pending != "Main Menu")
             {
                 Activated.Clear();
-                Networking.Send(PacketType.Level, WriteData, size: 256);
+                Networking.Send(PacketType.Level, DataSize(), WriteData);
             }
         };
         Events.OnLoad += () =>
@@ -53,6 +53,9 @@ public class World
     }
 
     #region data
+
+    /// <summary> Returns the number of bytes required to write world data. </summary>
+    public static int DataSize() => 3 + ((Pending ?? Scene).Length + Version.CURRENT.Length) * 2;
 
     /// <summary> Writes data about the world such as level, difficulty and triggers fired. </summary>
     public static void WriteData(Writer w)

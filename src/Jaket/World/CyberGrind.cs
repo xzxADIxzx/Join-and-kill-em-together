@@ -27,12 +27,12 @@ public class CyberGrind
     }
 
     /// <summary> Sends the current arena pattern to all clients. </summary>
-    public static void SyncPattern(ArenaPattern pattern) => Networking.Send(PacketType.CyberGrindAction, w =>
+    public static void SyncPattern(ArenaPattern pattern) => Networking.Send(PacketType.CyberGrindAction, 6 + (pattern.heights.Length + pattern.prefabs.Length) * 2, w =>
     {
         w.Int(grid.currentWave);
         w.String(pattern.heights);
         w.String(pattern.prefabs);
-    }, size: 4096); // the pattern size is always different, but IO+Networking will send the required size, so we feel free to allocate with a margin
+    });
 
     /// <summary> Reads and loads a pattern from memory. </summary>
     public static void LoadPattern(Reader r)
