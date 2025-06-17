@@ -20,14 +20,6 @@ public unsafe struct Writer
     /// <summary> Wraps the given memory into a writer. </summary>
     public Writer(Ptr memory) => Memory = memory;
 
-    /// <summary> Allocates memory and writes data there. </summary>
-    public static void Write(Refw cons, Cons<Ptr, int> result, int bytesCount)
-    {
-        Writer instance = new(Pointers.Allocate(bytesCount));
-        cons(ref instance);
-        result(instance.Memory, instance.Position);
-    }
-
     /// <summary> Moves the position by the given number of bytes. </summary>
     public void* Inc(int bytesCount)
     {
@@ -95,7 +87,4 @@ public unsafe struct Writer
     }
 
     #endregion
-
-    /// <summary> Consumer, but the argument is a reference. </summary>
-    public delegate void Refw(ref Writer w);
 }
