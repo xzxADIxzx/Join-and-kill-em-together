@@ -17,17 +17,17 @@ public class Networking
 {
     /// <summary> Number of snapshots to be sent per second. </summary>
     public const int TICKS_PER_SECOND = 15;
-    /// <summary> Number of subticks in a tick, i.e. each tick is divided into equal gaps in which snapshots of equal number of entities are written. </summary>
+    /// <summary> Number of subticks in a tick, i.e. each tick is divided into equal gaps in which snapshots of equal number of entities are sent. </summary>
     public const int SUBTICKS_PER_TICK = 4;
 
-    /// <summary> Server endpoint. Will be updated by the owner of the lobby. </summary>
+    /// <summary> Server endpoint, updated by the owner of the lobby. </summary>
     public static Server Server = new();
-    /// <summary> Client endpoint. Will be updated by players connected to the lobby. </summary>
+    /// <summary> Client endpoint, updated by the players connected to the lobby. </summary>
     public static Client Client = new();
 
     /// <summary> List of all entities by their id. May contain null. </summary>
     public static Pools Entities = new();
-    /// <summary> Local player singleton. </summary>
+    /// <summary> Singleton of the local player. </summary>
     public static LocalPlayer LocalPlayer;
 
     /// <summary> Whether a scene is loading right now. </summary>
@@ -211,7 +211,7 @@ public class Networking
     /// <summary> Reserves memory for a packet, writes the data there, and then redirects it. </summary>
     public static void Send(PacketType type, int bytesCount = 47, Cons<Writer> data = null, Cons<Ptr, int> packet = null)
     {
-        Writer w = new(Pointers.Allocate(data == null ? 1 : bytesCount + 1));
+        Writer w = new(Pointers.Reserve(data == null ? 1 : bytesCount + 1));
 
         w.Enum(type);
         data?.Invoke(w);

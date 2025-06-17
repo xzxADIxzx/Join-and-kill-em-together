@@ -3,29 +3,30 @@ namespace Jaket.IO;
 using System;
 using System.Runtime.InteropServices;
 
-/// <summary> List of pointers to memory allocated for writers. </summary>
-public class Pointers
+/// <summary> Set of different tools for working with the unmanaged memory. </summary>
+public static class Pointers
 {
-    /// <summary> Amount of bytes that will be reserved. Only 8kb are used most of the time, but sprays occupy up to 256kb. </summary>
-    public const int RESERVED = 256 * 1024;
+    /// <summary> Number of bytes to allocate for the project needs. </summary>
+    public const int RESERVED = 1024 * 1024;
 
-    /// <summary> Pointer to the beginning of the memory reserved for writing data. </summary>
-    private static Ptr pointer;
-    /// <summary> Amount of bytes allocated for writers. </summary>
+    /// <summary> Pointer to the beginning of the allocated memory. </summary>
+    private static Ptr memory;
+    /// <summary> Number of bytes reserved in the allocated memory. </summary>
     private static int offset;
 
-    /// <summary> Reserves 8kb for future allocation. </summary>
-    public static void Allocate() => pointer = Marshal.AllocHGlobal(RESERVED);
+    /// <summary> Allocates a portion of memory for future reservation. </summary>
+    public static void Allocate() => memory = Marshal.AllocHGlobal(RESERVED);
 
-    /// <summary> Allocates the given amount of bytes on the reserved memory. </summary>
-    public static Ptr Allocate(int bytes)
+    /// <summary> Reserves the given number of bytes in the memory. </summary>
+    public static Ptr Reserve(int bytesCount)
     {
-        var alloc = pointer + offset;
+        offset += bytesCount;
 
-        if ((offset += bytes) >= RESERVED) throw new OutOfMemoryException("Attempt to allocate more bytes than were reserved in memory.");
-        return alloc;
+        if (offset >= RESERVED) throw new OutOfMemoryException("Caught an attempt to reserve more bytes than were allocated in the unmanaged memory");
+
+        return memory + offset - bytesCount;
     }
 
-    /// <summary> Frees the memory allocated for writers. </summary>
+    /// <summary> Frees up the reserved memory. </summary>
     public static void Free() => offset = 0;
 }
