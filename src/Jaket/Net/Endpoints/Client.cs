@@ -84,7 +84,11 @@ public class Client : Endpoint, IConnectionManager
         Pointers.Free();
     }
 
-    public override void Close() => Manager?.Close();
+    public override void Close()
+    {
+        Manager?.Close();
+        Manager = null;
+    }
 
     public void Connect(SteamId id)
     {

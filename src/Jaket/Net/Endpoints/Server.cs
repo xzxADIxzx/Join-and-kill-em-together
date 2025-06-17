@@ -150,7 +150,11 @@ public class Server : Endpoint, ISocketManager
         Pointers.Free();
     }
 
-    public override void Close() => Manager?.Close();
+    public override void Close()
+    {
+        Manager?.Close();
+        Manager = null;
+    }
 
     public void Open()
     {
