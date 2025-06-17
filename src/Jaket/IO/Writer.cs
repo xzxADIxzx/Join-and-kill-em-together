@@ -81,7 +81,7 @@ public unsafe struct Writer
     public void Player(Team team, byte weapon, byte emote, byte rps, bool typing)
     {
         if (weapon == 0xFF) weapon = 0b111111;
-        if (emote == 0xFF)  emote  = 0b1111;
+        if (emote  == 0xFF) emote  = 0b1111;
 
         *(short*)Inc(2) = (short)((weapon << 10) | (Convert.ToByte(team) << 7) | (emote << 3) | (rps << 1) | (typing ? 1 : 0));
     }
