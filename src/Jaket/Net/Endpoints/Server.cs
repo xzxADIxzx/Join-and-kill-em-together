@@ -9,7 +9,7 @@ using Jaket.Net.Types;
 using Jaket.Sprays;
 using Jaket.World;
 
-/// <summary> Server endpoint processing socket events and client packets. </summary>
+/// <summary> Endpoint of a server connection that processes socket events and client data. </summary>
 public class Server : Endpoint, ISocketManager
 {
     static Pools ents => Networking.Entities;
@@ -136,11 +136,11 @@ public class Server : Endpoint, ISocketManager
 
     public override void Update()
     {
-        Stats.MeasureTime(ref Stats.ReadTime, () => Manager.Receive(64));
+        Stats.MeasureTime(ref Stats.ReadTime, () => Manager.Receive());
         Stats.MeasureTime(ref Stats.WriteTime, () =>
         {
             if (Networking.Loading) return;
-            ents.Pool(pool = ++pool % 4, e => Networking.Send(PacketType.Snapshot, w =>
+            ents.Pool(pool = ++pool % 4, e => Networking.Send(PacketType.Snapshot, 5 + e.BufferSize, w =>
             {
                 w.Id(e.Id);
                 w.Enum(e.Type);
@@ -148,7 +148,7 @@ public class Server : Endpoint, ISocketManager
             }));
         });
 
-        Manager.Connected.Each(con => con.Flush());
+        Manager.Connected.Each(c => c.Flush());
         Pointers.Free();
     }
 
@@ -168,64 +168,65 @@ public class Server : Endpoint, ISocketManager
 
     public void OnConnecting(Connection con, ConnectionInfo info)
     {
-        Log.Info("[Server] Someone is connecting...");
-        var identity = info.Identity;
-        var accId = identity.SteamId.AccountId;
+        Log.Info("[SERVER] Someone is connecting...");
 
-        // multiple connections are prohibited
-        if (identity.IsSteamId && Networking.Find(accId).Id != 0u)
+        var netId = info.Identity;
+        var accId = netId.SteamId.AccountId;
+
+        // multiple connections are forbidden
+        if (netId.IsSteamId && Networking.Connections.Any(c => c.ConnectionName == accId.ToString()))
         {
-            Log.Debug("[Server] Connection is rejected: already connected");
+            Log.Debug("[SERVER] Connection is rejected: already connected");
             con.Close();
             return;
         }
 
-        // check if the player is banned
-        if (identity.IsSteamId && Administration.Banned.Contains(accId))
+        // restrain naughty players from rejoining
+        if (netId.IsSteamId && Administration.Banned.Contains(accId))
         {
-            Log.Debug("[Server] Connection is rejected: banned");
+            Log.Debug("[SERVER] Connection is rejected: banned");
             con.Close();
             return;
         }
 
-        // this will be used later to find the connection by its id
+        // only the members of the lobby are allowed to connect
+        if (netId.IsSteamId && !LobbyController.Contains(accId))
+        {
+            Log.Debug("[SERVER] Connection is rejected: either non-steam or not in the lobby");
+            con.Close();
+            return;
+        }
+
+        // this will be used later to find the connection by id
         con.ConnectionName = accId.ToString();
-
-        // only steam users in the lobby can connect to the server
-        if (identity.IsSteamId && LobbyController.Contains(accId))
-            con.Accept();
-        else
-        {
-            Log.Debug("[Server] Connection rejected: either a non-steam user or not in the lobby");
-            con.Close();
-        }
+        con.Accept();
     }
 
     public void OnConnected(Connection con, ConnectionInfo info)
     {
-        Log.Info($"[Server] {info.Identity.SteamId.AccountId} connected");
+        Log.Info($"[SERVER] {info.Identity.SteamId.AccountId} connected");
         Networking.Send(PacketType.Level, World.DataSize(), World.WriteData, (data, size) => Networking.Send(con, data, size));
     }
 
     public void OnDisconnected(Connection con, ConnectionInfo info)
     {
-        Log.Info($"[Server] {info.Identity.SteamId.AccountId} disconnected");
+        Log.Info($"[SERVER] {info.Identity.SteamId.AccountId} disconnected");
         if (ents.TryGetValue(info.Identity.SteamId.AccountId, out var entity) && entity is RemotePlayer player) player?.NetKill();
     }
 
-    public void OnMessage(Connection con, NetIdentity id, Ptr data, int size, long msg, long time, int channel)
+    public void OnMessage(Connection con, NetIdentity netId, Ptr data, int size, long msg, long time, int channel)
     {
-        var accId = id.SteamId.AccountId;
+        var accId = netId.SteamId.AccountId;
 
         if (Administration.IsSpam(accId, size))
         {
             Administration.ClearSpam(accId);
-            Log.Warning($"[Server] {accId} was warned due to sending a large amount of data");
+            Log.Warning($"[SERVER] {accId} was warned due to sending a large amount of data");
 
             if (Administration.IsWarned(accId))
             {
                 Administration.Ban(accId);
-                Log.Warning($"[Server] {accId} was blocked due to an attempt to spam");
+                Log.Warning($"[SERVER] {accId} was blocked due to an attempt to spam");
             }
         }
 
