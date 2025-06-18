@@ -5,53 +5,42 @@ using Steamworks.Data;
 using Jaket.Content;
 using Jaket.IO;
 
-/// <summary> Network connection endpoint that contains listeners for different packet types. </summary>
+/// <summary> Endpoint of a network connection that processes incoming data via packet handlers. </summary>
 public abstract class Endpoint
 {
-    protected Pools ents => Networking.Entities;
-
-    /// <summary> List of packet listeners by packet types. </summary>
-    protected PacketListener[] listeners = new PacketListener[32];
-    /// <summary> Pool, the entities of which will be written in the current subtick. </summary>
+    /// <summary> Handlers of incoming data packets. </summary>
+    protected PacketHandler[] handlers = new PacketHandler[32];
+    /// <summary> Counter showing the pool that will be included in the next snapshot. </summary>
     protected int pool;
 
-    /// <summary> Loads endpoint listeners and other stuff. </summary>
-    public abstract void Load();
+    /// <summary> Creates handlers to process incoming data. </summary>
+    public abstract void Create();
     /// <summary> Updates various stuff in the endpoint. </summary>
     public abstract void Update();
     /// <summary> Closes the connection to the endpoint. </summary>
     public abstract void Close();
 
-    /// <summary> Adds a new listener to the endpoint. </summary>
-    public void Listen(PacketType type, PacketListener listener) => listeners[(int)type] = listener;
-    /// <summary> Adds a new listener to the endpoint, but without sender. </summary>
-    public void Listen(PacketType type, Cons<Reader> listener) => listeners[(int)type] = (con, sender, r) => listener(r);
+    /// <summary> Adds a new handler to the endpoint. </summary>
+    public void Listen(PacketType type, PacketHandler listener) => handlers[(int)type] = listener;
 
-    /// <summary> Adds a new listener to the endpoint that will forward data to clients. </summary>
-    public void ListenAndRedirect(PacketType type, Cons<Reader> listener) => listeners[(int)type] = (con, sender, r) =>
-    {
-        listener(r);
-        Redirect(r, con);
-    };
-    /// <summary> Forwards data to clients. </summary>
-    public void Redirect(Reader data, Connection ignore) => Networking.Connections.Each(c =>
-    {
-        if (c != ignore) Networking.Send(c, data.mem, data.Length);
-    });
+    /// <summary> Adds a new handler to the endpoint. </summary>
+    public void Listen(PacketType type, Cons<Reader> listener) => handlers[(int)type] = (con, sender, data, size) => listener(data);
 
-    /// <summary> Handles the packet and calls the corresponding listener. </summary>
-    public void Handle(Connection con, uint sender, Reader r)
+    /// <summary> Handles the incoming data packet. </summary>
+    public void Handle(Connection con, uint sender, Ptr data, int size)
     {
+        Reader r = new(data);
         var type = r.Enum<PacketType>();
+
         if (Networking.Loading && type != PacketType.Level && type != PacketType.ImageChunk) return;
 
-        // find the required listener and transfer control to it, all it has to do is read the payload
-        listeners[(int)type](con, sender, r);
-        Stats.Read += r.Length;
+        handlers[(int)type](con, sender, r, size);
+        Stats.Read += size;
     }
-    /// <summary> Handles the packet from unmanaged memory. </summary>
-    public void Handle(Connection con, uint sender, Ptr data, int size) => Reader.Read(data, size, r => Handle(con, sender, r));
 
-    /// <summary> Packet listener that accepts the sender of the packet and the packet itself. </summary>
-    public delegate void PacketListener(Connection con, uint sender, Reader r);
+    /// <summary> Forwards the packet to all of the clients. </summary>
+    public void Redirect(Reader data, int size, Connection ignore) => Networking.Connections.Each(c => c != ignore, c => Networking.Send(c, data.Memory, size));
+
+    /// <summary> Backbone of the entire project networking. </summary>
+    public delegate void PacketHandler(Connection con, uint sender, Reader data, int size);
 }
