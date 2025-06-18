@@ -9,13 +9,15 @@ using Jaket.Net.Types;
 using Jaket.Sprays;
 using Jaket.World;
 
-/// <summary> Client endpoint processing socket events and host packets. </summary>
+/// <summary> Client endpoint processing socket events and server packets. </summary>
 public class Client : Endpoint, IConnectionManager
 {
-    /// <summary> Steam networking sockets API backend. </summary>
-    public ConnectionManager Manager { get; protected set; }
+    static Pools ents => Networking.Entities;
 
-    public override void Load()
+    /// <summary> Steam networking sockets backend. </summary>
+    public ConnectionManager Manager { get; private set; }
+
+    public override void Create()
     {
         Listen(PacketType.Snapshot, r =>
         {

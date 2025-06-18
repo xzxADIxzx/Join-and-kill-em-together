@@ -9,15 +9,17 @@ using Jaket.Net.Types;
 using Jaket.Sprays;
 using Jaket.World;
 
-/// <summary> Host endpoint processing socket events and client packets. </summary>
+/// <summary> Server endpoint processing socket events and client packets. </summary>
 public class Server : Endpoint, ISocketManager
 {
-    /// <summary> Steam networking sockets API backend. </summary>
-    public SocketManager Manager { get; protected set; }
+    static Pools ents => Networking.Entities;
 
-    public override void Load()
+    /// <summary> Steam networking sockets backend. </summary>
+    public SocketManager Manager { get; private set; }
+
+    public override void Create()
     {
-        Listen(PacketType.Snapshot, (con, sender, r) =>
+        Listen(PacketType.Snapshot, (con, sender, r, s) =>
         {
             var id = r.Id();
             var type = r.Enum<EntityType>();
@@ -38,7 +40,7 @@ public class Server : Endpoint, ISocketManager
             ents[id]?.Read(r);
         });
 
-        Listen(PacketType.SpawnBullet, (con, sender, r) =>
+        Listen(PacketType.SpawnBullet, (con, sender, r, s) =>
         {
             var type = r.Byte(); r.Position = 1; // extract the bullet type
             int cost = type >= 18 && type <= 20 ? 6 : 1; // rail costs more than the rest of the bullets
@@ -46,23 +48,23 @@ public class Server : Endpoint, ISocketManager
             if (type == 23 || Administration.CanSpawnBullet(sender, cost))
             {
                 Bullets.CInstantiate(r);
-                Redirect(r, con);
+                Redirect(r, s, con);
             }
         });
-        Listen(PacketType.DamageEntity, (con, sender, r) =>
+        Listen(PacketType.DamageEntity, (con, sender, r, size) =>
         {
             if (ents.TryGetValue(r.Id(), out var entity))
             {
                 entity?.Damage(r);
-                Redirect(r, con);
+                Redirect(r, size, con);
             }
         });
-        Listen(PacketType.KillEntity, (con, sender, r) =>
+        Listen(PacketType.KillEntity, (con, sender, r, s) =>
         {
             if (ents.TryGetValue(r.Id(), out var entity) && entity && entity is not RemotePlayer && entity is not LocalPlayer)
             {
                 entity.Kill(r);
-                Redirect(r, con);
+                Redirect(r, s, con);
             }
         });
 
@@ -81,7 +83,7 @@ public class Server : Endpoint, ISocketManager
 
         ListenAndRedirect(PacketType.Spray, r => SprayManager.Spawn(r.Id(), r.Vector(), r.Vector()));
 
-        Listen(PacketType.ImageChunk, (con, sender, r) =>
+        Listen(PacketType.ImageChunk, (con, sender, r, s) =>
         {
             var owner = r.Id(); r.Position = 1; // extract the spray owner
 
@@ -94,11 +96,11 @@ public class Server : Endpoint, ISocketManager
             else
             {
                 SprayDistributor.Download(r);
-                Redirect(r, con);
+                Redirect(r, s, con);
             }
         });
 
-        Listen(PacketType.RequestImage, (con, sender, r) =>
+        Listen(PacketType.RequestImage, (con, sender, r, s) =>
         {
             var owner = r.Id();
             if (SprayDistributor.Requests.TryGetValue(owner, out var list)) list.Add(con);
@@ -114,7 +116,7 @@ public class Server : Endpoint, ISocketManager
 
         ListenAndRedirect(PacketType.ActivateObject, World.ReadAction);
 
-        Listen(PacketType.Vote, (con, sender, r) =>
+        Listen(PacketType.Vote, (con, sender, r, s) =>
         {
             var owner = r.Id();
 
@@ -127,7 +129,7 @@ public class Server : Endpoint, ISocketManager
             else
             {
                 Votes.UpdateVote(owner, r.Byte());
-                Redirect(r, con);
+                Redirect(r, s, con);
             }
         });
     }

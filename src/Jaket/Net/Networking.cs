@@ -62,8 +62,8 @@ public class Networking
     /// <summary> Loads server, client and event listeners. </summary>
     public static void Load()
     {
-        Server.Load();
-        Client.Load();
+        Server.Create();
+        Client.Create();
 
         LocalPlayer = Create<LocalPlayer>("Local Player");
 
