@@ -9,7 +9,7 @@ using Jaket.Net.Types;
 using Jaket.Sprays;
 using Jaket.World;
 
-/// <summary> Client endpoint processing socket events and server packets. </summary>
+/// <summary> Endpoint of a client connection that processes socket events and server data. </summary>
 public class Client : Endpoint, IConnectionManager
 {
     static Pools ents => Networking.Entities;
@@ -70,11 +70,11 @@ public class Client : Endpoint, IConnectionManager
 
     public override void Update()
     {
-        Stats.MeasureTime(ref Stats.ReadTime, () => Manager.Receive(64));
+        Stats.MeasureTime(ref Stats.ReadTime, () => Manager.Receive());
         Stats.MeasureTime(ref Stats.WriteTime, () =>
         {
             if (Networking.Loading) return;
-            ents.Pool(pool = ++pool % 4, e => e.IsOwner, e => Networking.Send(PacketType.Snapshot, w =>
+            ents.Pool(pool = ++pool % 4, e => e.IsOwner, e => Networking.Send(PacketType.Snapshot, 5 + e.BufferSize, w =>
             {
                 w.Id(e.Id);
                 w.Enum(e.Type);
@@ -100,11 +100,11 @@ public class Client : Endpoint, IConnectionManager
 
     #region manager
 
-    public void OnConnecting(ConnectionInfo info) => Log.Info("[Client] Connecting...");
+    public void OnConnecting(ConnectionInfo info) => Log.Info("[CLIENT] Connecting...");
 
-    public void OnConnected(ConnectionInfo info) => Log.Info("[Client] Connected");
+    public void OnConnected(ConnectionInfo info) => Log.Info("[CLIENT] Connected");
 
-    public void OnDisconnected(ConnectionInfo info) => Log.Info("[Client] Disconnected");
+    public void OnDisconnected(ConnectionInfo info) => Log.Info("[CLIENT] Disconnected");
 
     public void OnMessage(Ptr data, int size, long msg, long time, int channel) => Handle(Manager.Connection, LobbyController.LastOwner, data, size);
 
