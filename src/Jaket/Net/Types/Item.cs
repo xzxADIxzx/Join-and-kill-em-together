@@ -44,7 +44,7 @@ public class Item : OwnableEntity
             ? player.Value.Doll.HoldPosition
             : new(px.Get(LastUpdate), py.Get(LastUpdate), pz.Get(LastUpdate));
 
-        transform.eulerAngles = new(rx.GetAngel(LastUpdate), ry.GetAngel(LastUpdate), rz.GetAngel(LastUpdate));
+        transform.eulerAngles = new(rx.GetAngle(LastUpdate), ry.GetAngle(LastUpdate), rz.GetAngle(LastUpdate));
         if (holding) transform.eulerAngles -= new Vector3(20f, 140f);
 
         // remove from the altar
