@@ -121,7 +121,7 @@ public abstract class Entity : MonoBehaviour
         private T value;
         public T Value => value ?? (Networking.Entities[Id] is T t ? value = t : null);
 
-        public static explicit operator uint(Cache<T> ch) => ch.Id;
-        public static explicit operator Cache<T>(uint id) => default(Cache<T>) with { Id = id };
+        public static implicit operator uint(Cache<T> ch) => ch.Id;
+        public static implicit operator Cache<T>(uint id) => default(Cache<T>) with { Id = id };
     }
 }
