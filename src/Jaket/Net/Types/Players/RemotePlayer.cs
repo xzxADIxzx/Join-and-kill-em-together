@@ -13,13 +13,12 @@ using Jaket.UI.Elements;
 /// </summary>
 public class RemotePlayer : Entity
 {
-    /// <summary> Position of the player, the rotation of its body and head, and the position of the hook. </summary>
-    private FloatLerp x, y, z, bodyRotation, headRotation, hookX, hookY, hookZ;
+    Float bodyX, bodyY, bodyZ, hookX, hookY, hookZ, bodyRotation, headRotation;
 
     /// <summary> Health may not match the real one due to byte limitations. </summary>
     public byte Health = 100;
     /// <summary> Player's railgun charge. From 0 to 10. </summary>
-    public byte RailCharge;
+    public byte Charge;
 
     /// <summary> Player team needed for PvP mechanics. </summary>
     public Team Team, LastTeam = (Team)0xFF;
@@ -42,11 +41,6 @@ public class RemotePlayer : Entity
     {
         Init(null, true);
         TryGetComponent(out Voice);
-
-        x = new(); y = new(); z = new();
-        bodyRotation = new();
-        headRotation = new();
-        hookX = new(); hookY = new(); hookZ = new();
     }
 
     private void Start()
@@ -64,7 +58,7 @@ public class RemotePlayer : Entity
 
         EnemyId.weakPoint = Doll.Head.gameObject;
         Doll.HookWinch.material = HookArm.Instance.GetComponent<LineRenderer>().material;
-        ClearTrail(Doll.WingTrail, x, y, z);
+        ClearTrail(Doll.WingTrail, bodyX, bodyY, bodyZ);
 
         // idols can target players, which is undesirable
         int index = EnemyTracker.Instance.enemies.IndexOf(EnemyId);
@@ -85,8 +79,8 @@ public class RemotePlayer : Entity
         }
         else if (Health == 0) GoLimp();
 
-        transform.position = new(x.Get(LastUpdate), y.Get(LastUpdate) - (Doll.Sliding ? .3f : 1.5f), z.Get(LastUpdate));
         transform.eulerAngles = new(0f, bodyRotation.GetAngel(LastUpdate));
+        transform.position = new(bodyX.Get(LastUpdate), bodyY.Get(LastUpdate) - (Doll.Sliding ? .3f : 1.5f), bodyZ.Get(LastUpdate));
         Doll.Head.localEulerAngles = new(Doll.Emote == 8 ? -20f : headRotation.Get(LastUpdate), 0f);
 
         EnemyId.machine.health = 4200f; // prevent the doll from dying too early
@@ -164,17 +158,20 @@ public class RemotePlayer : Entity
     #endregion
     #region entity
 
+    public override int BufferSize => 37;
+
     public override void Write(Writer w)
     {
         UpdatesCount++;
 
-        w.Float(x.Target); w.Float(y.Target); w.Float(z.Target);
-        w.Float(bodyRotation.Target);
-        w.Float(headRotation.Target);
-        w.Float(hookX.Target); w.Float(hookY.Target); w.Float(hookZ.Target);
+        w.Floats(bodyX, bodyY, bodyZ);
+        w.Floats(hookX, hookY, hookZ);
+
+        w.Float(bodyRotation.Next);
+        w.Float(headRotation.Next);
 
         w.Byte(Health);
-        w.Byte(RailCharge);
+        w.Byte(Charge);
 
         if (!Doll) return;
 
@@ -186,13 +183,14 @@ public class RemotePlayer : Entity
     {
         LastUpdate = Time.time;
 
-        x.Read(r); y.Read(r); z.Read(r);
-        bodyRotation.Read(r);
-        headRotation.Read(r);
-        hookX.Read(r); hookY.Read(r); hookZ.Read(r);
+        r.Floats(ref bodyX, ref bodyY, ref bodyZ);
+        r.Floats(ref hookX, ref hookY, ref hookZ);
+
+        bodyRotation.Set(r.Float());
+        headRotation.Set(r.Float());
 
         Health = r.Byte();
-        RailCharge = r.Byte();
+        Charge = r.Byte();
 
         if (!Doll || r.Position >= r.Length) return;
 

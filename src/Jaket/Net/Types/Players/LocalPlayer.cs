@@ -108,17 +108,21 @@ public class LocalPlayer : Entity
     #endregion
     #region entity
 
+    public override int BufferSize => 37;
+
     public override void Write(Writer w)
     {
         UpdatesCount++;
 
         w.Vector(nm.transform.position);
+        w.Vector(Hook);
+
         w.Float(nm.transform.eulerAngles.y);
         w.Float(135f - Mathf.Clamp(CameraController.Instance.rotationX, -40f, 80f));
-        w.Vector(Hook);
 
         w.Byte((byte)nm.hp);
         w.Byte((byte)Mathf.Floor(WeaponCharges.Instance.raicharge * 2.5f));
+
         w.Player(Team, weapon, Emotes.Current, Emotes.Rps, Chat.Shown);
         w.Bools(
             nm.walking,
