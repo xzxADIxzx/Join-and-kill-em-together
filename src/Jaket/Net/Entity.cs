@@ -112,13 +112,16 @@ public abstract class Entity : MonoBehaviour
         public readonly float GetAngle(float time) => Mathf.LerpAngle(Prev, Next, (Time.time - time) * Networking.TICKS_PER_SECOND);
     }
 
-    /// <summary> Class for finding entities according to their ID. </summary>
-    public class EntityProv<T> where T : Entity
+    /// <summary> Widely used structure that finds and caches entities. </summary>
+    public struct Cache<T> where T : Entity
     {
-        /// <summary> Id of the entity that needs to be found. </summary>
+        /// <summary> Identifier of the entity to find. </summary>
         public uint Id;
 
         private T value;
-        public T Value => value?.Id == Id ? value : Networking.Entities.TryGetValue(Id, out var e) && e is T t ? value = t : null;
+        public T Value => value ?? (Networking.Entities[Id] is T t ? value = t : null);
+
+        public static explicit operator uint(Cache<T> ch) => ch.Id;
+        public static explicit operator Cache<T>(uint id) => default(Cache<T>) with { Id = id };
     }
 }
