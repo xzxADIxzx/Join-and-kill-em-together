@@ -92,27 +92,24 @@ public abstract class Entity : MonoBehaviour
         Networking.Send(PacketType.KillEntity, 4, w => w.Id(Id));
     }
 
-    /// <summary> Class for interpolating floating point values. </summary>
-    public class FloatLerp
+    /// <summary> Widely used structure that interpolates floating point numbers. </summary>
+    public struct Float
     {
-        /// <summary> Interpolation values. </summary>
-        public float Last, Target;
+        /// <summary> Numbers to interpolate. </summary>
+        public float Prev, Next;
 
-        /// <summary> Updates interpolation values. </summary>
+        /// <summary> Updates the boundaries. </summary>
         public void Set(float value)
         {
-            Last = Target;
-            Target = value;
+            Prev = Next;
+            Next = value;
         }
 
-        /// <summary> Reads values to be interpolated from the reader. </summary>
-        public void Read(Reader r) => Set(r.Float());
-
         /// <summary> Returns an intermediate value. </summary>
-        public float Get(float lastUpdate) => Mathf.Lerp(Last, Target, (Time.time - lastUpdate) * Networking.TICKS_PER_SECOND);
+        public readonly float Get(float time) => Mathf.Lerp(Prev, Next, (Time.time - time) * Networking.TICKS_PER_SECOND);
 
-        /// <summary> Returns the intermediate value of the angle. </summary>
-        public float GetAngel(float lastUpdate) => Mathf.LerpAngle(Last, Target, (Time.time - lastUpdate) * Networking.TICKS_PER_SECOND);
+        /// <summary> Returns an intermediate value, taking into account the cyclic nature of angles. </summary>
+        public readonly float GetAngle(float time) => Mathf.LerpAngle(Prev, Next, (Time.time - time) * Networking.TICKS_PER_SECOND);
     }
 
     /// <summary> Class for finding entities according to their ID. </summary>
