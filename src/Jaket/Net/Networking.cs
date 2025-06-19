@@ -119,7 +119,7 @@ public class Networking
             // return the exited player's entities back to the host & close the connection
             if (!LobbyController.IsOwner) return;
 
-            Find(member.Id.AccountId).Close();
+            Connections.Each(c => c.ConnectionName == member.Id.AccountId.ToString(), c => c.Close());
             Entities.Alive(entity =>
             {
                 if (entity is OwnableEntity oe && oe.Owner == member.Id.AccountId) oe.TakeOwnage();
@@ -222,9 +222,6 @@ public class Networking
 
     /// <summary> Forwards the packet to either all of the clients or host. </summary>
     public static void Redirect(Ptr data, int size) => Connections.Each(c => Send(c, data, size));
-
-    /// <summary> Finds a connection by the given identifier. </summary>
-    public static Connection Find(uint id) => Connections.Find(c => c.ConnectionName == id.ToString());
 
     /// <summary> Returns the team of the given member. </summary>
     public static Team GetTeam(Friend friend) => friend.IsMe

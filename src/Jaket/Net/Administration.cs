@@ -58,15 +58,12 @@ public class Administration
         // who does the client think he is?!
         if (!LobbyController.IsOwner) return;
 
-        Networking.Send(PacketType.Ban, packet: (data, size) =>
+        Networking.Send(PacketType.Ban, packet: (data, size) => Networking.Connections.Each(c => c.ConnectionName == id.ToString(), c =>
         {
-            var con = Networking.Find(id);
-            if (con.Id == 0u) return;
-
-            Networking.Send(con, data, size);
-            con.Flush();
-            Events.Post2(() => con.Close());
-        });
+            Networking.Send(c, data, size);
+            c.Flush();
+            Events.Post2(() => c.Close());
+        }));
 
         Banned.Add(id);
         LobbyController.Lobby?.SendChatString("#/k" + id);
