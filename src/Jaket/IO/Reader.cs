@@ -5,6 +5,7 @@ using System.Text;
 using UnityEngine;
 
 using Jaket.Content;
+using Jaket.Net;
 
 /// <summary>
 /// Widely used structure that reads both basic and complex data types from unmanaged memory.
@@ -58,6 +59,16 @@ public unsafe struct Reader
         var value = new byte[bytesCount];
         for (int i = 0; i < bytesCount; i++) value[i] = Byte();
         return value;
+    }
+
+    public void Floats(ref Entity.Float x, ref Entity.Float y, ref Entity.Float z)
+    {
+        x.Prev = x.Next;
+        y.Prev = y.Next;
+        z.Prev = z.Next;
+        x.Next = *(float*)Inc(4);
+        y.Next = *(float*)Inc(4);
+        z.Next = *(float*)Inc(4);
     }
 
     public string String() => Encoding.Unicode.GetString(Bytes(Byte()));

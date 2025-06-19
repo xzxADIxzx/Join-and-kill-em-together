@@ -5,6 +5,7 @@ using System.Text;
 using UnityEngine;
 
 using Jaket.Content;
+using Jaket.Net;
 
 /// <summary>
 /// Widely used structure that writes both basic and complex data types into unmanaged memory.
@@ -59,6 +60,13 @@ public unsafe struct Writer
     }
 
     public void Bytes(byte[] value) => Bytes(value, 0, value.Length);
+
+    public void Floats(Entity.Float x, Entity.Float y, Entity.Float z)
+    {
+        *(float*)Inc(4) = x.Next;
+        *(float*)Inc(4) = y.Next;
+        *(float*)Inc(4) = z.Next;
+    }
 
     public void String(string value)
     {
