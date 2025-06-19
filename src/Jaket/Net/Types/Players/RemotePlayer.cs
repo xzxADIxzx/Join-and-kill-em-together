@@ -79,8 +79,8 @@ public class RemotePlayer : Entity
         }
         else if (Health == 0) GoLimp();
 
-        transform.eulerAngles = new(0f, bodyRotation.GetAngel(LastUpdate));
         transform.position = new(bodyX.Get(LastUpdate), bodyY.Get(LastUpdate) - (Doll.Sliding ? .3f : 1.5f), bodyZ.Get(LastUpdate));
+        transform.eulerAngles = new(0f, bodyRotation.GetAngle(LastUpdate));
         Doll.Head.localEulerAngles = new(Doll.Emote == 8 ? -20f : headRotation.Get(LastUpdate), 0f);
 
         EnemyId.machine.health = 4200f; // prevent the doll from dying too early
