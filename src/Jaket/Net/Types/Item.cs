@@ -12,10 +12,8 @@ public class Item : OwnableEntity
 {
     static FishManager fm => FishManager.Instance;
 
-    /// <summary> Item position and rotation. </summary>
-    private FloatLerp x, y, z, rx, ry, rz;
-    /// <summary> Player holding the item in their hands. </summary>
-    private EntityProv<RemotePlayer> player = new();
+    Float px, py, pz, rx, ry, rz;
+    Cache<RemotePlayer> player;
 
     /// <summary> Whether the player is holding the item. </summary>
     private bool holding;
@@ -28,11 +26,8 @@ public class Item : OwnableEntity
         InitTransfer(() =>
         {
             if (Rb && !IsOwner) Rb.isKinematic = true;
-            player.Id = Owner;
+            player = Owner;
         });
-
-        x = new(); y = new(); z = new();
-        rx = new(); ry = new(); rz = new();
     }
 
     private void Start()
@@ -47,7 +42,7 @@ public class Item : OwnableEntity
 
         transform.position = holding && player.Value != null
             ? player.Value.Doll.HoldPosition
-            : new(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
+            : new(px.Get(LastUpdate), py.Get(LastUpdate), pz.Get(LastUpdate));
 
         transform.eulerAngles = new(rx.GetAngel(LastUpdate), ry.GetAngel(LastUpdate), rz.GetAngel(LastUpdate));
         if (holding) transform.eulerAngles -= new Vector3(20f, 140f);
@@ -100,6 +95,7 @@ public class Item : OwnableEntity
 
         w.Vector(transform.position);
         w.Vector(transform.eulerAngles);
+
         w.Bool(IsOwner ? ItemId.pickedUp : holding);
         w.Bool(IsOwner ? ItemId.Placed() : placed);
     }
@@ -109,8 +105,9 @@ public class Item : OwnableEntity
         base.Read(r);
         if (IsOwner) return;
 
-        x.Read(r); y.Read(r); z.Read(r);
-        rx.Read(r); ry.Read(r); rz.Read(r);
+        r.Floats(ref px, ref py, ref pz);
+        r.Floats(ref rx, ref ry, ref rz);
+
         holding = r.Bool();
         placed = r.Bool();
     }

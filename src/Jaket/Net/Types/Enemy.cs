@@ -5,10 +5,9 @@ using UnityEngine;
 using Jaket.IO;
 
 /// <summary> Common to all enemies in the game class. Performs a small number of functions. </summary>
-public class Enemy : OwnableEntity
+public abstract class Enemy : OwnableEntity
 {
-    /// <summary> Position of the enemy in the world space. </summary>
-    protected FloatLerp x = new(), y = new(), z = new();
+    Float x, y, z;
 
     /// <summary> Whether the enemy is a boss. </summary>
     public bool IsBoss;
@@ -46,7 +45,7 @@ public class Enemy : OwnableEntity
     {
         if (IsOwner) return;
 
-        transform.position = new(x.Last = x.Target, y.Last = y.Target, z.Last = z.Target);
+        transform.position = new(x.Prev = x.Next, y.Prev = y.Next, z.Prev = z.Next);
         if (EnemyId.spawnEffect)
             Inst(EnemyId.spawnEffect, TryGetComponent(out Collider col) ? col.bounds.center : transform.position, transform.rotation);
     }
