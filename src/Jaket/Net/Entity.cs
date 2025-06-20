@@ -5,92 +5,60 @@ using UnityEngine;
 using Jaket.Content;
 using Jaket.IO;
 
-/// <summary> Any entity that has updatable state synchronized across the network. </summary>
-public abstract class Entity : MonoBehaviour
+/// <summary> Abstract entity of any type whose state is synchronized across the network via snapshots. </summary>
+public abstract class Entity
 {
-    /// <summary> Entity id in the global list. This is usually a small number, but for players, their account ids are used. </summary>
-    public uint Id;
-    /// <summary> Type of the entity, like a player or some kind of enemy. </summary>
-    public EntityType Type;
+    /// <summary> Unique identifier of the entity, account ids are used for players. </summary>
+    public readonly uint Id;
+    /// <summary> Type of the entity, such as player or enemy of some kind. </summary>
+    public readonly EntityType Type;
 
-    /// <summary> Id of the entity owner. </summary>
+    /// <summary> Account identifier of the entity's owner. </summary>
     public uint Owner;
     /// <summary> Whether the local player owns the entity. </summary>
     public bool IsOwner => Owner == AccId;
 
-    /// <summary> Last update time via snapshots. </summary>
+    /// <summary> Time of the last snapshot reception. </summary>
     public float LastUpdate;
-    /// <summary> The number of updates written. </summary>
-    public uint UpdatesCount;
-    /// <summary> Whether the entity is dead. Dead entities will not be sync. </summary>
-    public bool Dead;
+    /// <summary> Time of the last entity concealment. </summary>
+    public float LastHidden;
 
-    /// <summary> Different components, not inherent in all entities. </summary>
-    public EnemyIdentifier EnemyId;
-    public ItemIdentifier ItemId;
-    public Animator Animator;
-    public Rigidbody Rb;
-
-    /// <summary> Adds itself to the entities list if the player is the owner, and finds different components specific to different entities. </summary>
-    protected void Init(Func<Entity, EntityType> prov, bool getGeneralComponents = false)
+    /// <summary> Whether the entity is hidden, such entities are neither synchronized nor updated. </summary>
+    public bool Hidden
     {
-        Log.Debug($"Initializing an entity with name {name}");
-
-        // do this before calling prov, so as not to break the search of the entity type
-        TryGetComponent(out EnemyId);
-        TryGetComponent(out ItemId);
-
-        // if an entity is marked with this tag, then it was downloaded over the network,
-        // otherwise the entity is local and must be added to the global list
-        if (name != "Net")
-        {
-            var provided = prov(this);
-            if (provided == EntityType.None)
-            {
-                Log.Warning($"Couldn't find the entity type of the object {name}");
-                Dest(this);
-                return;
-            }
-
-            Id = Entities.NextId();
-            Type = provided;
-            Owner = AccId;
-
-            name = "Local";
-            Networking.Entities[Id] = this;
-        }
-
-        if (getGeneralComponents)
-        {
-            Animator = GetComponentInChildren<Animator>();
-            Rb = GetComponent<Rigidbody>();
-        }
+        get => LastHidden != 0f;
+        set => LastHidden = Time.time;
     }
 
-    /// <summary> Teleports the entity to the target position and clears its trail. </summary>
-    protected void ClearTrail(TrailRenderer trail, params FloatLerp[] l)
+    public Entity(uint id, EntityType type) { Id = id; Type = type; }
+
+    /// <summary> Pushes the entity into networking pool. </summary>
+    public void Push() => Networking.Entities[Id] = this;
+
+    /// <summary> Kills the entity remotely and, if necessary, locally. </summary>
+    public void Kill(int bytesCount = 0, Cons<Writer> data = null, bool locally = true)
     {
-        if (IsOwner) return;
-        transform.position = new(l[0].Last = l[0].Target, l[1].Last = l[1].Target, l[2].Last = l[2].Target);
-        trail.Clear();
+        Networking.Send(PacketType.KillEntity, 4 + bytesCount, w =>
+        {
+            w.Id(Id);
+            data?.Invoke(w);
+        });
+        if (locally) Killed(default, -1);
     }
 
-    /// <summary> Writes the entity data to the writer. </summary>
+    /// <summary> Number of bytes that the entity takes in a snapshot. </summary>
+    public abstract int BufferSize { get; }
+    /// <summary> Writes the entity data into a snapshot. </summary>
     public abstract void Write(Writer w);
-    /// <summary> Reads the entity data from the reader. </summary>
+    /// <summary> Reads the entity data from a snapshot. </summary>
     public abstract void Read(Reader r);
 
-    /// <summary> Deals damage to the entity. </summary>
-    public virtual void Damage(Reader r) => Bullets.DealDamage(EnemyId, r);
-    /// <summary> Kills the entity. </summary>
-    public virtual void Kill(Reader r) => Dead = true;
-
-    /// <summary> Kills the entity and informs all the network members about it. </summary>
-    public void NetKill()
-    {
-        Kill(null);
-        Networking.Send(PacketType.KillEntity, 4, w => w.Id(Id));
-    }
+    /// <summary> Updates internal logic of the entity. </summary>
+    public abstract void Update(float delta);
+    /// <summary> Deals incoming damage to the entity. </summary>
+    public abstract void Damage(Reader r);
+    /// <summary> Kills the entity, takes custom data. </summary>
+    public abstract void Killed(Reader r, int left);
 
     /// <summary> Widely used structure that interpolates floating point numbers. </summary>
     public struct Float
