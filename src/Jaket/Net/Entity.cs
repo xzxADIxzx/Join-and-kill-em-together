@@ -53,12 +53,34 @@ public abstract class Entity
     /// <summary> Reads the entity data from a snapshot. </summary>
     public abstract void Read(Reader r);
 
+    /// <summary> Assigns the given agent to the entity. </summary>
+    public abstract void Assign(Agent agent);
     /// <summary> Updates internal logic of the entity. </summary>
     public abstract void Update(float delta);
     /// <summary> Deals incoming damage to the entity. </summary>
     public abstract void Damage(Reader r);
     /// <summary> Kills the entity, takes custom data. </summary>
     public abstract void Killed(Reader r, int left);
+
+    /// <summary> Most of the entities manipulate an object of some kind, agents implement these interactions. </summary>
+    public class Agent : MonoBehaviour
+    {
+        /// <summary> Entity that owns the agent and has to be updated every frame. </summary>
+        public Entity Patron;
+
+        public Vector3 Position
+        {
+            get => transform.position;
+            set => transform.position = value;
+        }
+        public Vector3 Rotation
+        {
+            get => transform.eulerAngles;
+            set => transform.eulerAngles = value;
+        }
+
+        private void Update() => Stats.MeasureTime(ref Stats.EntityUpdate, () => Patron.Update(Time.time - Patron.LastUpdate));
+    }
 
     /// <summary> Widely used structure that interpolates floating point numbers. </summary>
     public struct Float
@@ -74,10 +96,10 @@ public abstract class Entity
         }
 
         /// <summary> Returns an intermediate value. </summary>
-        public readonly float Get(float time) => Mathf.Lerp(Prev, Next, (Time.time - time) * Networking.TICKS_PER_SECOND);
+        public readonly float Get(float delta) => Mathf.Lerp(Prev, Next, delta * Networking.TICKS_PER_SECOND);
 
         /// <summary> Returns an intermediate value, taking into account the cyclic nature of angles. </summary>
-        public readonly float GetAngle(float time) => Mathf.LerpAngle(Prev, Next, (Time.time - time) * Networking.TICKS_PER_SECOND);
+        public readonly float GetAngle(float delta) => Mathf.LerpAngle(Prev, Next, delta * Networking.TICKS_PER_SECOND);
     }
 
     /// <summary> Widely used structure that finds and caches entities. </summary>

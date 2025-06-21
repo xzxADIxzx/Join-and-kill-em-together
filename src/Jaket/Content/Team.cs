@@ -6,7 +6,7 @@ using Jaket.Net;
 
 using static Jaket.UI.Lib.Pal;
 
-/// <summary> All teams. They are required by versus mechanics. </summary>
+/// <summary> All teams. They are required for versus mechanics. </summary>
 public enum Team
 {
     Yellow, Red, Green, Blue, Pink
