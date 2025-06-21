@@ -76,7 +76,7 @@ public class Item : OwnableEntity
     public void PickUp()
     {
         TakeOwnage();
-        Networking.LocalPlayer.HeldItem = this;
+        Networking.LocalPlayer.Holding = this;
 
         // a special feature of my dev plushie
         if (Type == EntityType.xzxADIxzx)
