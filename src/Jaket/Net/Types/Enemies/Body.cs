@@ -1,3 +1,4 @@
+/*
 namespace Jaket.Net.Types;
 
 using UnityEngine;
@@ -87,3 +88,4 @@ public class Body : Enemy
 
     #endregion
 }
+*/

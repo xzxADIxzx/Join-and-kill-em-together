@@ -1,3 +1,4 @@
+/*
 namespace Jaket.Net.Types;
 
 using Jaket.Content;
@@ -53,3 +54,4 @@ public class SimpleEnemy : Enemy
 
     #endregion
 }
+*/

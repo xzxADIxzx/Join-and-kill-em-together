@@ -1,3 +1,4 @@
+/*
 namespace Jaket.Net.Types;
 
 using UnityEngine;
@@ -58,3 +59,4 @@ public class Swords : SimpleEnemy
         }
     }
 }
+*/

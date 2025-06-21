@@ -1,3 +1,4 @@
+/*
 namespace Jaket.Net.Types;
 
 using UnityEngine;
@@ -64,3 +65,4 @@ public class Brain : Enemy
 
     #endregion
 }
+*/

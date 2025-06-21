@@ -1,3 +1,4 @@
+/*
 namespace Jaket.Net.Types;
 
 using Jaket.Content;
@@ -40,3 +41,4 @@ public class Gutterman : SimpleEnemy
 
     #endregion
 }
+*/

@@ -1,3 +1,4 @@
+/*
 namespace Jaket.Net.Types;
 
 using UnityEngine;
@@ -59,3 +60,4 @@ public class Minotaur : Enemy
 
     #endregion
 }
+*/

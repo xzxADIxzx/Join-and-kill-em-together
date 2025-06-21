@@ -1,3 +1,4 @@
+/*
 namespace Jaket.Net.Types;
 
 using UnityEngine;
@@ -150,3 +151,4 @@ public class Gabriel : Enemy
 
     #endregion
 }
+*/

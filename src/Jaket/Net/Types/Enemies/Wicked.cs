@@ -1,3 +1,4 @@
+/*
 namespace Jaket.Net.Types;
 
 using Jaket.Content;
@@ -22,3 +23,4 @@ public class Wicked : SimpleEnemy
 
     private void UpdateTarget() => Set("player", wicked, EnemyId.target?.targetTransform.gameObject);
 }
+*/

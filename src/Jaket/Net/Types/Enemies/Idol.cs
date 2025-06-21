@@ -1,3 +1,4 @@
+/*
 namespace Jaket.Net.Types;
 
 using Jaket.Content;
@@ -70,3 +71,4 @@ public class Idol : Enemy
 
     #endregion
 }
+*/
