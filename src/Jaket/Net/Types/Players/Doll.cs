@@ -87,6 +87,9 @@ public class Doll : MonoBehaviour
         WingTrail  = GetComponentInChildren<TrailRenderer>();
         WingLight  = GetComponentInChildren<Light>();
         HookWinch  = GetComponentInChildren<LineRenderer>(true);
+
+        // update the material and texture of the hook winch to match the original
+        HookWinch.material = HookArm.Instance.GetComponent<LineRenderer>().material;
     }
 
     private void Update() => Stats.MTE(() =>
