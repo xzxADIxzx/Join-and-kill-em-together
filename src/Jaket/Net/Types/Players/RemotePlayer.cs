@@ -161,6 +161,9 @@ public class RemotePlayer : Entity
     #endregion
     #region other
 
+    /// <summary> Approximate position of the player used by spectators and indicators. </summary>
+    public Vector3 Position => agent.Position + Vector3.up * 2.5f;
+
     /// <summary> Breaks the player doll into multiple peaces. </summary>
     public void Disassemble()
     {

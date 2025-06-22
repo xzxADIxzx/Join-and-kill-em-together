@@ -13,7 +13,7 @@ using Jaket.UI.Lib;
 public class PlayerIndicators : Fragment
 {
     /// <summary> List of all indicator targets. </summary>
-    private List<Transform> targets = new(8);
+    private List<RemotePlayer> targets = new(8);
     /// <summary> List of indicators themselves. </summary>
     private List<UICircle> indicators = new(8);
 
@@ -47,18 +47,18 @@ public class PlayerIndicators : Fragment
     /// <summary> Adds a new indicator pointing to the given player. </summary>
     public void Add(RemotePlayer player)
     {
-        targets.Add(player.transform);
+        targets.Add(player);
         indicators.Add(Builder.Circle(Rect("Indicator", new(88f, 88f)), 0f, 0, 4f, color: player.Team.Color()));
     }
 
     /// <summary> Updates the size and rotation of the given indicator. </summary>
-    public void Update(Transform target, UICircle indicator)
+    public void Update(RemotePlayer target, UICircle indicator)
     {
         if (target == null || indicator == null) return;
 
-        var dst = Vector3.Distance(NewMovement.Instance.transform.position, target.position);
+        var dst = Vector3.Distance(NewMovement.Instance.transform.position, target.Position);
         var cam = CameraController.Instance.transform;
-        var dir = target.position - cam.position + Vector3.up * 2.5f;
+        var dir = target.Position - cam.position;
 
         indicator.Arc   = Mathf.Clamp(100f - dst, 5f, 100f) * .006f;
         indicator.color = indicator.color with { a = 1f - indicator.Arc * 1.5f };

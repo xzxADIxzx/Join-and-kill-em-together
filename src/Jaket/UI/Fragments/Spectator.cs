@@ -9,6 +9,7 @@ using ImageType = UnityEngine.UI.Image.Type;
 using Jaket.Assets;
 using Jaket.Input;
 using Jaket.Net;
+using Jaket.Net.Types;
 using Jaket.UI.Lib;
 using Jaket.World;
 
@@ -72,8 +73,8 @@ public class Spectator : Fragment
     public void UpdateCamera(bool ends)
     {
         var camera = cc.cam.transform;
-        var player = nm.dead && Networking.Entities.TryGetValue(LobbyController.MemberId(targetPlayer), out var rp) && rp != Networking.LocalPlayer
-            ? rp.transform.position + Vector3.up * 2.5f
+        var player = nm.dead && Networking.Entities.TryGetValue(LobbyController.MemberId(targetPlayer), out var e) && e is RemotePlayer rp
+            ? rp.Position
             : nm.transform.position + Vector3.up;
 
         position = Vector3.MoveTowards(position, Vector3.up * (ends ? .1f : 6f), 12f * Time.deltaTime);

@@ -211,7 +211,7 @@ public class Server : Endpoint, ISocketManager
     public void OnDisconnected(Connection con, ConnectionInfo info)
     {
         Log.Info($"[SERVER] {info.Identity.SteamId.AccountId} disconnected");
-        if (ents.TryGetValue(info.Identity.SteamId.AccountId, out var entity) && entity is RemotePlayer player) player?.NetKill();
+        if (ents.TryGetValue(info.Identity.SteamId.AccountId, out var e) && e is RemotePlayer p) p.Kill();
     }
 
     public void OnMessage(Connection con, NetIdentity netId, Ptr data, int size, long msg, long time, int channel)
