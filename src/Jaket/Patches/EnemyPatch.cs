@@ -1,3 +1,4 @@
+/*
 namespace Jaket.ObsoletePatches;
 
 using HarmonyLib;
@@ -105,3 +106,4 @@ public class OtherPatch
     [HarmonyPatch(typeof(EventOnDestroy), "OnDestroy")]
     static bool Destroy() => LobbyController.Offline || LobbyController.IsOwner;
 }
+*/

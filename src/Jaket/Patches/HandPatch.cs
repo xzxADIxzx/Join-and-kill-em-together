@@ -1,3 +1,4 @@
+/*
 namespace Jaket.ObsoletePatches;
 
 using HarmonyLib;
@@ -24,3 +25,4 @@ public class HandPatch
     [HarmonyPatch("SlamRight")]
     static void SlamRight() { if (World.Hand && World.Hand.IsOwner) World.Hand.HandPos = 2; }
 }
+*/

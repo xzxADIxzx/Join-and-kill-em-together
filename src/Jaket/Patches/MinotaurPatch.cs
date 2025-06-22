@@ -1,3 +1,4 @@
+/*
 namespace Jaket.ObsoletePatches;
 
 using HarmonyLib;
@@ -24,3 +25,4 @@ public class MinotaurPatch
     [HarmonyPatch("HandSwing")]
     static void Hand() { if (World.Minotaur && World.Minotaur.IsOwner) World.Minotaur.Attack = 2; }
 }
+*/

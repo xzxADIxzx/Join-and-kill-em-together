@@ -1,3 +1,4 @@
+/*
 namespace Jaket.ObsoletePatches;
 
 using HarmonyLib;
@@ -106,3 +107,4 @@ public class BinPatch
         return false;
     }
 }
+*/
