@@ -186,12 +186,12 @@ public static class ModAssets
         enemyId.dontUnlockBestiary = true;
         enemyId.dontCountAsKills   = true;
 
-        enemyId.weaknesses = new string[0];
-        enemyId.burners    = new();
-        enemyId.flammables = new();
-        enemyId.activateOnDeath = new GameObject[0];
-        machine.destroyOnDeath  = new GameObject[0];
-        machine.hurtSounds      = new  AudioClip[0];
+        enemyId.weaknesses      = [];
+        enemyId.burners         = [];
+        enemyId.flammables      = [];
+        enemyId.activateOnDeath = [];
+        machine.destroyOnDeath  = [];
+        machine.hurtSounds      = [];
 
         // make body parts of the doll hittable and resolve the mismatch of their tags
         foreach (var rb in obj.transform.GetChild(0).GetComponentsInChildren<Rigidbody>())

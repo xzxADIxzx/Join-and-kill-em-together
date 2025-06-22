@@ -91,7 +91,7 @@ public class LocalPlayer : Entity
         Holding = null;
 
         fc.currentPunch.ForceThrow();
-        fc.currentPunch.PlaceHeldObject(new ItemPlaceZone[0], null);
+        fc.currentPunch.PlaceHeldObject([], null);
     }
 
     public override void Damage(Reader r)

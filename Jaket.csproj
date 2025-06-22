@@ -16,7 +16,7 @@
 
     <RootNamespace>Jaket</RootNamespace>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <NoWarn>IDE0028, IDE0044, IDE0062, IDE0130, IDE0290, IDE0300, IDE1006</NoWarn>
+    <NoWarn>IDE0028, IDE0044, IDE0130, IDE0290, IDE0300, IDE1006</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
