@@ -84,4 +84,20 @@ public class Entities
 
     /// <summary> Entity provider. </summary>
     public delegate Entity Prov();
+
+    /// <summary> Vendors are responsible for their respective group of entity types. </summary>
+    public interface Vendor
+    {
+        /// <summary> Loads prefabs of entities managed by the vendor. </summary>
+        public abstract void Load();
+
+        /// <summary> Resolves the type of the given object or returns none. </summary>
+        public abstract EntityType Type(GameObject obj);
+
+        /// <summary> Instantiates an object to manipulate via entity agent. </summary>
+        public abstract GameObject Make(EntityType type, Vector3 position = new(), Transform parent = null);
+
+        /// <summary> Synchronizes the given object between network members. </summary>
+        public abstract void Sync(GameObject obj, params bool[] args);
+    }
 }
