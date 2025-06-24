@@ -42,7 +42,7 @@ public class Networking
         {
             var list = new Entity[Entities.Count()];
             int i = 0;
-            Entities.Each(entry => list[i++] = entry.Value);
+            Entities.Each(e => list[i++] = e);
             return list;
         }
     }

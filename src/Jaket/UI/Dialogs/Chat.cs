@@ -90,10 +90,7 @@ public class Chat : CanvasSingleton<Chat>
         List<string> list = new();
 
         if (Shown) list.Add(Bundle.Get("chat.you"));
-        Networking.Entities.Player(player =>
-        {
-            if (player.Typing) list.Add(player.Header.Name);
-        });
+        Networking.Entities.Player(p => p.Typing, p => list.Add(p.Header.Name));
 
         // hide the typing label if there is no one in the chat
         typingBg.gameObject.SetActive(list.Count > 0);
