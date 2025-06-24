@@ -67,6 +67,14 @@ public class Plugin : MonoBehaviour
 
         Log.Info("[INIT] Initializing network components...");
 
+        Pointers.Allocate();
+        Stats.StartRecord();
+        Tools.CacheAccId();
+
+        LobbyController.Load();
+        Entities.Load();
+        Networking.Load();
+
         Create<Emotes>("Emotes");
         Create<Movement>("Movement");
 
@@ -81,10 +89,6 @@ public class Plugin : MonoBehaviour
 
         if (true) return;
 
-        Pointers.Allocate();
-        Stats.StartRecord();
-        Tools.CacheAccId();
-
         Commands.Commands.Load();
         Bundle.Load();
         Weapons.Load();
@@ -93,9 +97,6 @@ public class Plugin : MonoBehaviour
         Items.Load();
 
         Administration.Load();
-        LobbyController.Load();
-        Networking.Load();
-        Entities.Load();
 
         World.World.Load();
         WorldActionsList.Load();

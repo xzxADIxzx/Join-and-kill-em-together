@@ -27,9 +27,9 @@ public static class LobbyController
     /// <summary> Subscribes to several events for proper work. </summary>
     public static void Load()
     {
-        // general info about the lobby
+        // log general info about the lobby
         Events.OnLobbyAction += () => Log.Debug($"[LOBY] Lobby owner is {Lobby?.Owner.ToString() ?? "null"}, level is {LobbyConfig.Level ?? "null"}");
-        // get the owner id after entering a lobby
+        // get the owner after entering a lobby
         Events.OnLobbyEnter += () =>
         {
             if (Offline) return;
