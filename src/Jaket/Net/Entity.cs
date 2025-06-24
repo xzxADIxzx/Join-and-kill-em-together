@@ -26,11 +26,11 @@ public abstract class Entity
     /// <summary> Whether the entity is hidden, such entities are neither synchronized nor updated. </summary>
     public bool Hidden
     {
-        get => LastHidden != 0f;
-        set => LastHidden = Time.time;
+        get => LastHidden != float.PositiveInfinity;
+        set => LastHidden = value ? Time.time : float.PositiveInfinity;
     }
 
-    public Entity(uint id, EntityType type) { Id = id; Type = type; }
+    public Entity(uint id, EntityType type) { Id = id; Type = type; Hidden = false; }
 
     /// <summary> Pushes the entity into networking pool. </summary>
     public void Push() => Networking.Entities[Id] = this;

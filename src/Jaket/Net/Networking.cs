@@ -22,15 +22,15 @@ public class Networking
 
     /// <summary> Server endpoint, updated by the owner of the lobby. </summary>
     public static Server Server = new();
-    /// <summary> Client endpoint, updated by the players connected to the lobby. </summary>
+    /// <summary> Client endpoint, updated by the members of the lobby. </summary>
     public static Client Client = new();
 
-    /// <summary> List of all entities by their id. May contain null. </summary>
+    /// <summary> Backbone of the entire network of entities. </summary>
     public static Pools Entities = new();
     /// <summary> Singleton of the local player. </summary>
-    public static LocalPlayer LocalPlayer;
+    public static LocalPlayer LocalPlayer = new();
 
-    /// <summary> Whether a scene is loading right now. </summary>
+    /// <summary> Whether any scene is loading at the moment. </summary>
     public static bool Loading;
     /// <summary> Whether multiplayer was used in the current level. </summary>
     public static bool WasMultiplayerUsed;
@@ -59,18 +59,16 @@ public class Networking
 
     #region general
 
-    /// <summary> Loads server, client and event listeners. </summary>
+    /// <summary> Subscribes to several events for proper work. </summary>
     public static void Load()
     {
         Server.Create();
         Client.Create();
 
-        LocalPlayer = Create<LocalPlayer>("Local Player");
-
-        Events.EveryTick += NetworkUpdate;
+        Events.EveryTick += Update;
         Events.EveryDozen += Optimize;
 
-        Events.OnLoad += () => WasMultiplayerUsed = LobbyController.Online;
+        Events.OnLoad        += () => WasMultiplayerUsed  = LobbyController.Online;
         Events.OnLobbyAction += () => WasMultiplayerUsed |= LobbyController.Online;
 
         Events.OnLoadingStart += () =>
@@ -84,20 +82,20 @@ public class Networking
             Loading = false;
         };
 
-        // fires when accepting an invitation via the Steam overlay
         Events.OnLobbyInvite += LobbyController.JoinLobby;
 
         Events.OnLobbyEnter += () =>
         {
-            Clear(); // destroy all entities, since the player could join from another lobby
             if (LobbyController.IsOwner)
             {
-                // open the server so people can join it
+                // open the server so people can join
                 Server.Open();
+                // clear the pools so people join clean server
+                Clear();
             }
             else
             {
-                // establishing a connection with the owner of the lobby
+                // establish a connection with the owner of the lobby
                 Client.Connect(LobbyController.Lobby.Value.Owner.Id);
                 // prevent objects from loading before the scene is loaded
                 Loading = true;
@@ -116,14 +114,14 @@ public class Networking
 
         Events.OnMemberLeave += member =>
         {
-            // return the exited player's entities back to the host & close the connection
-            if (!LobbyController.IsOwner) return;
-
-            Connections.Each(c => c.ConnectionName == member.Id.AccountId.ToString(), c => c.Close());
-            Entities.Alive(entity =>
+            if (LobbyController.IsOwner)
             {
-                if (entity is OwnableEntity oe && oe.Owner == member.Id.AccountId) oe.TakeOwnage();
-            });
+                Connections.Each(c => c.ConnectionName == member.Id.AccountId.ToString(), c => c.Close());
+                Entities.Alive(e =>
+                {
+                    if (e is OwnableEntity o && o.Owner == member.Id.AccountId) o.TakeOwnage();
+                });
+            }
         };
 
         SteamMatchmaking.OnChatMessage += (lobby, member, message) =>
@@ -158,48 +156,36 @@ public class Networking
         };
     }
 
-    /// <summary> Kills all players and clears the list of entities. </summary>
-    public static void Clear()
+    /// <summary> Updates network logic, i.e. receives incoming data and flushes outcoming one. </summary>
+    public static void Update()
     {
-        Entities.Player(player => player.Kill());
-        Entities.Clear();
-        Entities[LocalPlayer.Id] = LocalPlayer;
-    }
-
-    // TODO docs
-    public static void Close()
-    {
-        Server.Close();
-        Client.Close();
-        Clear();
-        Pointers.Free();
-    }
-
-    /// <summary> Core network logic should have been here, but in fact it is located in the server and client classes. </summary>
-    public static void NetworkUpdate()
-    {
-        // the player isn't connected to the lobby and the logic doesn't need to be updated
         if (LobbyController.Offline) return;
-
-        // update the server or client depending on the role of the player
         if (LobbyController.IsOwner)
             Server.Update();
         else
             Client.Update();
     }
 
-    /// <summary> Optimizes the network by removing the dead entities from the global list. </summary>
+    /// <summary> Optimizes the pools by removing hidden entities, making the hashmap lighter. </summary>
     public static void Optimize()
     {
-        // there is no need to optimize the network if no one uses it
-        if (LobbyController.Offline || DeadEntity.Instance.LastUpdate > Time.time - 1f) return;
+        if (LobbyController.Online) Entities.Each(e => Time.time - e.LastHidden >= 12f, e => Entities.Remove(e.Id));
+    }
 
-        List<uint> toRemove = new();
-        Entities.Each(pair =>
-        {
-            if (pair.Value == DeadEntity.Instance) toRemove.Add(pair.Key);
-        });
-        toRemove.ForEach(Entities.Remove);
+    /// <summary> Clears the pools, but pushes the local player back, as it must always be in. </summary>
+    public static void Clear()
+    {
+        Entities.Player(p => p.Killed(default, -1));
+        Entities.Clear();
+        LocalPlayer.Push();
+    }
+
+    /// <summary> Closes all of the connections and clears the pools. </summary>
+    public static void Close()
+    {
+        Clear();
+        Server.Close();
+        Client.Close();
     }
 
     #endregion

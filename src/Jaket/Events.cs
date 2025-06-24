@@ -68,7 +68,6 @@ public class Events : MonoBehaviour
         SteamMatchmaking.OnLobbyMemberJoined += (lobby, member) => OnMemberJoin.Fire(member);
         SteamMatchmaking.OnLobbyMemberLeave += (lobby, member) => OnMemberLeave.Fire(member);
 
-        // interaction with the lobby affects many aspects of the game
         OnLobbyAction += OnTeamChange.Fire;
         OnLobbyAction += OnHandChange.Fire;
         OnLobbyAction += () =>
