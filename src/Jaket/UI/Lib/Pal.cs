@@ -65,7 +65,7 @@ public static class Pal
     /// <summary> Fills the hash map with basic colors. </summary>
     public static void Load()
     {
-        void Put(string name, string color)
+        static void Put(string name, string color)
         {
             Colors ??= new string[byte.MaxValue + 1];
             var hash = Hash(name);

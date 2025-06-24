@@ -35,7 +35,7 @@ public class Server : Endpoint, ISocketManager
                 // client cannot create special enemies
                 if (type.IsEnemy() /* && !type.IsCommonEnemy() */) return;
 
-                Administration.Handle(sender, ents[id] = Entities.Get(id, type));
+                Administration.Handle(sender, ents[id] = Entities.Supply(id, type));
             }
             ents[id]?.Read(r);
         });

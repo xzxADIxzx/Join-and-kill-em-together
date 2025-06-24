@@ -3,50 +3,19 @@ namespace Jaket.Net;
 using System.Collections.Generic;
 using UnityEngine;
 
-using Jaket.Assets;
 using Jaket.Content;
-using Jaket.World;
 
-/// <summary> Class that provides entities by their type. </summary>
-public class Entities
+/// <summary> Class responsible for entities, their vendors and identifiers. </summary>
+public static class Entities
 {
-    /// <summary> Dictionary of entity types to their providers. </summary>
-    public static Dictionary<EntityType, Prov> Providers = new(); // TODO replace with array
-    /// <summary> Last used id, next id's are guaranteed to be greater than it. </summary>
-    public static uint LastId;
+    /// <summary> Last used identifier, subsequent ones will be greater. </summary>
+    private static uint? last;
 
-    /// <summary> Loads providers into the dictionary. </summary>
+    /// <summary> Loads all of the available vendors, thus, loading prefabs and suppliers as well. </summary>
     public static void Load()
     {
-        Providers.Add(EntityType.Player, ModAssets.CreateDoll);
-
-        for (var type = EntityType.Filth; type <= EntityType.Puppet; type++)
-        {
-            var sucks = type;
-            Providers.Add(sucks, () => Enemies.Instantiate(sucks));
-        }
-
-        Providers.Add(EntityType.Hand, () => World.Hand);
-        Providers.Add(EntityType.Leviathan, () => World.Leviathan);
-        Providers.Add(EntityType.Minotaur_Chase, () => World.Minotaur);
-
-        for (var type = EntityType.SecuritySystem_Main; type <= EntityType.SecuritySystem_Tower_; type++)
-        {
-            var sucks = type;
-            Providers.Add(sucks, () => World.SecuritySystem[sucks - EntityType.SecuritySystem_Main]);
-        }
-
-        Providers.Add(EntityType.Brain, () => World.Brain);
-
-        for (var type = EntityType.BlueSkull; type <= EntityType.Sowler; type++)
-        {
-            var sucks = type;
-            Providers.Add(sucks, () => Items.Instantiate(sucks));
-        }
-
-        Providers.Add(EntityType.Coin, () => Bullets.EInstantiate(EntityType.Coin));
-        Providers.Add(EntityType.Rocket, () => Bullets.EInstantiate(EntityType.Rocket));
-        Providers.Add(EntityType.Ball, () => Bullets.EInstantiate(EntityType.Ball));
+        Events.OnLobbyEnter += () => last = null;
+        Events.OnMemberJoin += __ => last = null;
     }
 
     /// <summary> Instantiates the given prefab and marks it with the Net tag. </summary>
@@ -59,35 +28,50 @@ public class Entities
         return instance;
     }
 
-    /// <summary> Returns an entity of the given type. </summary>
-    public static Entity Get(uint id, EntityType type)
+    /// <summary> Instantiates a new entity with the given identifier. </summary>
+    public static Entity Supply(uint id, EntityType type) => Vendor.Suppliers[(int)type](id, type);
+
+    /// <summary> Instantiates a new entity and generates an identifier for it. </summary>
+    public static Entity Supply(EntityType type)
     {
-        var entity = Providers[type]();
-        if (entity == null) return null;
+        if (last == null)
+        {
+            uint factor = 0x20000000; // uint.MaxValue plus one divided by eight
+            uint sector = AccId / factor;
 
-        entity.Id = id;
-        entity.Type = type;
+            // the range of all possible identifiers is divided into eight equal sectors
+            List<uint>[] sectors = [[], [], [], [], [], [], [], []];
 
-        return entity;
+            // lobby members are distributed among these sectors according to their identifiers
+            LobbyController.Lobby?.Members.Each(m => sectors[m.Id.AccountId / factor].Add(m.Id.AccountId));
+
+            // then we are given a number of steps equal to the number of members located in the same sector to the right of us
+            int steps = sectors[sector].Count(m => m > AccId);
+
+            // at each turn we move to the next sector and add the population of that sector to the number of steps
+            while (steps > 0) steps += sectors[sector = (sector + 1) % 8].Count - 1;
+
+            // this ensures that all of the lobby members are distributed across their sectors regardless of whom the algorithm is run for
+            last = sector * factor;
+
+            // a little extra information never hurts
+            if (Version.DEBUG) Log.Debug($"[ENTS] Generated a new starting identifier, the sector is {sector}");
+        }
+
+        do last++;
+        while (Networking.Entities.Contains(last.Value));
+
+        return Supply(last.Value, type);
     }
-
-    /// <summary> Returns the next available id, skips ids of all existing entities. </summary>
-    public static uint NextId()
-    {
-        if (LastId < AccId) LastId = AccId;
-
-        LastId++;
-        while (Networking.Entities.Contains(LastId)) LastId += 8192;
-
-        return LastId;
-    }
-
-    /// <summary> Entity provider. </summary>
-    public delegate Entity Prov();
 
     /// <summary> Vendors are responsible for their respective group of entity types. </summary>
     public interface Vendor
     {
+        /// <summary> Prefabs of the objects manipulated by entities. </summary>
+        public static GameObject[] Prefabs = new GameObject[byte.MaxValue + 1];
+        /// <summary> Suppliers that provide the entities themselves. </summary>
+        public static Supplier[] Suppliers = new Supplier[byte.MaxValue + 1];
+
         /// <summary> Loads prefabs of entities managed by the vendor. </summary>
         public abstract void Load();
 
@@ -100,4 +84,7 @@ public class Entities
         /// <summary> Synchronizes the given object between network members. </summary>
         public abstract void Sync(GameObject obj, params bool[] args);
     }
+
+    /// <summary> Instantiates a new entity of the given type. </summary>
+    public delegate Entity Supplier(uint id, EntityType type);
 }
