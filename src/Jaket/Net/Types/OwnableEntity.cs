@@ -1,3 +1,4 @@
+/*
 namespace Jaket.Net.Types;
 
 using UnityEngine;
@@ -48,3 +49,4 @@ public abstract class OwnableEntity : Entity
         }
     }
 }
+*/

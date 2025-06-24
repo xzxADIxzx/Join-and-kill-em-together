@@ -1,3 +1,4 @@
+/*
 namespace Jaket.Net.Types;
 
 using System.Linq;
@@ -123,3 +124,4 @@ public class Item : OwnableEntity
 
     #endregion
 }
+*/

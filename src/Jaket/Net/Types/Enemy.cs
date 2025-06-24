@@ -1,3 +1,4 @@
+/*
 namespace Jaket.Net.Types;
 
 using UnityEngine;
@@ -90,3 +91,4 @@ public abstract class Enemy : OwnableEntity
 
     #endregion
 }
+*/
