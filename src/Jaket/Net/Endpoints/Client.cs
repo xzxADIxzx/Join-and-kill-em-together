@@ -22,7 +22,7 @@ public class Client : Endpoint, IConnectionManager
         Listen(PacketType.Snapshot, r =>
         {
             var id = r.Id();
-            var type = r.Enum<EntityType>();
+            var type = r.EntityType();
 
             if (ents[id] == null) ents[id] = Entities.Supply(id, type);
             ents[id]?.Read(r);

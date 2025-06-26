@@ -30,7 +30,7 @@ public abstract class Endpoint
     public void Handle(Connection con, uint sender, Ptr data, int size)
     {
         Reader r = new(data);
-        var type = r.Enum<PacketType>();
+        var type = r.PacketType();
 
         if (Networking.Loading && type != PacketType.Level && type != PacketType.ImageChunk) return;
 

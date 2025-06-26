@@ -22,7 +22,7 @@ public class Server : Endpoint, ISocketManager
         Listen(PacketType.Snapshot, (con, sender, r, s) =>
         {
             var id = r.Id();
-            var type = r.Enum<EntityType>();
+            var type = r.EntityType();
 
             // player can only have one doll and its id should match the player's id
             if ((id == sender && type != EntityType.Player) || (id != sender && type == EntityType.Player)) return;

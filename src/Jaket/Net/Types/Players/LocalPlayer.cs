@@ -97,7 +97,7 @@ public class LocalPlayer : Entity
 
     public override void Damage(Reader r)
     {
-        var team = r.Enum<Team>();
+        var team = r.Team();
         var drill = Bullets.Types[r.Byte()] == "drill";
 
         if (nm.dead || team.Ally()) return;
