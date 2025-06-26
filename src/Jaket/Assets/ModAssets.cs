@@ -214,7 +214,7 @@ public static class ModAssets
     public static Texture HandTexture(int type)
     {
         int color = type < 2 ? Settings.FeedColor : Settings.KnklColor;
-        int index = type * 2 + color == 0 ? (LobbyController.Online ? 1 : 0) : color == 1 ? 1 : 0;
+        int index = type * 2 + (color == 0 ? (LobbyController.Online ? 1 : 0) : color == 1 ? 1 : 0);
 
         return HandTextures[index];
     }
