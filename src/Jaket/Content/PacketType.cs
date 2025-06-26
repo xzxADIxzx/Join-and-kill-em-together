@@ -1,7 +1,7 @@
 namespace Jaket.Content;
 
 /// <summary> All packet types. Will replenish over time. </summary>
-public enum PacketType
+public enum PacketType : byte
 {
     /// <summary> Data of an entity: player, enemy, item and etc. </summary>
     Snapshot,

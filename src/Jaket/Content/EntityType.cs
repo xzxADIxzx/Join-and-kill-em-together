@@ -1,10 +1,10 @@
 namespace Jaket.Content;
 
 /// <summary> All entity types. Will replenish over time. </summary>
-public enum EntityType
+public enum EntityType : byte
 {
-    None = -1,
-    Player,
+    None   = 0xFF,
+    Player = 0x00,
 
     Filth,
     Stray,

@@ -40,12 +40,12 @@ public class Items
             if (id.name.Contains("(Clone)")) id.name = id.name.Substring(0, id.name.IndexOf("(Clone)")).Trim();
 
             int index = Prefabs.FindIndex(prefab => prefab.name == id.name);
-            return index == -1 ? EntityType.None : (EntityType.BlueSkull + index);
+            return index == -1 ? EntityType.None : (EntityType.BlueSkull + (byte)index);
         }
         if (id.TryGetComponent(out FishObjectReference fish))
         {
             int index = FishManager.Instance.recognizedFishes.Keys.ToList().IndexOf(fish.fishObject);
-            return index == -1 ? EntityType.BurntStuff : (EntityType.FunnyStupidFish + index);
+            return index == -1 ? EntityType.BurntStuff : (EntityType.FunnyStupidFish + (byte)index);
         }
         return id.transform.GetChild(0).name switch
         {

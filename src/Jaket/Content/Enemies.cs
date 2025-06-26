@@ -67,7 +67,7 @@ public class Enemies
 
         // the remaining enemies can be found by their type
         int index = Prefabs.FindIndex(prefab => prefab.enemyClass == id.enemyClass && prefab.enemyType == id.enemyType);
-        return index == -1 ? EntityType.None : (EntityType.Filth + index);
+        return index == -1 ? EntityType.None : (EntityType.Filth + (byte)index);
     }
 
     /// <summary> Spawns an enemy with the given type. </summary>
