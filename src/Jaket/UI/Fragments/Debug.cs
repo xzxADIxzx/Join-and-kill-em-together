@@ -4,7 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
 
+using Jaket.Assets;
 using Jaket.IO;
+using Jaket.Net;
 using Jaket.UI.Lib;
 
 using static Jaket.UI.Lib.Pal;
@@ -14,8 +16,10 @@ public class Debug : Fragment
 {
     /// <summary> Warehouses containing a lot of diverse information. </summary>
     private Data readBs, sentBs, readMs, writeMs, entityMs, targetMs, totalMs, flushMs;
+    /// <summary> Labels displaying diverse information about network. </summary>
+    private Text entities, players, isowner, loading;
 
-    public Debug(Transform root) : base(root, "Debug", false) => Component<Bar>(Rect("Content", new(0f, 190f, 1920f, 440f, new(.5f, 0f))).gameObject, b =>
+    public Debug(Transform root) : base(root, "Debug", false) => Component<Bar>(Rect("Content", new(0f, 220f, 1920f, 440f, new(.5f, 0f))).gameObject, b =>
     {
         b.Setup(true, 16f, 16f);
         b.Subbar(136f, s =>
@@ -37,6 +41,14 @@ public class Debug : Fragment
                 b.Text("TARGET UPDATE", 24f, out (targetMs = new(97)).Label, color: Darker(blue));
                 b.Text("TOTAL TIME   ", 24f, out (totalMs  = new(97)).Label, color: purple);
                 b.Text("FLUSH TIME   ", 24f, out (flushMs  = new(97)).Label, color: Darker(purple));
+            });
+            Component<Bar>(s.Image(Tex.Fill, 320f, semi, multiplier: 2).gameObject, b =>
+            {
+                b.Setup(true);
+                b.Text("ENTITIES     ", 24f, out entities);
+                b.Text("PLAYERS      ", 24f, out players);
+                b.Text("IS OWNER     ", 24f, out isowner);
+                b.Text("LOADING      ", 24f, out loading);
             });
         });
         b.Subbar(256f, s =>
@@ -87,6 +99,13 @@ public class Debug : Fragment
         targetMs.Project(timePeak);
         totalMs .Project(timePeak);
         flushMs .Project(timePeak);
+
+        entities.text = Bundle.Parse($"{Networking.Entities.Count(e => !e.Hidden)}[light]/{Networking.Entities.Count()}");
+        players.text  = Bundle.Parse($"{Networking.Connections.Count()}[light]/{LobbyController.Lobby?.MemberCount ?? 0}");
+        isowner.text  = LobbyController.IsOwner.ToString().ToUpper();
+        isowner.color = LobbyController.IsOwner ? green : red;
+        loading.text  = Networking.Loading.ToString().ToUpper();
+        loading.color = Networking.Loading ? green : red;
     }
 
     /// <summary> Data warehouse that can be projected onto a graph. </summary>
