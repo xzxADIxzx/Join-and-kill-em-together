@@ -33,7 +33,7 @@ public static class Stats
         TotalMs = ReadMs + WriteMs + FlushMs + EntityMs + TargetMs;
 
         // flush the current frame to the debug fragment
-        UI.Debug.Rebuild();
+        if (Version.DEBUG || UI.Debug.Shown) UI.Debug.Rebuild();
 
         ReadBs = WriteBs = 0;
         ReadMs = WriteMs = EntityMs = TargetMs = TotalMs = FlushMs = 0f;

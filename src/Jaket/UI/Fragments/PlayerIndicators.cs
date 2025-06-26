@@ -17,7 +17,7 @@ public class PlayerIndicators : Fragment
     /// <summary> List of indicators themselves. </summary>
     private List<UICircle> indicators = new(8);
 
-    public PlayerIndicators(Transform root) : base(root, "PlayerIndicators", true, cond: () => Scene == "Main Menu")
+    public PlayerIndicators(Transform root) : base(root, "PlayerIndicators", false, cond: () => Scene == "Main Menu")
     {
         Events.OnLobbyEnter += () => { if (!Shown) Toggle(); };
         Events.OnTeamChange += Rebuild;

@@ -29,7 +29,7 @@ public class EmoteWheel : Fragment
     /// <summary> Hold time of the 5th segment. </summary>
     private float holdTime;
 
-    public EmoteWheel(Transform root) : base(root, "EmoteWheel", true)
+    public EmoteWheel(Transform root) : base(root, "EmoteWheel", false)
     {
         Builder.Circle(Rect("Shadow", new(640f, 640f)), 1f, 0, 245f, Tex.Shadow, black);
         Builder.Circle(Rect("Center", new(154f, 154f)), 1f, 0, 12f);

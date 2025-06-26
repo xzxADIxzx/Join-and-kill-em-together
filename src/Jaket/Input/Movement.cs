@@ -15,7 +15,6 @@ using Jaket.UI;
 using Jaket.UI.Dialogs;
 using Jaket.UI.Elements;
 using Jaket.UI.Fragments;
-using Jaket.World;
 
 /// <summary> Class responsible for additions to control and local display of emotes. </summary>
 public class Movement : MonoSingleton<Movement>
@@ -96,8 +95,7 @@ public class Movement : MonoSingleton<Movement>
         if (Keybind.Chat.Tap()) Chat.Instance.Toggle();
         if (Keybind.Spectate.Tap()) Suicide();
 
-        if (Input.GetKeyDown(KeyCode.F4)) Debugging.Instance.Toggle();
-        if (Input.GetKeyDown(KeyCode.C) && Debugging.Shown) Debugging.Instance.Clear();
+        if (Input.GetKeyDown(KeyCode.F4)) UI.Debug.Toggle();
         if (Input.GetKeyDown(KeyCode.F11)) InteractiveGuide.Instance.Launch();
     }
 
@@ -197,11 +195,12 @@ public class Movement : MonoSingleton<Movement>
         cc.ResetCamera(rotation);
         cc.StopShake();
 
-        // TODO move checkpoints instead of doing this
+        /* TODO move checkpoints instead of doing this
         // the player is currently fighting the Minotaur in the tunnel, the security system or the brain in the Earthmover
         if (World.TunnelRoomba) nm.transform.position = World.TunnelRoomba.position with { y = -112.5f };
         if (World.SecuritySystem[0]) nm.transform.position = new(0f, 472f, 745f);
         if (World.Brain && World.Brain.IsFightActive) nm.transform.position = new(0f, 826.5f, 610f);
+        */
     }
 
     /// <summary> Respawns Cyber Grind players and flashes the screen. </summary>

@@ -31,6 +31,7 @@ public static class UI
     #endregion
     #region fragments
 
+    public static Fragments.Debug Debug;
     public static EmoteWheel Emote;
     public static MainMenuAccess Access;
     public static PlayerIndicators PlayerInds;
@@ -55,7 +56,7 @@ public static class UI
     /// <summary> Builds all of the interface elements: fragments, dialogs and so on. </summary>
     public static void Build()
     {
-        void Fix() => Events.Post(() =>
+        static void Fix() => Events.Post(() =>
         {
             HudMessageReceiver.Instance.text.font = ModAssets.TmpFont;
             Component<Canvas>(HudMessageReceiver.Instance.gameObject, c =>
@@ -74,6 +75,7 @@ public static class UI
         PlayerList = new(root);
         Settings = new(root);
 
+        Debug = new(root);
         Emote = new(root);
         Access = new(root);
         PlayerInds = new(root);
@@ -82,8 +84,8 @@ public static class UI
         Teleporter = new(root);
 
         Dialogs = new Fragment[] { LobbyTab, LobbyList, PlayerList, Settings };
-        Fragments = new Fragment[] { Emote, Access, PlayerInds, Skateboard, Spectator, Teleporter };
-        LeftGroup = new Fragment[] { LobbyTab, PlayerList, Settings };
+        Fragments = new Fragment[] { Debug, Emote, Access, PlayerInds, Skateboard, Spectator, Teleporter };
+        LeftGroup = new Fragment[] { LobbyTab, PlayerList, Settings, Debug };
         MidlGroup = new Fragment[] { LobbyList };
 
         Log.Info($"[FACE] Builded {Dialogs.Length} dialogs and {Fragments.Length} fragments");
