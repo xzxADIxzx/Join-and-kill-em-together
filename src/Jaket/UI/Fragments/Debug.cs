@@ -106,6 +106,8 @@ public class Debug : Fragment
         isowner.color = LobbyController.IsOwner ? green : red;
         loading.text  = Networking.Loading.ToString().ToUpper();
         loading.color = Networking.Loading ? green : red;
+
+        if (Input.GetKey(KeyCode.F5)) new Data[] { readBs, sentBs, readMs, writeMs, entityMs, targetMs, totalMs, flushMs }.Each(d => d.Clear());
     }
 
     /// <summary> Data warehouse that can be projected onto a graph. </summary>
@@ -149,5 +151,8 @@ public class Debug : Fragment
             for (int i = 0; i < data.Length; i++) if (data[i] > max) max = data[i];
             return max;
         }
+
+        /// <summary> Empties the warehouse, completely erases all of the stored data. </summary>
+        public void Clear() => data.Clear();
     }
 }
