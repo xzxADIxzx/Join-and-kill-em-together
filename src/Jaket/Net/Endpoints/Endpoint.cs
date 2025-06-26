@@ -35,7 +35,7 @@ public abstract class Endpoint
         if (Networking.Loading && type != PacketType.Level && type != PacketType.ImageChunk) return;
 
         handlers[(int)type](con, sender, r, size);
-        Stats.Read += size;
+        Stats.ReadBs += size;
     }
 
     /// <summary> Forwards the packet to all of the clients. </summary>

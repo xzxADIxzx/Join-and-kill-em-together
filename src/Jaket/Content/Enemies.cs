@@ -158,7 +158,7 @@ public class Enemies
     }
 
     /// <summary> Finds the most suitable target for the enemy, that is the closest player. </summary>
-    public static void FindTarget(EnemyIdentifier enemyId) => Stats.MeasureTime(ref Stats.TargetUpdate, () =>
+    public static void FindTarget(EnemyIdentifier enemyId) => Stats.MeasureTime(ref Stats.TargetMs, () =>
     {
         if (LobbyController.Offline || enemyId.dead) return;
 

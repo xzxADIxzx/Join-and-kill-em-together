@@ -2,30 +2,41 @@ namespace Jaket.IO;
 
 using System.Diagnostics;
 
-/// <summary> Class that collects reading/writing data statistics for subsequent analysis and optimization of traffic. </summary>
-public class Stats
+using Jaket.Net;
+using Jaket.UI;
+
+/// <summary> Set of different tools for collecting various data for subsequent analysis and optimization. </summary>
+public static class Stats
 {
-    /// <summary> Number of read and written bytes per second. </summary>
-    public static int Write, LastWrite, Read, LastRead;
-    /// <summary> Time that has gone to read and write in milliseconds. </summary>
-    public static float WriteTime, LastWriteTime, ReadTime, LastReadTime;
-    /// <summary> Time that has gone to update entities logic in milliseconds. </summary>
-    public static float TargetUpdate, LastTargetUpdate, EntityUpdate, LastEntityUpdate;
+    /// <summary> Number of subticks accumulated in the current statistics frame. </summary>
+    public static int Subticks;
+    /// <summary> Number of bytes read and written. </summary>
+    public static int ReadBs, WriteBs;
+
+    /// <summary> Time spent reading and writing in milliseconds. </summary>
+    public static float ReadMs, WriteMs;
+    /// <summary> Time spent updating entities and targets in milliseconds. </summary>
+    public static float EntityMs, TargetMs;
+    /// <summary> Time spent flushing data and total time in milliseconds. </summary>
+    public static float TotalMs, FlushMs;
 
     /// <summary> Timer used to measure the time of performing various actions. </summary>
     private static Stopwatch sw = new();
 
-    /// <summary> Begins to record statistics. </summary>
-    public static void StartRecord() => Events.EverySecond += () =>
+    /// <summary> Starts recording various data. </summary>
+    public static void StartRecord() => Events.EveryTick += () =>
     {
-        LastWrite = Write; LastRead = Read;
-        Write = Read = 0;
+        if (++Subticks % (Networking.TICKS_PER_SECOND * Networking.SUBTICKS_PER_TICK) != 0) return;
+        Subticks = 0;
 
-        LastWriteTime = WriteTime; LastReadTime = ReadTime;
-        WriteTime = ReadTime = 0f;
+        // count the total time spent
+        TotalMs = ReadMs + WriteMs + FlushMs + EntityMs + TargetMs;
 
-        LastTargetUpdate = TargetUpdate; LastEntityUpdate = EntityUpdate;
-        TargetUpdate = EntityUpdate = 0f;
+        // flush the current frame to the debug fragment
+        UI.Debug.Rebuild();
+
+        ReadBs = WriteBs = 0;
+        ReadMs = WriteMs = EntityMs = TargetMs = TotalMs = FlushMs = 0f;
     };
 
     /// <summary> Measures the time of execution of the given action. </summary>
@@ -35,7 +46,4 @@ public class Stats
         action();
         store += sw.ElapsedTicks / 10000f;
     }
-
-    /// <summary> Measures the time of execution of entities logic. </summary>
-    public static void MTE(Runnable action) => MeasureTime(ref EntityUpdate, action);
 }

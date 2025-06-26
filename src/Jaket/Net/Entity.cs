@@ -79,7 +79,7 @@ public abstract class Entity
             set => transform.eulerAngles = value;
         }
 
-        private void Update() => Stats.MeasureTime(ref Stats.EntityUpdate, () => Patron.Update(Time.time - Patron.LastUpdate));
+        private void Update() => Stats.MeasureTime(ref Stats.EntityMs, () => Patron.Update(Time.time - Patron.LastUpdate));
     }
 
     /// <summary> Widely used structure that interpolates floating point numbers. </summary>

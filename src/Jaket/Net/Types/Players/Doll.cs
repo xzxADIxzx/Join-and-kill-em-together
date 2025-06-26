@@ -92,7 +92,7 @@ public class Doll : MonoBehaviour
         HookWinch.material = HookArm.Instance.GetComponent<LineRenderer>().material;
     }
 
-    private void Update() => Stats.MTE(() =>
+    private void Update() => Stats.MeasureTime(ref Stats.EntityMs, () =>
     {
         if (Animator == null) return;
 

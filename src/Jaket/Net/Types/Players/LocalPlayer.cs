@@ -47,6 +47,7 @@ public class LocalPlayer : Entity
             var shine = nm.transform.Find("Point Light");
             if (shine) shine.GetComponent<Light>().color = LobbyController.Offline ? Color.white : Team.Color();
         };
+        Create<Agent>("Agent").Patron = this;
     }
 
     #region snapshot
