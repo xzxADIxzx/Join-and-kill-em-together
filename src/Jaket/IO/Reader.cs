@@ -1,6 +1,5 @@
 namespace Jaket.IO;
 
-using System;
 using System.Text;
 using UnityEngine;
 
@@ -41,6 +40,15 @@ public unsafe struct Reader
     public float Float()           => *(float*)Inc(4);
 
     #endregion
+    #region enums
+
+    public PacketType PacketType()     => *(PacketType*)Inc(1);
+
+    public EntityType EntityType()     => *(EntityType*)Inc(1);
+
+    public Team Team()                 => *(Team*)Inc(1);
+
+    #endregion
     #region complex
 
     public void Bools(out bool v0, out bool v1, out bool v2, out bool v3, out bool v4, out bool v5, out bool v6, out bool v7) { var value = Byte();
@@ -76,8 +84,6 @@ public unsafe struct Reader
     public Vector3 Vector() => new(Float(), Float(), Float());
 
     public Color32 Color() => new(Byte(), Byte(), Byte(), Byte());
-
-    public T Enum<T>() where T : Enum => (T)System.Enum.ToObject(typeof(T), Byte());
 
     public void Player(out Team team, out byte weapon, out byte emote, out byte rps, out bool typing)
     {

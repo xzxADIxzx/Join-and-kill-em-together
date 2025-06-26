@@ -1,6 +1,5 @@
 namespace Jaket.IO;
 
-using System;
 using System.Text;
 using UnityEngine;
 
@@ -39,6 +38,15 @@ public unsafe struct Writer
     public void Int(int value)     => *(int*)Inc(4)   = value;
 
     public void Float(float value) => *(float*)Inc(4) = value;
+
+    #endregion
+    #region enums
+
+    public void Enum(PacketType value) => *(PacketType*)Inc(1) = value;
+
+    public void Enum(EntityType value) => *(EntityType*)Inc(1) = value;
+
+    public void Enum(Team value)       => *(Team*)Inc(1)       = value;
 
     #endregion
     #region complex
@@ -84,14 +92,12 @@ public unsafe struct Writer
 
     public void Color(Color32 value) => Int(value.rgba);
 
-    public void Enum<T>(T value) where T : Enum => Byte(Convert.ToByte(value));
-
     public void Player(Team team, byte weapon, byte emote, byte rps, bool typing)
     {
         if (weapon == 0xFF) weapon = 0b111111;
         if (emote  == 0xFF) emote  = 0b1111;
 
-        *(short*)Inc(2) = (short)((weapon << 10) | (Convert.ToByte(team) << 7) | (emote << 3) | (rps << 1) | (typing ? 1 : 0));
+        *(short*)Inc(2) = (short)((weapon << 10) | (((byte)team) << 7) | (emote << 3) | (rps << 1) | (typing ? 1 : 0));
     }
 
     #endregion
