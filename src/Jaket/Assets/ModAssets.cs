@@ -175,7 +175,7 @@ public static class ModAssets
     }
 
     /// <summary> Creates a new player doll from the prefab. </summary>
-    public static RemotePlayer CreateDoll()
+    public static GameObject CreateDoll()
     {
         var obj = Entities.Mark(Doll);
         var enemyId = obj.AddComponent<EnemyIdentifier>();
@@ -205,7 +205,7 @@ public static class ModAssets
                 _             => rb.tag
             };
         }
-        return obj.AddComponent<RemotePlayer>();
+        return obj;
     }
 
     #region replacement

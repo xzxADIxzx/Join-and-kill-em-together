@@ -197,7 +197,7 @@ public class Networking
     /// <summary> Reserves memory for a packet, writes the data there, and then redirects it. </summary>
     public static void Send(PacketType type, int bytesCount = 0, Cons<Writer> data = null, Cons<Ptr, int> packet = null)
     {
-        Writer w = new(Pointers.Reserve(data == null ? 1 : bytesCount + 1));
+        Writer w = new(Pointers.Reserve(bytesCount = data == null ? 1 : bytesCount + 1));
 
         w.Enum(type);
         data?.Invoke(w);
