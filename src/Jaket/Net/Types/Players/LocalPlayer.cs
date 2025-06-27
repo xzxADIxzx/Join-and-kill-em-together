@@ -35,7 +35,7 @@ public class LocalPlayer : Entity
     /// <summary> Whether the current level is 4-4. </summary>
     private bool pyramid;
 
-    public LocalPlayer() : base(AccId, EntityType.Player)
+    public LocalPlayer() : base(Tools.Id.AccountId, EntityType.Player)
     {
         Events.OnHandChange += () =>
         {

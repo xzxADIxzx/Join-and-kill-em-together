@@ -192,7 +192,11 @@ public class Networking
     #region tools
 
     /// <summary> Sends the packet to the given connection and updates statistics. </summary>
-    public static void Send(Connection con, Ptr data, int size) => con.SendMessage(data, Stats.WriteBs += size);
+    public static void Send(Connection con, Ptr data, int size)
+    {
+        con.SendMessage(data, size);
+        Stats.WriteBs += size;
+    }
 
     /// <summary> Reserves memory for a packet, writes the data there, and then redirects it. </summary>
     public static void Send(PacketType type, int bytesCount = 0, Cons<Writer> data = null, Cons<Ptr, int> packet = null)
