@@ -29,6 +29,7 @@ public class CyberGrind
     /// <summary> Sends the current arena pattern to all clients. </summary>
     public static void SyncPattern(ArenaPattern pattern) => Networking.Send(PacketType.CyberGrindAction, 6 + (pattern.heights.Length + pattern.prefabs.Length) * 2, w =>
     {
+        // TODO parse pattern to optimize the size of the packet
         w.Int(grid.currentWave);
         w.String(pattern.heights);
         w.String(pattern.prefabs);

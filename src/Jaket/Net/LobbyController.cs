@@ -27,14 +27,11 @@ public static class LobbyController
     /// <summary> Subscribes to several events for proper work. </summary>
     public static void Load()
     {
-        // log general info about the lobby
-        Events.OnLobbyAction += () => Log.Debug($"[LOBY] Lobby owner is {Lobby?.Owner.ToString() ?? "null"}, level is {LobbyConfig.Level ?? "null"}");
-        // get the owner after entering a lobby
-        Events.OnLobbyEnter += () =>
+        // log general information about the lobby
+        Events.OnLobbyAction += () => Log.Debug($"[LOBY] Lobby name is {LobbyConfig.Name ?? "null"}, level is {LobbyConfig.Level ?? "null"}");
+        // and leave it if local player is banned
+        Events.OnLobbyAction += () =>
         {
-            if (Offline) return;
-            Log.Info($"[LOBY] Entered a lobby owned by {LastOwner = Lobby?.Owner.Id.AccountId ?? 0u}");
-
             if (LobbyConfig.Banned.Any(b => b == AccId.ToString()))
             {
                 // notify the player to avoid confusion
@@ -44,7 +41,10 @@ public static class LobbyController
                 Log.Info("[LOBY] Left the lobby as you are banned there");
             }
         };
-        // and leave the lobby if the owner has left it
+
+        // get the owner after entering a lobby
+        Events.OnLobbyEnter += () => Log.Info($"[LOBY] Entered a lobby owned by {LastOwner = Lobby?.Owner.Id.AccountId ?? 0u}");
+        // and leave it if the owner has left
         Events.OnMemberLeave += m =>
         {
             if (LastOwner == m.Id.AccountId)
@@ -158,7 +158,7 @@ public static class LobbyController
         SteamMatchmaking.LobbyList.WithKeyValue("client", "jaket").RequestAsync().ContinueWith(t =>
         {
             Fetching = false;
-            cons(t.Result ?? new Lobby[0]);
+            cons(t.Result ?? []);
 
             Log.Info($"[LOBY] Fetched {t.Result?.Length ?? 0} lobbies");
         });
