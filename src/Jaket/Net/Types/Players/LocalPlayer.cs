@@ -48,7 +48,6 @@ public class LocalPlayer : Entity
             if (shine) shine.GetComponent<Light>().color = LobbyController.Offline ? Color.white : Team.Color();
         };
         Create<Agent>("Agent").Patron = this;
-        Owner = Id;
     }
 
     #region snapshot

@@ -30,7 +30,7 @@ public abstract class Entity
         set => LastHidden = value ? Time.time : float.PositiveInfinity;
     }
 
-    public Entity(uint id, EntityType type) { Id = id; Type = type; Hidden = false; }
+    public Entity(uint id, EntityType type) { Owner = Id = id; Type = type; Hidden = false; }
 
     /// <summary> Pushes the entity into networking pool. </summary>
     public void Push() => Networking.Entities[Id] = this;
