@@ -46,7 +46,7 @@ public abstract class Entity
         if (locally) Killed(default, -1);
     }
 
-    /// <summary> Number of bytes that the entity takes in a snapshot. </summary>
+    /// <summary> Number of bytes that the entity takes in a snapshot, plus the size of its header. </summary>
     public abstract int BufferSize { get; }
     /// <summary> Writes the entity data into a snapshot. </summary>
     public abstract void Write(Writer w);
