@@ -10,26 +10,6 @@ using Jaket.Net;
 using Jaket.Net.Types;
 
 [HarmonyPatch]
-public class GunsPatch
-{
-    [HarmonyPostfix]
-    [HarmonyPatch(typeof(GunControl), nameof(GunControl.SwitchWeapon), typeof(int), typeof(List<GameObject>), typeof(bool), typeof(bool), typeof(bool), typeof(bool))]
-    static void GunSwitch() => Events.OnHandChange.Fire();
-
-    [HarmonyPostfix]
-    [HarmonyPatch(typeof(GunControl), nameof(GunControl.ForceWeapon))]
-    static void GunForce() => Events.OnHandChange.Fire();
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(GunColorGetter), nameof(GunColorGetter.UpdateColor))]
-    static bool GunColor(GunColorGetter __instance) => __instance.GetComponentInParent<RemotePlayer>() == null;
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(WeaponIcon), nameof(WeaponIcon.UpdateIcon))]
-    static bool GunIcon(WeaponIcon __instance) => __instance.GetComponentInParent<RemotePlayer>() == null;
-}
-
-[HarmonyPatch]
 public class ArmsPatch
 {
     static LocalPlayer lp => Networking.LocalPlayer;

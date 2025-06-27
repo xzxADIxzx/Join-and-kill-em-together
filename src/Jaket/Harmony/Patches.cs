@@ -22,6 +22,7 @@ public static class Patches
     };
     public static Type[] StaticTypes =
     {
+        typeof(GunsPatch),
         typeof(Movement),
         typeof(BestiaryEntry)
     };
