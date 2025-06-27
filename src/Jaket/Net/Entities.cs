@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Jaket.Content;
+using Jaket.Net.Types;
 
 /// <summary> Class responsible for entities, their vendors and identifiers. </summary>
 public static class Entities
@@ -16,6 +17,8 @@ public static class Entities
     {
         Events.OnLobbyEnter += () => last = null;
         Events.OnMemberJoin += __ => last = null;
+
+        Vendor.Suppliers[(byte)EntityType.Player] = (id, type) => new RemotePlayer(id, type);
     }
 
     /// <summary> Instantiates the given prefab and marks it with the Net tag. </summary>
