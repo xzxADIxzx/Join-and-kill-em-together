@@ -53,6 +53,8 @@ public abstract class Entity
     /// <summary> Reads the entity data from a snapshot. </summary>
     public abstract void Read(Reader r);
 
+    /// <summary> Creates an object for manipulation. </summary>
+    public abstract void Create();
     /// <summary> Assigns the given agent to the entity. </summary>
     public abstract void Assign(Agent agent);
     /// <summary> Updates internal logic of the entity. </summary>

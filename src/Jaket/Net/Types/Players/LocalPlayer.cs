@@ -84,6 +84,8 @@ public class LocalPlayer : Entity
     #endregion
     #region logic
 
+    public override void Create() { }
+
     public override void Assign(Agent agent) { }
 
     public override void Update(float delta)

@@ -82,6 +82,8 @@ public class RemotePlayer : Entity
     #endregion
     #region logic
 
+    public override void Create() => Assign(ModAssets.CreateDoll().AddComponent<Agent>());
+
     public override void Assign(Agent agent)
     {
         (this.agent = agent).Patron = this;
