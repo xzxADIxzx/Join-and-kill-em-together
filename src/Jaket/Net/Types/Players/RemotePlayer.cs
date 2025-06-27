@@ -39,7 +39,7 @@ public class RemotePlayer : Entity
     /// <summary> Last pointer created by the player. </summary>
     public Pointer Pointer;
 
-    public RemotePlayer(uint id, EntityType type) : base(id, type) { }
+    public RemotePlayer(uint id, EntityType type) : base(id, type) => Owner = id;
 
     #region snapshot
 
