@@ -28,11 +28,11 @@ public static class LobbyController
     public static void Load()
     {
         // log general information about the lobby
-        Events.OnLobbyAction += () => Log.Debug($"[LOBY] Lobby name is {LobbyConfig.Name ?? "null"}, level is {LobbyConfig.Level ?? "null"}");
+        Events.OnLobbyAction += () => Log.Debug($"[LOBY] Lobby name is {LobbyConfig.Name ?? "null"}, mode is {LobbyConfig.Mode ?? "null"}, level is {LobbyConfig.Level ?? "null"}");
         // and leave it if local player is banned
         Events.OnLobbyAction += () =>
         {
-            if (LobbyConfig.Banned.Any(b => b == AccId.ToString()))
+            if (Online && LobbyConfig.Banned.Any(b => b == AccId.ToString()))
             {
                 // notify the player to avoid confusion
                 Bundle.Hud2NS("lobby.banned");
