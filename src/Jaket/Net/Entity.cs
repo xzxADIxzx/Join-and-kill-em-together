@@ -38,7 +38,7 @@ public abstract class Entity
     /// <summary> Kills the entity remotely and, if necessary, locally. </summary>
     public void Kill(int bytesCount = 0, Cons<Writer> data = null, bool locally = true)
     {
-        Networking.Send(PacketType.KillEntity, 4 + bytesCount, w =>
+        Networking.Send(PacketType.Death, 4 + bytesCount, w =>
         {
             w.Id(Id);
             data?.Invoke(w);

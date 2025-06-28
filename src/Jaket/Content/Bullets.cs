@@ -78,7 +78,7 @@ public class Bullets
             }
         }
 
-        Fake = Create<DeadEntity>("Fake").gameObject;
+        Fake = Create("Fake").gameObject;
         NetDmg = Create("Network Damage");
     }
 
@@ -96,6 +96,7 @@ public class Bullets
         _ => EntityType.None
     };
 
+/*
     /// <summary> Spawns a bullet with the given type or other data. </summary>
     public static void CInstantiate(Reader r)
     {
@@ -103,6 +104,7 @@ public class Bullets
         obj.transform.position = r.Vector();
         obj.transform.eulerAngles = r.Vector();
 
+        // TODO get the size as it would be unpleasant to write additional bytes
         if (r.Length == 27) Coins.PaintBeam(obj, r.Enum<Team>());
         if (r.Length == 38) obj.GetComponent<Rigidbody>().velocity = r.Vector();
     }
@@ -151,14 +153,14 @@ public class Bullets
     {
         if (bullet.TryGetComponent<Entity>(out var entity) && entity.IsOwner)
         {
-            DeadEntity.Replace(entity);
-            Networking.Send(PacketType.KillEntity, harmless ? 4 : 5, w =>
+            Networking.Send(PacketType.Death, harmless ? 4 : 5, w =>
             {
                 w.Id(entity.Id);
                 if (!harmless) w.Bool(big);
             });
         }
     }
+*/
 
     #region special
 
@@ -221,7 +223,7 @@ public class Bullets
     public static void SyncDamage(uint enemyId, string hitter, float damage, float crit)
     {
         var type = (byte)Types.IndexOf(hitter);
-        if (type != 0xFF) Networking.Send(PacketType.DamageEntity, 11, w =>
+        if (type != 0xFF) Networking.Send(PacketType.Damage, 11, w =>
         {
             w.Id(enemyId);
             w.Enum(Networking.LocalPlayer.Team);
@@ -235,7 +237,7 @@ public class Bullets
     /// <summary> Deals bullet damage to the enemy. </summary>
     public static void DealDamage(EnemyIdentifier enemyId, Reader r)
     {
-        r.Inc(1); // skip team because enemies don't have a team
+        r.Team(); // skip team because enemies don't have a team
         enemyId.hitter = Types[r.Byte()];
         enemyId.DeliverDamage(enemyId.gameObject, Vector3.zero, enemyId.transform.position, r.Float(), false, r.Bool() ? 0f : 1f, NetDmg);
     }
