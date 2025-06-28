@@ -19,29 +19,33 @@ public class Client : Endpoint, IConnectionManager
 
     public override void Create()
     {
+        Listen(PacketType.Level, World.ReadData);
+
         Listen(PacketType.Snapshot, r =>
         {
             var id = r.Id();
             var type = r.EntityType();
 
-            if (ents[id] == null) ents[id] = Entities.Supply(id, type);
-            ents[id]?.Read(r);
-        });
-        Listen(PacketType.Level, World.ReadData);
-        Listen(PacketType.Ban, r =>
-        {
-            LobbyController.LeaveLobby();
-            Assets.Bundle.Hud2NS("lobby.banned");
+            if (ents.TryGetValue(id, out var entity)) entity.Read(r);
+            else
+            {
+                entity = Entities.Supply(id, type);
+
+                entity.Read(r);
+                entity.Create();
+                entity.Push();
+            }
         });
 
+        /*
         Listen(PacketType.SpawnBullet, Bullets.CInstantiate);
         Listen(PacketType.DamageEntity, r =>
         {
             if (ents.TryGetValue(r.Id(), out var entity)) entity?.Damage(r);
         });
-        Listen(PacketType.KillEntity, r =>
+        Listen(PacketType.KillEntity, (con, sender, r, s) =>
         {
-            if (ents.TryGetValue(r.Id(), out var entity)) entity?.Kill(r);
+            if (ents.TryGetValue(r.Id(), out var entity)) entity?.Killed(r, s - 5);
         });
 
         Listen(PacketType.Style, r =>
@@ -66,6 +70,7 @@ public class Client : Endpoint, IConnectionManager
         Listen(PacketType.CyberGrindAction, CyberGrind.LoadPattern);
 
         Listen(PacketType.Vote, r => Votes.UpdateVote(r.Id(), r.Byte()));
+        */
     }
 
     public override void Update()

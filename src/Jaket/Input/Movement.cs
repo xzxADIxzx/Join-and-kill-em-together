@@ -129,7 +129,7 @@ public class Movement : MonoSingleton<Movement>
 
         if (Settings.DisableFreezeFrames || UI.AnyDialog) Time.timeScale = 1f;
 
-        if (ch.cheatsEnabled && !Administration.CheatsAllowed)
+        if (ch.cheatsEnabled && !Administration.Privileged.Contains(AccId))
         {
             ch.cheatsEnabled = false;
             cm.transform.Find("Cheats Overlay").Each(c => c.gameObject.SetActive(false));

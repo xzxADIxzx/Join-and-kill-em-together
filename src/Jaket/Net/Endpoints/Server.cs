@@ -24,22 +24,22 @@ public class Server : Endpoint, ISocketManager
             var id = r.Id();
             var type = r.EntityType();
 
-            // player can only have one doll and its id should match the player's id
-            if ((id == sender && type != EntityType.Player) || (id != sender && type == EntityType.Player)) return;
+            if ((id == sender) != (type == EntityType.Player)) return;
 
-            if (ents[id] == null)
+            if (ents.TryGetValue(id, out var entity)) entity.Read(r);
+            else
             {
-                // double-check on cheats just in case of any custom multiplayer clients existence
-                if (!Administration.CheatsAllowed && (type.IsEnemy() || type.IsItem())) return;
+                entity = Entities.Supply(id, type);
 
-                // client cannot create special enemies
-                if (type.IsEnemy() /* && !type.IsCommonEnemy() */) return;
+                entity.Read(r);
+                entity.Create();
+                entity.Push();
 
-                Administration.Handle(sender, ents[id] = Entities.Supply(id, type));
+                Administration.Handle(sender, entity);
             }
-            ents[id]?.Read(r);
         });
 
+        /*
         Listen(PacketType.SpawnBullet, (con, sender, r, s) =>
         {
             var type = r.Byte(); r.Position = 1; // extract the bullet type
@@ -63,7 +63,7 @@ public class Server : Endpoint, ISocketManager
         {
             if (ents.TryGetValue(r.Id(), out var entity) && entity && entity is not RemotePlayer && entity is not LocalPlayer)
             {
-                entity.Kill(r);
+                entity.Killed(r, s - 5);
                 Redirect(r, s, con);
             }
         });
@@ -132,6 +132,7 @@ public class Server : Endpoint, ISocketManager
                 Redirect(r, s, con);
             }
         });
+        */
     }
 
     public override void Update()
@@ -220,6 +221,7 @@ public class Server : Endpoint, ISocketManager
     {
         var accId = netId.SteamId.AccountId;
 
+        /*
         if (Administration.IsSpam(accId, size))
         {
             Administration.ClearSpam(accId);
@@ -231,6 +233,7 @@ public class Server : Endpoint, ISocketManager
                 Log.Warning($"[SERVER] {accId} was blocked due to an attempt to spam");
             }
         }
+        */
 
         Handle(con, accId, data, size);
     }
