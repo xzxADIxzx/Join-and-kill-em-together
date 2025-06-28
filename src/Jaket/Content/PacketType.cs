@@ -3,19 +3,20 @@ namespace Jaket.Content;
 /// <summary> All packet types. Will replenish over time. </summary>
 public enum PacketType : byte
 {
-    /// <summary> Data of an entity: player, enemy, item and etc. </summary>
-    Snapshot,
-    /// <summary> Initializes a loading of the level requested by the host. </summary>
+    /// <summary> Initiates loading of the level selected by the lobby owner. </summary>
     Level,
-    /// <summary> Hey Client, could you leave the lobby please? The host asks you to leave the lobby because you were banned... Cheers~ :heart: </summary>
+    /// <summary> Dear client, could you leave the lobby please? Cheers~ :heart: </summary>
     Ban,
 
-    /// <summary> Data of the bullet spawned by a player. </summary>
-    SpawnBullet,
-    /// <summary> Data of the damage dealt to an entity. </summary>
-    DamageEntity,
-    /// <summary> Request from a player to kill an entity or to destroy a bullet. </summary>
-    KillEntity,
+    /// <summary> Contains data of a particular entity. </summary>
+    Snapshot,
+    /// <summary> Contains data of a hitscan shot. </summary>
+    Hitscan,
+
+    /// <summary> Contains data of a dealt damage unit. </summary>
+    Damage,
+    /// <summary> Contains data of a death and some entity-specific flags. </summary>
+    Death,
 
     /// <summary> Player changed their style: the color of weapons or clothes. </summary>
     Style,
