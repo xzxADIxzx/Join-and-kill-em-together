@@ -10,8 +10,8 @@ public static class Stats
 {
     /// <summary> Number of subticks accumulated in the current statistics frame. </summary>
     public static int Subticks;
-    /// <summary> Number of bytes read and written. </summary>
-    public static int ReadBs, WriteBs;
+    /// <summary> Number of bytes read and sent. </summary>
+    public static int ReadBs, SentBs;
 
     /// <summary> Time spent reading and writing in milliseconds. </summary>
     public static float ReadMs, WriteMs;
@@ -35,7 +35,7 @@ public static class Stats
         // flush the current frame to the debug fragment
         if (Version.DEBUG || UI.Debug.Shown) UI.Debug.Rebuild();
 
-        ReadBs = WriteBs = 0;
+        ReadBs = SentBs = 0;
         ReadMs = WriteMs = EntityMs = TargetMs = TotalMs = FlushMs = 0f;
     };
 

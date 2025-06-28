@@ -195,7 +195,7 @@ public class Networking
     public static void Send(Connection con, Ptr data, int size)
     {
         con.SendMessage(data, size);
-        Stats.WriteBs += size;
+        Stats.SentBs += size;
     }
 
     /// <summary> Reserves memory for a packet, writes the data there, and then redirects it. </summary>

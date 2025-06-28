@@ -79,7 +79,7 @@ public class Debug : Fragment
     public override void Rebuild()
     {
         readBs  .Enqueue(Stats.ReadBs,   v => $"{v}bs");
-        sentBs  .Enqueue(Stats.WriteBs,  v => $"{v}bs");
+        sentBs  .Enqueue(Stats.SentBs,   v => $"{v}bs");
         readMs  .Enqueue(Stats.ReadMs,   v => $"{v:0.000}ms");
         writeMs .Enqueue(Stats.WriteMs,  v => $"{v:0.000}ms");
         entityMs.Enqueue(Stats.EntityMs, v => $"{v:0.000}ms");
