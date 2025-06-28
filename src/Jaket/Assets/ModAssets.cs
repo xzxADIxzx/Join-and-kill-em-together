@@ -8,7 +8,6 @@ using FontAsset = TMPro.TMP_FontAsset;
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net;
-using Jaket.Net.Types;
 using Jaket.UI.Dialogs;
 using Jaket.UI.Elements;
 
@@ -175,9 +174,9 @@ public static class ModAssets
     }
 
     /// <summary> Creates a new player doll from the prefab. </summary>
-    public static GameObject CreateDoll()
+    public static GameObject CreateDoll(Vector3 position)
     {
-        var obj = Entities.Mark(Doll);
+        var obj = Inst(Doll, position);
         var enemyId = obj.AddComponent<EnemyIdentifier>();
         var machine = obj.AddComponent<Machine>();
 
