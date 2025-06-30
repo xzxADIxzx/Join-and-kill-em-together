@@ -38,7 +38,7 @@ public class Spectator : Fragment
 
     public Spectator(Transform root) : base(root, "Spectator", false)
     {
-        Events.EverySecond += () =>
+        Events.EveryHalf += () =>
         {
             if (LobbyController.Online && Special) UpdateAlive();
         };

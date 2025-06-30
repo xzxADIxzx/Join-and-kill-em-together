@@ -50,7 +50,7 @@ public class SprayManager
             Cache.Clear();
             Cache.Add(AccId, CurrentSpray);
         };
-        Events.EverySecond += SprayDistributor.ProcessRequests;
+        Events.EveryHalf += SprayDistributor.ProcessRequests;
     }
 
     /// <summary> Loads sprays from the sprays folder. </summary>

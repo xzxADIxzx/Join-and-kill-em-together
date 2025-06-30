@@ -46,8 +46,8 @@ public class Events : MonoBehaviour
 
     /// <summary> List of tasks that will be completed on the next frame. </summary>
     public static Queue<Runnable> Tasks = new();
-    /// <summary> Events that are fired every subtick, second and dozen of seconds. </summary>
-    public static SafeEvent EveryTick = new("tick"), EverySecond = new("second"), EveryDozen = new("dozen");
+    /// <summary> Events that are fired every subtick, half a second and dozen of seconds. </summary>
+    public static SafeEvent EveryTick = new("tick"), EveryHalf = new("half"), EveryDozen = new("dozen");
 
     /// <summary> Subscribes to some internal events. </summary>
     public static void Load()
@@ -87,13 +87,13 @@ public class Events : MonoBehaviour
     public static void Post2(Runnable task) => Post(() => Post(task));
 
     private void Tick() => EveryTick.Fire();
-    private void Second() => EverySecond.Fire();
+    private void Half() => EveryHalf.Fire();
     private void Dozen() => EveryDozen.Fire();
 
     private void Start()
     {
         InvokeRepeating("Tick", 1f, 1f / Networking.TICKS_PER_SECOND / Networking.SUBTICKS_PER_TICK);
-        InvokeRepeating("Second", 1f, 1f);
+        InvokeRepeating("Half", 1f, 0.5f);
         InvokeRepeating("Dozen", 1f, 12f);
     }
 
