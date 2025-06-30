@@ -252,4 +252,25 @@ public class Chat : CanvasSingleton<Chat>
     }
 
     #endregion
+
+    /// <summary> Constant-size sequence of messages that stores chat history. </summary>
+    public class Messages
+    {
+        /// <summary> Array containing data to be stored. </summary>
+        private string[] messages;
+        /// <summary> Index of the start of the sequence. </summary>
+        private int start;
+
+        public Messages(int size) => messages = new string[size];
+
+        /// <summary> Puts the message into the sequence. </summary>
+        public void Enqueue(string msg)
+        {
+            messages[start] = msg;
+            start = (start + 1) % messages.Length;
+        }
+
+        /// <summary> Returns message at the given index. </summary>
+        public string At(int index) => messages[(start + index) % messages.Length];
+    }
 }
