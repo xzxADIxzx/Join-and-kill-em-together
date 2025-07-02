@@ -125,7 +125,7 @@ public class Debug : Fragment
 
         public Data(int size) => data = new float[size];
 
-        /// <summary> Adds the given value to the end of the sequence. </summary>
+        /// <summary> Puts the value into the sequence. </summary>
         public void Enqueue(float value, Func<float, string> format)
         {
             data[start] = value;
@@ -133,12 +133,15 @@ public class Debug : Fragment
             Label.text = format(value);
         }
 
-        /// <summary> Projects the stored data onto the graph. </summary>
+        /// <summary> Returns value at the given index. </summary>
+        public float At(int index) => data[(start + index) % data.Length];
+
+        /// <summary> Projects the data onto the graph. </summary>
         public void Project(float peak)
         {
             var x = -16f;
             var o = new Vector2[data.Length];
-            for (int i = 0; i < data.Length; i++) o[i] = new(x += 16f, data[(start + i) % data.Length] / peak * 240f);
+            for (int i = 0; i < data.Length; i++) o[i] = new(x += 16f, At(i) / peak * 240f);
 
             Graph.color = Label.color;
             Graph.Points = o;
@@ -152,7 +155,7 @@ public class Debug : Fragment
             return max;
         }
 
-        /// <summary> Empties the warehouse, completely erases all of the stored data. </summary>
+        /// <summary> Completely erases all of the stored data. </summary>
         public void Clear() => data.Clear();
     }
 }
