@@ -9,6 +9,7 @@ public static class Pal
     public static string
 
     Clear   = "#00000000",
+    Invi    = "#00000075",
     Semi    = "#000000C7",
     Black   = "#000000",
     Dark    = "#424242",
@@ -36,6 +37,7 @@ public static class Pal
     public static Color
 
     clear   = new(),
+    invi    = new(0f, 0f, 0f, .46f),
     semi    = new(0f, 0f, 0f, .78f),
     black   = From(0x000000),
     dark    = From(0x424242),
