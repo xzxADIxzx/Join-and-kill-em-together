@@ -259,14 +259,13 @@ public class Chat : CanvasSingleton<Chat>
 
         public Messages(int size) => messages = new string[size];
 
-        /// <summary> Puts the message into the sequence. </summary>
-        public void Enqueue(string msg)
+        public string this[int index]
         {
-            messages[start] = msg;
-            start = (start + 1) % messages.Length;
+            set => messages[(start + index) % messages.Length] = value;
+            get => messages[(start + index) % messages.Length];
         }
 
-        /// <summary> Returns message at the given index. </summary>
-        public string At(int index) => messages[(start + index) % messages.Length];
+        /// <summary> Moves the start of the sequence back. </summary>
+        public void Move() => start = (messages.Length + start - 1) % messages.Length;
     }
 }
