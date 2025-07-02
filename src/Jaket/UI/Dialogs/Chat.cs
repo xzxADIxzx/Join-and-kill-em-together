@@ -19,17 +19,13 @@ using static Rect;
 /// <summary> Front end of the chat, back end implemented via Steamworks. </summary>
 public class Chat : CanvasSingleton<Chat>
 {
-    /// <summary> Prefix that will be added to bot messages. </summary>
-    public const string BOT_PREFIX = "[#FF7F50][14]\\[BOT][][]";
-    /// <summary> Prefix that will be added to TTS messages. </summary>
-    public const string TTS_PREFIX = "[#FF7F50][14]\\[TTS][][]";
+    /// <summary> Prefix that is added to bot messages. </summary>
+    public const string BOT_TAG = "[coral][14]\\[BOT][][]";
+    /// <summary> Prefix that is added to TTS messages. </summary>
+    public const string TTS_TAG = "[coral][14]\\[TTS][][]";
 
-    /// <summary> Maximum length of chat message. </summary>
-    public const int MAX_MESSAGE_LENGTH = 128;
-    /// <summary> How many messages at a time will be shown. </summary>
-    public const int MESSAGES_SHOWN = 14;
-    /// <summary> Chat width in pixels. </summary>
-    public const float WIDTH = 640f;
+    /// <summary> Maximum length of a chat message. </summary>
+    public const int MAX_LENGTH = 128;
 
     /// <summary> List of the chat messages. </summary>
     private RectTransform list;
