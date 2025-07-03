@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 using Jaket.IO;
+using Jaket.UI;
 using Jaket.UI.Dialogs;
 
 using static Jaket.UI.Lib.Pal;
@@ -193,10 +194,10 @@ public static class Bundle
     public static void Hud2NS(string key, params string[] args) => text2Show = Format(key, args);
 
     /// <summary> Sends a localized message to the chat. </summary>
-    public static void Msg(string key) => Chat.Instance.Receive(Get(key), false);
+    public static void Msg(string key) => UI.Chat.Receive(Get(key), false);
 
     /// <summary> Sends a localized & formatted message to the chat. </summary>
-    public static void Msg(string key, params string[] args) => Chat.Instance.Receive(Format(key, args), false);
+    public static void Msg(string key, params string[] args) => UI.Chat.Receive(Format(key, args), false);
 
     #endregion
 }

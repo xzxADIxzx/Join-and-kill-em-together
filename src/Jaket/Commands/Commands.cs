@@ -5,12 +5,13 @@ using UnityEngine;
 using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net;
+using Jaket.UI;
 using Jaket.UI.Dialogs;
 
 /// <summary> List of chat commands used by the mod. </summary>
 public class Commands
 {
-    static Chat chat => Chat.Instance;
+    static Chat chat => UI.Chat;
 
     /// <summary> Chat command handler. </summary>
     public static CommandHandler Handler = new();
@@ -25,7 +26,7 @@ public class Commands
                 chat.Receive($"[14]/{command.Name}{(command.Args == null ? "" : $" [#BBBBBB]{command.Args}[]")} - {command.Desc}[]");
             });
         });
-        Handler.Register("hello", "Resend the tips for new players", args => chat.Hello());
+        Handler.Register("hello", "Resend the tips for new players", args => chat.SayHello());
 
         Handler.Register("tts-volume", "\\[0-100]", "Set Sam's volume to keep your ears comfortable", args =>
         {
@@ -43,15 +44,15 @@ public class Commands
         });
         Handler.Register("tts-auto", "\\[on/off]", "Turn auto reading of all messages", args =>
         {
-            bool enable = args.Length == 0 ? !chat.AutoTTS : (args[0] == "on" || (args[0] == "off" ? false : !chat.AutoTTS));
+            bool enable = args.Length == 0 ? !Settings.AutoTTS : (args[0] == "on" || (args[0] == "off" ? false : !Settings.AutoTTS));
             if (enable)
             {
-                Settings.AutoTTS = chat.AutoTTS = true;
+                Settings.AutoTTS = true;
                 chat.Receive("[#32CD32]Auto TTS enabled.");
             }
             else
             {
-                Settings.AutoTTS = chat.AutoTTS = false;
+                Settings.AutoTTS = false;
                 chat.Receive("[#FF341C]Auto TTS disabled.");
             }
         });
@@ -149,7 +150,7 @@ public class Commands
             Msg("Testers:");
             Msg("[#cccccc]Fenicemaster, AndruGhost, Subjune, FruitCircuit");
 
-            chat.Receive("0096FF", Chat.BOT_PREFIX + "xzxADIxzx", "Thank you all, I couldn't have done it alone ♡");
+            chat.Receive("Thank you all, I couldn't have done it alone ♡", "0096FF", "xzxADIxzx", Chat.BOT_TAG);
         });
         Handler.Register("support", "Support the author by buying him a coffee", args => Application.OpenURL("https://www.buymeacoffee.com/adithedev"));
     }

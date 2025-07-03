@@ -49,7 +49,10 @@ public class Chat : Fragment
 
     public Chat(Transform root) : base(root, "Chat", true)
     {
-        Events.OnLoad += SayHello;
+        Events.OnLoad += () =>
+        {
+            if (string.IsNullOrEmpty(chat.text)) SayHello();
+        };
         Events.EveryHalf += Rebuild;
 
         chatBg = Builder.Image(Rect("Chat", new(640f, 30f)), Tex.Fill, invi, ImageType.Sliced).rectTransform;
