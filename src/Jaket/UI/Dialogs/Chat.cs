@@ -24,6 +24,8 @@ public class Chat : Fragment
 
     /// <summary> Maximum length of a chat message. </summary>
     public const int MAX_LENGTH = 128;
+    /// <summary> Secret message hidden in the chat. </summary>
+    public const string LOVEYOU = "I♡U";
 
     /// <summary> Messages that were received from the network. </summary>
     private Messages received = new(16);
@@ -62,20 +64,16 @@ public class Chat : Fragment
         Content.gameObject.SetActive(true);
         Content = field.transform; // hacky
 
+        static void Lerp(CanvasGroup group, bool target) => group.alpha = Mathf.Lerp(group.alpha, target ? 1f : 0f, Time.deltaTime * 12f);
+
         Component<CanvasGroup>(chatBg.gameObject, g =>
         {
-            Component<Bar>(chatBg.gameObject, b => b.Update(() =>
-            {
-                g.alpha = Mathf.Lerp(g.alpha, Shown || Time.time - lastUpdate < 8f ? 1f : 0f, Time.deltaTime * 16f);
-            }));
+            Component<Bar>(chatBg.gameObject, b => b.Update(() => Lerp(g, Shown || Time.time - lastUpdate < 8f)));
             g.blocksRaycasts = false;
         });
         Component<CanvasGroup>(infoBg.gameObject, g =>
         {
-            Component<Bar>(infoBg.gameObject, b => b.Update(() =>
-            {
-                g.alpha = Mathf.Lerp(g.alpha, string.IsNullOrEmpty(info.text) ? 0f : 1f, Time.deltaTime * 16f);
-            }));
+            Component<Bar>(infoBg.gameObject, b => b.Update(() => Lerp(g, info.text != LOVEYOU)));
             g.blocksRaycasts = false;
         });
     }
