@@ -82,7 +82,7 @@ public static class Bundle
     public static string CutColors(string original) => Regex.Replace(original, "<.*?>|\\[.*?\\]", string.Empty);
 
     // <summary> Returns a string without the tags that can cause lags. </summary>
-    public static string CutDanger(string original) => Regex.Replace(original, "</?size.*?>|</?quad.*?>|</?material.*?>", string.Empty).Replace('\n', ' ');
+    public static string CutDanger(string original) => Regex.Replace(original, "</?b>|</?i>|</?color.*?>|</?size.*?>|</?quad.*?>|</?material.*?>", string.Empty).Replace('\n', ' ');
 
     /// <summary> Parses the formatting tags in the given string so that Unity can understand them. </summary>
     public static string Parse(string original, int maxSize = 64)

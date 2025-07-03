@@ -82,7 +82,7 @@ public class Chat : Fragment
     {
         base.Toggle();
         this.Rebuild();
-        UI.Hide(UI.LeftGroup, this, field.ActivateInputField);
+        UI.Hide(UI.LeftGroup, this, Activate);
     }
 
     public override void Rebuild()
@@ -120,10 +120,32 @@ public class Chat : Fragment
         infoBg.anchoredPosition = new(336f - 336f * Settings.ChatLocation - 320f + infoBg.sizeDelta.x / 2f, 87f);
     }
 
+    public void Activate()
+    {
+        field.ActivateInputField();
+        Events.Post2(() => field.caretPosition = int.MaxValue);
+    }
+
     public void OnFocusLost(string msg)
     {
         // focus was lost because the player sent a message
-        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) Send(msg);
+        if (Input.GetKeyDown(KeyCode.Return) | Input.GetKeyDown(KeyCode.KeypadEnter) && msg != "")
+        {
+            if (string.IsNullOrWhiteSpace(Bundle.CutColors(msg)) || Bundle.CutDanger(msg) != msg)
+            {
+                Activate();
+                field.StartCoroutine(Flash(red));
+                return; // skip toggle
+            }
+            else
+            {
+                if (!Commands.Handler.Handle(msg)) LobbyController.Lobby?.SendChatString(Settings.AutoTTS ? "#/t" + msg : msg);
+
+                sent[0] = msg;
+                sent.Move();
+                sent[0] = field.text = "";
+            }
+        }
         // focus was lost for some unknown reason
         Events.Post(Toggle);
     }
@@ -166,13 +188,13 @@ public class Chat : Fragment
         StartCoroutine("MessageScrolled");
     }
 
-    /// <summary> Interpolates the color of the input field from green to white. </summary>
-    private IEnumerator MessageScrolled()
+    /// <summary> Flashes the field with the given color. </summary>
+    public IEnumerator Flash(Color color)
     {
         float start = Time.time;
         while (Time.time - start < .4f)
         {
-            Field.textComponent.color = Color.Lerp(green, white, (Time.time - start) * 2.5f);
+            field.textComponent.color = Color.Lerp(color, white, (Time.time - start) * 2.5f);
             yield return null;
         }
     }
