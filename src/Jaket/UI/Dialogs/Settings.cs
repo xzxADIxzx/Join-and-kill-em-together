@@ -34,6 +34,12 @@ public class Settings : Fragment
         get => pm.GetInt("jaket.knkl-color");
         set => pm.SetInt("jaket.knkl-color", value % 3);
     }
+    /// <summary> Location of the chat: left, middle or right. </summary>
+    public static int ChatLocation
+    {
+        get => pm.GetInt("jaket.chat-location");
+        set => pm.SetInt("jaket.chat-location", value % 3);
+    }
     /// <summary> Whether freeze frames aka hitstops are disabled. </summary>
     public static bool DisableFreezeFrames
     {
@@ -60,7 +66,7 @@ public class Settings : Fragment
     #endregion
 
     /// <summary> Buttons that controls the language and colors of the feedbacker and knuckleblaster. </summary>
-    private Button lang, feed, knkl;
+    private Button lang, feed, knkl, chat;
     /// <summary> Content of the keybind list. </summary>
     private Bar keylist;
 
@@ -69,7 +75,7 @@ public class Settings : Fragment
 
     public Settings(Transform root) : base(root, "Settings", true)
     {
-        Bar(352f, b =>
+        Bar(400f, b =>
         {
             b.Setup(true);
             b.Text("#settings.general", 32f, 32);
@@ -83,15 +89,21 @@ public class Settings : Fragment
                 Rebuild();
             });
 
-            feed = b.OffsetButton("FEEDBACKER:", () =>
+            feed = b.OffsetButton("FEEDBACKER", () =>
             {
                 FeedColor++;
                 Rebuild();
             });
 
-            knkl = b.OffsetButton("KNUCKLEBLASTER:", () =>
+            knkl = b.OffsetButton("KNUCKLEBLASTER", () =>
             {
                 KnklColor++;
+                Rebuild();
+            });
+
+            chat = b.OffsetButton("#settings.chatloc", () =>
+            {
+                ChatLocation++;
                 Rebuild();
             });
 
@@ -135,9 +147,13 @@ public class Settings : Fragment
         lang.GetComponentInChildren<Text>().text = Bundle.Locales[Bundle.Codes.IndexOf(Locale)];
         feed.GetComponentInChildren<Text>().text = Mode(FeedColor);
         knkl.GetComponentInChildren<Text>().text = Mode(KnklColor);
+        chat.GetComponentInChildren<Text>().text = Bundle.Parse($"[b][i][46]{ChatLocation switch { 0 => "▪▫▫▫▫", 1 => "▫▫▪▫▫", _ => "▫▫▫▫▪" }}");
+
+        // update the alignment of the chat option
+        chat.transform.GetChild(0).localPosition = new(-4f, -3f);
 
         // update the toggle of the freeze frames
-        Content.GetChild(0).GetChild(0).GetChild(6).GetComponent<Toggle>().isOn = DisableFreezeFrames;
+        Content.GetChild(0).GetChild(0).GetChild(7).GetComponent<Toggle>().isOn = DisableFreezeFrames;
 
         // update the colors of the feedbacker and knuckleblaster
         Events.OnHandChange.Fire();
