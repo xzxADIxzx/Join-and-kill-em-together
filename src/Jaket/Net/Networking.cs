@@ -149,15 +149,15 @@ public class Networking
             else if (msg.StartsWith("#/t"))
             {
                 if (member.IsMe)
-                    SamAPI.TryPlay(msg, LocalPlayer.Voice);
+                    SamAPI.TryPlay(msg = msg[3..], LocalPlayer.Voice);
 
                 else if (Entities.TryGetValue(member.Id.AccountId, out var e) && e is RemotePlayer p)
-                    SamAPI.TryPlay(msg, p.Voice);
+                    SamAPI.TryPlay(msg = msg[3..], p.Voice);
 
-                UI.Chat.Receive(GetColor(member), member.Name.Replace("[", "\\["), msg[3..], Chat.TTS_TAG);
+                UI.Chat.Receive(msg, GetColor(member), member.Name.Replace("[", "\\["), Chat.TTS_TAG);
             }
             else
-                UI.Chat.Receive(GetColor(member), member.Name.Replace("[", "\\["), msg);
+                UI.Chat.Receive(msg, GetColor(member), member.Name.Replace("[", "\\["));
         };
     }
 

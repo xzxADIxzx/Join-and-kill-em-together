@@ -82,7 +82,11 @@ public class Chat : Fragment
     {
         base.Toggle();
         this.Rebuild();
-        UI.Hide(UI.LeftGroup, this, Activate);
+        UI.Hide(UI.LeftGroup, this, () =>
+        {
+            field.ActivateInputField();
+            Events.Post2(() => field.caretPosition = int.MaxValue);
+        });
     }
 
     public override void Rebuild()
@@ -120,12 +124,6 @@ public class Chat : Fragment
         infoBg.anchoredPosition = new(336f - 336f * Settings.ChatLocation - 320f + infoBg.sizeDelta.x / 2f, 87f);
     }
 
-    public void Activate()
-    {
-        field.ActivateInputField();
-        Events.Post2(() => field.caretPosition = int.MaxValue);
-    }
-
     public void OnFocusLost(string msg)
     {
         // focus was lost because the player sent a message
@@ -133,8 +131,10 @@ public class Chat : Fragment
         {
             if (string.IsNullOrWhiteSpace(Bundle.CutColors(msg)) || Bundle.CutDanger(msg) != msg)
             {
-                Activate();
                 field.StartCoroutine(Flash(red));
+                field.ActivateInputField();
+                Events.Post2(() => field.caretPosition = int.MaxValue);
+
                 return; // skip toggle
             }
             else
@@ -196,7 +196,7 @@ public class Chat : Fragment
     }
 
     /// <summary> Writes the given message to the chat, formatting it beforehand. </summary>
-    public void Receive(string col, string author, string msg, string tag = null) => Receive(Bundle.CutDanger($"[b][#{col}]{tag}{author}[coral]:[][][] {msg}"));
+    public void Receive(string msg, string col, string author, string tag = null) => Receive(Bundle.CutDanger($"[b][#{col}]{tag}{author}[coral]:[][][] {msg}"));
 
 
     /// <summary> Sends some useful information to the chat. </summary>
