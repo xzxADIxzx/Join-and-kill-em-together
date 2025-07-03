@@ -1,23 +1,21 @@
 namespace Jaket.UI.Dialogs;
 
-using Steamworks;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+using ImageType = UnityEngine.UI.Image.Type;
+
 using Jaket.Assets;
 using Jaket.Commands;
-using Jaket.Input;
 using Jaket.Net;
-using Jaket.Net.Types;
-using Jaket.Sam;
+using Jaket.UI.Lib;
 
 using static Jaket.UI.Lib.Pal;
-using static Rect;
 
-/// <summary> Front end of the chat, back end implemented via Steamworks. </summary>
-public class Chat : CanvasSingleton<Chat>
+/// <summary> Dialog that is responsible for communication between members of the lobby. </summary>
+public class Chat : Fragment
 {
     /// <summary> Prefix that is added to bot messages. </summary>
     public const string BOT_TAG = "[coral][14]\\[BOT][][]";
@@ -27,102 +25,109 @@ public class Chat : CanvasSingleton<Chat>
     /// <summary> Maximum length of a chat message. </summary>
     public const int MAX_LENGTH = 128;
 
-    /// <summary> List of the chat messages. </summary>
-    private RectTransform list;
-    /// <summary> Canvas group used to change the chat transparency. </summary>
-    private CanvasGroup listBg;
+    /// <summary> Messages that were received from the network. </summary>
+    private Messages received = new(16);
+    /// <summary> Messages that were sent by the local player. </summary>
+    private Messages sent = new(8 * 16);
 
-    /// <summary> List of the players currently typing. </summary>
-    private Text typing;
-    /// <summary> Background of the typing players list. </summary>
-    private RectTransform typingBg;
+    /// <summary> Background image of the chat element. </summary>
+    private RectTransform chatBg;
+    /// <summary> Element displaying received messages. </summary>
+    private Text chat;
 
-    /// <summary> Whether auto TTS is enabled. </summary>
-    public bool AutoTTS;
-    /// <summary> Background of the auto TTS sign. </summary>
-    private RectTransform ttsBg;
+    /// <summary> Background image of the info element. </summary>
+    private RectTransform infoBg;
+    /// <summary> Element displaying extra information. </summary>
+    private Text info;
 
-    /// <summary> Input field in which the message will be entered directly. </summary>
-    public InputField Field;
-    /// <summary> Arrival time of the last message, used to change the chat transparency. </summary>
-    private float lastMessageTime;
+    /// <summary> Input field used to type messages. </summary>
+    private InputField field;
+    /// <summary> Time of the last message reception. </summary>
+    private float lastUpdate;
 
-    /// <summary> Messages sent by the player. </summary>
-    private List<string> messages = new();
-    /// <summary> Index of the current message in the list. </summary>
-    private int messageIndex;
-
-    private void Start()
+    public Chat(Transform root) : base(root, "Chat", true)
     {
-        Events.OnLobbyEnter += Hello; // send some useful information to the chat so that players know about the mod's features
-        AutoTTS = Settings.AutoTTS;
+        Events.OnLoad += SayHello;
+        Events.EveryHalf += Rebuild;
 
-        list = UIB.Table("List", transform, Blh(WIDTH)).rectTransform;
-        listBg = Component<CanvasGroup>(list.gameObject, group => group.blocksRaycasts = false); // disable the chat collision so it doesn't interfere with other buttons
+        chatBg = Builder.Image(Rect("Chat", new(640f, 30f)), Tex.Fill, invi, ImageType.Sliced).rectTransform;
+        infoBg = Builder.Image(Rect("Info", new(640f, 30f)), Tex.Fill, invi, ImageType.Sliced).rectTransform;
 
-        typingBg = UIB.Table("Typing", transform, Blh(0f)).rectTransform;
-        typing = UIB.Text("", typingBg, Blh(4200f).Text);
+        chat = Builder.Text(Builder.Rect("Text", chatBg.transform, Lib.Rect.Fill with { Width = -16f, Height = -16f }), "", 16, white, TextAnchor.MiddleLeft);
+        info = Builder.Text(Builder.Rect("Text", infoBg.transform, Lib.Rect.Fill with { Width = -16f, Height = -16f }), "", 16, white, TextAnchor.MiddleLeft);
 
-        ttsBg = UIB.Table("TTS", transform, Blh(128f)).rectTransform;
-        UIB.Text("#chat.tts", ttsBg, Blh(128f).Text);
+        field = Builder.Field(Rect("Input", new(0f, 36f, 1024f, 40f, new(.5f, 0f))), Tex.Fill, invi, "Type something idk", 24, OnFocusLost);
+        field.characterLimit = MAX_LENGTH;
 
-        Field = UIB.Field("#chat.info", transform, Msg(1888f) with { y = 32f }, cons: OnFocusLost);
-        Field.characterLimit = MAX_MESSAGE_LENGTH;
-        Field.gameObject.SetActive(false);
+        Content.gameObject.SetActive(true);
+        Content = field.transform; // hacky
 
-        // start the update cycle of typing players
-        InvokeRepeating("UpdateTyping", 0f, .5f);
-    }
-
-    private void Update()
-    {
-        listBg.alpha = Mathf.Lerp(listBg.alpha, Shown || Time.time - lastMessageTime < 5f ? 1f : 0f, Time.deltaTime * 5f);
-        ttsBg.gameObject.SetActive(AutoTTS && Shown);
-    }
-
-    private void UpdateTyping()
-    {
-        // get a list of players typing in the chat
-        List<string> list = new();
-
-        if (Shown) list.Add(Bundle.Get("chat.you"));
-        Networking.Entities.Player(p => p.Typing, p => list.Add(p.Header.Name));
-
-        // hide the typing label if there is no one in the chat
-        typingBg.gameObject.SetActive(list.Count > 0);
-
-        if (list.Count != 0)
+        Component<CanvasGroup>(chatBg.gameObject, g =>
         {
-            if (list.Count == 1 && Shown)
-                typing.text = Bundle.Get("chat.only-you");
-            else
+            Component<Bar>(chatBg.gameObject, b => b.Update(() =>
             {
-                typing.text = string.Join(", ", list.ToArray(), 0, Mathf.Min(list.Count, 3));
-                if (list.Count > 3) typing.text += Bundle.Get("chat.other");
-
-                typing.text += Bundle.Get(list.Count == 1 ? "chat.single" : "chat.multiple");
-            }
-
-            float width = typing.preferredWidth + 16f;
-
-            typingBg.sizeDelta = new(width, 32f);
-            typingBg.anchoredPosition = new(16f + width / 2f, 80f);
-        }
-
-        ttsBg.anchoredPosition = new(list.Count > 0 ? typingBg.anchoredPosition.x + typingBg.sizeDelta.x / 2f + 80f : 80f, 80f);
+                g.alpha = Mathf.Lerp(g.alpha, Shown || Time.time - lastUpdate < 8f ? 1f : 0f, Time.deltaTime * 16f);
+            }));
+            g.blocksRaycasts = false;
+        });
+        Component<CanvasGroup>(infoBg.gameObject, g =>
+        {
+            Component<Bar>(infoBg.gameObject, b => b.Update(() =>
+            {
+                g.alpha = Mathf.Lerp(g.alpha, string.IsNullOrEmpty(info.text) ? 0f : 1f, Time.deltaTime * 16f);
+            }));
+            g.blocksRaycasts = false;
+        });
     }
 
-    private void OnFocusLost(string msg)
+    public override void Toggle()
     {
-        // focus lost because the player entered a message
-        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) Send(msg);
+        base.Toggle();
+        this.Rebuild();
+        UI.Hide(UI.LeftGroup, this, field.ActivateInputField);
+    }
 
-        // focus lost for some other reason
-        else
+    public override void Rebuild()
+    {
+        string Typing()
         {
-            Field.gameObject.SetActive(Shown = false);
-            Movement.UpdateState();
+            var typing = new string[8];
+            int number = Shown ? 1 : 0;
+
+            if (Shown) typing[0] = Bundle.Get("chat.you");
+
+            Networking.Entities.Player(p => p.Typing && p.Id != AccId, p => typing[number++] = p.Header.Name);
+
+            if (number == 0) return null;
+            if (number == 1 && Shown) return Bundle.Get("chat.only-you");
+            {
+                string list = string.Join(", ", typing, 0, Mathf.Min(number, 3));
+
+                if (number > 3) list += Bundle.Get("chat.other");
+
+                return list += Bundle.Get(number == 1 ? "chat.single" : "chat.multiple");
+            }
         }
+
+        chat.text = string.Join("\n", received.NonNulls(Shown ? 16 : 4));
+        info.text = /* forced ?? */ Typing();
+
+        chatBg.anchorMin = chatBg.anchorMax =
+        infoBg.anchorMin = infoBg.anchorMax = new(Settings.ChatLocation * .5f, 0f);
+
+        chatBg.sizeDelta = new(640f, 16f + chat.preferredHeight);
+        infoBg.sizeDelta = new(16f + info.preferredWidth, 30f);
+
+        chatBg.anchoredPosition = new(336f - 336f * Settings.ChatLocation, 126f + chat.preferredHeight / 2f);
+        infoBg.anchoredPosition = new(336f - 336f * Settings.ChatLocation - 320f + infoBg.sizeDelta.x / 2f, 87f);
+    }
+
+    public void OnFocusLost(string msg)
+    {
+        // focus was lost because the player sent a message
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) Send(msg);
+        // focus was lost for some unknown reason
+        Events.Post(Toggle);
     }
 
     /// <summary> Sends a message to all other players. </summary>
@@ -133,25 +138,13 @@ public class Chat : CanvasSingleton<Chat>
         // if the message is not empty, then send it to other players and remember it
         if (Bundle.CutColors(msg).Trim() != "")
         {
-            if (!Commands.Handler.Handle(msg)) LobbyController.Lobby?.SendChatString(AutoTTS ? "/tts " + msg : msg);
+            if (!Commands.Handler.Handle(msg)) LobbyController.Lobby?.SendChatString(Settings.AutoTTS ? $"/tts {msg}" : msg);
             messages.Insert(0, msg);
         }
 
         Field.text = "";
         messageIndex = -1;
         Events.Post(Toggle);
-    }
-
-    /// <summary> Toggles visibility of the chat. </summary>
-    public void Toggle()
-    {
-        // if (!Shown && LobbyController.Online) UI.HideLeftGroup();
-
-        Field.gameObject.SetActive(Shown = !Shown && LobbyController.Online);
-        Movement.UpdateState();
-        UpdateTyping();
-
-        if (Shown) Field.ActivateInputField();
     }
 
     #region scroll
@@ -189,27 +182,14 @@ public class Chat : CanvasSingleton<Chat>
     #endregion
     #region receive
 
-    /// <summary> Writes a message directly to the chat. </summary>
+    /// <summary> Writes the given message directly to the chat. </summary>
     public void Receive(string msg, bool format = true)
     {
-        // add the given message to the list
-        if (format) msg = Bundle.Parse(msg);
-        var text = UIB.Text(msg, list, Msg(WIDTH - 16f), null, 16, TextAnchor.MiddleLeft);
+        received.Move();
+        received[0] = format ? Bundle.Parse(msg) : msg;
 
-        float height = text.preferredHeight + 4f;
-        text.rectTransform.sizeDelta = new(WIDTH - 16f, height);
-        text.rectTransform.anchoredPosition = new(0f, 8f - height / 2f);
-
-        foreach (RectTransform child in list) child.anchoredPosition += new Vector2(0f, height);
-        if (list.childCount > MESSAGES_SHOWN) Imdt(list.GetChild(0).gameObject);
-
-        // scale the chat panel
-        var top = list.GetChild(0) as RectTransform;
-        list.sizeDelta = new(WIDTH, top.anchoredPosition.y + top.sizeDelta.y / 2f + 8f);
-        list.anchoredPosition = new(16f + WIDTH / 2f, 112f + list.sizeDelta.y / 2f);
-
-        // save the time the message was received to give the player time to read it
-        lastMessageTime = Time.time;
+        lastUpdate = Time.time;
+        Rebuild();
     }
 
     /// <summary> Writes a message to the chat, formatting it beforehand. </summary>
@@ -267,5 +247,11 @@ public class Chat : CanvasSingleton<Chat>
 
         /// <summary> Moves the start of the sequence back. </summary>
         public void Move() => start = (messages.Length + start - 1) % messages.Length;
+
+        /// <summary> Returns all values that are not null. </summary>
+        public IEnumerable<string> NonNulls(int amount)
+        {
+            for (int i = amount; i > 0;) if (this[--i] != null) yield return this[i];
+        }
     }
 }
