@@ -131,7 +131,7 @@ public class Spectator : Fragment
 
     [HarmonyPatch(typeof(StatsManager), nameof(StatsManager.Restart))]
     [HarmonyPrefix]
-    static bool Restart() => !UI.Spectator.Shown && !Dialogs.Chat.Shown;
+    static bool Restart() => !UI.Spectator.Shown;
 
     [HarmonyPatch(typeof(DeathSequence), nameof(DeathSequence.EndSequence))]
     [HarmonyPostfix]

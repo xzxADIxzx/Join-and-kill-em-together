@@ -23,6 +23,7 @@ public static class UI
 
     #region dialogs
 
+    public static Chat Chat;
     public static LobbyTab LobbyTab;
     public static LobbyList LobbyList;
     public static PlayerList PlayerList;
@@ -70,6 +71,7 @@ public static class UI
 
         var root = Create("UI").transform;
 
+        Chat = new(root);
         LobbyTab = new(root);
         LobbyList = new(root);
         PlayerList = new(root);
@@ -83,9 +85,9 @@ public static class UI
         Spectator = new(root);
         Teleporter = new(root);
 
-        Dialogs = new Fragment[] { LobbyTab, LobbyList, PlayerList, Settings };
+        Dialogs = new Fragment[] { Chat, LobbyTab, LobbyList, PlayerList, Settings };
         Fragments = new Fragment[] { Debug, Emote, Access, PlayerInds, Skateboard, Spectator, Teleporter };
-        LeftGroup = new Fragment[] { LobbyTab, PlayerList, Settings, Debug };
+        LeftGroup = new Fragment[] { Chat, LobbyTab, PlayerList, Settings, Debug };
         MidlGroup = new Fragment[] { LobbyList };
 
         Log.Info($"[FACE] Builded {Dialogs.Length} dialogs and {Fragments.Length} fragments");

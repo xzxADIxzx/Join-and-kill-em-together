@@ -92,11 +92,10 @@ public class Movement : MonoSingleton<Movement>
             if (UI.Emote.Shown) UI.Emote.Hide();
         }
 
-        if (Keybind.Chat.Tap()) Chat.Instance.Toggle();
+        if (Keybind.Chat.Tap()) UI.Chat.Toggle();
         if (Keybind.Spectate.Tap()) Suicide();
 
         if (Input.GetKeyDown(KeyCode.F4)) UI.Debug.Toggle();
-        if (Input.GetKeyDown(KeyCode.F11)) InteractiveGuide.Instance.Launch();
     }
 
     private void LateUpdate()
@@ -129,6 +128,7 @@ public class Movement : MonoSingleton<Movement>
 
         if (Settings.DisableFreezeFrames || UI.AnyDialog) Time.timeScale = 1f;
 
+        // TODO move to EveryHalf event
         if (ch.cheatsEnabled && !Administration.Privileged.Contains(AccId))
         {
             ch.cheatsEnabled = false;
@@ -179,7 +179,7 @@ public class Movement : MonoSingleton<Movement>
 
         if (!locked) fc.YesFist();
 
-        OptionsManager.Instance.frozen = Emotes.Current != 0xFF || InteractiveGuide.Shown;
+        OptionsManager.Instance.frozen = Emotes.Current != 0xFF;
         Console.Instance.enabled       = Emotes.Current == 0xFF;
     }
 
