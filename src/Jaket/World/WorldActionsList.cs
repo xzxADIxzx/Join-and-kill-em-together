@@ -31,6 +31,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
     // NEVER DO DESTROY IMMEDIATE IN STATIC ACTION
     public static void Load()
     {
+        /*
         string l; // just for focusing attention
         #region 0-1
         l = "Level 0-1";
@@ -533,5 +534,6 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         });
 
         #endregion
+        */
     }
 }
