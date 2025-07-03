@@ -58,7 +58,7 @@ public class Chat : Fragment
         chat = Builder.Text(Builder.Rect("Text", chatBg.transform, Lib.Rect.Fill with { Width = -16f, Height = -16f }), "", 16, white, TextAnchor.MiddleLeft);
         info = Builder.Text(Builder.Rect("Text", infoBg.transform, Lib.Rect.Fill with { Width = -16f, Height = -16f }), "", 16, white, TextAnchor.MiddleLeft);
 
-        field = Builder.Field(Rect("Input", new(0f, 36f, 1024f, 40f, new(.5f, 0f))), Tex.Fill, invi, "Type something idk", 24, OnFocusLost);
+        field = Builder.Field(Rect("Input", new(0f, 36f, -32, 40f, new(0f, 0f), new(1f, 0f))), Tex.Fill, invi, "#chat.tip", 24, OnFocusLost);
         field.characterLimit = MAX_LENGTH;
 
         Content.gameObject.SetActive(true);
@@ -97,18 +97,18 @@ public class Chat : Fragment
             Networking.Entities.Player(p => p.Typing && p.Id != AccId, p => typing[number++] = p.Header.Name);
 
             if (number == 0) return null;
-            if (number == 1 && Shown) return Bundle.Get("chat.only-you");
+            if (number == 1 && Shown) return Bundle.Get("chat.you-only");
             {
                 string list = string.Join(", ", typing, 0, Mathf.Min(number, 3));
 
-                if (number > 3) list += Bundle.Get("chat.other");
+                if (number > 3) list += Bundle.Get("chat.others");
 
                 return list += Bundle.Get(number == 1 ? "chat.single" : "chat.multiple");
             }
         }
 
         chat.text = string.Join("\n", received.NonNulls(Shown ? 16 : 4));
-        info.text = /* forced ?? */ Typing();
+        info.text = /* forced ?? */ Typing() ?? LOVEYOU;
 
         chatBg.anchorMin = chatBg.anchorMax =
         infoBg.anchorMin = infoBg.anchorMax = new(Settings.ChatLocation * .5f, 0f);
