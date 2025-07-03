@@ -6,7 +6,7 @@ using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Input;
 using Jaket.IO;
-using Jaket.UI.Dialogs;
+using Jaket.UI;
 
 /// <summary>
 /// There is a single instance of this entity, representing the player on whose machine the game is running.
@@ -37,6 +37,7 @@ public class LocalPlayer : Entity
 
     public LocalPlayer() : base(Tools.Id.AccountId, EntityType.Player)
     {
+        Events.OnLoad += Recolor;
         Events.OnHandChange += () =>
         {
             SyncSuit();
@@ -67,7 +68,7 @@ public class LocalPlayer : Entity
         w.Byte((byte)nm.hp);
         w.Byte((byte)Mathf.Floor(WeaponCharges.Instance.raicharge * 2.5f));
 
-        w.Player(Team, weapon, Emotes.Current, Emotes.Rps, Chat.Shown);
+        w.Player(Team, weapon, Emotes.Current, Emotes.Rps, UI.Chat.Shown);
         w.Bools(
             nm.walking,
             sliding,
