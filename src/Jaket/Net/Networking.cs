@@ -10,6 +10,8 @@ using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net.Endpoints;
 using Jaket.Net.Types;
+using Jaket.Sam;
+using Jaket.UI;
 using Jaket.UI.Dialogs;
 
 /// <summary> Class responsible for updating endpoints, transmitting packets and managing entities. </summary>
@@ -124,35 +126,38 @@ public class Networking
             }
         };
 
-        SteamMatchmaking.OnChatMessage += (lobby, member, message) =>
+        SteamMatchmaking.OnChatMessage += (lobby, member, msg) =>
         {
             if (Administration.Banned.Contains(member.Id.AccountId)) return;
-            if (message.Length > Chat.MAX_MESSAGE_LENGTH + 8) message = message.Substring(0, Chat.MAX_MESSAGE_LENGTH);
+            if (msg.Length > Chat.MAX_LENGTH + 4) msg = msg[..Chat.MAX_LENGTH];
 
-            if (message == "#/d")
+            if (msg == "#/d")
             {
                 Bundle.Msg("player.died", member.Name);
-                if (LobbyConfig.HealBosses) Entities.Alive(entity =>
-                {
-                    if (entity is Enemy enemy && enemy.IsBoss) enemy.HealBoss();
-                });
+                if (LobbyConfig.HealBosses) Entities.Alive(e => { if (e is Enemy b && b.IsBoss) b.HealBoss(); });
             }
 
-            else if (message.StartsWith("#/k") && uint.TryParse(message.Substring(3), out uint id))
+            else if (msg.StartsWith("#/s") && byte.TryParse(msg[3..], out byte team) && LocalPlayer.Team == (Team)team)
+                StyleHUD.Instance.AddPoints(Mathf.RoundToInt(250f * StyleCalculator.Instance.airTime), Bundle.Parse("[green]FRATRICIDE"));
+
+            else if (msg.StartsWith("#/b") && uint.TryParse(msg[3..], out uint id))
                 Bundle.Msg("player.banned", Name(id));
 
-            else if (message.StartsWith("#/s") && byte.TryParse(message.Substring(3), out byte team))
+            else if (msg.StartsWith("#/r") && byte.TryParse(msg[3..], out byte rps))
+                Bundle.Msg("emote.roll", $"#emote.{rps}");
+
+            else if (msg.StartsWith("#/t"))
             {
-                if (LocalPlayer.Team == (Team)team) StyleHUD.Instance.AddPoints(Mathf.RoundToInt(250f * StyleCalculator.Instance.airTime), "<color=#32CD32>FRATRICIDE</color>");
+                if (member.IsMe)
+                    SamAPI.TryPlay(msg, LocalPlayer.Voice);
+
+                else if (Entities.TryGetValue(member.Id.AccountId, out var e) && e is RemotePlayer p)
+                    SamAPI.TryPlay(msg, p.Voice);
+
+                UI.Chat.Receive(GetColor(member), member.Name.Replace("[", "\\["), msg[3..], Chat.TTS_TAG);
             }
-
-            else if (message.StartsWith("#/r") && byte.TryParse(message.Substring(3), out byte rps))
-                Chat.Instance.Receive($"[#FFA500]{member.Name} has chosen {rps switch { 0 => "rock", 1 => "paper", 2 => "scissors", _ => "nothing" }}");
-
-            else if (message.StartsWith("/tts "))
-                Chat.Instance.ReceiveTTS(GetTeamColor(member), member, message.Substring(5));
             else
-                Chat.Instance.Receive(GetTeamColor(member), member.Name.Replace("[", "\\["), message);
+                UI.Chat.Receive(GetColor(member), member.Name.Replace("[", "\\["), msg);
         };
     }
 
@@ -219,7 +224,7 @@ public class Networking
         : Entities.TryGetValue(friend.Id.AccountId, out var entity) && entity != null && entity is RemotePlayer player ? player.Team : Team.Yellow;
 
     /// <summary> Returns the color of the given member's team. </summary>
-    public static string GetTeamColor(Friend friend) => ColorUtility.ToHtmlStringRGBA(GetTeam(friend).Color());
+    public static string GetColor(Friend friend) => ColorUtility.ToHtmlStringRGBA(GetTeam(friend).Color());
 
     #endregion
 }

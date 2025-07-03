@@ -150,23 +150,6 @@ public class Chat : Fragment
         Events.Post(Toggle);
     }
 
-    /// <summary> Sends a message to all other players. </summary>
-    public void Send(string msg)
-    {
-        msg = msg.Trim(); // remove extra spaces from the message before formatting
-
-        // if the message is not empty, then send it to other players and remember it
-        if (Bundle.CutColors(msg).Trim() != "")
-        {
-            if (!Commands.Handler.Handle(msg)) LobbyController.Lobby?.SendChatString(Settings.AutoTTS ? $"/tts {msg}" : msg);
-            messages.Insert(0, msg);
-        }
-
-        Field.text = "";
-        messageIndex = -1;
-        Events.Post(Toggle);
-    }
-
     #region scroll
 
     /// <summary> Scrolls messages through the list of messages sent by the player. </summary>
@@ -212,22 +195,9 @@ public class Chat : Fragment
         Rebuild();
     }
 
-    /// <summary> Writes a message to the chat, formatting it beforehand. </summary>
-    public void Receive(string color, string author, string msg) => Receive($"<b>[#{color}]{author}[][#FF7F50]:[]</b> {Bundle.CutDanger(msg)}");
+    /// <summary> Writes the given message to the chat, formatting it beforehand. </summary>
+    public void Receive(string col, string author, string msg, string tag = null) => Receive(Bundle.CutDanger($"[b][#{col}]{tag}{author}[coral]:[][][] {msg}"));
 
-    /// <summary> Speaks the message before writing it. </summary>
-    public void ReceiveTTS(string color, Friend author, string msg)
-    {
-        // play the message in the local player's position if he is its author
-        if (author.IsMe)
-            SamAPI.TryPlay(msg, Networking.LocalPlayer.Voice);
-
-        // or find the author among the other players and play the sound from them
-        else if (Networking.Entities.TryGetValue(author.Id.AccountId, out var entity) && entity is RemotePlayer player)
-            SamAPI.TryPlay(msg, player.Voice);
-
-        Receive(color, TTS_PREFIX + author.Name.Replace("[", "\\["), msg);
-    }
 
     /// <summary> Sends some useful information to the chat. </summary>
     public void Hello()
