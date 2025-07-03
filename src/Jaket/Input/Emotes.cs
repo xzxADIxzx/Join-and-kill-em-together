@@ -35,7 +35,7 @@ public class Emotes : MonoSingleton<Emotes>
     private void Update()
     {
         // interrupt emote if space is pressed
-        if (Current != 0xFF && Input.GetKey(KeyCode.Space)) Play(0xFF);
+        if (Current != 0xFF && Input.GetKey(KeyCode.Space) && !UI.Focused) Play(0xFF);
     }
 
     /// <summary> Plays the given emote animation. </summary>
@@ -60,8 +60,8 @@ public class Emotes : MonoSingleton<Emotes>
         nm.gc.transform.localPosition = new(0f, -1.256f, 0f);
 
         // restart the coroutine if the emote is not infinite
-        StopCoroutine("ClearEmote");
-        if (Length[emote] != -1f) StartCoroutine("ClearEmote");
+        StopCoroutine("Clear");
+        if (Length[emote] != -1f) StartCoroutine("Clear");
     }
 
     /// <summary> Clears the current emote after the end of its animation. </summary>
