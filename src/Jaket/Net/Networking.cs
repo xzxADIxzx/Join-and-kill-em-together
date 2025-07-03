@@ -131,9 +131,11 @@ public class Networking
             if (Administration.Banned.Contains(member.Id.AccountId)) return;
             if (msg.Length > Chat.MAX_LENGTH + 4) msg = msg[..Chat.MAX_LENGTH];
 
+            string name = member.Name.Replace("[", "\\[");
+
             if (msg == "#/d")
             {
-                Bundle.Msg("player.died", member.Name);
+                Bundle.Msg("player.died", name);
                 if (LobbyConfig.HealBosses) Entities.Alive(e => { if (e is Enemy b && b.IsBoss) b.HealBoss(); });
             }
 
@@ -144,7 +146,7 @@ public class Networking
                 Bundle.Msg("player.banned", Name(id));
 
             else if (msg.StartsWith("#/r") && byte.TryParse(msg[3..], out byte rps))
-                Bundle.Msg("emote.roll", $"#emote.{rps}");
+                Bundle.Msg("emote.roll", name, $"#emote.{rps}");
 
             else if (msg.StartsWith("#/t"))
             {
@@ -154,10 +156,10 @@ public class Networking
                 else if (Entities.TryGetValue(member.Id.AccountId, out var e) && e is RemotePlayer p)
                     SamAPI.TryPlay(msg = msg[3..], p.Voice);
 
-                UI.Chat.Receive(msg, GetColor(member), member.Name.Replace("[", "\\["), Chat.TTS_TAG);
+                UI.Chat.Receive(msg, GetColor(member), name, Chat.TTS_TAG);
             }
             else
-                UI.Chat.Receive(msg, GetColor(member), member.Name.Replace("[", "\\["));
+                UI.Chat.Receive(msg, GetColor(member), name);
         };
     }
 
