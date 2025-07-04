@@ -8,7 +8,6 @@ using UnityEngine.UI;
 using Random = System.Random;
 
 using Jaket.Assets;
-using Jaket.IO;
 using Jaket.Net;
 using Jaket.World;
 
@@ -42,7 +41,7 @@ public class Voting : MonoBehaviour
             List<int> list = new();
             for (int i = 0; i < 3; i++) if (v[i] == max) list.Add(i);
 
-            Random rand = new(Writer.Uint2int(LobbyController.Lobby.Value.Id.AccountId));
+            Random rand = new((int)LobbyController.Lobby.Value.Id.AccountId);
             return list[rand.Next(0, list.Count)];
         }
     }

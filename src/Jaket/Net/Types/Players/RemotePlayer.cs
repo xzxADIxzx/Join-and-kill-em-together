@@ -114,7 +114,7 @@ public class RemotePlayer : Entity
             if (Health != 0) // the player has respawned, the agent needs to be recreated
             {
                 Dest(agent.gameObject);
-                // TODO Create();
+                Create();
             }
             return;
         }
@@ -156,6 +156,7 @@ public class RemotePlayer : Entity
         Hidden = true;
         Header.Hide();
         Disassemble();
+        Dest(agent);
         Dest(Doll.Hand.gameObject);
         Events.OnTeamChange.Fire();
     }
