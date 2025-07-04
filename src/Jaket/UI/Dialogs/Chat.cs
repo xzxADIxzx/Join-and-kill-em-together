@@ -46,6 +46,10 @@ public class Chat : Fragment
     private InputField field;
     /// <summary> Time of the last message reception. </summary>
     private float lastUpdate;
+    /// <summary> Text that is forced to be displayed. </summary>
+    private string toDisplay;
+    /// <summary> Index of the currently viewed message in the history. </summary>
+    private int index;
 
     public Chat(Transform root) : base(root, "Chat", true)
     {
@@ -115,7 +119,7 @@ public class Chat : Fragment
         }
 
         chat.text = string.Join("\n", received.NonNulls(Shown ? 16 : 4));
-        info.text = /* forced ?? */ Typing() ?? LOVEYOU;
+        info.text = toDisplay ?? Typing() ?? LOVEYOU;
 
         chatBg.anchorMin = chatBg.anchorMax =
         infoBg.anchorMin = infoBg.anchorMax = new(Settings.ChatLocation * .5f, 0f);
@@ -146,7 +150,7 @@ public class Chat : Fragment
 
                 sent[0] = msg;
                 sent.Move();
-                sent[0] = field.text = "";
+                sent[index = 0] = field.text = "";
             }
         }
         // focus was lost for some unknown reason
@@ -156,22 +160,15 @@ public class Chat : Fragment
     #region scroll
 
     /// <summary> Scrolls messages through the list of messages sent by the player. </summary>
-    public void ScrollMessages(bool up)
+    public void Scroll(bool up)
     {
-        // to scroll through messages, the chat must be open and the list must have at least one element
-        if (messages.Count == 0 || !Shown) return;
+        if (sent[0] == null || !Shown || (up ? sent[index + 1] == null : index == 0)) return;
 
-        // limiting the message index
-        if (up ? messageIndex == messages.Count - 1 : messageIndex == -1) return;
+        if (index == 0) sent[0] = field.text;
 
-        // update the message id and text in the input field
-        messageIndex += up ? 1 : -1;
-        Field.text = messageIndex == -1 ? "" : messages[messageIndex];
-        Field.caretPosition = Field.text.Length;
-
-        // run message highlight
-        StopCoroutine("MessageScrolled");
-        StartCoroutine("MessageScrolled");
+        field.text = sent[index += up ? 1 : -1];
+        field.caretPosition = int.MaxValue;
+        field.StartCoroutine(Flash(green));
     }
 
     /// <summary> Flashes the field with the given color. </summary>

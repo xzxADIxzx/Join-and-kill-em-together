@@ -50,8 +50,8 @@ public class Movement : MonoSingleton<Movement>
     {
         if (Scene == "Main Menu") return;
 
-        if (Keybind.ScrollUp.Tap()) Chat.Instance.ScrollMessages(true);
-        if (Keybind.ScrollDown.Tap()) Chat.Instance.ScrollMessages(false);
+        if (Keybind.ScrollUp.Tap()) UI.Chat.Scroll(true);
+        if (Keybind.ScrollDown.Tap()) UI.Chat.Scroll(false);
 
         if (UI.Focused || UI.Settings.Rebinding != null) return;
 
