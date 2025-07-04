@@ -9,7 +9,7 @@ using Jaket.Assets;
 public static class Version
 {
     /// <summary> Current version of the project. </summary>
-    public const string CURRENT = "1.3.42";
+    public const string CURRENT = "2.0.0";
     /// <summary> Whether current build is debug. </summary>
     public const bool DEBUG = true;
 
