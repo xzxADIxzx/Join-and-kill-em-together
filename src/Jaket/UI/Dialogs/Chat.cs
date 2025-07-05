@@ -9,6 +9,7 @@ using ImageType = UnityEngine.UI.Image.Type;
 
 using Jaket.Assets;
 using Jaket.Commands;
+using Jaket.Input;
 using Jaket.Net;
 using Jaket.UI.Lib;
 
@@ -25,7 +26,7 @@ public class Chat : Fragment
     /// <summary> Maximum length of a chat message. </summary>
     public const int MAX_LENGTH = 128;
     /// <summary> Secret message hidden in the chat. </summary>
-    public const string LOVEYOU = "I♡U";
+    public const string LOVEYOU = "I<b><size=14>♡</size></b>U";
 
     /// <summary> Messages that were received from the network. </summary>
     private Messages received = new(16);
@@ -198,23 +199,31 @@ public class Chat : Fragment
     /// <summary> Writes the given message to the chat, formatting it beforehand. </summary>
     public void Receive(string msg, string col, string author, string tag = null) => Receive(Bundle.CutDanger($"[b][#{col}]{tag}{author}[coral]:[][][] {msg}"));
 
-
-    /// <summary> Sends some useful information to the chat. </summary>
-    public void Hello()
+    /// <summary> Writes the hello message to the chat. </summary>
+    public void SayHello()
     {
-        void Msg(string msg) => Receive("0096FF", BOT_PREFIX + "xzxADIxzx", msg);
-        void Tip(string tip) => Msg($"[14]* {tip}[]");
+        void Msg(string msg) => Receive(msg, "0096FF", "xzxADIxzx", BOT_TAG);
+        void Tip(params string[] tips)
+        {
+            var tab = "[14]     []           [gray]|[#EEE] ";
+            //  [coral][14][TAG][]xzxADIxzx:
+            Receive(tab + string.Join(tab, tips));
+        }
 
-        Msg("Hello, it's me, the main developer of Jaket.");
-        Msg("I just wanted to give you some tips:");
+        Msg("Hello, it's me, the main developer of Jaket");
+        Msg("I just wanna leave you some tips here");
+        Tip
+        (
+            $"To host a lobby, open the respective tab via [orange]\\[{Keybind.LobbyTab.FormatValue()}][]",
+            $"Looking through the options [orange]\\[{Keybind.Settings.FormatValue()}][] is worth it",
+            "Try typing [green]/help[] in the chat",
+            "Take a look at the bestiary, there's a [pink]surprise[]",
+            "If you have an issue, tell us in our [discord]Discord[] server"
+        );
+        Msg("Cheers~ [b][red]♡");
 
-        // TODO remake prob
-        // Tip($"Hold [#FFA500]{Settings.EmoteWheel}[] to open the emote wheel");
-        Tip("Try typing [#FFA500]/help[] in the chat");
-        Tip("Take a look at the bestiary, there's a [#FF66CC]surprise[] :3");
-        Tip("If you have an issue, tell us in our [#5865F2]Discord[] server");
-
-        Msg("Cheers~ ♡");
+        // give 'em enough time to read the tips
+        lastUpdate = Time.time + 24f;
     }
 
     #endregion
