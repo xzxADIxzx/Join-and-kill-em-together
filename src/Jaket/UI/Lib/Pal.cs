@@ -31,7 +31,7 @@ public static class Pal
 
     Discord = "#5865F2",
     PayPal  = "#003087",
-    BMaC    = "#FFDD00";
+    Coffee  = "#FFDD00";
 
     /// <summary> Int variants of the colors. </summary>
     public static Color
@@ -59,7 +59,7 @@ public static class Pal
 
     discord = From(0x5865F2),
     paypal  = From(0x003087),
-    bmac    = From(0xFFDD00);
+    coffee  = From(0xFFDD00);
 
     /// <summary> Hash map containing hex variants of the colors. </summary>
     public static string[] Colors;

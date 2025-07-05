@@ -156,7 +156,7 @@ public class Bar : MonoBehaviour
 
     /// <summary> Adds a button that corresponds to the style of Buy Me a Coffee. </summary>
     public Button CoffeeButton(string text) =>
-        FillButton(text, bmac, () => Application.OpenURL("https://www.buymeacoffee.com/adithedev"));
+        FillButton(text, coffee, () => Application.OpenURL("https://www.buymeacoffee.com/adithedev"));
 
     /// <summary> Adds a button, it has a label on the left. </summary>
     public Button OffsetButton(string text, Runnable callback, int size = 24, string value = "")
