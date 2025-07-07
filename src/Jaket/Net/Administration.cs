@@ -2,8 +2,6 @@ namespace Jaket.Net;
 
 using System.Collections.Generic;
 
-using Jaket.Content;
-
 /// <summary> Class dedicated to protecting the lobby from unfavorable people. </summary>
 public class Administration
 {
@@ -19,10 +17,12 @@ public class Administration
     /// <summary> Max amount of plushies per player. </summary>
     public const int MAX_PLUSHIES = 6;
 
-    /// <summary> List of banned player ids. </summary>
+    /// <summary> Identifiers of hidden sprays. </summary>
+    public static List<uint> Hidden = new();
+    /// <summary> Identifiers of banned players. </summary>
     public static List<uint> Banned = new();
-    /// <summary> List of banned player sprays. </summary>
-    public static List<uint> BannedSprays = new();
+    /// <summary> Identifiers of privileged ones. </summary>
+    public static List<uint> Privileged = new();
 
     private static Counter spam = new();
     private static Counter warnings = new();
@@ -30,8 +30,6 @@ public class Administration
     private static Tree entityBullets = new();
     private static Tree entities = new();
     private static Tree plushies = new();
-
-    public static bool CheatsAllowed => false; // TODO yeah uh bruh
 
     /// <summary> Subscribes to events to clear lists. </summary>
     public static void Load()
@@ -47,8 +45,8 @@ public class Administration
             });
         };
         Events.OnLobbyEnter += () => { Banned.Clear(); entityBullets.Clear(); entities.Clear(); plushies.Clear(); };
-        Events.EverySecond += spam.Clear;
-        Events.EverySecond += commonBullets.Clear;
+        Events.EveryHalf += spam.Clear;
+        Events.EveryHalf += commonBullets.Clear;
         Events.EveryDozen += warnings.Clear;
     }
 
@@ -58,15 +56,10 @@ public class Administration
         // who does the client think he is?!
         if (!LobbyController.IsOwner) return;
 
-        Networking.Send(PacketType.Ban, packet: (data, size) => Networking.Connections.Each(c => c.ConnectionName == id.ToString(), c =>
-        {
-            Networking.Send(c, data, size);
-            c.Flush();
-            Events.Post2(() => c.Close());
-        }));
-
+        Networking.Connections.Each(c => c.ConnectionName == id.ToString(), c => c.Close());
         Banned.Add(id);
-        LobbyController.Lobby?.SendChatString("#/k" + id);
+
+        LobbyController.Lobby?.SendChatString("#/b" + id);
         LobbyConfig.Banned = Banned.ConvertAll(i => i.ToString());
     }
 
@@ -85,6 +78,7 @@ public class Administration
     /// <summary> Handles the creations of a new entity by a client. If the client exceeds its limit, the old entity will be destroyed. </ Summary>
     public static void Handle(uint owner, Entity entity)
     {
+        /*
         void Default(Tree tree, int max)
         {
             if (tree.Count(owner) > max) tree[owner][0].NetKill();
@@ -100,6 +94,7 @@ public class Administration
         }
         else if (entity.Type.IsPlushie()) Default(plushies, MAX_PLUSHIES);
         else if (entity.Type.IsBullet()) Default(entityBullets, MAX_BULLETS);
+        */
     }
 
     /// <summary> Counter of abstract actions done by players. </summary>
@@ -120,7 +115,7 @@ public class Administration
         public new int Count(uint id)
         {
             if (ContainsKey(id))
-                return this[id].Count - this[id].RemoveAll(entity => entity == null || entity.Dead);
+                return this[id].Count - this[id].RemoveAll(entity => entity == null || entity.Hidden);
             else
             {
                 this[id] = new();

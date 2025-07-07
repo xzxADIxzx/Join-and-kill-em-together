@@ -77,7 +77,7 @@ public class Spray : MonoBehaviour
 
     /// <summary> Updates the image's sprite. </summary>
     public void UpdateSprite() => image.sprite =
-        SprayManager.Cache.TryGetValue(owner, out var spray) && SpraySettings.Enabled && !Administration.BannedSprays.Contains(owner)
+        SprayManager.Cache.TryGetValue(owner, out var spray) && SpraySettings.Enabled && !Administration.Hidden.Contains(owner)
         ? spray.Sprite : UIB.Checkmark;
 
     /// <summary> Spawns white dust particles. </summary>
