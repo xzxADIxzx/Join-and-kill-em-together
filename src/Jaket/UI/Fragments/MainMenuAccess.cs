@@ -18,7 +18,7 @@ public class MainMenuAccess : Fragment
     /// <summary> Additional elements to display in the difficulty selection element. </summary>
     private GameObject[] addition = new GameObject[5];
 
-    public MainMenuAccess(Transform root) : base(root, "MainMenuAccess", true, hide: () => Events.Post(() => UI.Access.Toggle()))
+    public MainMenuAccess(Transform root) : base(root, "MainMenuAccess", true, hide: () => UI.Access.Toggle())
     {
         Content.GetComponent<CanvasScaler>().screenMatchMode = CanvasScaler.ScreenMatchMode.Expand;
 

@@ -28,7 +28,7 @@ public class Fragment
 
         void Check() { if (cond()) hide(); }
 
-        Check();
+        Events.Post(Check);
         Events.OnLoad += Check;
     }
 
