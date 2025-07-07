@@ -207,7 +207,7 @@ public class Chat : Fragment
         {
             var tab = "[14]     []           [gray]|[#EEE] ";
             //  [coral][14][TAG][]xzxADIxzx:
-            Receive(tab + string.Join(tab, tips));
+            Receive(tab + string.Join("\n" + tab, tips));
         }
 
         Msg("Hello, it's me, the main developer of Jaket");
