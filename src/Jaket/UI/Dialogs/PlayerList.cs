@@ -69,7 +69,7 @@ public class PlayerList : Fragment
             if (!LobbyController.IsOwner) return;
 
             b.Separator();
-            b.TextButton("#player-list.clear", red, () => LobbyConfig.Banned = new string[0]);
+            b.FillButton("#player-list.clear", red, () => LobbyConfig.Banned = new string[0]);
         });
         VersionBar();
     }

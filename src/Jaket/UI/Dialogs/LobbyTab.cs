@@ -81,8 +81,8 @@ public class LobbyTab : Fragment
             bosses = b.Toggle("#lobby-tab.heal-bosses", b => LobbyConfig.HealBosses = b);
 
             b.Separator();
-            b.TextButton("#lobby-tab.gamemode", red, () => { });
-            b.TextButton("#lobby-tab.cheats",   red, () => { });
+            b.FillButton("#lobby-tab.gamemode", red, () => { });
+            b.FillButton("#lobby-tab.cheats",   red, () => { });
         });
         VersionBar();
     }
