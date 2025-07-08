@@ -210,8 +210,8 @@ public static class Builder
         Component<InputField>(rect.gameObject, f =>
         {
             f.targetGraphic = Image(rect, sprite, color, ImageType.Sliced);
-            f.textComponent = Text(Rect("Textfield", rect, Lib.Rect.Fill with { X = 8f, Y = 1f }), "", size, white, TextAnchor.MiddleLeft);
-            f.placeholder = Text(Rect("Placeholder", rect, Lib.Rect.Fill with { X = 8f, Y = 1f }), ph, size, light, TextAnchor.MiddleLeft);
+            f.textComponent = Text(Rect("Textfield", rect, Lib.Rect.Fill with { Width = -16f, Y = 1f }), "", size, white, TextAnchor.MiddleLeft);
+            f.placeholder = Text(Rect("Placeholder", rect, Lib.Rect.Fill with { Width = -16f, Y = 1f }), ph, size, light, TextAnchor.MiddleLeft);
             f.onEndEdit.AddListener(callback.Invoke);
         });
 
@@ -239,8 +239,10 @@ public static class Builder
             c.renderMode = RenderMode.WorldSpace;
             s.uiScaleMode = ScaleMode.ConstantPixelSize;
 
+            c.sortingOrder = 1; // there's no need to move the canvas too high
             rect.localPosition = position;
             rect.localScale = Vector2.one * .02f;
+
             cons(rect);
         }));
 
