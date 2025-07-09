@@ -35,7 +35,7 @@ public class PlayerList : Fragment
             b.Setup(true);
             b.Text("#player-list.team", 32f, 32);
 
-            b.Text("#player-list.info", 62f, 16, light, TextAnchor.MiddleLeft).alignByGeometry = true;
+            b.Text("#player-list.info", 62f, 16, light, TextAnchor.MiddleLeft);
             b.Subbar(40f, s =>
             {
                 s.Setup(false, 0f);

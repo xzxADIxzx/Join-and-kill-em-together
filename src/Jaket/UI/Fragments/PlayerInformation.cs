@@ -75,9 +75,6 @@ public class PlayerInformation : Fragment
             playername = Text(TextAnchor.MiddleLeft),
             railcharge = Text(TextAnchor.MiddleRight);
 
-        playername.alignByGeometry = true;
-        railcharge.alignByGeometry = true;
-
         Component<Bar>(root.gameObject, b => b.Update(() =>
         {
             int health = player.Health, charge = Mathf.Min(player.Charge, 8);

@@ -41,7 +41,7 @@ public static class Builder
         });
 
     /// <summary> Creates a label with the given text, size, color and alignment. </summary>
-    public static Text Text(Transform rect, string text, int size, Color color, TextAnchor align) =>
+    public static Text Text(Transform rect, string text, int size, Color color, TextAnchor align, bool alignByGeometry = true) =>
         Component<Text>(rect.gameObject, t =>
         {
             t.text = text == string.Empty || text[0] != '#' ? text : Bundle.Get(text[1..]);
@@ -49,6 +49,7 @@ public static class Builder
             t.fontSize = size;
             t.color = color;
             t.alignment = align;
+            t.alignByGeometry = alignByGeometry;
         });
 
     #endregion
@@ -104,7 +105,7 @@ public static class Builder
             b.colors = Colors;
             b.onClick.AddListener(callback.Invoke);
 
-            Text(Rect("Text", rect, Lib.Rect.Fill), text, size, sprite == Tex.Fill ? white : color, align).alignByGeometry = true;
+            Text(Rect("Text", rect, Lib.Rect.Fill), text, size, sprite == Tex.Fill ? white : color, align);
         });
 
     /// <summary> Creates a button with the given sprite, color, icon and callback. </summary>
@@ -139,7 +140,7 @@ public static class Builder
             t.onValueChanged.AddListener(value => t.colors = GetColor(value));
             t.onValueChanged.AddListener(callback.Invoke);
 
-            Text(rect, text, size, color, TextAnchor.MiddleLeft).alignByGeometry = true;
+            Text(rect, text, size, color, TextAnchor.MiddleLeft);
         });
 
     #endregion
@@ -210,8 +211,8 @@ public static class Builder
         Component<InputField>(rect.gameObject, f =>
         {
             f.targetGraphic = Image(rect, sprite, color, ImageType.Sliced);
-            f.textComponent = Text(Rect("Textfield", rect, Lib.Rect.Fill with { Width = -16f, Y = 1f }), "", size, white, TextAnchor.MiddleLeft);
-            f.placeholder = Text(Rect("Placeholder", rect, Lib.Rect.Fill with { Width = -16f, Y = 1f }), ph, size, light, TextAnchor.MiddleLeft);
+            f.textComponent = Text(Rect("Textfield", rect, Lib.Rect.Fill with { Width = -16f, Y = 1f }), "", size, white, TextAnchor.MiddleLeft, false);
+            f.placeholder = Text(Rect("Placeholder", rect, Lib.Rect.Fill with { Width = -16f, Y = 1f }), ph, size, light, TextAnchor.MiddleLeft, false);
             f.onEndEdit.AddListener(callback.Invoke);
         });
 
