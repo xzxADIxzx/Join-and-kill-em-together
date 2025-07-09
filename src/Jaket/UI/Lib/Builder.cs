@@ -211,8 +211,8 @@ public static class Builder
         Component<InputField>(rect.gameObject, f =>
         {
             f.targetGraphic = Image(rect, sprite, color, ImageType.Sliced);
-            f.textComponent = Text(Rect("Textfield", rect, Lib.Rect.Fill with { Width = -16f, Y = 1f }), "", size, white, TextAnchor.MiddleLeft, false);
-            f.placeholder = Text(Rect("Placeholder", rect, Lib.Rect.Fill with { Width = -16f, Y = 1f }), ph, size, light, TextAnchor.MiddleLeft, false);
+            f.textComponent = Text(Rect("Textfield", rect, Lib.Rect.Fill with { Width = -16f, Y = 3f }), "", size, white, TextAnchor.MiddleLeft, false);
+            f.placeholder = Text(Rect("Placeholder", rect, Lib.Rect.Fill with { Width = -16f, Y = 3f }), ph, size, light, TextAnchor.MiddleLeft, false);
             f.onEndEdit.AddListener(callback.Invoke);
         });
 
