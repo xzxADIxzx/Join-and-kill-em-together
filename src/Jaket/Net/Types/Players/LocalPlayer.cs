@@ -66,7 +66,7 @@ public class LocalPlayer : Entity
         w.Float(135f - Mathf.Clamp(CameraController.Instance.rotationX, -40f, 80f));
 
         w.Byte((byte)nm.hp);
-        w.Byte((byte)Mathf.Floor(WeaponCharges.Instance.raicharge * 2.5f));
+        w.Byte((byte)Mathf.Floor(WeaponCharges.Instance.raicharge * 2f));
 
         w.Player(Team, weapon, Emotes.Current, Emotes.Rps, UI.Chat.Shown);
         w.Bools(

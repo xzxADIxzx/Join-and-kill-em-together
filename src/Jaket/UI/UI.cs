@@ -36,6 +36,7 @@ public static class UI
     public static EmoteWheel Emote;
     public static MainMenuAccess Access;
     public static PlayerIndicators PlayerInds;
+    public static PlayerInformation PlayerInfo;
     public static Skateboard Skateboard;
     public static Spectator Spectator;
     public static Teleporter Teleporter;
@@ -81,12 +82,13 @@ public static class UI
         Emote = new(root);
         Access = new(root);
         PlayerInds = new(root);
+        PlayerInfo = new(root);
         Skateboard = new(root);
         Spectator = new(root);
         Teleporter = new(root);
 
         Dialogs = new Fragment[] { Chat, LobbyTab, LobbyList, PlayerList, Settings };
-        Fragments = new Fragment[] { Debug, Emote, Access, PlayerInds, Skateboard, Spectator, Teleporter };
+        Fragments = new Fragment[] { Debug, Emote, Access, PlayerInds, PlayerInfo, Skateboard, Spectator, Teleporter };
         LeftGroup = new Fragment[] { Chat, LobbyTab, PlayerList, Settings, Debug };
         MidlGroup = new Fragment[] { LobbyList };
 
