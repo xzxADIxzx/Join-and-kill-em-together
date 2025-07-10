@@ -718,6 +718,58 @@
 	</glyph>
 </collection>
 
+<collection unicode="U+015a">
+	<glyph id="0" left="0" right="12">
+		<layer name= "Base" visible="true">
+			<path data="R 2,2 K 2,3 K 1,3 K 1,5 K 3,5 K 3,4 K 4,4 K 4,3 K 8,3 K 8,4 K 9,4 K 9,6 K 8,6 K 8,7 K 3,7 K 3,8 K 2,8 K 2,9 K 1,9 K 1,12 K 2,12 K 2,13 K 3,13 K 3,14 K 9,14 K 9,13 K 10,13 K 10,12 K 11,12 K 11,10 K 9,10 K 9,11 K 8,11 K 8,12 K 4,12 K 4,11 K 3,11 K 3,10 K 4,10 K 4,9 K 9,9 K 9,8 K 10,8 K 10,7 K 11,7 K 11,3 K 10,3 K 10,2 K 9,2 K 9,1 K 3,1 K 3,2 K 2,2" />
+			<path data="R 4,15 K 4,16 K 5,16 K 5,17 K 6,17 K 6,18 K 9,18 K 9,17 K 8,17 K 8,16 K 6,16 K 6,15 K 4,15" />
+		</layer>
+	</glyph>
+</collection>
+
+<collection unicode="U+0179">
+	<glyph id="0" left="0" right="12">
+		<layer name= "Base" visible="true">
+			<path data="R 1,1 K 1,5 K 2,5 K 2,6 K 3,6 K 3,7 K 4,7 K 4,8 K 5,8 K 5,9 K 6,9 K 6,10 K 7,10 K 7,11 K 8,11 K 8,12 K 1,12 K 1,14 K 11,14 K 11,11 K 10,11 K 10,10 K 9,10 K 9,9 K 8,9 K 8,8 K 7,8 K 7,7 K 6,7 K 6,6 K 5,6 K 5,5 K 4,5 K 4,4 K 3,4 K 3,3 K 11,3 K 11,1 K 1,1" />
+			<path data="R 4,15 K 4,16 K 5,16 K 5,17 K 6,17 K 6,18 K 9,18 K 9,17 K 8,17 K 8,16 K 6,16 K 6,15 K 4,15" />
+		</layer>
+	</glyph>
+</collection>
+
+<collection unicode="U+017b">
+	<glyph id="0" left="0" right="12">
+		<layer name= "Base" visible="true">
+			<path data="R 1,1 K 1,5 K 2,5 K 2,6 K 3,6 K 3,7 K 4,7 K 4,8 K 5,8 K 5,9 K 6,9 K 6,10 K 7,10 K 7,11 K 8,11 K 8,12 K 1,12 K 1,14 K 11,14 K 11,11 K 10,11 K 10,10 K 9,10 K 9,9 K 8,9 K 8,8 K 7,8 K 7,7 K 6,7 K 6,6 K 5,6 K 5,5 K 4,5 K 4,4 K 3,4 K 3,3 K 11,3 K 11,1 K 1,1" />
+			<path data="R 5,15 K 5,17 K 7,17 K 7,15 K 5,15" />
+		</layer>
+	</glyph>
+</collection>
+
+<collection unicode="U+0104">
+	<glyph id="0" left="0" right="12">
+		<layer name= "Base" visible="true">
+			<path data="R 3,3 K 3,6 K 9,6 K 9,3 K 8,3 K 8,2 K 9,2 K 9,1 K 11,1 K 11,2 K 10,2 K 10,3 K 11,3 K 11,11 K 10,11 K 10,12 K 9,12 K 9,13 K 8,13 K 8,14 K 7,14 K 7,15 K 5,15 K 5,14 K 4,14 K 4,13 K 3,13 K 3,12 K 2,12 K 2,11 K 1,11 K 1,3 K 3,3" />
+			<path data="R 3,8 K 3,10 K 4,10 K 4,11 K 5,11 K 5,12 K 7,12 K 7,11 K 8,11 K 8,10 K 9,10 K 9,8 K 3,8" />
+		</layer>
+	</glyph>
+</collection>
+
+<collection unicode="U+c7">
+	<glyph id="0" left="0" right="12">
+		<layer name= "Base" visible="true">
+			<path data="R 2,4 K 2,5 K 1,5 K 1,13 K 2,13 K 2,14 K 3,14 K 3,15 K 9,15 K 9,14 K 10,14 K 10,13 K 11,13 K 11,11 K 9,11 K 9,12 K 8,12 K 8,13 K 4,13 K 4,12 K 3,12 K 3,6 K 4,6 K 4,5 K 8,5 K 8,6 K 9,6 K 9,7 K 11,7 K 11,5 K 10,5 K 10,4 K 9,4 K 9,3 K 7,3 K 7,2 K 6,2 K 6,1 K 4,1 K 4,2 K 5,2 K 5,3 K 3,3 K 3,4 K 2,4" />
+		</layer>
+	</glyph>
+</collection>
+
+<collection unicode="U+0118">
+	<glyph id="0" left="0" right="12">
+		<layer name= "Base" visible="true">
+			<path data="R 1,3 K 1,15 K 11,15 K 11,13 K 3,13 K 3,10 K 9,10 K 9,8 K 3,8 K 3,5 K 11,5 K 11,3 K 10,3 K 10,2 K 11,2 K 11,1 K 9,1 K 9,2 K 8,2 K 8,3 K 1,3" />
+		</layer>
+	</glyph>
+</collection>
+
 <!-- #endregion -->
 
 </font>
