@@ -162,7 +162,7 @@ public static class Bundle
         // close the remaining tags
         while (types.Count > 0) builder.Append(Closing());
 
-        return builder.ToString()[1..];
+        return builder.ToString()[1..].Replace(":heart:", "♡");
     }
 
     #endregion

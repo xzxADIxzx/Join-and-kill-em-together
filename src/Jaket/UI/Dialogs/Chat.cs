@@ -220,7 +220,7 @@ public class Chat : Fragment
             "Take a look at the bestiary, there's a [pink]surprise[]",
             "If you have an issue, tell us in our [discord]Discord[] server"
         );
-        Msg("Cheers~ [b][red]♡");
+        Msg("Cheers~ [b][red]:heart:");
 
         // give 'em enough time to read the tips
         lastUpdate = Time.time + 24f;

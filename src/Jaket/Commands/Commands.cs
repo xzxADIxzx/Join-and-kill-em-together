@@ -150,7 +150,7 @@ public class Commands
             Msg("Testers:");
             Msg("[#cccccc]Fenicemaster, AndruGhost, Subjune, FruitCircuit");
 
-            chat.Receive("Thank you all, I couldn't have done it alone ♡", "0096FF", "xzxADIxzx", Chat.BOT_TAG);
+            chat.Receive("Thank you all, I couldn't have done it alone :heart:", "0096FF", "xzxADIxzx", Chat.BOT_TAG);
         });
         Handler.Register("support", "Support the author by buying him a coffee", args => Application.OpenURL("https://www.buymeacoffee.com/adithedev"));
     }
