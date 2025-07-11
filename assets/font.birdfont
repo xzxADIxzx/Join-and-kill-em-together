@@ -1025,6 +1025,19 @@
 	</glyph>
 </collection>
 
+<collection unicode="U+25aa">
+	<glyph id="0" left="0" right="12">
+		<path data="R -1,3 K -1,14 K 9,14 K 9,3 K -1,3" />
+	</glyph>
+</collection>
+
+<collection unicode="U+25ab">
+	<glyph id="0" left="0" right="12">
+		<path data="R -1,3 K -1,14 K 9,14 K 9,3 K -1,3" />
+		<path data="R 7,5 K 7,12 K 1,12 K 1,5 K 7,5" />
+	</glyph>
+</collection>
+
 <!-- #endregion -->
 
 </font>
