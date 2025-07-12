@@ -1025,6 +1025,137 @@
 	</glyph>
 </collection>
 
+<collection unicode="U+2b">
+	<glyph id="0" left="0" right="12">
+		<path data="R 5,7 K 1,7 K 1,9 K 5,9 K 5,13 K 7,13 K 7,9 K 11,9 K 11,7 K 7,7 K 7,3 K 5,3 K 5,7" />
+	</glyph>
+</collection>
+
+<collection unicode="U+2d">
+	<glyph id="0" left="0" right="12">
+		<path data="R 1,9 K 11,9 K 11,7 K 1,7 K 1,9" />
+	</glyph>
+</collection>
+
+<collection unicode="U+2a">
+	<glyph id="0" left="0" right="12">
+		<path data="R 5,15 K 7,15 K 7,12 K 8,12 K 8,13 K 9,13 K 9,14 K 10,14 K 10,12 K 9,12 K 9,11 K 8,11 K 8,10 K 9,10 K 9,9 K 10,9 K 10,7 K 9,7 K 9,8 K 8,8 K 8,9 K 7,9 K 7,6 K 5,6 K 5,9 K 4,9 K 4,8 K 3,8 K 3,7 K 2,7 K 2,9 K 3,9 K 3,10 K 4,10 K 4,11 K 3,11 K 3,12 K 2,12 K 2,14 K 3,14 K 3,13 K 4,13 K 4,12 K 5,12 K 5,15" />
+	</glyph>
+</collection>
+
+<collection unicode="U+2f">
+	<glyph id="0" left="0" right="12">
+		<path data="R 1,1 K 1,5 K 2,5 K 2,6 K 3,6 K 3,7 K 4,7 K 4,8 K 5,8 K 5,9 K 6,9 K 6,10 K 7,10 K 7,11 K 8,11 K 8,12 K 9,12 K 9,15 K 11,15 K 11,11 K 10,11 K 10,10 K 9,10 K 9,9 K 8,9 K 8,8 K 7,8 K 7,7 K 6,7 K 6,6 K 5,6 K 5,5 K 4,5 K 4,4 K 3,4 K 3,1 K 1,1" />
+	</glyph>
+</collection>
+
+<collection unicode="U+7c">
+	<glyph id="0" left="0" right="12">
+		<path data="R 5,15 K 7,15 K 7,1 K 5,1 K 5,15" />
+	</glyph>
+</collection>
+
+<collection unicode="U+5c">
+	<glyph id="0" left="0" right="12">
+		<path data="R 9,1 K 9,4 K 8,4 K 8,5 K 7,5 K 7,6 K 6,6 K 6,7 K 5,7 K 5,8 K 4,8 K 4,9 K 3,9 K 3,10 K 2,10 K 2,11 K 1,11 K 1,15 K 3,15 K 3,12 K 4,12 K 4,11 K 5,11 K 5,10 K 6,10 K 6,9 K 7,9 K 7,8 K 8,8 K 8,7 K 9,7 K 9,6 K 10,6 K 10,5 K 11,5 K 11,1 K 9,1" />
+	</glyph>
+</collection>
+
+<collection unicode="U+3d">
+	<glyph id="0" left="0" right="12">
+		<path data="R 1,11 K 11,11 K 11,9 K 1,9 K 1,11" />
+		<path data="R 1,7 K 11,7 K 11,5 K 1,5 K 1,7" />
+	</glyph>
+</collection>
+
+<collection unicode="U+7e">
+	<glyph id="0" left="0" right="12">
+		<path data="R 1,6 K 1,8 K 2,8 K 2,9 K 3,9 K 3,10 K 6,10 K 6,9 K 7,9 K 7,8 K 9,8 K 9,9 K 10,9 K 10,10 K 11,10 K 11,8 K 10,8 K 10,7 K 9,7 K 9,6 K 6,6 K 6,7 K 5,7 K 5,8 K 3,8 K 3,7 K 2,7 K 2,6 K 1,6" />
+	</glyph>
+</collection>
+
+<collection unicode="U+60">
+	<glyph id="0" left="0" right="12">
+		<path data="R 6,12 K 6,13 K 4,13 K 4,14 K 3,14 K 3,15 K 6,15 K 6,14 K 7,14 K 7,13 K 8,13 K 8,12 K 6,12" />
+	</glyph>
+</collection>
+
+<collection unicode="U+40">
+	<glyph id="0" left="0" right="12">
+		<path data="R 2,2 K 2,3 K 1,3 K 1,10 K 1,10 K 2,10 K 2,11 K 3,11 K 3,12 K 9,12 K 9,11 K 10,11 K 10,10 K 11,10 K 11,5 K 10,5 K 10,4 K 8,4 K 8,5 K 7,5 K 7,4 K 4,4 K 4,5 K 3,5 K 3,8 K 4,8 K 4,9 K 6,9 K 6,8 K 7,8 K 7,9 K 8,9 K 8,5 K 9,5 K 9,6 K 10,6 K 10,9 K 9,9 K 9,10 K 8,10 K 8,11 K 4,11 K 4,10 K 3,10 K 3,9 K 2,9 K 2,4 K 3,4 K 3,3 K 4,3 K 4,2 K 8,2 K 8,3 K 10,3 K 10,2 K 9,2 K 9,1 K 3,1 K 3,2 K 2,2" />
+		<path data="R 6,5 K 6,8 K 5,8 K 5,5 K 6,5" />
+	</glyph>
+</collection>
+
+<collection unicode="U+23">
+	<glyph id="0" left="0" right="12">
+		<path data="R 3,2 K 3,4 K 1,4 K 1,6 K 3,6 K 3,9 K 1,9 K 1,11 K 3,11 K 3,14 K 5,14 K 5,12 K 7,12 K 7,15 K 9,15 K 9,13 K 11,13 K 11,11 K 9,11 K 9,8 K 11,8 K 11,6 K 9,6 K 9,3 K 7,3 K 7,5 K 5,5 K 5,2 K 3,2" />
+		<path data="R 5,7 K 7,7 K 7,10 K 5,10 K 5,7" />
+	</glyph>
+</collection>
+
+<collection unicode="U+24">
+	<glyph id="0" left="0" right="12">
+		<path data="R 5,1 K 5,2 K 3,2 K 3,3 K 2,3 K 2,4 K 1,4 K 1,6 K 3,6 K 3,5 K 4,5 K 4,4 K 5,4 K 5,7 K 3,7 K 3,8 K 2,8 K 2,9 K 1,9 K 1,12 K 2,12 K 2,13 K 3,13 K 3,14 K 5,14 K 5,15 K 7,15 K 7,14 K 9,14 K 9,13 K 10,13 K 10,12 K 11,12 K 11,10 K 9,10 K 9,11 K 8,11 K 8,12 K 7,12 K 7,9 K 9,9 K 9,8 K 10,8 K 10,7 K 11,7 K 11,4 K 10,4 K 10,3 K 9,3 K 9,2 K 7,2 K 7,1 K 5,1" />
+		<path data="R 8,4 K 8,5 K 9,5 K 9,6 K 8,6 K 8,7 K 7,7 K 7,4 K 8,4" />
+		<path data="R 5,9 K 5,12 K 4,12 K 4,11 K 3,11 K 3,10 K 4,10 K 4,9 K 5,9" />
+	</glyph>
+</collection>
+
+<collection unicode="U+25">
+	<glyph id="0" left="0" right="12">
+		<path data="R 1,1 K 1,5 K 2,5 K 2,6 K 3,6 K 3,7 K 4,7 K 4,8 K 5,8 K 5,9 K 6,9 K 6,10 K 7,10 K 7,11 K 8,11 K 8,12 K 9,12 K 9,15 K 11,15 K 11,11 K 10,11 K 10,10 K 9,10 K 9,9 K 8,9 K 8,8 K 7,8 K 7,7 K 6,7 K 6,6 K 5,6 K 5,5 K 4,5 K 4,4 K 3,4 K 3,1 K 1,1" />
+		<path data="R 2,9 K 2,10 K 1,10 K 1,14 K 2,14 K 2,15 K 5,15 K 5,14 K 6,14 K 6,10 K 5,10 K 5,9 K 2,9" />
+		<path data="R 3,11 K 4,11 K 4,13 K 3,13 K 3,11" />
+		<path data="R 7,1 K 7,2 K 6,2 K 6,6 K 7,6 K 7,7 K 10,7 K 10,6 K 11,6 K 11,2 K 10,2 K 10,1 K 7,1" />
+		<path data="R 8,3 K 9,3 K 9,5 K 8,5 K 8,3" />
+	</glyph>
+</collection>
+
+<collection unicode="U+26">
+	<glyph id="0" left="0" right="12">
+		<path data="R 2,2 K 2,3 K 1,3 K 1,8 K 2,8 K 2,9 K 3,9 K 3,11 K 2,11 K 2,14 K 3,14 K 3,15 K 4,15 K 4,16 K 7,16 K 7,15 K 8,15 K 8,14 K 9,14 K 9,11 K 8,11 K 8,9 K 7,9 K 7,7 K 8,7 K 8,6 K 9,6 K 9,7 K 11,7 K 11,5 K 10,5 K 10,3 K 11,3 K 11,1 K 9,1 K 9,2 K 8,2 K 8,1 K 3,1 K 3,2 K 2,2" />
+		<path data="R 4,3 K 7,3 K 7,5 K 6,5 K 6,6 K 5,6 K 5,7 K 3,7 K 3,4 K 4,4 K 4,3" />
+		<path data="R 5,11 K 5,10 K 6,10 K 6,11 K 7,11 K 7,13 K 6,13 K 6,14 K 5,14 K 5,13 K 4,13 K 4,11 K 5,11" />
+	</glyph>
+</collection>
+
+<collection unicode="U+5e">
+	<glyph id="0" left="0" right="12">
+		<path data="R 1,10 K 1,11 K 2,11 K 2,12 K 3,12 K 3,13 K 4,13 K 4,14 K 5,14 K 5,15 K 7,15 K 7,14 K 8,14 K 8,13 K 9,13 K 9,12 K 10,12 K 10,11 K 11,11 K 11,10 K 8,10 K 8,11 K 7,11 K 7,12 K 5,12 K 5,11 K 4,11 K 4,10 K 1,10" />
+	</glyph>
+</collection>
+
+<collection unicode="U+5f">
+	<glyph id="0" left="0" right="12">
+		<path data="R 0,1 K 0,3 K 12,3 K 12,1 K 0,1" />
+	</glyph>
+</collection>
+
+<collection unicode="U+25b2">
+	<glyph id="0" left="0" right="12">
+		<path data="R 1,2 K 1,6 K 2,6 K 2,8 K 3,8 K 3,10 K 4,10 K 4,12 K 5,12 K 5,14 K 7,14 K 7,12 K 8,12 K 8,10 K 9,10 K 9,8 K 10,8 K 10,6 K 11,6 K 11,2 K 1,2" />
+	</glyph>
+</collection>
+
+<collection unicode="U+25bc">
+	<glyph id="0" left="0" right="12">
+		<path data="R 11,14 K 11,10 K 10,10 K 10,8 K 9,8 K 9,6 K 8,6 K 8,4 K 7,4 K 7,2 K 5,2 K 5,4 K 4,4 K 4,6 K 3,6 K 3,8 K 2,8 K 2,10 K 1,10 K 1,14 K 11,14" />
+	</glyph>
+</collection>
+
+<collection unicode="U+25c4">
+	<glyph id="0" left="0" right="12">
+		<path data="R 10,2 K 7,2 K 7,3 K 6,3 K 6,4 K 5,4 K 5,5 K 4,5 K 4,6 K 3,6 K 3,7 K 2,7 K 2,9 K 3,9 K 3,10 K 4,10 K 4,11 K 5,11 K 5,12 K 6,12 K 6,13 K 7,13 K 7,14 K 10,14 K 10,2" />
+	</glyph>
+</collection>
+
+<collection unicode="U+25ba">
+	<glyph id="0" left="0" right="12">
+		<path data="R 2,14 K 5,14 K 5,13 K 6,13 K 6,12 K 7,12 K 7,11 K 8,11 K 8,10 K 9,10 K 9,9 K 10,9 K 10,7 K 9,7 K 9,6 K 8,6 K 8,5 K 7,5 K 7,4 K 6,4 K 6,3 K 5,3 K 5,2 K 2,2 K 2,14" />
+	</glyph>
+</collection>
+
 <collection unicode="U+25aa">
 	<glyph id="0" left="0" right="12">
 		<path data="R -1,3 K -1,14 K 9,14 K 9,3 K -1,3" />
