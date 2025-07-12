@@ -53,7 +53,7 @@ public class LobbyTab : Fragment
             join = b.TextButton("#lobby-tab.join", callback: LobbyController.JoinByCode);
             list = b.TextButton("#lobby-tab.list", callback: () => UI.LobbyList.Toggle());
         });
-        Bar(518f, b =>
+        Bar(520f, b =>
         {
             b.Setup(true);
             b.Text("#lobby-tab.config", 32f, 32);
@@ -75,7 +75,7 @@ public class LobbyTab : Fragment
             pvp = b.Toggle("#lobby-tab.allow-pvp", b => LobbyConfig.PvPAllowed = b);
             mod = b.Toggle("#lobby-tab.allow-mod", b => LobbyConfig.ModsAllowed = b);
 
-            b.Text("#lobby-tab.ppp-desc", 46f, 16, light, TextAnchor.MiddleLeft);
+            b.Text("#lobby-tab.ppp-desc", 48f, 16, light, TextAnchor.MiddleLeft);
             ppp = b.Slider(0, 16, i => LobbyConfig.PPP = i, "#lobby-tab.ppp-name", i => $"{(int)(i / 8f * 100f)}PPP");
 
             bosses = b.Toggle("#lobby-tab.heal-bosses", b => LobbyConfig.HealBosses = b);

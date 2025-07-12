@@ -64,7 +64,7 @@ public class Chat : Fragment
         infoBg = Builder.Image(Rect("Info", new(640f, 30f)), Tex.Fill, invi, ImageType.Sliced).rectTransform;
 
         chat = Builder.Text(Builder.Rect("Text", chatBg.transform, Lib.Rect.Fill with { Width = -16f, Height = -16f }), "", 16, white, TextAnchor.MiddleLeft);
-        info = Builder.Text(Builder.Rect("Text", infoBg.transform, Lib.Rect.Fill with { Width = -16f, Height = -16f }), "", 16, white, TextAnchor.MiddleLeft);
+        info = Builder.Text(Builder.Rect("Text", infoBg.transform, Lib.Rect.Fill with { Width = -16f, Height = -14f }), "", 16, white, TextAnchor.MiddleLeft);
 
         field = Builder.Field(Rect("Input", new(0f, 36f, -32, 40f, new(0f, 0f), new(1f, 0f))), Tex.Fill, invi, "#chat.tip", 24, OnFocusLost);
         field.characterLimit = MAX_LENGTH;
@@ -125,10 +125,10 @@ public class Chat : Fragment
         chatBg.anchorMin = chatBg.anchorMax =
         infoBg.anchorMin = infoBg.anchorMax = new(Settings.ChatLocation * .5f, 0f);
 
-        chatBg.sizeDelta = new(640f, 16f + chat.preferredHeight);
+        chatBg.sizeDelta = new(640f, 17f + chat.preferredHeight);
         infoBg.sizeDelta = new(16f + info.preferredWidth, 30f);
 
-        chatBg.anchoredPosition = new(336f - 336f * Settings.ChatLocation, 126f + chat.preferredHeight / 2f);
+        chatBg.anchoredPosition = new(336f - 336f * Settings.ChatLocation, 126.5f + chat.preferredHeight / 2f);
         infoBg.anchoredPosition = new(336f - 336f * Settings.ChatLocation - 320f + infoBg.sizeDelta.x / 2f, 87f);
     }
 
