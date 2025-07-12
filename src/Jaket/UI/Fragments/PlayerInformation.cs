@@ -80,7 +80,7 @@ public class PlayerInformation : Fragment
             int health = player.Health, charge = Mathf.Min(player.Charge, 8);
 
             playername.text = $"<color={(health > 0 ? White : Red)}>{player.Header.Name}</color>";
-            railcharge.text = $"<color={Charge}>ϟ<color=white>[</color>{new string('I', charge)}</color><color={Empty}>{new string('-', 8 - charge)}</color>]";
+            railcharge.text = $"<color={Charge}><b>ϟ</b>[<i>{new string('▪', charge)}<color={Empty}>{new string('▫', 8 - charge)}</color></i>]</color>";
 
             normhealth.sizeDelta = new(health <= 000 ? -737f : -7.37f * Mathf.Clamp(100 - health, 0, 96), 0f);
             overhealth.sizeDelta = new(health <= 100 ? -737f : -7.37f * Mathf.Clamp(200 - health, 0, 96), 0f);

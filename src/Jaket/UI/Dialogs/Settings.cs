@@ -147,10 +147,10 @@ public class Settings : Fragment
         lang.GetComponentInChildren<Text>().text = Bundle.Locales[Bundle.Codes.IndexOf(Locale)];
         feed.GetComponentInChildren<Text>().text = Mode(FeedColor);
         knkl.GetComponentInChildren<Text>().text = Mode(KnklColor);
-        chat.GetComponentInChildren<Text>().text = Bundle.Parse($"[b][i][46]{ChatLocation switch { 0 => "▪▫▫▫▫", 1 => "▫▫▪▫▫", _ => "▫▫▫▫▪" }}");
+        chat.GetComponentInChildren<Text>().text = Bundle.Parse($"[i]{ChatLocation switch { 0 => "▪▫▫▫▫", 1 => "▫▫▪▫▫", _ => "▫▫▫▫▪" }}");
 
         // update the alignment of the chat option
-        chat.transform.GetChild(0).localPosition = new(-4f, -3f);
+        chat.transform.GetChild(0).localPosition = Vector2.down;
 
         // update the toggle of the freeze frames
         Content.GetChild(0).GetChild(0).GetChild(7).GetComponent<Toggle>().isOn = DisableFreezeFrames;

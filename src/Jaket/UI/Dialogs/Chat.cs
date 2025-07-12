@@ -26,7 +26,7 @@ public class Chat : Fragment
     /// <summary> Maximum length of a chat message. </summary>
     public const int MAX_LENGTH = 128;
     /// <summary> Secret message hidden in the chat. </summary>
-    public const string LOVEYOU = "I<b><size=14>♡</size></b>U";
+    public const string LOVEYOU = "I♡<size=4> </size>U";
 
     /// <summary> Messages that were received from the network. </summary>
     private Messages received = new(16);
@@ -220,7 +220,7 @@ public class Chat : Fragment
             "Take a look at the bestiary, there's a [pink]surprise[]",
             "If you have an issue, tell us in our [discord]Discord[] server"
         );
-        Msg("Cheers~ [b][red]:heart:");
+        Msg("Cheers~ [red]:heart:");
 
         // give 'em enough time to read the tips
         lastUpdate = Time.time + 24f;
