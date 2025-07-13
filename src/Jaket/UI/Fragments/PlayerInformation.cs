@@ -26,12 +26,17 @@ public class PlayerInformation : Fragment
 
     public override void Toggle()
     {
-        Dest(hc.transform.Find("Info")?.gameObject);
         base.Toggle();
-        if (Shown) Rebuild();
+        this.Rebuild();
     }
 
-    public override void Rebuild() => Builder.WorldCanvas(Create("Info", hc.transform).transform, default, c =>
+    public override void Rebuild()
+    {
+        Dest(hc.transform.Find("Info")?.gameObject);
+        if (Shown) Build();
+    }
+
+    public void Build() => Builder.WorldCanvas(Create("Info", hc.transform).transform, default, c =>
     {
         Component<HUDPos>(c.gameObject, p =>
         {
