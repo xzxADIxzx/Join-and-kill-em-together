@@ -176,9 +176,9 @@ public class RemotePlayer : Entity
     public void Disassemble()
     {
         enemyId.machine.GoLimp();
-        Dest(Doll.WingLight);
-        Dest(Doll.SlidParticle?.gameObject);
-        Dest(Doll.SlamParticle?.gameObject);
+        if (Doll.WingLight)    Dest(Doll.WingLight);
+        if (Doll.SlidParticle) Dest(Doll.SlidParticle.gameObject);
+        if (Doll.SlamParticle) Dest(Doll.SlamParticle.gameObject);
     }
 
     /// <summary> Plays the punching animation and creates a shockwave as needed. </summary>
