@@ -64,7 +64,7 @@ public class PlayerInformation : Fragment
             else
                 Networking.Entities.Player(p => p.Team.Ally(), p => Build(p, b.Resolve("Entry", 72f)));
         });
-        Events.Post2(() => root?.GetComponentsInChildren<Graphic>().Each(g => g.material = hc.fistFill.material));
+        Events.Post2(() => { if (root) root.GetComponentsInChildren<Graphic>().Each(g => g.material = hc.fistFill.material); });
     });
 
     public void Build(RemotePlayer player, Transform root)

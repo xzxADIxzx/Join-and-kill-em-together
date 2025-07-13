@@ -49,7 +49,7 @@ public class Weapons
     /// <summary> Spawns a weapon with the given type and assigns its parent transform. </summary>
     public static void Instantiate(byte type, Transform parent)
     {
-        if (type == 0xFF) return;
+        return;
 
         var obj = Inst(Prefabs[type], parent);
 
