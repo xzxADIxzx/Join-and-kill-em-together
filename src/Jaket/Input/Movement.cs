@@ -46,7 +46,7 @@ public class Movement : MonoSingleton<Movement>
         };
         Events.EveryHalf += () =>
         {
-            if (ch.cheatsEnabled && !Administration.Privileged.Contains(AccId))
+            if (ch.cheatsEnabled && LobbyController.Online && !Administration.Privileged.Contains(AccId))
             {
                 ch.cheatsEnabled = false;
                 cm.transform.Find("Cheats Overlay").Each(c => c.gameObject.SetActive(false));
@@ -133,11 +133,6 @@ public class Movement : MonoSingleton<Movement>
             : Emotes.Current == 0xFF || Emotes.Current == 0x0B
                 ? RigidbodyConstraints.FreezeRotation
                 : RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
-
-        // all of the following changes are related to the online part of the game and shouldn't affect the offline one
-        if (LobbyController.Offline) return;
-
-        if (Settings.DisableFreezeFrames || UI.AnyDialog) Time.timeScale = 1f;
     }
 
     private void OnGUI()
@@ -206,6 +201,13 @@ public class Movement : MonoSingleton<Movement>
 
     #endregion
     #region harmony
+
+    [HarmonyPatch(typeof(OptionsManager), "LateUpdate")]
+    [HarmonyPostfix]
+    static void Scale()
+    {
+        if (LobbyController.Online && Settings.DisableFreezeFrames | UI.AnyDialog) Time.timeScale = 1f;
+    }
 
     [HarmonyPatch(typeof(NewMovement), nameof(NewMovement.GetHurt))]
     [HarmonyPrefix]
