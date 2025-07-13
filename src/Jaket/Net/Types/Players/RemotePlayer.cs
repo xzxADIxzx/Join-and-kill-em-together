@@ -127,6 +127,8 @@ public class RemotePlayer : Entity
         agent.Rotation             = new(0f,                         bodyRotation.GetAngle(delta));
         Doll.Head.localEulerAngles = new(Doll.Emote == 0x08 ? -20f : headRotation.GetAngle(delta), 0f);
 
+        Doll.Head.localPosition = Vector3.up * .0021f; // the fuck are you doing, Unity?
+
         Doll.Hook.LookAt(agent.Position);
         Doll.Hook.Rotate(Vector3.up * 180f, Space.Self);
         Doll.HookWinch.SetPosition(0, Doll.HookRoot.position);

@@ -88,6 +88,9 @@ public static class ModAssets
 
         Load<GameObject>("Doll", p =>
         {
+            // make animation controller ignore head of the doll
+            p.transform.Find("Model/Metarig/Spine 0/Spine 1/Spine 2").name += "#";
+
             Keep(Doll = p);
             UpdtMaterials(p);
         });

@@ -68,7 +68,7 @@ public class Doll : MonoBehaviour
             mod = transform.Find("Model"),
             rig = transform.Find("Model/Metarig");
 
-        Head       = rig.Find("Spine 0/Spine 1/Spine 2");
+        Head       = rig.Find("Spine 0/Spine 1/Spine 2#");
         Hand       = rig.Find("Spine 0/Right Shoulder/Right Elbow/Right Wrist");
         Hook       = rig.Find("Hook");
         HookRoot   = rig.Find("Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm");
