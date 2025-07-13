@@ -139,11 +139,11 @@ public class Networking
                 if (LobbyConfig.HealBosses) Entities.Alive(e => { if (e is Enemy b && b.IsBoss) b.HealBoss(); });
             }
 
-            else if (msg.StartsWith("#/s") && byte.TryParse(msg[3..], out byte team) && LocalPlayer.Team == (Team)team)
+            else if (msg.StartsWith("#/s") && byte.TryParse(msg[3..], out byte tid) && LocalPlayer.Team == (Team)tid)
                 StyleHUD.Instance.AddPoints(Mathf.RoundToInt(250f * StyleCalculator.Instance.airTime), Bundle.Parse("[green]FRATRICIDE"));
 
-            else if (msg.StartsWith("#/b") && uint.TryParse(msg[3..], out uint id))
-                Bundle.Msg("player.banned", Name(id));
+            else if (msg.StartsWith("#/b") && uint.TryParse(msg[3..], out uint bid) && lobby.Owner.Id == member.Id)
+                Bundle.Msg("player.banned", Name(bid));
 
             else if (msg.StartsWith("#/r") && byte.TryParse(msg[3..], out byte rps))
                 Bundle.Msg("emote.roll", name, $"#emote.{rps}");
