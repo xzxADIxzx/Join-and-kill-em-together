@@ -44,6 +44,17 @@ public class Movement : MonoSingleton<Movement>
             }
             UpdateState(true);
         };
+        Events.EveryHalf += () =>
+        {
+            if (ch.cheatsEnabled && !Administration.Privileged.Contains(AccId))
+            {
+                ch.cheatsEnabled = false;
+                cm.transform.Find("Cheats Overlay").Each(c => c.gameObject.SetActive(false));
+
+                (Get("idToCheat", cm) as Dictionary<string, ICheat>).Values.Each(cm.DisableCheat);
+                Bundle.Hud("lobby.cheats");
+            }
+        };
     }
 
     private void Update()
@@ -127,22 +138,6 @@ public class Movement : MonoSingleton<Movement>
         if (LobbyController.Offline) return;
 
         if (Settings.DisableFreezeFrames || UI.AnyDialog) Time.timeScale = 1f;
-
-        // TODO move to EveryHalf event
-        if (ch.cheatsEnabled && !Administration.Privileged.Contains(AccId))
-        {
-            ch.cheatsEnabled = false;
-            cm.transform.Find("Cheats Overlay").Each(c => c.gameObject.SetActive(false));
-
-            (Get("idToCheat", cm) as Dictionary<string, ICheat>).Values.Each(cm.DisableCheat);
-            Bundle.Hud("lobby.cheats");
-        }
-
-        if (Version.HasIncompatibility && !LobbyController.IsOwner && !LobbyConfig.ModsAllowed)
-        {
-            LobbyController.LeaveLobby();
-            Bundle.Hud2NS("lobby.mods");
-        }
     }
 
     private void OnGUI()
