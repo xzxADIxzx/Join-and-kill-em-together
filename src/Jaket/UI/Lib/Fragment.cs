@@ -51,7 +51,7 @@ public class Fragment
     {
         Sidebar ??= Component<Bar>(Rect("Sidebar", new(256f, 0f, 480f, 0f, new(0f, 0f), new(0f, 1f))).gameObject, b => b.Setup(true, 16f, 16f));
 
-        var img = Sidebar.Image(Sidebar.Empty ? Tex.Back : Tex.Fill, height, semi, multiplier: 2f).gameObject;
+        var img = Sidebar.Image(Sidebar.Empty ? Tex.Back : Tex.Fill, height, semi, multiplier: Sidebar.Empty ? 2f : 3f).gameObject;
 
         Component(img, cons);
         Component<HudOpenEffect>(img, e => e.speed = 38f - height / 24f);
@@ -76,7 +76,7 @@ public class Fragment
         var bar = Builder.Rect("Version", Sidebar.transform, new(0f, 36f, 480f - 36f, 40f, new(.5f, 0f)));
         var txt = Builder.Rect("Text", bar, Lib.Rect.Fill);
 
-        Builder.Image(bar, Tex.Fill, semi, ImageType.Sliced);
+        Builder.Image(bar, Tex.Fill, semi, ImageType.Sliced, 3f);
         Builder.Text(txt, $"Jaket version is {Version.CURRENT}{(Version.DEBUG ? "-beta" : "")}", 24, gray, TextAnchor.MiddleCenter);
     }
 

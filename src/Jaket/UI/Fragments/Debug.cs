@@ -26,7 +26,7 @@ public class Debug : Fragment
         {
             s.Setup(false, 0f, 16f);
 
-            Component<Bar>(s.Image(Tex.Fill, 320f, semi, multiplier: 2).gameObject, b =>
+            Component<Bar>(s.Image(Tex.Fill, 320f, semi, multiplier: 3f).gameObject, b =>
             {
                 b.Setup(true);
                 b.Text("BYTES READ   ", 24f, out (readBs   = new(20)).Label, color: green);
@@ -34,7 +34,7 @@ public class Debug : Fragment
                 b.Text("READ TIME    ", 24f, out (readMs   = new(97)).Label, color: orange);
                 b.Text("WRITE TIME   ", 24f, out (writeMs  = new(97)).Label, color: Darker(orange));
             });
-            Component<Bar>(s.Image(Tex.Fill, 320f, semi, multiplier: 2).gameObject, b =>
+            Component<Bar>(s.Image(Tex.Fill, 320f, semi, multiplier: 3f).gameObject, b =>
             {
                 b.Setup(true);
                 b.Text("ENTITY UPDATE", 24f, out (entityMs = new(97)).Label, color: blue);
@@ -42,7 +42,7 @@ public class Debug : Fragment
                 b.Text("TOTAL TIME   ", 24f, out (totalMs  = new(97)).Label, color: purple);
                 b.Text("FLUSH TIME   ", 24f, out (flushMs  = new(97)).Label, color: Darker(purple));
             });
-            Component<Bar>(s.Image(Tex.Fill, 320f, semi, multiplier: 2).gameObject, b =>
+            Component<Bar>(s.Image(Tex.Fill, 320f, semi, multiplier: 3f).gameObject, b =>
             {
                 b.Setup(true);
                 b.Text("ENTITIES     ", 24f, out entities);
@@ -56,8 +56,8 @@ public class Debug : Fragment
             s.Setup(false, 0f, 16f);
 
             void Build(Image graph, Data data) => Component<UILineRenderer>(Builder.Rect("Graph", graph.transform, new(8f, 8f, 0f, 0f, new())).gameObject, g => data.Graph = g);
-            var byteGraph = s.Image(Tex.Fill, 320f,  semi, multiplier: 2);
-            var timeGraph = s.Image(Tex.Fill, 1552f, semi, multiplier: 2);
+            var byteGraph = s.Image(Tex.Fill, 320f,  semi, multiplier: 3f);
+            var timeGraph = s.Image(Tex.Fill, 1552f, semi, multiplier: 3f);
 
             Build(byteGraph, readBs);
             Build(byteGraph, sentBs);
