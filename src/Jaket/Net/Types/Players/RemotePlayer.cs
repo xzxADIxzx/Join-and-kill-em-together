@@ -153,6 +153,9 @@ public class RemotePlayer : Entity
 
     public override void Killed(Reader r, int left)
     {
+        // the player is already destroyed
+        if (agent == null) return;
+
         Hidden = true;
         Header.Hide();
         Disassemble();
@@ -165,7 +168,7 @@ public class RemotePlayer : Entity
     #region other
 
     /// <summary> Approximate position of the player used by spectators and indicators. </summary>
-    public Vector3 Position => agent.Position + Vector3.up * 2.5f;
+    public Vector3 Position => agent == null ? Vector3.zero : agent.Position + Vector3.up * 2.5f;
 
     /// <summary> Breaks the player doll into multiple peaces. </summary>
     public void Disassemble()
