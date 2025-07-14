@@ -18,16 +18,14 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <NoWarn>IDE0028, IDE0044, IDE0130, IDE0290, IDE0300, IDE1006</NoWarn>
   </PropertyGroup>
+
+  <Import Project="./Local.props" />
   
   <PropertyGroup>
-    <GamePath Condition="$([System.OperatingSystem]::IsWindows())">C:/Program Files (x86)/Steam/steamapps/common/ULTRAKILL</GamePath>
-    <GamePath Condition="!$([System.OperatingSystem]::IsWindows())">$(HOME)/.local/share/Steam/steamapps/common/ULTRAKILL</GamePath>
-    
     <ManagedPath>$(GamePath)/ULTRAKILL_Data/Managed</ManagedPath>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="UnityEngine.Modules" Version="2022.3.29" IncludeAssets="compile" />
     <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" ExcludeAssets="RUNTIME" />
     <PackageReference Include="BepInEx.Core" Version="5.*" ExcludeAssets="RUNTIME" />
     <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" ExcludeAssets="RUNTIME" />

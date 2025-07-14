@@ -11,3 +11,4 @@ obj/*
 .idea
 Folder.DotSettings.user
 Jaket.csproj.DotSettings
+Local.props
