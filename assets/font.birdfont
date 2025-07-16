@@ -1009,8 +1009,8 @@
 
 <collection unicode="U+042a">
 	<glyph id="0" left="0" right="12">
-		<path data="R 2,1 K 2,13 K 0,13 K 0,15 K 4,15 K 4,9 K 10,9 K 10,8 K 11,8 K 11,7 K 12,7 K 12,3 K 11,3 K 11,2 K 10,2 K 10,1 K 2,1" />
-		<path data="R 9,3 K 9,4 K 10,4 K 10,6 K 9,6 K 9,7 K 4,7 K 4,3 K 9,3" />
+		<path data="R 4,1 K 4,13 K 1,13 K 1,15 K 6,15 K 6,9 K 9,9 K 9,8 K 10,8 K 10,7 K 11,7 K 11,3 K 10,3 K 10,2 K 9,2 K 9,1 K 4,1" />
+		<path data="R 8,3 K 8,4 K 9,4 K 9,6 K 8,6 K 8,7 K 6,7 K 6,3 K 8,3" />
 	</glyph>
 </collection>
 
@@ -1247,8 +1247,8 @@
 
 <collection unicode="U+044a">
 	<glyph id="0" left="0" right="12">
-		<path data="R 2,1 K 2,10 K 0,10 K 0,12 K 4,12 K 4,8 K 10,8 K 10,7 K 11,7 K 11,6 K 12,6 K 12,3 K 11,3 K 11,2 K 10,2 K 10,1 K 2,1" />
-		<path data="R 9,3 K 9,4 K 10,4 K 10,5 K 9,5 K 9,6 K 4,6 K 4,3 K 9,3" />
+		<path data="R 4,1 K 4,10 K 1,10 K 1,12 K 6,12 K 6,8 K 9,8 K 9,7 K 10,7 K 10,6 K 11,6 K 11,3 K 10,3 K 10,2 K 9,2 K 9,1 K 4,1" />
+		<path data="R 8,3 K 8,4 K 9,4 K 9,5 K 8,5 K 8,6 K 6,6 K 6,3 K 8,3" />
 	</glyph>
 </collection>
 
