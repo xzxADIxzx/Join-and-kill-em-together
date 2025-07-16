@@ -41,6 +41,19 @@ public abstract class Endpoint
     /// <summary> Forwards the packet to all of the clients. </summary>
     public void Redirect(Reader data, int size, Connection ignore) => Networking.Connections.Each(c => c != ignore, c => Networking.Send(c, data.Memory, size));
 
+    /// <summary> Verifies the identifier and then forwards. </summary>
+    public bool Redirect(Reader data, int size, Connection ignore, uint sender)
+    {
+        var valid = data.Id() == sender;
+        if (valid) Redirect(data, size, ignore);
+        else
+        {
+            Administration.Ban(sender);
+            Log.Warning($"[SERVER] {sender} was blocked: falsification of identifier");
+        }
+        return valid;
+    }
+
     /// <summary> Backbone of the entire project networking. </summary>
     public delegate void PacketHandler(Connection con, uint sender, Reader data, int size);
 }
