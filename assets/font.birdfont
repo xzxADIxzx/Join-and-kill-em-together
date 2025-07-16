@@ -25,8 +25,8 @@
 </horizontal>
 
 <grid width="1.0000" />
-<grid width="2.0000" />
-<grid width="4.0000" />
+<grid width="0.5000" />
+<grid width="0.2500" />
 <background scale="1" />
 
 <!-- #region basic latin -->
@@ -1085,9 +1085,9 @@
 
 <collection unicode="U+0432">
 	<glyph id="0" left="0" right="12">
-		<path data="R 1,1 K 1,13 K 9,13 K 9,12 K 10,12 K 10,11 K 11,11 K 11,8 K 10,8 K 10,6 K 11,6 K 11,3 K 10,3 K 10,2 K 9,2 K 9,1 K 1,1" />
-		<path data="R 8,3 K 8,4 K 9,4 K 9,5 K 8,5 K 8,6 K 3,6 K 3,3 K 8,3" />
-		<path data="R 8,8 K 8,9 K 9,9 K 9,10 K 8,10 K 8,11 K 3,11 K 3,8 K 8,8" />
+		<path data="R 1,1 K 1,12 K 9,12 K 9,11 K 10,11 K 10,10 K 11,10 K 11,7.5 K 10,7.5 K 10,5.5 K 11,5.5 K 11,3 K 10,3 K 10,2 K 9,2 K 9,1 K 1,1" />
+		<path data="R 8,3 K 8,3.75 K 9,3.75 K 9,4.75 K 8,4.75 K 8,5.5 K 3,5.5 K 3,3 K 8,3" />
+		<path data="R 8,7.5 K 8,8.25 K 9,8.25 K 9,9.25 K 8,9.25 K 8,10 K 3,10 K 3,7.5 K 8,7.5" />
 	</glyph>
 </collection>
 
