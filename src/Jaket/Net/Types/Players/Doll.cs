@@ -50,7 +50,7 @@ public class Doll : MonoBehaviour
         Component<Doll>(Inst(ModAssets.DollPreview, parent), doll =>
         {
             doll.transform.localPosition = new(0f, -1.5f);
-            doll.transform.localScale = Vector3.one * 2.18f;
+            doll.transform.localScale *= 2.5f;
 
             doll.Emote = emote;
             doll.Rps = rps;

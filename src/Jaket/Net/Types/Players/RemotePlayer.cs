@@ -175,7 +175,9 @@ public class RemotePlayer : Entity
     /// <summary> Breaks the player doll into multiple peaces. </summary>
     public void Disassemble()
     {
+        // destroy the animation controller and rigdol the model
         enemyId.machine.GoLimp();
+
         if (Doll.WingLight)    Dest(Doll.WingLight);
         if (Doll.SlidParticle) Dest(Doll.SlidParticle.gameObject);
         if (Doll.SlamParticle) Dest(Doll.SlamParticle.gameObject);
