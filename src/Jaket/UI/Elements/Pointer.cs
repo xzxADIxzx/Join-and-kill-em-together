@@ -4,6 +4,7 @@ using UnityEngine;
 
 using Jaket.Assets;
 using Jaket.Content;
+using Jaket.Net.Types;
 using Jaket.UI;
 
 using static Rect;
@@ -17,7 +18,7 @@ public class Pointer : MonoBehaviour
     private Vector3 position, direction;
 
     /// <summary> Transform of the player who created the pointer. </summary>
-    private Transform player;
+    private RemotePlayer player;
     /// <summary> Line going from the pointer to the player who created the pointer. </summary>
     private LineRenderer line;
 
@@ -27,7 +28,7 @@ public class Pointer : MonoBehaviour
     public float Lifetime;
 
     /// <summary> Spawns a pointer at the given position. </summary>
-    public static Pointer Spawn(Team team, Vector3 position, Vector3 direction, Transform player = null) =>
+    public static Pointer Spawn(Team team, Vector3 position, Vector3 direction, RemotePlayer player = null) =>
         Component<Pointer>(Create("Pointer"), pointer =>
         {
             pointer.color = team.Color();
@@ -93,7 +94,7 @@ public class Pointer : MonoBehaviour
         if (player != null && line != null)
         {
             line.SetPosition(0, transform.position);
-            line.SetPosition(1, player.position);
+            line.SetPosition(1, player.Position - Vector3.up * 2.5f);
         }
     }
 }
