@@ -36,8 +36,10 @@ public class RemotePlayer : Entity
     public Doll Doll;
     /// <summary> Label that displays the nickname and health of the player. </summary>
     public PlayerHeader Header;
-    /// <summary> Last pointer created by the player. </summary>
-    public Pointer Pointer;
+    /// <summary> Last point created by the player. </summary>
+    public Pointer Point;
+    /// <summary> Last spray created by the player. </summary>
+    public Spray Spray;
 
     public RemotePlayer(uint id, EntityType type) : base(id, type) { }
 
@@ -206,13 +208,6 @@ public class RemotePlayer : Entity
                 shock.force = r.Float();
                 break;
         }
-    }
-
-    /// <summary> Creates a pointer that will draw a line from itself to the player. </summary>
-    public void Point(Reader r)
-    {
-        if (Pointer != null) Pointer.Lifetime = 4.5f;
-        Pointer = Pointer.Spawn(Team, r.Vector(), r.Vector(), agent.transform);
     }
 
     #endregion

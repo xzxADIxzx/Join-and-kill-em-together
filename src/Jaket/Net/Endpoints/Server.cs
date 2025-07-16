@@ -7,6 +7,7 @@ using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net.Types;
 using Jaket.Sprays;
+using Jaket.UI.Elements;
 using Jaket.World;
 
 /// <summary> Endpoint of a server connection that processes socket events and client data. </summary>
@@ -36,6 +37,24 @@ public class Server : Endpoint, ISocketManager
                 entity.Push();
 
                 Administration.Handle(sender, entity);
+            }
+        });
+
+        Listen(PacketType.Point, (con, sender, r, s) =>
+        {
+            if (Redirect(r, s, con, sender) && ents[sender] is RemotePlayer p)
+            {
+                if (p.Point) p.Point.Lifetime = 4.5f;
+                p.Point = Pointer.Spawn(p.Team, r.Vector(), r.Vector(), p);
+            }
+        });
+
+        Listen(PacketType.Spray, (con, sender, r, s) =>
+        {
+            if (Redirect(r, s, con, sender) && ents[sender] is RemotePlayer p)
+            {
+                if (p.Spray) p.Spray.Lifetime = 58f;
+                p.Spray = null; // TODO remake spray manager
             }
         });
 
