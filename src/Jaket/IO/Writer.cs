@@ -62,9 +62,9 @@ public unsafe struct Writer
         (v7 ? 1 << 7 : 0)
     ));
 
-    public void Bytes(byte[] value, int start, int length)
+    public void Bytes(byte[] value, int start, int count)
     {
-        for (int i = start; i < length; i++) Byte(value[i]);
+        for (int i = start; i < start + count; i++) *(byte*)Inc(1) = value[i];
     }
 
     public void Bytes(byte[] value) => Bytes(value, 0, value.Length);
@@ -78,9 +78,9 @@ public unsafe struct Writer
 
     public void String(string value)
     {
-        value ??= "";
-        Byte((byte)(value.Length * 2));
-        Bytes(Encoding.Unicode.GetBytes(value));
+        var bytes = Encoding.Unicode.GetBytes(value ?? "");
+        Byte((byte)bytes.Length);
+        Bytes(bytes);
     }
 
     public void Vector(Vector3 value)

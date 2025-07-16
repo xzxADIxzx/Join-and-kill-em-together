@@ -62,12 +62,12 @@ public unsafe struct Reader
         v7 = (value & 1 << 7) != 0;
     }
 
-    public byte[] Bytes(int bytesCount)
+    public void Bytes(byte[] value, int start, int count)
     {
-        var value = new byte[bytesCount];
-        for (int i = 0; i < bytesCount; i++) value[i] = Byte();
-        return value;
+        for (int i = start; i < start + count; i++) value[i] = *(byte*)Inc(1);
     }
+
+    public void Bytes(byte[] value) => Bytes(value, 0, value.Length);
 
     public void Floats(ref Entity.Float x, ref Entity.Float y, ref Entity.Float z)
     {
@@ -79,7 +79,12 @@ public unsafe struct Reader
         z.Next = *(float*)Inc(4);
     }
 
-    public string String() => Encoding.Unicode.GetString(Bytes(Byte()));
+    public string String()
+    {
+        var bytes = new byte[Byte()];
+        Bytes(bytes);
+        return Encoding.Unicode.GetString(bytes);
+    }
 
     public Vector3 Vector() => new(Float(), Float(), Float());
 
