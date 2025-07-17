@@ -18,15 +18,16 @@ public enum PacketType : byte
     /// <summary> Contains data of a death and some entity-specific flags. </summary>
     Death,
 
-    /// <summary> Player changed their style: the color of weapons or clothes. </summary>
+    /// <summary> A player changed their look. </summary>
     Style,
-    /// <summary> Player punched, this needs to be visually displayed. </summary>
+    /// <summary> A player punched or parried. </summary>
     Punch,
-    /// <summary> Player pointed to some point in space. </summary>
-    Point,
 
-    /// <summary> Player sprayed something. </summary>
+    /// <summary> A player pointed somewhere. </summary>
+    Point,
+    /// <summary> A player sprayed something. </summary>
     Spray,
+
     /// <summary> Image chunk from the sprayer. </summary>
     ImageChunk,
     /// <summary> Player asked the host to give him someone's spray data. </summary>
