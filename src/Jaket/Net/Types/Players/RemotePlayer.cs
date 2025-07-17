@@ -35,7 +35,7 @@ public class RemotePlayer : Entity
     /// <summary> Doll that displays the state of the player via animations. </summary>
     public Doll Doll;
     /// <summary> Label that displays the nickname and health of the player. </summary>
-    public PlayerHeader Header;
+    public Header Header;
     /// <summary> Last point created by the player. </summary>
     public Pointer Point;
     /// <summary> Last spray created by the player. </summary>
@@ -101,7 +101,9 @@ public class RemotePlayer : Entity
             // or destroy it if the animation has started
             else Doll.Hand.Each(Dest);
         };
-        Header = new(Owner = Id, agent.transform);
+
+        Header ??= new(this);
+        Header.Assign(agent.transform);
 
         enemyId.tag = "Enemy";
         enemyId.weakPoint = Doll.Head.gameObject;
@@ -109,8 +111,6 @@ public class RemotePlayer : Entity
 
     public override void Update(float delta)
     {
-        Header.Update(Health, Typing);
-
         if (Doll.Animator == null)
         {
             if (Health != 0) // the player has respawned, the agent needs to be recreated

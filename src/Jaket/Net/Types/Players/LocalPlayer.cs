@@ -63,7 +63,7 @@ public class LocalPlayer : Entity
         w.Vector(Hook);
 
         w.Float(nm.transform.eulerAngles.y);
-        w.Float(135f - Mathf.Clamp(CameraController.Instance.rotationX, -40f, 80f));
+        w.Float(135f - Mathf.Max(CameraController.Instance.rotationX, -45f));
 
         w.Byte((byte)nm.hp);
         w.Byte((byte)Mathf.Floor(WeaponCharges.Instance.raicharge * 2f));

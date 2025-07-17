@@ -242,7 +242,7 @@ public static class Builder
 
             c.sortingOrder = 1; // there's no need to move the canvas too high
             rect.localPosition = position;
-            rect.localScale = Vector2.one * .02f;
+            rect.localScale = Vector2.one * .002f;
 
             cons(rect);
         }));
