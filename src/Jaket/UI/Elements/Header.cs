@@ -34,7 +34,7 @@ public class Header
     /// <summary> Assigns the header to the given transform. </summary>
     public void Assign(Transform root) => Builder.WorldCanvas(Create("Header", Root = root).transform, Vector3.up * 4.8f, c =>
     {
-        RectTransform Slider(Color color) => Builder.Image(Builder.Rect("Slider", c, new(0f, -120f)), Tex.Fill, color, ImageType.Sliced, 2f).rectTransform;
+        RectTransform Slider(Color color) => Builder.Image(Builder.Rect("Slider", c, new(0f, -120f, 40f, 40f)), Tex.Fill, color, ImageType.Sliced, 2f).rectTransform;
         RectTransform
             background = Slider(invi),
             normhealth = Slider(cb.healthBarColor),
