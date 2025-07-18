@@ -63,7 +63,7 @@ public class Chat : Fragment
         chatBg = Builder.Image(Rect("Chat", new(640f, 30f)), Tex.Fill, invi, ImageType.Sliced).rectTransform;
         infoBg = Builder.Image(Rect("Info", new(640f, 30f)), Tex.Fill, invi, ImageType.Sliced).rectTransform;
 
-        chat = Builder.Text(Builder.Rect("Text", chatBg, Lib.Rect.Fill with { Width = -16f, Height = -16f }), "", 16, white, TextAnchor.MiddleLeft);
+        chat = Builder.Text(Builder.Rect("Text", chatBg, Lib.Rect.Fill with { Width = -16f, Height = -14f }), "", 16, white, TextAnchor.MiddleLeft);
         info = Builder.Text(Builder.Rect("Text", infoBg, Lib.Rect.Fill with { Width = -16f, Height = -14f }), "", 16, white, TextAnchor.MiddleLeft);
 
         field = Builder.Field(Rect("Input", new(0f, 36f, -32, 40f, new(0f, 0f), new(1f, 0f))), Tex.Fill, invi, "#chat.tip", 24, OnFocusLost);
