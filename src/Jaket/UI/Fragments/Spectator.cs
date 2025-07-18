@@ -97,7 +97,7 @@ public class Spectator : Fragment
         }
 
         rotation += InputManager.Instance.InputSource.Look.ReadValue<Vector2>() * 2f;
-        rotation.y = Mathf.Clamp(rotation.y, 0f, 180f);
+        rotation.y = Mathf.Clamp(rotation.y, 1f, 179f);
 
         if (Keybind.SpectNext.Tap()) targetPlayer++;
         if (Keybind.SpectPrev.Tap()) targetPlayer--;
