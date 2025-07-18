@@ -40,9 +40,19 @@ public class Server : Endpoint, ISocketManager
             }
         });
 
+        Listen(PacketType.Style, (con, sender, r, s) =>
+        {
+            if (ents[sender] is RemotePlayer p && Redirect(r, s, con, sender)) p.Doll.ReadSuit(r);
+        });
+
+        Listen(PacketType.Punch, (con, sender, r, s) =>
+        {
+            if (ents[sender] is RemotePlayer p && Redirect(r, s, con, sender)) p.Punch(r);
+        });
+
         Listen(PacketType.Point, (con, sender, r, s) =>
         {
-            if (Redirect(r, s, con, sender) && ents[sender] is RemotePlayer p)
+            if (ents[sender] is RemotePlayer p && Redirect(r, s, con, sender))
             {
                 if (p.Point) p.Point.Lifetime = 4.5f;
                 p.Point = Pointer.Spawn(p.Team, r.Vector(), r.Vector(), p);
@@ -51,7 +61,7 @@ public class Server : Endpoint, ISocketManager
 
         Listen(PacketType.Spray, (con, sender, r, s) =>
         {
-            if (Redirect(r, s, con, sender) && ents[sender] is RemotePlayer p)
+            if (ents[sender] is RemotePlayer p && Redirect(r, s, con, sender))
             {
                 if (p.Spray) p.Spray.Lifetime = 58f;
                 p.Spray = null; // TODO remake spray manager
@@ -85,19 +95,6 @@ public class Server : Endpoint, ISocketManager
                 entity.Killed(r, s - 5);
                 Redirect(r, s, con);
             }
-        });
-
-        ListenAndRedirect(PacketType.Style, r =>
-        {
-            if (ents[r.Id()] is RemotePlayer player) player.Doll.ReadSuit(r);
-        });
-        ListenAndRedirect(PacketType.Punch, r =>
-        {
-            if (ents[r.Id()] is RemotePlayer player) player.Punch(r);
-        });
-        ListenAndRedirect(PacketType.Point, r =>
-        {
-            if (ents[r.Id()] is RemotePlayer player) player.Point(r);
         });
 
         ListenAndRedirect(PacketType.Spray, r => SprayManager.Spawn(r.Id(), r.Vector(), r.Vector()));
