@@ -47,22 +47,6 @@ public class Doll
 
     public Doll(Runnable onEmote) => OnEmote = onEmote;
 
-    /// <summary> Spawns a preview of the given emote. </summary>
-    public static Doll Spawn(Transform parent, Team team, byte emote, byte rps, int hat, int jacket) =>
-        Component<Doll>(Inst(ModAssets.DollPreview, parent), doll =>
-        {
-            doll.transform.localPosition = new(0f, -1.5f);
-            doll.transform.localScale *= 2.5f;
-
-            doll.Emote = emote;
-            doll.Rps = rps;
-            doll.Hat = hat;
-            doll.Jacket = jacket;
-
-            doll.ApplyTeam(team);
-            doll.ApplySuit();
-        });
-
     /// <summary> Assigns the doll to the given transform. </summary>
     public void Assign(Transform root)
     {
@@ -143,6 +127,26 @@ public class Doll
             SlamParticle.localScale       = new(1.2f,  .6f,   1f);
         }
         else if (!Slaming && SlamParticle != null) Dest(SlamParticle.gameObject);
+    }
+
+    /// <summary> Spawns a preview of the given emote with the given style. </summary>
+    public static void Preview(byte emote, byte rps, int hat, int jacket, Team team)
+    {
+        var preview = Inst(ModAssets.DollPreview, NewMovement.Instance.transform).transform;
+        var doll = new Doll(() => { });
+
+        preview.localPosition = new(0f, -1.5f);
+        preview.localScale *= 2.5f;
+
+        doll.Emote = emote;
+        doll.Rps = rps;
+        doll.Hat = hat;
+        doll.Jacket = jacket;
+
+        doll.Assign(preview);
+        doll.ApplyTeam(team);
+        doll.ApplySuit();
+        doll.Update();
     }
 
     #region apply

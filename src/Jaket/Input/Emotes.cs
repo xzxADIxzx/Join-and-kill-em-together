@@ -19,8 +19,6 @@ public class Emotes : MonoSingleton<Emotes>
     /// <summary> Identifier of the currently playing emote. </summary>
     public static byte Current = 0xFF, Rps;
 
-    /// <summary> Doll that plays the current emote. </summary>
-    public GameObject Preview;
     /// <summary> Time of the current emote start. </summary>
     public float StartTime;
     /// <summary> Whether the current emote is about to end. </summary>
@@ -44,7 +42,7 @@ public class Emotes : MonoSingleton<Emotes>
         Current = emote;
         StartTime = Time.time;
 
-        Dest(Preview);
+        Dest(nm.transform.Find("Doll Preview(Clone)")?.gameObject);
         Movement.UpdateState();
 
         UI.Spectator.Reset();
@@ -52,7 +50,7 @@ public class Emotes : MonoSingleton<Emotes>
 
         if (emote == 0xFF) return;
 
-        Preview = Doll.Spawn(nm.transform, Networking.LocalPlayer.Team, emote, Rps, Shop.SelectedHat, Shop.SelectedJacket).gameObject;
+        Doll.Preview(emote, Rps, Shop.SelectedHat, Shop.SelectedJacket, Networking.LocalPlayer.Team);
         Bundle.Hud("emote.info", true);
 
         // stop sliding to prevent preview from falling underground

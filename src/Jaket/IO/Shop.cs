@@ -83,7 +83,7 @@ public class Shop
 [System.Serializable]
 public class ShopEntry
 {
-    /// <summary> This id is assigned to a new entry once and never changes, so that purchases are not discarded after adding another entry. </summary>
+    /// <summary> This id is assigned to a new entry once and never changes, so that purchases are not discarded after adding new entries. </summary>
     public int historicalId;
     /// <summary> This id may change and displays the position of purchase in the suits hierarchy. </summary>
     public int hierarchyId;
