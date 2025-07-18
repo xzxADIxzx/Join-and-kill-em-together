@@ -125,20 +125,18 @@ public class RemotePlayer : Entity
         }
         else if (Health == 0) Disassemble();
 
-        enemyId.machine.health = 4200f;
-        Doll.Update();
-
         agent.Position     = new(bodyX.Get(delta), bodyY.Get(delta), bodyZ.Get(delta));
         Doll.Hook.position = new(hookX.Get(delta), hookY.Get(delta), hookZ.Get(delta));
-        agent.Rotation             = new(0f,                         bodyRotation.GetAngle(delta));
-        Doll.Head.localEulerAngles = new(Doll.Emote == 0x08 ? -20f : headRotation.GetAngle(delta), 0f);
-
-        Doll.Head.localPosition = Vector3.up * .0021f; // the fuck are you doing, Unity?
+        agent.Rotation = new(0f, bodyRotation.GetAngle(delta));
+        Doll.HeadAngle =         headRotation.GetAngle(delta);
 
         Doll.Hook.LookAt(agent.Position);
         Doll.Hook.Rotate(Vector3.up * 180f, Space.Self);
         Doll.HookWinch.SetPosition(0, Doll.HookRoot.position);
         Doll.HookWinch.SetPosition(1, Doll.Hook.position);
+
+        Doll.Update();
+        enemyId.machine.health = 4200f;
 
         if (LastTeam != Team)
         {

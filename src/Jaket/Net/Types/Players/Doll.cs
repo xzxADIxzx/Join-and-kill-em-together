@@ -35,6 +35,15 @@ public class Doll
     public Transform SlidParticle, SlamParticle;
     /// <summary> Position in which the doll holds an item. </summary>
     public Vector3 HoldPosition => Hooking ? Hook.position : HookRoot.position;
+    /// <summary> Angle of the head rotation relative to the respective bone. </summary>
+    public float HeadAngle
+    {
+        set
+        {
+            Head.localPosition = Vector3.up * .0021f; // the fuck are you doing, Unity?
+            Head.localRotation = Quaternion.Euler(value, 0f, 0f);
+        }
+    }
 
     /// <summary> Materials of the wings, coin, skateboard and ears. </summary>
     public Material WingMat, CoinMat, SkateMat, EarsMat;
@@ -107,8 +116,8 @@ public class Doll
             Throne    .gameObject.SetActive(Emote == 0x06);
             Coin      .gameObject.SetActive(Emote == 0x07);
             Skateboard.gameObject.SetActive(Emote == 0x0B);
-            if (Emote == 0x08) Head.localEulerAngles = new(-20f, 0f);
         }
+        if (LastEmote == 0x08) HeadAngle = -20f;
 
         if (Sliding && SlidParticle == null)
         {
