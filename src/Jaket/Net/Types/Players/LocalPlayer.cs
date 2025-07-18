@@ -1,5 +1,6 @@
 namespace Jaket.Net.Types;
 
+using System.Collections;
 using UnityEngine;
 
 using Jaket.Assets;
@@ -37,7 +38,11 @@ public class LocalPlayer : Entity
 
     public LocalPlayer() : base(Tools.Id.AccountId, EntityType.Player)
     {
-        Events.OnLoad += Recolor;
+        Events.OnLoad += () =>
+        {
+            Plugin.Instance.StartCoroutine(SyncDelayed());
+            Recolor();
+        };
         Events.OnHandChange += () =>
         {
             SyncSuit();
@@ -113,6 +118,13 @@ public class LocalPlayer : Entity
 
     #endregion
     #region other
+
+    /// <summary> Synchronizes the suit in half a second after being called. </summary>
+    public IEnumerator SyncDelayed()
+    {
+        yield return new WaitForSeconds(.5f);
+        SyncSuit();
+    }
 
     /// <summary> Synchronizes the suit and custom weapon colors. </summary>
     public void SyncSuit()
