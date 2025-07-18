@@ -23,9 +23,9 @@ public class RemotePlayer : Entity
     public byte Charge;
 
     /// <summary> Team required for versus mechanics. </summary>
-    public Team Team, LastTeam = (Team)0xFF;
+    public Team Team, LastTeam;
     /// <summary> Identifier of the displayed weapon. </summary>
-    public byte Weapon, LastWeapon = 0xFF;
+    public byte Weapon, LastWeapon;
 
     /// <summary> Source playing the voice of the player. </summary>
     public AudioSource Voice;
@@ -107,6 +107,9 @@ public class RemotePlayer : Entity
 
         enemyId.tag = "Enemy";
         enemyId.weakPoint = Doll.Head.gameObject;
+
+        LastTeam = (Team)0xFF;
+        LastWeapon = 0xFF;
     }
 
     public override void Update(float delta)
@@ -143,13 +146,8 @@ public class RemotePlayer : Entity
         }
         if (LastWeapon != Weapon)
         {
-            Doll.Hand.Each(Dest);
-            if ((LastWeapon = Weapon) != 0xFF)
-            {
-                Weapons.Instantiate(Weapon, Doll.Hand);
-                WeaponsOffsets.Apply(Weapon, Doll.Hand);
-                Doll.ApplySuit();
-            }
+            Doll.ApplyItem(LastWeapon = Weapon);
+            Doll.ApplySuit();
         }
     }
 

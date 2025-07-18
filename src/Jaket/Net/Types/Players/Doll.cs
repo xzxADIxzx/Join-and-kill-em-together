@@ -128,8 +128,8 @@ public class Doll : MonoBehaviour
         if (Sliding && SlidParticle == null)
         {
             SlidParticle = Inst(NewMovement.Instance.slideParticle, transform).transform;
-            SlidParticle.localPosition    = new(0f,     0f, 3.5f);
-            SlidParticle.localEulerAngles = new(0f,   180f,   0f);
+            SlidParticle.localPosition    = new(  0f,   0f, 3.5f);
+            SlidParticle.localEulerAngles = new(  0f, 180f,   0f);
             SlidParticle.localScale       = new(1.5f,   1f,  .8f);
         }
         else if (!Sliding && SlidParticle != null) Dest(SlidParticle.gameObject);
@@ -137,8 +137,8 @@ public class Doll : MonoBehaviour
         if (Slaming && SlamParticle == null)
         {
             SlamParticle = Inst(NewMovement.Instance.fallParticle, transform).transform;
-            SlamParticle.localPosition    = new(0f,     6f,   0f);
-            SlamParticle.localEulerAngles = new(90f,    0f,   0f);
+            SlamParticle.localPosition    = new(  0f,   6f,   0f);
+            SlamParticle.localEulerAngles = new( 90f,   0f,   0f);
             SlamParticle.localScale       = new(1.2f,  .6f,   1f);
         }
         else if (!Slaming && SlamParticle != null) Dest(SlamParticle.gameObject);
@@ -154,6 +154,16 @@ public class Doll : MonoBehaviour
 
         if (WingTrail) WingTrail.startColor = team.Color() with { a = .2f };
         if (WingLight) WingLight.color      = team.Color();
+    }
+
+    /// <summary> Applies the given item to the doll. </summary>
+    public void ApplyItem(byte item)
+    {
+        Hand.Each(Dest);
+        if (item == 0xFF) return;
+
+        Weapons.Instantiate(item, Hand);
+        WeaponsOffsets.Apply(item, Hand);
     }
 
     /// <summary> Applies the saved suit to the doll. </summary>
@@ -185,12 +195,15 @@ public class Doll : MonoBehaviour
     }
 
     #endregion
-    #region entity
+    #region state
 
+    /// <summary> Writes the animation state into a snapshot. </summary>
     public void WriteAnim(Writer w) => w.Bools(Walking, Sliding, Falling, Slaming, Dashing, Riding, Hooking, Shopping);
 
+    /// <summary> Reads the animation state from a snapshot. </summary>
     public void ReadAnim(Reader r) => r.Bools(out Walking, out Sliding, out Falling, out Slaming, out Dashing, out Riding, out Hooking, out Shopping);
 
+    /// <summary> Reads the style of the suit from a packet. </summary>
     public void ReadSuit(Reader r)
     {
         Hat = r.Int();
