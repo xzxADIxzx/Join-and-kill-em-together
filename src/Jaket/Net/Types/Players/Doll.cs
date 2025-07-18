@@ -10,7 +10,7 @@ using Jaket.IO;
 /// Doll of a player, remote from network or local from emotes.
 /// Responsible for the visual part of the player, i.e. suits and animations.
 /// </summary>
-public class Doll : MonoBehaviour
+public class Doll
 {
     /// <summary> Animation controller of the doll. </summary>
     public Animator Animator;
@@ -20,7 +20,7 @@ public class Doll : MonoBehaviour
     /// <summary> Emote that is playing at the moment. </summary>
     public byte Emote, LastEmote = 0xFF, Rps;
     /// <summary> Event that is triggered when emote changes. </summary>
-    public Runnable OnEmote = () => { };
+    public Runnable OnEmote;
 
     /// <summary> Hat and jacket that are worn by the doll. </summary>
     public int Hat, Jacket;
@@ -30,7 +30,7 @@ public class Doll : MonoBehaviour
     public Color32 Color1, Color2, Color3;
 
     /// <summary> Transforms of different parts of the doll. </summary>
-    public Transform Head, Hand, Hook, HookRoot, Throne, Coin, Skateboard, Suits;
+    public Transform Root, Head, Hand, Hook, HookRoot, Throne, Coin, Skateboard, Suits;
     /// <summary> Sliding and slaming particles transforms. </summary>
     public Transform SlidParticle, SlamParticle;
     /// <summary> Position in which the doll holds an item. </summary>
@@ -44,6 +44,8 @@ public class Doll : MonoBehaviour
     public Light WingLight;
     /// <summary> Winch of the hook. </summary>
     public LineRenderer HookWinch;
+
+    public Doll(Runnable onEmote) => OnEmote = onEmote;
 
     /// <summary> Spawns a preview of the given emote. </summary>
     public static Doll Spawn(Transform parent, Team team, byte emote, byte rps, int hat, int jacket) =>
@@ -61,12 +63,13 @@ public class Doll : MonoBehaviour
             doll.ApplySuit();
         });
 
-    private void Awake()
+    /// <summary> Assigns the doll to the given transform. </summary>
+    public void Assign(Transform root)
     {
-        Animator = GetComponentInChildren<Animator>();
+        Animator = (Root = root).GetComponentInChildren<Animator>();
         Transform
-            mod = transform.Find("Model"),
-            rig = transform.Find("Model/Metarig");
+            mod = root.Find("Model"),
+            rig = root.Find("Model/Metarig");
 
         Head       = rig.Find("Spine 0/Spine 1/Spine 2#");
         Hand       = rig.Find("Spine 0/Right Shoulder/Right Elbow/Right Wrist");
@@ -84,18 +87,17 @@ public class Doll : MonoBehaviour
         CoinMat    = Coin.GetComponent<Renderer>().material;
         SkateMat   = Skateboard.GetComponent<Renderer>().material;
         EarsMat    = Suits.Find("Big Ears").GetComponent<Renderer>().material;
-        WingTrail  = GetComponentInChildren<TrailRenderer>();
-        WingLight  = GetComponentInChildren<Light>();
-        HookWinch  = GetComponentInChildren<LineRenderer>(true);
+        WingTrail  = root.GetComponentInChildren<TrailRenderer>();
+        WingLight  = root.GetComponentInChildren<Light>();
+        HookWinch  = root.GetComponentInChildren<LineRenderer>(true);
 
         // update the material and texture of the hook winch to match the original
         if (HookWinch) HookWinch.material = HookArm.Instance.GetComponent<LineRenderer>().material;
     }
 
-    private void Update() => Stats.MeasureTime(ref Stats.EntityMs, () =>
+    /// <summary> Updates the animation controller state. </summary>
+    public void Update()
     {
-        if (Animator == null) return;
-
         Animator.SetBool("walking", Walking);
         Animator.SetBool("sliding", Sliding);
         Animator.SetBool("falling", Falling);
@@ -116,18 +118,17 @@ public class Doll : MonoBehaviour
             Animator.SetTrigger("show-emote");
             Animator.SetInteger("emote", LastEmote = Emote);
             Animator.SetInteger("rps", Rps);
-
-            Throne.gameObject.SetActive(Emote == 6);
-            Coin.gameObject.SetActive(Emote == 7);
-            Skateboard.gameObject.SetActive(Emote == 11);
-            if (Emote == 8) Head.localEulerAngles = new(-20f, 0f);
-
             OnEmote();
+
+            Throne    .gameObject.SetActive(Emote == 0x06);
+            Coin      .gameObject.SetActive(Emote == 0x07);
+            Skateboard.gameObject.SetActive(Emote == 0x0B);
+            if (Emote == 0x08) Head.localEulerAngles = new(-20f, 0f);
         }
 
         if (Sliding && SlidParticle == null)
         {
-            SlidParticle = Inst(NewMovement.Instance.slideParticle, transform).transform;
+            SlidParticle = Inst(NewMovement.Instance.slideParticle, Root).transform;
             SlidParticle.localPosition    = new(  0f,   0f, 3.5f);
             SlidParticle.localEulerAngles = new(  0f, 180f,   0f);
             SlidParticle.localScale       = new(1.5f,   1f,  .8f);
@@ -136,13 +137,13 @@ public class Doll : MonoBehaviour
 
         if (Slaming && SlamParticle == null)
         {
-            SlamParticle = Inst(NewMovement.Instance.fallParticle, transform).transform;
+            SlamParticle = Inst(NewMovement.Instance.fallParticle, Root).transform;
             SlamParticle.localPosition    = new(  0f,   6f,   0f);
             SlamParticle.localEulerAngles = new( 90f,   0f,   0f);
             SlamParticle.localScale       = new(1.2f,  .6f,   1f);
         }
         else if (!Slaming && SlamParticle != null) Dest(SlamParticle.gameObject);
-    });
+    }
 
     #region apply
 

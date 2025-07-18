@@ -93,14 +93,14 @@ public class RemotePlayer : Entity
         agent.TryGetComponent(out enemyId);
         agent.TryGetComponent(out Voice);
 
-        Doll = agent.gameObject.AddComponent<Doll>();
-        Doll.OnEmote += () =>
+        Doll ??= new(() =>
         {
             // recreate the weapon if the animation is over
             if (Doll.Emote == 0xFF) LastWeapon = 0xFF;
             // or destroy it if the animation has started
             else Doll.Hand.Each(Dest);
-        };
+        });
+        Doll.Assign(agent.transform);
 
         Header ??= new(this);
         Header.Assign(agent.transform);
@@ -126,6 +126,7 @@ public class RemotePlayer : Entity
         else if (Health == 0) Disassemble();
 
         enemyId.machine.health = 4200f;
+        Doll.Update();
 
         agent.Position     = new(bodyX.Get(delta), bodyY.Get(delta), bodyZ.Get(delta));
         Doll.Hook.position = new(hookX.Get(delta), hookY.Get(delta), hookZ.Get(delta));
