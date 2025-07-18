@@ -7,3 +7,8 @@ obj/*
 
 *.sln
 *.bat
+
+.idea
+Folder.DotSettings.user
+Jaket.csproj.DotSettings
+Local.props
