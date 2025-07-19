@@ -22,6 +22,8 @@ public class Point : MonoBehaviour
     private RemotePlayer owner;
     /// <summary> Line going from the point to the player. </summary>
     private LineRenderer line;
+    /// <summary> Point emitting a barely noticeable glow. </summary>
+    private Light glow;
 
     /// <summary> Components that the point is made of. </summary>
     private RectTransform circle1, circle2, diamond;
@@ -47,6 +49,15 @@ public class Point : MonoBehaviour
             l.widthMultiplier = 0f;
             l.material.shader = ModAssets.Additv;
         });
+
+        glow = Component<Light>(Create("Light", transform), l =>
+        {
+            l.color = color;
+            l.intensity = 0f;
+            l.range = 30f;
+        });
+
+        glow.transform.localPosition = Vector3.back * 1.6f;
 
         Builder.WorldCanvas(Create("Cirlce", transform).transform, Vector3.back * .2f, c =>
         {
@@ -89,6 +100,7 @@ public class Point : MonoBehaviour
         diamond.localEulerAngles = new(time * 20f, 270f, 0f);
 
         if (line) line.widthMultiplier = scale / 10f;
+        if (glow) glow.intensity = scale / 2f;
     }
 
     private void LateUpdate()
