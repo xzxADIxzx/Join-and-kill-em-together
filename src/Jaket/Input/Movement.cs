@@ -27,7 +27,7 @@ public class Movement : MonoSingleton<Movement>
     static CheatsManager cm => CheatsManager.Instance;
 
     /// <summary> Last point created by the player. </summary>
-    private Pointer point;
+    private Point point;
     /// <summary> Last spray created by the player. </summary>
     private Spray spray;
     /// <summary> Hold time of the emote wheel key. </summary>
@@ -76,8 +76,8 @@ public class Movement : MonoSingleton<Movement>
         {
             if (Keybind.Point.Tap())
             {
-                if (point) point.Lifetime = 4.5f;
-                point = Pointer.Spawn(Networking.LocalPlayer.Team, hit.point, hit.normal);
+                if (point) point.Lifetime = 5.5f;
+                point = Point.Spawn(hit.point, hit.normal, Networking.LocalPlayer.Team);
             }
             if (Keybind.Spray.Tap())
             {

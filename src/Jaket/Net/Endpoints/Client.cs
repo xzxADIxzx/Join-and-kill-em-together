@@ -52,8 +52,8 @@ public class Client : Endpoint, IConnectionManager
         {
             if (ents[r.Id()] is RemotePlayer p)
             {
-                if (p.Point) p.Point.Lifetime = 4.5f;
-                p.Point = Pointer.Spawn(p.Team, r.Vector(), r.Vector(), p);
+                if (p.Point) p.Point.Lifetime = 5.5f;
+                p.Point = Point.Spawn(r.Vector(), r.Vector(), p.Team, p);
             }
         });
 

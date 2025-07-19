@@ -37,7 +37,7 @@ public class RemotePlayer : Entity
     /// <summary> Label that displays the nickname and health of the player. </summary>
     public Header Header;
     /// <summary> Last point created by the player. </summary>
-    public Pointer Point;
+    public Point Point;
     /// <summary> Last spray created by the player. </summary>
     public Spray Spray;
 

@@ -54,8 +54,8 @@ public class Server : Endpoint, ISocketManager
         {
             if (ents[sender] is RemotePlayer p && Redirect(r, s, con, sender))
             {
-                if (p.Point) p.Point.Lifetime = 4.5f;
-                p.Point = Pointer.Spawn(p.Team, r.Vector(), r.Vector(), p);
+                if (p.Point) p.Point.Lifetime = 5.5f;
+                p.Point = Point.Spawn(r.Vector(), r.Vector(), p.Team, p);
             }
         });
 
