@@ -78,12 +78,35 @@ public static class Builder
         });
 
     /// <summary> Adds a diamond-shaped image with the given parameters. </summary>
-    public static DiamondGraph Diamond(Transform rect, Color color, float a, float b, float c, float d) =>
+    public static DiamondGraph Diamond(Transform rect, Color color, float a, float b, float c, float d, bool culloff = false) =>
         Component<DiamondGraph>(rect.gameObject, i =>
         {
             i.color = color;
             i.A = a; i.B = b; i.C = c; i.D = d;
+
+            if (culloff) Component<PerfectDiamond>(rect.gameObject, p => p.Diamond = i);
         });
+
+    /// <summary> Makes the given diamond be visible from both sides. </summary>
+    public class PerfectDiamond : MonoBehaviour, IMeshModifier
+    {
+        /// <summary> Diamond to modify. </summary>
+        public DiamondGraph Diamond;
+
+        public void ModifyMesh(Mesh mesh) { }
+
+        public void ModifyMesh(VertexHelper vh)
+        {
+            float num = Diamond.rectTransform.rect.width / 2f;
+
+            vh.AddVert(new(-num * Diamond.A, 0f), Diamond.color, new());
+            vh.AddVert(new(0f, -num * Diamond.B), Diamond.color, new());
+            vh.AddVert(new(+num * Diamond.C, 0f), Diamond.color, new());
+            vh.AddVert(new(0f, +num * Diamond.D), Diamond.color, new());
+            vh.AddTriangle(4, 5, 6);
+            vh.AddTriangle(6, 7, 4);
+        }
+    }
 
     #endregion
     #region button
@@ -242,7 +265,7 @@ public static class Builder
 
             c.sortingOrder = 1; // there's no need to move the canvas too high
             rect.localPosition = position;
-            rect.localScale = Vector2.one * .002f;
+            rect.localScale = Vector3.one * .002f;
 
             cons(rect);
         }));
