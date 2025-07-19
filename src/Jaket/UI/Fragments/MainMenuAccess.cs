@@ -30,7 +30,7 @@ public class MainMenuAccess : Fragment
             b.Setup(true, 0f, 6f);
             b.Update(() =>
             {
-                if (!original?.activeInHierarchy ?? false) addition.Each(e => e.SetActive(false));
+                if (!original?.activeInHierarchy ?? addition[0].activeSelf) addition.Each(e => e.SetActive(false));
             });
 
             addition[0] = b.Image(null, 3f, col, ImageType.Simple).gameObject;
@@ -43,7 +43,7 @@ public class MainMenuAccess : Fragment
             });
             addition[3] = b.Image(null, 3f, drk, ImageType.Simple).gameObject;
         });
-        addition[4] = Builder.Text(Rect("Tip", new(-315f, 50f, 620f, 40f, new(1f, 0f))), "#access", 21, white, TextAnchor.MiddleCenter).gameObject;
+        addition[4] = Builder.Text(Rect("Tip", new(-315f, 50f, 620f, 40f, new(1f, 0f))), "#menuaccess", 21, white, TextAnchor.MiddleCenter).gameObject;
 
         Content.GetComponentsInChildren<Image>().Each(i => i.pixelsPerUnitMultiplier = 4f / 1.5f);
     }
