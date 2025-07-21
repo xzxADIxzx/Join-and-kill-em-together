@@ -52,7 +52,7 @@ public class Movement : MonoSingleton<Movement>
                 cm.transform.Find("Cheats Overlay").Each(c => c.gameObject.SetActive(false));
 
                 (Get("idToCheat", cm) as Dictionary<string, ICheat>).Values.Each(cm.DisableCheat);
-                Bundle.Hud("lobby.cheats");
+                Bundle.Hud("unprivileged");
             }
         };
     }

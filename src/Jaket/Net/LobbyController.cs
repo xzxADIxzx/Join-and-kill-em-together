@@ -46,7 +46,7 @@ public static class LobbyController
             if (Version.HasIncompatibility && !LobbyConfig.ModsAllowed)
             {
                 // notify the player to avoid confusion
-                Bundle.Hud2NS("lobby.mods");
+                Bundle.Hud2NS("lobby.modded");
 
                 LeaveLobby();
                 Log.Info("[LOBY] Left the lobby as you have incompatible mods");

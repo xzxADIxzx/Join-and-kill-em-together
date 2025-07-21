@@ -49,7 +49,7 @@ public static class Version
             var latest = res.Substring(tagIndex += TAG.Length, res.IndexOf('"', tagIndex) - tagIndex);
             var name = res.Substring(nameIndex += NAME.Length, res.IndexOf('"', nameIndex) - nameIndex);
 
-            if (latest != CURRENT) Bundle.Hud("version.outdated", false, CURRENT, latest, name);
+            if (latest != CURRENT) Bundle.Hud("outdated-mod", false, CURRENT, latest, name);
         });
     }
 
