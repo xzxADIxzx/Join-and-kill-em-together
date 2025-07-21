@@ -6,6 +6,3 @@ obj/*
 
 *.sln
 *.bat
-
-# contains path to libraries
-Path.props

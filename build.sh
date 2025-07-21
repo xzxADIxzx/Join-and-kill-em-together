@@ -21,6 +21,9 @@ else
     dotnet build $project.csproj
 fi
 
+# make sure to not commit changes performed in this file
+git update-index --skip-worktree Path.props
+
 
 
 [ "$2" != "deploy" ] && exit 0
