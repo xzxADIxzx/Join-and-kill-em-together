@@ -1,9 +1,0 @@
-<Project>
-    <PropertyGroup>
-        <!-- Windows -->
-        <GamePath>C:/Program Files (x86)/Steam/steamapps/common/ULTRAKILL</GamePath>
-    
-        <!-- Linux/MacOS -->
-        <GamePath>$(HOME)/.local/share/Steam/steamapps/common/ULTRAKILL</GamePath>
-    </PropertyGroup>
-</Project>

@@ -84,7 +84,7 @@ To compile you will need .NET SDK 6.0 and Git.
 
 1. Clone the repository with `git clone https://github.com/xzxADIxzx/Join-and-kill-em-together.git`
    1. Run `cd <path-to-cloned-repository>`
-2. Copy the `Local.props.example` to `Local.props`, making sure the game path is set correctly.
+2. Make sure to set the correct game path in the `Path.props` file.
 3. Compile the mod with `dotnet build`
 4. At the output you will get the **Jaket.dll** file, which will be located in the `bin\Debug\netstandard2.0` folder.
    1. Copy this file to the mods folder.
