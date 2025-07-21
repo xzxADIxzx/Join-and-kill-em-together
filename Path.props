@@ -1,0 +1,19 @@
+<Project>
+
+  <PropertyGroup>
+
+    <!-- Windows -->
+    <!-- C:/Program Files (x86)/Steam/steamapps/common/ULTRAKILL -->
+
+    <!-- Linux -->
+    <!-- $(HOME)/.local/share/Steam/steamapps/common/ULTRAKILL -->
+
+    <!-- either choose an option above or find the path yourself -->
+    <!-- put it inside the GamePath similar to how it's done in the ManagedPath -->
+
+    <GamePath></GamePath>
+    <ManagedPath>$(GamePath)/ULTRAKILL_Data/Managed</ManagedPath>
+
+  </PropertyGroup>
+
+</Project>
