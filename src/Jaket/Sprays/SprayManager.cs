@@ -13,16 +13,16 @@ using Jaket.IO;
 public class SprayManager
 {
     /// <summary> Spray currently selected by the local player. </summary>
-    public static SprayFile CurrentSpray;
+    public static SprayImage CurrentSpray;
     /// <summary> Other sprays located in the sprays folder. </summary>
-    public static List<SprayFile> Loaded = new();
+    public static List<SprayImage> Loaded = new();
     /// <summary> Whether the current spray has been uploaded. </summary>
     public static bool Uploaded;
 
     /// <summary> Sprays spawned by players. </summary>
     public static Dictionary<uint, Spray> Sprays = new();
     /// <summary> Cached sprays of other players. </summary>
-    public static Dictionary<uint, SprayFile> Cache = new();
+    public static Dictionary<uint, SprayImage> Cache = new();
 
     /// <summary> Sound that is played when creating a spray. </summary>
     public static AudioClip puh;
@@ -59,13 +59,13 @@ public class SprayManager
         Loaded.Clear();
 
         Files.MakeDir(Files.Sprays);
-        Files.IterAll(f => Loaded.Add(new(f)), Files.Sprays, SprayFile.SUPPORTED.Split('#'));
+        Files.IterAll(f => Loaded.Add(new(f)), Files.Sprays, SprayImage.SUPPORTED.Split('#'));
 
         Log.Info($"Loaded {Loaded.Count} sprays: {string.Join(", ", Loaded.ConvertAll(s => s.Name))}");
     }
 
     /// <summary> Sets the current spray. </summary>
-    public static void SetSpray(SprayFile spray)
+    public static void SetSpray(SprayImage spray)
     {
         CurrentSpray = spray;
         Uploaded = false;

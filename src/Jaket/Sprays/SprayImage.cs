@@ -4,15 +4,15 @@ using UnityEngine;
 
 using Jaket.IO;
 
-/// <summary> Represents a spray stored in either memory or a local file. </summary>
-public class SprayFile
+/// <summary> Represents a titled image stored in memory. </summary>
+public class SprayImage
 {
-    /// <summary> Maximum size in bytes. If the image is bigger, it won't be loaded. </summary>
+    /// <summary> If an image is bigger, it won't be loaded to memory. </summary>
     public const int MAX_IMAGE_SIZE = 512 * 1024;
     /// <summary> List of supported image extensions. </summary>
     public const string SUPPORTED = "*.png#*.jpg#*.jpeg";
 
-    /// <summary> Name of the file and its path. </summary>
+    /// <summary> Name of the image and its path. </summary>
     public readonly string Name, Path;
 
     /// <summary> Short version of the file name. </summary>
@@ -24,25 +24,25 @@ public class SprayFile
     public byte[] Data => data ??= Files.ReadBytes(Path);
 
     private Sprite sprite;
-    public Sprite Sprite => sprite ??= LoadSprite(Data);
+    public Sprite Sprite => sprite ??= MakeSprite(Data);
 
-    /// <summary> Converts the given data into a sprite. </summary>
-    public static Sprite LoadSprite(byte[] data)
+    /// <summary> Creates a sprite from the given data. </summary>
+    public static Sprite MakeSprite(byte[] data)
     {
         Texture2D tex = new(2, 2) { filterMode = FilterMode.Point };
         tex.LoadImage(data);
         return Sprite.Create(tex, new(0f, 0f, tex.width, tex.height), Vector2.zero, 256f);
     }
 
-    public SprayFile(string path)
+    public SprayImage(string path)
     {
         Name = Files.Name(path);
         Path = path;
     }
 
-    public SprayFile(byte[] data)
+    public SprayImage(byte[] data)
     {
-        Name = Path = "Net";
+        Name = Path = "NETWORK";
         this.data = data;
     }
 }
