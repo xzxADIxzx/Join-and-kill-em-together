@@ -28,10 +28,10 @@ public enum PacketType : byte
     /// <summary> A player sprayed something. </summary>
     Spray,
 
-    /// <summary> Image chunk from the sprayer. </summary>
+    /// <summary> Initiates loading of the image selected by a player. </summary>
+    ImageHeader,
+    /// <summary> Contains a chunk of the image data to be delivered. </summary>
     ImageChunk,
-    /// <summary> Player asked the host to give him someone's spray data. </summary>
-    RequestImage,
 
     /// <summary> Need to activate a certain object. It can be anything, because there are a lot of different stuff in the game. </summary>
     ActivateObject,
