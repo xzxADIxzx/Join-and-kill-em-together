@@ -87,6 +87,19 @@ public static class SprayDistributor
         if (Version.DEBUG) Log.Debug($"[SPRY] Downloaded {s.Chunks.Progress * 100f:0.00}% of a spray owner by {s.Owner}");
     });
 
+    /// <summary> Removes all of the streams of the given member. </summary>
+    public static void Remove(uint? owner = null)
+    {
+        for (int i = 0; i < uploads.Length; i++)
+        {
+            if (owner == null || uploads[i].Owner == owner) uploads[i] = default;
+        }
+        for (int i = 0; i < downloads.Length; i++)
+        {
+            if (owner == null || downloads[i].Owner == owner) downloads[i] = default;
+        }
+    }
+
     /// <summary> Stream that is either uploading or downloading an image. </summary>
     public struct Stream
     {
@@ -100,7 +113,7 @@ public static class SprayDistributor
         public Connection Target;
 
         /// <summary> Whether the streaming process is completed or interrupted. </summary>
-        public readonly bool Done => Chunks == null || Chunks.Progress >= 1f || !LobbyController.Contains(Owner);
+        public readonly bool Done => Chunks == null || Chunks.Progress >= 1f;
     }
 
     /// <summary> Table that controls an uploading or downloading process. </summary>
