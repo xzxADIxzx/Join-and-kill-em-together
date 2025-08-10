@@ -4,106 +4,76 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Jaket.Assets;
+using Jaket.IO;
 using Jaket.Net;
 using Jaket.UI.Dialogs;
-using Jaket.UI.Elements;
-using Jaket.IO;
 
-/// <summary> Saves sprays of players and loads sprays of the local player. </summary>
-public class SprayManager
+/// <summary> Class responsible for managing spray images. </summary>
+public static class SprayManager
 {
-    /// <summary> Spray currently selected by the local player. </summary>
-    public static SprayImage CurrentSpray;
-    /// <summary> Other sprays located in the sprays folder. </summary>
-    public static List<SprayImage> Loaded = new();
-    /// <summary> Whether the current spray has been uploaded. </summary>
-    public static bool Uploaded;
+    /// <summary> Images of the local player. </summary>
+    public static List<SprayImage> Local = new();
+    /// <summary> Images of the remote players. </summary>
+    public static Dictionary<uint, SprayImage> Remote = new();
 
-    /// <summary> Sprays spawned by players. </summary>
-    public static Dictionary<uint, Spray> Sprays = new();
-    /// <summary> Cached sprays of other players. </summary>
-    public static Dictionary<uint, SprayImage> Cache = new();
+    /// <summary> Image chosen by the local player. </summary>
+    public static SprayImage Selected, Uploaded;
+    /// <summary> Sound played by new spray elements. </summary>
+    public static AudioClip Puh;
 
-    /// <summary> Sound that is played when creating a spray. </summary>
-    public static AudioClip puh;
-
-    /// <summary> Subscribes to various events to synchronize sprays or clear cache. </summary>
+    /// <summary> Loads spray images of the local player. </summary>
     public static void Load()
     {
-        LoadSprayFiles();
-        SpraySettings.Load();
-
-        ResFind<AudioClip>().Each(clip => clip.name == "Explosion Harmless", clip => puh = clip);
-
-        // clear the cache in offline game & upload the current spray if it was changed
-        Events.OnLoad += () =>
-        {
-            if (LobbyController.Offline) Cache.Clear();
-            else SprayDistributor.UploadLocal();
-
-            foreach (var spray in Sprays.Values)
-                if (spray != null) spray.Lifetime = 60f;
-        };
-        Events.OnLobbyEnter += () =>
-        {
-            Uploaded = LobbyController.IsOwner;
-            Cache.Clear();
-            Cache.Add(AccId, CurrentSpray);
-        };
-        Events.EveryHalf += SprayDistributor.ProcessRequests;
-    }
-
-    /// <summary> Loads sprays from the sprays folder. </summary>
-    public static void LoadSprayFiles()
-    {
-        Loaded.Clear();
+        Local.Clear();
 
         Files.MakeDir(Files.Sprays);
-        Files.IterAll(f => Loaded.Add(new(f)), Files.Sprays, SprayImage.SUPPORTED.Split('#'));
+        Files.IterAll(f => Local.Add(new(f)), Files.Sprays, SprayImage.SUPPORTED.Split('#'));
 
-        Log.Info($"Loaded {Loaded.Count} sprays: {string.Join(", ", Loaded.ConvertAll(s => s.Name))}");
+        Log.Info($"[SPRY] Loaded {Local.Count} sprays: {string.Join(", ", Local.ConvertAll(s => s.Name))}");
+
+        // this method may be called multiple times to refresh the local images
+        if (Puh) return;
+
+        GameAssets.Sound("Impacts/Explosion Harmless.wav", c => Puh = c);
+        SpraySettings.Load();
+
+        Events.OnLobbyEnter += () => Uploaded = null;
+        Events.OnLoad += () =>
+        {
+            if (Uploaded == null && Selected != null && !LobbyController.IsOwner)
+            {
+                Uploaded = Selected;
+                SprayDistributor.Upload(AccId, Selected, Networking.Client.Manager.Connection);
+            }
+        };
+        Events.OnMemberJoin += m =>
+        {
+            if (LobbyController.IsOwner) ; // TODO add member to the upload queue
+        };
+
+        Events.OnLobbyEnter += () =>
+        {
+            Remote.Clear();
+            SprayDistributor.Remove();
+        };
+        Events.OnMemberLeave += m =>
+        {
+            Remote.Remove(m.Id.AccountId);
+            SprayDistributor.Remove(m.Id.AccountId);
+        };
+        Events.EveryTick += SprayDistributor.ProcessUploads;
     }
 
-    /// <summary> Sets the current spray. </summary>
-    public static void SetSpray(SprayImage spray)
+    /// <summary> Finds spray image of the given member. </summary>
+    public static SprayImage Find(uint owner)
     {
-        CurrentSpray = spray;
-        Uploaded = false;
-
-        Cache.Remove(AccId);
-        Cache.Add(AccId, CurrentSpray);
-    }
-
-    /// <summary> Spawns someone's spray in the given position. </summary>
-    public static Spray Spawn(uint owner, Vector3 position, Vector3 direction)
-    {
-        if (Sprays.TryGetValue(owner, out var spray))
+        if (owner == AccId && Selected == null)
         {
-            spray.Lifetime = 58f;
-            Sprays.Remove(owner);
-        }
-        if (!Cache.ContainsKey(owner))
-        {
-            if (owner == AccId) // seems like the player is in offline game
-                Cache.Add(owner, CurrentSpray);
-            else
-                SprayDistributor.Request(owner);
-        }
-
-        spray = Spray.Spawn(owner, position, direction);
-        Sprays.Add(owner, spray);
-
-        return spray;
-    }
-
-    /// <summary> Spawns the local player's spray in the given position. </summary>
-    public static Spray Spawn(Vector3 position, Vector3 direction)
-    {
-        if (CurrentSpray == null)
-        {
-            Bundle.Hud("sprays.empty"); // You haven't chosen a spray. Please, choose on in settings.
+            Bundle.Hud("sprays.nospray");
             return null;
         }
-        return Spawn(AccId, position, direction);
+        if (Administration.Hidden.Contains(owner) || !SpraySettings.Enabled) return null;
+
+        return owner == AccId ? Selected : Remote.TryGetValue(owner, out var s) ? s : null;
     }
 }
