@@ -9,7 +9,7 @@ using Jaket.UI;
 using Jaket.UI.Dialogs;
 
 /// <summary> List of chat commands used by the mod. </summary>
-public class Commands
+public static class Commands
 {
     static Chat chat => UI.Chat;
 

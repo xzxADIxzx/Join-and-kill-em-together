@@ -8,7 +8,7 @@ using Jaket.Content;
 using Jaket.Net.Types;
 
 /// <summary> List of all living coins and methods for finding targets. </summary>
-public class Coins
+public static class Coins
 {
     static Transform cc => CameraController.Instance.transform;
 

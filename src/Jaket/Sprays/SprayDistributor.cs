@@ -8,7 +8,7 @@ using Jaket.IO;
 using Jaket.Net;
 
 /// <summary> Class responsible for distributing spray images between clients. </summary>
-public class SprayDistributor
+public static class SprayDistributor
 {
     /// <summary> Size of the payload of image delivering packets. </summary>
     public const int CHUNK_SIZE = 1024;

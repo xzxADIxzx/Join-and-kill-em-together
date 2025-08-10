@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 
 /// <summary> Loader that manages the assets of the game. </summary>
-public class GameAssets
+public static class GameAssets
 {
     #region loading
 

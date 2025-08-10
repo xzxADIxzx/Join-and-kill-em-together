@@ -6,7 +6,7 @@ using UnityEngine;
 using Jaket.Assets;
 
 /// <summary> Class responsible for saving purchases in the mod shop. </summary>
-public class Shop
+public static class Shop
 {
     /// <summary> Path to the file in which the purchases are saved. </summary>
     public static string SavePath => Files.Join(GameProgressSaver.SavePath, "customization.bepis");

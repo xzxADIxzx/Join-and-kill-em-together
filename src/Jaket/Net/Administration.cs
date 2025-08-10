@@ -3,7 +3,7 @@ namespace Jaket.Net;
 using System.Collections.Generic;
 
 /// <summary> Class dedicated to protecting the lobby from unfavorable people. </summary>
-public class Administration
+public static class Administration
 {
     /// <summary> Max amount of bytes a player can send per second. </summary>
     public const int SPAM_RATE = 32 * 1024;

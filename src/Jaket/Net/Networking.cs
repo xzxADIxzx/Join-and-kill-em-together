@@ -15,7 +15,7 @@ using Jaket.UI;
 using Jaket.UI.Dialogs;
 
 /// <summary> Class responsible for updating endpoints, transmitting packets and managing entities. </summary>
-public class Networking
+public static class Networking
 {
     /// <summary> Number of snapshots to be sent per second. </summary>
     public const int TICKS_PER_SECOND = 15;
