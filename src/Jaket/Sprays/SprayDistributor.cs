@@ -1,130 +1,118 @@
 namespace Jaket.Sprays;
 
 using Steamworks.Data;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using UnityEngine;
 
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net;
-using Jaket.UI.Dialogs;
 
-/// <summary> Class responsible for distributing sprays between clients. </summary>
-public static class SprayDistributor
+/// <summary> Class responsible for distributing spray images between clients. </summary>
+public class SprayDistributor
 {
-    /// <summary> Size of the packet that contains an image chunk. </summary>
-    public const int CHUNK_SIZE = 512;
+    /// <summary> Size of the payload of image delivering packets. </summary>
+    public const int CHUNK_SIZE = 1024;
 
-    /// <summary> List of all streams for spray loading. </summary>
-    public static Dictionary<uint, Writer> Streams = new();
-    /// <summary> List of requests for spray by id. </summary>
-    public static Dictionary<uint, List<Connection>> Requests = new();
+    /// <summary> List of streams that upload images. </summary>
+    private static Stream[] uploads = new Stream[16];
+    /// <summary> List of streams that download images. </summary>
+    private static Stream[] downloads = new Stream[16];
 
-    /// <summary> Whether the downloading progress must be logged. </summary>
-    public static bool Debug;
-
-    #region distribution logic
-
-    /// <summary> Processes all spray requests. </summary>
-    public static void ProcessRequests()
+    /// <summary> Initializes an uploading of an image. </summary>
+    public static void Upload(uint owner, SprayImage image, Connection target)
     {
-        foreach (var owner in Requests.Keys)
-        {
-            if (SprayManager.Cache.TryGetValue(owner, out var spray))
-                Upload(owner, spray.Data, (data, size) => Requests[owner].ForEach(con => Networking.Send(con, data, size)));
-            else
-                Log.Error($"[SPRY] Couldn't find the requested spray; the spray id is {owner}");
-        }
-
-        Requests.Clear(); // clear all requests, because they are processed
-    }
-
-    /// <summary> Handles the downloaded spray and decides where to send it next. </summary>
-    public static void HandleSpray(uint owner, byte[] data)
-    {
-        SprayManager.Cache.Remove(owner);
-        SprayManager.Cache.Add(owner, new(data));
-
-        // update the existing spray if there is one
-        if (SprayManager.Sprays.TryGetValue(owner, out var spray)) spray.UpdateSprite();
-    }
-
-    /// <summary> Requests someone's spray from the host. </summary>
-    public static void Request(uint owner) => Networking.Send(PacketType.RequestImage, 4, w => w.Id(owner));
-
-    #endregion
-    #region networking
-
-    /// <summary> Uploads the given spray to the clients or server. </summary>
-    public static void Upload(uint owner, byte[] data, Cons<Ptr, int> result = null)
-    {
-        // initialize a new stream
-        Networking.Send(PacketType.ImageChunk, 9, w =>
+        Networking.Send(PacketType.ImageHeader, 8, w =>
         {
             w.Id(owner);
-            w.Bool(true);
-            w.Int(data.Length);
-        }, result);
+            w.Int(image.Data.Length);
+        },
+        (data, size) => Networking.Send(target, data, size));
 
-        // send data over the stream
-        for (int i = 0; i < data.Length; i += CHUNK_SIZE) Networking.Send(PacketType.ImageChunk, CHUNK_SIZE + 5, w =>
+        for (int i = 0; i < uploads.Length; i++)
         {
-            w.Id(owner);
-            w.Bool(false);
-            w.Bytes(data, i, Mathf.Min(CHUNK_SIZE, data.Length - i));
-        }, result);
-    }
-
-    /// <summary> Uploads the current spray to the server. </summary>
-    public static void UploadLocal()
-    {
-        // there is no point in sending the spray to the distributor if you haven't changed it
-        if (SprayManager.Uploaded || SprayManager.CurrentSpray == null) return;
-        Log.Info("[SPRY] Uploading the current spray...");
-
-        Upload(AccId, SprayManager.CurrentSpray.Data);
-        SprayManager.Uploaded = true;
-    }
-
-    /// <summary> Loads a spray from the client or server. </summary>
-    public static void Download(Reader r)
-    {
-        if (!SpraySettings.Enabled) return;
-
-        var id = r.Id(); // id of the spray owner
-        if (r.Bool()) // initial packet
-        {
-            if (Streams.TryGetValue(id, out var stream))
+            if (uploads[i].Owner == owner || uploads[i].Done)
             {
-                Log.Warning("[SPRY] Overriding the old stream");
-                Marshal.FreeHGlobal(stream.mem);
+                uploads[i] = default(Stream) with { Owner = owner, Image = image, Target = target, Chunks = new(image.Data.Length) };
+                break;
             }
-            Log.Info("[SPRY] Downloading spray#" + id);
-
-            int length = r.Int();
-            Streams[id] = new(Marshal.AllocHGlobal(length), length);
         }
-        else // data packet
-        {
-            if (!Streams.TryGetValue(id, out var stream))
-            {
-                Log.Error("[SPRY] Stream's initial packet was lost!");
-                return;
-            }
-
-            stream.Bytes(r.Bytes(r.Length - 6));
-            if (stream.Position >= stream.Length)
-            {
-                // handle the downloaded spray
-                Reader.Read(stream.mem, stream.Length, r => HandleSpray(id, r.Bytes(r.Length)));
-
-                Marshal.FreeHGlobal(stream.mem);
-                Streams.Remove(id);
-            }
-            if (Debug) Log.Debug($"[SPRY] Downloaded {100f * stream.Position / stream.Length:0.00}%");
-        }
+        if (Version.DEBUG) Log.Debug($"[SPRY] Uploading a spray owner by {owner}");
     }
 
-    #endregion
+    /// <summary> Initializes a downloading of an image. </summary>
+    public static void Download(uint owner, int bytesCount)
+    {
+        if (bytesCount > SprayImage.MAX_IMAGE_SIZE && LobbyController.IsOwner)
+        {
+            Administration.Ban(owner);
+            Log.Warning($"[SPRY] {owner} was blocked: enormous spray");
+        }
+        else if (bytesCount > SprayImage.MAX_IMAGE_SIZE) return;
+
+        for (int i = 0; i < downloads.Length; i++)
+        {
+            if (downloads[i].Owner == owner || downloads[i].Done)
+            {
+                downloads[i] = default(Stream) with { Owner = owner, Image = new(new byte[bytesCount]), Chunks = new(bytesCount) };
+                break;
+            }
+        }
+        if (Version.DEBUG) Log.Debug($"[SPRY] Downloading a spray owner by {owner}");
+    }
+
+    /// <summary> Processes all of the upload streams. </summary>
+    public static void ProcessUploads() => uploads.Each(s => !s.Done, s =>
+    {
+        int bytesCount = s.Chunks.BytesCount;
+
+        Networking.Send(PacketType.ImageChunk, bytesCount + 4, w =>
+        {
+            w.Id(s.Owner);
+            w.Bytes(s.Image.Data, s.Chunks.Processed, bytesCount);
+        },
+        (data, size) => Networking.Send(s.Target, data, size));
+
+        s.Chunks.Processed += bytesCount;
+
+        if (Version.DEBUG) Log.Debug($"[SPRY] Uploaded {s.Chunks.Progress * 100f:0.00}% of a spray owner by {s.Owner}");
+    });
+
+    /// <summary> Processes a download stream of the given member. </summary>
+    public static void ProcessDownload(uint owner, int bytesCount, Reader r) => downloads.Each(s => !s.Done && s.Owner == owner, s =>
+    {
+        r.Bytes(s.Image.Data, s.Chunks.Processed, bytesCount);
+
+        s.Chunks.Processed += bytesCount;
+
+        if (Version.DEBUG) Log.Debug($"[SPRY] Downloaded {s.Chunks.Progress * 100f:0.00}% of a spray owner by {s.Owner}");
+    });
+
+    /// <summary> Stream that is either uploading or downloading an image. </summary>
+    public struct Stream
+    {
+        /// <summary> Identifier of the player who owns the spray image. </summary>
+        public uint Owner;
+        /// <summary> Image itself that is being streamed over the network. </summary>
+        public SprayImage Image;
+        /// <summary> Table counting proccessed chunks of the spray image. </summary>
+        public ChunkTable Chunks;
+        /// <summary> Endpoint to upload the spray image to, may be null. </summary>
+        public Connection Target;
+
+        /// <summary> Whether the streaming process is completed or interrupted. </summary>
+        public readonly bool Done => Chunks == null || Chunks.Progress >= 1f || !LobbyController.Contains(Owner);
+    }
+
+    /// <summary> Table that controls an uploading or downloading process. </summary>
+    public class ChunkTable
+    {
+        /// <summary> Size of the image and the amount of processed bytes. </summary>
+        public int ImageSize, Processed;
+        /// <summary> Size of the chunk to be processed on the next subtick. </summary>
+        public int BytesCount => Mathf.Min(CHUNK_SIZE, ImageSize - Processed);
+        /// <summary> Ratio of processed bytes to the image size. </summary>
+        public float Progress => (float)Processed / ImageSize;
+
+        public ChunkTable(int size) => ImageSize = size;
+    }
 }

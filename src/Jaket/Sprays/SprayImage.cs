@@ -18,7 +18,7 @@ public class SprayImage
     /// <summary> Short version of the file name. </summary>
     public string Short => Name.Length < 22 ? Name : $"{Name[..18]}...";
     /// <summary> Whether the image fits the maximum size. </summary>
-    public bool Valid => Files.Exists(Path) && Files.Size(Path) < MAX_IMAGE_SIZE;
+    public bool Valid => Files.Exists(Path) && Files.Size(Path) <= MAX_IMAGE_SIZE;
 
     private byte[] data;
     public byte[] Data => data ??= Files.ReadBytes(Path);
