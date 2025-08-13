@@ -18,6 +18,9 @@ public static class SprayDistributor
     /// <summary> List of streams that download images. </summary>
     private static Stream[] downloads = new Stream[16];
 
+    /// <summary> Whether the distributor is busy uploading or downloading images. </summary>
+    public static bool Busy => uploads.Any(s => !s.Done) || downloads.Any(s => !s.Done);
+
     /// <summary> Initializes an uploading of an image. </summary>
     public static void Upload(uint owner, SprayImage image, Connection target)
     {

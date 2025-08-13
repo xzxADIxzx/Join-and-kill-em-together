@@ -40,15 +40,12 @@ public static class SprayManager
         Events.OnLobbyEnter += () => Uploaded = null;
         Events.OnLoad += () =>
         {
-            if (Uploaded == null && Selected != null && !LobbyController.IsOwner)
-            {
-                Uploaded = Selected;
-                SprayDistributor.Upload(AccId, Selected, Networking.Client.Manager.Connection);
-            }
+            if (!LobbyController.IsOwner && Uploaded == null && Selected != null)
+                SprayDistributor.Upload(AccId, Uploaded = Selected, Networking.Client.Manager.Connection);
         };
         Events.OnMemberJoin += m =>
         {
-            if (LobbyController.IsOwner) ; // TODO add member to the upload queue
+            if (LobbyController.IsOwner) Upload(m.Id.AccountId);
         };
 
         Events.OnLobbyEnter += () =>
@@ -75,5 +72,20 @@ public static class SprayManager
         if (Administration.Hidden.Contains(owner) || !SpraySettings.Enabled) return null;
 
         return owner == AccId ? Selected : Remote.TryGetValue(owner, out var s) ? s : null;
+    }
+
+    /// <summary> Uploads all sprays to the given member. </summary>
+    public static void Upload(uint target)
+    {
+        if (SprayDistributor.Busy || Networking.Connections.All(c => c.ConnectionName != target.ToString()))
+        {
+            Events.Post2(() => Upload(target));
+            return;
+        }
+        var con = Networking.Connections.Find(c => c.ConnectionName == target.ToString());
+
+        if (Selected != null) SprayDistributor.Upload(AccId, Selected, con);
+
+        Remote.Each(p => SprayDistributor.Upload(p.Key, p.Value, con));
     }
 }
