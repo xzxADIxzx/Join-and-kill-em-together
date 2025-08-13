@@ -83,11 +83,15 @@ public static class SprayDistributor
     /// <summary> Processes a download stream of the given member. </summary>
     public static void ProcessDownload(uint owner, int bytesCount, Reader r) => downloads.Each(s => !s.Done && s.Owner == owner, s =>
     {
+        if (bytesCount != s.Chunks.BytesCount) return; // something went wrong
+
         r.Bytes(s.Image.Data, s.Chunks.Processed, bytesCount);
 
         s.Chunks.Processed += bytesCount;
 
         if (Version.DEBUG) Log.Debug($"[SPRY] Downloaded {s.Chunks.Progress * 100f:0.00}% of a spray owner by {s.Owner}");
+
+        if (s.Done) SprayManager.Remote[s.Owner] = s.Image;
     });
 
     /// <summary> Removes all of the streams of the given member. </summary>
@@ -116,7 +120,7 @@ public static class SprayDistributor
         public Connection Target;
 
         /// <summary> Whether the streaming process is completed or interrupted. </summary>
-        public readonly bool Done => Chunks == null || Chunks.Progress >= 1f;
+        public readonly bool Done => Chunks == null || Chunks.Processed == Chunks.ImageSize;
     }
 
     /// <summary> Table that controls an uploading or downloading process. </summary>
