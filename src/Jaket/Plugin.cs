@@ -78,6 +78,8 @@ public class Plugin : MonoBehaviour
         Create<Emotes>("Emotes");
         Create<Movement>("Movement");
 
+        SprayManager.Load();
+
         Log.Info("[INIT] Running postinit hooks...");
 
         Version.Check4Updates();
@@ -101,6 +103,5 @@ public class Plugin : MonoBehaviour
         World.World.Load();
         WorldActionsList.Load();
         Votes.Load();
-        SprayManager.Load();
     }
 }

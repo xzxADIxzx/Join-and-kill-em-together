@@ -64,8 +64,18 @@ public class Server : Endpoint, ISocketManager
             if (ents[sender] is RemotePlayer p && Redirect(r, s, con, sender))
             {
                 if (p.Spray) p.Spray.Lifetime = 58f;
-                p.Spray = null; // TODO remake spray manager
+                p.Spray = Spray.Spawn(r.Vector(), r.Vector(), p);
             }
+        });
+
+        Listen(PacketType.ImageHeader, (con, sender, r, s) =>
+        {
+            if (Redirect(r, s, con, sender)) SprayDistributor.Download(sender, r.Int());
+        });
+
+        Listen(PacketType.ImageChunk, (con, sender, r, s) =>
+        {
+            if (Redirect(r, s, con, sender)) SprayDistributor.ProcessDownload(sender, s - 5, r);
         });
 
         /*
@@ -98,37 +108,6 @@ public class Server : Endpoint, ISocketManager
         });
 
         ListenAndRedirect(PacketType.Spray, r => SprayManager.Spawn(r.Id(), r.Vector(), r.Vector()));
-
-        Listen(PacketType.ImageChunk, (con, sender, r, s) =>
-        {
-            var owner = r.Id(); r.Position = 1; // extract the spray owner
-
-            // prevent an attempt to overwrite someone else's spray, because this can lead to tragic consequences
-            if (sender != owner)
-            {
-                Administration.Ban(sender);
-                Log.Warning($"[Server] {sender} was blocked due to an attempt to overwrite someone else's spray");
-            }
-            else
-            {
-                SprayDistributor.Download(r);
-                Redirect(r, s, con);
-            }
-        });
-
-        Listen(PacketType.RequestImage, (con, sender, r, s) =>
-        {
-            var owner = r.Id();
-            if (SprayDistributor.Requests.TryGetValue(owner, out var list)) list.Add(con);
-            else
-            {
-                list = new();
-                list.Add(con);
-                SprayDistributor.Requests.Add(owner, list);
-            }
-
-            Log.Debug($"[Server] Got an image request for spray#{owner}. Count: {list.Count}");
-        });
 
         ListenAndRedirect(PacketType.ActivateObject, World.ReadAction);
 

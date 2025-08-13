@@ -62,8 +62,18 @@ public class Client : Endpoint, IConnectionManager
             if (ents[r.Id()] is RemotePlayer p)
             {
                 if (p.Spray) p.Spray.Lifetime = 58f;
-                p.Spray = null; // TODO remake spray manager
+                p.Spray = Spray.Spawn(r.Vector(), r.Vector(), p);
             }
+        });
+
+        Listen(PacketType.ImageHeader, r =>
+        {
+            SprayDistributor.Download(r.Id(), r.Int());
+        });
+
+        Listen(PacketType.ImageChunk, (con, sender, r, s) =>
+        {
+            SprayDistributor.ProcessDownload(r.Id(), s - 5, r);
         });
 
         /*
@@ -78,8 +88,6 @@ public class Client : Endpoint, IConnectionManager
         });
 
         Listen(PacketType.Spray, r => SprayManager.Spawn(r.Id(), r.Vector(), r.Vector()));
-
-        Listen(PacketType.ImageChunk, SprayDistributor.Download);
 
         Listen(PacketType.ActivateObject, World.ReadAction);
 
