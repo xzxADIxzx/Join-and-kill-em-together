@@ -27,7 +27,7 @@ public class Point : MonoBehaviour
 
     /// <summary> Components that the point is made of. </summary>
     private RectTransform circle1, circle2, diamond;
-    /// <summary> How many seconds has the pointer existed. </summary>
+    /// <summary> How many seconds has the point existed. </summary>
     public float Lifetime;
 
     /// <summary> Spawns a point at the given position. </summary>

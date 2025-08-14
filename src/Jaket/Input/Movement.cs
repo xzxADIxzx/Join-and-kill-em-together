@@ -82,7 +82,7 @@ public class Movement : MonoSingleton<Movement>
             if (Keybind.Spray.Tap())
             {
                 if (spray) spray.Lifetime = 58f;
-                spray = SprayManager.Spawn(hit.point, hit.normal);
+                spray = Spray.Spawn(hit.point, hit.normal, Networking.LocalPlayer.Team);
             }
             if (LobbyController.Online) Networking.Send(Keybind.Point.Tap() ? PacketType.Point : PacketType.Spray, 28, w =>
             {

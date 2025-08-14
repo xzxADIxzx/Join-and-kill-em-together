@@ -263,7 +263,7 @@ public static class Builder
             c.renderMode = RenderMode.WorldSpace;
             s.uiScaleMode = ScaleMode.ConstantPixelSize;
 
-            c.sortingOrder = 1; // there's no need to move the canvas too high
+            c.sortingOrder = -1; // there's no need to move the canvas too high
             rect.localPosition = position;
             rect.localScale = Vector3.one * .002f;
 

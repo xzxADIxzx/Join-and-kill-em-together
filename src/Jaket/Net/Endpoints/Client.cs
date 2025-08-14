@@ -62,7 +62,7 @@ public class Client : Endpoint, IConnectionManager
             if (ents[r.Id()] is RemotePlayer p)
             {
                 if (p.Spray) p.Spray.Lifetime = 58f;
-                p.Spray = Spray.Spawn(r.Vector(), r.Vector(), p);
+                p.Spray = Spray.Spawn(r.Vector(), r.Vector(), p.Team, p);
             }
         });
 

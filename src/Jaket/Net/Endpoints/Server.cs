@@ -64,7 +64,7 @@ public class Server : Endpoint, ISocketManager
             if (ents[sender] is RemotePlayer p && Redirect(r, s, con, sender))
             {
                 if (p.Spray) p.Spray.Lifetime = 58f;
-                p.Spray = Spray.Spawn(r.Vector(), r.Vector(), p);
+                p.Spray = Spray.Spawn(r.Vector(), r.Vector(), p.Team, p);
             }
         });
 
