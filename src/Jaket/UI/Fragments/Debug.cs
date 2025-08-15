@@ -73,7 +73,7 @@ public class Debug : Fragment
     public override void Toggle()
     {
         base.Toggle();
-        UI.Hide(UI.LeftGroup, this, () => { });
+        UI.Hide(UI.LeftGroup, this, null);
     }
 
     public override void Rebuild()

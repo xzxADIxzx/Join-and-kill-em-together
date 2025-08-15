@@ -98,12 +98,12 @@ public static class UI
     /// <summary> Hides all of the elements in the given group except the fragment. </summary>
     public static void Hide(Fragment[] group, Fragment frag)
     {
-        group.Each(f => f.Shown && f != frag, f => f.Toggle());
         if (group == MidlGroup && Scene != "Main Menu")
         {
             OptionsManager.Instance.UnPause();
             WeaponWheel.Instance.gameObject.SetActive(false);
         }
+        group.Each(f => f.Shown && f != frag, f => f.Toggle());
     }
 
     /// <summary> Hides all of the elements in the given group and runs particular callbacks. </summary>
@@ -112,7 +112,7 @@ public static class UI
         if (frag.Shown)
         {
             Hide(group, frag);
-            shown();
+            shown?.Invoke();
         }
         Movement.UpdateState();
     }
