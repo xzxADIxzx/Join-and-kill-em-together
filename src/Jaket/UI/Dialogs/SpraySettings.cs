@@ -1,117 +1,106 @@
 namespace Jaket.UI.Dialogs;
 
-using Steamworks;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+using ImageType = UnityEngine.UI.Image.Type;
+
 using Jaket.Assets;
-using Jaket.Input;
 using Jaket.IO;
-using Jaket.Net;
 using Jaket.Sprays;
+using Jaket.UI.Lib;
 
 using static Jaket.UI.Lib.Pal;
-using static Rect;
 
-/// <summary> Global spray settings not related to the lobby. </summary>
-public class SpraySettings : CanvasSingleton<SpraySettings>
+/// <summary> Dialog that is responsible for spray options and blacklist. </summary>
+public class SpraySettings : Fragment
 {
     static PrefsManager pm => PrefsManager.Instance;
 
-    #region general
+    #region options
 
-    // <summary> Name of the currently selected spray. </summary>
+    /// <summary> Spray chosen by the player. </summary>
     public static string Current
     {
         get => pm.GetString("jaket.sprays.current");
         set => pm.SetString("jaket.sprays.current", value);
     }
-    // <summary> Whether sprays are enabled or not. </summary>
-    public static bool Enabled;
+    /// <summary> Whether sprays are enabled. </summary>
+    public static bool Enabled
+    {
+        get => pm.GetBool("jaket.sprays.enabled");
+        set => pm.SetBool("jaket.sprays.enabled", value);
+    }
 
     #endregion
 
-    /// <summary> List of the loaded sprays, whitelist and blacklist of players. </summary>
-    private RectTransform sprays, players;
-    /// <summary> Preview of the currently selected spray. </summary>
+    /// <summary> Preview of the currently selected image. </summary>
     private Image preview;
+    /// <summary> Bars displaying different spray options. </summary>
+    private Bar loaded, hidden;
 
-    /// <summary> Loads and applies all settings. </summary>
-    public static void Load()
+    public SpraySettings(Transform root) : base(root, "SpraySettings", true)
     {
-        Enabled = pm.GetBool("jaket.sprays.enabled", true);
-        var c = Current;
-        SprayManager.CurrentSpray = SprayManager.Loaded.Find(spray => spray.Name == c);
-    }
-
-    private void Start()
-    {
-        UIB.Table("Settings", "#sprays.name", transform, Size(664f, 760f), table =>
+        Bar(888f, 920f, b =>
         {
-            UIB.IconButton("X", table, Icon(304f, 28f), red, clicked: Toggle);
+            b.Setup(true);
+            b.Text("#spray.name", 32f, 32);
 
-            sprays = UIB.Rect("Sprays", table, new(-164f, -20f, 320f, 720f));
-            players = UIB.Rect("Players", table, new(164f, -20f, 320f, 720f));
-
-            preview = UIB.Image("Preview", sprays, Btn(456f) with { Height = 320f }, type: Image.Type.Filled);
-
-            UIB.Button("#sprays.refresh", sprays, Btn(644f), clicked: Refresh);
-            UIB.Button("#sprays.open", sprays, Btn(692f), clicked: OpenFolder);
-
-            UIB.Toggle("#sprays.enabled", players, Tgl(696f), 16, _ =>
+            b.Subbar(864f, s =>
             {
-                pm.SetBool("jaket.sprays.enabled", Enabled = _);
-            }).isOn = Enabled;
-        });
-        Rebuild();
-    }
-
-    private void OpenFolder() => Application.OpenURL($"file://{Files.Sprays.Replace("\\", "/")}");
-
-    // <summary> Toggles visibility of the spray settings. </summary>
-    public void Toggle()
-    {
-        // if (!Shown) UI.HideCentralGroup();
-
-        gameObject.SetActive(Shown = !Shown);
-        Movement.UpdateState();
-
-        if (Shown && transform.childCount > 0) Rebuild();
-        if (!Shown) SprayDistributor.UploadLocal();
-    }
-
-    /// <summary> Rebuilds the spray settings to update the list of sprays and players. </summary>
-    public void Rebuild()
-    {
-        #region left side
-
-        for (int i = 3; i < sprays.childCount; i++) Dest(sprays.GetChild(i).gameObject);
-        for (int i = 0; i < Mathf.Min(6, SprayManager.Loaded.Count); i++)
-        {
-            var spray = SprayManager.Loaded[i];
-            var n = " " + spray.Short;
-            var r = Btn(28f + 48f * i);
-
-            if (spray.Name == SprayManager.CurrentSpray?.Name)
-                UIB.Button(n, sprays, r, green, align: TextAnchor.MiddleLeft);
-            else if (spray.Valid)
-                UIB.Button(n, sprays, r, align: TextAnchor.MiddleLeft, clicked: () =>
+                s.Setup(false, 0f);
+                s.Subbar(432f, b =>
                 {
-                    SprayManager.SetSpray(spray);
-                    Rebuild();
+                    b.Setup(true, 0f);
 
-                    Current = spray.Name;
+                    preview = b.Image(null, 432f, white, ImageType.Filled);
+                    preview.preserveAspect = true;
+
+                    b.Subbar(328f, s =>
+                    {
+                        s.Setup(false, 0f);
+                        loaded = Component<Bar>(s.ScrollV(0f, 384f).content.gameObject, b => b.Setup(true, 0f));
+                        s.Slider(loaded.transform);
+                    });
+
+                    b.TextButton("#spray.refresh", callback: Refresh);
+                    b.TextButton("#spray.open", callback: OpenFolder);
+                });
+                s.Subbar(432f, b => (hidden = b).Setup(true, 0f));
+            });
+        });
+    }
+
+    public override void Toggle()
+    {
+        base.Toggle();
+        UI.Hide(UI.MidlGroup, this, Rebuild);
+
+        if (!Shown && SprayManager.Uploaded != SprayManager.Selected && SprayManager.Selected != null) SprayManager.UploadLocal();
+    }
+
+    public override void Rebuild()
+    {
+        preview.sprite = SprayManager.Selected != null ? SprayManager.Selected.Sprite : Tex.Mark;
+
+        loaded.Clear();
+        SprayManager.Local.Each(s =>
+        {
+            var name = " " + Bundle.CutColors(s.Short);
+
+            if (s.Name == Current)
+                loaded.FillButton(name, green, () => { });
+            else if (s.Valid)
+                loaded.TextButton(name, light, () =>
+                {
+                    SprayManager.Selected = s;
+                    Current = s.Name;
+                    Rebuild();
                 });
             else
-                UIB.Button(n, sprays, r, red, align: TextAnchor.MiddleLeft, clicked: () => Bundle.Hud("sprays.invalid"));
-        }
-        if (SprayManager.Loaded.Count < 6) UIB.Button("+", sprays, Btn(28f + 48f * SprayManager.Loaded.Count), gray, clicked: OpenFolder);
-
-        preview.sprite = SprayManager.CurrentSpray != null ? SprayManager.CurrentSpray.Sprite : UIB.Checkmark;
-        preview.preserveAspect = true;
-
-        #endregion
+                loaded.TextButton(name, red, () => Bundle.Hud("spray.toobig"));
+        });
+        /*
         #region right side
 
         for (int i = 1; i < players.childCount; i++) Dest(players.GetChild(i).gameObject);
@@ -150,12 +139,10 @@ public class SpraySettings : CanvasSingleton<SpraySettings>
         });
 
         #endregion
+        */
     }
 
-    /// <summary> Updates the list of the loaded sprays and rebuilds the menu. </summary>
-    public void Refresh()
-    {
-        SprayManager.LoadSprayFiles();
-        Rebuild();
-    }
+    public void Refresh() { SprayManager.Load(); Rebuild(); }
+
+    public void OpenFolder() => Application.OpenURL($"file://{Files.Sprays.Replace("\\", "/")}");
 }

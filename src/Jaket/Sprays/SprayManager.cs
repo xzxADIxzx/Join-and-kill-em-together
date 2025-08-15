@@ -35,12 +35,12 @@ public static class SprayManager
         if (Puh) return;
 
         GameAssets.Sound("Impacts/Explosion Harmless.wav", c => Puh = c);
-        SpraySettings.Load();
+        Selected = Local.Find(s => s.Name == SpraySettings.Current);
 
         Events.OnLobbyEnter += () => Uploaded = null;
         Events.OnLoad += () =>
         {
-            if (!LobbyController.IsOwner && Uploaded == null && Selected != null) UploadLocal();
+            if (!LobbyController.IsOwner && LobbyController.Online && Uploaded == null && Selected != null) UploadLocal();
         };
         Events.OnMemberJoin += m =>
         {

@@ -108,7 +108,7 @@ public class Settings : Fragment
             });
 
             b.Toggle("#settings.freeze", b => DisableFreezeFrames = b);
-            b.TextButton("#settings.sprays", callback: () => SpraySettings.Instance.Toggle());
+            b.TextButton("#settings.sprays", callback: () => UI.Sprays.Toggle());
         });
         Bar(552f, b =>
         {
