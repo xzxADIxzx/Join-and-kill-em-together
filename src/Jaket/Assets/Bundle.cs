@@ -79,10 +79,10 @@ public static class Bundle
 
     #region parsing
 
-    // <summary> Returns a string without Unity and Jaket formatting. </summary>
+    /// <summary> Returns a string without Unity and Jaket formatting. </summary>
     public static string CutColors(string original) => Regex.Replace(original, "<.*?>|\\[.*?\\]", string.Empty);
 
-    // <summary> Returns a string without the tags that can cause lags. </summary>
+    /// <summary> Returns a string without the tags that can cause lags. </summary>
     public static string CutDanger(string original) => Regex.Replace(original, "</?b>|</?i>|</?color.*?>|</?size.*?>|</?quad.*?>|</?material.*?>|\\\\n|\n", string.Empty);
 
     /// <summary> Parses the formatting tags in the given string so that Unity can understand them. </summary>

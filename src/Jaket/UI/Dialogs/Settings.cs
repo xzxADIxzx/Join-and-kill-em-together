@@ -46,7 +46,7 @@ public class Settings : Fragment
         get => pm.GetBool("jaket.disable-freeze", true);
         set => pm.SetBool("jaket.disable-freeze", value);
     }
-    // <summary> Percentage volume of the Sam's voice. </summary>
+    /// <summary> Percentage volume of the Sam's voice. </summary>
     public static int Volume
     {
         get => pm.GetInt("jaket.tts.volume", 60);
