@@ -3,10 +3,8 @@ namespace Jaket.World;
 using System.Collections.Generic;
 using UnityEngine.UI;
 
-using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net;
-using Jaket.UI.Elements;
 
 /// <summary> Class that manages voting for the skip of a cutscene or an option at 2-S. </summary>
 public class Votes
@@ -14,7 +12,7 @@ public class Votes
     /// <summary> Voted players' ids and their votes. </summary>
     public static Dictionary<uint, byte> Ids2Votes = new();
     /// <summary> Current voting taking all updates. </summary>
-    public static Voting CurrentVoting;
+    // public static Voting CurrentVoting;
 
     /// <summary> Loads the vote system. </summary>
     public static void Load()
@@ -30,7 +28,7 @@ public class Votes
     public static void Init()
     {
         if (Scene == "Level 2-S") Init2S();
-        ResFind<CutsceneSkip>().Each(IsReal, cs => cs.gameObject.AddComponent<Voting>());
+        // ResFind<CutsceneSkip>().Each(IsReal, cs => cs.gameObject.AddComponent<Voting>());
     }
 
     /// <summary> Votes for the given option. </summary>
@@ -44,7 +42,7 @@ public class Votes
     public static void UpdateVote(uint owner, byte vote)
     {
         Ids2Votes[owner] = vote;
-        CurrentVoting?.Invoke("UpdateVotes", 0f);
+        // CurrentVoting?.Invoke("UpdateVotes", 0f);
     }
 
     /// <summary> Counts the amount of votes for the given option. </summary>
@@ -55,6 +53,7 @@ public class Votes
     /// <summary> Replaces Mirage with Vermicelli, patches buttons and other minor stuff. </summary>
     public static void Init2S()
     {
+        /*
         var fallen = ObjFind("Canvas/PowerUpVignette/Panel/Aspect Ratio Mask/Fallen");
         for (int i = 0; i < 4; i++)
             fallen.transform.GetChild(i).GetComponent<Image>().sprite = ModAssets.ChanFallen;
@@ -81,6 +80,7 @@ public class Votes
 
         fix.events = new() { onActivate = new() };
         fix.events.onActivate.AddListener(() => fix.GetComponent<Voting>().enabled = true);
+        */
     }
 
     /// <summary> Changes the name of the character to Vermicelli. </summary>
