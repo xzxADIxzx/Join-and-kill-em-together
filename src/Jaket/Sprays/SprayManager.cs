@@ -66,7 +66,7 @@ public static class SprayManager
     {
         if (owner == AccId && Selected == null)
         {
-            Bundle.Hud("sprays.nospray");
+            Bundle.Hud("spray.choose");
             return null;
         }
         if (Administration.Hidden.Contains(owner) || !SpraySettings.Enabled) return null;

@@ -14,9 +14,9 @@ public static class SprayDistributor
     public const int CHUNK_SIZE = 1024;
 
     /// <summary> List of streams that upload images. </summary>
-    private static Stream[] uploads = new Stream[16];
+    private static Stream[] uploads = new Stream[10];
     /// <summary> List of streams that download images. </summary>
-    private static Stream[] downloads = new Stream[16];
+    private static Stream[] downloads = new Stream[10];
 
     /// <summary> Whether the distributor is busy uploading or downloading images. </summary>
     public static bool Busy => uploads.Any(s => !s.Done) || downloads.Any(s => !s.Done);
