@@ -40,8 +40,7 @@ public static class SprayManager
         Events.OnLobbyEnter += () => Uploaded = null;
         Events.OnLoad += () =>
         {
-            if (!LobbyController.IsOwner && Uploaded == null && Selected != null)
-                SprayDistributor.Upload(AccId, Uploaded = Selected, Networking.Client.Manager.Connection);
+            if (!LobbyController.IsOwner && Uploaded == null && Selected != null) UploadLocal();
         };
         Events.OnMemberJoin += m =>
         {
@@ -87,5 +86,19 @@ public static class SprayManager
         if (Selected != null) SprayDistributor.Upload(AccId, Selected, con);
 
         Remote.Each(p => SprayDistributor.Upload(p.Key, p.Value, con));
+    }
+
+    /// <summary> Uploads the selected spray to all members. </summary>
+    public static void UploadLocal()
+    {
+        if (SprayDistributor.Busy)
+        {
+            Events.Post2(UploadLocal);
+            return;
+        }
+        if (LobbyController.IsOwner)
+            Networking.Connections.Each(c => SprayDistributor.Upload(AccId, Uploaded = Selected, c));
+        else
+            SprayDistributor.Upload(AccId, Uploaded = Selected, Networking.Client.Manager.Connection);
     }
 }
