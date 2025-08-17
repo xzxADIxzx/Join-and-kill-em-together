@@ -42,7 +42,7 @@ public abstract class Endpoint
     public void Redirect(Reader data, int size, Connection ignore) => Networking.Connections.Each(c => c != ignore, c => Networking.Send(c, data.Memory, size));
 
     /// <summary> Verifies the identifier and then forwards. </summary>
-    public bool Redirect(Reader data, int size, Connection ignore, uint sender)
+    public bool Redirect(ref Reader data, int size, Connection ignore, uint sender)
     {
         var valid = data.Id() == sender;
         if (valid) Redirect(data, size, ignore);

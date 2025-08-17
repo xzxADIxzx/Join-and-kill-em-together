@@ -42,17 +42,17 @@ public class Server : Endpoint, ISocketManager
 
         Listen(PacketType.Style, (con, sender, r, s) =>
         {
-            if (ents[sender] is RemotePlayer p && Redirect(r, s, con, sender)) p.Doll.ReadSuit(r);
+            if (ents[sender] is RemotePlayer p && Redirect(ref r, s, con, sender)) p.Doll.ReadSuit(r);
         });
 
         Listen(PacketType.Punch, (con, sender, r, s) =>
         {
-            if (ents[sender] is RemotePlayer p && Redirect(r, s, con, sender)) p.Punch(r);
+            if (ents[sender] is RemotePlayer p && Redirect(ref r, s, con, sender)) p.Punch(r);
         });
 
         Listen(PacketType.Point, (con, sender, r, s) =>
         {
-            if (ents[sender] is RemotePlayer p && Redirect(r, s, con, sender))
+            if (ents[sender] is RemotePlayer p && Redirect(ref r, s, con, sender))
             {
                 if (p.Point) p.Point.Lifetime = 5.5f;
                 p.Point = Point.Spawn(r.Vector(), r.Vector(), p.Team, p);
@@ -61,7 +61,7 @@ public class Server : Endpoint, ISocketManager
 
         Listen(PacketType.Spray, (con, sender, r, s) =>
         {
-            if (ents[sender] is RemotePlayer p && Redirect(r, s, con, sender))
+            if (ents[sender] is RemotePlayer p && Redirect(ref r, s, con, sender))
             {
                 if (p.Spray) p.Spray.Lifetime = 58f;
                 p.Spray = Spray.Spawn(r.Vector(), r.Vector(), p.Team, p);
@@ -70,12 +70,12 @@ public class Server : Endpoint, ISocketManager
 
         Listen(PacketType.ImageHeader, (con, sender, r, s) =>
         {
-            if (Redirect(r, s, con, sender)) SprayDistributor.Download(sender, r.Int());
+            if (Redirect(ref r, s, con, sender)) SprayDistributor.Download(sender, r.Int());
         });
 
         Listen(PacketType.ImageChunk, (con, sender, r, s) =>
         {
-            if (Redirect(r, s, con, sender)) SprayDistributor.ProcessDownload(sender, s - 5, r);
+            if (Redirect(ref r, s, con, sender)) SprayDistributor.ProcessDownload(sender, s - 5, r);
         });
 
         /*
