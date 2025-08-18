@@ -32,7 +32,7 @@ public abstract class Endpoint
         Reader r = new(data);
         var type = r.PacketType();
 
-        if (Networking.Loading && type != PacketType.Level && type != PacketType.ImageChunk) return;
+        if (Networking.Loading && type != PacketType.Level && type != PacketType.ImageHeader && type != PacketType.ImageChunk) return;
 
         handlers[(int)type](con, sender, r, size);
         Stats.ReadBs += size;
