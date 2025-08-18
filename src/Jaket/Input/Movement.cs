@@ -74,21 +74,24 @@ public class Movement : MonoSingleton<Movement>
 
         if ((Keybind.Point.Tap() || Keybind.Spray.Tap()) && Physics.Raycast(cc.transform.position, cc.transform.forward, out var hit, float.MaxValue, EnvMask))
         {
+            // rotate the normal towards the local player a little so that when placed on the ground it is rotated correctly
+            var normal = Vector3.RotateTowards(hit.normal, nm.transform.position - hit.point, .001f, 0f);
+
             if (Keybind.Point.Tap())
             {
                 if (point) point.Lifetime = 5.5f;
-                point = Point.Spawn(hit.point, hit.normal, Networking.LocalPlayer.Team);
+                point = Point.Spawn(hit.point, normal, Networking.LocalPlayer.Team);
             }
             if (Keybind.Spray.Tap())
             {
                 if (spray) spray.Lifetime = 58f;
-                spray = Spray.Spawn(hit.point, hit.normal, Networking.LocalPlayer.Team);
+                spray = Spray.Spawn(hit.point, normal, Networking.LocalPlayer.Team);
             }
             if (LobbyController.Online) Networking.Send(Keybind.Point.Tap() ? PacketType.Point : PacketType.Spray, 28, w =>
             {
                 w.Id(AccId);
                 w.Vector(hit.point);
-                w.Vector(hit.normal);
+                w.Vector(normal);
             });
         }
 
