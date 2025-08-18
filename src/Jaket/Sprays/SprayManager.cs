@@ -76,12 +76,12 @@ public static class SprayManager
     /// <summary> Uploads all sprays to the given member. </summary>
     public static void Upload(uint target)
     {
-        if (SprayDistributor.Busy || Networking.Connections.All(c => c.ConnectionName != target.ToString()))
+        if (SprayDistributor.Busy || Networking.Connections.All(c => c.UserData != target))
         {
             Events.Post2(() => Upload(target));
             return;
         }
-        var con = Networking.Connections.Find(c => c.ConnectionName == target.ToString());
+        var con = Networking.Connections.Find(c => c.UserData == target);
 
         if (Selected != null) SprayDistributor.Upload(AccId, Selected, con);
 

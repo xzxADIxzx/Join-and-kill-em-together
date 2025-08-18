@@ -56,7 +56,7 @@ public static class Administration
         // who does the client think he is?!
         if (!LobbyController.IsOwner) return;
 
-        Networking.Connections.Each(c => c.ConnectionName == id.ToString(), c => c.Close());
+        Networking.Connections.Each(c => c.UserData == id, c => c.Close());
         Banned.Add(id);
 
         LobbyController.Lobby?.SendChatString("#/b" + id);

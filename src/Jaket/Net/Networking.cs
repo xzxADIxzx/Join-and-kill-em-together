@@ -118,7 +118,7 @@ public static class Networking
         {
             if (LobbyController.IsOwner)
             {
-                Connections.Each(c => c.ConnectionName == member.Id.AccountId.ToString(), c => c.Close());
+                Connections.Each(c => c.UserData == member.Id.AccountId, c => c.Close());
                 Entities.Alive(e =>
                 {
                     if (e is OwnableEntity o && o.Owner == member.Id.AccountId) o.TakeOwnage();
