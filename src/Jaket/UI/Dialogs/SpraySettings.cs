@@ -84,21 +84,24 @@ public class SpraySettings : Fragment
         preview.sprite = SprayManager.Selected != null ? SprayManager.Selected.Sprite : Tex.Mark;
 
         loaded.Clear();
+        hidden.Clear();
+
+        (loaded.transform as RectTransform).pivot = new(.5f, 1f);
+        (loaded.transform as RectTransform).sizeDelta = new(384f, SprayManager.Local.Count * 48f - 8f);
+
         SprayManager.Local.Each(s =>
         {
-            var name = " " + Bundle.CutColors(s.Short);
-
             if (s.Name == Current)
-                loaded.FillButton(name, green, () => { });
+                loaded.FillButton(s.Short, green, () => { });
             else if (s.Valid)
-                loaded.TextButton(name, light, () =>
+                loaded.TextButton(s.Short, light, () =>
                 {
                     SprayManager.Selected = s;
                     Current = s.Name;
                     Rebuild();
                 });
             else
-                loaded.TextButton(name, red, () => Bundle.Hud("spray.toobig"));
+                loaded.TextButton(s.Short, red, () => Bundle.Hud("spray.toobig"));
         });
         /*
         #region right side
