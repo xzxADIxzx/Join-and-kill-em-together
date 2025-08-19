@@ -7,6 +7,7 @@ using ImageType = UnityEngine.UI.Image.Type;
 
 using Jaket.Assets;
 using Jaket.IO;
+using Jaket.Net;
 using Jaket.Sprays;
 using Jaket.UI.Lib;
 
@@ -103,46 +104,28 @@ public class SpraySettings : Fragment
             else
                 loaded.TextButton(s.Short, red, () => Bundle.Hud("spray.toobig"));
         });
-        /*
-        #region right side
 
-        for (int i = 1; i < players.childCount; i++) Dest(players.GetChild(i).gameObject);
-        if ((LobbyController.Lobby?.MemberCount ?? 0) <= 1)
+        hidden.Toggle("#spray.show", b => Enabled = b).isOn = Enabled;
+
+        foreach (var blacklist in new bool[] { false, true })
         {
-            UIB.Text("#sprays.alone", players, Size(320f, 48f), gray);
-            return;
-        }
+            if (LobbyController.Lobby?.Members.All(m => Administration.Hidden.Contains(m.Id.AccountId) != blacklist || m.IsMe) ?? true) continue;
 
-        List<Friend> whitelist = new(), blacklist = new();
-        foreach (var member in LobbyController.Lobby?.Members) (Administration.Hidden.Contains(member.Id.AccountId) ? blacklist : whitelist).Add(member);
+            var color = blacklist ? red : green;
 
-        float y = -20f;
-        void BuildList(string name, List<Friend> list, Color color, Cons<Friend> clicked)
-        {
-            if (list.Count == 0) return;
-            UIB.Text(name, players, Btn(y += 48f), align: TextAnchor.MiddleLeft);
+            hidden.Resolve("Space", 16f);
+            hidden.Text(blacklist ? "#spray.blacklist" : "#spray.whitelist", 24f, 24, color, TextAnchor.MiddleLeft);
 
-            foreach (var member in list)
+            LobbyController.Lobby?.Members.Each(m => Administration.Hidden.Contains(m.Id.AccountId) == blacklist && !m.IsMe, m => hidden.TextButton(m.Name, color, () =>
             {
-                var sucks = member;
-                UIB.Button(member.Name, players, Btn(y += 48f), color, clicked: () => clicked(sucks));
-            }
-        }
-        BuildList("WHITELIST:", whitelist, green, member =>
-        {
-            Administration.Hidden.Add(member.Id.AccountId);
-            Rebuild();
-            if (member.IsMe) Bundle.Hud("sprays.blacklist-yourself");
-        });
-        BuildList("BLACKLIST:", blacklist, red, member =>
-        {
-            Administration.Hidden.Remove(member.Id.AccountId);
-            Rebuild();
-            if (member.IsMe) Bundle.Hud("sprays.whitelist-yourself");
-        });
+                if (blacklist)
+                    Administration.Hidden.Remove(m.Id.AccountId);
+                else
+                    Administration.Hidden.Add(m.Id.AccountId);
 
-        #endregion
-        */
+                Rebuild();
+            }));
+        }
     }
 
     public void Refresh() { SprayManager.Load(); Rebuild(); }
