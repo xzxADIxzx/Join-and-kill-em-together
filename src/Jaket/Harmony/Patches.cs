@@ -24,7 +24,8 @@ public static class Patches
     {
         typeof(GunsPatch),
         typeof(Movement),
-        typeof(BestiaryEntry)
+        typeof(BestiaryEntry),
+        typeof(RichPresence)
     };
 
     /// <summary> Subscribes to several events for proper work. </summary>
