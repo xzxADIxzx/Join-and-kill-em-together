@@ -21,16 +21,6 @@ public static class Entities
         Vendor.Suppliers[(byte)EntityType.Player] = (id, type) => new RemotePlayer(id, type);
     }
 
-    /// <summary> Instantiates the given prefab and marks it with the Net tag. </summary>
-    public static GameObject Mark(GameObject prefab)
-    {
-        // the instance is created on these coordinates so as not to collide with anything after the spawn
-        var instance = Inst(prefab, Vector3.zero);
-
-        instance.name = "Net";
-        return instance;
-    }
-
     /// <summary> Instantiates a new entity with the given identifier. </summary>
     public static Entity Supply(uint id, EntityType type) => Vendor.Suppliers[(int)type](id, type);
 

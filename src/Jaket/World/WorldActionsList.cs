@@ -9,8 +9,6 @@ using Jaket.Net.Types;
 using Jaket.UI;
 using Jaket.UI.Fragments;
 
-using static Jaket.UI.Rect;
-
 /// <summary> List of all interactions with the level needed by the multiplayer. </summary>
 public class WorldActionsList
 {
