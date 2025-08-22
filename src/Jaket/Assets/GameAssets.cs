@@ -11,6 +11,9 @@ public static class GameAssets
     /// <summary> Asynchronously loads an asset by the given path. </summary>
     public static void LoadAsync<T>(string path, Cons<T> cons) => Addressables.LoadAssetAsync<T>(path).Task.ContinueWith(t => cons(t.Result));
 
+    /// <summary> Loads a preafb by the given path. </summary>
+    public static void Prefab(string path, Cons<GameObject> cons) => LoadAsync($"Assets/Prefabs/{path}", cons);
+
     /// <summary> Loads a material by the given path. </summary>
     public static void Material(string path, Cons<Material> cons) => LoadAsync($"Assets/Models/{path}", cons);
 
@@ -25,6 +28,33 @@ public static class GameAssets
 
     #endregion
     #region content
+
+    /// <summary> List of internal paths of all weapons. </summary>
+    public static readonly string[] Weapons =
+    {
+        "Weapons/Revolver Pierce.prefab",   "Weapons/Alternative Revolver Pierce.prefab",
+        "Weapons/Revolver Ricochet.prefab", "Weapons/Alternative Revolver Ricochet.prefab",
+        "Weapons/Revolver Twirl.prefab",    "Weapons/Alternative Revolver Twirl.prefab",
+
+        "Weapons/Shotgun Grenade.prefab",   "Weapons/Hammer Grenade.prefab",
+        "Weapons/Shotgun Pump.prefab",      "Weapons/Hammer Pump.prefab",
+        "Weapons/Shotgun Saw.prefab",       "Weapons/Hammer Saw.prefab",
+
+        "Weapons/Nailgun Magnet.prefab",    "Weapons/Sawblade Launcher Magnet.prefab",
+        "Weapons/Nailgun Overheat.prefab",  "Weapons/Sawblade Launcher Overheat.prefab",
+        "Weapons/Nailgun Zapper.prefab",    "Weapons/Sawblade Launcher Zapper.prefab",
+
+        "Weapons/Railcannon Electric.prefab",
+        "Weapons/Railcannon Harpoon.prefab",
+        "Weapons/Railcannon Malicious.prefab",
+
+        "Weapons/Rocket Launcher Cannonball.prefab",
+        "Weapons/Rocket Launcher Freeze.prefab",
+        "Weapons/Rocket Launcher Napalm.prefab",
+    };
+
+    #endregion
+    #region obsolete content
 
     /// <summary> List of items that mustn't be synchronized, because they are not items at all. </summary>
     public static readonly string[] ItemExceptions =
@@ -73,13 +103,9 @@ public static class GameAssets
     };
 
     #endregion
-    #region tools
+    #region obsolete loading
 
     private static GameObject Prefab(string name) => AssetHelper.LoadPrefab($"Assets/Prefabs/{name}.prefab");
-
-
-    #endregion
-    #region loading
 
     public static GameObject Enemy(string name) => Prefab($"Enemies/{name}");
 

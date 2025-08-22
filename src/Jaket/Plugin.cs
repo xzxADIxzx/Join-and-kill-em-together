@@ -92,11 +92,6 @@ public class Plugin : MonoBehaviour
         if (true) return;
 
         Commands.Commands.Load();
-        Bundle.Load();
-        Weapons.Load();
-        Bullets.Load();
-        Enemies.Load();
-        Items.Load();
 
         Administration.Load();
 
