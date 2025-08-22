@@ -15,7 +15,7 @@ public static class UI
 {
     /// <summary> Object the player is focused on. </summary>
     public static GameObject Focus => EventSystem.current?.currentSelectedGameObject;
-    /// <summary> Whether the player is focused on a input field. </summary>
+    /// <summary> Whether the player is focused on an input field. </summary>
     public static bool Focused => Focus && Focus.TryGetComponent<InputField>(out var f) && f.isActiveAndEnabled;
 
     /// <summary> Whether any dialog is visible. </summary>

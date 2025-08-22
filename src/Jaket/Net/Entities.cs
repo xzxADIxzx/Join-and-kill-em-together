@@ -12,6 +12,15 @@ public static class Entities
     /// <summary> Last used identifier, subsequent ones will be greater. </summary>
     private static uint? last;
 
+    #region vendors
+
+    public static Vendor Enemies;
+    public static Vendor Items;
+    public static Vendor Weapons;
+    public static Vendor Projectiles;
+
+    #endregion
+
     /// <summary> Loads all of the available vendors, thus, loading prefabs and suppliers as well. </summary>
     public static void Load()
     {
@@ -19,6 +28,11 @@ public static class Entities
         Events.OnMemberJoin += __ => last = null;
 
         Vendor.Suppliers[(byte)EntityType.Player] = (id, type) => new RemotePlayer(id, type);
+
+        Vendor[] vendors = { };
+        vendors.Each(v => v.Load());
+
+        Log.Info($"[ENTS] Loaded {vendors.Length} vendors");
     }
 
     /// <summary> Instantiates a new entity with the given identifier. </summary>

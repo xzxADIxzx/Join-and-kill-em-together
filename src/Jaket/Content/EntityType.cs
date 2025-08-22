@@ -6,6 +6,39 @@ public enum EntityType : byte
     None   = 0xFF,
     Player = 0x00,
 
+    #region weapons
+
+    RevolverBlue,
+    RevolverBlueAlt,
+    RevolverGreen,
+    RevolverGreenAlt,
+    RevolverRed,
+    RevolverRedAlt,
+
+    ShotgunBlue,
+    ShotgunBlueAlt,
+    ShotgunGreen,
+    ShotgunGreenAlt,
+    ShotgunRed,
+    ShotgunRedAlt,
+
+    NailgunBlue,
+    NailgunBlueAlt,
+    NailgunGreen,
+    NailgunGreenAlt,
+    NailgunRed,
+    NailgunRedAlt,
+
+    RailgunBlue,
+    RailgunGreen,
+    RailgunRed,
+
+    RocketlBlue,
+    RocketlGreen,
+    RocketlRed,
+
+    #endregion
+
     Filth,
     Stray,
     Schism,
