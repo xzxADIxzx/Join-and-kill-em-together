@@ -86,7 +86,7 @@ public static class Entities
         public abstract EntityType Type(GameObject obj);
 
         /// <summary> Instantiates an object to manipulate via entity agent. </summary>
-        public abstract GameObject Make(EntityType type, Vector3 position = new(), Transform parent = null);
+        public abstract GameObject Make(EntityType type, Vector3 position = default, Transform parent = null);
 
         /// <summary> Synchronizes the given object between network members. </summary>
         public abstract void Sync(GameObject obj, params bool[] args);

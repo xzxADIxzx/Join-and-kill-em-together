@@ -48,8 +48,8 @@ public static class GameAssets
         "Weapons/Railcannon Harpoon.prefab",
         "Weapons/Railcannon Malicious.prefab",
 
-        "Weapons/Rocket Launcher Cannonball.prefab",
         "Weapons/Rocket Launcher Freeze.prefab",
+        "Weapons/Rocket Launcher Cannonball.prefab",
         "Weapons/Rocket Launcher Napalm.prefab",
     };
 
