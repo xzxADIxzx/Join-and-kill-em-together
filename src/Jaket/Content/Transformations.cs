@@ -26,7 +26,7 @@ public static class Transformations
         default, // player
         defRewower, altRewower, defRewower, altRewower, defRewower, altRewower,
         defShotgun, altShotgun, defShotgun, altShotgun, defShotgun, altShotgun,
-        defNailgun, altNailgun, defNailgun, altNailgun, defShotgun, altShotgun,
+        defNailgun, altNailgun, defNailgun, altNailgun, defNailgun, altNailgun,
         railcannon, railcannon, railcannon, rocketLnch, rocketLnch, rocketLnch,
     };
 
