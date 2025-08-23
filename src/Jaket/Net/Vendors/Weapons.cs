@@ -31,8 +31,8 @@ public class Weapons : Vendor
 
         obj.SetActive(true);
         obj.GetComponentsInChildren<Renderer>().Each(c => c.gameObject.layer = 24); // outdoors
-        obj.GetComponentsInChildren<Canvas>().Each(c => c.gameObject.layer = 24); // outdoors
-        obj.GetComponentsInChildren<AudioSource>().Each(s => s.spatialBlend = 1f); // surround audio
+        obj.GetComponentsInChildren<Canvas>().Each(c => c.gameObject.layer = 24);   // outdoors
+        obj.GetComponentsInChildren<AudioSource>().Each(s => s.spatialBlend = 1f);  // surround audio
 
         foreach (var path in new string[] {
 
