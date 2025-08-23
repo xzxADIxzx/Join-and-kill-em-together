@@ -5,6 +5,7 @@ using UnityEngine;
 
 using Jaket.Content;
 using Jaket.Net.Types;
+using Jaket.Net.Vendors;
 
 /// <summary> Class responsible for entities, their vendors and identifiers. </summary>
 public static class Entities
@@ -16,7 +17,7 @@ public static class Entities
 
     public static Vendor Enemies;
     public static Vendor Items;
-    public static Vendor Weapons;
+    public static Weapons Weapons = new();
     public static Vendor Projectiles;
 
     #endregion
@@ -29,7 +30,7 @@ public static class Entities
 
         Vendor.Suppliers[(byte)EntityType.Player] = (id, type) => new RemotePlayer(id, type);
 
-        Vendor[] vendors = { };
+        Vendor[] vendors = { Weapons };
         vendors.Each(v => v.Load());
 
         Log.Info($"[ENTS] Loaded {vendors.Length} vendors");

@@ -273,6 +273,9 @@ public static class Tools
 
 
 
+    /// <summary> Whether the type is a weapon. </summary>
+    public static bool IsWeapon(this EntityType type) => type >= EntityType.RevolverBlue && type <= EntityType.RocketlRed;
+
     /// <summary> Whether the type is a bullet. </summary>
     public static bool IsBullet(this EntityType type) => type >= EntityType.Coin;
 
