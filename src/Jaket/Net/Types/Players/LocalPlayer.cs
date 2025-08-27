@@ -22,7 +22,7 @@ public class LocalPlayer : Entity
     /// <summary> Team required for versus mechanics. </summary>
     public Team Team;
     /// <summary> Source playing the voice of the player. </summary>
-    public AudioSource Voice = Create<AudioSource>("Sam");
+    public AudioSource Voice = Create<AudioSource>("Player");
 
     /// <summary> Whether the player just parried a projectile. </summary>
     public bool Parried;
@@ -53,7 +53,7 @@ public class LocalPlayer : Entity
             var shine = nm.transform.Find("Point Light");
             if (shine) shine.GetComponent<Light>().color = LobbyController.Offline ? Color.white : Team.Color();
         };
-        Create<Agent>("Agent").Patron = this;
+        Component<Agent>(Voice.gameObject, a => a.Patron = this);
     }
 
     #region snapshot
