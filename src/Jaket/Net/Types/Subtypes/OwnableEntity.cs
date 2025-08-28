@@ -26,6 +26,7 @@ public abstract class OwnableEntity : Entity
     public void TakeOwnage()
     {
         if (IsOwner) return;
+        if (Version.DEBUG) Log.Debug($"[ENTS] Transferred the ownership of {Id} from {Owner} to {AccId}");
 
         Owner = AccId;
         Locked = true;

@@ -70,6 +70,11 @@ public abstract class Entity
         /// <summary> Entity that owns the agent and has to be updated every frame. </summary>
         public Entity Patron;
 
+        public Transform Parent
+        {
+            get => transform.parent;
+            set => transform.parent = value;
+        }
         public Vector3 Position
         {
             get => transform.position;
@@ -79,6 +84,11 @@ public abstract class Entity
         {
             get => transform.eulerAngles;
             set => transform.eulerAngles = value;
+        }
+        public Vector3 Scale
+        {
+            get => transform.localScale;
+            set => transform.localScale = value;
         }
 
         private void Update() => Stats.MeasureTime(ref Stats.EntityMs, () => Patron.Update(Time.time - Patron.LastUpdate));
