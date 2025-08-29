@@ -44,6 +44,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7020190121296749102, guid: 9f62bfc06cb4e6b4ea47c47f82881502, type: 3}
+      propertyPath: m_Name
+      value: Spine 2#
+      objectReference: {fileID: 0}
     - target: {fileID: -5837550431125040950, guid: 9f62bfc06cb4e6b4ea47c47f82881502, type: 3}
       propertyPath: m_IsActive
       value: 0
