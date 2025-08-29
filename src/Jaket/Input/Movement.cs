@@ -10,7 +10,6 @@ using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net;
 using Jaket.Net.Types;
-using Jaket.Sprays;
 using Jaket.UI;
 using Jaket.UI.Dialogs;
 using Jaket.UI.Elements;

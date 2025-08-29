@@ -8,7 +8,7 @@ public struct Rect
     /// <summary> Rectangle that fills its parent. </summary>
     public static readonly Rect Fill = new(0f, 0f, 0f, 0f, Vector2.zero, Vector2.one);
     /// <summary> Rectangle used for high quality text. </summary>
-    public static readonly Rect Huge = new(0f, 0f, 4200f, 4200f);
+    public static readonly Rect Huge = new(0f, 0f, 4242f, 4242f);
 
     /// <summary> Position of the element relative to the anchor and its constant size in pixels. </summary>
     public float X, Y, Width, Height;

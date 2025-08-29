@@ -136,7 +136,7 @@ public class RemotePlayer : Entity
         Doll.HookWinch.SetPosition(1, Doll.Hook.position);
 
         Doll.Update();
-        enemyId.machine.health = 4200f;
+        enemyId.machine.health = 4242f;
 
         if (LastTeam != Team)
         {

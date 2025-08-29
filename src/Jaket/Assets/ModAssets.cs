@@ -123,7 +123,7 @@ public static class ModAssets
         Load<GameObject>("DevPlushie (xzxADIxzx)", p =>
         {
             Keep(xzxADIxzx = Items.Prefabs[EntityType.xzxADIxzx - EntityType.BlueSkull] = p);
-            UpdtMaterials(p, new(1.3f, 1.3f, 1.3f));
+            UpdtMaterials(p, new(1.4f, 1.4f, 1.4f));
 
             Component<ItemIdentifier>(p, i =>
             {

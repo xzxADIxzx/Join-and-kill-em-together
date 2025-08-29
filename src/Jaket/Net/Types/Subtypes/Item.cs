@@ -5,7 +5,7 @@ using UnityEngine;
 using Jaket.Content;
 using Jaket.IO;
 
-/// <summary> Abstract entity of any item type, except glasses and books </summary>
+/// <summary> Abstract entity of any item type, except glasses and books. </summary>
 public abstract class Item : OwnableEntity
 {
     Agent agent;
