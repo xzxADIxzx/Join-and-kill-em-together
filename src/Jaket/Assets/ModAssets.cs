@@ -86,22 +86,8 @@ public static class ModAssets
         GameAssets.Texture("V1/Arms/T_Feedbacker.png", t => HandTextures[2] = t);
         GameAssets.Texture("V1/v2_armtex.png",         t => HandTextures[4] = t);
 
-        Load<GameObject>("Doll", p =>
-        {
-            // make animation controller ignore head of the doll
-            p.transform.Find("Model/Metarig/Spine 0/Spine 1/Spine 2").name += "#";
-
-            Keep(Doll = p);
-            UpdtMaterials(p);
-        });
-        Load<GameObject>("Doll Preview", p =>
-        {
-            // make animation controller ignore head of the doll
-            p.transform.Find("Model/Metarig/Spine 0/Spine 1/Spine 2").name += "#";
-
-            Keep(DollPreview = p);
-            UpdtMaterials(p);
-        });
+        Load<GameObject>("Doll",         p => UpdtMaterials(Doll        = p));
+        Load<GameObject>("Doll Preview", p => UpdtMaterials(DollPreview = p));
         Load<Texture>("V2-plushie", t =>
         {
             int i = EntityType.V2 - EntityType.BlueSkull;
@@ -122,14 +108,10 @@ public static class ModAssets
         });
         Load<GameObject>("DevPlushie (xzxADIxzx)", p =>
         {
-            Keep(xzxADIxzx = Items.Prefabs[EntityType.xzxADIxzx - EntityType.BlueSkull] = p);
-            UpdtMaterials(p, new(1.4f, 1.4f, 1.4f));
-
+            UpdtMaterials(xzxADIxzx = p, new(1.4f, 1.4f, 1.4f));
             Component<ItemIdentifier>(p, i =>
             {
-                i.itemType = ItemType.CustomKey1;
-                i.pickUpSound = GameAssets.Squeaky();
-
+                GameAssets.LoadAsync<GameObject>("Assets/Particles/SoundBubbles/SqueakyToy.prefab", p => i.pickUpSound = p);
                 i.reverseTransformSettings = true;
 
                 i.putDownRotation = new(  0f, 120f,  90f);
@@ -138,14 +120,10 @@ public static class ModAssets
         });
         Load<GameObject>("DevPlushie (Sowler)", p =>
         {
-            Keep(Sowler = Items.Prefabs[EntityType.Sowler - EntityType.BlueSkull] = p);
-            UpdtMaterials(p);
-
+            UpdtMaterials(Sowler = p);
             Component<ItemIdentifier>(p, i =>
             {
-                i.itemType = ItemType.CustomKey1;
-                i.pickUpSound = GameAssets.Squeaky();
-
+                GameAssets.LoadAsync<GameObject>("Assets/Particles/SoundBubbles/SqueakyToy.prefab", p => i.pickUpSound = p);
                 i.reverseTransformSettings = true;
 
                 i.putDownRotation = new(-15f, 120f,  95f);
