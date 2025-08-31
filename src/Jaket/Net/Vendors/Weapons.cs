@@ -16,12 +16,17 @@ public class Weapons : Vendor
         EntityType counter = EntityType.RevolverBlue;
         GameAssets.Weapons.Each(w =>
         {
-            int index = (int)counter++;
+            byte index = (byte)counter++;
             GameAssets.Prefab(w, p => Vendor.Prefabs[index] = p);
         });
     }
 
-    public EntityType Type(GameObject obj) => (EntityType)Vendor.Prefabs.IndexOf(p => p?.name.Length == obj?.name.Length - 7 && (obj?.name.Contains(p?.name) ?? false));
+    public EntityType Type(GameObject obj) => Vendor.Find
+    (
+        EntityType.RevolverBlue,
+        EntityType.RocketlRed,
+        p => p?.name.Length == obj?.name.Length - 7 && (obj?.name.Contains(p?.name) ?? false)
+    );
 
     public GameObject Make(EntityType type, Vector3 position = default, Transform parent = null)
     {

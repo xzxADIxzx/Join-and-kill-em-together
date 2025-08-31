@@ -80,6 +80,16 @@ public static class Entities
         /// <summary> Suppliers that provide the entities themselves. </summary>
         public static Supplier[] Suppliers = new Supplier[byte.MaxValue + 1];
 
+        /// <summary> Returns the index of the prefab that is suitable for the given predicate in the given range. </summary>
+        public static EntityType Find(EntityType from, EntityType to, Pred<GameObject> pred)
+        {
+            for (EntityType i = from; i <= to; i++)
+            {
+                if (pred(Prefabs[(byte)i])) return i;
+            }
+            return EntityType.None;
+        }
+
         /// <summary> Loads prefabs of entities managed by the vendor. </summary>
         public abstract void Load();
 
