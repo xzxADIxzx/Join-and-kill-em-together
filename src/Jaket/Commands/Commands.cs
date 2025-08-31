@@ -74,7 +74,7 @@ public static class Commands
             };
             string msg = "";
             for (int i = 0; i < 24; i += 3) msg += $"[{content[i]}]| {content[i + 1]}[]\n[{content[i]}]| []{content[i + 2]}\n";
-            chat.Receive(msg);
+            chat.Receive(msg[..^1]);
         });
 
         Handler.Register("plushie", "<name>", "Spawn a plushie by name", args =>
