@@ -26,6 +26,7 @@ public static class Commands
                 chat.Receive($"[14]/{command.Name}{(command.Args == null ? "" : $" [#BBBBBB]{command.Args}[]")} - {command.Desc}[]");
             });
         });
+
         Handler.Register("hello", "Resend the tips for new players", args => chat.SayHello());
 
         Handler.Register("tts-volume", "\\[0-100]", "Set Sam's volume to keep your ears comfortable", args =>
@@ -42,6 +43,7 @@ public static class Commands
             else
                 chat.Receive("[#FF341C]Failed to parse value. It must be an integer in the range from 0 to 100.");
         });
+
         Handler.Register("tts-auto", "\\[on/off]", "Turn auto reading of all messages", args =>
         {
             bool enable = args.Length == 0 ? !Settings.AutoTTS : (args[0] == "on" || (args[0] == "off" ? false : !Settings.AutoTTS));
@@ -57,19 +59,24 @@ public static class Commands
             }
         });
 
-        Handler.Register("plushies", "Display the list of all dev plushies", args =>
+        Handler.Register("plushies", "Display the list of all plushies", args =>
         {
-            void Msg(string role, string devs) => chat.Receive($"[14]{role}:\n{devs}{(role[0] == 'M' ? "" : "\n")}[]");
-
-            Msg("Leading developers", "Hakita, Pitr, Victoria");
-            Msg("Programmers", "Heckteck, CabalCrow, Lucas");
-            Msg("Artists", "Francis, Jericho, BigRock, Mako, Samuel, Salad");
-            Msg("Composers", "Meganeko, KGC, BJ, Jake, John, Quetzal");
-            Msg("Voice actors", "Gianni, Weyte, Lenval, Joy, Mandy");
-            Msg("Quality assurance", "Cameron, Dalia, Tucker, Scott");
-            Msg("Other", "Jacob, Vvizard");
-            Msg("Machines", "V1, V2, V3, xzxADIxzx, Sowler");
+            string[] content =
+            {
+                "blue",   "Leading Developers", "Hakita, Pitr, Victoria",
+                "purple", "Programmers",        "Heckteck, CabalCrow, Lucas, Zombie",
+                "pink",   "Artists",            "Francis, Jericho, BigRock, Mako, FlyingDog, Samuel, Salad",
+                "coral",  "Composers",          "Meganeko, KGC, Benjamin, Jake, John, Lizard, Quetzal",
+                "blue",   "Voice Actors",       "Gianni, Weyte, Lenval, Joy, Mandy",
+                "purple", "Quality Assurance",  "Cameron, Dalia, Tucker, Scott",
+                "pink",   "Other",              "Jacob, Vvizard",
+                "coral",  "Machines",           "V1, V2, V3, xzxADIxzx, Sowler"
+            };
+            string msg = "";
+            for (int i = 0; i < 24; i += 3) msg += $"[{content[i]}]| {content[i + 1]}[]\n[{content[i]}]| []{content[i + 2]}\n";
+            chat.Receive(msg);
         });
+
         Handler.Register("plushie", "<name>", "Spawn a plushie by name", args =>
         {
             string name = args.Length == 0 ? null : args[0].ToLower();
@@ -152,6 +159,7 @@ public static class Commands
 
             chat.Receive("Thank you all, I couldn't have done it alone :heart:", "0096FF", "xzxADIxzx", Chat.BOT_TAG);
         });
+
         Handler.Register("support", "Support the author by buying him a coffee", args => Application.OpenURL("https://www.buymeacoffee.com/adithedev"));
     }
 }
