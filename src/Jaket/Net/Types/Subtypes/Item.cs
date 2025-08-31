@@ -5,7 +5,7 @@ using UnityEngine;
 using Jaket.Content;
 using Jaket.IO;
 
-/// <summary> Abstract entity of any item type, except glasses and books. </summary>
+/// <summary> Abstract entity of any item type, except books. </summary>
 public abstract class Item : OwnableEntity
 {
     Agent agent;
@@ -95,7 +95,7 @@ public abstract class Item : OwnableEntity
         agent.Position = holding ? player.Value.Doll.HoldPosition                        : new(posX.Get(delta),      posY.Get(delta),      posZ.Get(delta));
         agent.Rotation = holding ? player.Value.Doll.HookRoot.eulerAngles + HoldRotation : new(rotX.GetAngle(delta), rotY.GetAngle(delta), rotZ.GetAngle(delta));
 
-        agent.Scale    = holding == itemId.reverseTransformSettings ? Vector3.one : itemId.putDownScale;
+        agent.Scale    = holding == itemId.reverseTransformSettings ? itemId.putDownScale : Vector3.one;
 
         if (!placed && itemId.Placed())
         {
