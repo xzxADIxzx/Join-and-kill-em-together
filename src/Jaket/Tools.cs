@@ -246,11 +246,6 @@ public static class Tools
     #endregion
     #region entities
 
-    /// <summary> Whether the type is a player. </summary>
-    public static bool IsPlayer(this EntityType type) => type == EntityType.Player;
-
-
-
     /// <summary> Whether the type is an enemy. </summary>
     public static bool IsEnemy(this EntityType type) => type >= EntityType.Filth && type <= EntityType.Brain;
 
@@ -263,10 +258,10 @@ public static class Tools
 
 
     /// <summary> Whether the type is an item. </summary>
-    public static bool IsItem(this EntityType type) => type >= EntityType.BlueSkull && type <= EntityType.Sowler;
+    public static bool IsItem(this EntityType type) => type >= EntityType.SkullBlue && type <= EntityType.Sowler;
 
-    /// <summary> Whether the type is a bait or fish. </summary>
-    public static bool IsFish(this EntityType type) => type >= EntityType.AppleBait && type <= EntityType.BurntStuff;
+    /// <summary> Whether the type is a fish. </summary>
+    public static bool IsFish(this EntityType type) => type >= EntityType.FishFunny && type <= EntityType.FishBurnt;
 
     /// <summary> Whether the type is a plushie. </summary>
     public static bool IsPlushie(this EntityType type) => type >= EntityType.Hakita && type <= EntityType.Sowler;
