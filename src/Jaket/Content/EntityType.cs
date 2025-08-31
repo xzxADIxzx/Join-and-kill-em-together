@@ -12,7 +12,7 @@ public enum EntityType : byte
     SkullRed,
     Soap,
     Torch,
-    // Moon 4-3
+    Moon,
     Florp,
     BaitApple,
     BaitFace,

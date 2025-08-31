@@ -100,6 +100,9 @@ public static class Tools
     /// <summary> Default environment raycast mask. </summary>
     public static readonly int EnvMask = LayerMaskDefaults.Get(LMD.Environment);
 
+    /// <summary> Whether the item is placed on an altar. </summary>
+    public static bool Placed(this ItemIdentifier itemId) => itemId.transform.parent?.gameObject.layer == 22;
+
     public static bool Within(Vector3 a,   Vector3 b,   float dst = 1f) => (a - b).sqrMagnitude < dst * dst;
     public static bool Within(Vector3 a,   Transform b, float dst = 1f) => Within(a, b.position, dst);
     public static bool Within(Vector3 a,   Component b, float dst = 1f) => Within(a, b.transform.position, dst);

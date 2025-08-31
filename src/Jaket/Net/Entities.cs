@@ -16,7 +16,7 @@ public static class Entities
     #region vendors
 
     public static Vendor Enemies;
-    public static Vendor Items;
+    public static Items Items = new();
     public static Weapons Weapons = new();
     public static Vendor Projectiles;
 
@@ -30,7 +30,7 @@ public static class Entities
 
         Vendor.Suppliers[(byte)EntityType.Player] = (id, type) => new RemotePlayer(id, type);
 
-        Vendor[] vendors = { Weapons };
+        Vendor[] vendors = { Items, Weapons };
         vendors.Each(v => v.Load());
 
         Log.Info($"[ENTS] Loaded {vendors.Length} vendors");

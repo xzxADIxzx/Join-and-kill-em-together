@@ -36,7 +36,7 @@ public static class GameAssets
         "Items/SkullRed.prefab",
         "Items/Soap.prefab",
         "Items/Torch.prefab",
-        // Moon 4-3
+        "Items/Torch.prefab",
         "Items/Florp Throwable.prefab",
         "Fishing/Apple Bait.prefab",
         "Fishing/Maurice Bait.prefab",
