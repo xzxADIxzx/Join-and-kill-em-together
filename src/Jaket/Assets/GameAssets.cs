@@ -33,7 +33,7 @@ public static class GameAssets
     public static readonly string[] Items =
     {
         "Items/SkullBlue.prefab",
-        "Items/SkullRed",
+        "Items/SkullRed.prefab",
         "Items/Soap.prefab",
         "Items/Torch.prefab",
         // Moon 4-3
@@ -87,8 +87,6 @@ public static class GameAssets
         "Items/DevPlushies/DevPlushie (Scott).prefab",
         "Items/DevPlushies/DevPlushie (Jacob).prefab",
         "Items/DevPlushies/DevPlushie (Vvizard).prefab",
-        "Items/DevPlushies/DevPlushie.prefab",
-        "Items/DevPlushies/DevPlushie.prefab",
         "Items/DevPlushies/DevPlushie.prefab"
     };
 
