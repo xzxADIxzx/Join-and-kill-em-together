@@ -23,7 +23,7 @@ public class Plushie : Item
         agent.GetComponent<ItemIdentifier>().onPickUp.onActivate.AddListener(() =>
         {
             if (Type == EntityType.xzxADIxzx) agent.StartCoroutine(ShakeYourHead(42));
-            if (Type == EntityType.Sowler) ; // TODO
+            if (Type == EntityType.Sowler) agent.StartCoroutine(Hoot());
         });
     }
 
@@ -44,8 +44,11 @@ public class Plushie : Item
         head.localEulerAngles = new(270f, Random.value < .042f ? 45f : 0f, 0f);
     }
 
-    /// <summary> SPecial feature of the plushie of OwlNotSowler. </summary>
-    public IEnumerator ThinkOfSomething() => null;
+    /// <summary> Special feature of the plushie of OwlNotSowler. </summary>
+    public IEnumerator Hoot()
+    {
+        yield return null; // TODO play different owl sounds from time to time
+    }
 
     #endregion
 }

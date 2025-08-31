@@ -29,6 +29,75 @@ public static class GameAssets
     #endregion
     #region content
 
+    /// <summary> List of internal paths of all items. </summary>
+    public static readonly string[] Items =
+    {
+        "Items/SkullBlue.prefab",
+        "Items/SkullRed",
+        "Items/Soap.prefab",
+        "Items/Torch.prefab",
+        // Moon 4-3
+        "Items/Florp Throwable.prefab",
+        "Fishing/Apple Bait.prefab",
+        "Fishing/Maurice Bait.prefab",
+
+        "Fishing/Fishes/Funny Fish!!!.prefab",
+        "Fishing/Fishes/pitr fish.prefab",
+        "Fishing/Fishes/Trout.prefab",
+        "Fishing/Fishes/Amid Efil Fish.prefab",
+        "Fishing/Fishes/Dusk Chomper.prefab",
+        "Fishing/Fishes/Bomb Fish.prefab",
+        "Fishing/Fishes/Gib Eyeball Fish.prefab",
+        "Fishing/Fishes/IronLungFish.prefab",
+        "Fishing/Fishes/Dope Fish.prefab",
+        "Fishing/Fishes/Fish Stick.prefab",
+        "Fishing/Fishes/Cooked Fish.prefab",
+        "Fishing/Fishes/Shark Fish.prefab",
+        "Fishing/Fishes/Burnt Stuff.prefab",
+
+        "Items/DevPlushies/DevPlushie (Hakita).prefab",
+        "Items/DevPlushies/DevPlushie (PITR).prefab",
+        "Items/DevPlushies/DevPlushie (Dawg).prefab",
+        "Items/DevPlushies/DevPlushie (Heckteck).prefab",
+        "Items/DevPlushies/DevPlushie (CabalCrow) Variant.prefab",
+        "Items/DevPlushies/DevPlushie (Lucas).prefab",
+        "Items/DevPlushies/DevPlushie (Zombie).prefab",
+        "Items/DevPlushies/DevPlushie (Francis).prefab",
+        "Items/DevPlushies/DevPlushie (Jericho).prefab",
+        "Items/DevPlushies/DevPlushie (BigRock).prefab",
+        "Items/DevPlushies/DevPlushie (Mako).prefab",
+        "Items/DevPlushies/DevPlushie (FlyingDog).prefab",
+        "Items/DevPlushies/DevPlushie (Sam).prefab",
+        "Items/DevPlushies/DevPlushie (Salad).prefab",
+        "Items/DevPlushies/DevPlushie (Meganeko).prefab",
+        "Items/DevPlushies/DevPlushie (KGC).prefab",
+        "Items/DevPlushies/DevPlushie (HEALTH - BJ).prefab",
+        "Items/DevPlushies/DevPlushie (HEALTH - Jake).prefab",
+        "Items/DevPlushies/DevPlushie (HEALTH - John).prefab",
+        "Items/DevPlushies/DevPlushie (King Gizzard).prefab",
+        "Items/DevPlushies/DevPlushie (Quetzal).prefab",
+        "Items/DevPlushies/DevPlushie (Gianni).prefab",
+        "Items/DevPlushies/DevPlushie (Weyte).prefab",
+        "Items/DevPlushies/DevPlushie (Lenval).prefab",
+        "Items/DevPlushies/DevPlushie (Joy).prefab",
+        "Items/DevPlushies/DevPlushie (Mandy).prefab",
+        "Items/DevPlushies/DevPlushie (Cameron).prefab",
+        "Items/DevPlushies/DevPlushie (Dalia).prefab",
+        "Items/DevPlushies/DevPlushie (Tucker).prefab",
+        "Items/DevPlushies/DevPlushie (Scott).prefab",
+        "Items/DevPlushies/DevPlushie (Jacob).prefab",
+        "Items/DevPlushies/DevPlushie (Vvizard).prefab",
+        "Items/DevPlushies/DevPlushie.prefab",
+        "Items/DevPlushies/DevPlushie.prefab",
+        "Items/DevPlushies/DevPlushie.prefab"
+    };
+
+    /// <summary> List of readable names of all plushies. </summary>
+    public static readonly string[] Plushies =
+    {
+        "hakita", "pitr", "victoria", "heckteck", "cabalcrow", "lucas", "zombie", "francis", "jericho", "bigrock", "mako", "flyingdog", "samuel", "salad", "meganeko", "kgc", "benjamin", "jake", "john", "lizard", "quetzal", "gianni", "weyte", "lenval", "joy", "mandy", "cameron", "dalia", "tucker", "scott", "jacob", "vvizard", "v1", "v2", "v3", "xzxadixzx", "owlnotsowler"
+    };
+
     /// <summary> List of internal paths of all weapons. </summary>
     public static readonly string[] Weapons =
     {
@@ -70,52 +139,12 @@ public static class GameAssets
         "MinosPrime", "SisyphusPrime", "Cancerous Rodent", "Very Cancerous Rodent", "Mandalore", "Big Johninator", "Puppet"
     };
 
-    /// <summary> List of internal names of all items. </summary>
-    public static readonly string[] Items =
-    { "SkullBlue", "SkullRed", "Soap", "Torch", "Florp Throwable" };
-
-    /// <summary> List of internal names of all baits. </summary>
-    public static readonly string[] Baits =
-    { "Apple Bait", "Maurice Bait" };
-
-    /// <summary> List of internal names of all fishes. </summary>
-    public static readonly string[] Fishes =
-    {
-        "Funny Fish!!!", "pitr fish", "Trout", "Amid Efil Fish", "Dusk Chomper",
-        "Bomb Fish", "Gib Eyeball Fish", "IronLungFish", "Dope Fish", "Fish Stick",
-        "Cooked Fish", "Shark Fish", "Burnt Stuff"
-    };
-
-    /// <summary> List of internal names of all dev plushies. </summary>
-    public static readonly string[] Plushies =
-    {
-        "Hakita", "PITR", "Dawg", "Heckteck", ". (CabalCrow) Variant", "Lucas", "Francis", "Jericho", "BigRock", "Mako",
-        "Sam", "Salad", "Meganeko", "KGC", "HEALTH - BJ", "HEALTH - Jake", "HEALTH - John", "Quetzal", "Gianni", "Weyte",
-        "Lenval", "Joy", "Mandy", "Cameron", "Dalia", "Tucker", "Scott", "Jacob", "Vvizard", ".", ".", ".", ".", "."
-    };
-
-    /// <summary> List of readable names of all dev plushies. </summary>
-    public static readonly string[] PlushiesButReadable =
-    {
-        "hakita", "pitr", "victoria", "heckteck", "cabalcrow", "lucas", "francis", "jericho", "bigrock", "mako",
-        "samuel", "salad", "meganeko", "kgc", "bj", "jake", "john", "quetzal", "gianni", "weyte",
-        "lenval", "joy", "mandy", "cameron", "dalia", "tucker", "scott", "jacob", "vvizard", "v1", "v2", "v3", "xzxadixzx", "sowler"
-    };
-
     #endregion
     #region obsolete loading
 
     private static GameObject Prefab(string name) => AssetHelper.LoadPrefab($"Assets/Prefabs/{name}.prefab");
 
     public static GameObject Enemy(string name) => Prefab($"Enemies/{name}");
-
-    public static GameObject Item(string name) => Prefab($"Items/{name}");
-
-    public static GameObject Bait(string name) => Prefab($"Fishing/{name}");
-
-    public static GameObject Fish(string name) => Prefab($"Fishing/Fishes/{name}");
-
-    public static GameObject Plushie(string name) => Prefab($"Items/DevPlushies/DevPlushie{(name.StartsWith(".") ? name.Substring(1) : $" ({name})")}");
 
     /// <summary> Loads the torch prefab. </summary>
     public static GameObject Torch() => Prefab("Levels/Interactive/Altar (Torch) Variant");
