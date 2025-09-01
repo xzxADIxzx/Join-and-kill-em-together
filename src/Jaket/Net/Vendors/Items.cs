@@ -11,6 +11,9 @@ using static Entities;
 /// <summary> Vendor responsible for items. </summary>
 public class Items : Vendor
 {
+    /// <summary> Template used for fishes. </summary>
+    public GameObject FishTemplate;
+
     public void Load()
     {
         EntityType counter = EntityType.SkullBlue;
@@ -19,6 +22,7 @@ public class Items : Vendor
             byte index = (byte)counter++;
             GameAssets.Prefab(w, p => Vendor.Prefabs[index] = p);
         });
+        GameAssets.Prefab("Fishing/Fish Pickup Template.prefab", p => FishTemplate = p);
 
         for (EntityType i = EntityType.SkullBlue; i < EntityType.BaitFace;  i++) Vendor.Suppliers[(byte)i] = (id, type) => new CommonItem(id, type);
         for (EntityType i = EntityType.FishFunny; i < EntityType.FishBurnt; i++) Vendor.Suppliers[(byte)i] = (id, type) => new Fish      (id, type);
@@ -60,7 +64,7 @@ public class Items : Vendor
         (
             EntityType.FishFunny,
             EntityType.FishBurnt,
-            p => p == fish.fishObject
+            p => p == fish.fishObject.worldObject
         );
         return obj?.transform.GetChild(obj.transform.childCount - 1).name switch
         {
@@ -77,5 +81,24 @@ public class Items : Vendor
                 _                  => EntityType.None
             }
         };
+    }
+
+    public GameObject Make(EntityType type, Vector3 position = default, Transform parent = null)
+    {
+        if (!type.IsItem()) return null;
+
+        var obj = Inst(Vendor.Prefabs[(int)type], position);
+
+        if (type.IsFish())
+        {
+            obj.transform.parent = Component<FishObjectReference>(Inst(FishTemplate, position), f =>
+            {
+                byte index = type - EntityType.FishFunny;
+                foreach (var fish in FishManager.Instance?.recognizedFishes.Keys) if (index-- == 0) f.fishObject = fish;
+            }).transform;
+            obj.transform.localRotation = obj.transform.parent.Find("Dummy Object").localRotation; // it is some kind of template
+        }
+
+        return obj;
     }
 }
