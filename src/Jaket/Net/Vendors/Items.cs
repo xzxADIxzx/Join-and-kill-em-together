@@ -66,13 +66,13 @@ public class Items : Vendor
             EntityType.FishBurnt,
             p => p == fish.fishObject.worldObject
         );
-        return obj?.transform.GetChild(obj.transform.childCount - 1).name switch
+        return (obj?.transform.childCount > 0 ? obj.transform.GetChild(obj.transform.childCount - 1).name : null) switch
         {
             "Arch"                 => EntityType.Moon,
             "Florp"                => EntityType.Florp,
             "Apple Bait (1)"       => EntityType.BaitApple,
             "Maurice Prop"         => EntityType.BaitFace,
-            _ => obj?.GetComponent<ItemIdentifier>().itemType switch
+            _                      => obj?.GetComponent<ItemIdentifier>().itemType switch
             {
                 ItemType.SkullBlue => EntityType.SkullBlue,
                 ItemType.SkullRed  => EntityType.SkullRed,
