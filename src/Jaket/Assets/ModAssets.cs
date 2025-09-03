@@ -88,24 +88,8 @@ public static class ModAssets
 
         Load<GameObject>("Doll",         p => UpdtMaterials(Doll        = p));
         Load<GameObject>("Doll Preview", p => UpdtMaterials(DollPreview = p));
-        Load<Texture>("V2-plushie", t =>
-        {
-            int i = EntityType.V2 - EntityType.BlueSkull;
-            Keep(V2 = Items.Prefabs[i] = Inst(Items.Prefabs[i]));
-
-            V2.name = "DevPlushie (V2)";
-            V2.GetComponentInChildren<Renderer>().material.mainTexture = t;
-            V2.GetComponent<Rigidbody>().isKinematic = true;
-        });
-        Load<Texture>("V3-plushie", t =>
-        {
-            int i = EntityType.V3 - EntityType.BlueSkull;
-            Keep(V3 = Items.Prefabs[i] = Inst(Items.Prefabs[i]));
-
-            V3.name = "DevPlushie (V3)";
-            V3.GetComponentInChildren<Renderer>().material.mainTexture = t;
-            V3.GetComponent<Rigidbody>().isKinematic = true;
-        });
+        Load<Texture>("V2-plushie",      t => UpdtMaterials(t, true));
+        Load<Texture>("V3-plushie",      t => UpdtMaterials(t, false));
         Load<GameObject>("DevPlushie (xzxADIxzx)", p =>
         {
             UpdtMaterials(xzxADIxzx = p, new(1.4f, 1.4f, 1.4f));
@@ -219,6 +203,23 @@ public static class ModAssets
                 m.shader = Master;
             });
         });
+    }
+
+    /// <summary> Changes the textures of materials and saves the prefab for the given entity type. </summary>
+    public static void UpdtMaterials(Texture texture, bool V2orV3)
+    {
+        if (Entities.Vendor.Prefabs[(byte)EntityType.V1] == null)
+        {
+            Events.Post2(() => UpdtMaterials(texture, V2orV3));
+            return;
+        }
+        ref GameObject prefab = ref (V2orV3 ? ref V2 : ref V3);
+
+        Keep(prefab = Entities.Items.Make(EntityType.V1));
+
+        prefab.name = $"DevPlushie ({(V2orV3 ? "V2" : "V3")})";
+        prefab.GetComponentInChildren<Renderer>().material.mainTexture = texture;
+        prefab.GetComponent<Rigidbody>().isKinematic = true;
     }
 
     #endregion
