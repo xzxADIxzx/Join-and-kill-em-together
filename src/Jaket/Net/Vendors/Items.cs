@@ -32,7 +32,7 @@ public class Items : Vendor
         {
             if (LobbyController.Offline) return;
 
-            ResFind<ItemIdentifier>().Each(i => Sync(i.gameObject, false));
+            ResFind<ItemIdentifier>().Each(IsReal, i => Sync(i.gameObject, false));
             ResFind<ItemPlaceZone>().Each(IsReal, z =>
             {
                 z.transform.parent = null;
@@ -72,7 +72,7 @@ public class Items : Vendor
             "Florp"                => EntityType.Florp,
             "Apple Bait (1)"       => EntityType.BaitApple,
             "Maurice Prop"         => EntityType.BaitFace,
-            _ => obj.GetComponent<ItemIdentifier>().itemType switch
+            _ => obj?.GetComponent<ItemIdentifier>().itemType switch
             {
                 ItemType.SkullBlue => EntityType.SkullBlue,
                 ItemType.SkullRed  => EntityType.SkullRed,
@@ -100,5 +100,27 @@ public class Items : Vendor
         }
 
         return obj;
+    }
+
+    public void Sync(GameObject obj, params bool[] args)
+    {
+        var type = Type(obj);
+        if (type == EntityType.None || obj.GetComponent<Entity.Agent>()) return;
+
+        if (obj.activeSelf && obj.TryGetComponent(out ItemIdentifier itemId) && !itemId.infiniteSource)
+        {
+            // for some unknown reason this value is true for the museum plushies
+            itemId.pickedUp = false;
+
+            if (LobbyController.IsOwner || args[0])
+            {
+                var entity = Supply(type);
+
+                entity.Owner = AccId;
+                entity.Assign(obj.AddComponent<Entity.Agent>());
+                entity.Push();
+            }
+            else Imdt(obj);
+        }
     }
 }
