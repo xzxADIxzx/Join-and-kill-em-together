@@ -22,7 +22,13 @@ public class Items : Vendor
             byte index = (byte)counter++;
             GameAssets.Prefab(w, p => Vendor.Prefabs[index] = p);
         });
+
         GameAssets.Prefab("Fishing/Fish Pickup Template.prefab", p => FishTemplate = p);
+
+        Vendor.Prefabs[(byte)EntityType.V2       ] = ModAssets.V2;
+        Vendor.Prefabs[(byte)EntityType.V3       ] = ModAssets.V3;
+        Vendor.Prefabs[(byte)EntityType.xzxADIxzx] = ModAssets.xzxADIxzx;
+        Vendor.Prefabs[(byte)EntityType.Sowler   ] = ModAssets.Sowler;
 
         for (EntityType i = EntityType.SkullBlue; i <= EntityType.BaitFace;  i++) Vendor.Suppliers[(byte)i] = (id, type) => new CommonItem(id, type);
         for (EntityType i = EntityType.FishFunny; i <= EntityType.FishBurnt; i++) Vendor.Suppliers[(byte)i] = (id, type) => new Fish      (id, type);
