@@ -1,5 +1,6 @@
 namespace Jaket.Net.Types;
 
+using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Content;
@@ -126,6 +127,13 @@ public abstract class Item : OwnableEntity
         Hidden = true;
         Dest(agent);
     }
+
+    #endregion
+    #region harmony
+
+    [HarmonyPatch(typeof(ItemIdentifier), MethodType.Constructor)]
+    [HarmonyPrefix]
+    static void Start(ItemIdentifier __instance) => Events.Post(() => Entities.Items.Sync(__instance.gameObject, true));
 
     #endregion
 }

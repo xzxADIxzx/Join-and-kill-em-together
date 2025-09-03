@@ -5,6 +5,7 @@ using System;
 
 using Jaket.Input;
 using Jaket.Net;
+using Jaket.Net.Types;
 using Jaket.UI.Elements;
 using Jaket.UI.Fragments;
 
@@ -18,14 +19,15 @@ public static class Patches
 
     public static Type[] DynamicTypes =
     {
-        typeof(Spectator)
+        typeof(Item),
+        typeof(Spectator),
     };
     public static Type[] StaticTypes =
     {
         typeof(GunsPatch),
+        typeof(RichPresence),
         typeof(Movement),
         typeof(BestiaryEntry),
-        typeof(RichPresence)
     };
 
     /// <summary> Subscribes to several events for proper work. </summary>
