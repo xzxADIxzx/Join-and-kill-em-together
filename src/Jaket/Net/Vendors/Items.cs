@@ -24,9 +24,9 @@ public class Items : Vendor
         });
         GameAssets.Prefab("Fishing/Fish Pickup Template.prefab", p => FishTemplate = p);
 
-        for (EntityType i = EntityType.SkullBlue; i < EntityType.BaitFace;  i++) Vendor.Suppliers[(byte)i] = (id, type) => new CommonItem(id, type);
-        for (EntityType i = EntityType.FishFunny; i < EntityType.FishBurnt; i++) Vendor.Suppliers[(byte)i] = (id, type) => new Fish      (id, type);
-        for (EntityType i = EntityType.Hakita;    i < EntityType.Sowler;    i++) Vendor.Suppliers[(byte)i] = (id, type) => new Plushie   (id, type);
+        for (EntityType i = EntityType.SkullBlue; i <= EntityType.BaitFace;  i++) Vendor.Suppliers[(byte)i] = (id, type) => new CommonItem(id, type);
+        for (EntityType i = EntityType.FishFunny; i <= EntityType.FishBurnt; i++) Vendor.Suppliers[(byte)i] = (id, type) => new Fish      (id, type);
+        for (EntityType i = EntityType.Hakita;    i <= EntityType.Sowler;    i++) Vendor.Suppliers[(byte)i] = (id, type) => new Plushie   (id, type);
 
         void SyncAll()
         {
