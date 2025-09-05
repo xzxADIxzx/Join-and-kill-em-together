@@ -23,7 +23,6 @@ public static class Transformations
     /// <summary> Transformations of all weapons. </summary>
     private static Vector4[] transforms =
     {
-        default, // player
         defRewower, altRewower, defRewower, altRewower, defRewower, altRewower,
         defShotgun, altShotgun, defShotgun, altShotgun, defShotgun, altShotgun,
         defNailgun, altNailgun, defNailgun, altNailgun, defNailgun, altNailgun,
@@ -33,8 +32,8 @@ public static class Transformations
     /// <summary> Applies transformation to the given transform. </summary>
     public static void Apply(EntityType type, Transform target)
     {
-        target.localPosition = transforms[(int)type];
+        target.localPosition = transforms[type - EntityType.RevolverBlue];
         target.localRotation = Quaternion.Euler(type >= EntityType.RocketlBlue ? 290f : 280f, 0f, 180f);
-        target.localScale    = transforms[(int)type].w * Vector3.one;
+        target.localScale    = transforms[type - EntityType.RevolverBlue].w * Vector3.one;
     }
 }

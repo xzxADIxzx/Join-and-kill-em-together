@@ -17,7 +17,7 @@ public abstract class OwnableEntity : Entity
     public bool Locked
     {
         get => Time.time - LastTransfer < 1f;
-        set => LastTransfer = value ? Time.time : float.PositiveInfinity;
+        set => LastTransfer = value ? Time.time : float.NegativeInfinity;
     }
 
     public OwnableEntity(uint id, EntityType type) : base(id, type) { Locked = false; }
