@@ -133,7 +133,10 @@ public abstract class Item : OwnableEntity
 
     [HarmonyPatch(typeof(ItemIdentifier), MethodType.Constructor)]
     [HarmonyPrefix]
-    static void Start(ItemIdentifier __instance) => Events.Post(() => Entities.Items.Sync(__instance.gameObject, true));
+    static void Start(ItemIdentifier __instance) => Events.Post(() =>
+    {
+        if (__instance) Entities.Items.Sync(__instance.gameObject, true);
+    });
 
     #endregion
 }
