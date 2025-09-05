@@ -74,32 +74,22 @@ public static class SprayManager
     }
 
     /// <summary> Uploads all sprays to the given member. </summary>
-    public static void Upload(uint target)
+    public static void Upload(uint target) => Events.Post(() => !SprayDistributor.Busy && Networking.Connections.Any(c => c.UserData == target), () =>
     {
-        if (SprayDistributor.Busy || Networking.Connections.All(c => c.UserData != target))
-        {
-            Events.Post2(() => Upload(target));
-            return;
-        }
         var con = Networking.Connections.Find(c => c.UserData == target);
 
         if (Selected != null) SprayDistributor.Upload(AccId, Selected, con);
 
         Remote.Each(p => SprayDistributor.Upload(p.Key, p.Value, con));
-    }
+    });
 
     /// <summary> Uploads the selected spray to all members. </summary>
-    public static void UploadLocal()
+    public static void UploadLocal() => Events.Post(() => !SprayDistributor.Busy, () =>
     {
-        if (SprayDistributor.Busy)
-        {
-            Events.Post2(UploadLocal);
-            return;
-        }
         if (LobbyController.Offline) return;
         if (LobbyController.IsOwner)
             Networking.Connections.Each(c => SprayDistributor.Upload(AccId, Uploaded = Selected, c));
         else
             SprayDistributor.Upload(AccId, Uploaded = Selected, Networking.Client.Manager.Connection);
-    }
+    });
 }

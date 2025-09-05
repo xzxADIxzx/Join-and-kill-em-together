@@ -62,7 +62,7 @@ public class Teleporter : Fragment
         ObjFind("Hellmap")?.SetActive(false);
 
         // but this one is fine, I like it
-        Events.Post2(() => AudioSource.PlayClipAtPoint(UI.Teleporter.clip, position));
+        Events.Post(() => AudioSource.PlayClipAtPoint(UI.Teleporter.clip, position));
 
         // load necessary locations to prevent players from getting out of bounds
         if (Scene == "Level 7-4") ObjFind(insideEarthmover ? "InsideActivator" : "OutsideActivator").GetComponent<ObjectActivator>().Activate();

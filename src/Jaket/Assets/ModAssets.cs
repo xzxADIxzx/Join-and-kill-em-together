@@ -187,13 +187,8 @@ public static class ModAssets
     }
 
     /// <summary> Changes the colors of materials and their shaders to match the style of the game. </summary>
-    public static void UpdtMaterials(GameObject prefab, Color? color = null)
+    public static void UpdtMaterials(GameObject prefab, Color? color = null) => Events.Post(() => Master != null && Additv != null, () =>
     {
-        if (Master == null || Additv == null)
-        {
-            Events.Post2(() => UpdtMaterials(prefab, color));
-            return;
-        }
         prefab.GetComponentsInChildren<Renderer>(true).Each(r =>
         {
             if (r is TrailRenderer) r.material.shader = Additv;
@@ -203,16 +198,11 @@ public static class ModAssets
                 m.shader = Master;
             });
         });
-    }
+    });
 
     /// <summary> Changes the textures of materials and saves the prefab for the given entity type. </summary>
-    public static void UpdtMaterials(Texture texture, bool V2orV3)
+    public static void UpdtMaterials(Texture texture, bool V2orV3) => Events.Post(() => Entities.Vendor.Prefabs[(byte)EntityType.V1] != null, () =>
     {
-        if (Entities.Vendor.Prefabs[(byte)EntityType.V1] == null)
-        {
-            Events.Post2(() => UpdtMaterials(texture, V2orV3));
-            return;
-        }
         ref GameObject prefab = ref (V2orV3 ? ref V2 : ref V3);
 
         Keep(prefab = Entities.Items.Make(EntityType.V1));
@@ -220,7 +210,7 @@ public static class ModAssets
         prefab.name = $"DevPlushie ({(V2orV3 ? "V2" : "V3")})";
         prefab.GetComponentInChildren<Renderer>().material.mainTexture = texture;
         prefab.GetComponent<Rigidbody>().isKinematic = true;
-    }
+    });
 
     #endregion
 }

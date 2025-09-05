@@ -48,8 +48,8 @@ public class Items : Vendor
                 z.reverseArenaStatuses.Each(s => s.currentStatus = 0);
             });
         }
-        Events.OnLoad += () => Events.Post2(SyncAll);
-        Events.OnLobbyEnter += () => Events.Post2(SyncAll);
+        Events.OnLoad += () => Events.Post(SyncAll);
+        Events.OnLobbyEnter += () => Events.Post(SyncAll);
     }
 
     public EntityType Type(GameObject obj)

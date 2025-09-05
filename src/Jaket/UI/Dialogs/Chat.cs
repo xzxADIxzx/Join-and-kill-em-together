@@ -93,7 +93,7 @@ public class Chat : Fragment
         UI.Hide(UI.LeftGroup, this, () =>
         {
             field.ActivateInputField();
-            Events.Post2(() => field.caretPosition = int.MaxValue);
+            Events.Post(() => field.caretPosition = int.MaxValue);
         });
     }
 
@@ -141,7 +141,7 @@ public class Chat : Fragment
             {
                 field.StartCoroutine(Flash(red));
                 field.ActivateInputField();
-                Events.Post2(() => field.caretPosition = int.MaxValue);
+                Events.Post(() => field.caretPosition = int.MaxValue);
 
                 return; // skip toggle
             }

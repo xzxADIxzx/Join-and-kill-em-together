@@ -89,19 +89,14 @@ public class EmoteWheel : Fragment
         }));
     }
 
-    public override void Rebuild()
+    public override void Rebuild() => Events.Post(() => ModAssets.EmoteIcons.All(t => t != null) && ModAssets.EmoteGlows.All(t => t != null), () =>
     {
-        if (ModAssets.EmoteIcons.Any(t => t == null) && ModAssets.EmoteGlows.Any(t => t == null))
-        {
-            Events.Post2(Rebuild);
-            return;
-        }
         for (int i = 0; i < 6; i++)
         {
             segments[i].icon.sprite     = ModAssets.EmoteIcons[second ? i + 6 : i];
             segments[i].iconGlow.sprite = ModAssets.EmoteGlows[second ? i + 6 : i];
         }
-    }
+    });
 
     /// <summary> Shows the wheel and resets the selected segment. </summary>
     public void Show()
