@@ -160,7 +160,9 @@ public class LocalPlayer : Entity
         var knkl = fc?.transform.Find("Arm Red(Clone)");
         if (knkl) knkl.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = ModAssets.HandTexture(2);
 
-        weapon = (byte)Entities.Weapons.Type(cw);
+        var type = Entities.Weapons.Type(cw);
+
+        weapon = type == EntityType.None ? (byte)0xFF : type - EntityType.RevolverBlue;
         pyramid = Scene == "Level 4-4";
     }
 

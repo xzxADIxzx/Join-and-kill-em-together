@@ -176,8 +176,8 @@ public class Doll
         Hand.Each(Dest);
         if (item == 0xFF) return;
 
-        Entities.Weapons.Make((EntityType)item, parent: Hand);
-        Transformations.Apply((EntityType)item, Hand);
+        Entities.Weapons.Make(EntityType.RevolverBlue + item, parent: Hand);
+        Transformations.Apply(EntityType.RevolverBlue + item, Hand);
     }
 
     /// <summary> Applies the saved suit to the doll. </summary>
