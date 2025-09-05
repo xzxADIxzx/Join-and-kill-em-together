@@ -81,10 +81,16 @@ public class Events : MonoBehaviour
         };
     }
 
-    /// <summary> Posts the task for execution in the late update. </summary>
-    public static void Post(Runnable task) => Tasks.Enqueue(task);
     /// <summary> Posts the task for execution in the next frame. </summary>
-    public static void Post2(Runnable task) => Post(() => Post(task));
+    public static void Post(Runnable task) => Tasks.Enqueue(() => Tasks.Enqueue(task));
+    /// <summary> Posts the task for execution in the next frame until the given condition is met. </summary>
+    public static void Post(Prov<bool> cond, Runnable task)
+    {
+        if (cond())
+            task();
+        else
+            Post(() => Post(cond, task));
+    }
 
     private void Tick() => EveryTick.Fire();
     private void Half() => EveryHalf.Fire();
