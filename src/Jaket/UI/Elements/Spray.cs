@@ -46,7 +46,7 @@ public class Spray : MonoBehaviour
 
             Builder.Image(Builder.Rect("Image", c, new(1960f, 1960f)),             spray,      white, ImageType.Filled).preserveAspect = true;
             Builder.Text (Builder.Rect("Label", c, new(480f, -880f, width, 240f)), title, 240, color, TextAnchor.MiddleCenter).transform.localEulerAngles = new(0f, 0f, 6f);
-        });
+        }).sortingOrder = -1;
 
         GetComponentsInChildren<Graphic>().Each(g => Component<Outline>(g.gameObject, o =>
         {
