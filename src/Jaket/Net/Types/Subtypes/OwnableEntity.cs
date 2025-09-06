@@ -25,7 +25,7 @@ public abstract class OwnableEntity : Entity
     /// <summary> Transfers the ownership to the local player. </summary>
     public void TakeOwnage()
     {
-        if (IsOwner) return;
+        if (IsOwner || Locked) return;
         if (Version.DEBUG) Log.Debug($"[ENTS] Transferred the ownership of {Id} from {Owner} to {AccId}");
 
         Owner = AccId;
