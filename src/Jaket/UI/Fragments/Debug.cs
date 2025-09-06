@@ -14,6 +14,8 @@ using static Jaket.UI.Lib.Pal;
 /// <summary> Fragment that provides access to networking statistics. </summary>
 public class Debug : Fragment
 {
+    static Transform cc => CameraController.Instance.transform;
+
     /// <summary> Warehouses containing a lot of diverse information. </summary>
     private Data readBs, sentBs, readMs, writeMs, entityMs, targetMs, totalMs, flushMs;
     /// <summary> Labels displaying diverse information about network. </summary>
@@ -106,8 +108,20 @@ public class Debug : Fragment
         isowner.color = LobbyController.IsOwner ? green : red;
         loading.text  = Networking.Loading.ToString().ToUpper();
         loading.color = Networking.Loading ? green : red;
+    }
 
-        if (Input.GetKey(KeyCode.F5)) new Data[] { readBs, sentBs, readMs, writeMs, entityMs, targetMs, totalMs, flushMs }.Each(d => d.Clear());
+    public void Clear() => new Data[] { readBs, sentBs, readMs, writeMs, entityMs, targetMs, totalMs, flushMs }.Each(d => d.Clear());
+
+    public void Raycast()
+    {
+        if (Physics.Raycast(cc.position, cc.forward, out var hit, float.MaxValue, EnvMask | 0x400000))
+        {
+            var agent = hit.collider.GetComponentInParent<Entity.Agent>();
+            if (agent)
+                Log.Debug($"Caught an entity of {agent.Patron.Type} type");
+            else
+                Log.Debug("Couldn't catch an entity of any kind");
+        }
     }
 
     /// <summary> Data warehouse that can be projected onto a graph. </summary>

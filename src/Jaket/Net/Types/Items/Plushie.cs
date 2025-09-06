@@ -25,6 +25,8 @@ public class Plushie : Item
             if (Type == EntityType.xzxADIxzx) agent.StartCoroutine(ShakeYourHead(42));
             if (Type == EntityType.Sowler) agent.StartCoroutine(Hoot());
         });
+
+        Imdt(agent.transform.Find("GlassesHitbox").gameObject);
     }
 
     #endregion
