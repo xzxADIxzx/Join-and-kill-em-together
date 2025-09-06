@@ -60,8 +60,8 @@ public class Events : MonoBehaviour
             if (Scene == "Main Menu") OnMainMenuLoad.Fire();
         };
 
-        SteamMatchmaking.OnLobbyDataChanged += lobby => Post(OnLobbyAction.Fire);
-        SteamMatchmaking.OnLobbyEntered += lobby => Post(OnLobbyEnter.Fire);
+        SteamMatchmaking.OnLobbyDataChanged += lobby => OnLobbyAction.Fire();
+        SteamMatchmaking.OnLobbyEntered += lobby => OnLobbyEnter.Fire();
 
         SteamFriends.OnGameLobbyJoinRequested += (lobby, id) => OnLobbyInvite.Fire(lobby);
 
