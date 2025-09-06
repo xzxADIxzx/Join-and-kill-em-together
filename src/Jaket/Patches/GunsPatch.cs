@@ -27,15 +27,5 @@ public class ArmsPatch
     [HarmonyPrefix]
     [HarmonyPatch(typeof(Punch), nameof(Punch.GetParryLookTarget))]
     static void Parry() => lp.Parried = true;
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(HookArm), "Update")]
-    static void Hook(HookArm __instance, bool ___forcingFistControl, Vector3 ___hookPoint, bool ___lightTarget, EnemyIdentifier ___caughtEid)
-    {
-        if (LobbyController.Offline) return;
-
-        lp.Hook = ___forcingFistControl ? ___hookPoint : Vector3.zero;
-        if (__instance.state == HookState.Pulling && ___lightTarget && ___caughtEid.name == "Net") ___caughtEid.GetComponent<Enemy>()?.TakeOwnage();
-    }
 }
 */
