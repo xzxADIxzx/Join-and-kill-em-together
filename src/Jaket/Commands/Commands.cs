@@ -135,31 +135,5 @@ public static class Commands
             else
                 chat.Receive("[#FF341C]Layer must be an integer from 0 to 7. Level must be an integer from 1 to 5.");
         });
-
-        Handler.Register("authors", "Display the list of the mod developers", args =>
-        {
-            void Msg(string msg) => chat.Receive($"[14]{msg}[]");
-
-            Msg("Leading developers:");
-            Msg("* [#0096FF]xzxADIxzx[] - the main developer of this mod");
-            Msg("* [#8A2BE2]Sowler[] - owner of the Discord server and just a good friend");
-            Msg("* [#FFA000]Fumboy[] - textures and a part of animations");
-
-            Msg("Contributors:");
-            Msg("* [#00E666]Rey Hunter[] - really cool icons for emotes");
-            Msg("* [#00E666]Ardub[] - invaluable help with The Cyber Grind [12][#cccccc](he did 90% of the work)");
-            Msg("* [#00E666]Kekson1a[] - Steam Rich Presence support");
-
-            Msg("Translators:");
-            Msg("[#cccccc]NotPhobos - Spanish, sSAR - Italian, Theoyeah - French, Sowler - Polish,");
-            Msg("[#cccccc]Ukrainian, Poyozit - Portuguese, Fraku - Filipino, Iyad - Arabic");
-
-            Msg("Testers:");
-            Msg("[#cccccc]Fenicemaster, AndruGhost, Subjune, FruitCircuit");
-
-            chat.Receive("Thank you all, I couldn't have done it alone :heart:", "0096FF", "xzxADIxzx", Chat.BOT_TAG);
-        });
-
-        Handler.Register("support", "Support the author by buying him a coffee", args => Application.OpenURL("https://www.buymeacoffee.com/adithedev"));
     }
 }
