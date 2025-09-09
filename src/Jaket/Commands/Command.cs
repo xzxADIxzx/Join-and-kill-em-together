@@ -1,11 +1,11 @@
 namespace Jaket.Commands;
 
-/// <summary> Command that has a name, parameters, a description, and a handler that accepts arguments. </summary>
+/// <summary> Command executable through in-game chat, accepts arguments. </summary>
 public class Command
 {
     /// <summary> Basic command parameters displayed by the help command. </summary>
     public string Name, Args, Desc;
-    /// <summary> Handler for receiving command arguments. </summary>
+    /// <summary> Function that receives and processes command arguments. </summary>
     public Cons<string[]> Handler;
 
     public Command(string name, string args, string desc, Cons<string[]> handler)
@@ -16,13 +16,13 @@ public class Command
         Handler = handler;
     }
 
-    /// <summary> Handles the command call and its arguments. </summary>
+    /// <summary> Handles a command call and its arguments. </summary>
     public void Handle(string args)
     {
         args = args.Trim();
 
         if (args == "")
-            Handler(new string[0]);
+            Handler([]);
         else
             Handler(args.Split(' '));
     }
