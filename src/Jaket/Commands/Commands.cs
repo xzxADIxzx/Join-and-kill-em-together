@@ -38,10 +38,14 @@ public static class Commands
 
         Handler.Register("help", "Display the list of all commands", args =>
         {
-            Handler.Commands.ForEach(command =>
+            string[] content = new string[Handler.Commands.Count * 2];
+            int i = 0;
+            Handler.Commands.Each(c =>
             {
-                chat.Receive($"[14]/{command.Name}{(command.Args == null ? "" : $" [#BBBBBB]{command.Args}[]")} - {command.Desc}[]");
+                content[i++] = c.Desc;
+                content[i++] = $"/{c.Name} [light]{c.Args}[]";
             });
+            Print(content);
         });
 
         Handler.Register("hello", "Resend the tips for new players", args => chat.SayHello());
