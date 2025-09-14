@@ -19,6 +19,23 @@ public static class Commands
     /// <summary> Registers all default mod commands. </summary>
     public static void Load()
     {
+        static void Print(string[] content)
+        {
+            for (int i = 0; i < content.Length;)
+            {
+                string color = (i / 2 % 4) switch
+                {
+                    0 => "blue",
+                    1 => "purple",
+                    2 => "pink",
+                    _ => "coral"
+                };
+                content[i] = $"[{color}]| {content[i++]}[]";
+                content[i] = $"[{color}]| []{content[i++]}";
+            }
+            chat.Receive(string.Join('\n', content));
+        }
+
         Handler.Register("help", "Display the list of all commands", args =>
         {
             Handler.Commands.ForEach(command =>
@@ -59,23 +76,17 @@ public static class Commands
             }
         });
 
-        Handler.Register("plushies", "Display the list of all plushies", args =>
-        {
-            string[] content =
-            {
-                "blue",   "Leading Developers", "Hakita, Pitr, Victoria",
-                "purple", "Programmers",        "Heckteck, CabalCrow, Lucas, Zombie",
-                "pink",   "Artists",            "Francis, Jericho, BigRock, Mako, FlyingDog, Samuel, Salad",
-                "coral",  "Composers",          "Meganeko, KGC, Benjamin, Jake, John, Lizard, Quetzal",
-                "blue",   "Voice Actors",       "Gianni, Weyte, Lenval, Joy, Mandy",
-                "purple", "Quality Assurance",  "Cameron, Dalia, Tucker, Scott",
-                "pink",   "Other",              "Jacob, Vvizard",
-                "coral",  "Machines",           "V1, V2, V3, xzxADIxzx, Sowler"
-            };
-            string msg = "";
-            for (int i = 0; i < 24; i += 3) msg += $"[{content[i]}]| {content[i + 1]}[]\n[{content[i]}]| []{content[i + 2]}\n";
-            chat.Receive(msg[..^1]);
-        });
+        Handler.Register("plushies", "Display the list of all plushies", args => Print
+        ([
+            "Leading Developers", "Hakita, Pitr, Victoria",
+            "Programmers",        "Heckteck, CabalCrow, Lucas, Zombie",
+            "Artists",            "Francis, Jericho, BigRock, Mako, FlyingDog, Samuel, Salad",
+            "Composers",          "Meganeko, KGC, Benjamin, Jake, John, Lizard, Quetzal",
+            "Voice Actors",       "Gianni, Weyte, Lenval, Joy, Mandy",
+            "Quality Assurance",  "Cameron, Dalia, Tucker, Scott",
+            "Other",              "Jacob, Vvizard",
+            "Machines",           "V1, V2, V3, xzxADIxzx, Sowler"
+        ]));
 
         Handler.Register("plushie", "<name>", "Spawn a plushie by name", args =>
         {
