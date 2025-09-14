@@ -8,15 +8,15 @@ using Jaket.Net;
 using Jaket.UI;
 using Jaket.UI.Dialogs;
 
-/// <summary> List of chat commands used by the mod. </summary>
+/// <summary> Set of commands for the in-game chat. </summary>
 public static class Commands
 {
     static Chat chat => UI.Chat;
 
-    /// <summary> Chat command handler. </summary>
+    /// <summary> Default command space. </summary>
     public static CommandHandler Handler = new();
 
-    /// <summary> Registers all default mod commands. </summary>
+    /// <summary> Registers all commands. </summary>
     public static void Load()
     {
         static void Print(string[] content)

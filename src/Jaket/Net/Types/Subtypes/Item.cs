@@ -127,7 +127,7 @@ public abstract class Item : OwnableEntity
     public override void Killed(Reader r, int left)
     {
         Hidden = true;
-        Dest(agent);
+        Dest(agent.gameObject);
     }
 
     #endregion
