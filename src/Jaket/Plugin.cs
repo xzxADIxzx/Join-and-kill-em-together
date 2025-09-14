@@ -64,6 +64,7 @@ public class Plugin : MonoBehaviour
         ModAssets.Load();
         Bundle.Load();
         UI.UI.Build();
+        Commands.Commands.Load();
 
         Log.Info("[INIT] Initializing network components...");
 
@@ -90,8 +91,6 @@ public class Plugin : MonoBehaviour
         Log.Info("[INIT] Jaket has been initialized");
 
         if (true) return;
-
-        Commands.Commands.Load();
 
         Administration.Load();
 

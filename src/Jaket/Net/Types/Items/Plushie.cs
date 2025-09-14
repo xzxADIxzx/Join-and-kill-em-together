@@ -25,8 +25,9 @@ public class Plushie : Item
             if (Type == EntityType.xzxADIxzx) agent.StartCoroutine(ShakeYourHead(42));
             if (Type == EntityType.Sowler) agent.StartCoroutine(Hoot());
         });
+        agent.transform.Each(c => c.gameObject.layer = 22); // the plushie of lizard has an issue with layers
 
-        Imdt(agent.transform.Find("GlassesHitbox").gameObject);
+        Imdt(agent.transform.Find("GlassesHitbox")?.gameObject);
     }
 
     #endregion

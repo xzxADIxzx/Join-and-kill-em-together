@@ -59,7 +59,7 @@ public static class Commands
                 chat.Receive($"[green]TTS volume is set to {Settings.Volume = Mathf.Clamp(value, 0, 100)}.");
 
             else
-                chat.Receive("[red]Couldn't parse the given value, it must be an integer between 0 and 100.");
+                chat.Receive("[red]Couldn't parse the value, it must be an integer between 0 and 100.");
         });
 
         Handler.Register("tts", "\\[on/off]", "Toggle TTS for thy messages", args =>
@@ -90,13 +90,13 @@ public static class Commands
 
         Handler.Register("plushie", "<name>", "Spawn a plushie by name", args =>
         {
-            string name = args.Length == 0 ? null : args[0].ToLower();
-            int index = GameAssets.Plushies.IndexOf(n => n.Contains(name));
+            var name = args.Length == 0 ? null : args[0].ToLower();
+            int type = GameAssets.Plushies.IndexOf(n => n.Contains(name));
 
-            if (index == -1)
-                chat.Receive($"[#FF341C]Plushie named {name} not found.");
+            if (type == -1)
+                chat.Receive($"[red]Couldn't find a plushie named {name}.");
             else
-                Inst(Items.Prefabs[EntityType.Hakita + (byte)index - EntityType.BlueSkull], NewMovement.Instance.transform.position);
+                Entities.Items.Make(EntityType.Hakita + (byte)type, NewMovement.Instance.transform.position);
         });
 
         Handler.Register("level", "<layer> <level> / sandbox / cyber grind / museum", "Load a level", args =>
