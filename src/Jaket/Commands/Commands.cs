@@ -50,33 +50,29 @@ public static class Commands
 
         Handler.Register("hello", "Resend the tips for new players", args => chat.SayHello());
 
-        Handler.Register("tts-volume", "\\[0-100]", "Set Sam's volume to keep your ears comfortable", args =>
+        Handler.Register("tts-volume", "\\[0-100]", "Set the volume of TTS", args =>
         {
             if (args.Length == 0)
-                chat.Receive($"[#FFA500]TTS volume is {Settings.Volume}.");
-            else if (int.TryParse(args[0], out int value))
-            {
-                int clamped = Mathf.Clamp(value, 0, 100);
-                Settings.Volume = clamped;
+                chat.Receive($"[orange]TTS volume is {Settings.Volume}.");
 
-                chat.Receive($"[#32CD32]TTS volume is set to {clamped}.");
-            }
+            else if (int.TryParse(args[0], out int value))
+                chat.Receive($"[green]TTS volume is set to {Settings.Volume = Mathf.Clamp(value, 0, 100)}.");
+
             else
-                chat.Receive("[#FF341C]Failed to parse value. It must be an integer in the range from 0 to 100.");
+                chat.Receive("[red]Couldn't parse the given value, it must be an integer between 0 and 100.");
         });
 
-        Handler.Register("tts-auto", "\\[on/off]", "Turn auto reading of all messages", args =>
+        Handler.Register("tts", "\\[on/off]", "Toggle TTS for thy messages", args =>
         {
-            bool enable = args.Length == 0 ? !Settings.AutoTTS : (args[0] == "on" || (args[0] == "off" ? false : !Settings.AutoTTS));
-            if (enable)
+            if (args.Length > 0 ? args[0] == "on" : !Settings.AutoTTS)
             {
                 Settings.AutoTTS = true;
-                chat.Receive("[#32CD32]Auto TTS enabled.");
+                chat.Receive("[green]TTS enabled.");
             }
             else
             {
                 Settings.AutoTTS = false;
-                chat.Receive("[#FF341C]Auto TTS disabled.");
+                chat.Receive("[red]TTS disabled.");
             }
         });
 
