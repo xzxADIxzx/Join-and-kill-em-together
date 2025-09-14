@@ -90,7 +90,7 @@ public static class Commands
 
         Handler.Register("plushie", "<name>", "Spawn a plushie by name", args =>
         {
-            var name = args.Length == 0 ? null : args[0].ToLower();
+            var name = args.Length == 0 ? null : args[0];
             int type = GameAssets.Plushies.IndexOf(n => n.Contains(name));
 
             if (type == -1)
@@ -101,50 +101,49 @@ public static class Commands
 
         Handler.Register("level", "<layer> <level> / sandbox / cyber grind / museum", "Load a level", args =>
         {
-            if (args.Length == 1 && args[0].Contains("-")) args = args[0].Split('-');
+            if (args.Length == 1 && args[0].Contains('-')) args = args[0].Split('-');
 
-            if (!LobbyController.IsOwner)
-                chat.Receive($"[#FF341C]Only the lobby owner can load levels.");
+            if (!LobbyController.IsOwner) chat.Receive("[red]Only the owner of the lobby can load levels.");
 
-            else if (args.Length >= 1 && (args[0].ToLower() == "sandbox" || args[0].ToLower() == "sand"))
+            else if (args.Length >= 1 && "sandbox tester".Contains(args[0]))
             {
                 LoadScn("uk_construct");
-                chat.Receive("[#32CD32]Sandbox is loading.");
+                chat.Receive("[green]Sandbox is loading...");
             }
-            else if (args.Length >= 1 && (args[0].ToLower().Contains("cyber") || args[0].ToLower().Contains("grind") || args[0].ToLower() == "cg"))
+            else if (args.Length >= 1 && "cyber grind cg".Contains(args[0]))
             {
                 LoadScn("Endless");
-                chat.Receive("[#32CD32]The Cyber Grind is loading.");
+                chat.Receive("[green]The Cyber Grind is loading...");
             }
-            else if (args.Length >= 1 && (args[0].ToLower().Contains("credits") || args[0].ToLower() == "museum"))
+            else if (args.Length >= 1 && "credits museum".Contains(args[0]))
             {
                 LoadScn("CreditsMuseum2");
-                chat.Receive("[#32CD32]The Credits Museum is loading.");
+                chat.Receive("[green]Museum is loading...");
             }
             else if (args.Length < 2)
-                chat.Receive($"[#FF341C]Insufficient number of arguments.");
+                chat.Receive("[red]Insufficient number of arguments.");
             else if
             (
                 int.TryParse(args[0], out int layer) && layer >= 0 && layer <= 7 &&
                 int.TryParse(args[1], out int level) && level >= 1 && level <= 5 &&
-                (level == 5 ? layer == 0 : true) && (layer == 3 || layer == 6 ? level <= 2 : true)
+                (layer == 0 || level != 5) && (layer != 3 && layer != 6 || level <= 2)
             )
             {
                 LoadScn($"Level {layer}-{level}");
-                chat.Receive($"[#32CD32]Level {layer}-{level} is loading.");
+                chat.Receive($"[green]Level {layer}-{level} is loading...");
             }
-            else if (args[1].ToUpper() == "S" && int.TryParse(args[0], out level) && level >= 0 && level <= 7 && level != 3 && level != 6)
+            else if (args[1] == "s" && int.TryParse(args[0], out layer) && layer >= 0 && layer <= 7 && layer != 3 && layer != 6)
             {
-                LoadScn($"Level {level}-S");
-                chat.Receive($"[#32CD32]Secret level {level}-S is loading.");
+                LoadScn($"Level {layer}-S");
+                chat.Receive($"[green]Level {layer}-S is loading...");
             }
-            else if (args[0].ToUpper() == "P" && int.TryParse(args[1], out level) && level >= 1 && level <= 2)
+            else if (args[0] == "p" && int.TryParse(args[1], out level) && level >= 1 && level <= 2)
             {
                 LoadScn($"Level P-{level}");
-                chat.Receive($"[#32CD32]Prime level P-{level} is loading.");
+                chat.Receive($"[green]Level P-{level} is loading...");
             }
             else
-                chat.Receive("[#FF341C]Layer must be an integer from 0 to 7. Level must be an integer from 1 to 5.");
+                chat.Receive("[red]Couldn't parse the given values.");
         });
     }
 }

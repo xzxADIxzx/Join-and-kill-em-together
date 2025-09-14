@@ -19,7 +19,7 @@ public class Command
     /// <summary> Handles a command call and its arguments. </summary>
     public void Handle(string args)
     {
-        args = args.Trim();
+        args = args.Trim().ToLower();
 
         if (args == "")
             Handler([]);
