@@ -87,6 +87,8 @@ public abstract class Item : OwnableEntity
             TakeOwnage();
             Networking.LocalPlayer.Holding = this;
         });
+
+        OnTransfer();
     }
 
     public override void Update(float delta)
