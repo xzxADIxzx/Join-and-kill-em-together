@@ -105,7 +105,7 @@ public class Items : Vendor
             obj.transform.localRotation = obj.transform.parent.Find("Dummy Object").localRotation; // it is some kind of template
         }
 
-        return obj;
+        return type.IsFish() ? obj.transform.parent.gameObject : obj;
     }
 
     public void Sync(GameObject obj, params bool[] args)
