@@ -42,8 +42,10 @@ public abstract class Entity
         {
             w.Id(Id);
             data?.Invoke(w);
+
+            // offset is formed from packet type and identifier
+            if (locally) Killed(new(w.Memory + 5), bytesCount);
         });
-        if (locally) Killed(default, -1);
     }
 
     /// <summary> Number of bytes that the entity takes in a snapshot, plus the size of its header. </summary>
