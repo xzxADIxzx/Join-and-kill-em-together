@@ -109,7 +109,7 @@ public abstract class Item : OwnableEntity
 
             itemId.ipz = null;
         }
-        if (placed && !itemId.Placed()) Physics.OverlapSphere(agent.Position, .5f, EnvMask | 0x400000, QueryTriggerInteraction.Collide).Each(
+        if (placed && !itemId.Placed()) Physics.OverlapSphere(agent.Position, .5f, 0x400000).Each(
             c => c.gameObject.layer == 22, // item
             c =>
             {
@@ -128,6 +128,9 @@ public abstract class Item : OwnableEntity
     {
         Hidden = true;
         Dest(agent.gameObject);
+
+        if (left >= 1 && r.Bool())
+            Physics.OverlapSphere(agent.Position, 5f, 0x400000).Each(c => c.transform.Find("../ThatExplosionGif")?.gameObject.SetActive(true));
     }
 
     #endregion
