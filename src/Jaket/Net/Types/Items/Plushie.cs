@@ -1,8 +1,10 @@
 namespace Jaket.Net.Types;
 
+using HarmonyLib;
 using System.Collections;
 using UnityEngine;
 
+using Jaket.Assets;
 using Jaket.Content;
 
 /// <summary> Tangible entity of any plushie type. </summary>
@@ -51,6 +53,84 @@ public class Plushie : Item
     public IEnumerator Hoot()
     {
         yield return null; // TODO play different owl sounds from time to time
+    }
+
+    #endregion
+    #region harmony
+
+    [HarmonyPatch(typeof(ItemTrigger), "OnTriggerEnter")]
+    [HarmonyPrefix]
+    static bool Trash(ItemTrigger __instance, Collider other)
+    {
+        var agent = other.GetComponentInParent<Agent>();
+        if (agent && Scene == "CreditsMuseum2")
+        {
+            if (agent.Patron is Item i && i.IsOwner && __instance.targetType == ItemType.CustomKey1)
+            {
+                if (i.Type == EntityType.xzxADIxzx) Trash(__instance);
+                if (i.Type == EntityType.Sowler) Trash(other);
+                if (i.Type != EntityType.Sowler) i.Kill(1, w => w.Bool(true));
+            }
+            return false;
+        }
+        else return true;
+    }
+
+    static void Trash(ItemTrigger trigger)
+    {
+        var black = Inst(ObjFind("SORT ME").transform.Find("OBJECT Activator Gianni world enemies/time of day changer").gameObject);
+        var white = Inst(ObjFind("SORT ME").transform.Find("time of day reverser").gameObject);
+        var music = ObjFind("Music");
+
+        var gif = trigger.onEvent.toActivateObjects[0];
+        if (gif.TryGetComponent(out RandomPitch rnd) && gif.TryGetComponent(out ObjectActivator act))
+        {
+            rnd.defaultPitch = .2f;
+            rnd.pitchVariation = .01f;
+            act.delay = 8f;
+
+            black.SetActive(true);
+            white.SetActive(false);
+            music.SetActive(false);
+
+            act.events.onActivate.AddListener(() =>
+            {
+                rnd.defaultPitch = 1f;
+                rnd.pitchVariation = .1f;
+                act.delay = 1f;
+
+                black.SetActive(false);
+                white.SetActive(true);
+                music.SetActive(true);
+            });
+        }
+    }
+
+    static void Trash(Collider col)
+    {
+        var mov = NewMovement.Instance.transform;
+        var cam = CameraController.Instance.transform;
+        var owl = col.transform.parent.parent;
+
+        owl.position = cam.position - mov.forward * 6f - Vector3.up;
+        owl.LookAt(cam);
+        col.attachedRigidbody.isKinematic = true;
+
+        GameAssets.Sound("Voices/Gabriel/gab_Intro1d.ogg", c =>
+        {
+            var src = Component<AudioSource>(owl.gameObject, src =>
+            {
+                src.clip = c;
+                src.rolloffMode = AudioRolloffMode.Linear;
+                src.Play();
+            });
+            var act = Component<ObjectActivator>(owl.gameObject, act =>
+            {
+                act.ActivateDelayed(5f);
+                act.events = new() { onActivate = new() };
+                act.events.onActivate.AddListener(() => { Dest(src); Dest(act); });
+            });
+        });
     }
 
     #endregion

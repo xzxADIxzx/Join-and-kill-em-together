@@ -20,6 +20,7 @@ public static class Patches
     public static Type[] DynamicTypes =
     {
         typeof(Item),
+        typeof(Plushie),
         typeof(Spectator),
     };
     public static Type[] StaticTypes =

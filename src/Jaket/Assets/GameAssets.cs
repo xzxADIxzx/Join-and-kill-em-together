@@ -162,8 +162,5 @@ public static class GameAssets
     /// <summary> Loads an insurrectionist material by name. </summary>
     public static void SisyMaterial(string name, Renderer[] output) => Material($"Enemies/Sisyphus/{name}.mat", mat => output[0].material = output[1].material = mat);
 
-    /// <summary> Loads a Gabriel voice line by name. </summary>
-    public static void GabLine(string name, Cons<AudioClip> output) => Sound($"Voices/Gabriel/{name}.ogg", output);
-
     #endregion
 }
