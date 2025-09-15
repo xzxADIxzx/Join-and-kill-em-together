@@ -40,6 +40,15 @@ public class Server : Endpoint, ISocketManager
             }
         });
 
+        Listen(PacketType.Death, (con, sender, r, s) =>
+        {
+            if (ents.TryGetValue(r.Id(), out var e) && e is not LocalPlayer && e is not RemotePlayer)
+            {
+                e.Killed(r, s - 5);
+                Redirect(r, s, con);
+            }
+        });
+
         Listen(PacketType.Style, (con, sender, r, s) =>
         {
             if (ents[sender] is RemotePlayer p && Redirect(ref r, s, con, sender)) p.Doll.ReadSuit(r);
@@ -96,14 +105,6 @@ public class Server : Endpoint, ISocketManager
             {
                 entity?.Damage(r);
                 Redirect(r, size, con);
-            }
-        });
-        Listen(PacketType.KillEntity, (con, sender, r, s) =>
-        {
-            if (ents.TryGetValue(r.Id(), out var entity) && entity && entity is not RemotePlayer && entity is not LocalPlayer)
-            {
-                entity.Killed(r, s - 5);
-                Redirect(r, s, con);
             }
         });
 

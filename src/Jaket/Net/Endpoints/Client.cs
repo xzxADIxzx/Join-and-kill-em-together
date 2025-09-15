@@ -38,6 +38,11 @@ public class Client : Endpoint, IConnectionManager
             }
         });
 
+        Listen(PacketType.Death, (con, sender, r, s) =>
+        {
+            if (ents.TryGetValue(r.Id(), out var e)) e.Killed(r, s - 5);
+        });
+
         Listen(PacketType.Style, r =>
         {
             if (ents[r.Id()] is RemotePlayer p) p.Doll.ReadSuit(r);
@@ -81,10 +86,6 @@ public class Client : Endpoint, IConnectionManager
         Listen(PacketType.DamageEntity, r =>
         {
             if (ents.TryGetValue(r.Id(), out var entity)) entity?.Damage(r);
-        });
-        Listen(PacketType.KillEntity, (con, sender, r, s) =>
-        {
-            if (ents.TryGetValue(r.Id(), out var entity)) entity?.Killed(r, s - 5);
         });
 
         Listen(PacketType.Spray, r => SprayManager.Spawn(r.Id(), r.Vector(), r.Vector()));
