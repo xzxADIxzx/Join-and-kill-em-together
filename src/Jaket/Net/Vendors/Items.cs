@@ -93,16 +93,15 @@ public class Items : Vendor
     {
         if (!type.IsItem()) return null;
 
-        var obj = Inst(Vendor.Prefabs[(int)type], position);
+        var obj = Inst(Vendor.Prefabs[(byte)type], position);
 
         if (type.IsFish())
         {
             obj.transform.parent = Component<FishObjectReference>(Inst(FishTemplate, position), f =>
             {
-                byte index = type - EntityType.FishFunny;
-                foreach (var fish in FishManager.Instance?.recognizedFishes.Keys) if (index-- == 0) f.fishObject = fish;
+                f.fishObject = ResFind<FishObject>().Find(o => o.worldObject == Vendor.Prefabs[(byte)type]);
             }).transform;
-            obj.transform.localRotation = obj.transform.parent.Find("Dummy Object").localRotation; // it is some kind of template
+            obj.transform.localRotation = obj.transform.Find("../Dummy Object").localRotation; // it is some kind of template
         }
 
         return type.IsFish() ? obj.transform.parent.gameObject : obj;

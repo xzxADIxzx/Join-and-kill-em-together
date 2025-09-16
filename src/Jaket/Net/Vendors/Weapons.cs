@@ -32,7 +32,7 @@ public class Weapons : Vendor
     {
         if (!type.IsWeapon()) return null;
 
-        var obj = Inst(Vendor.Prefabs[(int)type], parent);
+        var obj = Inst(Vendor.Prefabs[(byte)type], parent);
 
         obj.SetActive(true);
         obj.GetComponentsInChildren<Renderer>().Each(c => c.gameObject.layer = 24); // outdoors
