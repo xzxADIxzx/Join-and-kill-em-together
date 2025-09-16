@@ -103,7 +103,7 @@ public static class Commands
         {
             if (args.Length == 1 && args[0].Contains('-')) args = args[0].Split('-');
 
-            if (!LobbyController.IsOwner) chat.Receive("[red]Only the owner of the lobby can load levels.");
+            if (LobbyController.Online && !LobbyController.IsOwner) chat.Receive("[red]Only the owner of the lobby can load levels.");
 
             else if (args.Length >= 1 && "sandbox tester".Contains(args[0]))
             {
