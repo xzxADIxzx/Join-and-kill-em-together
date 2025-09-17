@@ -100,6 +100,7 @@ public abstract class Item : OwnableEntity
         agent.Rotation = holding ? player.Value.Doll.HookRoot.eulerAngles + HoldRotation : new(rotX.GetAngle(delta), rotY.GetAngle(delta), rotZ.GetAngle(delta));
 
         agent.Scale    = holding == itemId.reverseTransformSettings ? itemId.putDownScale : Vector3.one;
+        itemId.pickedUp= holding;
 
         if (!placed && itemId.Placed())
         {

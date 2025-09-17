@@ -9,7 +9,9 @@ using Jaket.Content;
 /// <summary> Tangible entity of any fish type. </summary>
 public class Fish : Item
 {
+    ItemIdentifier itemId;
     FishObjectReference fish;
+    ObjectActivator timer;
 
     public Fish(uint id, EntityType type) : base(id, type) { }
 
@@ -21,9 +23,27 @@ public class Fish : Item
     {
         base.Assign(agent);
 
+        agent.TryGetComponent(out itemId);
         agent.TryGetComponent(out fish);
 
         FishManager.Instance.UnlockFish(fish.fishObject);
+    }
+
+    public override void Update(float delta)
+    {
+        base.Update(delta);
+
+        if (Type == EntityType.FishBomb && !itemId.pickedUp && !timer) timer = Component<ObjectActivator>(fish.gameObject, a =>
+        {
+            a.ActivateDelayed(2.4f);
+            a.events = new() { onActivate = new() };
+            a.events.onActivate.AddListener(() =>
+            {
+                Killed(default, -1);
+                var pos = fish.transform.position;
+                GameAssets.Prefab("Attacks and Projectiles/Explosions/Explosion Harmless.prefab", p => Inst(p, pos));
+            });
+        });
     }
 
     #endregion
