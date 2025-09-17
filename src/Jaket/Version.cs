@@ -1,6 +1,7 @@
 namespace Jaket;
 
 using BepInEx.Bootstrap;
+using System.Collections.Generic;
 using UnityEngine.Networking;
 
 using Jaket.Assets;
@@ -27,10 +28,11 @@ public static class Version
     public static bool HasIncompatibility;
 
     /// <summary> Fetches data from the given URL address. </summary>
-    public static void Fetch(string url, Cons<string> cons) => UnityWebRequest.Get(url).SendWebRequest().completed += t =>
+    public static void Fetch(string url, Cons<string> cons, Cons<long> pst) => UnityWebRequest.Get(url).SendWebRequest().completed += t =>
     {
         var r = (t as UnityWebRequestAsyncOperation).webRequest;
         if (r.responseCode == 200) cons(r.downloadHandler.text);
+        pst(r.responseCode);
     };
 
     /// <summary> Fetches the latest version from GitHub and notifies players about it so that they no longer whine to me. </summary>
@@ -50,7 +52,8 @@ public static class Version
             var name = res.Substring(nameIndex += NAME.Length, res.IndexOf('"', nameIndex) - nameIndex);
 
             if (latest != CURRENT) Bundle.Hud("outdated-mod", false, CURRENT, latest, name);
-        });
+        },
+        code => Log.Info($"[UPDT] {(code == 200 ? "Fetched" : "Couldn't fetch")} the latest version of the project"));
     }
 
     /// <summary> Fetches the list of mods that are compatible with Jaket from GitHub. </summary>
@@ -68,8 +71,15 @@ public static class Version
 
                 Compatible[i] = res[s..e];
             }
+        }, code =>
+        {
+            List<string> incompatible = new();
+            Chainloader.PluginInfos.Keys.Each(p => Compatible.All(c => c != p), incompatible.Add);
 
-            HasIncompatibility = Compatible.Any(Chainloader.PluginInfos.ContainsKey);
+            if (HasIncompatibility = incompatible.Count > 0)
+                Log.Warning($"[UPDT] Incompatible mods found: {string.Join(", ", incompatible)}");
+            else
+                Log.Info("[UPDT] All of the loaded mods are compatible with the project");
         });
     }
 }
