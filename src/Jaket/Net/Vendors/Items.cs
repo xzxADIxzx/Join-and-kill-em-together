@@ -115,7 +115,7 @@ public class Items : Vendor
         if (obj.activeSelf && obj.TryGetComponent(out ItemIdentifier itemId) && !itemId.infiniteSource)
         {
             // for some unknown reason this value is true for the museum plushies
-            itemId.pickedUp = false;
+            itemId.pickedUp = type.IsFish();
 
             if (LobbyController.IsOwner || args[0])
             {
