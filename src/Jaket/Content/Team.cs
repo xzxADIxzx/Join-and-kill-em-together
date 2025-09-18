@@ -9,7 +9,7 @@ using static Jaket.UI.Lib.Pal;
 /// <summary> All teams. They are required for versus mechanics. </summary>
 public enum Team : byte
 {
-    Yellow, Red, Green, Blue, Pink
+    Yellow, Red, Green, Blue, Pink, None = 0xFF
 }
 
 /// <summary> Set of different tools for working with teams. </summary>
