@@ -258,8 +258,6 @@ public static class Tools
     /// <summary> Whether the type is an enemy and can be shot by a coin. </summary>
     public static bool IsTargetable(this EntityType type) => IsEnemy(type) && type != EntityType.Idol && type != EntityType.CancerousRodent;
 
-
-
     /// <summary> Whether the type is an item. </summary>
     public static bool IsItem(this EntityType type) => type >= EntityType.SkullBlue && type <= EntityType.Sowler;
 
@@ -269,13 +267,11 @@ public static class Tools
     /// <summary> Whether the type is a plushie. </summary>
     public static bool IsPlushie(this EntityType type) => type >= EntityType.Hakita && type <= EntityType.Sowler;
 
-
-
     /// <summary> Whether the type is a weapon. </summary>
     public static bool IsWeapon(this EntityType type) => type >= EntityType.RevolverBlue && type <= EntityType.RocketlRed;
 
-    /// <summary> Whether the type is a bullet. </summary>
-    public static bool IsBullet(this EntityType type) => type >= EntityType.Coin;
+    /// <summary> Whether the type is a projectile. </summary>
+    public static bool IsProjectile(this EntityType type) => type >= EntityType.SawbladeCommon && type <= EntityType.SawbladeHeated;
 
     #endregion
 }

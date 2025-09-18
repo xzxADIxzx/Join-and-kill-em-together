@@ -102,6 +102,13 @@ public enum EntityType : byte
     RocketlRed,
 
     #endregion
+    #region projectiles
+
+    SawbladeCommon,
+    SawbladeFodder,
+    SawbladeHeated,
+
+    #endregion
 
     Filth,
     Stray,
