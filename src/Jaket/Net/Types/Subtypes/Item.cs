@@ -71,8 +71,8 @@ public abstract class Item : OwnableEntity
     {
         (this.agent = agent).Patron = this;
 
-        agent.TryGetComponent(out rb);
-        agent.TryGetComponent(out itemId);
+        agent.Get(out rb, true);
+        agent.Get(out itemId);
 
         OnTransfer = () =>
         {

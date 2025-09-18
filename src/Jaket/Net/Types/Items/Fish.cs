@@ -23,8 +23,9 @@ public class Fish : Item
     {
         base.Assign(agent);
 
-        agent.TryGetComponent(out itemId);
-        agent.TryGetComponent(out fish);
+        agent.Get(out itemId);
+        agent.Get(out fish);
+        agent.Rem<ExplosiveFish>(true);
 
         FishManager.Instance.UnlockFish(fish.fishObject);
     }
@@ -35,7 +36,7 @@ public class Fish : Item
 
         if (Type == EntityType.FishBomb && !itemId.pickedUp && !timer) timer = Component<ObjectActivator>(fish.gameObject, a =>
         {
-            a.ActivateDelayed(2.4f);
+            a.ActivateDelayed(3f);
             a.events = new() { onActivate = new() };
             a.events.onActivate.AddListener(() =>
             {
@@ -43,6 +44,7 @@ public class Fish : Item
                 var pos = fish.transform.position;
                 GameAssets.Prefab("Attacks and Projectiles/Explosions/Explosion Harmless.prefab", p => Inst(p, pos));
             });
+            fish.transform.Find("Bomb Fish/Fire")?.gameObject.SetActive(true);
         });
     }
 

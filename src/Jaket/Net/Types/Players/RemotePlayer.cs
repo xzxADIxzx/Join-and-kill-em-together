@@ -90,8 +90,8 @@ public class RemotePlayer : Entity
     {
         (this.agent = agent).Patron = this;
 
-        agent.TryGetComponent(out enemyId);
-        agent.TryGetComponent(out Voice);
+        agent.Get(out enemyId);
+        agent.Get(out Voice);
 
         Doll ??= new(() =>
         {
