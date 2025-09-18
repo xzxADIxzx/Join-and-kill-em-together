@@ -72,6 +72,29 @@ public abstract class Entity
         /// <summary> Entity that owns the agent and has to be updated every frame. </summary>
         public Entity Patron;
 
+        /// <summary> Gets a component of the given type or logs an error. </summary>
+        public void Get<T>(out T t, bool nullable = false) where T : Component
+        {
+            t = GetComponent<T>();
+            if (!t && !nullable) Log.Error($"[ENTS] Couldn't get a component of type {typeof(T)}");
+        }
+
+        /// <summary> Gets components of the given type or logs an error. </summary>
+        public void Get<T>(out T[] t, bool nullable = false) where T : Component
+        {
+            t = GetComponentsInChildren<T>();
+            if (t.Length == 0 && !nullable) Log.Error($"[ENTS] Couldn't get components of type {typeof(T)}");
+        }
+
+        /// <summary> Removes a component of the given type or logs an error. </summary>
+        public void Rem<T>(bool nullable = false) where T : Component
+        {
+            if (TryGetComponent(out T t))
+                Dest(t);
+            else if (!nullable)
+                Log.Error($"[ENTS] Couldn't remove a component of type {typeof(T)}");
+        }
+
         public Transform Parent
         {
             get => transform.parent;
