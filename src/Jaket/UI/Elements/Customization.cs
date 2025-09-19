@@ -1,3 +1,4 @@
+/*
 namespace Jaket.UI.Elements;
 
 using UnityEngine;
@@ -179,3 +180,4 @@ public class Customization : MonoBehaviour
         #endregion
     }
 }
+*/
