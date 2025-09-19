@@ -14,7 +14,7 @@ public class Projectiles : Vendor
     public void Load()
     {
         EntityType counter = EntityType.SawbladeCommon;
-        GameAssets.Items.Each(w =>
+        GameAssets.Projectiles.Each(w =>
         {
             byte index = (byte)counter++;
             GameAssets.Prefab(w, p => Vendor.Prefabs[index] = p);
