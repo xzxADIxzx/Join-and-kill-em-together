@@ -25,7 +25,7 @@ public class Weapons : Vendor
     (
         EntityType.RevolverBlue,
         EntityType.RocketlRed,
-        p => p?.name.Length == obj?.name.Length - 7 && (obj?.name.Contains(p?.name) ?? false)
+        p => p.name.Length == obj?.name.Length - 7 && (obj?.name.Contains(p.name) ?? false)
     );
 
     public GameObject Make(EntityType type, Vector3 position = default, Transform parent = null)
