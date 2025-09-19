@@ -87,7 +87,7 @@ public static class GameAssets
         "Items/DevPlushies/DevPlushie (Scott).prefab",
         "Items/DevPlushies/DevPlushie (Jacob).prefab",
         "Items/DevPlushies/DevPlushie (Vvizard).prefab",
-        "Items/DevPlushies/DevPlushie.prefab"
+        "Items/DevPlushies/DevPlushie.prefab",
     };
 
     /// <summary> List of readable names of all plushies. </summary>
@@ -120,6 +120,14 @@ public static class GameAssets
         "Weapons/Rocket Launcher Napalm.prefab",
     };
 
+    /// <summary> List of internal paths of all projectiles. </summary>
+    public static readonly string[] Projectiles =
+    {
+        "Attacks and Projectiles/NailAlt.prefab",
+        "Attacks and Projectiles/NailAltFodder.prefab",
+        "Attacks and Projectiles/NailAltHeated.prefab",
+    };
+
     #endregion
     #region obsolete content
 
@@ -149,9 +157,6 @@ public static class GameAssets
 
     /// <summary> Loads the blast explosion prefab. </summary>
     public static GameObject Blast() => Prefab("Attacks and Projectiles/Explosions/Explosion Wave");
-
-    /// <summary> Loads the harmless explosion prefab. </summary>
-    public static GameObject Harmless() => Prefab("Attacks and Projectiles/Explosions/Explosion Harmless");
 
     /// <summary> Loads the shotgun pickup prefab. </summary>
     public static GameObject Shotgun() => Prefab("Weapons/Pickups/ShotgunPickUp");
