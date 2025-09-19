@@ -150,7 +150,7 @@ public class RemotePlayer : Entity
         }
     }
 
-    public override void Damage(Reader r) => Bullets.DealDamage(enemyId, r); // TODO Damage class
+    public override void Damage(Reader r) { } // => Bullets.DealDamage(enemyId, r); // TODO Damage class
 
     public override void Killed(Reader r, int left)
     {
@@ -183,8 +183,8 @@ public class RemotePlayer : Entity
     }
 
     /// <summary> Plays the punching animation and creates a shockwave as needed. </summary>
-    public void Punch(Reader r)
-    {
+    public void Punch(Reader r) { }
+    /*{ TODO resync animations and explosions separately
         var field = Field<Harpoon>("target");
         foreach (var harpoon in Object.FindObjectsOfType<Harpoon>())
             if ((field.GetValue(harpoon) as EnemyIdentifierIdentifier)?.eid == enemyId) Bullets.Punch(harpoon, false);
@@ -205,7 +205,7 @@ public class RemotePlayer : Entity
                 shock.force = r.Float();
                 break;
         }
-    }
+    }*/
 
     #endregion
 }
