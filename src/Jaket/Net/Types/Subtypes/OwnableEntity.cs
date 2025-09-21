@@ -16,7 +16,7 @@ public abstract class OwnableEntity : Entity
     /// <summary> Whether the entity is locked, such entities' ownership cannot be transferred. </summary>
     public bool Locked
     {
-        get => Time.time - LastTransfer < 1f;
+        get => Time.time - LastTransfer < .4f;
         set => LastTransfer = value ? Time.time : float.NegativeInfinity;
     }
 
