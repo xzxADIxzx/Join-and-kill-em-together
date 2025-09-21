@@ -43,6 +43,8 @@ public static class Administration
             {
                 if (uint.TryParse(sid, out var id)) Banned.Add(id);
             });
+
+            if (!Privileged.Contains(AccId)) Privileged.Add(AccId);
         };
         Events.OnLobbyEnter += () => { Banned.Clear(); entityBullets.Clear(); entities.Clear(); plushies.Clear(); };
         Events.EveryHalf += spam.Clear;
