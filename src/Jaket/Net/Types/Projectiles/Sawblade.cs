@@ -120,7 +120,15 @@ public class Sawblade : OwnableEntity
 
     [HarmonyPatch(typeof(Nail), "RemoveTime")]
     [HarmonyPrefix]
-    static bool Death(Nail __instance) => Break(__instance);
+    static bool Death(Nail __instance)
+    {
+        if (__instance.TryGetComponent(out Agent a) && a.Patron is Sawblade s)
+        {
+            if (s.IsOwner) s.Kill();
+            return false;
+        }
+        else return true;
+    }
 
     [HarmonyPatch(typeof(Nail), "DamageEnemy")]
     [HarmonyPrefix]
