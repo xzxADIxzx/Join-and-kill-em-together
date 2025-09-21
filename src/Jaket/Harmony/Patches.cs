@@ -22,6 +22,7 @@ public static class Patches
         typeof(Item),
         typeof(Fish),
         typeof(Plushie),
+        typeof(Sawblade),
         typeof(Spectator),
     };
     public static Type[] StaticTypes =
