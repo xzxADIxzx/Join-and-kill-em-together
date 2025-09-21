@@ -122,5 +122,34 @@ public class Sawblade : OwnableEntity
     [HarmonyPrefix]
     static bool Death(Nail __instance) => Break(__instance);
 
+    [HarmonyPatch(typeof(Nail), "DamageEnemy")]
+    [HarmonyPrefix]
+    static bool Damage(Nail __instance, EnemyIdentifier eid)
+    {
+        if (__instance.TryGetComponent(out Agent a) && a.Patron is Sawblade s && eid.TryGetComponent(out Agent b))
+        {
+            if (s.IsOwner)
+            {
+                if (b.Patron is RemotePlayer p && p.Team.Ally()) return false;
+
+                float fodder = eid.enemyType switch
+                {
+                    EnemyType.Filth   => 2.0f,
+                    EnemyType.Stray   => 2.0f,
+                    EnemyType.Schism  => 1.5f,
+                    EnemyType.Soldier => 1.5f,
+                    EnemyType.Stalker => 1.5f,
+                    _                 => 1.0f,
+                };
+                float damage = __instance.damage * (__instance.punched ? 2f : 1f) * (__instance.fodderDamageBoost ? fodder : 1f);
+
+                // TODO Damage class
+                return true;
+            }
+            return false;
+        }
+        else return true;
+    }
+
     #endregion
 }
