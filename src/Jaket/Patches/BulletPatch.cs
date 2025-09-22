@@ -159,23 +159,5 @@ public class EntityBulletsPatch
         // pass the network value in the most crutch and optimized way
         if (__instance.rocketSpeed != 100f) __result = __instance.rocketSpeed == 98f;
     }
-
-
-
-    [HarmonyPostfix]
-    [HarmonyPatch(typeof(Cannonball), "Start")]
-    static void CannonballSpawn(Cannonball __instance) => Bullets.Sync(__instance.gameObject, default, default);
-
-    [HarmonyPostfix]
-    [HarmonyPatch(typeof(Cannonball), nameof(Cannonball.Break))]
-    static void CannonballDeath(Cannonball __instance) => Bullets.SyncDeath(__instance.gameObject);
-
-    [HarmonyPostfix]
-    [HarmonyPatch(typeof(Cannonball), nameof(Cannonball.Launch))]
-    static void CannonballParry(Cannonball __instance) => __instance.GetComponent<Bullet>()?.TakeOwnage();
-
-    [HarmonyPostfix]
-    [HarmonyPatch(typeof(Cannonball), nameof(Cannonball.Unlaunch))]
-    static void CannonballHook(Cannonball __instance) => __instance.GetComponent<Bullet>()?.TakeOwnage();
 }
 */

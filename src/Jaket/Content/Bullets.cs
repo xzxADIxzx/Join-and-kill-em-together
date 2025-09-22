@@ -67,7 +67,6 @@ public class Bullets
             if (weapon.TryGetComponent<RocketLauncher>(out var launcher))
             {
                 Add(launcher.rocket, $"RL PRI");
-                Add(launcher.cannonBall?.gameObject, $"RL ALT");
                 Add((Get("napalmProjectile", launcher) as Rigidbody)?.gameObject, $"RL EXT");
             }
         }
@@ -86,7 +85,6 @@ public class Bullets
     {
         "Coin(Clone)" => EntityType.Coin,
         "RL PRI(Clone)" => EntityType.Rocket,
-        "RL ALT(Clone)" => EntityType.Ball,
         _ => EntityType.None
     };
 
@@ -105,7 +103,6 @@ public class Bullets
     {
         EntityType.Coin => 4,
         EntityType.Rocket => 21,
-        EntityType.Ball => 22,
         _ => -1
     }]).AddComponent(type == EntityType.Coin ? typeof(TeamCoin) : typeof(Bullet)) as Entity;
 
