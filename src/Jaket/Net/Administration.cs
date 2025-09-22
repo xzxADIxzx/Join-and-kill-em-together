@@ -36,8 +36,6 @@ public static class Administration
     {
         Events.OnLobbyAction += () =>
         {
-            if (LobbyController.IsOwner) return;
-
             Banned.Clear();
             LobbyConfig.Banned.Each(sid =>
             {

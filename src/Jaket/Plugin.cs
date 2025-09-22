@@ -72,6 +72,7 @@ public class Plugin : MonoBehaviour
         Stats.StartRecord();
         Tools.CacheAccId();
 
+        Administration.Load();
         LobbyController.Load();
         Entities.Load();
         Networking.Load();
@@ -91,8 +92,6 @@ public class Plugin : MonoBehaviour
         Log.Info("[INIT] Jaket has been initialized");
 
         if (true) return;
-
-        Administration.Load();
 
         World.World.Load();
         WorldActionsList.Load();
