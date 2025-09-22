@@ -107,6 +107,7 @@ public enum EntityType : byte
     SawbladeCommon,
     SawbladeFodder,
     SawbladeHeated,
+    Cannonball,
 
     #endregion
 

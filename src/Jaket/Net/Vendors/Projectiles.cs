@@ -26,7 +26,7 @@ public class Projectiles : Vendor
     public EntityType Type(GameObject obj) => Vendor.Find
     (
         EntityType.SawbladeCommon,
-        EntityType.SawbladeHeated,
+        EntityType.Cannonball,
         p => p.name.Length == obj?.name.Length - 7 && (obj?.name.Contains(p.name) ?? false)
     );
 
