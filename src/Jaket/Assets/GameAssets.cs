@@ -136,22 +136,10 @@ public static class GameAssets
     public static readonly string[] ItemExceptions =
     { "Minotaur", "Tram (3)", "BombTrigger", "BombStationTramTeleporterKey", "Checker" };
 
-    /// <summary> List of internal names of all enemies. </summary>
-    public static readonly string[] Enemies =
-    {
-        "Zombie", "Projectile Zombie", "Super Projectile Zombie", "ShotgunHusk", "MinosBoss", "Stalker", "Sisyphus", "Ferryman",
-        "SwordsMachineNonboss", "Drone", "Streetcleaner", "Mindflayer", "V2", "V2 Green Arm Variant", "Turret", "Gutterman",
-        "Guttertank", "Spider", "StatueEnemy", "Mass", "Idol", "Mannequin", "Minotaur", "Virtue",
-        "Gabriel", "Gabriel 2nd Variant", "Wicked", "Flesh Prison", "DroneFlesh", "Flesh Prison 2", "DroneFleshCamera Variant", "DroneSkull Variant",
-        "MinosPrime", "SisyphusPrime", "Cancerous Rodent", "Very Cancerous Rodent", "Mandalore", "Big Johninator", "Puppet"
-    };
-
     #endregion
     #region obsolete loading
 
     private static GameObject Prefab(string name) => AssetHelper.LoadPrefab($"Assets/Prefabs/{name}.prefab");
-
-    public static GameObject Enemy(string name) => Prefab($"Enemies/{name}");
 
     /// <summary> Loads the torch prefab. </summary>
     public static GameObject Torch() => Prefab("Levels/Interactive/Altar (Torch) Variant");
