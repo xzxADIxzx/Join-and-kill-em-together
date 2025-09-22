@@ -59,13 +59,6 @@ public class Bullets
                 Add(Get("overPumpExplosion", hammer) as GameObject, "SH"); // thank you, developers
             }
             else
-            if (weapon.TryGetComponent<Nailgun>(out var nailgun))
-            {
-                Add(nailgun.nail, $"NG{++ng} PRI");
-                Add(nailgun.heatedNail, $"NG{ng} ALT");
-                Add(nailgun.magnetNail, $"NG{ng} EXT");
-            }
-            else
             if (weapon.TryGetComponent<Railcannon>(out var railcannon))
             {
                 Add(railcannon.beam, $"RC{++rc}");
