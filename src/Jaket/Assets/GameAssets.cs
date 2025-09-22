@@ -126,7 +126,7 @@ public static class GameAssets
         "Attacks and Projectiles/NailAlt.prefab",
         "Attacks and Projectiles/NailAltFodder.prefab",
         "Attacks and Projectiles/NailAltHeated.prefab",
-        "Attacks and Projectiles/Rocket.prefab",
+        "Attacks and Projectiles/Cannonball.prefab",
     };
 
     #endregion
