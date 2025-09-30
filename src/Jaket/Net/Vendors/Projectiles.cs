@@ -21,6 +21,7 @@ public class Projectiles : Vendor
         });
 
         for (EntityType i = EntityType.SawbladeCommon; i <= EntityType.SawbladeHeated; i++) Vendor.Suppliers[(byte)i] = (id, type) => new Sawblade(id, type);
+        for (EntityType i = EntityType.Cannonball;     i <= EntityType.Cannonball;     i++) Vendor.Suppliers[(byte)i] = (id, type) => new Cannon  (id, type);
     }
 
     public EntityType Type(GameObject obj) => Vendor.Find

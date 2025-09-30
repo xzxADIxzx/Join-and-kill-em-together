@@ -10,7 +10,6 @@ using Jaket.IO;
 public class Bullet : OwnableEntity
 {
     Grenade grenade;
-    Cannonball ball;
 
     /// <summary> Bullet position and rotation. </summary>
     private FloatLerp x, y, z, rx, ry, rz;
@@ -28,7 +27,6 @@ public class Bullet : OwnableEntity
         InitTransfer(() =>
         {
             if (Rb) Rb.isKinematic = !IsOwner;
-            if (ball) ball.ghostCollider = !IsOwner;
             if (grenade)
             {
                 if (IsOwner) grenade.rocketSpeed = 100f;
@@ -37,7 +35,6 @@ public class Bullet : OwnableEntity
             player.Id = Owner;
         });
         TryGetComponent(out grenade);
-        TryGetComponent(out ball);
         Dest(GetComponent<FloatingPointErrorPreventer>());
 
         x = new(); y = new(); z = new();
@@ -119,7 +116,6 @@ public class Bullet : OwnableEntity
             else
                 grenade.Explode(harmless: true);
         }
-        else ball?.Break();
     }
 
     #endregion
