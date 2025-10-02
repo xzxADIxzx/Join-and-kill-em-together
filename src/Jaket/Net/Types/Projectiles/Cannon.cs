@@ -3,6 +3,7 @@ namespace Jaket.Net.Types;
 using HarmonyLib;
 using UnityEngine;
 
+using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
 
@@ -85,7 +86,13 @@ public class Cannon : OwnableEntity
     public override void Killed(Reader r, int left)
     {
         Hidden = true;
-        ball.Break(); // TODO explosion?
+        ball.Break();
+
+        if (left >= 1 && r.Bool())
+        {
+            var pos = agent.Position;
+            GameAssets.Prefab("Attacks and Projectiles/Explosions/Explosion Big.prefab", p => Inst(p, pos));
+        }
     }
 
     #endregion
@@ -108,6 +115,18 @@ public class Cannon : OwnableEntity
             if (c.Hidden) return true;
 
             if (c.IsOwner) c.Kill();
+            return false;
+        }
+        else return true;
+    }
+
+    [HarmonyPatch(typeof(Cannonball), nameof(Cannonball.Explode))]
+    [HarmonyPrefix]
+    static bool Death(Cannonball __instance)
+    {
+        if (__instance.TryGetComponent(out Agent a) && a.Patron is Cannon c)
+        {
+            c.Kill(1, w => w.Bool(true));
             return false;
         }
         else return true;
