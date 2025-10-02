@@ -150,11 +150,14 @@ public class Cannon : OwnableEntity
     [HarmonyPrefix]
     static bool Damage(Cannonball __instance, Collider other, Rigidbody ___rb)
     {
+        if (!other.TryGetComponent(out EnemyIdentifier eid)) eid = other.GetComponent<EnemyIdentifierIdentifier>()?.eid;
+
         if (__instance.TryGetComponent(out Agent a) && a.Patron is Cannon c)
         {
-            if (c.IsOwner && (other.TryGetComponent(out EnemyIdentifier e) || (e = other.GetComponent<EnemyIdentifierIdentifier>()?.eid)) && e.TryGetComponent(out Agent b))
+            if (!eid) return c.IsOwner;
+            if (c.IsOwner && eid.TryGetComponent(out Agent b))
             {
-                if (b.Patron is RemotePlayer p && p.Team.Ally() || __instance.hitEnemies.Contains(e)) return false;
+                if (b.Patron is RemotePlayer p && p.Team.Ally() || __instance.hitEnemies.Contains(eid)) return false;
 
                 float damage = __instance.forceMaxSpeed ? __instance.damage : Mathf.Min(__instance.damage, ___rb.velocity.magnitude * .15f);
 

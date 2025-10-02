@@ -136,6 +136,7 @@ public class Sawblade : OwnableEntity
     {
         if (__instance.TryGetComponent(out Agent a) && a.Patron is Sawblade s)
         {
+            if (!eid) return s.IsOwner;
             if (s.IsOwner && eid.TryGetComponent(out Agent b))
             {
                 if (b.Patron is RemotePlayer p && p.Team.Ally()) return false;
