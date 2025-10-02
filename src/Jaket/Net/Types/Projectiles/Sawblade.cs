@@ -134,9 +134,9 @@ public class Sawblade : OwnableEntity
     [HarmonyPrefix]
     static bool Damage(Nail __instance, EnemyIdentifier eid)
     {
-        if (__instance.TryGetComponent(out Agent a) && a.Patron is Sawblade s && eid.TryGetComponent(out Agent b))
+        if (__instance.TryGetComponent(out Agent a) && a.Patron is Sawblade s)
         {
-            if (s.IsOwner)
+            if (s.IsOwner && eid.TryGetComponent(out Agent b))
             {
                 if (b.Patron is RemotePlayer p && p.Team.Ally()) return false;
 
