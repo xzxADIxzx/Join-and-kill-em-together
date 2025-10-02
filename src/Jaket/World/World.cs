@@ -9,6 +9,9 @@ using Jaket.IO;
 using Jaket.Net;
 using Jaket.Net.Types;
 
+// TODO remove extra v1 plushies from museum (gianni nightmare)
+// TODO remove trash bin counter from museum (MapInt or smth)
+
 /// <summary> Class that manages objects in the level, such as hook points, skull cases, triggers and etc. </summary>
 public class World
 {
@@ -88,21 +91,6 @@ public class World
     }
 
     #endregion
-    #region iteration
-
-    /// <summary> Iterates each static world action. </summary>
-    public static void EachStatic(Cons<StaticAction> cons) => Actions.ForEach(action =>
-    {
-        if (action is StaticAction sa) cons(sa);
-    });
-
-    /// <summary> Iterates each net world action. </summary>
-    public static void EachNet(Cons<NetAction> cons) => Actions.ForEach(action =>
-    {
-        if (action is NetAction sa) cons(sa);
-    });
-
-    #endregion
     #region general
 
     /// <summary> Restores activated actions after restart of the level. </summary>
@@ -110,7 +98,7 @@ public class World
     {
         Events.Post(() =>
         {
-            EachStatic(sa => sa.Run());
+            Actions.Each(a => a is StaticAction, a => a.Run());
             Activated.ForEach(index => Actions[index].Run());
         });
 
@@ -231,8 +219,9 @@ public class World
     }
 
     /// <summary> Synchronizes activations of the given game object. </summary>
-    public static void SyncAction(GameObject obj) => EachNet(na =>
+    public static void SyncAction(GameObject obj) => Actions.Each(a =>
     {
+        if (a is not NetAction na) return;
         if (!Within(obj.transform, na.Position) || obj.name != na.Name) return;
 
         byte index = (byte)Actions.IndexOf(na);
