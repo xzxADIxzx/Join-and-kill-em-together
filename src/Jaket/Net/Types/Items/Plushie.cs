@@ -11,6 +11,7 @@ using Jaket.Content;
 public class Plushie : Item
 {
     Agent agent;
+    ItemIdentifier itemId;
 
     public Plushie(uint id, EntityType type) : base(id, type) { }
 
@@ -22,10 +23,14 @@ public class Plushie : Item
     {
         base.Assign(this.agent = agent);
 
-        agent.GetComponent<ItemIdentifier>().onPickUp.onActivate.AddListener(() =>
+        agent.Get(out itemId);
+
+        itemId.onPickUp.onActivate.AddListener(() =>
         {
+            agent.StopAllCoroutines();
+
             if (Type == EntityType.xzxADIxzx) agent.StartCoroutine(ShakeYourHead(42));
-            if (Type == EntityType.Sowler) agent.StartCoroutine(Hoot());
+            if (Type == EntityType.Sowler   ) agent.StartCoroutine(Hoot());
         });
         agent.transform.Each(c => c.gameObject.layer = 22); // the plushie of lizard has an issue with layers
 
@@ -52,7 +57,54 @@ public class Plushie : Item
     /// <summary> Special feature of the plushie of OwlNotSowler. </summary>
     public IEnumerator Hoot()
     {
-        yield return null; // TODO play different owl sounds from time to time
+        bool lower = false;
+
+        yield return new WaitForSeconds(1.2f);
+        while (IsOwner && itemId.pickedUp)
+        {
+            #region sound
+
+            int[] apogeeSample = { 00350, 01400, 02050, 02700, 03900, 05150, 06100, 06950, 08100, 09400, 09850, 11800, 14250, 15850, 17800, 19350 };
+            float[] narrowness = { .036f, .008f, .020f, .016f, .032f, .010f, .006f, .016f, .006f, .008f, .001f, .010f, .004f, .010f, .012f, .032f };
+            float[] levitation = { .050f, .104f, .122f, .148f, .142f, .106f, .108f, .140f, .160f, .156f, .142f, .124f, .176f, .132f, .148f, .086f };
+
+            float baseFreq = lower ? Random.Range(360f, 380f) : Random.Range(390f, 410f);
+            float overFreq = Random.Range(.0000001f, .0000003f);
+
+            var clip = AudioClip.Create("hoot", 20000, 1, 44100, false);
+            var data = new float[20000];
+
+            for (int i = 0; i < 20000; i++)
+            {
+                float amp = 0f, dst;
+
+                for (int j = 0; j < apogeeSample.Length; j++)
+                {
+                    dst = i - apogeeSample[j];
+                    amp = Mathf.Max(amp, -.00001f * narrowness[j] * dst * dst + levitation[j]);
+                }
+
+                data[i] = Mathf.Sin(i / 20000f * Mathf.PI * (baseFreq - overFreq * (dst = i - 12000) * dst)) * amp;
+            }
+
+            clip.SetData(data, 0);
+            AudioSource.PlayOneShotHelper(agent.GetOrAddComponent<AudioSource>(), clip, lower ? Random.Range(1.4f, 1.8f) : Random.Range(1.8f, 2.2f));
+
+            #endregion
+            #region break
+
+            lower = false;
+
+            if (Random.value < .42f)
+            {
+                lower = true;
+                yield return new WaitForSeconds(Random.Range(.6f, .8f));
+            }
+            else
+                yield return new WaitForSeconds(Random.Range(8f, 16f));
+
+            #endregion
+        }
     }
 
     #endregion
