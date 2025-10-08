@@ -28,7 +28,7 @@ public class Plushie : Item
 
         itemId.onPickUp.onActivate.AddListener(() =>
         {
-            agent.Rem("RageEffect(Clone)");
+            agent.Rem("RageEffect(Clone)", true);
             agent.StopAllCoroutines();
 
             if (Type == EntityType.xzxADIxzx) agent.StartCoroutine(ShakeYourHead(42));
