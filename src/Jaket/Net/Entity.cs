@@ -95,6 +95,16 @@ public abstract class Entity
                 Log.Error($"[ENTS] Couldn't remove a component of type {typeof(T)}");
         }
 
+        /// <summary> Removes a child with the given path or logs an error. </summary>
+        public void Rem(string path, bool nullable = false)
+        {
+            var child = transform.Find(path)?.gameObject;
+            if (child)
+                Dest(child);
+            else if (!nullable)
+                Log.Error($"[ENTS] Couldn't remove a child with path {path}");
+        }
+
         public Transform Parent
         {
             get => transform.parent;

@@ -24,17 +24,17 @@ public class Plushie : Item
         base.Assign(this.agent = agent);
 
         agent.Get(out itemId);
+        agent.Rem("GlassesHitbox");
 
         itemId.onPickUp.onActivate.AddListener(() =>
         {
+            agent.Rem("RageEffect(Clone)");
             agent.StopAllCoroutines();
 
             if (Type == EntityType.xzxADIxzx) agent.StartCoroutine(ShakeYourHead(42));
             if (Type == EntityType.Sowler   ) agent.StartCoroutine(Hoot());
         });
         agent.transform.Each(c => c.gameObject.layer = 22); // the plushie of lizard has an issue with layers
-
-        Imdt(agent.transform.Find("GlassesHitbox")?.gameObject);
     }
 
     #endregion
@@ -182,6 +182,16 @@ public class Plushie : Item
                 act.events = new() { onActivate = new() };
                 act.events.onActivate.AddListener(() => { Dest(src); Dest(act); });
             });
+        });
+        GameAssets.LoadAsync<GameObject>("Assets/Particles/Enemies/RageEffect.prefab", p =>
+        {
+            p = Inst(p, owl);
+
+            p.transform.localPosition = Vector3.up  * .3f;
+            p.transform.localScale    = Vector3.one * .8f;
+
+            p.GetComponentsInChildren<AudioSource>().Each(s => s.volume = .2f);
+            p.GetComponentInChildren<MeshRenderer>().material.color = new(1f, 0f, 120f);
         });
     }
 
