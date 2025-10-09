@@ -137,27 +137,5 @@ public class EntityBulletsPatch
     [HarmonyPrefix]
     [HarmonyPatch(typeof(Coin), "OnCollisionEnter")]
     static bool CoinCollision() => LobbyController.Offline;
-
-
-
-    [HarmonyPostfix]
-    [HarmonyPatch(typeof(Grenade), "Start")] // DO NOT USE AWAKE
-    static void GrenadeSpawn(Grenade __instance) => Bullets.Sync(__instance.gameObject, true, false);
-
-    [HarmonyPostfix]
-    [HarmonyPatch(typeof(Grenade), nameof(Grenade.Explode))]
-    static void GrenadeDeath(Grenade __instance, bool harmless, float sizeMultiplier) => Bullets.SyncDeath(__instance.gameObject, harmless, sizeMultiplier > 1f);
-
-    [HarmonyPostfix]
-    [HarmonyPatch(typeof(Grenade), nameof(Grenade.PlayerRideStart))]
-    static void GrenadeRide(Grenade __instance) => __instance.GetComponent<Bullet>()?.TakeOwnage();
-
-    [HarmonyPostfix]
-    [HarmonyPatch(typeof(Grenade), nameof(Grenade.frozen), MethodType.Getter)]
-    static void GrenadeFrozen(Grenade __instance, ref bool __result)
-    {
-        // pass the network value in the most crutch and optimized way
-        if (__instance.rocketSpeed != 100f) __result = __instance.rocketSpeed == 98f;
-    }
 }
 */
