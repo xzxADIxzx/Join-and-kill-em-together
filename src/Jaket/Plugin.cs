@@ -90,11 +90,5 @@ public class Plugin : MonoBehaviour
         Patches.LoadStatic();
 
         Log.Info("[INIT] Jaket has been initialized");
-
-        if (true) return;
-
-        World.World.Load();
-        WorldActionsList.Load();
-        Votes.Load();
     }
 }
