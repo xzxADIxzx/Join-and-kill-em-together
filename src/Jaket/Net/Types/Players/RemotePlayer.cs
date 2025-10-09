@@ -182,6 +182,17 @@ public class RemotePlayer : Entity
         if (Doll.SlamParticle) Dest(Doll.SlamParticle.gameObject);
     }
 
+    /// <summary> Acquires the given rocket and its transform. </summary>
+    public void Acquire(Agent rocket)
+    {
+        // the agent is inaccessible outside of this class, so the check has to be done here
+        if (rocket.Parent == agent.transform) return;
+
+        rocket.Parent = agent.transform;
+        rocket.transform.localPosition = Vector3.back;
+        rocket.transform.localRotation = Quaternion.identity;
+    }
+
     /// <summary> Plays the punching animation and creates a shockwave as needed. </summary>
     public void Punch(Reader r) { }
     /*{ TODO resync animations and explosions separately
