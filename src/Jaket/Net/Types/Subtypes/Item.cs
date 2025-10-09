@@ -96,7 +96,7 @@ public abstract class Item : OwnableEntity
     {
         if (IsOwner || player.Value == null || player.Value.Health == 0) return;
 
-        agent.Position = holding ? player.Value.Doll.HoldPosition                        : new(posX.Get(delta),      posY.Get(delta),      posZ.Get(delta));
+        agent.Position = holding ? player.Value.Doll.HoldPosition                        : new(posX.Get(delta),      posY.Get(delta),      posZ.Get(delta)     );
         agent.Rotation = holding ? player.Value.Doll.HookRoot.eulerAngles + HoldRotation : new(rotX.GetAngle(delta), rotY.GetAngle(delta), rotZ.GetAngle(delta));
 
         agent.Scale    = holding == itemId.reverseTransformSettings ? itemId.putDownScale : Vector3.one;

@@ -3,7 +3,6 @@ namespace Jaket.Net.Types;
 using HarmonyLib;
 using UnityEngine;
 
-using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
 
@@ -11,10 +10,11 @@ using Jaket.IO;
 public class Rocket : OwnableEntity
 {
     Agent agent;
-    Float x, y, z;
+    Float posX, posY, posZ, rotX, rotY, rotZ;
     Cache<RemotePlayer> player;
     Rigidbody rb;
     Grenade grenade;
+    Collider[] cs;
 
     /// <summary> Whether the rocket is frozen. </summary>
     private bool frozen;
@@ -25,7 +25,7 @@ public class Rocket : OwnableEntity
 
     #region snapshot
 
-    public override int BufferSize => 23;
+    public override int BufferSize => 35;
 
     public override void Write(Writer w)
     {
@@ -34,12 +34,16 @@ public class Rocket : OwnableEntity
         if (IsOwner)
         {
             w.Vector(agent.Position);
+            w.Vector(agent.Rotation);
+
             w.Bool(grenade.frozen);
             w.Bool(grenade.playerRiding);
         }
         else
         {
-            w.Floats(x, y, z);
+            w.Floats(posX, posY, posZ);
+            w.Floats(rotX, rotY, rotZ);
+
             w.Bool(frozen);
             w.Bool(riding);
         }
@@ -49,7 +53,9 @@ public class Rocket : OwnableEntity
     {
         if (ReadOwner(ref r)) return;
 
-        r.Floats(ref x, ref y, ref z);
+        r.Floats(ref posX, ref posY, ref posZ);
+        r.Floats(ref rotX, ref rotY, ref rotZ);
+
         frozen = r.Bool();
         riding = r.Bool();
     }
@@ -57,7 +63,7 @@ public class Rocket : OwnableEntity
     #endregion
     #region logic
 
-    public override void Create() => Assign(Entities.Projectiles.Make(Type, new(x.Prev = x.Next, y.Prev = y.Next, z.Prev = z.Next)).AddComponent<Agent>());
+    public override void Create() => Assign(Entities.Projectiles.Make(Type, new(posX.Prev = posX.Next, posY.Prev = posY.Next, posZ.Prev = posZ.Next)).AddComponent<Agent>());
 
     public override void Assign(Agent agent)
     {
@@ -65,12 +71,15 @@ public class Rocket : OwnableEntity
 
         agent.Get(out rb);
         agent.Get(out grenade);
+        agent.Get(out cs);
         agent.Rem<FloatingPointErrorPreventer>();
+        agent.Rem<RemoveOnTime>();
+        agent.Rem<DestroyOnCheckpointRestart>();
 
         OnTransfer = () =>
         {
             player = Owner;
-            if (rb && !IsOwner) rb.isKinematic = true;
+            rb.isKinematic = !IsOwner;
         };
 
         OnTransfer();
@@ -87,9 +96,12 @@ public class Rocket : OwnableEntity
         else
         {
             if (agent.Parent != null) agent.Parent = null;
-            agent.Position          = new(x.Get(delta),    y.Get(delta),    z.Get(delta)   );
-            agent.transform.forward = new(x.Next - x.Prev, y.Next - y.Prev, z.Next - z.Prev);
+            agent.Position = new(posX.Get(delta),      posY.Get(delta),      posZ.Get(delta)     );
+            agent.Rotation = new(rotX.GetAngle(delta), rotY.GetAngle(delta), rotZ.GetAngle(delta));
         }
+        cs.Each(c => c.enabled = !riding);
+
+        if (grenade.hooked) TakeOwnage();
     }
 
     public override void Damage(Reader r) { }
@@ -142,7 +154,7 @@ public class Rocket : OwnableEntity
     [HarmonyPostfix]
     static void Stop(Grenade __instance, ref bool __result)
     {
-        __result = __instance.name == "S";
+        if (__instance.name != "O") __result = __instance.name == "S";
     }
 
     [HarmonyPatch(typeof(Grenade), nameof(Grenade.Collision))]
