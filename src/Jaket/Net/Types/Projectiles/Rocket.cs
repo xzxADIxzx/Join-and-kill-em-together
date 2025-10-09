@@ -78,6 +78,8 @@ public class Rocket : OwnableEntity
 
     public override void Update(float delta)
     {
+        agent.name = IsOwner ? "O" : frozen ? "S" : "R";
+
         if (IsOwner) return;
 
         if (riding)
@@ -102,6 +104,68 @@ public class Rocket : OwnableEntity
             r.Bools(out var harmless, out var big, out var super, out var ultra, out _, out _, out _, out _);
             grenade.Explode(big, harmless, super, ultra ? 2f : 1f, ultra);
         }
+    }
+
+    #endregion
+    #region harmony
+
+    [HarmonyPatch(typeof(Grenade), "Start")]
+    [HarmonyPrefix]
+    static void Start(Grenade __instance)
+    {
+        if (__instance && __instance.rocket && !__instance.enemy) Entities.Projectiles.Sync(__instance.gameObject);
+    }
+
+    [HarmonyPatch(typeof(Grenade), nameof(Grenade.Explode))]
+    [HarmonyPrefix]
+    static bool Break(Grenade __instance, bool harmless, bool big, bool super, bool ultrabooster)
+    {
+        if (__instance.TryGetComponent(out Agent a) && a.Patron is Rocket r)
+        {
+            // it's called after death to spawn some nice explosions
+            if (r.Hidden) return true;
+
+            r.Kill(1, w => w.Bools(harmless, big, super, ultrabooster));
+            return false;
+        }
+        else return true;
+    }
+
+    [HarmonyPatch(typeof(Grenade), nameof(Grenade.PlayerRideStart))]
+    [HarmonyPrefix]
+    static void Ride(Grenade __instance)
+    {
+        if (__instance.TryGetComponent(out Agent a) && a.Patron is Rocket r) r.TakeOwnage();
+    }
+
+    [HarmonyPatch(typeof(Grenade), nameof(Grenade.frozen), MethodType.Getter)]
+    [HarmonyPostfix]
+    static void Stop(Grenade __instance, ref bool __result)
+    {
+        __result = __instance.name == "S";
+    }
+
+    [HarmonyPatch(typeof(Grenade), nameof(Grenade.Collision))]
+    [HarmonyPrefix]
+    static bool Damage(Grenade __instance, Collider other)
+    {
+        if (!other.TryGetComponent(out EnemyIdentifier eid)) eid = other.GetComponent<EnemyIdentifierIdentifier>()?.eid;
+
+        if (__instance.TryGetComponent(out Agent a) && a.Patron is Rocket c)
+        {
+            if (!eid) return c.IsOwner;
+            if (c.IsOwner && eid.TryGetComponent(out Agent b))
+            {
+                if (b.Patron is RemotePlayer p && p.Team.Ally())
+                {
+                    Physics.IgnoreCollision(__instance.GetComponent<Collider>(), other);
+                    return false;
+                }
+                else return true;
+            }
+            return false;
+        }
+        else return true;
     }
 
     #endregion
