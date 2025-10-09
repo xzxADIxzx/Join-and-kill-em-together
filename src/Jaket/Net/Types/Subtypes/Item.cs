@@ -76,8 +76,8 @@ public abstract class Item : OwnableEntity
 
         OnTransfer = () =>
         {
-            if (rb && !IsOwner) rb.isKinematic = true;
             player = Owner;
+            if (rb && !IsOwner) rb.isKinematic = true;
         };
 
         itemId.onPickUp ??= new();

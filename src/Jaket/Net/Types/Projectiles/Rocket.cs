@@ -13,6 +13,7 @@ public class Rocket : OwnableEntity
     Agent agent;
     Float x, y, z;
     Cache<RemotePlayer> player;
+    Rigidbody rb;
     Grenade grenade;
 
     /// <summary> Whether the rocket is frozen. </summary>
@@ -62,17 +63,14 @@ public class Rocket : OwnableEntity
     {
         (this.agent = agent).Patron = this;
 
+        agent.Get(out rb);
         agent.Get(out grenade);
         agent.Rem<FloatingPointErrorPreventer>();
 
         OnTransfer = () =>
         {
             player = Owner;
-
-            if (IsOwner)
-                agent.Get(out grenade.rb);
-            else
-                grenade.rb = null;
+            if (rb && !IsOwner) rb.isKinematic = true;
         };
 
         OnTransfer();

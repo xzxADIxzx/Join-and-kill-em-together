@@ -23,6 +23,7 @@ public static class Patches
         typeof(Fish),
         typeof(Plushie),
         typeof(Sawblade),
+        typeof(Rocket),
         typeof(Cannon),
         typeof(Spectator),
     };
