@@ -147,7 +147,7 @@ public class Rocket : OwnableEntity
     [HarmonyPrefix]
     static void Ride(Grenade __instance)
     {
-        if (__instance.TryGetComponent(out Agent a) && a.Patron is Rocket r) r.TakeOwnage();
+        if (__instance.TryGetComponent(out Agent a) && a.Patron is Rocket r && !r.riding) r.TakeOwnage();
     }
 
     [HarmonyPatch(typeof(Grenade), nameof(Grenade.frozen), MethodType.Getter)]
