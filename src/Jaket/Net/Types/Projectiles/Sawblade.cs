@@ -139,7 +139,7 @@ public class Sawblade : OwnableEntity
             if (!eid) return s.IsOwner;
             if (s.IsOwner && eid.TryGetComponent(out Agent b))
             {
-                if (b.Patron is RemotePlayer p && p.Team.Ally()) return false;
+                if (b.Patron is RemotePlayer p && p.Team.Ally()) { __instance.hitAmount += 1; return false; }
 
                 float fodder = eid.enemyType switch
                 {
