@@ -107,6 +107,7 @@ public enum EntityType : byte
     SawbladeCommon,
     SawbladeFodder,
     SawbladeHeated,
+    Rocket,
     Cannonball,
 
     #endregion
@@ -157,9 +158,5 @@ public enum EntityType : byte
     SecuritySystem_RocketLauncher, SecuritySystem_RocketLauncher_,
     SecuritySystem_Mortar, SecuritySystem_Mortar_,
     SecuritySystem_Tower, SecuritySystem_Tower_,
-    Brain,
-
-    Coin,
-    Rocket,
-    Ball
+    Brain
 }
