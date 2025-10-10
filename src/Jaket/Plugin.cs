@@ -4,7 +4,6 @@ using BepInEx;
 using UnityEngine;
 
 using Jaket.Assets;
-using Jaket.Content;
 using Jaket.Harmony;
 using Jaket.Input;
 using Jaket.IO;

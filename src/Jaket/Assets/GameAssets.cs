@@ -123,6 +123,7 @@ public static class GameAssets
     /// <summary> List of internal paths of all projectiles. </summary>
     public static readonly string[] Projectiles =
     {
+        "Attacks and Projectiles/Grenade.prefab",
         "Attacks and Projectiles/NailAlt.prefab",
         "Attacks and Projectiles/NailAltFodder.prefab",
         "Attacks and Projectiles/NailAltHeated.prefab",

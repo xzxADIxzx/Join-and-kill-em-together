@@ -104,6 +104,7 @@ public enum EntityType : byte
     #endregion
     #region projectiles
 
+    Core,
     SawbladeCommon,
     SawbladeFodder,
     SawbladeHeated,

@@ -13,7 +13,7 @@ public class Projectiles : Vendor
 {
     public void Load()
     {
-        EntityType counter = EntityType.SawbladeCommon;
+        EntityType counter = EntityType.Core;
         GameAssets.Projectiles.Each(w =>
         {
             byte index = (byte)counter++;
@@ -27,7 +27,7 @@ public class Projectiles : Vendor
 
     public EntityType Type(GameObject obj) => Vendor.Find
     (
-        EntityType.SawbladeCommon,
+        EntityType.Core,
         EntityType.Cannonball,
         p => p.name.Length == obj?.name.Length - 7 && (obj?.name.Contains(p.name) ?? false)
     );

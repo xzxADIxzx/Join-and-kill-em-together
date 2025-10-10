@@ -271,7 +271,7 @@ public static class Tools
     public static bool IsWeapon(this EntityType type) => type >= EntityType.RevolverBlue && type <= EntityType.RocketlRed;
 
     /// <summary> Whether the type is a projectile. </summary>
-    public static bool IsProjectile(this EntityType type) => type >= EntityType.SawbladeCommon && type <= EntityType.Cannonball;
+    public static bool IsProjectile(this EntityType type) => type >= EntityType.Core && type <= EntityType.Cannonball;
 
     #endregion
 }
