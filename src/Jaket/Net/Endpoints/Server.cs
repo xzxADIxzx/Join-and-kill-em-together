@@ -40,6 +40,15 @@ public class Server : Endpoint, ISocketManager
             }
         });
 
+        Listen(PacketType.Damage, (con, sender, r, s) =>
+        {
+            if (ents.TryGetValue(r.Id(), out var e))
+            {
+                e.Damage(r);
+                Redirect(r, s, con);
+            }
+        });
+
         Listen(PacketType.Death, (con, sender, r, s) =>
         {
             if (ents.TryGetValue(r.Id(), out var e) && e is not LocalPlayer && e is not RemotePlayer)
@@ -97,14 +106,6 @@ public class Server : Endpoint, ISocketManager
             {
                 Bullets.CInstantiate(r);
                 Redirect(r, s, con);
-            }
-        });
-        Listen(PacketType.DamageEntity, (con, sender, r, size) =>
-        {
-            if (ents.TryGetValue(r.Id(), out var entity))
-            {
-                entity?.Damage(r);
-                Redirect(r, size, con);
             }
         });
 

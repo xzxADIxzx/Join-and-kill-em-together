@@ -38,6 +38,11 @@ public class Client : Endpoint, IConnectionManager
             }
         });
 
+        Listen(PacketType.Damage, r =>
+        {
+            if (ents.TryGetValue(r.Id(), out var e)) e.Damage(r);
+        });
+
         Listen(PacketType.Death, (con, sender, r, s) =>
         {
             if (ents.TryGetValue(r.Id(), out var e)) e.Killed(r, s - 5);
@@ -83,10 +88,6 @@ public class Client : Endpoint, IConnectionManager
 
         /*
         Listen(PacketType.SpawnBullet, Bullets.CInstantiate);
-        Listen(PacketType.DamageEntity, r =>
-        {
-            if (ents.TryGetValue(r.Id(), out var entity)) entity?.Damage(r);
-        });
 
         Listen(PacketType.Spray, r => SprayManager.Spawn(r.Id(), r.Vector(), r.Vector()));
 
