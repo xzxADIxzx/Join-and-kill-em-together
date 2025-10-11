@@ -131,6 +131,23 @@ public static class GameAssets
         "Attacks and Projectiles/Cannonball.prefab",
     };
 
+    /// <summary> List of internal paths of all explosions. </summary>
+    public static readonly string[] Explosions =
+    {
+        "Attacks and Projectiles/Explosions/Explosion Wave.prefab",
+        "Attacks and Projectiles/Explosions/Explosion.prefab",
+        "Attacks and Projectiles/Explosions/Explosion Hammer Weak.prefab",
+        "Attacks and Projectiles/Explosions/Explosion Super.prefab",
+    };
+
+    /// <summary> List of internal paths of all hammer particles.  </summary>
+    public static readonly string[] Particles =
+    {
+        "Assets/Particles/HammerHitLight.prefab",
+        "Assets/Particles/HammerHitMedium.prefab",
+        "Assets/Particles/HammerHitHeavy.prefab",
+    };
+
     #endregion
     #region obsolete content
 
