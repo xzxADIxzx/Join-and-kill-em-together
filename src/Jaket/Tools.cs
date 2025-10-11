@@ -55,10 +55,10 @@ public static class Tools
     /// <summary> Creates a new game object and adds a component of the given type to it. </summary>
     public static T Create<T>(string name, Transform parent = null) where T : Component => Create(name, parent).AddComponent<T>();
 
-    /// <summary> Adds a component of the given type to the given game object and returns it. </summary>
-    public static T Component<T>(GameObject obj, Cons<T> cons) where T : Component
+    /// <summary> Adds or gets a component of the given type to the object and returns it. </summary>
+    public static T Component<T>(GameObject obj, Cons<T> cons, bool get = false) where T : Component
     {
-        var t = obj.AddComponent<T>();
+        var t = get ? obj.GetComponent<T>() : obj.AddComponent<T>();
         cons(t);
         return t;
     }
