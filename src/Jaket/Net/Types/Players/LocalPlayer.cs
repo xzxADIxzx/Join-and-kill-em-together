@@ -24,8 +24,6 @@ public class LocalPlayer : Entity
     /// <summary> Source playing the voice of the player. </summary>
     public AudioSource Voice = Create<AudioSource>("Player");
 
-    /// <summary> Whether the player just parried a projectile. </summary>
-    public bool Parried;
     /// <summary> Grappling hook position, zero if the hook is not currently in use. </summary>
     public Vector3 Hook;
     /// <summary> Entity of the item the player is currently holding in their hands. </summary>

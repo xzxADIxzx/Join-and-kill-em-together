@@ -3,6 +3,7 @@ namespace Jaket.Harmony;
 using HarmonyLib;
 using UnityEngine;
 
+using Jaket.Content;
 using Jaket.Net;
 using Jaket.Net.Types;
 
@@ -25,4 +26,26 @@ public static class ArmsPatch
         }
         else caught = null;
     }
+
+    static bool parried;
+
+    [HarmonyPatch(typeof(Punch), "ActiveEnd")]
+    [HarmonyPrefix]
+    static void Punch()
+    {
+        if (LobbyController.Offline) return;
+
+        Networking.Send(PacketType.Punch, 6, w =>
+        {
+            w.Id(AccId);
+            w.Byte(0x00);
+
+            w.Bool(parried);
+            parried = false;
+        });
+    }
+
+    [HarmonyPatch(typeof(Punch), nameof(global::Punch.GetParryLookTarget))]
+    [HarmonyPrefix]
+    static void Parry() => parried = true;
 }
