@@ -97,22 +97,6 @@ public class Server : Endpoint, ISocketManager
         });
 
         /*
-        Listen(PacketType.SpawnBullet, (con, sender, r, s) =>
-        {
-            var type = r.Byte(); r.Position = 1; // extract the bullet type
-            int cost = type >= 18 && type <= 20 ? 6 : 1; // rail costs more than the rest of the bullets
-
-            if (type == 23 || Administration.CanSpawnBullet(sender, cost))
-            {
-                Bullets.CInstantiate(r);
-                Redirect(r, s, con);
-            }
-        });
-
-        ListenAndRedirect(PacketType.Spray, r => SprayManager.Spawn(r.Id(), r.Vector(), r.Vector()));
-
-        ListenAndRedirect(PacketType.ActivateObject, World.ReadAction);
-
         Listen(PacketType.Vote, (con, sender, r, s) =>
         {
             var owner = r.Id();

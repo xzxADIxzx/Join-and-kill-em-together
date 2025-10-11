@@ -87,14 +87,6 @@ public class Client : Endpoint, IConnectionManager
         });
 
         /*
-        Listen(PacketType.SpawnBullet, Bullets.CInstantiate);
-
-        Listen(PacketType.Spray, r => SprayManager.Spawn(r.Id(), r.Vector(), r.Vector()));
-
-        Listen(PacketType.ActivateObject, World.ReadAction);
-
-        Listen(PacketType.CyberGrindAction, CyberGrind.LoadPattern);
-
         Listen(PacketType.Vote, r => Votes.UpdateVote(r.Id(), r.Byte()));
         */
     }
