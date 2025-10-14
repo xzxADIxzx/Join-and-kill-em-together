@@ -151,61 +151,6 @@ public class Bullets
         }
     }
 
-    #region special
-
-    /// <summary> Synchronizes the punch or parry animation. </summary>
-    public static void SyncPunch() => Networking.Send(PacketType.Punch, 6, w =>
-    {
-        w.Id(AccId);
-        w.Byte(0);
-
-        w.Bool(Networking.LocalPlayer.Parried);
-        Networking.LocalPlayer.Parried = false;
-    });
-
-    /// <summary> Synchronizes the explosion of the knuckleblaster. </summary>
-    public static void SyncBlast(GameObject blast)
-    {
-        if (LobbyController.Offline || blast?.name != "Explosion Wave(Clone)") return;
-        Networking.Send(PacketType.Punch, 29, w =>
-        {
-            w.Id(AccId);
-            w.Byte(1);
-
-            w.Vector(blast.transform.position);
-            w.Vector(blast.transform.localEulerAngles);
-        });
-    }
-
-    /// <summary> Synchronizes the shockwave of the player. </summary>
-    public static void SyncShock(GameObject shock, float force)
-    {
-        if (LobbyController.Offline || shock?.name != "PhysicalShockwavePlayer(Clone)") return;
-        Networking.Send(PacketType.Punch, 9, w =>
-        {
-            w.Id(AccId);
-            w.Byte(2);
-
-            w.Float(force);
-        });
-    }
-
-    /// <summary> Turns the harpoon 180 degrees and then punches it. </summary>
-    public static void Punch(Harpoon harpoon, bool local)
-    {
-        // null pointer fix
-        Set("aud", harpoon, harpoon.GetComponent<AudioSource>());
-
-        // this is necessary so that only the one who created or punched the harpoon deals the damage
-        harpoon.sourceWeapon = local ? null : Fake;
-
-        harpoon.transform.SetParent(null, true);
-        harpoon.transform.Rotate(Vector3.up * 180f, Space.Self);
-        harpoon.transform.position += harpoon.transform.forward;
-        harpoon.Punched();
-    }
-
-    #endregion
     #region damage
 
     /// <summary> Synchronizes damage dealt to the enemy. </summary>

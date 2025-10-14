@@ -7,6 +7,8 @@ using Jaket.Content;
 using Jaket.IO;
 using Jaket.UI.Elements;
 
+using static Entities;
+
 /// <summary>
 /// There are multiple instances of this entity, representing players whose machines are connected to the local one.
 /// The snapshot structure of this entity is identical to the local player structure.
@@ -193,30 +195,49 @@ public class RemotePlayer : Entity
         rocket.transform.localRotation = Quaternion.identity;
     }
 
-    /// <summary> Plays the punching animation and creates a shockwave as needed. </summary>
-    public void Punch(Reader r) { }
-    /*{ TODO resync animations and explosions separately
-        var field = Field<Harpoon>("target");
-        foreach (var harpoon in Object.FindObjectsOfType<Harpoon>())
-            if ((field.GetValue(harpoon) as EnemyIdentifierIdentifier)?.eid == enemyId) Bullets.Punch(harpoon, false);
+    /// <summary> Plays an animation or produces an explosion. </summary>
+    public void Punch(Reader r)
+    {
+        var type = r.Byte();
+        var tier = type >> 0 & 0x03;
+        var chrg = type >> 2 & 0x03;
 
-        switch (r.Byte())
+        switch (type)
         {
-            case 0:
-                Doll.Animator.SetTrigger(r.Bool() ? "parry" : "punch");
+            case 0x00:
+                Doll.Animator?.SetTrigger(r.Bool() ? "parry" : "punch");
                 break;
-            case 1:
-                var blast = Inst(GameAssets.Blast(), r.Vector(), Quaternion.Euler(r.Vector()));
-                blast.name = "Net";
-                blast.GetComponentInChildren<Explosion>().sourceWeapon = Bullets.Fake;
+            case 0x01:
+                Component<PhysicalShockwave>(Inst(NewMovement.Instance.gc.shockwave, r.Vector()), s => { s.force = 11250f * r.Float(); s.hasHurtPlayer = false; }, true);
                 break;
-            case 2:
-                var shock = Inst(NewMovement.Instance.gc.shockwave, agent.Position).GetComponent<PhysicalShockwave>();
-                shock.name = "Net";
-                shock.force = r.Float();
+            case 0x02: // TODO Damage class
+                var pos1 = r.Vector();
+                var rot1 = r.Vector();
+                GameAssets.Prefab(GameAssets.Explosions[0], p => Inst(p, pos1, Quaternion.Euler(rot1)));
+                break;
+            case 0x03:
+                var pos2 = r.Vector();
+                var rot2 = r.Vector();
+                GameAssets.Prefab(GameAssets.Explosions[1], p => Inst(p, pos2, Quaternion.Euler(rot2)).GetComponentsInChildren<Explosion>().Each(e =>
+                {
+                    e.enemyDamageMultiplier = 1f;
+                    e.damage = 50;
+                    e.maxSize *= 1.5f;
+                }));
+                break;
+            default:
+                var pos3 = r.Vector();
+                var rot3 = r.Vector();
+                GameAssets.LoadAsync<GameObject>(GameAssets.Particles[tier], p => Inst(p, pos3, Quaternion.Euler(rot3)));
+                if (chrg == 0) return;
+                GameAssets.Prefab(GameAssets.Explosions[chrg == 3 ? 3 : 2], p =>
+                {
+                    p = Inst(p, pos3, Quaternion.Euler(rot3));
+                    if (chrg == 2) p.GetComponentsInChildren<Explosion>().Each(e => e.maxSize *= 2f);
+                });
                 break;
         }
-    }*/
+    }
 
     #endregion
 }
