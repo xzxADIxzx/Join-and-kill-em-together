@@ -228,7 +228,7 @@ public class RemotePlayer : Entity
             default:
                 var pos3 = r.Vector();
                 var rot3 = r.Vector();
-                GameAssets.LoadAsync<GameObject>(GameAssets.Particles[tier], p => Inst(p, pos3, Quaternion.Euler(rot3)));
+                GameAssets.Particle(GameAssets.Particles[tier], p => Inst(p, pos3, Quaternion.Euler(rot3)));
                 if (chrg == 0) return;
                 GameAssets.Prefab(GameAssets.Explosions[chrg == 3 ? 3 : 2], p =>
                 {

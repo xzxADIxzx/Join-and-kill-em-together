@@ -135,7 +135,7 @@ public abstract class Item : OwnableEntity
             Physics.OverlapSphere(agent.Position, 5f, 1 << 22).Each(c => c.transform.Find("../ThatExplosionGif")?.gameObject.SetActive(true));
 
         if (left >= 2 && r.Bool())
-            GameAssets.LoadAsync<GameObject>("Assets/Particles/Environment/HotSand.prefab", p => Inst(p, new(8.25f, -8.25f, 74.25f), null));
+            GameAssets.Particle("Environment/HotSand.prefab", p => Inst(p, new(8.25f, -8.25f, 74.25f), null));
     }
 
     #endregion

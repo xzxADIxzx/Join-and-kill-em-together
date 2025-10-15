@@ -95,7 +95,7 @@ public static class ModAssets
             UpdtMaterials(xzxADIxzx = p, new(1.4f, 1.4f, 1.4f));
             Component<ItemIdentifier>(p, i =>
             {
-                GameAssets.LoadAsync<GameObject>("Assets/Particles/SoundBubbles/SqueakyToy.prefab", p => i.pickUpSound = p);
+                GameAssets.Particle("SoundBubbles/SqueakyToy.prefab", p => i.pickUpSound = p);
                 i.reverseTransformSettings = true;
 
                 i.putDownRotation = new(  0f, 120f,  90f);
@@ -107,7 +107,7 @@ public static class ModAssets
             UpdtMaterials(Sowler = p);
             Component<ItemIdentifier>(p, i =>
             {
-                GameAssets.LoadAsync<GameObject>("Assets/Particles/SoundBubbles/SqueakyToy.prefab", p => i.pickUpSound = p);
+                GameAssets.Particle("SoundBubbles/SqueakyToy.prefab", p => i.pickUpSound = p);
                 i.reverseTransformSettings = true;
 
                 i.putDownRotation = new(-15f, 120f,  95f);

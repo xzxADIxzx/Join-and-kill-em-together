@@ -11,8 +11,11 @@ public static class GameAssets
     /// <summary> Asynchronously loads an asset by the given path. </summary>
     public static void LoadAsync<T>(string path, Cons<T> cons) => Addressables.LoadAssetAsync<T>(path).Task.ContinueWith(t => cons(t.Result));
 
-    /// <summary> Loads a preafb by the given path. </summary>
+    /// <summary> Loads a prefab by the given path. </summary>
     public static void Prefab(string path, Cons<GameObject> cons) => LoadAsync($"Assets/Prefabs/{path}", cons);
+
+    /// <summary> Loads a particle by the given path. </summary>
+    public static void Particle(string path, Cons<GameObject> cons) => LoadAsync($"Assets/Particles/{path}", cons);
 
     /// <summary> Loads a material by the given path. </summary>
     public static void Material(string path, Cons<Material> cons) => LoadAsync($"Assets/Models/{path}", cons);
@@ -144,9 +147,9 @@ public static class GameAssets
     /// <summary> List of internal paths of all hammer particles.  </summary>
     public static readonly string[] Particles =
     {
-        "Assets/Particles/HammerHitLight.prefab",
-        "Assets/Particles/HammerHitMedium.prefab",
-        "Assets/Particles/HammerHitHeavy.prefab",
+        "HammerHitLight.prefab",
+        "HammerHitMedium.prefab",
+        "HammerHitHeavy.prefab",
     };
 
     #endregion
@@ -163,9 +166,6 @@ public static class GameAssets
 
     /// <summary> Loads the torch prefab. </summary>
     public static GameObject Torch() => Prefab("Levels/Interactive/Altar (Torch) Variant");
-
-    /// <summary> Loads the blast explosion prefab. </summary>
-    public static GameObject Blast() => Prefab("Attacks and Projectiles/Explosions/Explosion Wave");
 
     /// <summary> Loads the shotgun pickup prefab. </summary>
     public static GameObject Shotgun() => Prefab("Weapons/Pickups/ShotgunPickUp");

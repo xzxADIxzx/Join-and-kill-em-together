@@ -99,7 +99,7 @@ public static class GunsPatch
             w.Id(AccId);
             w.Byte((byte)(0xF0 + (__instance.primaryCharge << 2) + (___forceWeakHit ? 0 : ___tier)));
 
-            w.Vector(CameraController.Instance.transform.position + CameraController.Instance.transform.forward);
+            w.Vector(CameraController.Instance.transform.position + CameraController.Instance.transform.forward * 2.5f);
             w.Vector(CameraController.Instance.transform.localEulerAngles);
         });
         if (Version.DEBUG) Log.Debug("[GUNS] Caught hammer explosion");

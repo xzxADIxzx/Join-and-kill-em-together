@@ -183,7 +183,7 @@ public class Plushie : Item
                 act.events.onActivate.AddListener(() => { Dest(src); Dest(act); });
             });
         });
-        GameAssets.LoadAsync<GameObject>("Assets/Particles/Enemies/RageEffect.prefab", p =>
+        GameAssets.Particle("Enemies/RageEffect.prefab", p =>
         {
             p = Inst(p, owl);
 
