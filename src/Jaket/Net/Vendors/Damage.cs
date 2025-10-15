@@ -10,6 +10,9 @@ using static Entities;
 /// <summary> Vendor responsible for explosions and damage. </summary>
 public class Damage : Vendor
 {
+    /// <summary> List of internal names of all melee damage types. </summary>
+    public static readonly string[] Melee = { "punch", "heavypunch", "hook", "ground slam", "hammer", "chainsawzone" };
+
     public void Load()
     {
         EntityType counter = EntityType.Shockwave;

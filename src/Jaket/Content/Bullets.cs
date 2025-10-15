@@ -14,20 +14,6 @@ public class Bullets
     /// <summary> List of prefabs of all bullets. </summary>
     public static List<GameObject> Prefabs = new();
 
-    /// <summary> Damage markers needed to prevent synchronized bullets from dealing extra damage. </summary>
-    public static GameObject Fake, NetDmg;
-    /// <summary> List of all synchronized damage types. </summary>
-    public static string[] Types = new[]
-    {
-        /* hitscan * "revolver", "railcannon", "coin",
-        /* shotgun * "shotgun", "shotgunzone", "chainsaw", "chainsawzone", "chainsawbounce", "chainsawprojectile", "hammer",
-        /* other * "nail", "sawblade", "cannonball",
-        /* drill * "harpoon", "drill", "drillpunch",
-        /* environmental * "explosion" /*???*, "aftershock", "zapper",
-        /* melee * "punch", "heavypunch", "ground slam", "hook",
-        /* parry * "projectile", "enemy"
-    };
-
     /// <summary> Loads all bullets for future use. </summary>
     public static void Load()
     {
@@ -54,20 +40,9 @@ public class Bullets
                 Add(shotgun.explosion, $"SG EXT");
             }
             else
-            if (weapon.TryGetComponent<ShotgunHammer>(out var hammer))
-            {
-                Add(Get("overPumpExplosion", hammer) as GameObject, "SH"); // thank you, developers
-            }
-            else
             if (weapon.TryGetComponent<Railcannon>(out var railcannon))
             {
                 Add(railcannon.beam, $"RC{++rc}");
-            }
-            else
-            if (weapon.TryGetComponent<RocketLauncher>(out var launcher))
-            {
-                Add(launcher.rocket, $"RL PRI");
-                Add((Get("napalmProjectile", launcher) as Rigidbody)?.gameObject, $"RL EXT");
             }
         }
 
