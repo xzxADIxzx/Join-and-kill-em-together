@@ -273,5 +273,8 @@ public static class Tools
     /// <summary> Whether the type is a projectile. </summary>
     public static bool IsProjectile(this EntityType type) => type >= EntityType.Core && type <= EntityType.Cannonball;
 
+    /// <summary> Whether the type is an explosion. </summary>
+    public static bool IsExplosion(this EntityType type) => type >= EntityType.Shockwave && type <= EntityType.HammerParticleHeavy;
+
     #endregion
 }
