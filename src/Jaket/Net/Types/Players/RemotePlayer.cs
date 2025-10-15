@@ -201,6 +201,7 @@ public class RemotePlayer : Entity
         var type = r.Byte();
         var tier = type >> 0 & 0x03;
         var chrg = type >> 2 & 0x03;
+        var temp = chrg == 3 ? 0x01 : 0x00;
 
         switch (type)
         {
@@ -208,32 +209,32 @@ public class RemotePlayer : Entity
                 Doll.Animator?.SetTrigger(r.Bool() ? "parry" : "punch");
                 break;
             case 0x01:
-                Component<PhysicalShockwave>(Inst(NewMovement.Instance.gc.shockwave, r.Vector()), s => { s.force = 11250f * r.Float(); s.hasHurtPlayer = false; }, true);
+                Component<PhysicalShockwave>(Inst(Vendor.Prefabs[(byte)EntityType.Shockwave], r.Vector()), s => { s.force = 11250f * r.Float(); s.hasHurtPlayer = false; }, true);
                 break;
-            case 0x02: // TODO Damage class
-                var pos1 = r.Vector();
-                var rot1 = r.Vector();
-                GameAssets.Prefab(GameAssets.Explosions[0], p => Inst(p, pos1, Quaternion.Euler(rot1)));
+            case 0x02:
+                Inst(Vendor.Prefabs[(byte)EntityType.Blastwave], r.Vector(), Quaternion.Euler(r.Vector()));
                 break;
             case 0x03:
-                var pos2 = r.Vector();
-                var rot2 = r.Vector();
-                GameAssets.Prefab(GameAssets.Explosions[1], p => Inst(p, pos2, Quaternion.Euler(rot2)).GetComponentsInChildren<Explosion>().Each(e =>
+                Inst(Vendor.Prefabs[(byte)EntityType.ShotgunExplosion], r.Vector(), Quaternion.Euler(r.Vector())).GetComponentsInChildren<Explosion>().Each(e =>
                 {
                     e.enemyDamageMultiplier = 1f;
                     e.damage = 50;
                     e.maxSize *= 1.5f;
-                }));
+                });
                 break;
             default:
-                var pos3 = r.Vector();
-                var rot3 = r.Vector();
-                GameAssets.Particle(GameAssets.Particles[tier], p => Inst(p, pos3, Quaternion.Euler(rot3)));
+                Vector3 pos = r.Vector(), rot = r.Vector();
+
+                Inst(Vendor.Prefabs[(byte)EntityType.HammerParticleLight + tier], pos, Quaternion.Euler(rot));
                 if (chrg == 0) return;
-                GameAssets.Prefab(GameAssets.Explosions[chrg == 3 ? 3 : 2], p =>
+                Inst(Vendor.Prefabs[(byte)EntityType.HammerExplosionWeak + temp], pos, Quaternion.Euler(rot)).GetComponentsInChildren<Explosion>().Each(e =>
                 {
-                    p = Inst(p, pos3, Quaternion.Euler(rot3));
-                    if (chrg == 2) p.GetComponentsInChildren<Explosion>().Each(e => e.maxSize *= 2f);
+                    if (chrg <= 2)
+                    {
+                        e.canHit = AffectedSubjects.All;
+                        e.playerDamageOverride = 0;
+                    }
+                    if (chrg == 2) e.maxSize *= 2f;
                 });
                 break;
         }
