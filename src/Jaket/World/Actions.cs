@@ -30,7 +30,7 @@ public class StaticAction : WorldAction
     /// <summary> Creates a static action that duplicates torches. </summary>
     public static void PlaceTorches(string level, Vector3 pos, float radius) => new StaticAction(level, () =>
     {
-        var obj = GameAssets.Torch();
+        var obj = /* GameAssets.Torch() */ (GameObject)null;
         for (float angle = 360f * 6f / 7f; angle >= 0f; angle -= 360f / 7f)
         {
             float rad = angle * Mathf.Deg2Rad;

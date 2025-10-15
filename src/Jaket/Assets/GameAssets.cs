@@ -153,28 +153,4 @@ public static class GameAssets
     };
 
     #endregion
-    #region obsolete content
-
-    /// <summary> List of items that mustn't be synchronized, because they are not items at all. </summary>
-    public static readonly string[] ItemExceptions =
-    { "Minotaur", "Tram (3)", "BombTrigger", "BombStationTramTeleporterKey", "Checker" };
-
-    #endregion
-    #region obsolete loading
-
-    private static GameObject Prefab(string name) => AssetHelper.LoadPrefab($"Assets/Prefabs/{name}.prefab");
-
-    /// <summary> Loads the torch prefab. </summary>
-    public static GameObject Torch() => Prefab("Levels/Interactive/Altar (Torch) Variant");
-
-    /// <summary> Loads the shotgun pickup prefab. </summary>
-    public static GameObject Shotgun() => Prefab("Weapons/Pickups/ShotgunPickUp");
-
-    /// <summary> Loads a swordsmachine material by name. </summary>
-    public static void SwordsMaterial(string name, Renderer output) => Material($"Enemies/SwordsMachine/{name}.mat", mat => output.material = mat);
-
-    /// <summary> Loads an insurrectionist material by name. </summary>
-    public static void SisyMaterial(string name, Renderer[] output) => Material($"Enemies/Sisyphus/{name}.mat", mat => output[0].material = output[1].material = mat);
-
-    #endregion
 }
