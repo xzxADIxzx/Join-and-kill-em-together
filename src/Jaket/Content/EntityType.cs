@@ -112,6 +112,18 @@ public enum EntityType : byte
     Cannonball,
 
     #endregion
+    #region explosions
+
+    Shockwave,
+    Blastwave,
+    ShotgunExplosion,
+    HammerExplosionWeak,
+    HammerExplosionWarm,
+    HammerParticleLight,
+    HammerParticleMedium,
+    HammerParticleHeavy,
+
+    #endregion
 
     Filth,
     Stray,
