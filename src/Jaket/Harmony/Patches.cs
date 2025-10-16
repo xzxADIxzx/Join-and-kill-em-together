@@ -6,6 +6,7 @@ using System;
 using Jaket.Input;
 using Jaket.Net;
 using Jaket.Net.Types;
+using Jaket.Net.Vendors;
 using Jaket.UI.Elements;
 using Jaket.UI.Fragments;
 
@@ -26,6 +27,7 @@ public static class Patches
         typeof(Sawblade),
         typeof(Rocket),
         typeof(Cannon),
+        typeof(Damage),
         typeof(Spectator),
     };
     public static Type[] StaticTypes =

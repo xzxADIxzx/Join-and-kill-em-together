@@ -18,9 +18,6 @@ public class Enemies
     /// <summary> Dictionary of entity types to their classes. </summary>
     public static Dictionary<EntityType, Type> Types = new();
 
-    /// <summary> Whether damage and death of enemies must be logged. </summary>
-    public static bool Debug;
-
     /// <summary> Loads all enemies for future use. </summary>
     public static void Load()
     {
@@ -130,21 +127,6 @@ public class Enemies
             Imdt(enemyId.name != "Body" && enemyId.name != "StatueBoss" ? enemyId.gameObject : enemyId.transform.parent.gameObject);
             return false;
         }
-    }
-
-    /// <summary> Synchronizes the damage dealt to the enemy. </summary>
-    public static bool SyncDamage(EnemyIdentifier enemyId, float damage, float crit, GameObject source)
-    {
-        if (LobbyController.Offline || enemyId.dead) return true;
-        if (Debug) Log.Debug($"{(source == Bullets.NetDmg ? "Network" : source == Bullets.Fake ? "Fake" : "Local")} damage was dealt: {enemyId.hitter}, {damage}, {crit}, {source?.name}");
-
-        if (source == Bullets.NetDmg) return true; // the damage was received over the network
-        if (source == Bullets.Fake) return false; // bullets are only needed for visual purposes and mustn't cause damage
-
-        if (enemyId.TryGetComponent<Entity>(out var entity) && (entity is not RemotePlayer player || !player.Doll.Dashing))
-            Bullets.SyncDamage(entity.Id, enemyId.hitter, damage, crit);
-
-        return true;
     }
 
     /// <summary> Synchronizes the death of the enemy. </summary>

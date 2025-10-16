@@ -1,5 +1,6 @@
 namespace Jaket.Net.Vendors;
 
+using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Assets;
@@ -67,6 +68,16 @@ public class Damage : Vendor
 
     /// <summary> Patch logic to be executed when an entity is hitten. </summary>
     public delegate bool Patch(EnemyIdentifier eid, uint tid, bool ally);
+
+    #endregion
+    #region harmony
+
+    [HarmonyPatch(typeof(EnemyIdentifier), nameof(EnemyIdentifier.DeliverDamage))]
+    [HarmonyPrefix]
+    static void MeleeDmg(EnemyIdentifier __instance, float multiplier)
+    {
+        if (Melee.Any(t => t == __instance.hitter) && __instance.TryGetComponent(out Entity.Agent a)) Entities.Damage.Deal(a.Patron.Id, multiplier);
+    }
 
     #endregion
 }
