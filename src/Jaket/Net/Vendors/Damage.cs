@@ -44,6 +44,13 @@ public class Damage : Vendor
         w.Float(damage);
     });
 
+    /// <summary> Delivers remote damage from the network. </summary>
+    public void Deal(EnemyIdentifier eid, float damage)
+    {
+        eid.hitter = "network";
+        eid.DeliverDamage(eid.gameObject, default, default, damage, false);
+    }
+
     /// <summary> Invokes the patch logic if the hitten collider is an entity. </summary>
     public bool Deal<T>(Component instance, Patch patch, Collider other = null, EnemyIdentifier eid = null) where T : Entity
     {
