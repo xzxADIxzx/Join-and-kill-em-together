@@ -19,6 +19,10 @@ public static class RichPresence
         ___cachedActivity.Party.Size.MaxSize     = LobbyController.Lobby?.MaxMembers  ?? 0;
     }
 
+    [HarmonyPatch(typeof(DiscordController), "OnApplicationQuit")]
+    [HarmonyPrefix]
+    static bool Discord() => false; // I'd honestly been trying to figure it out, but at some point I just gave up
+
     [HarmonyPatch(typeof(SteamController), nameof(SteamController.FetchSceneActivity))]
     [HarmonyPrefix]
     static void Steam()
