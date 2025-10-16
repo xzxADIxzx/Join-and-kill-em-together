@@ -127,6 +127,8 @@ public class LocalPlayer : Entity
     /// <summary> Synchronizes the suit and custom weapon colors. </summary>
     public void SyncSuit()
     {
+        if (LobbyController.Offline) return;
+
         Renderer renderer = null;
         bool custom = (cw?.GetComponentInChildren<GunColorGetter>()?.TryGetComponent(out renderer) ?? false) && renderer.material.name.Contains("Custom");
 
