@@ -148,13 +148,13 @@ public class Cannon : OwnableEntity
 
     [HarmonyPatch(typeof(Cannonball), nameof(Cannonball.Collide))]
     [HarmonyPrefix]
-    static bool Damage(Cannonball __instance, Collider other, Rigidbody ___rb) => Entities.Damage.Deal<Cannon>(__instance, (eid, ally) =>
+    static bool Damage(Cannonball __instance, Collider other, Rigidbody ___rb) => Entities.Damage.Deal<Cannon>(__instance, (eid, tid, ally) =>
     {
         if (ally || __instance.hitEnemies.Contains(eid)) return false;
 
         float damage = __instance.forceMaxSpeed ? __instance.damage : Mathf.Min(__instance.damage, ___rb.velocity.magnitude * .15f);
 
-        // TODO Damage class
+        Entities.Damage.Deal(tid, damage);
         return true;
     }, other);
 

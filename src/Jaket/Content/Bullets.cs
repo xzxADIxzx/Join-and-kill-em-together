@@ -125,32 +125,5 @@ public class Bullets
             });
         }
     }
-
-    #region damage
-
-    /// <summary> Synchronizes damage dealt to the enemy. </summary>
-    public static void SyncDamage(uint enemyId, string hitter, float damage, float crit)
-    {
-        var type = (byte)Types.IndexOf(hitter);
-        if (type != 0xFF) Networking.Send(PacketType.Damage, 11, w =>
-        {
-            w.Id(enemyId);
-            w.Enum(Networking.LocalPlayer.Team);
-            w.Byte(type);
-
-            w.Float(damage);
-            w.Bool(crit == 0f);
-        });
-    }
-
-    /// <summary> Deals bullet damage to the enemy. </summary>
-    public static void DealDamage(EnemyIdentifier enemyId, Reader r)
-    {
-        r.Team(); // skip team because enemies don't have a team
-        enemyId.hitter = Types[r.Byte()];
-        enemyId.DeliverDamage(enemyId.gameObject, Vector3.zero, enemyId.transform.position, r.Float(), false, r.Bool() ? 0f : 1f, NetDmg);
-    }
-
-    #endregion
 }
 */

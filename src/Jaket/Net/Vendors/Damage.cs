@@ -37,6 +37,13 @@ public class Damage : Vendor
 
     #region dealing
 
+    /// <summary> Distributes the damage over the network. </summary>
+    public void Deal(uint tid, float damage) => Networking.Send(PacketType.Damage, 8, w =>
+    {
+        w.Id(tid);
+        w.Float(damage);
+    });
+
     /// <summary> Invokes the patch logic if the hitten collider is an entity. </summary>
     public bool Deal<T>(Component instance, Patch patch, Collider other = null, EnemyIdentifier eid = null) where T : Entity
     {
@@ -45,14 +52,14 @@ public class Damage : Vendor
             if (!eid && !other.TryGetComponent(out eid)) eid = other.GetComponent<EnemyIdentifierIdentifier>()?.eid;
             if (!eid) return t.IsOwner;
 
-            if (t.IsOwner && eid.TryGetComponent(out Entity.Agent target)) return patch(eid, target.Patron is RemotePlayer p && p.Team.Ally());
+            if (t.IsOwner && eid.TryGetComponent(out Entity.Agent target)) return patch(eid, target.Patron.Id, target.Patron is RemotePlayer p && p.Team.Ally());
             return false;
         }
         else return true;
     }
 
     /// <summary> Patch logic to be executed when an entity is hitten. </summary>
-    public delegate bool Patch(EnemyIdentifier eid, bool ally);
+    public delegate bool Patch(EnemyIdentifier eid, uint tid, bool ally);
 
     #endregion
 }

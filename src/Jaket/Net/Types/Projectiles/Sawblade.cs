@@ -132,7 +132,7 @@ public class Sawblade : OwnableEntity
 
     [HarmonyPatch(typeof(Nail), "DamageEnemy")]
     [HarmonyPrefix]
-    static bool Damage(Nail __instance, EnemyIdentifier eid) => Entities.Damage.Deal<Sawblade>(__instance, (eid, ally) =>
+    static bool Damage(Nail __instance, EnemyIdentifier eid) => Entities.Damage.Deal<Sawblade>(__instance, (eid, tid, ally) =>
     {
         if (ally) { __instance.hitAmount += 1; return false; }
 
@@ -147,7 +147,7 @@ public class Sawblade : OwnableEntity
         };
         float damage = __instance.damage * (__instance.punched ? 2f : 1f) * (__instance.fodderDamageBoost ? fodder : 1f);
 
-        // TODO Damage class
+        Entities.Damage.Deal(tid, damage);
         return true;
     }, eid: eid);
 
