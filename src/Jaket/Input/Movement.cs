@@ -227,6 +227,13 @@ public class Movement : MonoSingleton<Movement>
         }
     }
 
+    [HarmonyPatch(typeof(NewMovement), nameof(NewMovement.GetHurt))]
+    [HarmonyPrefix]
+    static void Invincibility(ref float ___hurtInvincibility)
+    {
+        if (___hurtInvincibility > .08f) ___hurtInvincibility = .08f;
+    }
+
     [HarmonyPatch(typeof(CheatsManager), nameof(CheatsManager.HandleCheatBind))]
     [HarmonyPrefix]
     static bool CheatBind() => !(UI.AnyDialog || Emotes.Current != 0xFF || nm.dead);

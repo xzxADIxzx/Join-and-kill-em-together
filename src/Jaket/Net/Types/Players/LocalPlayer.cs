@@ -103,13 +103,11 @@ public class LocalPlayer : Entity
 
     public override void Damage(Reader r)
     {
-        var team = r.Team();
-        var drill = false; // Bullets.Types[r.Byte()] == "drill";
+        int damage = Mathf.CeilToInt(r.Float() * 3f);
 
-        if (nm.dead || team.Ally()) return;
+        nm.GetHurt(damage, damage <= 3, ignoreInvincibility: damage >= 3);
 
-        nm.GetHurt(Mathf.CeilToInt(r.Float() * 4f), drill, 0f);
-        if (nm.dead) LobbyController.Lobby?.SendChatString("#/s" + (byte)team);
+        if (Version.DEBUG) Log.Debug($"[ENTS] Received {damage} damage");
     }
 
     public override void Killed(Reader r, int left) { }
