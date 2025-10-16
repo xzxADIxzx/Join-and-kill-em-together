@@ -99,26 +99,15 @@ public class Core : Entity
 
     [HarmonyPatch(typeof(Grenade), nameof(Grenade.Collision))]
     [HarmonyPrefix]
-    static bool Damage(Grenade __instance, Collider other)
+    static bool Damage(Grenade __instance, Collider other) => Entities.Damage.Deal<Core>(__instance, (eid, ally) =>
     {
-        if (!other.TryGetComponent(out EnemyIdentifier eid)) eid = other.GetComponent<EnemyIdentifierIdentifier>()?.eid;
-
-        if (__instance.TryGetComponent(out Agent a) && a.Patron is Core c)
+        if (ally)
         {
-            if (!eid) return c.IsOwner;
-            if (c.IsOwner && eid.TryGetComponent(out Agent b))
-            {
-                if (b.Patron is RemotePlayer p && p.Team.Ally())
-                {
-                    Physics.IgnoreCollision(__instance.GetComponent<Collider>(), other);
-                    return false;
-                }
-                else return true;
-            }
+            Physics.IgnoreCollision(__instance.GetComponent<Collider>(), other);
             return false;
         }
         else return true;
-    }
+    }, other);
 
     #endregion
 }

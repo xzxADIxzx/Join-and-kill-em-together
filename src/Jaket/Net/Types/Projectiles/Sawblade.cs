@@ -132,33 +132,24 @@ public class Sawblade : OwnableEntity
 
     [HarmonyPatch(typeof(Nail), "DamageEnemy")]
     [HarmonyPrefix]
-    static bool Damage(Nail __instance, EnemyIdentifier eid)
+    static bool Damage(Nail __instance, EnemyIdentifier eid) => Entities.Damage.Deal<Sawblade>(__instance, (eid, ally) =>
     {
-        if (__instance.TryGetComponent(out Agent a) && a.Patron is Sawblade s)
+        if (ally) { __instance.hitAmount += 1; return false; }
+
+        float fodder = eid.enemyType switch
         {
-            if (!eid) return s.IsOwner;
-            if (s.IsOwner && eid.TryGetComponent(out Agent b))
-            {
-                if (b.Patron is RemotePlayer p && p.Team.Ally()) { __instance.hitAmount += 1; return false; }
+            EnemyType.Filth   => 2.0f,
+            EnemyType.Stray   => 2.0f,
+            EnemyType.Schism  => 1.5f,
+            EnemyType.Soldier => 1.5f,
+            EnemyType.Stalker => 1.5f,
+            _                 => 1.0f,
+        };
+        float damage = __instance.damage * (__instance.punched ? 2f : 1f) * (__instance.fodderDamageBoost ? fodder : 1f);
 
-                float fodder = eid.enemyType switch
-                {
-                    EnemyType.Filth   => 2.0f,
-                    EnemyType.Stray   => 2.0f,
-                    EnemyType.Schism  => 1.5f,
-                    EnemyType.Soldier => 1.5f,
-                    EnemyType.Stalker => 1.5f,
-                    _                 => 1.0f,
-                };
-                float damage = __instance.damage * (__instance.punched ? 2f : 1f) * (__instance.fodderDamageBoost ? fodder : 1f);
-
-                // TODO Damage class
-                return true;
-            }
-            return false;
-        }
-        else return true;
-    }
+        // TODO Damage class
+        return true;
+    }, eid: eid);
 
     #endregion
 }

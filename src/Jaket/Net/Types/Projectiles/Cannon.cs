@@ -148,26 +148,15 @@ public class Cannon : OwnableEntity
 
     [HarmonyPatch(typeof(Cannonball), nameof(Cannonball.Collide))]
     [HarmonyPrefix]
-    static bool Damage(Cannonball __instance, Collider other, Rigidbody ___rb)
+    static bool Damage(Cannonball __instance, Collider other, Rigidbody ___rb) => Entities.Damage.Deal<Cannon>(__instance, (eid, ally) =>
     {
-        if (!other.TryGetComponent(out EnemyIdentifier eid)) eid = other.GetComponent<EnemyIdentifierIdentifier>()?.eid;
+        if (ally || __instance.hitEnemies.Contains(eid)) return false;
 
-        if (__instance.TryGetComponent(out Agent a) && a.Patron is Cannon c)
-        {
-            if (!eid) return c.IsOwner;
-            if (c.IsOwner && eid.TryGetComponent(out Agent b))
-            {
-                if (b.Patron is RemotePlayer p && p.Team.Ally() || __instance.hitEnemies.Contains(eid)) return false;
+        float damage = __instance.forceMaxSpeed ? __instance.damage : Mathf.Min(__instance.damage, ___rb.velocity.magnitude * .15f);
 
-                float damage = __instance.forceMaxSpeed ? __instance.damage : Mathf.Min(__instance.damage, ___rb.velocity.magnitude * .15f);
-
-                // TODO Damage class
-                return true;
-            }
-            return false;
-        }
-        else return true;
-    }
+        // TODO Damage class
+        return true;
+    }, other);
 
     #endregion
 }
