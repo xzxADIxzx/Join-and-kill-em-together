@@ -231,7 +231,7 @@ public class Movement : MonoSingleton<Movement>
     [HarmonyPrefix]
     static void Invincibility(ref float ___hurtInvincibility)
     {
-        if (___hurtInvincibility > .08f) ___hurtInvincibility = .08f;
+        if (LobbyController.Online && ___hurtInvincibility > .08f) ___hurtInvincibility = .08f;
     }
 
     [HarmonyPatch(typeof(CheatsManager), nameof(CheatsManager.HandleCheatBind))]
