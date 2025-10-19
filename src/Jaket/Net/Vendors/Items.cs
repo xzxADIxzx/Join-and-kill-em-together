@@ -27,18 +27,19 @@ public class Items : Vendor
 
         GameAssets.Prefab("Levels/Hakita.prefab", p =>
         {
-            Events.Post(() => Vendor.Prefabs[(byte)EntityType.Moon] != null, () =>
+            Events.Post(() => Vendor.Prefabs[(byte)EntityType.Moon] != null, () => Events.Post(() => // damn Unity crashes w/o the second post
             {
-                ref GameObject prefab = ref Vendor.Prefabs[(byte)EntityType.Moon];
+                GameObject prefab;
 
-                Keep(prefab = Inst(prefab));
-                Dest(prefab.transform.Find("Fire"));
-                Dest(prefab.transform.Find("Light"));
+                Keep(prefab = Make(EntityType.Moon));
+                Dest(prefab.transform.Find("Fire").gameObject);
+                Dest(prefab.transform.Find("Light").gameObject);
+                Dest(prefab.GetComponent<Torch>());
 
                 prefab.name = "Moon";
                 prefab.GetComponent<ItemIdentifier>().itemType = ItemType.CustomKey1;
                 Inst(p, prefab.transform).transform.localScale = Vector3.one * .1f;
-            });
+            }));
         });
 
         Events.Post(() => ModAssets.V2        != null, () => Vendor.Prefabs[(byte)EntityType.V2       ] = ModAssets.V2       );
