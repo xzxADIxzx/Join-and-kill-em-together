@@ -25,6 +25,22 @@ public class Items : Vendor
 
         GameAssets.Prefab("Fishing/Fish Pickup Template.prefab", p => FishTemplate = p);
 
+        GameAssets.Prefab("Levels/Hakita.prefab", p =>
+        {
+            Events.Post(() => Vendor.Prefabs[(byte)EntityType.Moon] != null, () =>
+            {
+                ref GameObject prefab = ref Vendor.Prefabs[(byte)EntityType.Moon];
+
+                Keep(prefab = Inst(prefab));
+                Dest(prefab.transform.Find("Fire"));
+                Dest(prefab.transform.Find("Light"));
+
+                prefab.name = "Moon";
+                prefab.GetComponent<ItemIdentifier>().itemType = ItemType.CustomKey1;
+                Inst(p, prefab.transform).transform.localScale = Vector3.one * .1f;
+            });
+        });
+
         Events.Post(() => ModAssets.V2        != null, () => Vendor.Prefabs[(byte)EntityType.V2       ] = ModAssets.V2       );
         Events.Post(() => ModAssets.V3        != null, () => Vendor.Prefabs[(byte)EntityType.V3       ] = ModAssets.V3       );
         Events.Post(() => ModAssets.xzxADIxzx != null, () => Vendor.Prefabs[(byte)EntityType.xzxADIxzx] = ModAssets.xzxADIxzx);
