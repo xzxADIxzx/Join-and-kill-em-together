@@ -1,16 +1,4 @@
-namespace Jaket.World;
-
-using UnityEngine;
-
-using Jaket.Content;
-using Jaket.Input;
-using Jaket.Net;
-using Jaket.Net.Types;
-using Jaket.UI;
-using Jaket.UI.Fragments;
-
-/// <summary> List of all interactions with the level needed by the multiplayer. </summary>
-public class WorldActionsList
+/*
 {
     /// <summary> Funny text for the Gate Control Terminal™. </summary>
     public const string BASEMENT_TERMILA_TEXT =
@@ -29,8 +17,6 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
     // NEVER DO DESTROY IMMEDIATE IN STATIC ACTION
     public static void Load()
     {
-        /*
-        string l; // just for focusing attention
         #region 0-1
         l = "Level 0-1";
 
@@ -532,6 +518,6 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         });
 
         #endregion
-        */
     }
 }
+*/
