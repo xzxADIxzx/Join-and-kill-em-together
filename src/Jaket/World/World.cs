@@ -9,9 +9,6 @@ using Jaket.IO;
 using Jaket.Net;
 using Jaket.Net.Types;
 
-// TODO remove extra v1 plushies from museum (gianni nightmare)
-// TODO remove trash bin counter from museum (MapInt or smth)
-
 /// <summary> Class that manages objects in the level, such as hook points, skull cases, triggers and etc. </summary>
 public class World
 {

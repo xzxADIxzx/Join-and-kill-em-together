@@ -1,5 +1,7 @@
 namespace Jaket.World;
 
+using Logic;
+
 /// <summary> List of all interactions with the world. Will replenish over time. </summary>
 public static class ActionList
 {
@@ -165,6 +167,13 @@ public static class ActionList
         #endregion
         #region 7-S
         l = "Level 7-S";
+
+        #endregion
+        #region museum
+        l = "CreditsMuseum2";
+
+        ActionType.Run(l, () => ResFind<MapIntSetter>().Each(IsReal, Dest));
+        ActionType.Dest(l, "/__Gianni nightmare world");
 
         #endregion
 

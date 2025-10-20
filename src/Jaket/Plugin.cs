@@ -80,6 +80,7 @@ public class Plugin : MonoBehaviour
         Create<Movement>("Movement");
 
         SprayManager.Load();
+        ActionList.Load();
 
         Log.Info("[INIT] Running postinit hooks...");
 
