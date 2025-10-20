@@ -15,8 +15,6 @@ using Jaket.Net.Types;
 /// <summary> Class that manages objects in the level, such as hook points, skull cases, triggers and etc. </summary>
 public class World
 {
-    /// <summary> List of most actions with the world. </summary>
-    public static List<WorldAction> Actions = new();
     /// <summary> List of activated actions. Cleared only when the host loads a new level. </summary>
     public static List<byte> Activated = new();
 
@@ -29,12 +27,6 @@ public class World
     public static List<TramControl> Trams = new();
     /// <summary> Trolley with a teleport from the tunnel at level 7-1. </summary>
     public static Transform TunnelRoomba;
-
-    public static Hand Hand;
-    public static Leviathan Leviathan;
-    public static Minotaur Minotaur;
-    public static SecuritySystem[] SecuritySystem = new SecuritySystem[7];
-    public static Brain Brain;
 
     /// <summary> Subscribes to several events for proper work. </summary>
     public static void Load()
@@ -86,8 +78,10 @@ public class World
         }
         PrefsManager.Instance.SetInt("difficulty", r.Byte());
 
-        Activated.Clear();
-        Activated.AddRange(r.Bytes(r.Length - r.Position));
+        // TODO add the amount of data to the list of args
+        // TODO also replace it with a list of bools to avoid collisions
+        // Activated.Clear();
+        // Activated.AddRange(r.Bytes(r.Length - r.Position));
     }
 
     #endregion
@@ -96,11 +90,8 @@ public class World
     /// <summary> Restores activated actions after restart of the level. </summary>
     public static void Restore()
     {
-        Events.Post(() =>
-        {
-            Actions.Each(a => a is StaticAction, a => a.Run());
-            Activated.ForEach(index => Actions[index].Run());
-        });
+        // TODO run static ones
+        // TODO restore dynamic ones
 
         // change the layer from PlayerOnly to Invisible so that other players will be able to launch the wave
         ResFind<ActivateArena>().Each(t => t.gameObject.layer = 16);
@@ -153,8 +144,7 @@ public class World
         ResFind<GoreZone>().Each(zone => IsReal(zone) && zone.isActiveAndEnabled && FarEnough(zone.transform), zone => zone.ResetGibs());
 
         // big pieces of corpses, such as arms or legs, are part of the entities
-        DeadEntity.Corpses.Each(corpse => corpse && FarEnough(corpse.transform), Dest);
-        DeadEntity.Corpses.RemoveAll(corpse => corpse == null);
+        // TODO is it even necessary?
     }
 
     #endregion
@@ -169,12 +159,9 @@ public class World
         {
             case 0:
                 byte index = r.Byte();
-                if (Actions[index] is NetAction na)
-                {
-                    Log.Debug($"[World] Read the activation of the object {na.Name} in {na.Level}");
-                    Activated.Add(index);
-                    na.Run();
-                }
+                // TODO check for level bounds
+                // TODO check for active ones
+                // TODO run the correspondign action and log abt it
                 break;
 
             case 1:
@@ -212,13 +199,16 @@ public class World
                 });
                 break;
             case 6:
-                Networking.Entities.Alive(entity => entity.Type == EntityType.Puppet, entity => entity.EnemyId.InstaKill());
+                // TODO a better way of getting type specific entities (???)
+                // Networking.Entities.Alive(entity => entity.Type == EntityType.Puppet, entity => entity.EnemyId.InstaKill());
                 Find<BloodFiller>(r.Vector(), f => f.InstaFill());
                 break;
         }
     }
 
     /// <summary> Synchronizes activations of the given game object. </summary>
+    // mess, rewrite it
+    /*
     public static void SyncAction(GameObject obj) => Actions.Each(a =>
     {
         if (a is not NetAction na) return;
@@ -235,6 +225,7 @@ public class World
                 Log.Debug($"[World] Sent the activation of the object {na.Name} in {na.Level}");
             });
     });
+    */
 
     /// <summary> Synchronizes the state of a hook point. </summary>
     public static void SyncAction(byte index, bool hooked) => Networking.Send(PacketType.ActivateObject, 3, w =>
