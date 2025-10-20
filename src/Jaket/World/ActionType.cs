@@ -17,7 +17,7 @@ public static class ActionType
         {
             for (float angle = Mathf.PI * 12f / 7f; angle > 0f; angle -= Mathf.PI * 2f / 7f)
             {
-                Inst(p, position + new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * radius, Quaternion.Euler(0f, angle / Mathf.PI / 14f, 0f));
+                Inst(p, position + new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * radius, Quaternion.Euler(0f, -angle * 180f / Mathf.PI, 0f));
             }
         }));
     });

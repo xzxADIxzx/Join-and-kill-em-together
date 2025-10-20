@@ -39,6 +39,7 @@ public class Items : Vendor
                 prefab.name = "Moon";
                 prefab.GetComponent<ItemIdentifier>().itemType = ItemType.CustomKey1;
                 Inst(p, prefab.transform).transform.localScale = Vector3.one * .1f;
+                Dest(prefab.transform.Find("Hakita(Clone)/Trigger").gameObject);
             }));
         });
 
