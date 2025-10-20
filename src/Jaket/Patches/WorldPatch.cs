@@ -103,7 +103,7 @@ public class ActionPatch
     [HarmonyPatch(typeof(ObjectActivator), nameof(ObjectActivator.Activate))]
     static void Activate(ObjectActivator __instance)
     {
-        if (LobbyController.Online) World.SyncAction(__instance.gameObject);
+        // if (LobbyController.Online) World.SyncAction(__instance.gameObject);
     }
 
     [HarmonyPostfix]

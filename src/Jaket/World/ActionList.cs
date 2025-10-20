@@ -26,6 +26,7 @@ public static class ActionList
     public static void Load()
     {
         string l; // decreases the size of further lines
+
         #region 0-1
         l = "Level 0-1";
 
@@ -166,5 +167,7 @@ public static class ActionList
         l = "Level 7-S";
 
         #endregion
+
+        locked = true;
     }
 }
