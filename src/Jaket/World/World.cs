@@ -15,16 +15,6 @@ public class World
     /// <summary> List of activated actions. Cleared only when the host loads a new level. </summary>
     public static List<byte> Activated = new();
 
-    /// <summary> List of all hook points on the level. </summary>
-    public static List<HookPoint> HookPoints = new();
-    /// <summary> Last hook point, whose state was synchronized. </summary>
-    public static HookPoint LastSyncedPoint;
-
-    /// <summary> List of all tram controllers on the level. </summary>
-    public static List<TramControl> Trams = new();
-    /// <summary> Trolley with a teleport from the tunnel at level 7-1. </summary>
-    public static Transform TunnelRoomba;
-
     /// <summary> Subscribes to several events for proper work. </summary>
     public static void Load()
     {
@@ -96,36 +86,6 @@ public class World
         // raise the activation trigger so that players don't get stuck on the sides
         var act = ObjFind<PlayerActivator>();
         if (act) act.transform.position += Vector3.up * 6f;
-
-        #region trams
-
-        void Find<T>(List<T> list) where T : Component
-        {
-            list.Clear();
-            ResFind<T>().Each(IsReal, list.Add);
-
-            // sort the objects by the distance so that their order will be the same for all clients
-            list.Sort((t1, t2) => t1.transform.position.sqrMagnitude.CompareTo(t2.transform.position.sqrMagnitude));
-        }
-        Find(Trams);
-
-        #endregion
-        #region hook points
-
-        void Sync(HookPoint point, bool hooked)
-        {
-            var index = (byte)HookPoints.IndexOf(point);
-            if (index != 255 && point != LastSyncedPoint && Within(point, HookArm.Instance.hook, 9f)) SyncAction(index, hooked);
-        }
-
-        Find(HookPoints);
-        HookPoints.ForEach(p =>
-        {
-            p.onHook.onActivate.AddListener(() => Sync(p, true));
-            p.onUnhook.onActivate.AddListener(() => Sync(p, false));
-        });
-
-        #endregion
     }
 
     /// <summary> Optimizes the level by destroying the corpses of enemies. </summary>
@@ -161,29 +121,6 @@ public class World
                 // TODO run the correspondign action and log abt it
                 break;
 
-            case 1:
-                byte indexp = r.Byte();
-                bool hooked = r.Bool();
-                Log.Debug($"[World] Read the new state of point#{indexp}: {hooked}");
-
-                LastSyncedPoint = HookPoints[indexp];
-                if (hooked)
-                    LastSyncedPoint.Hooked();
-                else
-                {
-                    LastSyncedPoint.Unhooked();
-                    if (LastSyncedPoint.type == hookPointType.Switch) LastSyncedPoint.SwitchPulled();
-                }
-                break;
-
-            case 2:
-                byte indext = r.Byte();
-                int speed = r.Int();
-                Log.Debug($"[World] Read the new speed of tram#{indext}: {speed}");
-
-                Trams[indext].currentSpeedStep = speed;
-                break;
-
             case 3: Find<FinalDoor>(r.Vector(), d => d.transform.Find("FinalDoorOpener").gameObject.SetActive(true)); break;
             case 4: Find<Door>(r.Vector(), d => d.Open()); break;
             case 7: Find<Flammable>(r.Vector(), d => d.Burn(4.01f)); break;
@@ -216,32 +153,6 @@ public class World
             });
     });
     */
-
-    /// <summary> Synchronizes the state of a hook point. </summary>
-    public static void SyncAction(byte index, bool hooked) => Networking.Send(PacketType.ActivateObject, 3, w =>
-    {
-        w.Byte(1);
-        w.Byte(index);
-        w.Bool(hooked);
-
-        Log.Debug($"[World] Sent the new state of point#{index}: {hooked}");
-    });
-
-    /// <summary> Synchronizes the tram speed. </summary>
-    public static void SyncTram(TramControl tram)
-    {
-        if (LobbyController.Offline || Scene == "Level 7-1") return;
-
-        var index = (byte)Trams.IndexOf(tram);
-        if (index != 255) Networking.Send(PacketType.ActivateObject, 6, w =>
-        {
-            w.Byte(2);
-            w.Byte(index);
-            w.Int(tram.currentSpeedStep);
-
-            Log.Debug($"[World] Sent the new speed of tram#{index} {tram.currentSpeedStep}");
-        });
-    }
 
     /// <summary> Synchronizes actions characterized only by position: opening doors, activation of a stature or tree. </summary>
     public static void SyncAction(Component t, byte type) => Networking.Send(PacketType.ActivateObject, 13, w =>

@@ -72,30 +72,6 @@ public class RoomPatch
     }
 }
 
-[HarmonyPatch(typeof(TramControl))]
-public class TramPatch
-{
-    [HarmonyPrefix]
-    [HarmonyPatch(nameof(TramControl.SpeedUp), typeof(int))]
-    static void FightStart(TramControl __instance)
-    {
-        // find the cart in which the player will appear after respawn
-        if (LobbyController.Online && Scene == "Level 7-1") World.TunnelRoomba = __instance.transform.parent;
-    }
-
-    [HarmonyPostfix]
-    [HarmonyPatch(nameof(TramControl.SpeedUp), typeof(int))]
-    static void Up(TramControl __instance) => World.SyncTram(__instance);
-
-    [HarmonyPostfix]
-    [HarmonyPatch(nameof(TramControl.SpeedDown), typeof(int))]
-    static void Down(TramControl __instance) => World.SyncTram(__instance);
-
-    [HarmonyPrefix]
-    [HarmonyPatch("FixedUpdate")]
-    static bool Update() => LobbyController.Offline; // disable check for player distance
-}
-
 [HarmonyPatch]
 public class ActionPatch
 {
