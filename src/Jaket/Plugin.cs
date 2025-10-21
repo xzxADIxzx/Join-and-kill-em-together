@@ -81,6 +81,7 @@ public class Plugin : MonoBehaviour
 
         SprayManager.Load();
         ActionList.Load();
+        World.World.Load();
 
         Log.Info("[INIT] Running postinit hooks...");
 

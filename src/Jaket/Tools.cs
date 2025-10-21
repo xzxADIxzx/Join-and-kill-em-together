@@ -91,7 +91,6 @@ public static class Tools
     public static void Dest(Transform transform) => Dest(transform.gameObject);
 
     public static T[] ResFind<T>() where T : Object => Resources.FindObjectsOfTypeAll<T>();
-    public static T   ObjFind<T>() where T : Object => Object.FindObjectOfType<T>();
     public static GameObject ObjFind(string name) => GameObject.Find(name);
 
     #endregion
@@ -185,7 +184,7 @@ public static class Tools
         foreach (var item in seq) cons(item);
     }
 
-    /// <summary> Iterates each object in the given enumerable that are suitable for the given predicate. </summary>
+    /// <summary> Iterates each object in the given enumerable that is suitable for the given predicate. </summary>
     public static void Each<T>(this IEnumerable<T> seq, Pred<T> pred, Cons<T> cons)
     {
         foreach (var item in seq) if (pred(item)) cons(item);

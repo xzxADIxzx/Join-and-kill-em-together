@@ -1,43 +1,48 @@
 namespace Jaket.World;
 
-using System.Collections.Generic;
 using UnityEngine;
 
 using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net;
-using Jaket.Net.Types;
 
 /// <summary> Class that manages objects in the level, such as hook points, skull cases, triggers and etc. </summary>
 public class World
 {
-    /// <summary> List of activated actions. Cleared only when the host loads a new level. </summary>
-    public static List<byte> Activated = new();
+    /// <summary> Actions that were performed previously. </summary>
+    private static bool[] performed = new bool[byte.MaxValue + 1];
+    /// <summary> Vectors that were arguments of actions. </summary>
+    private static Vector3[] pos = new Vector3[byte.MaxValue + 1];
 
     /// <summary> Subscribes to several events for proper work. </summary>
     public static void Load()
     {
         Events.OnLoadingStart += () =>
         {
+            performed.Clear();
+            pos.Clear();
+
             if (LobbyController.Online && LobbyController.IsOwner && Pending != "Main Menu")
-            {
-                Activated.Clear();
-                Networking.Send(PacketType.Level, DataSize(), WriteData);
-            }
+                Networking.Send(PacketType.Level, BufferSize, WriteData);
         };
-        Events.OnLoad += () =>
+
+        static void Restore()
         {
-            if (LobbyController.Online) Restore();
-        };
+            if (LobbyController.Offline) return;
+
+            ActionList.Each(a => !a.Dynamic, a => a.Perform(default));
+            int counter = 0;
+            ActionList.Each(a => performed[counter++] && a.Dynamic, a => a.Perform(pos[counter - 1]));
+        }
+        Events.OnLoad += Restore;
         Events.OnLobbyEnter += Restore;
-        Events.EveryDozen += Optimize;
     }
 
     #region data
 
-    /// <summary> Returns the number of bytes required to write world data. </summary>
-    public static int DataSize() => 3 + ((Pending ?? Scene).Length + Version.CURRENT.Length) * 2;
+    /// <summary> Number of bytes that the world data takes in a snapshot. </summary>
+    public static int BufferSize => 3 + ((Pending ?? Scene).Length + Version.CURRENT.Length) * 2;
 
     /// <summary> Writes data about the world such as level, difficulty and triggers fired. </summary>
     public static void WriteData(Writer w)
@@ -49,7 +54,7 @@ public class World
         w.Byte((byte)PrefsManager.Instance.GetInt("difficulty"));
 
         // synchronize activated actions
-        w.Bytes(Activated.ToArray());
+        // w.Bytes(Activated.ToArray());
     }
 
     /// <summary> Reads data about the world: loads the level, sets difficulty and fires triggers. </summary>
@@ -70,96 +75,6 @@ public class World
         // Activated.Clear();
         // Activated.AddRange(r.Bytes(r.Length - r.Position));
     }
-
-    #endregion
-    #region general
-
-    /// <summary> Restores activated actions after restart of the level. </summary>
-    public static void Restore()
-    {
-        // TODO run static ones
-        // TODO restore dynamic ones
-
-        // change the layer from PlayerOnly to Invisible so that other players will be able to launch the wave
-        ResFind<ActivateArena>().Each(t => t.gameObject.layer = 16);
-
-        // raise the activation trigger so that players don't get stuck on the sides
-        var act = ObjFind<PlayerActivator>();
-        if (act) act.transform.position += Vector3.up * 6f;
-    }
-
-    /// <summary> Optimizes the level by destroying the corpses of enemies. </summary>
-    public static void Optimize()
-    {
-        // there is no need to optimize the world if remote entities are not present
-        if (LobbyController.Offline) return;
-
-        bool cg = Scene == "Endless";
-        bool FarEnough(Transform t) => !Within(t, NewMovement.Instance, 100f) || cg;
-
-        // clear gore zones located further than 100 units from the player
-        ResFind<GoreZone>().Each(zone => IsReal(zone) && zone.isActiveAndEnabled && FarEnough(zone.transform), zone => zone.ResetGibs());
-
-        // big pieces of corpses, such as arms or legs, are part of the entities
-        // TODO is it even necessary?
-    }
-
-    #endregion
-    #region networking
-
-    /// <summary> Reads an action with the remote world and applies it to the local one. </summary>
-    public static void ReadAction(Reader r)
-    {
-        void Find<T>(Vector3 pos, Cons<T> cons) where T : Component => ResFind<T>().Each(t => t.transform.position == pos, cons);
-
-        switch (r.Byte())
-        {
-            case 0:
-                byte index = r.Byte();
-                // TODO check for level bounds
-                // TODO check for active ones
-                // TODO run the correspondign action and log abt it
-                break;
-
-            case 3: Find<FinalDoor>(r.Vector(), d => d.transform.Find("FinalDoorOpener").gameObject.SetActive(true)); break;
-            case 4: Find<Door>(r.Vector(), d => d.Open()); break;
-            case 7: Find<Flammable>(r.Vector(), d => d.Burn(4.01f)); break;
-
-            case 6:
-                // TODO a better way of getting type specific entities (???)
-                // Networking.Entities.Alive(entity => entity.Type == EntityType.Puppet, entity => entity.EnemyId.InstaKill());
-                Find<BloodFiller>(r.Vector(), f => f.InstaFill());
-                break;
-        }
-    }
-
-    /// <summary> Synchronizes activations of the given game object. </summary>
-    // mess, rewrite it
-    /*
-    public static void SyncAction(GameObject obj) => Actions.Each(a =>
-    {
-        if (a is not NetAction na) return;
-        if (!Within(obj.transform, na.Position) || obj.name != na.Name) return;
-
-        byte index = (byte)Actions.IndexOf(na);
-        if (!Activated.Contains(index))
-            Networking.Send(PacketType.ActivateObject, 2, w =>
-            {
-                Activated.Add(index);
-                w.Byte(0);
-                w.Byte(index);
-
-                Log.Debug($"[World] Sent the activation of the object {na.Name} in {na.Level}");
-            });
-    });
-    */
-
-    /// <summary> Synchronizes actions characterized only by position: opening doors, activation of a stature or tree. </summary>
-    public static void SyncAction(Component t, byte type) => Networking.Send(PacketType.ActivateObject, 13, w =>
-    {
-        w.Byte(type);
-        w.Vector(t.transform.position);
-    });
 
     #endregion
 }

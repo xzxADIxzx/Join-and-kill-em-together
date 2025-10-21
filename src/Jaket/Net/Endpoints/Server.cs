@@ -189,7 +189,7 @@ public class Server : Endpoint, ISocketManager
     public void OnConnected(Connection con, ConnectionInfo info)
     {
         Log.Info($"[SERVER] {info.Identity.SteamId.AccountId} connected");
-        Networking.Send(PacketType.Level, World.DataSize(), World.WriteData, (data, size) => Networking.Send(con, data, size));
+        Networking.Send(PacketType.Level, World.BufferSize, World.WriteData, (data, size) => Networking.Send(con, data, size));
     }
 
     public void OnDisconnected(Connection con, ConnectionInfo info)

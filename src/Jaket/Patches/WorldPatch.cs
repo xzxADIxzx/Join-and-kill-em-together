@@ -71,7 +71,7 @@ public class RoomPatch
         }
     }
 }
-
+/*
 [HarmonyPatch]
 public class ActionPatch
 {
@@ -79,7 +79,7 @@ public class ActionPatch
     [HarmonyPatch(typeof(ObjectActivator), nameof(ObjectActivator.Activate))]
     static void Activate(ObjectActivator __instance)
     {
-        // if (LobbyController.Online) World.SyncAction(__instance.gameObject);
+        if (LobbyController.Online) World.SyncAction(__instance.gameObject);
     }
 
     [HarmonyPostfix]
@@ -121,7 +121,7 @@ public class ActionPatch
         if (LobbyController.Online && LobbyController.IsOwner) World.SyncAction(__instance, 6);
     }
 }
-
+*/
 [HarmonyPatch(typeof(IntermissionController))]
 public class LovelyPatch
 {
