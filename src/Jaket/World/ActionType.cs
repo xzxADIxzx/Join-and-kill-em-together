@@ -40,9 +40,8 @@ public static class ActionType
     #region dynamic
 
     /// <summary> Creates an action that finds an object of the given type. </summary>
-    public static void Find<T>(string scene, string path, Cons<T> perform) where T : Component => ActionList.Add(new(scene, path, true, false, r =>
+    public static void Find<T>(string scene, string path, Cons<T> perform) where T : Component => ActionList.Add(new(scene, path, true, false, pos =>
     {
-        var pos = r.Vector();
         ResFind<T>().Each(t => IsReal(t) && t.transform.position == pos, perform);
     }));
 
