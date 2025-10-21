@@ -24,6 +24,12 @@ public static class ActionList
             Log.Warning($"[WRLD] Out of identifiers for actions");
     }
 
+    /// <summary> Iterates each action in the global list that is suitable for the current scene and predicate. </summary>
+    public static void Each(Pred<Action> pred, Cons<Action> cons)
+    {
+        for (int i = 0; i < vanilla + custom; i++) if (all[i].Scene == Scene && pred(all[i])) cons(all[i]);
+    }
+
     /// <summary> Adds vanilla actions to the global list, and locks their index to prevent custom ones from interfering. </summary>
     public static void Load()
     {
