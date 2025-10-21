@@ -2,7 +2,6 @@ namespace Jaket.World;
 
 using UnityEngine;
 
-using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net;
@@ -20,8 +19,8 @@ public class World
     {
         Events.OnLoadingStart += () =>
         {
-            performed.Clear();
-            pos.Clear();
+            if (LobbyController.Offline || LobbyController.IsOwner)
+                Reset();
 
             if (LobbyController.Online && LobbyController.IsOwner && Pending != "Main Menu")
                 Networking.Send(PacketType.Level, BufferSize, WriteData);
@@ -39,41 +38,52 @@ public class World
         Events.OnLobbyEnter += Restore;
     }
 
+    /// <summary> Resets performed actions and their positions. </summary>
+    public static void Reset() { performed.Clear(); pos.Clear(); }
+
     #region data
 
     /// <summary> Number of bytes that the world data takes in a snapshot. </summary>
-    public static int BufferSize => 3 + ((Pending ?? Scene).Length + Version.CURRENT.Length) * 2;
+    public static int BufferSize => 4 + ((Pending ?? Scene).Length + Version.CURRENT.Length) * 2 + performed.Count(b => b) * 13;
 
-    /// <summary> Writes data about the world such as level, difficulty and triggers fired. </summary>
+    /// <summary> Writes the world data into a snapshot. </summary>
     public static void WriteData(Writer w)
     {
         w.String(Pending ?? Scene);
-
-        // the version is needed for a warning about incompatibility
         w.String(Version.CURRENT);
-        w.Byte((byte)PrefsManager.Instance.GetInt("difficulty"));
 
-        // synchronize activated actions
-        // w.Bytes(Activated.ToArray());
+        w.Byte((byte)PrefsManager.Instance.GetInt("difficulty"));
+        w.Byte((byte)performed.Count(b => b));
+
+        for (int i = 0; i < performed.Length; i++) if (performed[i])
+        {
+            w.Byte((byte)i);
+            w.Vector(pos[i]);
+        }
     }
 
-    /// <summary> Reads data about the world: loads the level, sets difficulty and fires triggers. </summary>
+    /// <summary> Reads the world data from a snapshot. </summary>
     public static void ReadData(Reader r)
     {
         LoadScn(r.String());
+        Reset();
 
-        // if the mod version doesn't match the host's one, then reading the packet is complete, as this may lead to bigger bugs
         if (r.String() != Version.CURRENT)
         {
-            Bundle.Hud2NS("version.host-outdated");
-            return;
+            LobbyController.LeaveLobby();
+            Log.Info("[LOBY] Left the lobby as the owner is outdated");
         }
-        PrefsManager.Instance.SetInt("difficulty", r.Byte());
+        else
+        {
+            PrefsManager.Instance.SetInt("difficulty", r.Byte());
 
-        // TODO add the amount of data to the list of args
-        // TODO also replace it with a list of bools to avoid collisions
-        // Activated.Clear();
-        // Activated.AddRange(r.Bytes(r.Length - r.Position));
+            for (byte i = r.Byte(); i > 0; i--)
+            {
+                byte id = r.Byte();
+                performed[id] = true;
+                pos[id] = r.Vector();
+            }
+        }
     }
 
     #endregion
