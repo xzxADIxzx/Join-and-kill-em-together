@@ -86,6 +86,8 @@ public class Client : Endpoint, IConnectionManager
             SprayDistributor.ProcessDownload(r.Id(), s - 5, r);
         });
 
+        Listen(PacketType.WorldAction, World.Perform);
+
         /*
         Listen(PacketType.Vote, r => Votes.UpdateVote(r.Id(), r.Byte()));
         */

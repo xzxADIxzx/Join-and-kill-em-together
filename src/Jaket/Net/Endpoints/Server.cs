@@ -96,6 +96,12 @@ public class Server : Endpoint, ISocketManager
             if (Redirect(ref r, s, con, sender)) SprayDistributor.ProcessDownload(sender, s - 5, r);
         });
 
+        Listen(PacketType.WorldAction, (con, sender, r, s) =>
+        {
+            World.Perform(r);
+            Redirect(r, s, con);
+        });
+
         /*
         Listen(PacketType.Vote, (con, sender, r, s) =>
         {
