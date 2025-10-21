@@ -33,10 +33,11 @@ public enum PacketType : byte
     /// <summary> Contains a chunk of the image data to be delivered. </summary>
     ImageChunk,
 
-    /// <summary> Need to activate a certain object. It can be anything, because there are a lot of different stuff in the game. </summary>
-    ActivateObject,
-    /// <summary> Any action with CyberGrind, like pattern and wave. </summary>
-    CyberGrindAction,
+    /// <summary> Any kind of interaction with the inner world. </summary>
+    WorldAction,
+    /// <summary> Any kind of interaction with the Cyber Grind. </summary>
+    CyberAction,
+
     /// <summary> Player voted for an option. Voting can be different: skip of a cutscene, dialog or choice of an option. </summary>
     Vote
 }
