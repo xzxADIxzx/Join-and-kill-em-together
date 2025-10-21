@@ -56,17 +56,30 @@ public static class ActionList
         #region 1-1
         l = "Level 1-1";
 
+        ActionType.Switch(l);
+
         #endregion
         #region 1-2
         l = "Level 1-2";
+
+        ActionType.Statue(l);
+        ActionType.Switch(l);
 
         #endregion
         #region 1-3
         l = "Level 1-3";
 
+        ActionType.Statue(l);
+        ActionType.Switch(l);
+
+        // TODO sync R1 - Courtyard/R1 Stuff(Clone)/Enemies/Wave 3/Trigger 'cause there are two statues
+
         #endregion
         #region 1-4
         l = "Level 1-4";
+
+        ActionType.Statue(l);
+        ActionType.Switch(l);
 
         #endregion
         #region 1-S
@@ -76,9 +89,13 @@ public static class ActionList
         #region 2-1
         l = "Level 2-1";
 
+        ActionType.Statue(l);
+
         #endregion
         #region 2-2
         l = "Level 2-2";
+
+        ActionType.Statue(l);
 
         #endregion
         #region 2-3
@@ -96,6 +113,8 @@ public static class ActionList
         #region 3-1
         l = "Level 3-1";
 
+        ActionType.Statue(l);
+
         #endregion
         #region 3-2
         l = "Level 3-2";
@@ -104,13 +123,20 @@ public static class ActionList
         #region 4-1
         l = "Level 4-1";
 
+        ActionType.Switch(l);
+
         #endregion
         #region 4-2
         l = "Level 4-2";
 
+        ActionType.Statue(l);
+        ActionType.Switch(l);
+
         #endregion
         #region 4-3
         l = "Level 4-3";
+
+        ActionType.Statue(l);
 
         #endregion
         #region 4-4
@@ -124,13 +150,19 @@ public static class ActionList
         #region 5-1
         l = "Level 5-1";
 
+        ActionType.Statue(l);
+
         #endregion
         #region 5-2
         l = "Level 5-2";
 
+        ActionType.Statue(l);
+
         #endregion
         #region 5-3
         l = "Level 5-3";
+
+        ActionType.Statue(l);
 
         #endregion
         #region 5-4
@@ -152,9 +184,15 @@ public static class ActionList
         #region 7-1
         l = "Level 7-1";
 
+        ActionType.Statue(l);
+        ActionType.Switch(l);
+
         #endregion
         #region 7-2
         l = "Level 7-2";
+
+        ActionType.Statue(l);
+        ActionType.Switch(l);
 
         #endregion
         #region 7-3
@@ -167,6 +205,8 @@ public static class ActionList
         #endregion
         #region 7-S
         l = "Level 7-S";
+
+        ActionType.Statue(l);
 
         #endregion
         #region museum
