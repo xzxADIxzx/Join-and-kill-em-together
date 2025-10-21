@@ -25,9 +25,6 @@ public class NetAction
             }
         ));
 
-    /// <summary> Creates a net action that synchronizes a limbo switch component. </summary>
-    public static void SyncLimbo(string level, Vector3 position) => Sync(level, "GameObject", position, obj => obj.GetComponentInParent<LimboSwitch>().Pressed());
-
     /// <summary> Creates a net action that synchronizes clicks on a button. </summary>
     public static void SyncButton(string level, string name, Vector3 position, Cons<RectTransform> action = null)
     {

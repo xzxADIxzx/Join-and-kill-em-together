@@ -188,13 +188,6 @@ public class World
             case 4: Find<Door>(r.Vector(), d => d.Open()); break;
             case 7: Find<Flammable>(r.Vector(), d => d.Burn(4.01f)); break;
 
-            case 5:
-                Find<StatueActivator>(r.Vector(), d =>
-                {
-                    d.gameObject.SetActive(true);
-                    d.transform.parent.gameObject.SetActive(true);
-                });
-                break;
             case 6:
                 // TODO a better way of getting type specific entities (???)
                 // Networking.Entities.Alive(entity => entity.Type == EntityType.Puppet, entity => entity.EnemyId.InstaKill());

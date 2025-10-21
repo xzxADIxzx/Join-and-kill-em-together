@@ -7,6 +7,8 @@ using Jaket.Assets;
 /// <summary> Tangible actions of multiple types. </summary>
 public static class ActionType
 {
+    #region static
+
     /// <summary> Creates an action that is performed on scene load. </summary>
     public static void Run(string scene, Runnable perform) => ActionList.Add(new(scene, null, false, false, perform));
 
@@ -33,4 +35,22 @@ public static class ActionType
 
     /// <summary> Creates an action that destroys an object. </summary>
     public static void Dest(string scene, string path) => Find(scene, path, t => Tools.Dest(t.gameObject));
+
+    #endregion
+    #region dynamic
+
+    /// <summary> Creates an action that finds an object of the given type. </summary>
+    public static void Find<T>(string scene, string path, Cons<T> perform) where T : Component => ActionList.Add(new(scene, path, true, false, r =>
+    {
+        var pos = r.Vector();
+        ResFind<T>().Each(t => IsReal(t) && t.transform.position == pos, perform);
+    }));
+
+    /// <summary> Creates an action that synchronizes all statues. </summary>
+    public static void Statue(string scene) => Find<StatueActivator>(scene, "statue", s => s.gameObject.SetActive(true));
+
+    /// <summary> Creates an action that synchronizes all switches. </summary>
+    public static void Switch(string scene) => Find<LimboSwitch>(scene, "switch", s => s.Pressed());
+
+    #endregion
 }

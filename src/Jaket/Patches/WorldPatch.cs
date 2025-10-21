@@ -139,13 +139,6 @@ public class ActionPatch
     }
 
     [HarmonyPostfix]
-    [HarmonyPatch(typeof(StatueActivator), "Start")]
-    static void Activate(StatueActivator __instance)
-    {
-        if (LobbyController.Online && LobbyController.IsOwner) World.SyncAction(__instance, 5);
-    }
-
-    [HarmonyPostfix]
     [HarmonyPatch(typeof(BloodFiller), "FullyFilled")]
     static void FillBlood(BloodFiller __instance)
     {
