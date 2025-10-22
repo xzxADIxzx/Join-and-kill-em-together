@@ -12,7 +12,7 @@ public class World
     /// <summary> Actions that were performed previously. </summary>
     private static bool[] performed = new bool[byte.MaxValue + 1];
     /// <summary> Vectors that were arguments of actions. </summary>
-    private static Vector3[] pos = new Vector3[byte.MaxValue + 1];
+    private static Vector2[] pos = new Vector2[byte.MaxValue + 1];
 
     /// <summary> Subscribes to several events for proper work. </summary>
     public static void Load()
