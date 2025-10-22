@@ -78,7 +78,7 @@ public unsafe struct Writer
 
     public void String(string value)
     {
-        var bytes = Encoding.Unicode.GetBytes(value ?? "");
+        var bytes = Encoding.ASCII.GetBytes(value ?? "");
         Byte((byte)bytes.Length);
         Bytes(bytes);
     }

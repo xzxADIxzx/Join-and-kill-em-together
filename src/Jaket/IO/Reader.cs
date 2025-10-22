@@ -83,7 +83,7 @@ public unsafe struct Reader
     {
         var bytes = new byte[Byte()];
         Bytes(bytes);
-        return Encoding.Unicode.GetString(bytes);
+        return Encoding.ASCII.GetString(bytes);
     }
 
     public Vector3 Vector() => new(Float(), Float(), Float());
