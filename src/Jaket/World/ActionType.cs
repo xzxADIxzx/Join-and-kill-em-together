@@ -3,6 +3,7 @@ namespace Jaket.World;
 using UnityEngine;
 
 using Jaket.Assets;
+using Jaket.Net;
 
 /// <summary> Tangible actions of multiple types. </summary>
 public static class ActionType
@@ -19,7 +20,11 @@ public static class ActionType
         {
             for (float angle = Mathf.PI * 12f / 7f; angle > 0f; angle -= Mathf.PI * 2f / 7f)
             {
-                Inst(p, position + new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * radius, Quaternion.Euler(0f, -angle * 180f / Mathf.PI, 0f));
+                Inst(p, position + new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * radius, Quaternion.Euler(0f, -angle * 180f / Mathf.PI, 0f))
+                    .GetComponentsInChildren<ItemIdentifier>().Each(i =>
+                    {
+                        if (!LobbyController.IsOwner) Tools.Dest(i.gameObject);
+                    });
             }
         }));
     });
