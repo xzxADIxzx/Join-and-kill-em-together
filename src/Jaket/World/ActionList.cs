@@ -19,7 +19,7 @@ public static class ActionList
         int i = locked ? vanilla + custom++ : vanilla++;
 
         if (i < all.Length)
-            all[i] = action;
+            (all[i] = action).Identifier = i;
         else
             Log.Warning($"[WRLD] Out of identifiers for actions");
     }

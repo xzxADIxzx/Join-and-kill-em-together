@@ -20,6 +20,11 @@ public class Action
     /// <summary> Number of objects that have the same path. </summary>
     public int Collisions => ResFind<Transform>().Count(o => $"{o.parent?.name}/{o.name}" == Path);
 
+    /// <summary> Identifier of the action in the global list. </summary>
+    public int Identifier = -1;
+    /// <summary> Whether the action is in the global list. </summary>
+    public bool Valid => Identifier != -1;
+
     public Action(string scene, string path, bool dynamic, bool reperformable, Cons<Vector2> perform)
     {
         Scene = scene;

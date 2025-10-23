@@ -31,12 +31,11 @@ public class World
             if (LobbyController.Offline) return;
 
             ActionList.Each(a => !a.Dynamic, a => a.Perform(default));
-            int counter = 0;
-            ActionList.Each(a => performed[counter++] && a.Dynamic, a =>
+            ActionList.Each(a => a.Dynamic && performed[a.Identifier], a =>
             {
                 for (int i = 0; i < 16; i++)
                 {
-                    var pi = pos[counter - 1 + i];
+                    var pi = pos[a.Identifier + i];
                     if (pi != default) a.Perform(pi);
                 }
             });
