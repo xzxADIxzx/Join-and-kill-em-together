@@ -36,6 +36,7 @@ public static class Patches
     {
         typeof(ArmsPatch),
         typeof(GunsPatch),
+        typeof(Loading),
         typeof(RichPresence),
         typeof(Movement),
         typeof(BestiaryEntry),
