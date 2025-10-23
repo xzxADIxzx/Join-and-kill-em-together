@@ -40,7 +40,7 @@ public static class ActionType
     #region dynamic
 
     /// <summary> Creates an action that finds an object of the given type. </summary>
-    public static void Find<T>(string scene, string path, Cons<T> perform) where T : Component => ActionList.Add(new(scene, path, true, false, pos =>
+    public static void Find<T>(string scene, string path, Cons<T> perform) where T : Component => ActionList.Add(new(scene, path, true, true, pos =>
     {
         ResFind<T>().Each(t => IsReal(t) && t.transform.position.x == pos.x && t.transform.position.z == pos.y, perform);
     }));
@@ -50,6 +50,9 @@ public static class ActionType
 
     /// <summary> Creates an action that synchronizes all switches. </summary>
     public static void Switch(string scene) => Find<LimboSwitch>(scene, "switch", s => s.Pressed());
+
+    /// <summary> Creates an action that synchronizes all flammables. </summary>
+    public static void Flammable(string scene) => Find<Flammable>(scene, "flammable", f => f.Burn(4f));
 
     #endregion
 }
