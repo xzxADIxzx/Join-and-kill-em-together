@@ -99,4 +99,57 @@ public class World
     }
 
     #endregion
+    #region actions
+
+    /// <summary> Returns the next available slot of an action with the given identifier. </summary>
+    private static int Next(int id)
+    {
+        for (int i = 0; i < 16; i++) if (pos[id + i] == default) return id + i;
+        return id + 15;
+    }
+
+    /// <summary> Performs an action with the given path and position in the outer world. </summary>
+    public static void Perform(string path, Vector2 p = default)
+    {
+        ActionList.Each(a =>
+        {
+            if (a.Dynamic && a.Path == path)
+            {
+                if (a.Reperformable)
+                {
+                    for (int i = 0; i < 16; i++) if (pos[a.Identifier + i] == p) return false;
+                    return true;
+                }
+                else return !performed[a.Identifier];
+            }
+            else return false;
+        },
+        a => Networking.Send(PacketType.WorldAction, 9, w =>
+        {
+            w.Byte((byte)a.Identifier);
+            w.Float(p.x);
+            w.Float(p.y);
+
+            performed[a.Identifier] = true;
+            pos[Next(a.Identifier)] = p;
+
+            if (Version.DEBUG) Log.Debug($"[WRLD] Performed an action {a.Path}#{a.Identifier} in the outer world");
+        }));
+    }
+
+    /// <summary> Performs an action with the given identifier in the inner world. </summary>
+    public static void Perform(Reader r)
+    {
+        var id = r.Byte();
+        var pi = Next(id);
+
+        performed[id] = true;
+        pos[pi] = new(r.Float(), r.Float());
+
+        ActionList.At(id)?.Perform(pos[pi]);
+
+        if (Version.DEBUG) Log.Debug($"[WRLD] Performed an action {ActionList.At(id).Path}#{id} received from the outer world");
+    }
+
+    #endregion
 }

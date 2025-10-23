@@ -30,6 +30,9 @@ public static class ActionList
         for (int i = 0; i < vanilla + custom; i++) if (all[i].Scene == Scene && pred(all[i])) cons(all[i]);
     }
 
+    /// <summary> Returns a dynamic action with the given identifier. </summary>
+    public static Action At(int id) => all[id].Scene == Scene && all[id].Dynamic ? all[id] : null;
+
     /// <summary> Adds vanilla actions to the global list, and locks their index to prevent custom ones from interfering. </summary>
     public static void Load()
     {
