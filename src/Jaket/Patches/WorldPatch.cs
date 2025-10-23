@@ -108,13 +108,6 @@ public class ActionPatch
     }
 
     [HarmonyPostfix]
-    [HarmonyPatch(typeof(Flammable), nameof(Flammable.Burn))]
-    static void Activate(Flammable __instance, float newHeat)
-    {
-        if (LobbyController.Online && newHeat == 4f) World.SyncAction(__instance, 7);
-    }
-
-    [HarmonyPostfix]
     [HarmonyPatch(typeof(BloodFiller), "FullyFilled")]
     static void FillBlood(BloodFiller __instance)
     {

@@ -9,6 +9,7 @@ using Jaket.Net.Types;
 using Jaket.Net.Vendors;
 using Jaket.UI.Elements;
 using Jaket.UI.Fragments;
+using Jaket.World;
 
 /// <summary> Class responsible for managing the harmony patches. </summary>
 public static class Patches
@@ -29,6 +30,7 @@ public static class Patches
         typeof(Cannon),
         typeof(Damage),
         typeof(Spectator),
+        typeof(World),
     };
     public static Type[] StaticTypes =
     {

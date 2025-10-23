@@ -155,4 +155,14 @@ public class World
     }
 
     #endregion
+    #region harmony
+
+    [HarmonyPatch(typeof(Flammable), nameof(Flammable.Burn))]
+    [HarmonyPostfix]
+    static void Activate(Flammable __instance)
+    {
+        if (__instance.name == "Flammable") Perform("flammable", new(__instance.transform.position.x, __instance.transform.position.z));
+    }
+
+    #endregion
 }
