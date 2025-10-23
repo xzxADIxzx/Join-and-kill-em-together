@@ -1,5 +1,6 @@
 namespace Jaket.World;
 
+using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Content;
@@ -9,10 +10,12 @@ using Jaket.Net;
 /// <summary> Class responsible for managing world objects and actions. </summary>
 public class World
 {
+    /// <summary> Size of the pool of actions' arguments. </summary>
+    public const int POOL = 24;
     /// <summary> Actions that were performed previously. </summary>
     private static bool[] performed = new bool[(byte.MaxValue + 1)];
     /// <summary> Vectors that were arguments of actions. </summary>
-    private static Vector2[] pos = new Vector2[(byte.MaxValue + 1) * 16];
+    private static Vector2[] pos = new Vector2[(byte.MaxValue + 1) * POOL];
 
     /// <summary> Subscribes to several events for proper work. </summary>
     public static void Load()
@@ -33,9 +36,9 @@ public class World
             ActionList.Each(a => !a.Dynamic, a => a.Perform(default));
             ActionList.Each(a => a.Dynamic && performed[a.Identifier], a =>
             {
-                for (int i = 0; i < 16; i++)
+                for (int i = 0; i < POOL; i++)
                 {
-                    var pi = pos[a.Identifier + i];
+                    var pi = pos[POOL * a.Identifier + i];
                     if (pi != default) a.Perform(pi);
                 }
             });
@@ -63,12 +66,12 @@ public class World
 
         for (int i = 0, j = 0, k = 0; i < performed.Length; i++) if (performed[i])
         {
-            for (j = 0; j < 16; j++) if (pos[i + j] == default) { k = j; break; }
+            for (j = 0; j < POOL; j++) if (pos[POOL * i + j] == default) { k = j; break; }
 
             w.Byte((byte)i);
             w.Byte((byte)k);
 
-            for (j = 0; j < k; j++) { w.Float(pos[i + j].x); w.Float(pos[i + j].y); }
+            for (j = 0; j < k; j++) { w.Float(pos[POOL * i + j].x); w.Float(pos[POOL * i + j].y); }
         }
     }
 
@@ -93,7 +96,7 @@ public class World
                 byte k = r.Byte();
 
                 performed[i] = true;
-                for (int j = 0; j < k; j++) pos[i + j] = new(r.Float(), r.Float());
+                for (int j = 0; j < k; j++) pos[POOL * i + j] = new(r.Float(), r.Float());
             }
         }
     }
@@ -104,12 +107,12 @@ public class World
     /// <summary> Returns the next available slot of an action with the given identifier. </summary>
     private static int Next(int id)
     {
-        for (int i = 0; i < 16; i++) if (pos[id + i] == default) return id + i;
-        return id + 15;
+        for (int i = 0; i < POOL; i++) if (pos[POOL * id + i] == default) return POOL * id + i;
+        return POOL * id + POOL - 1;
     }
 
     /// <summary> Performs an action with the given path and position in the outer world. </summary>
-    public static void Perform(string path, Vector2 p = default)
+    public static void Perform(string path, Vector2 p)
     {
         ActionList.Each(a =>
         {
@@ -117,7 +120,7 @@ public class World
             {
                 if (a.Reperformable)
                 {
-                    for (int i = 0; i < 16; i++) if (pos[a.Identifier + i] == p) return false;
+                    for (int i = 0; i < POOL; i++) if (pos[POOL * a.Identifier + i] == p) return false;
                     return true;
                 }
                 else return !performed[a.Identifier];
