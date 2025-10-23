@@ -71,14 +71,19 @@ public static class Log
         Ready = false;
     }
 
+    /// <summary> Any kind of mere info or flood. </summary>
     public static void Debug(string msg) => LogLevel(Level.Debug, msg);
 
+    /// <summary> Any kind of common information. </summary>
     public static void Info(string msg) => LogLevel(Level.Info, msg);
 
+    /// <summary> Any kind of uncommon behaviors. </summary>
     public static void Warning(string msg) => LogLevel(Level.Warning, msg);
 
+    /// <summary> Any kind of unacceptable situation. </summary>
     public static void Error(string msg) => LogLevel(Level.Error, msg);
 
+    /// <summary> Any kind of unacceptable exceptios. </summary>
     public static void Error(string msg, Exception ex) => LogLevel(Level.Error, $"{msg}\n{ex}");
 
     /// <summary> Log importance levels. </summary>

@@ -118,9 +118,9 @@ public class Debug : Fragment
         {
             var agent = hit.collider.GetComponentInParent<Entity.Agent>();
             if (agent)
-                Log.Debug($"Caught an entity of {agent.Patron.Type} type");
+                Log.Debug($"[ENTS] Caught an entity of {agent.Patron.Type} type");
             else
-                Log.Debug("Couldn't catch an entity of any kind");
+                Log.Debug($"[ENTS] Couldn't catch an entity of any kind");
         }
     }
 
