@@ -44,6 +44,17 @@ public static class ActionType
     #endregion
     #region dynamic
 
+    /// <summary> Creates an action that synchronizes an object activator. </summary>
+    public static void Act(string scene, string path, Cons<Transform> perform) => ActionList.Add(new(scene, path, true, false, () =>
+    {
+        ResFind<ObjectActivator>().Each(o => IsReal(o) && $"{o.transform.parent?.name}/{o.name}" == path, o =>
+        {
+            o.gameObject.SetActive(true);
+            o.Activate();
+            perform?.Invoke(o.transform);
+        });
+    }));
+
     /// <summary> Creates an action that finds an object of the given type. </summary>
     public static void Find<T>(string scene, string path, Cons<T> perform) where T : Component => ActionList.Add(new(scene, path, true, true, pos =>
     {
