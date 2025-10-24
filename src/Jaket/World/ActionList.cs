@@ -150,7 +150,7 @@ public static class ActionList
 
         ActionType.Statue(l);
         ActionType.Flammable(l);
-        ActionType.Torches(l, new(0f, -10f, 310f), 2f);
+        ActionType.Torches(l, new(0f, -10f, 310f));
 
         // remove the fuckin death trigger from the 4-pillars room (or make it ignore players igs)
         // or just make death zone ignore players

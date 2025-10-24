@@ -14,13 +14,13 @@ public static class ActionType
     public static void Run(string scene, Runnable perform) => ActionList.Add(new(scene, null, false, false, perform));
 
     /// <summary> Creates an actions that places a bunch of torches. </summary>
-    public static void Torches(string scene, Vector3 position, float radius) => Run(scene, () =>
+    public static void Torches(string scene, Vector3 position) => Run(scene, () =>
     {
         GameAssets.Prefab("Levels/Interactive/Altar (Torch) Variant.prefab", p => Events.Post(() => // damn Unity crashes w/o this
         {
             for (float angle = Mathf.PI * 12f / 7f; angle > 0f; angle -= Mathf.PI * 2f / 7f)
             {
-                Inst(p, position + new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * radius, Quaternion.Euler(0f, -angle * 180f / Mathf.PI, 0f))
+                Inst(p, position + new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * 2f, Quaternion.Euler(0f, -angle * 180f / Mathf.PI, 0f))
                     .GetComponentsInChildren<ItemIdentifier>().Each(i =>
                     {
                         if (!LobbyController.IsOwner) Tools.Dest(i.gameObject);
