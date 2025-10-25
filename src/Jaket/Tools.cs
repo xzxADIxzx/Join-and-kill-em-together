@@ -102,16 +102,6 @@ public static class Tools
     /// <summary> Whether the item is placed on an altar. </summary>
     public static bool Placed(this ItemIdentifier itemId) => itemId.transform.parent?.gameObject.layer == 22;
 
-    public static bool Within(Vector3 a,   Vector3 b,   float dst = 1f) => (a - b).sqrMagnitude < dst * dst;
-    public static bool Within(Vector3 a,   Transform b, float dst = 1f) => Within(a, b.position, dst);
-    public static bool Within(Vector3 a,   Component b, float dst = 1f) => Within(a, b.transform.position, dst);
-    public static bool Within(Transform a, Vector3 b,   float dst = 1f) => Within(a.position, b, dst);
-    public static bool Within(Transform a, Transform b, float dst = 1f) => Within(a.position, b.position, dst);
-    public static bool Within(Transform a, Component b, float dst = 1f) => Within(a.position, b.transform.position, dst);
-    public static bool Within(Component a, Vector3 b,   float dst = 1f) => Within(a.transform.position, b, dst);
-    public static bool Within(Component a, Transform b, float dst = 1f) => Within(a.transform.position, b.position, dst);
-    public static bool Within(Component a, Component b, float dst = 1f) => Within(a.transform.position, b.transform.position, dst);
-
     #endregion
     #region reflection
 

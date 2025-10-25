@@ -1,6 +1,7 @@
 namespace Jaket.World;
 
 using UnityEngine;
+using UnityEngine.UI;
 
 using Jaket.Assets;
 using Jaket.Net;
@@ -45,12 +46,23 @@ public static class ActionType
     #region dynamic
 
     /// <summary> Creates an action that synchronizes an object activator. </summary>
-    public static void Act(string scene, string path, Cons<Transform> perform) => ActionList.Add(new(scene, path, true, false, () =>
+    public static void Act(string scene, string path, Cons<Transform> perform = null) => ActionList.Add(new(scene, path, true, false, () =>
     {
         ResFind<ObjectActivator>().Each(o => IsReal(o) && $"{o.transform.parent?.name}/{o.name}" == path, o =>
         {
             o.gameObject.SetActive(true);
             o.Activate();
+            perform?.Invoke(o.transform);
+        });
+    }));
+
+    /// <summary> Creates an action that synchronizes clicks on a button. </summary>
+    public static void Btn(string scene, string path, Cons<Transform> perform = null) => ActionList.Add(new(scene, path, true, false, () =>
+    {
+        ResFind<Button>().Each(o => IsReal(o) && $"{o.transform.parent?.name}/{o.name}" == path, o =>
+        {
+            GetClick(o.gameObject).Invoke();
+            o.interactable = false;
             perform?.Invoke(o.transform);
         });
     }));
