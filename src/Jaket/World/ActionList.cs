@@ -87,7 +87,6 @@ public static class ActionList
         #region 1-4
         l = "Level 1-4";
 
-        ActionType.Statue(l);
         ActionType.Switch(l);
 
         #endregion

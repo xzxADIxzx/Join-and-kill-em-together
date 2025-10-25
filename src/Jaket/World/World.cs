@@ -2,6 +2,7 @@ namespace Jaket.World;
 
 using HarmonyLib;
 using UnityEngine;
+using UnityEngine.UI;
 
 using Jaket.Content;
 using Jaket.IO;
@@ -156,6 +157,34 @@ public class World
 
     #endregion
     #region harmony
+
+    [HarmonyPatch(typeof(ObjectActivator), nameof(ObjectActivator.Activate), typeof(bool))]
+    [HarmonyPostfix]
+    static void Activate(ObjectActivator __instance)
+    {
+        Perform(__instance.Path(), default);
+    }
+
+    [HarmonyPatch(typeof(Button), "Press")]
+    [HarmonyPostfix]
+    static void Activate(Button __instance)
+    {
+        Perform(__instance.Path(), default);
+    }
+
+    [HarmonyPatch(typeof(StatueActivator), "Start")]
+    [HarmonyPostfix]
+    static void Activate(StatueActivator __instance)
+    {
+        Perform("statue", new(__instance.transform.position.x, __instance.transform.position.z));
+    }
+
+    [HarmonyPatch(typeof(LimboSwitch), nameof(LimboSwitch.Pressed))]
+    [HarmonyPostfix]
+    static void Activate(LimboSwitch __instance)
+    {
+        Perform("switch", new(__instance.transform.position.x, __instance.transform.position.z));
+    }
 
     [HarmonyPatch(typeof(Flammable), nameof(Flammable.Burn))]
     [HarmonyPostfix]

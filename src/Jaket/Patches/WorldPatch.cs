@@ -48,7 +48,7 @@ public class RoomPatch
     [HarmonyPatch(nameof(CheckPoint.ActivateCheckPoint))]
     static void Activate(CheckPoint __instance)
     {
-        if (LobbyController.Online) __instance.roomsToInherit = new FakeList();
+        if (LobbyController.Online) __instance.roomsToInherit = new FakeList(); // TODO clear __instance.rooms instead (probably in World.Restore)
     }
 
     [HarmonyPrefix]
@@ -56,6 +56,7 @@ public class RoomPatch
     static void ClearRooms(CheckPoint __instance)
     {
         if (LobbyController.Online) __instance.newRooms.Clear();
+        // TODO restore kills, and challenge, and... perhaps, I should just remake it?
     }
 
     [HarmonyPostfix]
@@ -75,13 +76,6 @@ public class RoomPatch
 [HarmonyPatch]
 public class ActionPatch
 {
-    [HarmonyPostfix]
-    [HarmonyPatch(typeof(ObjectActivator), nameof(ObjectActivator.Activate))]
-    static void Activate(ObjectActivator __instance)
-    {
-        if (LobbyController.Online) World.SyncAction(__instance.gameObject);
-    }
-
     [HarmonyPostfix]
     [HarmonyPatch(typeof(FinalDoor), nameof(FinalDoor.Open))]
     static void OpenDoor(FinalDoor __instance)
