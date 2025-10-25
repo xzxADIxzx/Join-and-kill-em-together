@@ -74,7 +74,6 @@ public class Rocket : OwnableEntity
         agent.Get(out cs);
         agent.Rem<FloatingPointErrorPreventer>();
         agent.Rem<RemoveOnTime>();
-        agent.Rem<DestroyOnCheckpointRestart>();
 
         OnTransfer = () =>
         {

@@ -5,12 +5,16 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using Jaket.Content;
+using Jaket.Input;
 using Jaket.IO;
 using Jaket.Net;
 
 /// <summary> Class responsible for managing world objects and actions. </summary>
 public class World
 {
+    static NewMovement nm => NewMovement.Instance;
+    static StatsManager sm => StatsManager.Instance;
+
     /// <summary> Size of the pool of actions' arguments. </summary>
     public const int POOL = 24;
     /// <summary> Actions that were performed previously. </summary>
@@ -191,6 +195,37 @@ public class World
     static void Activate(Flammable __instance)
     {
         if (__instance.name == "Flammable") Perform("flammable", new(__instance.transform.position.x, __instance.transform.position.z));
+    }
+
+    [HarmonyPatch(typeof(CheckPoint), nameof(CheckPoint.ActivateCheckPoint))]
+    [HarmonyPrefix]
+    static bool Activate(CheckPoint __instance)
+    {
+        if (sm.currentCheckPoint && sm.currentCheckPoint != __instance)
+        {
+            if (sm.currentCheckPoint.resetOnGetOtherCheckpoint)
+                sm.currentCheckPoint.ReactivateCheckpoint();
+
+            nm.sameCheckpointRestarts = 0;
+        }
+        sm.currentCheckPoint = __instance;
+
+        if (__instance.activateEffect.RuntimeKeyIsValid() && !__instance.invisible) Inst(__instance.activateEffect.ToAsset(), nm.transform.position);
+        if (__instance.graphic) __instance.graphic.SetActive(false);
+
+        __instance.activated = true;
+        return false;
+    }
+
+    [HarmonyPatch(typeof(CheckPoint), nameof(CheckPoint.OnRespawn))]
+    [HarmonyPrefix]
+    static bool Respawn(CheckPoint __instance)
+    {
+        __instance.onRestart?.Invoke();
+        __instance.toActivate?.SetActive(true);
+
+        Movement.Respawn(__instance.transform.position + Vector3.up * 1.25f, __instance.transform.eulerAngles.y);
+        return false;
     }
 
     #endregion

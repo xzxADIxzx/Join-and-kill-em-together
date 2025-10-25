@@ -37,41 +37,6 @@ public class ArenaPatch
         if (!__instance.activated && other.name == "Net" && other.TryGetComponent<RemotePlayer>(out _)) __instance.Activate();
     }
 }
-
-[HarmonyPatch(typeof(CheckPoint))]
-public class RoomPatch
-{
-    /// <summary> Fake needed to prohibit the checkpoint to recreate the rooms at the first activation. </summary>
-    private class FakeList : List<GameObject> { public new int Count => 0; }
-
-    [HarmonyPrefix]
-    [HarmonyPatch(nameof(CheckPoint.ActivateCheckPoint))]
-    static void Activate(CheckPoint __instance)
-    {
-        if (LobbyController.Online) __instance.roomsToInherit = new FakeList(); // TODO clear __instance.rooms instead (probably in World.Restore)
-    }
-
-    [HarmonyPrefix]
-    [HarmonyPatch(nameof(CheckPoint.OnRespawn))]
-    static void ClearRooms(CheckPoint __instance)
-    {
-        if (LobbyController.Online) __instance.newRooms.Clear();
-        // TODO restore kills, and challenge, and... perhaps, I should just remake it?
-    }
-
-    [HarmonyPostfix]
-    [HarmonyPatch(nameof(CheckPoint.OnRespawn))]
-    static void Respawn(CheckPoint __instance)
-    {
-        if (LobbyController.Online)
-        {
-            __instance.onRestart?.Invoke();
-            __instance.toActivate?.SetActive(true);
-
-            Movement.Respawn(__instance.transform.position + Vector3.up * 1.25f, __instance.transform.eulerAngles.y);
-        }
-    }
-}
 /*
 [HarmonyPatch]
 public class ActionPatch

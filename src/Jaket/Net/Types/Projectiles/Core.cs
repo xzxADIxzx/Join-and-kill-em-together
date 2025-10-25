@@ -46,7 +46,6 @@ public class Core : Entity
         agent.Get(out grenade);
         agent.Rem<FloatingPointErrorPreventer>();
         agent.Rem<RemoveOnTime>();
-        agent.Rem<DestroyOnCheckpointRestart>();
 
         rb.isKinematic = !IsOwner;
     }

@@ -52,7 +52,6 @@ public class Sawblade : OwnableEntity
         agent.Get(out rb);
         agent.Get(out nail);
         agent.Get(out rs);
-        agent.Rem<DestroyOnCheckpointRestart>();
 
         OnTransfer = () =>
         {

@@ -36,6 +36,7 @@ public class Movement : MonoSingleton<Movement>
     {
         Events.OnLoad += () =>
         {
+            // TODO move to static actions
             if (Scene == "Level 0-S") nm.modNoJump = LobbyController.Online;
             if (Scene == "Level 0-S" || Scene == "Endless")
             {
@@ -182,12 +183,16 @@ public class Movement : MonoSingleton<Movement>
     {
         Teleporter.Tp(position, flash);
 
+        StyleHUD.Instance.ComboOver();
+        StyleHUD.Instance.ResetAllFreshness();
+
         nm.Respawn();
         nm.GetHealth(0, true);
         nm.ActivatePlayer();
 
         cc.ResetCamera(rotation);
         cc.StopShake();
+        fc.fistCooldown = 0f;
 
         /* TODO move checkpoints instead of doing this
         // the player is currently fighting the Minotaur in the tunnel, the security system or the brain in the Earthmover
