@@ -34,16 +34,7 @@ public class Movement : MonoSingleton<Movement>
 
     private void Start()
     {
-        Events.OnLoad += () =>
-        {
-            // TODO move to static actions
-            if (Scene == "Level 0-S") nm.modNoJump = LobbyController.Online;
-            if (Scene == "Level 0-S" || Scene == "Endless")
-            {
-                CanvasController.Instance.transform.Find("PauseMenu/Restart Mission").GetComponent<Button>().interactable = LobbyController.Offline || LobbyController.IsOwner;
-            }
-            UpdateState(true);
-        };
+        Events.OnLoad += () => UpdateState(true);
         Events.EveryHalf += () =>
         {
             if (ch.cheatsEnabled && LobbyController.Online && !Administration.Privileged.Contains(AccId))

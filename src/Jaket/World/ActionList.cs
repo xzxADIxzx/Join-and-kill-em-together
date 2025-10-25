@@ -1,6 +1,9 @@
 namespace Jaket.World;
 
 using Logic;
+using UnityEngine.UI;
+
+using Jaket.Net;
 
 /// <summary> List of all interactions with the world. Will replenish over time. </summary>
 public static class ActionList
@@ -60,6 +63,10 @@ public static class ActionList
         #endregion
         #region 0-S
         l = "Level 0-S";
+
+        ActionType.Find(l, "PauseMenu/Restart Mission", b => b.GetComponent<Button>().interactable = LobbyController.IsOwner);
+
+        ActionType.Run(l, () => NewMovement.Instance.modNoJump = true);
 
         #endregion
         #region 1-1
@@ -149,6 +156,7 @@ public static class ActionList
 
         ActionType.Statue(l);
         ActionType.Flammable(l);
+
         ActionType.Torches(l, new(0f, -10f, 310f));
 
         // remove the fuckin death trigger from the 4-pillars room (or make it ignore players igs)
@@ -223,6 +231,12 @@ public static class ActionList
         l = "Level 7-S";
 
         ActionType.Statue(l);
+
+        #endregion
+        #region endless
+        l = "Endless";
+
+        ActionType.Find(l, "PauseMenu/Restart Mission", b => b.GetComponent<Button>().interactable = LobbyController.IsOwner);
 
         #endregion
         #region museum
