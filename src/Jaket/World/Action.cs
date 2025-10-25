@@ -18,7 +18,7 @@ public class Action
     /// <summary> Path of the object to perform the action on. </summary>
     public readonly string Path;
     /// <summary> Number of objects that have the same path. </summary>
-    public int Collisions => ResFind<Transform>().Count(o => $"{o.parent?.name}/{o.name}" == Path);
+    public int Collisions => ResFind<Transform>().Count(o => o.Path() == Path);
 
     /// <summary> Identifier of the action in the global list. </summary>
     public int Identifier = -1;

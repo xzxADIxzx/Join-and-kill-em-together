@@ -102,6 +102,9 @@ public static class Tools
     /// <summary> Whether the item is placed on an altar. </summary>
     public static bool Placed(this ItemIdentifier itemId) => itemId.transform.parent?.gameObject.layer == 22;
 
+    /// <summary> Path of the component in the scene hierarchy. </summary>
+    public static string Path(this Component comp) => $"{comp.transform.parent?.name}/{comp.name}";
+
     #endregion
     #region reflection
 
