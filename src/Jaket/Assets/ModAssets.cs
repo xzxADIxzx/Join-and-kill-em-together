@@ -210,6 +210,8 @@ public static class ModAssets
         prefab.name = $"DevPlushie ({(V2orV3 ? "V2" : "V3")})";
         prefab.GetComponentInChildren<Renderer>().material.mainTexture = texture;
         prefab.GetComponent<Rigidbody>().isKinematic = true;
+
+        prefab.transform.position = Vector3.down * 4242f;
     });
 
     #endregion

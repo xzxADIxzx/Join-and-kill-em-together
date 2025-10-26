@@ -29,7 +29,7 @@ public class Items : Vendor
         {
             Events.Post(() => Vendor.Prefabs[(byte)EntityType.Moon] != null, () => Events.Post(() => // damn Unity crashes w/o the second post
             {
-                GameObject prefab;
+                ref GameObject prefab = ref Vendor.Prefabs[(byte)EntityType.Moon];
 
                 Keep(prefab = Make(EntityType.Moon));
                 Dest(prefab.transform.Find("Fire").gameObject);
@@ -40,6 +40,8 @@ public class Items : Vendor
                 prefab.GetComponent<ItemIdentifier>().itemType = ItemType.CustomKey1;
                 Inst(p, prefab.transform).transform.localScale = Vector3.one * .1f;
                 Dest(prefab.transform.Find("Hakita(Clone)/Trigger").gameObject);
+
+                prefab.transform.position = Vector3.down * 4242f;
             }));
         });
 
