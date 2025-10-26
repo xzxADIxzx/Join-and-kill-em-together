@@ -85,5 +85,8 @@ public static class ActionType
     /// <summary> Creates an action that synchronizes all arenas. </summary>
     public static void Arena(string scene) => Find<ActivateArena>(scene, "arena", a => a.Activate());
 
+    /// <summary> Creates an action that synchronizes all final doors. </summary>
+    public static void Final(string scene) => Find<FinalDoor>(scene, "final", d => d.Open());
+
     #endregion
 }

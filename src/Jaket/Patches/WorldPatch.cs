@@ -10,13 +10,6 @@ using Jaket.World;
 public class ActionPatch
 {
     [HarmonyPostfix]
-    [HarmonyPatch(typeof(FinalDoor), nameof(FinalDoor.Open))]
-    static void OpenDoor(FinalDoor __instance)
-    {
-        if (LobbyController.Online) World.SyncAction(__instance, 3);
-    }
-
-    [HarmonyPostfix]
     [HarmonyPatch(typeof(Door), nameof(Door.Open))]
     static void OpenCase(Door __instance)
     {

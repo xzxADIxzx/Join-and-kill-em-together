@@ -202,6 +202,13 @@ public class World
         __instance.doors = [];
     }
 
+    [HarmonyPatch(typeof(FinalDoor), nameof(FinalDoor.Open))]
+    [HarmonyPrefix]
+    static void Activate(FinalDoor __instance)
+    {
+        Perform("final", new(__instance.transform.position.x, __instance.transform.position.z));
+    }
+
     [HarmonyPatch(typeof(CheckPoint), nameof(CheckPoint.ActivateCheckPoint))]
     [HarmonyPrefix]
     static bool Activate(CheckPoint __instance)

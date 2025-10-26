@@ -249,7 +249,7 @@ public static class ActionList
         l = "All";
 
         ActionType.Arena(l);
-        // TODO final doors
+        ActionType.Final(l);
 
         #endregion
 
