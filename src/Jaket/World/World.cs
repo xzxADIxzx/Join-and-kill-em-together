@@ -193,6 +193,15 @@ public class World
         if (__instance.name == "Flammable") Perform("flammable", new(__instance.transform.position.x, __instance.transform.position.z));
     }
 
+    [HarmonyPatch(typeof(ActivateArena), nameof(ActivateArena.Activate))]
+    [HarmonyPrefix]
+    static void Activate(ActivateArena __instance)
+    {
+        Perform("arena", new(__instance.transform.position.x, __instance.transform.position.z));
+
+        __instance.doors = [];
+    }
+
     [HarmonyPatch(typeof(CheckPoint), nameof(CheckPoint.ActivateCheckPoint))]
     [HarmonyPrefix]
     static bool Activate(CheckPoint __instance)

@@ -82,5 +82,8 @@ public static class ActionType
     /// <summary> Creates an action that synchronizes all flammables. </summary>
     public static void Flammable(string scene) => Find<Flammable>(scene, "flammable", f => f.Burn(4f));
 
+    /// <summary> Creates an action that synchronizes all arenas. </summary>
+    public static void Arena(string scene) => Find<ActivateArena>(scene, "arena", a => a.Activate());
+
     #endregion
 }

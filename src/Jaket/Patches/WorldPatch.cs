@@ -1,12 +1,9 @@
 namespace Jaket.ObsoletePatches;
 
 using HarmonyLib;
-using ULTRAKILL.Cheats;
-using UnityEngine;
 using UnityEngine.UI;
 
 using Jaket.Net;
-using Jaket.Net.Types;
 using Jaket.World;
 
 [HarmonyPatch(typeof(ActivateArena))]
@@ -15,25 +12,6 @@ public class ArenaPatch
     [HarmonyPrefix]
     [HarmonyPatch(typeof(Door), nameof(Door.Optimize))]
     static bool Unload() => LobbyController.Offline;
-
-    [HarmonyPrefix]
-    [HarmonyPatch(nameof(ActivateArena.Activate))]
-    static void Activate(ActivateArena __instance)
-    {
-        // do not allow the doors to close because this will cause a lot of desync
-        if (LobbyController.Online) __instance.doors = new Door[0];
-    }
-
-    [HarmonyPostfix]
-    [HarmonyPatch("OnTriggerEnter")]
-    static void Enter(ActivateArena __instance, Collider other, ArenaStatus ___astat)
-    {
-        // there is a large check caused by complex game logic that has to be repeated
-        if (DisableEnemySpawns.DisableArenaTriggers || (__instance.waitForStatus > 0 && (___astat == null || ___astat.currentStatus < __instance.waitForStatus))) return;
-
-        // launch the arena when a remote player enters it
-        if (!__instance.activated && other.name == "Net" && other.TryGetComponent<RemotePlayer>(out _)) __instance.Activate();
-    }
 }
 /*
 [HarmonyPatch]

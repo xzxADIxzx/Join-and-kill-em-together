@@ -249,6 +249,9 @@ public static class ActionList
         #region all
         l = "All";
 
+        ActionType.Arena(l);
+        // TODO final doors
+
         #endregion
 
         locked = true;
