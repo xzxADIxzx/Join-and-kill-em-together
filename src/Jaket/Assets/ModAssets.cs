@@ -161,7 +161,7 @@ public static class ModAssets
         machine.hurtSounds      = [];
 
         // make body parts of the doll hittable and resolve the mismatch of their tags
-        foreach (var rb in obj.transform.GetChild(0).GetComponentsInChildren<Rigidbody>())
+        obj.transform.GetChild(0).GetComponentsInChildren<Rigidbody>().Each(rb =>
         {
             rb.gameObject.AddComponent<EnemyIdentifierIdentifier>();
             rb.tag = rb.tag switch
@@ -171,7 +171,8 @@ public static class ModAssets
                 "Forward"     => "Head",
                 _             => rb.tag
             };
-        }
+        });
+        obj.GetComponentsInChildren<Collider>().Each(c => c.gameObject.AddComponent<IgnoreDeathZones>());
         return obj;
     }
 
