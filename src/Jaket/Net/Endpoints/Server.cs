@@ -98,7 +98,7 @@ public class Server : Endpoint, ISocketManager
 
         Listen(PacketType.WorldAction, (con, sender, r, s) =>
         {
-            World.Perform(r);
+            World.Perform(r.Byte(), new(r.Float(), r.Float()));
             Redirect(r, s, con);
         });
 

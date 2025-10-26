@@ -143,16 +143,14 @@ public class World
         }));
     }
 
-    /// <summary> Performs an action with the given identifier in the inner world. </summary>
-    public static void Perform(Reader r)
+    /// <summary> Performs an action with the given identifier and position in the inner world. </summary>
+    public static void Perform(int id, Vector2 p)
     {
-        var id = r.Byte();
-        var pi = Next(id);
+        var a = ActionList.At(id);
+        if (a == null || Performed(a, p)) return;
 
         performed[id] = true;
-        pos[pi] = new(r.Float(), r.Float());
-
-        ActionList.At(id)?.Perform(pos[pi]);
+        a.Perform(pos[Next(id)] = p);
 
         if (Version.DEBUG) Log.Debug($"[WRLD] Performed an action {ActionList.At(id).Path}#{id} in the inner world");
     }
