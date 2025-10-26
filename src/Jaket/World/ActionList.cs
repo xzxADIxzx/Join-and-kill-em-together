@@ -74,6 +74,8 @@ public static class ActionList
 
         ActionType.Switch(l);
 
+        ActionType.Dest(l, "11 Nonstuff/Altar"); // duplicate
+
         #endregion
         #region 1-2
         l = "Level 1-2";
