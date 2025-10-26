@@ -114,10 +114,10 @@ public class World
     {
         if (a.Reperformable)
         {
-            for (int i = 0; i < POOL; i++) if (pos[POOL * a.Identifier + i] == p) return false;
-            return true;
+            for (int i = 0; i < POOL; i++) if (pos[POOL * a.Identifier + i] == p) return true;
+            return false;
         }
-        else return !performed[a.Identifier];
+        else return performed[a.Identifier];
     }
 
     /// <summary> Returns the next available slot of an action with the given identifier. </summary>
@@ -130,7 +130,7 @@ public class World
     /// <summary> Performs an action with the given path and position in the outer world. </summary>
     public static void Perform(string path, Vector2 p)
     {
-        ActionList.Each(a => a.Dynamic && a.Path == path && Performed(a, p), a => Networking.Send(PacketType.WorldAction, 9, w =>
+        ActionList.Each(a => a.Dynamic && a.Path == path && !Performed(a, p), a => Networking.Send(PacketType.WorldAction, 9, w =>
         {
             w.Byte((byte)a.Identifier);
             w.Float(p.x);
