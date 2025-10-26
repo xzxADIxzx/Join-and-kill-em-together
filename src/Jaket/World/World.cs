@@ -16,7 +16,7 @@ public class World
     static StatsManager sm => StatsManager.Instance;
 
     /// <summary> Size of the pool of actions' arguments. </summary>
-    public const int POOL = 24;
+    public const int POOL = 32;
     /// <summary> Actions that were performed previously. </summary>
     private static bool[] performed = new bool[(byte.MaxValue + 1)];
     /// <summary> Vectors that were arguments of actions. </summary>
