@@ -30,11 +30,11 @@ public static class ActionList
     /// <summary> Iterates each action in the global list that is suitable for the current scene and predicate. </summary>
     public static void Each(Pred<Action> pred, Cons<Action> cons)
     {
-        for (int i = 0; i < vanilla + custom; i++) if (all[i].Scene == Scene && pred(all[i])) cons(all[i]);
+        for (int i = 0; i < vanilla + custom; i++) if (all[i].Valid && pred(all[i])) cons(all[i]);
     }
 
     /// <summary> Returns a dynamic action with the given identifier. </summary>
-    public static Action At(int id) => all[id].Scene == Scene && all[id].Dynamic ? all[id] : null;
+    public static Action At(int id) => all[id].Valid && all[id].Dynamic ? all[id] : null;
 
     /// <summary> Adds vanilla actions to the global list, and locks their index to prevent custom ones from interfering. </summary>
     public static void Load()
@@ -244,6 +244,10 @@ public static class ActionList
 
         ActionType.Run(l, () => ResFind<MapIntSetter>().Each(IsReal, Dest));
         ActionType.Dest(l, "/__Gianni nightmare world");
+
+        #endregion
+        #region all
+        l = "All";
 
         #endregion
 

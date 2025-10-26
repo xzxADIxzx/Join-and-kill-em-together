@@ -22,8 +22,8 @@ public class Action
 
     /// <summary> Identifier of the action in the global list. </summary>
     public int Identifier = -1;
-    /// <summary> Whether the action is in the global list. </summary>
-    public bool Valid => Identifier != -1;
+    /// <summary> Whether the action is in the global list and is appliable to the loaded scene. </summary>
+    public bool Valid => Identifier != -1 && (Scene == Tools.Scene || Scene == "All");
 
     public Action(string scene, string path, bool dynamic, bool reperformable, Cons<Vector2> perform)
     {
