@@ -5,14 +5,6 @@ using UnityEngine.UI;
 
 using Jaket.Net;
 using Jaket.World;
-
-[HarmonyPatch(typeof(ActivateArena))]
-public class ArenaPatch
-{
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(Door), nameof(Door.Optimize))]
-    static bool Unload() => LobbyController.Offline;
-}
 /*
 [HarmonyPatch]
 public class ActionPatch

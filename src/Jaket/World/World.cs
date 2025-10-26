@@ -233,5 +233,9 @@ public class World
         return false;
     }
 
+    [HarmonyPatch(typeof(Door), nameof(Door.Optimize))]
+    [HarmonyPrefix]
+    static bool Unload() => false;
+
     #endregion
 }
