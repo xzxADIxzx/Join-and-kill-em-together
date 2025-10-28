@@ -81,6 +81,8 @@ public class Rocket : OwnableEntity
             rb.isKinematic = !IsOwner;
         };
 
+        Locked = false;
+
         OnTransfer();
     }
 

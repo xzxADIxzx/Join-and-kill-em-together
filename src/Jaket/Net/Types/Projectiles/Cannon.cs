@@ -71,6 +71,8 @@ public class Cannon : OwnableEntity
             });
         };
 
+        Locked = false;
+
         OnTransfer();
     }
 

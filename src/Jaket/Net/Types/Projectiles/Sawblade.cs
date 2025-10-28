@@ -67,6 +67,8 @@ public class Sawblade : OwnableEntity
             });
         };
 
+        Locked = false;
+
         OnTransfer();
     }
 
