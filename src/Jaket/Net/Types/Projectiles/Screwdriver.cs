@@ -14,6 +14,7 @@ public class Screwdriver : OwnableEntity
     Cache<RemotePlayer> player;
     Team team => player.Value?.Team ?? Networking.LocalPlayer.Team;
     Rigidbody rb;
+    Harpoon harp;
     Renderer[] rs;
 
     public Screwdriver(uint id, EntityType type) : base(id, type) { }
@@ -56,6 +57,7 @@ public class Screwdriver : OwnableEntity
         (this.agent = agent).Patron = this;
 
         agent.Get(out rb);
+        agent.Get(out harp);
         agent.Get(out rs);
 
         OnTransfer = () =>
@@ -70,6 +72,8 @@ public class Screwdriver : OwnableEntity
                 else
                     r.material.color = team.Color() * 8f;
             });
+
+            if (!IsOwner) harp.CancelInvoke();
         };
 
         Locked = false;
@@ -83,6 +87,9 @@ public class Screwdriver : OwnableEntity
 
         agent.Position = new(posX.Get(delta),      posY.Get(delta),      posZ.Get(delta)     );
         agent.Rotation = new(rotX.GetAngle(delta), rotY.GetAngle(delta), rotZ.GetAngle(delta));
+
+        // TODO if target is gotten, add harpoon to the list of drillers so that you can punch it
+        // TODO depending on target, enable/disable the trail (tr.emitting)
     }
 
     public override void Damage(Reader r) { }
@@ -93,5 +100,28 @@ public class Screwdriver : OwnableEntity
         Dest(agent.gameObject);
     }
 
+    #endregion
+    #region harmony
+
+    [HarmonyPatch(typeof(Harpoon), "Start")]
+    [HarmonyPrefix]
+    static void Start(Harpoon __instance)
+    {
+        if (__instance && __instance.drill) Entities.Projectiles.Sync(__instance.gameObject);
+    }
+
+    [HarmonyPatch(typeof(Harpoon), "OnDestroy")]
+    [HarmonyPrefix]
+    static void Death(Nail __instance)
+    {
+        if (__instance.TryGetComponent(out Agent a) && a.Patron is Screwdriver s) s.Kill();
+    }
+
+    [HarmonyPatch(typeof(Harpoon), nameof(Harpoon.Punched))]
+    [HarmonyPrefix]
+    static void Parry(Harpoon __instance)
+    {
+        if (__instance.TryGetComponent(out Agent a) && a.Patron is Screwdriver s) s.TakeOwnage();
+    }
     #endregion
 }
