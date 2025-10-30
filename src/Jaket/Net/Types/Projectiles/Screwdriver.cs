@@ -11,6 +11,7 @@ public class Screwdriver : OwnableEntity
 {
     Agent agent;
     Float posX, posY, posZ, rotX, rotY, rotZ;
+    Cache<Entity> target;
     Cache<RemotePlayer> player;
     Team team => player.Value?.Team ?? Networking.LocalPlayer.Team;
     Rigidbody rb;
@@ -21,7 +22,7 @@ public class Screwdriver : OwnableEntity
 
     #region snapshot
 
-    public override int BufferSize => 33;
+    public override int BufferSize => 37;
 
     public override void Write(Writer w)
     {
@@ -31,11 +32,15 @@ public class Screwdriver : OwnableEntity
         {
             w.Vector(agent.Position);
             w.Vector(agent.Rotation);
+
+            w.Id(target);
         }
         else
         {
             w.Floats(posX, posY, posZ);
             w.Floats(rotX, rotY, rotZ);
+
+            w.Id(target);
         }
     }
 
@@ -45,6 +50,9 @@ public class Screwdriver : OwnableEntity
 
         r.Floats(ref posX, ref posY, ref posZ);
         r.Floats(ref rotX, ref rotY, ref rotZ);
+
+        var id = r.Id();
+        if (id != target) target = id;
     }
 
     #endregion
@@ -73,7 +81,12 @@ public class Screwdriver : OwnableEntity
                     r.material.color = team.Color() * 8f;
             });
 
-            if (!IsOwner) harp.CancelInvoke();
+            if (!IsOwner)
+            {
+                harp.CancelInvoke();
+                Set("stopped",  harp, false);
+                Set("drilling", harp, false);
+            }
         };
 
         Locked = false;
@@ -97,7 +110,7 @@ public class Screwdriver : OwnableEntity
     public override void Killed(Reader r, int left)
     {
         Hidden = true;
-        Dest(agent.gameObject);
+        if (agent) Dest(agent.gameObject);
     }
 
     #endregion
@@ -112,7 +125,7 @@ public class Screwdriver : OwnableEntity
 
     [HarmonyPatch(typeof(Harpoon), "OnDestroy")]
     [HarmonyPrefix]
-    static void Death(Nail __instance)
+    static void Death(Harpoon __instance)
     {
         if (__instance.TryGetComponent(out Agent a) && a.Patron is Screwdriver s) s.Kill();
     }
@@ -121,7 +134,34 @@ public class Screwdriver : OwnableEntity
     [HarmonyPrefix]
     static void Parry(Harpoon __instance)
     {
-        if (__instance.TryGetComponent(out Agent a) && a.Patron is Screwdriver s) s.TakeOwnage();
+        if (__instance.TryGetComponent(out Agent a) && a.Patron is Screwdriver s) { s.TakeOwnage(); s.target = 0u; }
     }
+
+    [HarmonyPatch(typeof(Punch), "ActiveEnd")]
+    [HarmonyPrefix]
+    static void Punch() => Networking.Entities.Alive(e =>
+    {
+        if (e is Screwdriver s && s.target == AccId)
+        {
+            Set("aud", s.harp, s.harp.GetComponent<AudioSource>());
+            s.harp.transform.forward  = CameraController.Instance.transform.forward;
+            s.harp.transform.position = CameraController.Instance.GetDefaultPos();
+            s.harp.Punched();
+            TimeController.Instance.ParryFlash();
+        }
+    });
+
+    [HarmonyPatch(typeof(Harpoon), "OnTriggerEnter")]
+    [HarmonyPrefix]
+    static bool Damage(Harpoon __instance, Collider other, float ___damageLeft) => Entities.Damage.Deal<Screwdriver>(__instance, (eid, tid, ally, screwdriver) =>
+    {
+        if (ally || eid.drillers.Contains(__instance)) return false;
+
+        screwdriver.target = tid;
+
+        Entities.Damage.Deal(tid, ___damageLeft);
+        return true;
+    }, other);
+
     #endregion
 }

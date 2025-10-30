@@ -43,6 +43,7 @@ public class Spectator : Fragment
             if (LobbyController.Online && Special) UpdateAlive();
         };
 
+        // TODO something like the original death scren terminal, perhaps?
         info = Builder.Text(Fill("Info"), "", 96, white with { a = semi.a }, TextAnchor.MiddleCenter);
         dead = Builder.Image(Fill("Flash"), Tex.Dead, white, ImageType.Simple);
 
