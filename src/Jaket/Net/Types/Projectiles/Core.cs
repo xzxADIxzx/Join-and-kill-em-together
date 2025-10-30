@@ -98,7 +98,7 @@ public class Core : Entity
 
     [HarmonyPatch(typeof(Grenade), nameof(Grenade.Collision))]
     [HarmonyPrefix]
-    static bool Damage(Grenade __instance, Collider other) => Entities.Damage.Deal<Core>(__instance, (eid, tid, ally) =>
+    static bool Damage(Grenade __instance, Collider other) => Entities.Damage.Deal<Core>(__instance, (eid, tid, ally, _) =>
     {
         if (ally)
         {

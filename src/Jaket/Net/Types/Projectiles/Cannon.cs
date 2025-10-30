@@ -150,7 +150,7 @@ public class Cannon : OwnableEntity
 
     [HarmonyPatch(typeof(Cannonball), nameof(Cannonball.Collide))]
     [HarmonyPrefix]
-    static bool Damage(Cannonball __instance, Collider other, Rigidbody ___rb) => Entities.Damage.Deal<Cannon>(__instance, (eid, tid, ally) =>
+    static bool Damage(Cannonball __instance, Collider other, Rigidbody ___rb) => Entities.Damage.Deal<Cannon>(__instance, (eid, tid, ally, _) =>
     {
         if (ally || __instance.hitEnemies.Contains(eid)) return false;
 

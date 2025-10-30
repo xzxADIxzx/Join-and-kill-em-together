@@ -133,7 +133,7 @@ public class Sawblade : OwnableEntity
 
     [HarmonyPatch(typeof(Nail), "DamageEnemy")]
     [HarmonyPrefix]
-    static bool Damage(Nail __instance, EnemyIdentifier eid) => Entities.Damage.Deal<Sawblade>(__instance, (eid, tid, ally) =>
+    static bool Damage(Nail __instance, EnemyIdentifier eid) => Entities.Damage.Deal<Sawblade>(__instance, (eid, tid, ally, _) =>
     {
         if (ally) { __instance.hitAmount += 1; return false; }
 
