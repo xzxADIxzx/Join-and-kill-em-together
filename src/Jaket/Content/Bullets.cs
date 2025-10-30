@@ -36,8 +36,6 @@ public class Bullets
             if (weapon.TryGetComponent<Shotgun>(out var shotgun))
             {
                 Add(shotgun.bullet, $"SG PRI");
-                Add(shotgun.grenade, $"SG ALT");
-                Add(shotgun.explosion, $"SG EXT");
             }
             else
             if (weapon.TryGetComponent<Railcannon>(out var railcannon))
@@ -56,12 +54,6 @@ public class Bullets
         name = name.Contains("(") ? name.Substring(0, name.IndexOf("(")) : name;
         return (byte)Prefabs.FindIndex(prefab => prefab.name == name);
     }
-    public static EntityType EType(string name) => name switch
-    {
-        "Coin(Clone)" => EntityType.Coin,
-        "RL PRI(Clone)" => EntityType.Rocket,
-        _ => EntityType.None
-    };
 
     /// <summary> Spawns a bullet with the given type or other data. </summary>
     public static void CInstantiate(Reader r)
@@ -74,12 +66,6 @@ public class Bullets
         if (r.Length == 27) Coins.PaintBeam(obj, r.Enum<Team>());
         if (r.Length == 38) obj.GetComponent<Rigidbody>().velocity = r.Vector();
     }
-    public static Entity EInstantiate(EntityType type) => Entities.Mark(Prefabs[type switch
-    {
-        EntityType.Coin => 4,
-        EntityType.Rocket => 21,
-        _ => -1
-    }]).AddComponent(type == EntityType.Coin ? typeof(TeamCoin) : typeof(Bullet)) as Entity;
 
     /// <summary> Synchronizes the bullet between network members. </summary>
     public static void Sync(GameObject bullet, bool hasRigidbody, bool applyOffset, byte team = byte.MaxValue)
