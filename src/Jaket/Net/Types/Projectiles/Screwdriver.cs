@@ -52,7 +52,12 @@ public class Screwdriver : OwnableEntity
         r.Floats(ref rotX, ref rotY, ref rotZ);
 
         var id = r.Id();
-        if (id != target) target = id;
+        if (id != target && harp)
+        {
+            if (target.Value is Screwable o) o?.Update(harp, target);
+            target = id;
+            if (target.Value is Screwable n) n?.Update(harp, target);
+        }
     }
 
     #endregion
@@ -67,6 +72,7 @@ public class Screwdriver : OwnableEntity
         agent.Get(out rb);
         agent.Get(out harp);
         agent.Get(out rs);
+        agent.Get(out AudioSource source);
 
         OnTransfer = () =>
         {
@@ -87,6 +93,8 @@ public class Screwdriver : OwnableEntity
                 Set("stopped",  harp, false);
                 Set("drilling", harp, false);
             }
+
+            Set("aud", harp, source);
         };
 
         Locked = false;
@@ -101,8 +109,7 @@ public class Screwdriver : OwnableEntity
         agent.Position = new(posX.Get(delta),      posY.Get(delta),      posZ.Get(delta)     );
         agent.Rotation = new(rotX.GetAngle(delta), rotY.GetAngle(delta), rotZ.GetAngle(delta));
 
-        // TODO if target is gotten, add harpoon to the list of drillers so that you can punch it
-        // TODO depending on target, enable/disable the trail (tr.emitting)
+        rs.Each(r => { if (r is TrailRenderer t) t.emitting = target == 0u; });
     }
 
     public override void Damage(Reader r) { }
@@ -143,7 +150,6 @@ public class Screwdriver : OwnableEntity
     {
         if (e is Screwdriver s && s.target == AccId)
         {
-            Set("aud", s.harp, s.harp.GetComponent<AudioSource>());
             s.harp.transform.forward  = CameraController.Instance.transform.forward;
             s.harp.transform.position = CameraController.Instance.GetDefaultPos();
             s.harp.Punched();
@@ -164,4 +170,11 @@ public class Screwdriver : OwnableEntity
     }, other);
 
     #endregion
+
+    /// <summary> Any kind of entity that a screwdriver can be attached to. </summary>
+    public interface Screwable
+    {
+        /// <summary> Updates the attachment state of the given screwdriver. </summary>
+        public void Update(Harpoon harpoon, uint target);
+    }
 }
