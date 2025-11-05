@@ -92,6 +92,7 @@ public class Chat : Fragment
         this.Rebuild();
         UI.Hide(UI.LeftGroup, this, () =>
         {
+            field.textComponent.color = white;
             field.ActivateInputField();
             Events.Post(() => field.caretPosition = int.MaxValue);
         });
@@ -156,6 +157,12 @@ public class Chat : Fragment
         }
         // focus was lost for some unknown reason
         Events.Post(Toggle);
+    }
+
+    public void DisplayText(string msg)
+    {
+        toDisplay = msg;
+        Rebuild();
     }
 
     #region scroll
