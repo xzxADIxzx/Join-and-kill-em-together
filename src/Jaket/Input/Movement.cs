@@ -4,11 +4,11 @@ using GameConsole;
 using HarmonyLib;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net;
+using Jaket.Net.Admin;
 using Jaket.Net.Types;
 using Jaket.UI;
 using Jaket.UI.Dialogs;

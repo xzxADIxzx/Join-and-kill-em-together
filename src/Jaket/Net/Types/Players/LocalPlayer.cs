@@ -53,6 +53,7 @@ public class LocalPlayer : Entity
         };
         Component<Agent>(Voice.gameObject, a => a.Patron = this);
     }
+    // TODO move update to items, send #/s on death
 
     #region snapshot
 

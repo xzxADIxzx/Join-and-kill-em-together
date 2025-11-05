@@ -6,6 +6,7 @@ using UnityEngine;
 using Jaket.Assets;
 using Jaket.IO;
 using Jaket.Net;
+using Jaket.Net.Admin;
 using Jaket.UI.Dialogs;
 
 /// <summary> Class responsible for managing spray images. </summary>

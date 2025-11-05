@@ -8,6 +8,7 @@ using Jaket.Harmony;
 using Jaket.Input;
 using Jaket.IO;
 using Jaket.Net;
+using Jaket.Net.Admin;
 using Jaket.Sprays;
 using Jaket.UI.Lib;
 using Jaket.World;

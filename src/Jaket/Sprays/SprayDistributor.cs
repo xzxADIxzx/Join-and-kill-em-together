@@ -6,6 +6,7 @@ using UnityEngine;
 using Jaket.Content;
 using Jaket.IO;
 using Jaket.Net;
+using Jaket.Net.Admin;
 
 /// <summary> Class responsible for distributing spray images between clients. </summary>
 public static class SprayDistributor
