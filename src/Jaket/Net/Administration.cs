@@ -24,9 +24,6 @@ public static class Administration
     /// <summary> Identifiers of privileged ones. </summary>
     public static List<uint> Privileged = new();
 
-    private static Counter spam = new();
-    private static Counter warnings = new();
-    private static Counter commonBullets = new();
     private static Tree entityBullets = new();
     private static Tree entities = new();
     private static Tree plushies = new();
@@ -45,9 +42,6 @@ public static class Administration
             if (!Privileged.Contains(AccId)) Privileged.Add(AccId);
         };
         Events.OnLobbyEnter += () => { Banned.Clear(); entityBullets.Clear(); entities.Clear(); plushies.Clear(); };
-        Events.EveryHalf += spam.Clear;
-        Events.EveryHalf += commonBullets.Clear;
-        Events.EveryDozen += warnings.Clear;
     }
 
     /// <summary> Kicks the member from the lobby, or rather asks him to leave, because Valve hasn't added such functionality to their API. </summary>
@@ -62,18 +56,6 @@ public static class Administration
         LobbyController.Lobby?.SendChatString("#/b" + id);
         LobbyConfig.Banned = Banned.ConvertAll(i => i.ToString());
     }
-
-    /// <summary> Whether the player is sending a large amount of data. </summary>
-    public static bool IsSpam(uint id, int amount) => spam.Count(id, amount) >= SPAM_RATE;
-
-    /// <summary> Clears the amount of data sent by the given player. </summary>
-    public static void ClearSpam(uint id) => spam[id] = int.MinValue;
-
-    /// <summary> Whether the player is trying to spam. </summary>
-    public static bool IsWarned(uint id) => warnings.Count(id, 1) >= MAX_WARNINGS;
-
-    /// <summary> Whether the player can spawn another common bullet. </summary>
-    public static bool CanSpawnBullet(uint owner, int amount) => commonBullets.Count(owner, amount) <= MAX_BULLETS;
 
     /// <summary> Handles the creations of a new entity by a client. If the client exceeds its limit, the old entity will be destroyed. </ Summary>
     public static void Handle(uint owner, Entity entity)
@@ -95,17 +77,6 @@ public static class Administration
         else if (entity.Type.IsPlushie()) Default(plushies, MAX_PLUSHIES);
         else if (entity.Type.IsBullet()) Default(entityBullets, MAX_BULLETS);
         */
-    }
-
-    /// <summary> Counter of abstract actions done by players. </summary>
-    public class Counter : Dictionary<uint, int>
-    {
-        /// <summary> Counts the number of actions done by the given player and increases it by some value. </summary>
-        public new int Count(uint id, int amount)
-        {
-            TryGetValue(id, out int value);
-            return this[id] = value + amount;
-        }
     }
 
     /// <summary> Tree with players ids as roots and entities created by these players as children. </summary>
