@@ -37,7 +37,7 @@ public class Movement : MonoSingleton<Movement>
         Events.OnLoad += () => UpdateState(true);
         Events.EveryHalf += () =>
         {
-            if (ch.cheatsEnabled && LobbyController.Online && !Administration.Privileged.Contains(AccId))
+            if (ch.cheatsEnabled && LobbyController.Online && !Administration.Privileged)
             {
                 ch.cheatsEnabled = false;
                 cm.transform.Find("Cheats Overlay").Each(c => c.gameObject.SetActive(false));

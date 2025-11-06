@@ -5,6 +5,7 @@ using Steamworks.Data;
 
 using Jaket.Content;
 using Jaket.IO;
+using Jaket.Net.Admin;
 using Jaket.Net.Types;
 using Jaket.Sprays;
 using Jaket.UI.Elements;
@@ -36,7 +37,7 @@ public class Server : Endpoint, ISocketManager
                 entity.Create();
                 entity.Push();
 
-                Administration.Handle(sender, entity);
+                Administration.Find(sender).Handle(entity);
             }
         });
 

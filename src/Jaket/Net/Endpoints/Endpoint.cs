@@ -4,6 +4,7 @@ using Steamworks.Data;
 
 using Jaket.Content;
 using Jaket.IO;
+using Jaket.Net.Admin;
 
 /// <summary> Endpoint of a network connection that processes incoming data via packet handlers. </summary>
 public abstract class Endpoint

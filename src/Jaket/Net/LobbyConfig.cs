@@ -89,6 +89,7 @@ public static class LobbyConfig
         PvPAllowed = true;
         ModsAllowed = false;
         HealBosses = true;
+        Privileged = [AccId.ToString()];
     }
 
     /// <summary> Sets lobby data by the given key to the given value. </summary>
