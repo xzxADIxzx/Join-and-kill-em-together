@@ -49,7 +49,7 @@ public static class SprayDistributor
         if (bytesCount > SprayImage.MAX_IMAGE_SIZE && LobbyController.IsOwner)
         {
             Administration.Ban(owner);
-            Log.Warning($"[SPRY] {owner} was blocked: enormous spray");
+            Log.Warning($"[ADMIN] {owner} was blocked: enormous spray");
         }
         else if (bytesCount > SprayImage.MAX_IMAGE_SIZE) return;
 

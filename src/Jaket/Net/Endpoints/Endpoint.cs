@@ -50,7 +50,7 @@ public abstract class Endpoint
         else
         {
             Administration.Ban(sender);
-            Log.Warning($"[SERVER] {sender} was blocked: falsification of identifier");
+            Log.Warning($"[ADMIN] {sender} was blocked: falsification of identifier");
         }
         return valid;
     }

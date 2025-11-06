@@ -207,23 +207,8 @@ public class Server : Endpoint, ISocketManager
 
     public void OnMessage(Connection con, NetIdentity netId, Ptr data, int size, long msg, long time, int channel)
     {
-        var accId = netId.SteamId.AccountId;
-
-        /*
-        if (Administration.IsSpam(accId, size))
-        {
-            Administration.ClearSpam(accId);
-            Log.Warning($"[SERVER] {accId} was warned due to sending a large amount of data");
-
-            if (Administration.IsWarned(accId))
-            {
-                Administration.Ban(accId);
-                Log.Warning($"[SERVER] {accId} was blocked due to an attempt to spam");
-            }
-        }
-        */
-
-        Handle(con, accId, data, size);
+        Handle(con, netId.SteamId.AccountId, data, size);
+        Administration.Find(netId.SteamId.AccountId).Handle();
     }
 
     #endregion
