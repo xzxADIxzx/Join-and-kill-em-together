@@ -14,8 +14,15 @@ public class Subject
     private Ratekeeper
 
     warns = new(3f, .1f),
-    packets = new(48f, 32f),
+    packets = new(Networking.TICKS_PER_SECOND * 64f, Networking.TICKS_PER_SECOND * 48f),
     commons = new(16f, 8f);
+
+    /// <summary> These prevent flood of entities. </summary>
+    private Pool
+
+    defpool = new(24),
+    project = new(24),
+    harpoon = new(4);
 
     public Subject(uint id) => Id = id;
 
@@ -52,7 +59,7 @@ public class Subject
         {
             if (Privilege.Has)
             {
-                // TODO pools
+                defpool.Add(entity);
                 Warn("flood of entities", commons);
             }
             else Ban("abuse of entities", entity);
@@ -61,14 +68,14 @@ public class Subject
         {
             if (Privilege.Has || type.IsFish() || type.IsPlushie() || type == EntityType.BaitApple || type == EntityType.BaitFace)
             {
-                // TODO pools
+                defpool.Add(entity);
                 Warn("floow of entities", commons);
             }
             else Ban("abuse of entities", entity);
         }
         else if (type.IsProjectile())
         {
-            // TODO a lotta various ratekeepers
+            // TODO a lotta various ratekeepers and pools (???)
         }
     }
 }
