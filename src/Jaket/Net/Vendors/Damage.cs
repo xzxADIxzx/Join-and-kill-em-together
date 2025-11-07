@@ -23,11 +23,6 @@ public class Damage : Vendor
             byte index = (byte)counter++;
             GameAssets.Prefab(w, p => Vendor.Prefabs[index] = p);
         });
-        GameAssets.Particles.Each(w =>
-        {
-            byte index = (byte)counter++;
-            GameAssets.Particle(w, p => Vendor.Prefabs[index] = p);
-        });
     }
 
     public EntityType Type(GameObject obj) => EntityType.None;

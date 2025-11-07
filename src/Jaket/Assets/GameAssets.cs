@@ -12,10 +12,7 @@ public static class GameAssets
     public static void LoadAsync<T>(string path, Cons<T> cons) => Addressables.LoadAssetAsync<T>(path).Task.ContinueWith(t => cons(t.Result));
 
     /// <summary> Loads a prefab by the given path. </summary>
-    public static void Prefab(string path, Cons<GameObject> cons) => LoadAsync($"Assets/Prefabs/{path}", cons);
-
-    /// <summary> Loads a particle by the given path. </summary>
-    public static void Particle(string path, Cons<GameObject> cons) => LoadAsync($"Assets/Particles/{path}", cons);
+    public static void Prefab(string path, Cons<GameObject> cons) => LoadAsync(path.StartsWith("p/") ? $"Assets/Particles/{path[2..]}" : $"Assets/Prefabs/{path}", cons);
 
     /// <summary> Loads a material by the given path. </summary>
     public static void Material(string path, Cons<Material> cons) => LoadAsync($"Assets/Models/{path}", cons);
@@ -161,14 +158,9 @@ public static class GameAssets
         "Attacks and Projectiles/Explosions/Explosion.prefab",
         "Attacks and Projectiles/Explosions/Explosion Hammer Weak.prefab",
         "Attacks and Projectiles/Explosions/Explosion Super.prefab",
-    };
-
-    /// <summary> List of internal paths of all hammer particles.  </summary>
-    public static readonly string[] Particles =
-    {
-        "HammerHitLight.prefab",
-        "HammerHitMedium.prefab",
-        "HammerHitHeavy.prefab",
+        "p/HammerHitLight.prefab",
+        "p/HammerHitMedium.prefab",
+        "p/HammerHitHeavy.prefab",
     };
 
     #endregion
