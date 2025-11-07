@@ -27,7 +27,7 @@ public class Subject
     public Subject(uint id) => Id = id;
 
     /// <summary> Gives the member a warning if the given limit is exceeded. </summary>
-    public void Warn(string reason, Ratekeeper limit)
+    public void Warn(string reason, ref Ratekeeper limit)
     {
         if (limit.Kept()) return;
         if (warns.Kept())
@@ -49,7 +49,7 @@ public class Subject
     }
 
     /// <summary> Handles reception of a packet. </summary>
-    public void Handle() => Warn("flood of packets", packets);
+    public void Handle() => Warn("flood of packets", ref packets);
 
     /// <summary> Handles creation of an entity. </summary>
     public void Handle(Entity entity)
@@ -60,7 +60,7 @@ public class Subject
             if (Privilege.Has)
             {
                 defpool.Add(entity);
-                Warn("flood of entities", commons);
+                Warn("flood of entities", ref commons);
             }
             else Ban("abuse of entities", entity);
         }
@@ -69,7 +69,7 @@ public class Subject
             if (Privilege.Has || type.IsFish() || type.IsPlushie() || type == EntityType.BaitApple || type == EntityType.BaitFace)
             {
                 defpool.Add(entity);
-                Warn("floow of entities", commons);
+                Warn("flood of entities", ref commons);
             }
             else Ban("abuse of entities", entity);
         }

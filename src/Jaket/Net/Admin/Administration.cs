@@ -38,7 +38,7 @@ public static class Administration
         };
         Events.OnMemberJoin += m =>
         {
-            for (int i = 0; i < subjects.Length; i++) if (subjects[i] == null) subjects[i] = new(m.Id.AccountId);
+            for (int i = 0; i < subjects.Length; i++) if (subjects[i] == null) { subjects[i] = new(m.Id.AccountId); return; }
         };
         Events.OnMemberLeave += m =>
         {
