@@ -102,6 +102,23 @@ public enum EntityType : byte
     RocketlRed,
 
     #endregion
+    #region hitscans
+
+    Beam,
+    BeamSuper,
+    BeamSharp,
+    BeamAlt,
+    BeamSuperAlt,
+    BeamSharpAlt,
+    BeamElectric,
+    BeamExplosive,
+    BeamReflected,
+    BeamMalicious,
+    BeamSentry,
+    BeamGutter,
+    BeamHammer,
+
+    #endregion
     #region projectiles
 
     Core,
