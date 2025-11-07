@@ -123,6 +123,24 @@ public static class GameAssets
         "Weapons/Rocket Launcher Napalm.prefab",
     };
 
+    /// <summary> List of internal paths of all hitscans. </summary>
+    public static readonly string[] Hitscans =
+    {
+        "Attacks and Projectiles/Hitscan Beams/Revolver Beam.prefab",
+        "Attacks and Projectiles/Hitscan Beams/Revolver Beam Super.prefab",
+        "Attacks and Projectiles/Hitscan Beams/Revolver Beam Sharp.prefab",
+        "Attacks and Projectiles/Hitscan Beams/Revolver Beam Alternative.prefab",
+        "Attacks and Projectiles/Hitscan Beams/Revolver Beam Super Alternative.prefab",
+        "Attacks and Projectiles/Hitscan Beams/Revolver Beam Sharp Alternative.prefab",
+        "Attacks and Projectiles/Hitscan Beams/Railcannon Beam.prefab",
+        "Attacks and Projectiles/Hitscan Beams/Railcannon Beam Malicious.prefab",
+        "p/ReflectedBeamPoint.prefab",
+        "Attacks and Projectiles/Hitscan Beams/Malicious Beam.prefab",
+        "Attacks and Projectiles/Hitscan Beams/Turret Beam.prefab",
+        "Attacks and Projectiles/Hitscan Beams/Gutterman Beam.prefab",
+        "Attacks and Projectiles/Hitscan Beams/Grenade Beam.prefab",
+    };
+
     /// <summary> List of internal paths of all projectiles. </summary>
     public static readonly string[] Projectiles =
     {
