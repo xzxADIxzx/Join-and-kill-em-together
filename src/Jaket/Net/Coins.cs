@@ -100,17 +100,5 @@ public static class Coins
 
     /// <summary> Finds the position to which the player sent a coin by punching it. </summary>
     public static bool Punchcast(out RaycastHit hit) => Physics.Raycast(cc.position, cc.forward, out hit, float.PositiveInfinity, EnvMask);
-
-    /// <summary> Paints the given revolver beam in the color of the given team. This must only be used with RV1 PRI. </summary>
-    public static void PaintBeam(GameObject beam, Team team)
-    {
-        var rb = beam.GetComponent<RevolverBeam>();
-        rb.noMuzzleflash = true;
-        rb.hitParticle = null;
-        rb.bodiesPierced = (int)team; // this field is unused by RV1 PRI so it's okay
-
-        var lr = beam.GetComponent<LineRenderer>();
-        lr.startColor = lr.endColor = team.Color();
-    }
 }
 */

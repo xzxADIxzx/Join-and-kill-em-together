@@ -30,6 +30,7 @@ public static class Patches
         typeof(Rocket),
         typeof(Cannon),
         typeof(Damage),
+        typeof(Hitscans),
         typeof(Spectator),
         typeof(World),
     };
