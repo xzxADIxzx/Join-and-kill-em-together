@@ -39,6 +39,8 @@ public class Client : Endpoint, IConnectionManager
             }
         });
 
+        Listen(PacketType.Hitscan, r => Entities.Hitscans.Make(r.EntityType(), r.Vector(), r.Vector(), r.Byte()));
+
         Listen(PacketType.Damage, r =>
         {
             if (ents.TryGetValue(r.Id(), out var e)) e.Damage(r);

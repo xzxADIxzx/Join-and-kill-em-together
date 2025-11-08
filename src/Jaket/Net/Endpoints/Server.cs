@@ -41,6 +41,16 @@ public class Server : Endpoint, ISocketManager
             }
         });
 
+        Listen(PacketType.Hitscan, (con, sender, r, s) =>
+        {
+            var type = r.EntityType();
+
+            Entities.Hitscans.Make(type, r.Vector(), r.Vector(), r.Byte());
+            Redirect(r, s, con);
+
+            // TODO Administration.Find(sender).Handle(type)
+        });
+
         Listen(PacketType.Damage, (con, sender, r, s) =>
         {
             if (ents.TryGetValue(r.Id(), out var e))
