@@ -12,71 +12,12 @@ using Jaket.Net.Types;
 public class CommonBulletsPatch
 {
     [HarmonyPrefix]
-    [HarmonyPatch(typeof(RevolverBeam), "Start")]
-    static void Beam(RevolverBeam __instance) => Bullets.Sync(__instance.gameObject, ref __instance.sourceWeapon, false, true, __instance.noMuzzleflash ? (byte)__instance.bodiesPierced : byte.MaxValue);
-
-    [HarmonyPrefix]
     [HarmonyPatch(typeof(Projectile), "Start")]
     static void Projectile(Projectile __instance) => Bullets.Sync(__instance.gameObject, ref __instance.sourceWeapon, false, true);
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(GasolineProjectile), MethodType.Constructor)]
     static void Gasoline(GasolineProjectile __instance) => Events.Post(() => Bullets.Sync(__instance.gameObject, true, false));
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(ExplosionController), "Start")]
-    static void Explosion(ExplosionController __instance)
-    {
-        var ex = __instance.GetComponentInChildren<Explosion>();
-        if (ex == null) return;
-
-        var n1 = __instance.name;
-        var n2 = ex.sourceWeapon?.name ?? "";
-
-        // only shotgun and hammer explosions must be synchronized
-        if ((n1 == "SG EXT(Clone)" && n2.StartsWith("Shotgun")) || (n1 == "SH(Clone)" && n2.StartsWith("Hammer")) || n1 == "Net")
-            Bullets.Sync(__instance.gameObject, ref ex.sourceWeapon, false, false);
-    }
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(Harpoon), "Start")]
-    static void Harpoon(Harpoon __instance) => Events.Post2(() => Bullets.Sync(__instance.gameObject, ref __instance.sourceWeapon, true, true));
-
-
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(Explosion), "Start")]
-    static void Blast(Explosion __instance) => Bullets.SyncBlast(__instance.transform.parent?.gameObject);
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(PhysicalShockwave), "Start")]
-    static void Shock(PhysicalShockwave __instance) => Bullets.SyncShock(__instance.gameObject, __instance.force);
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(Grenade), nameof(Grenade.Explode))]
-    static bool Core(Grenade __instance)
-    {
-        // if the grenade is a rocket or local, then explode it, otherwise skip the explosion because it will be synced
-        if (LobbyController.Offline || __instance.rocket || __instance.name != "Net") return true;
-
-        Dest(__instance.gameObject);
-        return false;
-    }
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(Harpoon), "OnTriggerEnter")]
-    static bool HarpoonLogic(Harpoon __instance, Collider other, ref bool ___hit, ref Rigidbody ___rb)
-    {
-        if (__instance.sourceWeapon == Bullets.Fake && !___hit && other.gameObject == NewMovement.Instance.gameObject)
-        {
-            ___hit = true;
-            ___rb.constraints = RigidbodyConstraints.FreezeAll;
-            __instance.transform.SetParent(other.transform, true);
-
-            return false;
-        }
-        else return true;
-    }
 }
 
 [HarmonyPatch]
