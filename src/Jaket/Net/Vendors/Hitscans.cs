@@ -39,18 +39,26 @@ public class Hitscans : Vendor
         var beam = Make(type, position)?.GetComponent<RevolverBeam>();
         if (beam == null) return null;
 
-        if (type == EntityType.BeamReflected) beam.GetComponents<LineRenderer>().Each(r =>
+        // TODO explosions
+
+        beam.fake = true;
+        beam.GetComponents<LineRenderer>().Each(r =>
         {
-            r.startColor = r.endColor = ((Team)data).Color();
             r.SetPosition(0, position);
             r.SetPosition(1, target);
+
+            if (type == EntityType.BeamReflected)
+                r.startColor = r.endColor = ((Team)data).Color();
+
+            else if (data == byte.MaxValue)
+                r.transform.GetChild(0).gameObject.SetActive(false);
+
+            else
+            {
+                r.GetComponentsInChildren<SpriteRenderer>().Each(c => c.gameObject.layer = 24); // outdoors
+                r.transform.GetChild(0).LookAt(target);
+            }
         });
-        else
-        {
-            beam.noMuzzleflash = data == byte.MaxValue;
-            beam.fake = true;
-            beam.FakeShoot(target);
-        }
         return beam.gameObject;
     }
 
