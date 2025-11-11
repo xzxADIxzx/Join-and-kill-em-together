@@ -21,7 +21,12 @@ public class Hitscans : Vendor
         });
     }
 
-    public EntityType Type(GameObject obj) => EntityType.None; // TODO bruh
+    public EntityType Type(GameObject obj) => Vendor.Find
+    (
+        EntityType.Beam,
+        EntityType.BeamHammer,
+        p => p.name.Length == obj?.name.IndexOf('(') && (obj?.name.Contains(p.name) ?? false)
+    );
 
     public GameObject Make(EntityType type, Vector3 position = default, Transform parent = null)
     {
