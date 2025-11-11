@@ -72,10 +72,13 @@ public class Hitscans : Vendor
         var type = Type(obj);
         if (type == EntityType.None || !obj.TryGetComponent(out RevolverBeam beam)) return;
 
+        // makes hitscans more visually appealing
+        var correction = type <= EntityType.BeamExplosive && !args[0] ? beam.transform.forward * 1.2f : Vector3.zero;
+
         Networking.Send(PacketType.Hitscan, 26, w =>
         {
             w.Enum(type);
-            w.Vector(beam.transform.position);
+            w.Vector(beam.transform.position + correction);
             w.Vector(beam.alternateStartPoint);
 
             if (type == EntityType.BeamReflected)
