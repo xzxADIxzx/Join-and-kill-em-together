@@ -21,6 +21,9 @@ public static class Administration
     {
         Events.OnLobbyAction += () =>
         {
+            // y'now, imma just type smth stupid here
+            if (LobbyController.Offline) return;
+
             subjects.Each(s => s?.Privilege.Update(LobbyConfig.Privileged, s.Id));
 
             Banned.Clear();
