@@ -51,9 +51,7 @@ public class LocalPlayer : Entity
             var shine = nm.transform.Find("Point Light");
             if (shine) shine.GetComponent<Light>().color = LobbyController.Offline ? Color.white : Team.Color();
         };
-        Component<Agent>(Voice.gameObject, a => a.Patron = this);
     }
-    // TODO move update to items, send #/s on death
 
     #region snapshot
 
@@ -93,14 +91,7 @@ public class LocalPlayer : Entity
 
     public override void Assign(Agent agent) { }
 
-    public override void Update(float delta)
-    {
-        if (Holding == null || Holding.IsOwner) return;
-        Holding = null;
-
-        fc.currentPunch.ForceThrow();
-        fc.currentPunch.PlaceHeldObject([], null);
-    }
+    public override void Update(float delta) { }
 
     public override void Damage(Reader r)
     {

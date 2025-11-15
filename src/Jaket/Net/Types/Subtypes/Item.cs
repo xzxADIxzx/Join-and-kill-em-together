@@ -77,7 +77,14 @@ public abstract class Item : OwnableEntity
         OnTransfer = () =>
         {
             player = Owner;
-            if (rb && !IsOwner) rb.isKinematic = true;
+            if (IsOwner) return;
+
+            if (rb) rb.isKinematic = true;
+            if (Networking.LocalPlayer.Holding == this)
+            {
+                FistControl.Instance.currentPunch.ForceThrow();
+                FistControl.Instance.currentPunch.PlaceHeldObject([], null);
+            }
         };
 
         itemId.onPickUp ??= new();
