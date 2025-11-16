@@ -39,12 +39,12 @@ public class Hitscans : Vendor
         return obj;
     }
 
-    public GameObject Make(EntityType type, Vector3 position, Vector3 target, byte data)
+    public GameObject Make(EntityType type, Vector3 position, Vector3 target, bool wall, byte data)
     {
         var beam = Make(type, position)?.GetComponent<RevolverBeam>();
         if (beam == null) return null;
 
-        // TODO explosions
+        if (wall && type != EntityType.BeamReflected) Inst(beam.hitParticle, target, Quaternion.LookRotation(position - target));
 
         beam.fake = true;
         beam.GetComponents<LineRenderer>().Each(r =>
@@ -80,6 +80,7 @@ public class Hitscans : Vendor
             w.Enum(type);
             w.Vector(beam.transform.position + correction);
             w.Vector(beam.alternateStartPoint);
+            w.Bool(wall);
 
             if (type == EntityType.BeamReflected)
                 w.Byte((byte) beam.bodiesPierced);
@@ -89,6 +90,8 @@ public class Hitscans : Vendor
     }
 
     #region harmony
+
+    static bool wall;
 
     [HarmonyPatch(typeof(RevolverBeam), "Start")]
     [HarmonyPostfix]

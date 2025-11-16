@@ -50,6 +50,7 @@ public class CyberGrind
     /// <summary> Loads the given pattern and invokes the next wave. </summary>
     public static void LoadPattern(ArenaPattern pattern)
     {
+        // TODO replace with a patch
         // start a new wave with the synced pattern
         Call("NextWave", grid);
 

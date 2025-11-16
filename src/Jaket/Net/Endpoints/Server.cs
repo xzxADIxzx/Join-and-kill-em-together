@@ -45,7 +45,7 @@ public class Server : Endpoint, ISocketManager
         {
             var type = r.EntityType();
 
-            Entities.Hitscans.Make(type, r.Vector(), r.Vector(), r.Byte());
+            Entities.Hitscans.Make(type, r.Vector(), r.Vector(), r.Bool(), r.Byte());
             Redirect(r, s, con);
 
             // TODO Administration.Find(sender).Handle(type)
