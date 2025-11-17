@@ -68,6 +68,8 @@ public class Fragment
         Component<HudOpenEffect>(img, e => e.speed = 32f);
 
         if (Content.Find("Deco") == null) Builder.Image(Rect("Deco", new(width + 24f, height + 24f)), Tex.Large, semi, ImageType.Sliced, 2f).raycastTarget = false;
+
+        Builder.IconButton(Builder.Rect("Close", img.transform, new(-24f, -24f, 32f, 32f, Vector2.one)), Tex.Fill, red, Tex.Mark, 16, Toggle);
     }
 
     /// <summary> Adds a bar, it displays the current version of the project. </summary>
