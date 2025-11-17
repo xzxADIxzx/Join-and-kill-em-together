@@ -1,5 +1,6 @@
 global using static Jaket.Tools;
 global using Ptr = System.IntPtr;
+global using Ins = System.Collections.Generic.IEnumerable<HarmonyLib.CodeInstruction>;
 
 namespace Jaket;
 

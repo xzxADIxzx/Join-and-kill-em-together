@@ -99,6 +99,34 @@ public class Hitscans : Vendor
     {
         __instance.alternateStartPoint = ___lr.GetPosition(1);
         Entities.Hitscans.Sync(__instance.gameObject, __instance.noMuzzleflash);
+        wall = false;
+    }
+
+    [HarmonyPatch(typeof(RevolverBeam), "Shoot")]
+    [HarmonyPrefix]
+    static void Hide() => Networking.Entities.Player(p => p.Team.Ally(), p => p.Doll.Root.gameObject.SetActive(false));
+
+    [HarmonyPatch(typeof(RevolverBeam), "Shoot")]
+    [HarmonyPostfix]
+    static void Show() => Networking.Entities.Player(p => p.Team.Ally(), p => p.Doll.Root.gameObject.SetActive(true));
+
+    [HarmonyPatch(typeof(RevolverBeam), "HitSomething")]
+    [HarmonyPrefix]
+    static void Wall(RaycastHit hit) => wall = !hit.transform.CompareTag("Coin");
+
+    [HarmonyPatch(typeof(RevolverBeam), "PiercingShotCheck")]
+    [HarmonyTranspiler]
+    static Ins Wall(Ins instructions)
+    {
+        foreach (var ins in instructions)
+        {
+            if (ins.OperandIs(Field<RevolverBeam>("hitParticle")))
+            {
+                yield return new CodeInstruction(System.Reflection.Emit.OpCodes.Ldc_I4_1);
+                yield return CodeInstruction.StoreField(typeof(Hitscans), "wall");
+            }
+            yield return ins;
+        }
     }
 
     #endregion
