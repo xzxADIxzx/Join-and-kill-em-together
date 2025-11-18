@@ -1,12 +1,4 @@
 /*
-namespace Jaket.Net.Types;
-
-using UnityEngine;
-
-using Jaket.IO;
-
-/// <summary> Common to all enemies in the game class. Performs a small number of functions. </summary>
-public abstract class Enemy : OwnableEntity
 {
     Float x, y, z;
 
