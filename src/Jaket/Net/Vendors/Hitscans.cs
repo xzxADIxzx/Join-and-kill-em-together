@@ -111,9 +111,6 @@ public class Hitscans : Vendor
     static void Show() => Networking.Entities.Player(p => p.Team.Ally(), p => p.Doll.Root.gameObject.SetActive(true));
 
     [HarmonyPatch(typeof(RevolverBeam), "HitSomething")]
-    [HarmonyPrefix]
-    static void Wall(RaycastHit hit) => wall = !hit.transform.CompareTag("Coin");
-
     [HarmonyPatch(typeof(RevolverBeam), "PiercingShotCheck")]
     [HarmonyTranspiler]
     static Ins Wall(Ins instructions)
