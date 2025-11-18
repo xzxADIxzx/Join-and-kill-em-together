@@ -119,6 +119,8 @@ public class Hitscans : Vendor
         {
             if (ins.OperandIs(Field<RevolverBeam>("hitParticle")))
             {
+                if (Version.DEBUG) Log.Debug($"[HARM] Patched hitscans via transpilers");
+
                 yield return new CodeInstruction(System.Reflection.Emit.OpCodes.Ldc_I4_1);
                 yield return CodeInstruction.StoreField(typeof(Hitscans), nameof(wall));
             }
@@ -134,6 +136,8 @@ public class Hitscans : Vendor
         {
             if (ins.OperandIs(Method<EnemyIdentifier>("DeliverDamage")))
             {
+                if (Version.DEBUG) Log.Debug($"[HARM] Patched hitscans via transpilers");
+
                 yield return new CodeInstruction(System.Reflection.Emit.OpCodes.Ldloc_S, 0x08);
                 yield return new CodeInstruction(System.Reflection.Emit.OpCodes.Ldloc_S, 0x0B);
                 yield return CodeInstruction.Call(typeof(Hitscans), nameof(Dmg), [typeof(EnemyIdentifier), typeof(float)]);
