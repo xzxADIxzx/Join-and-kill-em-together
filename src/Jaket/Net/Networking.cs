@@ -137,11 +137,11 @@ public static class Networking
             if (msg == "#/d")
             {
                 Bundle.Msg("player.died", name);
+
+                StyleHUD.Instance.AddPoints(Mathf.RoundToInt(420f * StyleCalculator.Instance.airTime), Bundle.Parse("[green]FRATRICIDE"));
+
                 if (LobbyConfig.HealBosses) Entities.Alive(e => { if (e is Enemy b && b.IsBoss) b.HealBoss(); });
             }
-
-            else if (msg.StartsWith("#/s") && byte.TryParse(msg[3..], out byte tid) && LocalPlayer.Team == (Team)tid)
-                StyleHUD.Instance.AddPoints(Mathf.RoundToInt(250f * StyleCalculator.Instance.airTime), Bundle.Parse("[green]FRATRICIDE"));
 
             else if (msg.StartsWith("#/b") && uint.TryParse(msg[3..], out uint bid) && lobby.Owner.Id == member.Id)
                 Bundle.Msg("player.banned", Name(bid));
