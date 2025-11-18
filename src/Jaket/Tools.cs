@@ -109,8 +109,10 @@ public static class Tools
     #endregion
     #region reflection
 
-    /// <summary> Returns the information about a field with the given name. </summary>
+    /// <summary> Returns metadata of a field. </summary>
     public static FieldInfo Field<T>(string name) => AccessTools.Field(typeof(T), name);
+    /// <summary> Returns metadata of a method. </summary>
+    public static MethodInfo Method<T>(string name) => AccessTools.Method(typeof(T), name);
 
     /// <summary> Gets the value of a field with the given name. </summary>
     public static object Get<T>(string name, T t) => Field<T>(name).GetValue(t);

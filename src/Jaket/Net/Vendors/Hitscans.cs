@@ -120,10 +120,31 @@ public class Hitscans : Vendor
             if (ins.OperandIs(Field<RevolverBeam>("hitParticle")))
             {
                 yield return new CodeInstruction(System.Reflection.Emit.OpCodes.Ldc_I4_1);
-                yield return CodeInstruction.StoreField(typeof(Hitscans), "wall");
+                yield return CodeInstruction.StoreField(typeof(Hitscans), nameof(wall));
             }
             yield return ins;
         }
+    }
+
+    [HarmonyPatch(typeof(RevolverBeam), "ExecuteHits")]
+    [HarmonyTranspiler]
+    static Ins Call(Ins instructions)
+    {
+        foreach (var ins in instructions)
+        {
+            if (ins.OperandIs(Method<EnemyIdentifier>("DeliverDamage")))
+            {
+                yield return new CodeInstruction(System.Reflection.Emit.OpCodes.Ldloc_S, 0x08);
+                yield return new CodeInstruction(System.Reflection.Emit.OpCodes.Ldloc_S, 0x0B);
+                yield return CodeInstruction.Call(typeof(Hitscans), nameof(Dmg), [typeof(EnemyIdentifier), typeof(float)]);
+            }
+            yield return ins;
+        }
+    }
+
+    static void Dmg(EnemyIdentifier id, float damage)
+    {
+        if (!id.dead && id.TryGetComponent(out Entity.Agent a)) Entities.Damage.Deal(a.Patron.Id, damage);
     }
 
     #endregion
