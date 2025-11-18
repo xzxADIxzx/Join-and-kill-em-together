@@ -32,6 +32,8 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Hold time of the emote wheel key. </summary>
     private float holdTime;
 
+    #region general
+
     private void Start()
     {
         Events.OnLoad += () => UpdateState(true);
@@ -136,6 +138,7 @@ public class Movement : MonoSingleton<Movement>
         if (UI.Settings.Rebinding != null) UI.Settings.RebindUpdate();
     }
 
+    #endregion
     #region control
 
     /// <summary> Updates the state machine: toggles movement, cursor, hud and weapons. </summary>
@@ -230,25 +233,13 @@ public class Movement : MonoSingleton<Movement>
         if (LobbyController.Online && ___hurtInvincibility > .08f) ___hurtInvincibility = .08f;
     }
 
-    [HarmonyPatch(typeof(CheatsManager), nameof(CheatsManager.HandleCheatBind))]
-    [HarmonyPrefix]
-    static bool CheatBind() => !(UI.AnyDialog || Emotes.Current != 0xFF || nm.dead);
-
+    [HarmonyPatch(typeof(CheatsManager),    nameof(CheatsManager.HandleCheatBind))]
     [HarmonyPatch(typeof(CheatsController), nameof(CheatsController.Update))]
-    [HarmonyPrefix]
-    static bool CheatMenu() => CheatBind();
-
     [HarmonyPatch(typeof(ULTRAKILL.Cheats.Noclip), "UpdateTick")]
-    [HarmonyPrefix]
-    static bool CheatNoclip() => CheatBind();
-
     [HarmonyPatch(typeof(ULTRAKILL.Cheats.Flight), "Update")]
-    [HarmonyPrefix]
-    static bool CheatFlight() => CheatBind();
-
     [HarmonyPatch(typeof(Grenade), "Update")]
     [HarmonyPrefix]
-    static bool GrenadeRide() => CheatBind();
+    static bool GrenadeRide() => !(UI.AnyDialog || Emotes.Current != 0xFF || nm.dead);
 
     [HarmonyPatch(typeof(WeaponWheel), "OnEnable")]
     [HarmonyPrefix]
