@@ -85,7 +85,7 @@ public static class Commands
             "Voice Actors",       "Gianni, Weyte, Lenval, Joy, Mandy",
             "Quality Assurance",  "Cameron, Dalia, Tucker, Scott",
             "Other",              "Jacob, Vvizard",
-            "Machines",           "V1, V2, V3, xzxADIxzx, Sowler"
+            "Machines",           "V1, V2, V3, xzxADIxzx, Sowler",
         ]));
 
         Handler.Register("plushie", "<name>", "Spawn a plushie by name", args =>
@@ -145,5 +145,14 @@ public static class Commands
             else
                 chat.Receive("[red]Couldn't parse the given values.");
         });
+
+        Handler.Register("authors", "Display the list of all developers", args => Print
+        ([
+            "Permanent Author",   "xzxADIxzx",
+            "Endless Gratitude",  "Sowler",
+            "Contributors",       "Fumboy, Rey Hunter, Ardub, Kekson1a",
+            "Translators",        "Sowler", // TODO add others after they finish their bundles
+            "Testers",            "Sowler, Fenicemaster, Andru, Subjune, FruitCircuit, J'son, Dodo, Poot Man",
+        ]));
     }
 }
