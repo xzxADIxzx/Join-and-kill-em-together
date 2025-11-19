@@ -122,6 +122,9 @@ public enum EntityType : byte
     #region projectiles
 
     Core,
+    NailCommon,
+    NailFodder,
+    NailHeated,
     SawbladeCommon,
     SawbladeFodder,
     SawbladeHeated,

@@ -142,6 +142,9 @@ public static class GameAssets
     public static readonly string[] Projectiles =
     {
         "Attacks and Projectiles/Grenade.prefab",
+        "Attacks and Projectiles/Nails/Nail.prefab",
+        "Attacks and Projectiles/Nails/NailFodder.prefab",
+        "Attacks and Projectiles/Nails/NailHeated.prefab",
         "Attacks and Projectiles/NailAlt.prefab",
         "Attacks and Projectiles/NailAltFodder.prefab",
         "Attacks and Projectiles/NailAltHeated.prefab",
