@@ -78,7 +78,7 @@ public class Spectator : Fragment
             ? rp.Position
             : nm.transform.position + Vector3.up;
 
-        position = Vector3.MoveTowards(position, Vector3.up * (ends ? .1f : 6f), 12f * Time.deltaTime);
+        position = Vector3.MoveTowards(position, Vector3.up * (ends ? .1f : 6f), Time.deltaTime * 12f);
 
         camera.position = player + position;
         camera.RotateAround(player, Vector3.left, rotation.y);

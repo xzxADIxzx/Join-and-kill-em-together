@@ -177,7 +177,7 @@ public static class Networking
     /// <summary> Optimizes the pools by removing hidden entities, making the hashmap lighter. </summary>
     public static void Optimize()
     {
-        if (LobbyController.Online) Entities.Each(e => Time.time - e.LastHidden >= 12f, e => Entities.Remove(e.Id));
+        if (LobbyController.Online) Entities.Each(e => Time.time - e.LastHidden >= 4f, e => Entities.Remove(e.Id));
     }
 
     /// <summary> Clears the pools, but pushes the local player back, as it must always be in. </summary>
