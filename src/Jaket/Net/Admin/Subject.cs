@@ -13,7 +13,7 @@ public class Subject
     /// <summary> These prevent flood of actions. </summary>
     private Ratekeeper
 
-    warns = new(3f, .1f),
+    warns = new(3f, .02f),
     packets = new(Networking.TICKS_PER_SECOND * 64f, Networking.TICKS_PER_SECOND * 48f),
     commons = new(16f, 8f);
 
