@@ -205,6 +205,10 @@ public class Movement : MonoSingleton<Movement>
     #endregion
     #region harmony
 
+    [HarmonyPatch(typeof(OptionsManager), nameof(OptionsManager.UnPause))]
+    [HarmonyPostfix]
+    static void Pause() => UpdateState();
+
     [HarmonyPatch(typeof(OptionsManager), "LateUpdate")]
     [HarmonyPostfix]
     static void Scale()
