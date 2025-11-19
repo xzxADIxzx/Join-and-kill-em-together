@@ -26,6 +26,7 @@ public static class UI
     public static Chat Chat;
     public static LobbyTab LobbyTab;
     public static LobbyList LobbyList;
+    public static Privileges Privileges;
     public static PlayerList PlayerList;
     public static Settings Settings;
     public static SpraySettings Sprays;
@@ -76,6 +77,7 @@ public static class UI
         Chat = new(root);
         LobbyTab = new(root);
         LobbyList = new(root);
+        Privileges = new(root);
         PlayerList = new(root);
         Settings = new(root);
         Sprays = new(root);
@@ -89,10 +91,10 @@ public static class UI
         Spectator = new(root);
         Teleporter = new(root);
 
-        Dialogs = new Fragment[] { Chat, LobbyTab, LobbyList, PlayerList, Settings, Sprays };
+        Dialogs = new Fragment[] { Chat, LobbyTab, LobbyList, Privileges, PlayerList, Settings, Sprays };
         Fragments = new Fragment[] { Debug, Emote, Access, PlayerInds, PlayerInfo, Skateboard, Spectator, Teleporter };
         LeftGroup = new Fragment[] { Chat, LobbyTab, PlayerList, Settings, Debug };
-        MidlGroup = new Fragment[] { LobbyList, Sprays };
+        MidlGroup = new Fragment[] { LobbyList, Privileges, Sprays };
 
         Log.Info($"[FACE] Builded {Dialogs.Length} dialogs and {Fragments.Length} fragments");
     }

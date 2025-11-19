@@ -82,7 +82,7 @@ public class LobbyTab : Fragment
 
             b.Separator();
             b.FillButton("#lobby-tab.gamemode", red, () => { });
-            b.FillButton("#lobby-tab.cheats",   red, () => { });
+            b.FillButton("#lobby-tab.cheats",   red, () => UI.Privileges.Toggle());
         });
         VersionBar();
     }
