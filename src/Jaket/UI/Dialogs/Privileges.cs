@@ -51,12 +51,12 @@ public class Privileges : Fragment
 
             var color = upper ? green : red;
 
-            level.Text(upper ? "#privileges.upper" : "#privileged.lower", 24f, 24, color, TextAnchor.MiddleLeft);
+            level.Text(upper ? "#privileges.upper" : "#privileges.lower", 24f, 24, color, TextAnchor.MiddleLeft);
 
             LobbyController.Lobby?.Members.Each(m => LobbyConfig.Privileged.Any(p => p == m.Id.AccountId.ToString()) == upper, m => level.TextButton(m.Name, color, () =>
             {
                 if (upper)
-                    LobbyConfig.Set("privileged", LobbyConfig.Get("privileged").Replace(m.Id.AccountId.ToString(), ""));
+                    LobbyConfig.Set("privileged", LobbyConfig.Get("privileged").Replace(m.Id.AccountId.ToString(), string.Empty).Replace("  ", string.Empty).Trim());
                 else
                     LobbyConfig.Set("privileged", LobbyConfig.Get("privileged") + $" {m.Id.AccountId}");
             }));

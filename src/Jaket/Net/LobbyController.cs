@@ -32,9 +32,7 @@ public static class LobbyController
         // and leave it if local player is banned
         Events.OnLobbyAction += () =>
         {
-            if (Offline || IsOwner) return;
-
-            if (LobbyConfig.Banned.Any(b => b == AccId.ToString()))
+            if (Online && !IsOwner && LobbyConfig.Banned.Any(b => b == AccId.ToString()))
             {
                 // notify the player to avoid confusion
                 Bundle.Hud2NS("lobby.banned");
@@ -43,7 +41,7 @@ public static class LobbyController
                 Log.Info("[LOBY] Left the lobby as you are banned there");
             }
 
-            if (Version.HasIncompatibility && !LobbyConfig.ModsAllowed)
+            if (Online && !IsOwner && Version.HasIncompatibility && !LobbyConfig.ModsAllowed)
             {
                 // notify the player to avoid confusion
                 Bundle.Hud2NS("lobby.modded");
