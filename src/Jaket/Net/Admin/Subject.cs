@@ -13,15 +13,17 @@ public class Subject
     /// <summary> These prevent flood of actions. </summary>
     private Ratekeeper
 
-    warns = new(3f, .02f),
-    packets = new(Networking.TICKS_PER_SECOND * 64f, Networking.TICKS_PER_SECOND * 48f),
-    commons = new(16f, 8f);
+    warns   = new(3f, .02f),
+    packets = new(Networking.TICKS_PER_SECOND * 120f, Networking.TICKS_PER_SECOND * 80f),
+    hitscns = new(64f, 16f),
+    commons = new(12f, 8f);
 
     /// <summary> These prevent flood of entities. </summary>
     private Pool
 
     defpool = new(24),
     project = new(24),
+    flashes = new(32),
     harpoon = new(4);
 
     public Subject(uint id) => Id = id;
@@ -51,6 +53,12 @@ public class Subject
     /// <summary> Handles reception of a packet. </summary>
     public void Handle() => Warn("flood of packets", ref packets);
 
+    /// <summary> Handles creation of a hitscan. </summary>
+    public void Handle(EntityType type)
+    {
+        if (!Privilege.Has) Warn("flood of hitscns", ref hitscns);
+    }
+
     /// <summary> Handles creation of an entity. </summary>
     public void Handle(Entity entity)
     {
@@ -75,7 +83,12 @@ public class Subject
         }
         else if (type.IsProjectile())
         {
-            // TODO a lotta various ratekeepers and pools (???)
+            if (type == EntityType.Screwdriver)
+                harpoon.Add(entity);
+            else if (type >= EntityType.NailCommon && type <= EntityType.NailHeated)
+                flashes.Add(entity);
+            else
+                project.Add(entity);
         }
     }
 }
