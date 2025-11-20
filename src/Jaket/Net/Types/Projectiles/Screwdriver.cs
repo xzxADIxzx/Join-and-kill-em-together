@@ -134,7 +134,7 @@ public class Screwdriver : OwnableEntity
     [HarmonyPrefix]
     static void Death(Harpoon __instance)
     {
-        if (__instance.TryGetComponent(out Agent a) && a.Patron is Screwdriver s) s.Kill();
+        if (__instance.TryGetComponent(out Agent a) && a.Patron is Screwdriver s && !s.Hidden) s.Kill();
     }
 
     [HarmonyPatch(typeof(Harpoon), nameof(Harpoon.Punched))]
