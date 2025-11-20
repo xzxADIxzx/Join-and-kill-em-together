@@ -58,13 +58,13 @@ public class World
     #region data
 
     /// <summary> Number of bytes that the world data takes in a snapshot. </summary>
-    public static int BufferSize => 4 + (Pending ?? Scene).Length + Version.CURRENT.Length + performed.Count(b => b) * 2 + pos.Count(p => p != default) * 8;
+    public static int BufferSize => 4 + (Pending ?? Scene).Length + Version.Readable.Length + performed.Count(b => b) * 2 + pos.Count(p => p != default) * 8;
 
     /// <summary> Writes the world data into a snapshot. </summary>
     public static void WriteData(Writer w)
     {
         w.String(Pending ?? Scene);
-        w.String(Version.CURRENT);
+        w.String(Version.Readable);
 
         w.Byte((byte)PrefsManager.Instance.GetInt("difficulty"));
         w.Byte((byte)performed.Count(b => b));
@@ -86,7 +86,7 @@ public class World
         LoadScn(r.String());
         Reset();
 
-        if (r.String() != Version.CURRENT)
+        if (r.String() != Version.Readable)
         {
             LobbyController.LeaveLobby();
             Log.Info("[LOBY] Left the lobby as the owner is outdated");

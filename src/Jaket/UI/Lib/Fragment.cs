@@ -79,7 +79,7 @@ public class Fragment
         var txt = Builder.Rect("Text", bar, Lib.Rect.Fill);
 
         Builder.Image(bar, Tex.Fill, semi, ImageType.Sliced, 3f);
-        Builder.Text(txt, $"Jaket version is {Version.CURRENT}{(Version.DEBUG ? "-beta" : "")}", 24, gray, TextAnchor.MiddleCenter);
+        Builder.Text(txt, $"Jaket version is {Version.Readable}", 24, gray, TextAnchor.MiddleCenter);
     }
 
     #endregion

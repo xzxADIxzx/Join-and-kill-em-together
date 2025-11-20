@@ -18,9 +18,11 @@ public static class Version
     public const string REPO = "xzxADIxzx/Join-and-kill-em-together";
     /// <summary> Json fragments preceding the name and tag of the latest version. </summary>
     public const string TAG = "\"tag_name\": \"V", NAME = "\"name\": \"";
+    /// <summary> Various access points. </summary>
+    public const string GITHUB_API = "https://api.github.com", GITHUB_RAW = "https://raw.githubusercontent.com";
 
-    public const string GITHUB_API = "https://api.github.com";
-    public const string GITHUB_RAW = "https://raw.githubusercontent.com";
+    /// <summary> Readable version includes beta tag. </summary>
+    public static string Readable => DEBUG ? $"{CURRENT}-beta" : CURRENT;
 
     /// <summary> List of mods compatible with Jaket. </summary>
     public static string[] Compatible = { "Jaket" };
