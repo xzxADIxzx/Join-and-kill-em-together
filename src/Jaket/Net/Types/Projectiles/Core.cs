@@ -96,6 +96,13 @@ public class Core : Entity
         else return true;
     }
 
+    [HarmonyPatch(typeof(Grenade), nameof(Grenade.GrenadeBeam))]
+    [HarmonyPrefix]
+    static void Death(Grenade __instance)
+    {
+        if (__instance.TryGetComponent(out Agent a) && a.Patron is Core c) c.Kill();
+    }
+
     [HarmonyPatch(typeof(Grenade), nameof(Grenade.Collision))]
     [HarmonyPrefix]
     static bool Damage(Grenade __instance, Collider other) => Entities.Damage.Deal<Core>(__instance, (eid, tid, ally, _) =>
