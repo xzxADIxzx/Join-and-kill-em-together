@@ -21,6 +21,7 @@ public class Projectiles : Vendor
         });
 
         for (EntityType i = EntityType.Core;           i <= EntityType.Core;           i++) Vendor.Suppliers[(byte)i] = (id, type) => new Core       (id, type);
+        for (EntityType i = EntityType.NailCommon;     i <= EntityType.NailHeated;     i++) Vendor.Suppliers[(byte)i] = (id, type) => new Pin        (id, type);
         for (EntityType i = EntityType.SawbladeCommon; i <= EntityType.SawbladeHeated; i++) Vendor.Suppliers[(byte)i] = (id, type) => new Sawblade   (id, type);
         for (EntityType i = EntityType.Screwdriver;    i <= EntityType.Screwdriver;    i++) Vendor.Suppliers[(byte)i] = (id, type) => new Screwdriver(id, type);
         for (EntityType i = EntityType.Rocket;         i <= EntityType.Rocket;         i++) Vendor.Suppliers[(byte)i] = (id, type) => new Rocket     (id, type);
