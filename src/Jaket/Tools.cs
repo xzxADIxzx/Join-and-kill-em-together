@@ -245,34 +245,28 @@ public static class Tools
     #region entities
 
     /// <summary> Whether the type is an enemy. </summary>
-    public static bool IsEnemy(this EntityType type) => type >= EntityType.Filth && type <= EntityType.Brain;
-
-    /// <summary> Whether the type is an enemy and can be spawn only once. </summary>
-    public static bool IsHuge(this EntityType type) => type >= EntityType.FleshPrison && type <= EntityType.SisyphusPrime;
-
-    /// <summary> Whether the type is an enemy and can be shot by a coin. </summary>
-    public static bool IsTargetable(this EntityType type) => IsEnemy(type) && type != EntityType.Idol && type != EntityType.CancerousRodent;
+    public static bool IsEnemy     (this EntityType type) => type >= EntityType.Filth        && type <= EntityType.Brain;
 
     /// <summary> Whether the type is an item. </summary>
-    public static bool IsItem(this EntityType type) => type >= EntityType.SkullBlue && type <= EntityType.Sowler;
+    public static bool IsItem      (this EntityType type) => type >= EntityType.SkullBlue    && type <= EntityType.Sowler;
 
     /// <summary> Whether the type is a fish. </summary>
-    public static bool IsFish(this EntityType type) => type >= EntityType.FishFunny && type <= EntityType.FishBurnt;
+    public static bool IsFish      (this EntityType type) => type >= EntityType.FishFunny    && type <= EntityType.FishBurnt;
 
     /// <summary> Whether the type is a plushie. </summary>
-    public static bool IsPlushie(this EntityType type) => type >= EntityType.Hakita && type <= EntityType.Sowler;
+    public static bool IsPlushie   (this EntityType type) => type >= EntityType.Hakita       && type <= EntityType.Sowler;
 
     /// <summary> Whether the type is a weapon. </summary>
-    public static bool IsWeapon(this EntityType type) => type >= EntityType.RevolverBlue && type <= EntityType.RocketlRed;
+    public static bool IsWeapon    (this EntityType type) => type >= EntityType.RevolverBlue && type <= EntityType.RocketlRed;
 
     /// <summary> Whether the type is a hitscan. </summary>
-    public static bool IsHitscan(this EntityType type) => type >= EntityType.Beam && type <= EntityType.BeamHammer;
+    public static bool IsHitscan   (this EntityType type) => type >= EntityType.Beam         && type <= EntityType.BeamHammer;
 
     /// <summary> Whether the type is a projectile. </summary>
-    public static bool IsProjectile(this EntityType type) => type >= EntityType.Core && type <= EntityType.Cannonball;
+    public static bool IsProjectile(this EntityType type) => type >= EntityType.Core         && type <= EntityType.Cannonball;
 
     /// <summary> Whether the type is an explosion. </summary>
-    public static bool IsExplosion(this EntityType type) => type >= EntityType.Shockwave && type <= EntityType.HammerParticleHeavy;
+    public static bool IsExplosion (this EntityType type) => type >= EntityType.Shockwave    && type <= EntityType.HammerParticleHeavy;
 
     #endregion
 }
