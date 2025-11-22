@@ -71,38 +71,31 @@ public class Pools
         }
     }
 
-    /// <summary> Iterates each entity in the hash map. </summary>
+    /// <summary> Iterates each nonnull entity in the hash map. </summary>
     public void Each(Cons<Entity> cons)                      => Each(0, 1, cons);
-
-    /// <summary> Iterates each entity in the hash map that is suitable for the given predicate. </summary>
+    /// <summary> Iterates each nonnull entity in the hash map. </summary>
     public void Each(Pred<Entity> pred, Cons<Entity> cons)   => Each(0, 1, e => { if (pred(e)) cons(e); });
 
     /// <summary> Iterates each visible entity in the hash map. </summary>
-    public void Alive(Cons<Entity> cons)                     => Each(0, 1, e => { if (!e.Hidden) cons(e); });
-
-    /// <summary> Iterates each visible entity in the hash map that is suitable for the given predicate. </summary>
-    public void Alive(Pred<Entity> pred, Cons<Entity> cons)  => Each(0, 1, e => { if (!e.Hidden && pred(e)) cons(e); });
+    public void Alive<T>(Cons<T> cons)                       => Each(0, 1, e => { if (!e.Hidden && e is T t) cons(t); });
+    /// <summary> Iterates each visible entity in the hash map. </summary>
+    public void Alive<T>(Pred<T> pred, Cons<T> cons)         => Each(0, 1, e => { if (!e.Hidden && e is T t && pred(t)) cons(t); });
 
     /// <summary> Iterates each visible player in the hash map. </summary>
     public void Player(Cons<Player> cons)                    => Each(0, 1, e => { if (!e.Hidden && e is Player p) cons(p); });
-
-    /// <summary> Iterates each visible player in the hash map that is suitable for the given predicate. </summary>
+    /// <summary> Iterates each visible player in the hash map. </summary>
     public void Player(Pred<Player> pred, Cons<Player> cons) => Each(0, 1, e => { if (!e.Hidden && e is Player p && pred(p)) cons(p); });
 
     /// <summary> Iterates each visible entity in the given server pool. </summary>
-    public void ServerPool(int pool, Cons<Entity> cons)   => Each(pool, 4, e => { if (!e.Hidden) cons(e); });
-
+    public void ServerPool(int i, Cons<Entity> cons)         => Each(i, 4, e => { if (!e.Hidden) cons(e); });
     /// <summary> Iterates each visible entity in the given client pool. </summary>
-    public void ClientPool(int pool, Cons<Entity> cons)   => Each(pool, 4, e => { if (!e.Hidden && e.IsOwner) cons(e); });
+    public void ClientPool(int i, Cons<Entity> cons)         => Each(i, 4, e => { if (!e.Hidden && e.IsOwner) cons(e); });
 
     /// <summary> Counts the number of entities that are suitable for the given predicate. </summary>
     public int Count(Pred<Entity> pred)
     {
         int amount = 0;
-        Each(e =>
-        {
-            if (pred(e)) amount++;
-        });
+        Each(pred, _ => amount++);
         return amount;
     }
 
