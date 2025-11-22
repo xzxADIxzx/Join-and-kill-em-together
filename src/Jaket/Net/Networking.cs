@@ -120,10 +120,7 @@ public static class Networking
             if (LobbyController.IsOwner)
             {
                 Connections.Each(c => c.UserData == member.Id.AccountId, c => c.Close());
-                Entities.Alive(e =>
-                {
-                    if (e is OwnableEntity o && o.Owner == member.Id.AccountId) o.TakeOwnage();
-                });
+                Entities.Alive<OwnableEntity>(e => e.Owner == member.Id.AccountId, e => e.TakeOwnage());
             }
         };
 
@@ -140,7 +137,7 @@ public static class Networking
 
                 StyleHUD.Instance.AddPoints(Mathf.RoundToInt(420f * StyleCalculator.Instance.airTime), Bundle.Parse("[green]FRATRICIDE"));
 
-                if (LobbyConfig.HealBosses) Entities.Alive(e => { if (e is Enemy b && b.IsBoss) b.Heal(); });
+                if (LobbyConfig.HealBosses) Entities.Alive<Enemy>(e => e.IsBoss, e => e.Heal());
             }
 
             else if (msg.StartsWith("#/b") && uint.TryParse(msg[3..], out uint bid) && lobby.Owner.Id == member.Id)

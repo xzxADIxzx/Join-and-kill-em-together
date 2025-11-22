@@ -146,15 +146,12 @@ public class Screwdriver : OwnableEntity
 
     [HarmonyPatch(typeof(Punch), "ActiveEnd")]
     [HarmonyPrefix]
-    static void Punch() => Networking.Entities.Alive(e =>
+    static void Punch() => Networking.Entities.Alive<Screwdriver>(s => s.target == AccId, s =>
     {
-        if (e is Screwdriver s && s.target == AccId)
-        {
-            s.harp.transform.forward  = CameraController.Instance.transform.forward;
-            s.harp.transform.position = CameraController.Instance.GetDefaultPos();
-            s.harp.Punched();
-            TimeController.Instance.ParryFlash();
-        }
+        s.harp.transform.forward  = CameraController.Instance.transform.forward;
+        s.harp.transform.position = CameraController.Instance.GetDefaultPos();
+        s.harp.Punched();
+        TimeController.Instance.ParryFlash();
     });
 
     [HarmonyPatch(typeof(Harpoon), "OnTriggerEnter")]

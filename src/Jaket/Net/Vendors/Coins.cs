@@ -70,10 +70,7 @@ public class Coins : Vendor
         isPlayer = isEnemy = false;
         if (!enemiesOnly)
         {
-            Networking.Entities.Alive(e =>
-            {
-                if (e is TeamCoin c && c.Owner == coin.Owner) Check(c.Transform);
-            });
+            Networking.Entities.Alive<TeamCoin>(c => c.Owner == coin.Owner, c => Check(c.Transform));
             if (target) return target;
 
             ObjectTracker.Instance.cannonballList.Each(Within,                                        b => Check(b.transform));
@@ -82,10 +79,7 @@ public class Coins : Vendor
         }
         if (LobbyConfig.PvPAllowed)
         {
-            Networking.Entities.Player(p =>
-            {
-                if (p.Health > 0 && !p.Team.Ally()) Check(p.Doll.Head);
-            });
+            Networking.Entities.Player(p => p.Health > 0 && !p.Team.Ally(), p => Check(p.Doll.Head));
             if (target)
             {
                 isPlayer = true;
@@ -93,10 +87,7 @@ public class Coins : Vendor
             }
         }
         {
-            Networking.Entities.Alive(e =>
-            {
-                if (e.Type.IsEnemy() && e.Type != EntityType.Idol && e is Enemy t) Check(t.WeakPoint);
-            });
+            Networking.Entities.Alive<Enemy>(e => e.Type != EntityType.Idol, e => Check(e.WeakPoint));
             if (target)
             {
                 isEnemy = true;
@@ -105,16 +96,9 @@ public class Coins : Vendor
         }
         if (!enemiesOnly)
         {
-            GameObject.FindGameObjectsWithTag("Glass").Each(o =>
-            {
-                if (o.TryGetComponent<Glass>(out var g) && !g.broken) Check(g.transform);
-            });
-            GameObject.FindGameObjectsWithTag("GlassFloor").Each(o =>
-            {
-                if (o.TryGetComponent<Glass>(out var g) && !g.broken) Check(g.transform);
-            });
+            GameObject.FindGameObjectsWithTag("Glass")     .Each(o => o.TryGetComponent(out Glass g) && !g.broken, o => Check(o.transform));
+            GameObject.FindGameObjectsWithTag("GlassFloor").Each(o => o.TryGetComponent(out Glass g) && !g.broken, o => Check(o.transform));
         }
-
         return target;
     }
 

@@ -110,12 +110,9 @@ public class Pin : OwnableEntity
     [HarmonyPrefix]
     static void Blast(bool ___holdingInput)
     {
-        if (___holdingInput) Networking.Entities.Alive(e =>
+        if (___holdingInput) Networking.Entities.Alive<Pin>(p => p.rb, p =>
         {
-            if (e is not Pin p || p.rb == null) return;
-
             var dir = p.agent.Position - NewMovement.Instance.transform.position;
-
             if (dir.sqrMagnitude < 100f)
             {
                 p.TakeOwnage();
