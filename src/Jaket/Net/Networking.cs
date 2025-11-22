@@ -107,26 +107,26 @@ public static class Networking
 
         Events.OnMemberJoin += member =>
         {
-            if (!Administration.Banned.Contains(member.Id.AccountId)) Bundle.Msg("player.joined", member.Name);
+            if (!Administration.Banned.Contains(member.AccId)) Bundle.Msg("player.joined", member.Name);
         };
 
         Events.OnMemberLeave += member =>
         {
-            if (!Administration.Banned.Contains(member.Id.AccountId)) Bundle.Msg("player.left", member.Name);
+            if (!Administration.Banned.Contains(member.AccId)) Bundle.Msg("player.left", member.Name);
         };
 
         Events.OnMemberLeave += member =>
         {
             if (LobbyController.IsOwner)
             {
-                Connections.Each(c => c.UserData == member.Id.AccountId, c => c.Close());
-                Entities.Alive<OwnableEntity>(e => e.Owner == member.Id.AccountId, e => e.TakeOwnage());
+                Connections.Each(c => c.UserData == member.AccId, c => c.Close());
+                Entities.Alive<OwnableEntity>(e => e.Owner == member.AccId, e => e.TakeOwnage());
             }
         };
 
         SteamMatchmaking.OnChatMessage += (lobby, member, msg) =>
         {
-            if (Administration.Banned.Contains(member.Id.AccountId)) return;
+            if (Administration.Banned.Contains(member.AccId)) return;
             if (msg.Length > Chat.MAX_LENGTH + 4) msg = msg[..Chat.MAX_LENGTH];
 
             string name = member.Name.Replace("[", "\\[");
@@ -151,7 +151,7 @@ public static class Networking
                 if (member.IsMe)
                     SamAPI.TryPlay(msg = msg[3..], LocalPlayer.Voice);
 
-                else if (Entities.TryGetValue(member.Id.AccountId, out var e) && e is RemotePlayer p)
+                else if (Entities.TryGetValue(member.AccId, out var e) && e is RemotePlayer p)
                     SamAPI.TryPlay(msg = msg[3..], p.Voice);
 
                 UI.Chat.Receive(msg, GetColor(member), name, Chat.TTS_TAG);
@@ -219,12 +219,12 @@ public static class Networking
     public static void Redirect(Ptr data, int size) => Connections.Each(c => Send(c, data, size));
 
     /// <summary> Returns the team of the given member. </summary>
-    public static Team GetTeam(Friend friend) => friend.IsMe
+    public static Team GetTeam(Friend member) => member.IsMe
         ? LocalPlayer.Team
-        : Entities.TryGetValue(friend.Id.AccountId, out var entity) && entity != null && entity is RemotePlayer player ? player.Team : Team.Yellow;
+        : Entities.TryGetValue(member.AccId, out var entity) && entity != null && entity is RemotePlayer player ? player.Team : Team.Yellow;
 
     /// <summary> Returns the color of the given member's team. </summary>
-    public static string GetColor(Friend friend) => ColorUtility.ToHtmlStringRGBA(GetTeam(friend).Color());
+    public static string GetColor(Friend member) => ColorUtility.ToHtmlStringRGBA(GetTeam(member).Color());
 
     #endregion
 }

@@ -55,7 +55,7 @@ public class PlayerList : Fragment
             LobbyController.Lobby?.Members.Each(m => b.Subbar(40f, s =>
             {
                 s.Setup(false, 0f);
-                if (LobbyController.LastOwner == m.Id.AccountId)
+                if (LobbyController.LastOwner == m.AccId)
                 {
                     s.ProfileButton(m, false);
                     s.FillButton(ModAssets.LobbyOwner, yellow, () => Bundle.Hud("player-list.owner"));
@@ -63,7 +63,7 @@ public class PlayerList : Fragment
                 else if (LobbyController.IsOwner)
                 {
                     s.ProfileButton(m, false);
-                    s.FillButton(ModAssets.LobbyBan, red, () => Administration.Ban(m.Id.AccountId));
+                    s.FillButton(ModAssets.LobbyBan, red, () => Administration.Ban(m.AccId));
                 }
                 else s.ProfileButton(m, true);
             }));

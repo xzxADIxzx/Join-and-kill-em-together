@@ -47,18 +47,18 @@ public class Privileges : Fragment
         {
             var upper = level == this.upper;
 
-            if (LobbyController.Lobby?.Members.All(m => LobbyConfig.Privileged.Any(p => p == m.Id.AccountId.ToString()) != upper) ?? true) continue;
+            if (LobbyController.Lobby?.Members.All(m => LobbyConfig.Privileged.Any(p => p == m.AccId.ToString()) != upper) ?? true) continue;
 
             var color = upper ? green : red;
 
             level.Text(upper ? "#privileges.upper" : "#privileges.lower", 24f, 24, color, TextAnchor.MiddleLeft);
 
-            LobbyController.Lobby?.Members.Each(m => LobbyConfig.Privileged.Any(p => p == m.Id.AccountId.ToString()) == upper, m => level.TextButton(m.Name, color, () =>
+            LobbyController.Lobby?.Members.Each(m => LobbyConfig.Privileged.Any(p => p == m.AccId.ToString()) == upper, m => level.TextButton(m.Name, color, () =>
             {
                 if (upper)
-                    LobbyConfig.Set("privileged", LobbyConfig.Get("privileged").Replace(m.Id.AccountId.ToString(), string.Empty).Replace("  ", string.Empty).Trim());
+                    LobbyConfig.Set("privileged", LobbyConfig.Get("privileged").Replace(m.AccId.ToString(), string.Empty).Replace("  ", string.Empty).Trim());
                 else
-                    LobbyConfig.Set("privileged", LobbyConfig.Get("privileged") + $" {m.Id.AccountId}");
+                    LobbyConfig.Set("privileged", LobbyConfig.Get("privileged") + $" {m.AccId}");
             }));
         }
     }

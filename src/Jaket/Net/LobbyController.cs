@@ -52,11 +52,11 @@ public static class LobbyController
         };
 
         // get the owner after entering a lobby
-        Events.OnLobbyEnter += () => Log.Info($"[LOBY] Entered a lobby owned by {LastOwner = Lobby?.Owner.Id.AccountId ?? 0u}");
+        Events.OnLobbyEnter += () => Log.Info($"[LOBY] Entered a lobby owned by {LastOwner = Lobby?.Owner.AccId ?? 0u}");
         // and leave it if the owner has left
         Events.OnMemberLeave += m =>
         {
-            if (LastOwner == m.Id.AccountId)
+            if (LastOwner == m.AccId)
             {
                 LeaveLobby();
                 Log.Info("[LOBY] Left the lobby as the owner did the same");
@@ -70,12 +70,12 @@ public static class LobbyController
     }
 
     /// <summary> Whether there is a player with the given id among the members of the lobby. </summary>
-    public static bool Contains(uint id) => Lobby?.Members.Any(m => m.Id.AccountId == id) ?? false;
+    public static bool Contains(uint id) => Lobby?.Members.Any(m => m.AccId == id) ?? false;
 
     /// <summary> Returns identifier of the member with the given index. </summary>
     public static uint MemberId(int index)
     {
-        foreach (var member in Lobby?.Members) if (index-- <= 0) return member.Id.AccountId;
+        foreach (var member in Lobby?.Members) if (index-- <= 0) return member.AccId;
         return 0u;
     }
 

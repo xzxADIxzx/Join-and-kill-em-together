@@ -41,11 +41,11 @@ public static class Administration
         };
         Events.OnMemberJoin += m =>
         {
-            for (int i = 0; i < subjects.Length; i++) if (subjects[i] == null) { subjects[i] = new(m.Id.AccountId); return; }
+            for (int i = 0; i < subjects.Length; i++) if (subjects[i] == null) { subjects[i] = new(m.AccId); return; }
         };
         Events.OnMemberLeave += m =>
         {
-            for (int i = 0; i < subjects.Length; i++) if (subjects[i]?.Id == m.Id.AccountId) subjects[i] = null;
+            for (int i = 0; i < subjects.Length; i++) if (subjects[i]?.Id == m.AccId) subjects[i] = null;
         };
     }
 

@@ -110,19 +110,19 @@ public class SpraySettings : Fragment
 
         foreach (var blacklist in new bool[] { false, true })
         {
-            if (LobbyController.Lobby?.Members.All(m => Administration.Hidden.Contains(m.Id.AccountId) != blacklist || m.IsMe) ?? true) continue;
+            if (LobbyController.Lobby?.Members.All(m => Administration.Hidden.Contains(m.AccId) != blacklist || m.IsMe) ?? true) continue;
 
             var color = blacklist ? red : green;
 
             hidden.Resolve("Space", 16f);
             hidden.Text(blacklist ? "#spray.blacklist" : "#spray.whitelist", 24f, 24, color, TextAnchor.MiddleLeft);
 
-            LobbyController.Lobby?.Members.Each(m => Administration.Hidden.Contains(m.Id.AccountId) == blacklist && !m.IsMe, m => hidden.TextButton(m.Name, color, () =>
+            LobbyController.Lobby?.Members.Each(m => Administration.Hidden.Contains(m.AccId) == blacklist && !m.IsMe, m => hidden.TextButton(m.Name, color, () =>
             {
                 if (blacklist)
-                    Administration.Hidden.Remove(m.Id.AccountId);
+                    Administration.Hidden.Remove(m.AccId);
                 else
-                    Administration.Hidden.Add(m.Id.AccountId);
+                    Administration.Hidden.Add(m.AccId);
 
                 Rebuild();
             }));

@@ -45,7 +45,7 @@ public static class SprayManager
         };
         Events.OnMemberJoin += m =>
         {
-            if (LobbyController.IsOwner) Upload(m.Id.AccountId);
+            if (LobbyController.IsOwner) Upload(m.AccId);
         };
 
         Events.OnLobbyEnter += () =>
@@ -55,8 +55,8 @@ public static class SprayManager
         };
         Events.OnMemberLeave += m =>
         {
-            Remote.Remove(m.Id.AccountId);
-            SprayDistributor.Remove(m.Id.AccountId);
+            Remote.Remove(m.AccId);
+            SprayDistributor.Remove(m.AccId);
         };
         Events.EveryTick += SprayDistributor.ProcessUploads;
     }

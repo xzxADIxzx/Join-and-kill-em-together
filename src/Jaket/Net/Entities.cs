@@ -54,7 +54,7 @@ public static class Entities
             List<uint>[] sectors = [[], [], [], [], [], [], [], []];
 
             // lobby members are distributed among these sectors according to their identifiers
-            LobbyController.Lobby?.Members.Each(m => sectors[m.Id.AccountId / factor].Add(m.Id.AccountId));
+            LobbyController.Lobby?.Members.Each(m => sectors[m.AccId / factor].Add(m.AccId));
 
             // then we are given a number of steps equal to the number of members located in the same sector to the right of us
             int steps = sectors[sector].Count(m => m > AccId);
