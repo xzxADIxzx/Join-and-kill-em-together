@@ -5,6 +5,7 @@ public enum EntityType : byte
 {
     None   = 0xFF,
     Player = 0x00,
+    Coin   = 0x01,
 
     #region items
 
