@@ -23,10 +23,16 @@ public static class Tools
     /// <summary> Account id of the local player. </summary>
     public static uint AccId;
 
-    /// <summary> How could I know that Steamworks does not cache this value? </summary>
+    /// <summary> Steamworks doesn't cache this value. </summary>
     public static void CacheAccId() => AccId = Id.AccountId;
-    /// <summary> Returns the name of the player with the given AccountId. </summary>
+    /// <summary> Returns the name of the member with the given identifier. </summary>
     public static string Name(uint id) => new Friend(id | 76561197960265728u).Name;
+
+    extension(Friend member)
+    {
+        /// <summary> Account id of the member. </summary>
+        public uint AccId => member.Id.AccountId;
+    }
 
     #endregion
     #region scene
@@ -77,12 +83,12 @@ public static class Tools
     #endregion
     #region unity
 
-    public static GameObject Inst(GameObject obj) => Object.Instantiate(obj);
-    public static GameObject Inst(GameObject obj, Transform parent) => Object.Instantiate(obj, parent);
+    public static GameObject Inst(GameObject obj)                                                => Object.Instantiate(obj                                           );
+    public static GameObject Inst(GameObject obj, Transform parent)                              => Object.Instantiate(obj, parent                                   );
     public static GameObject Inst(GameObject obj, Vector3 position, Quaternion? rotation = null) => Object.Instantiate(obj, position, rotation ?? Quaternion.identity);
 
-    public static void Dest(Object obj) => Object.Destroy(obj);
-    public static void Imdt(Object obj) => Object.DestroyImmediate(obj);
+    public static void Dest(Object obj) => Object.Destroy          (obj);
+    public static void Imdt(Object obj) => Object.DestroyImmediate (obj);
     public static void Keep(Object obj) => Object.DontDestroyOnLoad(obj);
 
     public static void Each(this Transform parent, Cons<Transform> cons)
