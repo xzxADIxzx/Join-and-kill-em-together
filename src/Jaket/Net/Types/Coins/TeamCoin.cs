@@ -114,6 +114,12 @@ public class TeamCoin : OwnableEntity
     }
 
     #endregion
+    #region state
+
+    /// <summary> Transform of the coin used by the corresponding vendor. </summary>
+    public Transform Transform => agent.transform;
+
+    #endregion
     #region harmony
 
     [HarmonyPatch(typeof(Coin), "Start")]
