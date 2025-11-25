@@ -1,6 +1,7 @@
 namespace Jaket.Net.Types;
 
 using HarmonyLib;
+using System.Collections;
 using UnityEngine;
 
 using Jaket.Assets;
@@ -19,6 +20,16 @@ public class TeamCoin : OwnableEntity
     Renderer[] rs;
     Collider[] cs;
     AudioSource source;
+
+    /// <summary> Whether the coin will reflect a beam twice on hit. </summary>
+    private bool doubled;
+    /// <summary> Beam to be reflected after a short period of time. </summary>
+    private GameObject beam;
+
+    /// <summary> Effect showing the current state of the coin. </summary>
+    private GameObject effect;
+    /// <summary> Power that increases after punch or ricochet. </summary>
+    private int power = 2;
 
     public TeamCoin(uint id, EntityType type) : base(id, type) { }
 
@@ -72,6 +83,8 @@ public class TeamCoin : OwnableEntity
                     r.material.color = team.Color();
                 }
             });
+
+            Reset();
         };
 
         Locked = false;
@@ -90,12 +103,18 @@ public class TeamCoin : OwnableEntity
 
     public override void Killed(Reader r, int left)
     {
-        // TODO a lotta work
-    }
+        Hidden = true;
 
-    public void Collide(Collision collision)
-    {
-
+        if (left >= 1 && r.Bool())
+        {
+            Reset();
+            // TODO quadruple
+        }
+        else
+        {
+            Inst(coin.coinBreak, agent.Position);
+            Dest(agent.gameObject);
+        }
     }
 
     public void Reflect(GameObject beam)
@@ -119,22 +138,67 @@ public class TeamCoin : OwnableEntity
     /// <summary> Transform of the coin used by the corresponding vendor. </summary>
     public Transform Transform => agent.transform;
 
+    /// <summary> Resets the state of the coin and restarts a few timers. </summary>
+    public void Reset()
+    {
+        rb.isKinematic = !IsOwner || Hidden;
+        Dest(effect);
+        agent.StopAllCoroutines();
+
+        if (Hidden) return;
+
+        cs.Each(c => c.enabled = false);
+        coin.enabled = false;
+
+        agent.StartCoroutine(CallDelayed(Activate, .1f));
+        agent.StartCoroutine(CallDelayed(Double, .35f));
+        agent.StartCoroutine(CallDelayed(DoubleEnd, .417f));
+        agent.StartCoroutine(CallDelayed(Triple, 1f));
+        if (IsOwner)
+            agent.StartCoroutine(CallDelayed(() => Kill(), 5f));
+    }
+
+    /// <summary> Calls the method after the specified number of seconds. </summary>
+    public IEnumerator CallDelayed(Runnable call, float time)
+    {
+        yield return new WaitForSeconds(time);
+        call();
+    }
+
+    /// <summary> Activates the coin and colliders. </summary>
+    public void Activate()
+    {
+        cs.Each(c => c.enabled = true);
+        coin.enabled = true;
+    }
+
+    public void Double() { }
+
+    public void DoubleEnd() { }
+
+    public void Triple() { }
+
     #endregion
     #region harmony
 
     [HarmonyPatch(typeof(Coin), "Start")]
     [HarmonyPrefix]
-    static void Start(Coin __instance)
+    static bool Start(Coin __instance)
     {
         if (__instance) Entities.Coins.Sync(__instance.gameObject);
+        return false;
     }
 
     [HarmonyPatch(typeof(Coin), "OnCollisionEnter")]
     [HarmonyPrefix]
-    static bool Collide(Coin __instance, Collision collision)
+    static bool Death(Coin __instance, Collision collision)
     {
-        if (__instance.TryGetComponent(out Agent a) && a.Patron is TeamCoin c) c.Collide(collision);
-        return false;
+        if (__instance.TryGetComponent(out Agent a) && a.Patron is TeamCoin c && LayerMaskDefaults.IsMatchingLayer(collision.gameObject.layer, LMD.Environment))
+        {
+            if (c.IsOwner) c.Kill();
+            return false;
+        }
+        else return true;
     }
 
     [HarmonyPatch(typeof(Coin), nameof(Coin.DelayedReflectRevolver))]

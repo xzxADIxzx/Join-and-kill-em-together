@@ -15,95 +15,10 @@ public class TeamCoin : OwnableEntity
     static Transform cc => CameraController.Instance.transform;
     static StyleHUD sh => StyleHUD.Instance;
 
-    Coin coin;
-    AudioSource audio;
-
-    /// <summary> Coin position. </summary>
-    private FloatLerp x, y, z;
-    /// <summary> Player owning the coin. </summary>
-    private EntityProv<RemotePlayer> player = new();
-
-    /// <summary> Coin team can be changed after a punch or hook. </summary>
-    public Team Team = (Team)0xFF;
-    /// <summary> Material displaying the team, its texture is replaced by white. </summary>
-    private Material mat;
-    /// <summary> Trail of the coin highlighting the team. </summary>
-    private TrailRenderer trail;
-    /// <summary> Collision of the coin. Why are there 2 colliders? </summary>
-    private Collider[] cols;
-
-    /// <summary> Whether the coin is shot. </summary>
-    public bool shot;
-    /// <summary> Whether the coin will reflect an incoming beam twice. </summary>
-    private bool doubled { get => coin.hitTimes == 2; set => coin.hitTimes = value ? 2 : 1; }
-    /// <summary> Whether the coin is in the cooldown phase before shooting to a player or enemy. </summary>
-    private bool quadrupled, lastQuadrupled;
-    /// <summary> Effects indicate the current state of the coin. </summary>
-    private GameObject effect;
-
-    /// <summary> Beam that the coin will reflect. </summary>
-    private GameObject beam;
     /// <summary> Target that will be hit by reflection. </summary>
     private Transform target;
     /// <summary> List of objects hit by a chain of ricochets. </summary>
     private CoinChainCache ccc;
-
-    /// <summary> Power of the coin increases after a punch or ricochet. </summary>
-    private int power = 2;
-
-    private void Awake()
-    {
-        Init(_ => Bullets.EType(name), true);
-        InitTransfer(() =>
-        {
-            player.Id = Owner;
-            if (Team != player.Value?.Team)
-            {
-                Team = player.Value?.Team ?? Networking.LocalPlayer.Team;
-                mat ??= GetComponent<Renderer>().material;
-                trail ??= GetComponent<TrailRenderer>();
-
-                mat.mainTexture = ModAssets.CoinTexture;
-                mat.color = Team.Color();
-                trail.startColor = Team.Color() with { a = .5f };
-            }
-            Reset();
-        });
-        TryGetComponent(out coin);
-        TryGetComponent(out audio);
-
-        x = new(); y = new(); z = new();
-
-        if (IsOwner) OnTransferred();
-        Coins.Alive.Add(this);
-    }
-
-    private void Start() => ClearTrail(trail, x, y, z);
-
-    private void Update() => Stats.MTE(() =>
-    {
-        if (IsOwner || Dead) return;
-
-        transform.position = new(x.Get(LastUpdate), y.Get(LastUpdate), z.Get(LastUpdate));
-        if (lastQuadrupled != quadrupled && (lastQuadrupled = quadrupled))
-        {
-            shot = true;
-            Reset();
-            Quadruple();
-        }
-    });
-
-    private void OnCollisionEnter(Collision other)
-    {
-        if (IsOwner && !Dead && (other.gameObject.layer == 8 || other.gameObject.layer == 24))
-        {
-            var zone = other.transform.GetComponentInParent<GoreZone>();
-            if (zone) transform.SetParent(zone.gibZone, true);
-            NetKill();
-        }
-    }
-
-    private void OnDestroy() => Coins.Alive.Remove(this);
 
     private void PlaySound(GameObject source)
     {
@@ -111,12 +26,6 @@ public class TeamCoin : OwnableEntity
     }
 
     #region state
-
-    private void Activate()
-    {
-        foreach (var col in cols) col.enabled = true;
-        if (coin) coin.enabled = true;
-    }
 
     private void Effect(GameObject flash, float size)
     {
@@ -160,27 +69,6 @@ public class TeamCoin : OwnableEntity
         light.color = Team.Color();
         light.intensity = 10f;
         if (silent) Dest(effect.GetComponent<AudioSource>());
-    }
-
-    private void Reset()
-    {
-        Rb.isKinematic = !Dead && (!IsOwner || shot);
-        Dest(effect);
-
-        CancelInvoke("Double");
-        CancelInvoke("DoubleEnd");
-        CancelInvoke("Triple");
-        CancelInvoke("NetKill");
-        if (Dead || shot) return;
-
-        foreach (var col in cols ??= GetComponents<Collider>()) col.enabled = false;
-        coin.enabled = false;
-
-        Invoke("Activate", .1f);
-        Invoke("Double", .35f);
-        Invoke("DoubleEnd", .417f);
-        Invoke("Triple", 1f);
-        if (IsOwner) Invoke("NetKill", 5f);
     }
 
     #endregion
@@ -350,40 +238,6 @@ public class TeamCoin : OwnableEntity
         audio.Play();
         Rb.velocity = Vector3.zero;
         Rb.AddForce(Vector3.up * 25f, ForceMode.VelocityChange);
-    }
-
-    #endregion
-    #region entity
-
-    public override void Write(Writer w)
-    {
-        base.Write(w);
-
-        w.Vector(transform.position);
-        w.Bool(quadrupled);
-    }
-
-    public override void Read(Reader r)
-    {
-        base.Read(r);
-        if (IsOwner) return;
-
-        x.Read(r); y.Read(r); z.Read(r);
-        quadrupled = r.Bool();
-    }
-
-    public override void Kill(Reader r)
-    {
-        base.Kill(r);
-        DeadEntity.Replace(this);
-
-        Reset();
-        coin.GetDeleted();
-        Coins.Alive.Remove(this);
-
-        mat = GetComponent<Renderer>().material;
-        mat.mainTexture = ModAssets.CoinTexture;
-        mat.color = Team.Color();
     }
 
     #endregion
