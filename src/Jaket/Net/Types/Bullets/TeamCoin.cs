@@ -25,53 +25,6 @@ public class TeamCoin : OwnableEntity
         if (power > 2) foreach (var sound in source.GetComponents<AudioSource>()) sound.pitch = 1f + (power - 2f) / 5f;
     }
 
-    #region state
-
-    private void Effect(GameObject flash, float size)
-    {
-        Dest(effect);
-        effect = Inst(flash, transform);
-
-        effect.transform.localScale = Vector3.one * size;
-        effect.GetComponentInChildren<SpriteRenderer>(true).color = Team.Color();
-    }
-
-    private void Double()
-    {
-        coin.doubled = true; // for some reason, without this, the coin cannot be punched
-
-        doubled = true;
-        Effect(coin.flash, 20f);
-    }
-
-    private void DoubleEnd() => doubled = false;
-
-    private void Triple()
-    {
-        doubled = true;
-        Effect(coin.chargeEffect, 12f);
-
-        effect.transform.GetChild(0).GetChild(0).GetChild(0).localScale = Vector3.one * .42f;
-        effect.transform.GetChild(0).GetChild(0).gameObject.SetActive(true);
-        var col = effect.GetComponentInChildren<ParticleSystem>().colorOverLifetime;
-        var mat = effect.GetComponentInChildren<ParticleSystemRenderer>().material;
-        col.color = new(black, clear);
-        mat.color = Team.Color();
-        mat.mainTexture = null; // the texture has its own color, which is extremely undesirable
-    }
-
-    private void Quadruple(bool silent = false)
-    {
-        quadrupled = true;
-        Effect(coin.enemyFlash, 15f);
-
-        var light = effect.GetComponent<Light>();
-        light.color = Team.Color();
-        light.intensity = 10f;
-        if (silent) Dest(effect.GetComponent<AudioSource>());
-    }
-
-    #endregion
     #region interactions
 
     public void Reflect(GameObject beam, float offset = 0f)

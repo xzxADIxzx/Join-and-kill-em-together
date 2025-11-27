@@ -8,6 +8,8 @@ using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
 
+using static Jaket.UI.Lib.Pal;
+
 /// <summary> Tangible entity of the coin type. </summary>
 public class TeamCoin : OwnableEntity
 {
@@ -107,8 +109,10 @@ public class TeamCoin : OwnableEntity
 
         if (left >= 1 && r.Bool())
         {
+            Locked = false;
+            ReadOwner(ref r);
             Reset();
-            // TODO quadruple
+            Quadruple();
         }
         else
         {
@@ -172,11 +176,44 @@ public class TeamCoin : OwnableEntity
         coin.enabled = true;
     }
 
-    public void Double() { }
+    /// <summary> Switches to the doubled state. </summary>
+    public void Double()
+    {
+        coin.doubled = doubled = true; // punchability is bounded to this field (for some reason)
+        Dest(effect);
+        effect = Inst(coin.flash, agent.transform);
+        effect.GetComponentsInChildren<SpriteRenderer>().Each(r => r.color = team.Color());
+    }
 
-    public void DoubleEnd() { }
+    /// <summary> Switches back from the doubled state. </summary>
+    public void DoubleEnd() => doubled = false;
 
-    public void Triple() { }
+    /// <summary> Switches to the tripled state. </summary>
+    public void Triple()
+    {
+        coin.doubled = doubled = true;
+        Dest(effect);
+        effect = Inst(coin.chargeEffect, agent.transform);
+        effect.GetComponentsInChildren<SpriteRenderer  >(true).Each(Dest);
+        effect.GetComponentsInChildren<SpriteController>(true).Each(Dest);
+
+        effect.transform.Find("MuzzleFlash/muzzleflash/Particle System").localScale = Vector3.one * .42f;
+        effect.transform.Find("MuzzleFlash/muzzleflash"                ).gameObject.SetActive(true);
+        var col = effect.GetComponentInChildren<ParticleSystem        >().colorOverLifetime;
+        var mat = effect.GetComponentInChildren<ParticleSystemRenderer>().material;
+        col.color = new(clear, black);
+        mat.color = team.Color();
+        mat.mainTexture = null;
+    }
+
+    /// <summary> Switches to the quadrupled state. </summary>
+    public void Quadruple()
+    {
+        Dest(effect);
+        effect = Inst(coin.enemyFlash, agent.transform);
+        effect.GetComponentsInChildren<SpriteRenderer>().Each(r => r.color = team.Color());
+        effect.GetComponentsInChildren<Light         >().Each(r => r.color = team.Color());
+    }
 
     #endregion
     #region harmony
