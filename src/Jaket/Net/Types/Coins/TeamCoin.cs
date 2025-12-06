@@ -36,6 +36,11 @@ public class TeamCoin : OwnableEntity
     /// <summary> Targets that have already been hit. </summary>
     private CoinChainCache ccc;
 
+    /// <summary> Whether the target is a player. </summary>
+    private bool isPlayer;
+    /// <summary> Whether the target is an enemy. </summary>
+    private bool isEnemy;
+
     /// <summary> Effect showing the current state of the coin. </summary>
     private GameObject effect;
     /// <summary> Power that increases after punch or ricochet. </summary>
@@ -115,12 +120,12 @@ public class TeamCoin : OwnableEntity
     {
         Hidden = true;
 
-        if (left >= 1 && r.Bool())
+        if (left >= 5)
         {
             Locked = false;
             ReadOwner(ref r);
             Reset();
-            Quadruple();
+            if (r.Bool()) Quadruple();
         }
         else
         {
@@ -137,12 +142,81 @@ public class TeamCoin : OwnableEntity
 
     public void Reflect(GameObject beam)
     {
+        if (Hidden)
+        {
+            if (!team.Ally())
+            {
+                this.beam = beam;
+                target = player.Value.Doll.Head.transform;
+                isPlayer = true;
+                isEnemy = false;
 
+                agent.StopAllCoroutines();
+                Reflect();
+            }
+            return;
+        }
+        if (!coin.enabled) return;
+
+        this.beam = beam;
+
+        target = Entities.Coins.FindTarget(this, false, out isPlayer, out isEnemy, ccc ??= Create<CoinChainCache>("Chain"));
+
+        Kill(5, w => { w.Id(AccId); w.Bool(isPlayer); });
+
+        agent.StartCoroutine(CallDelayed(Reflect, isPlayer ? 1.2f : .1f));
+
+        // make sure to clear the cache later
+        ccc.beenHit.Add(target?.gameObject);
+        ccc.GetOrAddComponent<RemoveOnTime>().time = 5f;
     }
 
     public void Reflect()
     {
+        if ((target?.CompareTag("Coin") ?? false) && target.TryGetComponent(out TeamCoin c))
+        {
+            c.ccc = ccc;
+            c.power = power + 1;
+        }
 
+        if (beam == null)
+        {
+            // TODO a lotta logic
+        }
+        else
+        {
+            agent.tag = "Untagged"; // prevent reflection from hitting the coin
+            beam.SetActive(true);
+            beam.transform.position = agent.Position;
+
+            if (target)
+                beam.transform.LookAt(target);
+            else
+                beam.transform.forward = Random.onUnitSphere;
+
+            if (beam.TryGetComponent<RevolverBeam>(out var rb))
+            {
+                rb.damage += power / 4f;
+                rb.addedDamage += power / 4f;
+
+                if (doubled && rb.strongAlt && rb.hitAmount < 99) rb.maxHitsPerTarget = ++rb.hitAmount;
+                if (isEnemy || isPlayer)
+                {
+                    var prefix = rb.ultraRicocheter ? "<color=orange>ULTRA</color>" : "";
+                    int points = rb.ultraRicocheter ? 100 : 50;
+                    if (power > 2) points += (power - 1) * 15;
+
+                    sh.AddPoints(points, "ultrakill.ricoshot", rb.sourceWeapon, null, power - 1, prefix);
+                }
+            }
+        }
+
+        if (IsOwner && doubled && beam == null)
+        {
+            Hidden = doubled = false;
+            Reflect(null);
+        }
+        else Kill();
     }
 
     public void Punch()
@@ -192,8 +266,6 @@ public class TeamCoin : OwnableEntity
             else
             {
                 eid.hitter = "coin";
-                if (!eid.hitterWeapons.Contains("coin")) eid.hitterWeapons.Add("coin");
-
                 eid.DeliverDamage(target.gameObject, (target.position - agent.Position).normalized * 10000f, target.position, power, false, 1f);
             }
         }

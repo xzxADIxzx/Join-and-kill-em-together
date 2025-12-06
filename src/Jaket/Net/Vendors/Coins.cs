@@ -70,7 +70,7 @@ public class Coins : Vendor
         isPlayer = isEnemy = false;
         if (!enemiesOnly)
         {
-            Networking.Entities.Alive<TeamCoin>(c => c.Owner == coin.Owner, c => Check(c.Transform));
+            Networking.Entities.Alive<TeamCoin>(c => c != coin && c.Owner == coin.Owner, c => Check(c.Transform));
             if (target) return target;
 
             ObjectTracker.Instance.cannonballList.Each(Within,                                        b => Check(b.transform));
