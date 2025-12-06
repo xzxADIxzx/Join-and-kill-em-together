@@ -13,6 +13,9 @@ using static Jaket.UI.Lib.Pal;
 /// <summary> Tangible entity of the coin type. </summary>
 public class TeamCoin : OwnableEntity
 {
+    static Transform cc => CameraController.Instance.transform;
+    static StyleHUD sh => StyleHUD.Instance;
+
     Agent agent;
     Float x, y, z;
     Cache<RemotePlayer> player;
@@ -27,6 +30,11 @@ public class TeamCoin : OwnableEntity
     private bool doubled;
     /// <summary> Beam to be reflected after a short period of time. </summary>
     private GameObject beam;
+
+    /// <summary> Target to be hit on reflect invoke. </summary>
+    private Transform target;
+    /// <summary> Targets that have already been hit. </summary>
+    private CoinChainCache ccc;
 
     /// <summary> Effect showing the current state of the coin. </summary>
     private GameObject effect;
@@ -121,19 +129,91 @@ public class TeamCoin : OwnableEntity
         }
     }
 
+    public void Beam(params Vector3[] positions) => Inst(coin.refBeam, agent.Position).GetComponents<LineRenderer>().Each(l =>
+    {
+        l.startColor = l.endColor = team.Color();
+        l.SetPositions(positions);
+    });
+
     public void Reflect(GameObject beam)
+    {
+
+    }
+
+    public void Reflect()
     {
 
     }
 
     public void Punch()
     {
+        if (Hidden)
+        {
+            if (IsOwner)
+            {
+                agent.StopAllCoroutines();
+                Reflect();
+            }
+            return;
+        }
+        if (!coin.enabled) return;
 
+        target = Entities.Coins.FindTarget(this, true, out _, out _);
+        Vector3? pos = target
+            ? target.position
+            : Entities.Coins.Punchcast(out var hit)
+                ? hit.point - cc.forward
+                : null;
+
+        if (pos == null) Kill();
+
+        Bounce();
+        Beam(agent.Position, agent.Position = pos ?? cc.position + cc.forward * 4242f);
+
+        rs.Each(r => { if (r is TrailRenderer t) t.Clear(); });
+
+        if (target)
+        {
+            Breakable breakable = null;
+            var eid = target.GetComponentInChildren<EnemyIdentifierIdentifier>()?.eid ?? (breakable = target.GetComponentInChildren<Breakable>()).interruptEnemy;
+
+            if (!eid.puppet && !eid.blessed) sh.AddPoints(50, "ultrakill.fistfullofdollar", eid: eid);
+            if (breakable)
+            {
+                if (breakable.precisionOnly)
+                {
+                    sh.AddPoints(100, "ultrakill.interruption", eid: eid);
+                    TimeController.Instance.ParryFlash();
+
+                    if (!eid.blessed) eid.Explode(true);
+                }
+                breakable.Break();
+            }
+            else
+            {
+                eid.hitter = "coin";
+                if (!eid.hitterWeapons.Contains("coin")) eid.hitterWeapons.Add("coin");
+
+                eid.DeliverDamage(target.gameObject, (target.position - agent.Position).normalized * 10000f, target.position, power, false, 1f);
+            }
+        }
+        if (power < 5) power++;
     }
 
     public void Bounce()
     {
+        if (Hidden || !coin.enabled) return;
 
+        Locked = false;
+        TakeOwnage();
+
+        doubled = false;
+        Reset();
+
+        rb.velocity = Vector3.zero;
+        rb.AddForce(Vector3.up * 25f, ForceMode.VelocityChange);
+
+        source.Play();
     }
 
     #endregion

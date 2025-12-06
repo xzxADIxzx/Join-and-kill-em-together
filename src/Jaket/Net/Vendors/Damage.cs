@@ -13,7 +13,7 @@ using static Entities;
 public class Damage : Vendor
 {
     /// <summary> List of internal names of all melee damage types. </summary>
-    public static readonly string[] Melee = { "punch", "heavypunch", "hook", "ground slam", "drill", "drillpunch", "hammer", "chainsawzone" };
+    public static readonly string[] Melee = { "coin", "punch", "heavypunch", "hook", "ground slam", "drill", "drillpunch", "hammer", "chainsawzone" };
 
     public void Load()
     {

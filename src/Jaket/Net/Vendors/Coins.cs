@@ -48,7 +48,7 @@ public class Coins : Vendor
     static Transform cc => CameraController.Instance.transform;
 
     /// <summary> Finds the most suitable target of a ricochet. </summary>
-    public static Transform FindTarget(TeamCoin coin, bool enemiesOnly, out bool isPlayer, out bool isEnemy, CoinChainCache ccc = null)
+    public Transform FindTarget(TeamCoin coin, bool enemiesOnly, out bool isPlayer, out bool isEnemy, CoinChainCache ccc = null)
     {
         Transform target = null;
         var max = float.PositiveInfinity;
@@ -103,7 +103,7 @@ public class Coins : Vendor
     }
 
     /// <summary> Finds the target position of a punchflection. </summary>
-    public static bool Punchcast(out RaycastHit hit) => Physics.Raycast(cc.position, cc.forward, out hit, float.PositiveInfinity, EnvMask);
+    public bool Punchcast(out RaycastHit hit) => Physics.Raycast(cc.position, cc.forward, out hit, float.PositiveInfinity, EnvMask);
 
     #endregion
 }

@@ -12,14 +12,6 @@ using static Jaket.UI.Lib.Pal;
 /// <summary> Representation of a coin that has a team and the corresponding mechanics. </summary>
 public class TeamCoin : OwnableEntity
 {
-    static Transform cc => CameraController.Instance.transform;
-    static StyleHUD sh => StyleHUD.Instance;
-
-    /// <summary> Target that will be hit by reflection. </summary>
-    private Transform target;
-    /// <summary> List of objects hit by a chain of ricochets. </summary>
-    private CoinChainCache ccc;
-
     private void PlaySound(GameObject source)
     {
         if (power > 2) foreach (var sound in source.GetComponents<AudioSource>()) sound.pitch = 1f + (power - 2f) / 5f;
@@ -117,81 +109,6 @@ public class TeamCoin : OwnableEntity
     }
 
     public void DoubleReflect() => Reflect(null, -.1f);
-
-    public void Punch()
-    {
-        if (quadrupled)
-        {
-            if (IsOwner)
-            {
-                CancelInvoke("Reflect");
-                Reflect();
-            }
-            return;
-        }
-        if (!coin.enabled) return;
-        Bounce();
-
-        target = Coins.FindTarget(this, true, out _, out _, null);
-        Vector3? pos = target
-            ? target.position
-            : Coins.Punchcast(out var hit)
-                ? hit.point - cc.forward
-                : null;
-
-        // make the coin unavailable for future use
-        if (pos == null) shot = true;
-
-        var beam = Inst(coin.refBeam, transform.position).GetComponent<LineRenderer>();
-        PlaySound(beam.gameObject);
-        trail.Clear();
-
-        beam.startColor = beam.endColor = Team.Color();
-        beam.SetPosition(0, transform.position);
-        beam.SetPosition(1, transform.position = pos ?? cc.position + cc.forward * 4200f);
-
-        // deal a damage if the coin hit an enemy
-        if (target)
-        {
-            Breakable breakable = null;
-            var eid = target.GetComponentInChildren<EnemyIdentifierIdentifier>()?.eid;
-            eid ??= (breakable = target.GetComponentInChildren<Breakable>()).interruptEnemy;
-
-            if (!eid.puppet && !eid.blessed) sh.AddPoints(50, "ultrakill.fistfullofdollar", eid: eid);
-            if (breakable)
-            {
-                if (breakable.precisionOnly)
-                {
-                    sh.AddPoints(100, "ultrakill.interruption", eid: eid);
-                    TimeController.Instance.ParryFlash();
-
-                    if (!eid.blessed) eid.Explode(true);
-                }
-                breakable.Break();
-            }
-            else
-            {
-                eid.hitter = "coin";
-                if (!eid.hitterWeapons.Contains("coin")) eid.hitterWeapons.Add("coin");
-
-                eid.DeliverDamage(target.gameObject, (target.position - transform.position).normalized * 10000f, target.position, power, false, 1f);
-            }
-        }
-        if (power < 5) power++;
-    }
-
-    public void Bounce()
-    {
-        if (quadrupled || !coin.enabled) return;
-        TakeOwnage();
-
-        doubled = false;
-        Reset();
-
-        audio.Play();
-        Rb.velocity = Vector3.zero;
-        Rb.AddForce(Vector3.up * 25f, ForceMode.VelocityChange);
-    }
 
     #endregion
 }
