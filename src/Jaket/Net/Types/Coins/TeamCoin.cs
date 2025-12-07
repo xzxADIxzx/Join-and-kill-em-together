@@ -2,6 +2,7 @@ namespace Jaket.Net.Types;
 
 using HarmonyLib;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 using Jaket.Assets;
@@ -34,7 +35,7 @@ public class TeamCoin : OwnableEntity
     /// <summary> Target to be hit on reflect invoke. </summary>
     private Transform target;
     /// <summary> Targets that have already been hit. </summary>
-    private CoinChainCache ccc;
+    private List<GameObject> chain;
 
     /// <summary> Whether the target is a player. </summary>
     private bool isPlayer;
@@ -161,24 +162,21 @@ public class TeamCoin : OwnableEntity
 
         this.beam = beam;
 
-        target = Entities.Coins.FindTarget(this, false, out isPlayer, out isEnemy, ccc ??= Create<CoinChainCache>("Chain"));
+        target = Entities.Coins.FindTarget(this, false, out isPlayer, out isEnemy, chain ??= []);
 
         Kill(5, w => { w.Id(AccId); w.Bool(isPlayer); });
 
         agent.StartCoroutine(CallDelayed(Reflect, isPlayer ? 1.2f : .1f));
-
-        // make sure to clear the cache later
-        ccc.beenHit.Add(target?.gameObject);
-        ccc.GetOrAddComponent<RemoveOnTime>().time = 5f;
     }
 
     public void Reflect()
     {
         if ((target?.CompareTag("Coin") ?? false) && target.TryGetComponent(out Agent a) && a.Patron is TeamCoin c)
         {
-            c.ccc = ccc;
+            c.chain = chain;
             c.power = power + 1;
         }
+        chain.Add(target?.gameObject);
 
         if (beam == null)
         {

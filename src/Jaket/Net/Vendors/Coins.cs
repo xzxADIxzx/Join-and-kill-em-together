@@ -1,5 +1,6 @@
 namespace Jaket.Net.Vendors;
 
+using System.Collections.Generic;
 using UnityEngine;
 
 using Jaket.Assets;
@@ -48,7 +49,7 @@ public class Coins : Vendor
     static Transform cc => CameraController.Instance.transform;
 
     /// <summary> Finds the most suitable target of a ricochet. </summary>
-    public Transform FindTarget(TeamCoin coin, bool enemiesOnly, out bool isPlayer, out bool isEnemy, CoinChainCache ccc = null)
+    public Transform FindTarget(TeamCoin coin, bool enemiesOnly, out bool isPlayer, out bool isEnemy, List<GameObject> chain = null)
     {
         Transform target = null;
         var max = float.PositiveInfinity;
@@ -59,7 +60,7 @@ public class Coins : Vendor
             var dst = dir.sqrMagnitude;
             if (dst < max
             && (!Physics.Raycast(coin.Transform.position, dir, out var hit, Mathf.Sqrt(dst) - .5f, EnvMask) || hit.transform == t)
-            && (!ccc || !ccc.beenHit.Contains(t.gameObject)))
+            && (!chain?.Contains(t.gameObject) ?? true))
             {
                 target = t;
                 max = dst;
