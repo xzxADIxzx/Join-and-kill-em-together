@@ -117,6 +117,7 @@ public class Rocket : OwnableEntity
             r.Bools(out var harmless, out var big, out var super, out var ultra, out _, out _, out _, out _);
             grenade.Explode(big, harmless, super, ultra ? 2f : 1f, ultra);
         }
+        grenade.enemy = true; // check coins
     }
 
     #endregion

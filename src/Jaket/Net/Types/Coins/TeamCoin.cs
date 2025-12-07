@@ -171,12 +171,12 @@ public class TeamCoin : OwnableEntity
 
     public void Reflect()
     {
-        if ((target?.CompareTag("Coin") ?? false) && target.TryGetComponent(out Agent a) && a.Patron is TeamCoin c)
+        if (target && target.TryGetComponent(out Agent a) && a.Patron is TeamCoin c)
         {
             c.chain = chain;
             c.power = power + 1;
         }
-        chain.Add(target?.gameObject);
+        if (target) chain.Add(target.gameObject);
 
         if (beam == null)
         {
