@@ -75,7 +75,7 @@ public class Hitscans : Vendor
         // makes hitscans more visually appealing
         var correction = type <= EntityType.BeamExplosive && !args[0] ? beam.transform.forward * 1.2f : Vector3.zero;
 
-        Networking.Send(PacketType.Hitscan, 26, w =>
+        Networking.Send(PacketType.Hitscan, 27, w =>
         {
             w.Enum(type);
             w.Vector(beam.transform.position + correction);

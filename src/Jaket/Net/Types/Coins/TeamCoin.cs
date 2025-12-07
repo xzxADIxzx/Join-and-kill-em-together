@@ -134,10 +134,11 @@ public class TeamCoin : OwnableEntity
         }
     }
 
-    public void Beam(params Vector3[] positions) => Inst(coin.refBeam, agent.Position).GetComponents<LineRenderer>().Each(l =>
+    public void Beam(params Vector3[] positions) => Inst(coin.refBeam, positions[0]).GetComponents<LineRenderer>().Each(l =>
     {
         l.startColor = l.endColor = team.Color();
         l.SetPositions(positions);
+        l.GetComponent<RevolverBeam>().bodiesPierced = (byte)team;
     });
 
     public void Reflect(GameObject beam)
@@ -173,7 +174,7 @@ public class TeamCoin : OwnableEntity
 
     public void Reflect()
     {
-        if ((target?.CompareTag("Coin") ?? false) && target.TryGetComponent(out TeamCoin c))
+        if ((target?.CompareTag("Coin") ?? false) && target.TryGetComponent(out Agent a) && a.Patron is TeamCoin c)
         {
             c.ccc = ccc;
             c.power = power + 1;
@@ -196,8 +197,8 @@ public class TeamCoin : OwnableEntity
 
             if (beam.TryGetComponent<RevolverBeam>(out var rb))
             {
-                rb.damage += power / 4f;
-                rb.addedDamage += power / 4f;
+                rb.damage += power / 4f - rb.addedDamage;
+                rb.addedDamage = power / 4f;
 
                 if (doubled && rb.strongAlt && rb.hitAmount < 99) rb.maxHitsPerTarget = ++rb.hitAmount;
                 if (isEnemy || isPlayer)
@@ -266,7 +267,7 @@ public class TeamCoin : OwnableEntity
             else
             {
                 eid.hitter = "coin";
-                eid.DeliverDamage(target.gameObject, (target.position - agent.Position).normalized * 10000f, target.position, power, false, 1f);
+                eid.DeliverDamage(target.gameObject, Vector3.zero, target.position, power, false, 1f);
             }
         }
         if (power < 5) power++;
