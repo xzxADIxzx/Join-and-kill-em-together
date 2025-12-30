@@ -142,6 +142,29 @@ public class TeamCoin : OwnableEntity
         l.GetComponent<RevolverBeam>().bodiesPierced = (byte)team;
     });
 
+    public void Shot(string hitter, bool punch)
+    {
+        Breakable breakable = null;
+        var eid = target.GetComponentInChildren<EnemyIdentifierIdentifier>()?.eid ?? (breakable = target.GetComponentInChildren<Breakable>()).interruptEnemy;
+
+        if (punch && !eid.puppet && !eid.blessed) sh.AddPoints(50, "ultrakill.fistfullofdollar", eid: eid);
+        if (breakable)
+        {
+            if (breakable.precisionOnly)
+            {
+                TimeController.Instance.ParryFlash();
+                if (!eid.blessed) eid.Explode(true);
+                sh.AddPoints(100, "ultrakill.interruption", eid: eid);
+            }
+            breakable.Break();
+        }
+        else
+        {
+            eid.hitter = hitter;
+            eid.DeliverDamage(target.gameObject, Vector3.zero, target.position, power, false, 1f);
+        }
+    }
+
     public void Reflect(GameObject beam)
     {
         if (Hidden)
@@ -164,6 +187,8 @@ public class TeamCoin : OwnableEntity
 
         target = Entities.Coins.FindTarget(this, false, out isPlayer, out isEnemy, chain ??= []);
 
+        if (target) chain.Add(target.gameObject);
+
         Kill(5, w => { w.Id(AccId); w.Bool(isPlayer); });
 
         agent.StartCoroutine(CallDelayed(Reflect, isPlayer ? 1.2f : .1f));
@@ -175,12 +200,26 @@ public class TeamCoin : OwnableEntity
         {
             c.chain = chain;
             c.power = power + 1;
+            if (beam == null) c.Reflect(null);
         }
-        if (target) chain.Add(target.gameObject);
 
         if (beam == null)
         {
-            // TODO a lotta logic
+            if (target)
+            {
+                if (isEnemy || isPlayer)
+                {
+                    Shot("revolver", false);
+                    sh.AddPoints(power > 2 ? 50 + (power - 1) * 15 : 50, "ultrakill.ricoshot", count: power - 1);
+                }
+                else if (target.TryGetComponent(out Grenade    g)) g.Explode(g.rocket, false, !g.rocket);
+                else if (target.TryGetComponent(out Cannonball b)) b.Explode();
+                else if (target.TryGetComponent(out Glass      s)) s.Shatter();
+
+                Beam(agent.Position, target.position);
+            }
+            else
+                Beam(agent.Position, agent.Position + Random.onUnitSphere * 4242f);
         }
         else
         {
@@ -245,29 +284,7 @@ public class TeamCoin : OwnableEntity
 
         rs.Each(r => { if (r is TrailRenderer t) t.Clear(); });
 
-        if (target)
-        {
-            Breakable breakable = null;
-            var eid = target.GetComponentInChildren<EnemyIdentifierIdentifier>()?.eid ?? (breakable = target.GetComponentInChildren<Breakable>()).interruptEnemy;
-
-            if (!eid.puppet && !eid.blessed) sh.AddPoints(50, "ultrakill.fistfullofdollar", eid: eid);
-            if (breakable)
-            {
-                if (breakable.precisionOnly)
-                {
-                    sh.AddPoints(100, "ultrakill.interruption", eid: eid);
-                    TimeController.Instance.ParryFlash();
-
-                    if (!eid.blessed) eid.Explode(true);
-                }
-                breakable.Break();
-            }
-            else
-            {
-                eid.hitter = "coin";
-                eid.DeliverDamage(target.gameObject, Vector3.zero, target.position, power, false, 1f);
-            }
-        }
+        if (target) Shot("coin", true);
         if (power < 5) power++;
     }
 
