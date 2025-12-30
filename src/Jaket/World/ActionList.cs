@@ -44,17 +44,25 @@ public static class ActionList
         #region 0-1
         l = "Level 0-1";
 
+        ActionType.Window(l);
+
         #endregion
         #region 0-2
         l = "Level 0-2";
+
+        ActionType.Window(l);
 
         #endregion
         #region 0-3
         l = "Level 0-3";
 
+        ActionType.Window(l);
+
         #endregion
         #region 0-4
         l = "Level 0-4";
+
+        ActionType.Window(l);
 
         #endregion
         #region 0-5
@@ -72,6 +80,7 @@ public static class ActionList
         #region 1-1
         l = "Level 1-1";
 
+        ActionType.Window(l);
         ActionType.Switch(l);
 
         ActionType.Dest(l, "11 Nonstuff/Altar"); // duplicate
@@ -87,6 +96,7 @@ public static class ActionList
         #region 1-3
         l = "Level 1-3";
 
+        ActionType.Window(l);
         ActionType.Statue(l);
         ActionType.Switch(l);
 
@@ -106,6 +116,7 @@ public static class ActionList
         #region 2-1
         l = "Level 2-1";
 
+        ActionType.Window(l);
         ActionType.Statue(l);
 
         #endregion
@@ -118,9 +129,13 @@ public static class ActionList
         #region 2-3
         l = "Level 2-3";
 
+        ActionType.Window(l);
+
         #endregion
         #region 2-4
         l = "Level 2-4";
+
+        ActionType.Window(l);
 
         #endregion
         #region 2-S
@@ -149,6 +164,7 @@ public static class ActionList
         #region 4-2
         l = "Level 4-2";
 
+        ActionType.Window(l);
         ActionType.Statue(l);
         ActionType.Switch(l);
 
@@ -185,6 +201,7 @@ public static class ActionList
         #region 5-3
         l = "Level 5-3";
 
+        ActionType.Window(l);
         ActionType.Statue(l);
 
         #endregion
@@ -214,6 +231,7 @@ public static class ActionList
         #region 7-2
         l = "Level 7-2";
 
+        ActionType.Window(l);
         ActionType.Statue(l);
         ActionType.Switch(l);
 
@@ -254,5 +272,7 @@ public static class ActionList
         #endregion
 
         locked = true;
+
+        Log.Info($"[WRLD] Loaded {vanilla} actions");
     }
 }

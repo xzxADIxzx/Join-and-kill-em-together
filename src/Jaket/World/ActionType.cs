@@ -73,6 +73,9 @@ public static class ActionType
         ResFind<T>().Each(t => IsReal(t) && t.transform.position.x == pos.x && t.transform.position.z == pos.y, perform);
     }));
 
+    /// <summary> Creates an action that synchronizes all windows. </summary>
+    public static void Window(string scene) => Find<Glass>(scene, "window", w => { w.transform.Each(Imdt); w.Shatter(); });
+
     /// <summary> Creates an action that synchronizes all statues. </summary>
     public static void Statue(string scene) => Find<StatueActivator>(scene, "statue", s => s.gameObject.SetActive(true));
 

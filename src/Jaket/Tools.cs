@@ -96,6 +96,7 @@ public static class Tools
         foreach (Transform child in parent) cons(child);
     }
     public static void Dest(Transform transform) => Dest(transform.gameObject);
+    public static void Imdt(Transform transform) => Imdt(transform.gameObject);
 
     public static T[] ResFind<T>() where T : Object => Resources.FindObjectsOfTypeAll<T>();
     public static GameObject ObjFind(string name) => GameObject.Find(name);

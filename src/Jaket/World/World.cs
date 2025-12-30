@@ -172,6 +172,13 @@ public class World
         Perform(__instance.Path(), default);
     }
 
+    [HarmonyPatch(typeof(Glass), nameof(Glass.Shatter))]
+    [HarmonyPostfix]
+    static void Activate(Glass __instance)
+    {
+        Perform("window", new(__instance.transform.position.x, __instance.transform.position.z));
+    }
+
     [HarmonyPatch(typeof(StatueActivator), "Start")]
     [HarmonyPostfix]
     static void Activate(StatueActivator __instance)
