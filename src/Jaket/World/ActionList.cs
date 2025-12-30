@@ -243,6 +243,8 @@ public static class ActionList
         #region 7-4
         l = "Level 7-4";
 
+        ActionType.Window(l);
+
         #endregion
         #region 7-S
         l = "Level 7-S";
