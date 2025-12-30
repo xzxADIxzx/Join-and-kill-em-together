@@ -15,11 +15,11 @@ using static Jaket.UI.Lib.Pal;
 public static class Bundle
 {
     /// <summary> Language codes for internal use. </summary>
-    public static readonly string[] Codes = { "ar", "pt", "en", "fl", "fr", "it", "pl", "ru", "es", "uk" };
+    public static readonly string[] Codes = { "pt", "en", "fl", "fr", "de", "it", "pl", "ru", "es", "uk" };
     /// <summary> Language names to display. </summary>
-    public static readonly string[] Locales = { "عربي", "Português brasileiro", "English", "Filipino", "Français", "Italiano", "Polski", "Русский", "Español", "Українська" };
+    public static readonly string[] Locales = { "Português brasileiro", "English", "Filipino", "Français", "Deutsch", "Italiano", "Polski", "Русский", "Español", "Українська" };
     /// <summary> Property files containing localization. </summary>
-    public static readonly string[] Content = { "arabic", "brazilianportuguese", "english", "filipino", "french", "italian", "polish", "russian", "spanish", "ukrainian" };
+    public static readonly string[] Content = { "brazilianportuguese", "english", "filipino", "french", "german", "italian", "polish", "russian", "spanish", "ukrainian" };
 
     /// <summary> Identifier of the loaded localization or -1 if the bundle is not loaded yet. </summary>
     public static int Loaded = -1;
