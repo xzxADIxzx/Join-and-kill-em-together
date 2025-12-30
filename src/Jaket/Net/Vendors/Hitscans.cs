@@ -104,11 +104,11 @@ public class Hitscans : Vendor
 
     [HarmonyPatch(typeof(RevolverBeam), "Shoot")]
     [HarmonyPrefix]
-    static void Hide() => Networking.Entities.Player(p => p.Team.Ally(), p => p.Doll.Root.gameObject.SetActive(false));
+    static void Hide() => Networking.Entities.Player(p => p.Team.Ally(), p => p.Toggle(false));
 
     [HarmonyPatch(typeof(RevolverBeam), "Shoot")]
     [HarmonyPostfix]
-    static void Show() => Networking.Entities.Player(p => p.Team.Ally(), p => p.Doll.Root.gameObject.SetActive(true));
+    static void Show() => Networking.Entities.Player(p => p.Team.Ally(), p => p.Toggle(true));
 
     [HarmonyPatch(typeof(RevolverBeam), "HitSomething")]
     [HarmonyPatch(typeof(RevolverBeam), "PiercingShotCheck")]

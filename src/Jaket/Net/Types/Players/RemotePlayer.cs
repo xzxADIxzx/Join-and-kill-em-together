@@ -18,6 +18,7 @@ public class RemotePlayer : Entity, Screwdriver.Screwable
     Agent agent;
     Float bodyX, bodyY, bodyZ, hookX, hookY, hookZ, bodyRotation, headRotation;
     EnemyIdentifier enemyId;
+    Collider[] cs;
 
     /// <summary> Health of the player, usually varies between zero and two hundred. </summary>
     public byte Health = 100;
@@ -93,6 +94,7 @@ public class RemotePlayer : Entity, Screwdriver.Screwable
         (this.agent = agent).Patron = this;
 
         agent.Get(out enemyId);
+        agent.Get(out cs);
         agent.Get(out Voice);
 
         Doll ??= new(() =>
@@ -175,6 +177,8 @@ public class RemotePlayer : Entity, Screwdriver.Screwable
         }
         else enemyId.drillers.Remove(harpoon);
     }
+
+    public void Toggle(bool on) => cs.Each(c => c.enabled = on);
 
     #endregion
     #region other
