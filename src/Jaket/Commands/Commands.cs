@@ -151,8 +151,8 @@ public static class Commands
             "Permanent Author",   "xzxADIxzx",
             "Endless Gratitude",  "Sowler",
             "Contributors",       "Fumboy, Rey Hunter, Ardub, Kekson1a",
-            "Translators",        "Sowler", // TODO add others after they finish their bundles
-            "Testers",            "Sowler, Fenicemaster, Andru, Subjune, FruitCircuit, J'son, Dodo, Poot Man, Rusty Umnizm",
+            "Translators",        "Poyozito, Fraku, Theoyeah, Doomguy, Fenicemaster, sSAR, Sowler, \n[coral]|[] xzxADIxzx, NotPhobos",
+            "Testers",            "Sowler, Fenicemaster, Andru, Subjune, FruitCircuit, J'son, Dodo, \n[blue]|[] Poot Man, Rusty Umnizm",
         ]));
     }
 }
