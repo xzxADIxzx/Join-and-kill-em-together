@@ -14,6 +14,7 @@ using Jaket.Net.Types;
 using Jaket.Sam;
 using Jaket.UI;
 using Jaket.UI.Dialogs;
+using Jaket.World;
 
 /// <summary> Class responsible for updating endpoints, transmitting packets and managing entities. </summary>
 public static class Networking
@@ -136,6 +137,8 @@ public static class Networking
                 Bundle.Msg("player.died", name);
 
                 StyleHUD.Instance.AddPoints(Mathf.RoundToInt(420f * StyleCalculator.Instance.airTime), Bundle.Parse("[green]FRATRICIDE"));
+
+                Gameflow.OnDeath(member);
 
                 if (LobbyConfig.HealBosses) Entities.Alive<Enemy>(e => e.IsBoss, e => e.Heal());
             }

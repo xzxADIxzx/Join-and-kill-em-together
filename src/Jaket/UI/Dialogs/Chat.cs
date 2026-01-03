@@ -159,9 +159,9 @@ public class Chat : Fragment
         Events.Post(Toggle);
     }
 
-    public void DisplayText(string msg)
+    public void DisplayText(string msg, bool format = true)
     {
-        toDisplay = msg;
+        toDisplay = format ? Bundle.Parse(msg) : msg;
         Rebuild();
     }
 
