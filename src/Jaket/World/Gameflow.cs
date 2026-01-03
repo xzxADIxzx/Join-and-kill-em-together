@@ -25,6 +25,8 @@ public class Gameflow
     private static int startHPs = 6;
     private static int[] health = new int[Teams.All.Length];
 
+    #region general
+
     /// <summary> Subscribes to several events for proper work. </summary>
     public static void Load()
     {
@@ -40,7 +42,7 @@ public class Gameflow
         Events.OnLoad += Countdown;
         Events.EveryHalf += () =>
         {
-            if (LobbyController.Offline) return;
+            if (LobbyController.Offline || !Active) return;
             if (Mode.HPs()) UpdateHPs();
         };
     }
@@ -53,6 +55,7 @@ public class Gameflow
             Restart();
             return;
         }
+        else Active = false;
 
         static IEnumerator Countdown(int seconds)
         {
@@ -78,6 +81,11 @@ public class Gameflow
                 t => Networking.LocalPlayer.Team == t || Networking.Entities.Count(e => e is RemotePlayer p && p.Team == t) > 0,
                 t => health[(byte)t] = startHPs
             );
+            if (health.Count(h => h != 0) <= 1)
+            {
+                Bundle.Ext("game.lone-team");
+                return;
+            }
         }
 
         UI.Chat.DisplayText(null, false);
@@ -101,6 +109,7 @@ public class Gameflow
         }
     }
 
+    #endregion
     #region specific
 
     private static void UpdateHPs()
