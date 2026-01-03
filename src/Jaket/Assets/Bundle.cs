@@ -199,5 +199,11 @@ public static class Bundle
     /// <summary> Sends a localized & formatted message to the chat. </summary>
     public static void Msg(string key, params string[] args) => UI.Chat.Receive(Format(key, args), false);
 
+    /// <summary> Sends a localized message to the chat's extra display. </summary>
+    public static void Ext(string key) => UI.Chat.DisplayText(Get(key), false);
+
+    /// <summary> Sends a localized & formatted message to the chat's extra display. </summary>
+    public static void Ext(string key, params string[] args) => UI.Chat.DisplayText(Format(key, args), false);
+
     #endregion
 }
