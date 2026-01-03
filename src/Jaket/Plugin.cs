@@ -83,6 +83,7 @@ public class Plugin : MonoBehaviour
         SprayManager.Load();
         ActionList.Load();
         World.World.Load();
+        Gameflow.Load();
 
         Log.Info("[INIT] Running postinit hooks...");
 
