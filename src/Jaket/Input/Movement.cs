@@ -205,6 +205,10 @@ public class Movement : MonoSingleton<Movement>
     #endregion
     #region harmony
 
+    [HarmonyPatch(typeof(OptionsManager), nameof(OptionsManager.Pause))]
+    [HarmonyPrefix]
+    static void Fixes(ref GunControl ___gc) => ___gc = GunControl.Instance; // idk why, but it keeps happening randomly
+
     [HarmonyPatch(typeof(OptionsManager), nameof(OptionsManager.UnPause))]
     [HarmonyPostfix]
     static void Pause() => UpdateState();
