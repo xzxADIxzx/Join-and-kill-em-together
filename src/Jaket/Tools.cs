@@ -207,6 +207,18 @@ public static class Tools
         return false;
     }
 
+    /// <summary> Casts each object in the given enumerable. </summary>
+    public static IEnumerable<K> Cast<T, K>(this IEnumerable<T> seq, Func<T, K> cast)
+    {
+        foreach (var item in seq) yield return cast(item);
+    }
+
+    /// <summary> Casts each object in the given enumerable that is suitable for the given predicate. </summary>
+    public static IEnumerable<K> Cast<T, K>(this IEnumerable<T> seq, Pred<T> pred, Func<T, K> cast)
+    {
+        foreach (var item in seq) if (pred(item)) yield return cast(item);
+    }
+
     /// <summary> Returns the object in the given enumerable that is suitable for the given predicate or default. </summary>
     public static T Find<T>(this IEnumerable<T> seq, Pred<T> pred, Prov<T> defaultProv = null)
     {
