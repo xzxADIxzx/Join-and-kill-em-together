@@ -175,8 +175,6 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Respawns the player at the given position with the given rotation. </summary>
     public static void Respawn(Vector3 position, float rotation, bool flash = false)
     {
-        Teleporter.Tp(position, flash);
-
         StyleHUD.Instance.ComboOver();
         StyleHUD.Instance.ResetAllFreshness();
 
@@ -188,12 +186,7 @@ public class Movement : MonoSingleton<Movement>
         cc.StopShake();
         fc.fistCooldown = 0f;
 
-        /* TODO move checkpoints instead of doing this
-        // the player is currently fighting the Minotaur in the tunnel, the security system or the brain in the Earthmover
-        if (World.TunnelRoomba) nm.transform.position = World.TunnelRoomba.position with { y = -112.5f };
-        if (World.SecuritySystem[0]) nm.transform.position = new(0f, 472f, 745f);
-        if (World.Brain && World.Brain.IsFightActive) nm.transform.position = new(0f, 826.5f, 610f);
-        */
+        Teleporter.Tp(position, flash);
     }
 
     /// <summary> Respawns Cyber Grind players and flashes the screen. </summary>
