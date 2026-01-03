@@ -31,10 +31,12 @@ public class Gameflow
                 Mode = Gamemodes.All.Find(m => m.ToString().ToLower() == LobbyConfig.Mode);
                 Restart();
             }
+            if (LobbyController.Offline) UI.Chat.DisplayText(null, false);
         };
         Events.OnLoad += Restart;
         Events.EveryHalf += () =>
         {
+            if (LobbyController.Offline) return;
             if (Mode.HPs()) UpdateHPs();
         };
     }
@@ -52,6 +54,7 @@ public class Gameflow
                 t => health[(byte)t] = startHPs
             );
         }
+        UI.Chat.DisplayText(null, false);
     }
 
     /// <summary> Handles gamemode specific actions on player death. </summary>

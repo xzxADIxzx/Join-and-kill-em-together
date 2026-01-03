@@ -4,8 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using Jaket.Assets;
+using Jaket.Content;
 using Jaket.Net;
 using Jaket.UI.Lib;
+using Jaket.World;
 
 using static Jaket.UI.Lib.Pal;
 
@@ -133,8 +135,10 @@ public class LobbyTab : Fragment
 
         foreach (var toggle in new Selectable[] { pvp, mod, bosses, ppp })
         {
-            toggle.interactable = LobbyController.IsOwner;
-            toggle.GetComponentInChildren<Image>().color = LobbyController.IsOwner ? white : dark;
+            var interactable = LobbyController.IsOwner && (toggle != pvp || !Gameflow.Mode.PvP());
+
+            toggle.interactable = interactable;
+            toggle.GetComponentInChildren<Image>().color = interactable ? white : dark;
         }
     }
 }
