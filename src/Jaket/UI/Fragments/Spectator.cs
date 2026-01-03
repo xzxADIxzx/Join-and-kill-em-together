@@ -94,7 +94,7 @@ public class Spectator : Fragment
         if (Input.GetKeyDown(KeyCode.R) && !Special)
         {
             Content.gameObject.SetActive(Shown = false);
-            StatsManager.Instance.Restart();
+            Events.Post(StatsManager.Instance.Restart);
         }
 
         rotation += InputManager.Instance.InputSource.Look.ReadValue<Vector2>() * 2f;

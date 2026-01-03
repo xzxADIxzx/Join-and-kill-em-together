@@ -1,12 +1,14 @@
 namespace Jaket.World;
 
 using Steamworks;
+using System.Collections;
+using UnityEngine;
 
+using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net;
 using Jaket.Net.Types;
 using Jaket.UI;
-using UnityEngine;
 
 using static Jaket.UI.Lib.Pal;
 
@@ -17,6 +19,8 @@ public class Gameflow
 
     /// <summary> Actual gamemode controling the flow of the game. </summary>
     public static Gamemode Mode { get; private set; }
+    /// <summary> Whether the extant round is in the active state. </summary>
+    public static bool Active;
 
     private static int startHPs = 6;
     private static int[] health = new int[Teams.All.Length];
@@ -29,16 +33,37 @@ public class Gameflow
             if (LobbyConfig.Mode != Mode.ToString().ToLower())
             {
                 Mode = Gamemodes.All.Find(m => m.ToString().ToLower() == LobbyConfig.Mode);
-                Restart();
+                Countdown();
             }
             if (LobbyController.Offline) UI.Chat.DisplayText(null, false);
         };
-        Events.OnLoad += Restart;
+        Events.OnLoad += Countdown;
         Events.EveryHalf += () =>
         {
             if (LobbyController.Offline) return;
             if (Mode.HPs()) UpdateHPs();
         };
+    }
+
+    /// <summary> Counts a few seconds down before restarting the round. </summary>
+    public static void Countdown()
+    {
+        if (Mode == Gamemode.Campaign)
+        {
+            Restart();
+            return;
+        }
+
+        static IEnumerator Countdown(int seconds)
+        {
+            while (seconds > 0)
+            {
+                Bundle.Ext("game.countdown", $"{seconds--}");
+                yield return new WaitForSeconds(1);
+            }
+            Restart();
+        }
+        Plugin.Instance.StartCoroutine(Countdown(8));
     }
 
     /// <summary> Restarts the round, doesn't do anything in campaign. </summary>
@@ -54,7 +79,9 @@ public class Gameflow
                 t => health[(byte)t] = startHPs
             );
         }
+
         UI.Chat.DisplayText(null, false);
+        Active = true;
     }
 
     /// <summary> Handles gamemode specific actions on player death. </summary>
