@@ -112,6 +112,8 @@ public class Gameflow
             int fraction = LobbyController.Lobby?.MemberCount - 1 ?? 1;
             nm.GetHealth(100 / fraction, true);
         }
+        // update the info label
+        UI.Spectator.Toggle();
     }
 
     #endregion

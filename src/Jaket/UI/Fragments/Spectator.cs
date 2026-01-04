@@ -28,6 +28,8 @@ public class Spectator : Fragment
     private Text info;
     /// <summary> Flash that displays the I See You texture. </summary>
     private Image dead;
+    /// <summary> Time of the last death of the local player. </summary>
+    private float DeathTime;
 
     /// <summary> Third person camera position. </summary>
     private Vector3 position;
@@ -62,13 +64,17 @@ public class Spectator : Fragment
     public override void Toggle()
     {
         Content.gameObject.SetActive(Shown = NewMovement.Instance.dead);
+        DeathTime = Time.time;
 
-        if (Shown) info.text = Bundle.Format("spect",
+        if (Shown) info.text = Bundle.Format
+        (
+            "spect",
             Keybind.SpectNext.FormatValue(),
             Keybind.SpectPrev.FormatValue(),
             Special || Gameflow.LockRespawn
                 ? Bundle.Format("spect.special", Scene == "Endless" ? "#spect.cg" : Scene == "Level 0-S" ? "#spect.zs" : "#spect.gm")
-                : "#spect.default");
+                : "#spect.default"
+        );
     }
 
     #region camera
@@ -93,7 +99,7 @@ public class Spectator : Fragment
     public void UpdateInput()
     {
         if (UI.AnyDialog) return;
-        if (Input.GetKeyDown(KeyCode.R) && !Special && !Gameflow.LockRespawn)
+        if (Input.GetKeyDown(KeyCode.R) && !Special && !Gameflow.LockRespawn && Time.time - DeathTime >= 1f)
         {
             Content.gameObject.SetActive(Shown = false);
             Events.Post(StatsManager.Instance.Restart);
