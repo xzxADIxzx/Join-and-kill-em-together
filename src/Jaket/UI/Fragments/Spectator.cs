@@ -66,7 +66,9 @@ public class Spectator : Fragment
         if (Shown) info.text = Bundle.Format("spect",
             Keybind.SpectNext.FormatValue(),
             Keybind.SpectPrev.FormatValue(),
-            Special ? Bundle.Format("spect.special", Scene == "Endless" ? "#spect.cg" : "#spect.zs") : "#spect.default");
+            Special || Gameflow.LockRespawn
+                ? Bundle.Format("spect.special", Scene == "Endless" ? "#spect.cg" : Scene == "Level 0-S" ? "#spect.zs" : "#spect.gm")
+                : "#spect.default");
     }
 
     #region camera
@@ -91,7 +93,7 @@ public class Spectator : Fragment
     public void UpdateInput()
     {
         if (UI.AnyDialog) return;
-        if (Input.GetKeyDown(KeyCode.R) && !Special)
+        if (Input.GetKeyDown(KeyCode.R) && !Special && !Gameflow.LockRespawn)
         {
             Content.gameObject.SetActive(Shown = false);
             Events.Post(StatsManager.Instance.Restart);

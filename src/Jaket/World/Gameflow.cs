@@ -22,7 +22,12 @@ public class Gameflow
     /// <summary> Whether the extant round is in the active state. </summary>
     public static bool Active;
 
+    /// <summary> Whether respawn is locked due to gamemode logic. </summary>
+    public static bool LockRespawn => Mode.HPs() && health[(byte)Networking.LocalPlayer.Team] <= 0;
+
+    /// <summary> Number of health points given to each active team. </summary>
     private static int startHPs = 6;
+    /// <summary> Number of health points each team currently has. </summary>
     private static int[] health = new int[Teams.All.Length];
 
     #region general
@@ -119,7 +124,7 @@ public class Gameflow
         if (nm.hp > 0)
             alive[(byte)Networking.LocalPlayer.Team]++;
 
-        UI.Chat.DisplayText(string.Join("  ", Teams.All.Cast(t => health[(byte)t] != 0 || alive[(byte)t] != 0, t =>
+        UI.Chat.DisplayText(string.Join("  ", Teams.All.Cast(t => health[(byte)t] > 0 || alive[(byte)t] > 0, t =>
         {
             var common = ColorUtility.ToHtmlStringRGBA(       t.Color() );
             var dimmed = ColorUtility.ToHtmlStringRGBA(Darker(t.Color()));
