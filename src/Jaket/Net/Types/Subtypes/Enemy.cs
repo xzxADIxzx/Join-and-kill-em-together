@@ -24,7 +24,7 @@ public abstract class Enemy : OwnableEntity
     [HarmonyPrefix]
     static bool Start(EnemyIdentifier __instance)
     {
-        if (Gameflow.Mode.NoCommonEnemies()) // TODO somehow skip it for wave enemies
+        if (Gameflow.Mode.NoCommonEnemies() && !__instance.GetComponent<Agent>()) // TODO somehow skip it for wave enemies
         {
             Imdt(__instance.gameObject);
             return false;
