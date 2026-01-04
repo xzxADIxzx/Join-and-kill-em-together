@@ -1,8 +1,10 @@
 namespace Jaket.Net.Types;
 
+using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Content;
+using Jaket.World;
 
 /// <summary> Abstract entity of any enemy type. </summary>
 public abstract class Enemy : OwnableEntity
@@ -15,4 +17,20 @@ public abstract class Enemy : OwnableEntity
     public void Heal() { } // TODO remake enemies (again)
 
     public abstract Transform WeakPoint { get; }
+
+    #region harmony
+
+    [HarmonyPatch(typeof(EnemyIdentifier), "Start")]
+    [HarmonyPrefix]
+    static bool Start(EnemyIdentifier __instance)
+    {
+        if (Gameflow.Mode.NoCommonEnemies()) // TODO somehow skip it for wave enemies
+        {
+            Imdt(__instance.gameObject);
+            return false;
+        }
+        return true;
+    }
+
+    #endregion
 }

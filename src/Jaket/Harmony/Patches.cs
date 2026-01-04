@@ -22,6 +22,7 @@ public static class Patches
     public static Type[] DynamicTypes =
     {
         typeof(TeamCoin),
+        typeof(Enemy),
         typeof(Item),
         typeof(Fish),
         typeof(Plushie),
