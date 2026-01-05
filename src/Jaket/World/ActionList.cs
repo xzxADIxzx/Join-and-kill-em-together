@@ -1,10 +1,13 @@
 namespace Jaket.World;
 
 using Logic;
+using UnityEngine;
 using UnityEngine.UI;
 
+using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net;
+using Jaket.UI.Lib;
 
 /// <summary> List of all interactions with the world. Will replenish over time. </summary>
 public static class ActionList
@@ -284,6 +287,34 @@ public static class ActionList
         {
             if (Gameflow.Mode.NoRestarts()) b.GetComponent<Button>().interactable = LobbyController.IsOwner;
         });
+
+        #endregion
+        #region beta
+        l = "Main Menu";
+
+        string info =
+@"[31][b][red]!!! WARNING !!! WARNING !!! WARNING !!![][][]
+
+This is a public [orange]beta test[] of Jaket. A lot of features are either still in development or subjects to change. Full release of the mod should be expected [orange]after the fraud[] update.
+
+At this moment, the only gamemode available is [orange]Versus[], which is forced for every lobby. This gamemode includes team based health points, bonus healing after killing a player and disabled enemies spawn. More gamemodes are gonna be released in the near future. [12][gray]if i ain't fail examination session[][]
+
+[red]Thank you for your patience :heart:[]
+[12][gray]i know it's been 1.5 years since the last update, bruh[][]";
+
+        ActionType.Find(l, "Main Menu (1)/V1", r =>
+        {
+            var root = Builder.Rect("Warning", r, UI.Lib.Rect.Fill);
+
+            Builder.Image(root, Tex.Back, Pal.semi, Image.Type.Sliced);
+
+            var text = Builder.Rect("Text", root, new(0f, 0f, -32f, -32f, Vector2.zero, Vector2.one));
+
+            Builder.Text(text, Bundle.Parse(info), 24, Pal.white, TextAnchor.UpperLeft);
+        });
+
+        // TODO remove later
+        Each(a => a.Scene == "Main Menu", a => a.Perform(default));
 
         #endregion
 
