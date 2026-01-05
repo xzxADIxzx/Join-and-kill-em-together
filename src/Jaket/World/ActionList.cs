@@ -272,7 +272,18 @@ public static class ActionList
         ActionType.Arena(l);
         ActionType.Final(l);
 
-        ActionType.Find(l, "PauseMenu/Restart Mission", b => { if (Gameflow.Mode.NoRestarts()) b.GetComponent<Button>().interactable = LobbyController.IsOwner; });
+        ActionType.Find(l, "PauseMenu/Restart Checkpoint", b =>
+        {
+            if (Gameflow.Mode.NoRestarts())
+            {
+                b.GetComponentsInParent<PauseMenu>(true).Each(Dest);
+                b.GetComponent<Button>().interactable = false;
+            }
+        });
+        ActionType.Find(l, "PauseMenu/Restart Mission", b =>
+        {
+            if (Gameflow.Mode.NoRestarts()) b.GetComponent<Button>().interactable = LobbyController.IsOwner;
+        });
 
         #endregion
 
