@@ -22,6 +22,7 @@ public class Movement : MonoSingleton<Movement>
     static FistControl fc => FistControl.Instance;
     static GunControl gc => GunControl.Instance;
     static CameraController cc => CameraController.Instance;
+    static AssistController ac => AssistController.Instance;
     static CheatsController ch => CheatsController.Instance;
     static CheatsManager cm => CheatsManager.Instance;
 
@@ -46,6 +47,11 @@ public class Movement : MonoSingleton<Movement>
 
                 (Get("idToCheat", cm) as Dictionary<string, ICheat>).Values.Each(cm.DisableCheat);
                 Bundle.Hud("unprivileged");
+            }
+            if (ac.majorEnabled && LobbyController.Online)
+            {
+                ac.majorEnabled = false;
+                Bundle.Hud("major-assist");
             }
         };
     }
