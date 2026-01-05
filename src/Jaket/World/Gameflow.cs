@@ -111,6 +111,7 @@ public class Gameflow
         if (Mode.HealOnKill())
         {
             int fraction = LobbyController.Lobby?.MemberCount - 1 ?? 1;
+            nm.ForceAddAntiHP(-100 / fraction);
             nm.GetHealth(100 / fraction, true);
         }
         // update the info label
