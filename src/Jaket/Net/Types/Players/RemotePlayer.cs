@@ -178,7 +178,7 @@ public class RemotePlayer : Entity, Screwdriver.Screwable
         else enemyId.drillers.Remove(harpoon);
     }
 
-    public void Toggle(bool on) => cs.Each(c => c.enabled = on);
+    public void Toggle(bool on) => cs.Each(c => c, c => c.enabled = on);
 
     #endregion
     #region other
