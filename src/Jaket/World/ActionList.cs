@@ -3,6 +3,7 @@ namespace Jaket.World;
 using Logic;
 using UnityEngine.UI;
 
+using Jaket.Content;
 using Jaket.Net;
 
 /// <summary> List of all interactions with the world. Will replenish over time. </summary>
@@ -270,6 +271,8 @@ public static class ActionList
 
         ActionType.Arena(l);
         ActionType.Final(l);
+
+        ActionType.Find(l, "PauseMenu/Restart Mission", b => { if (Gameflow.Mode.NoRestarts()) b.GetComponent<Button>().interactable = LobbyController.IsOwner; });
 
         #endregion
 

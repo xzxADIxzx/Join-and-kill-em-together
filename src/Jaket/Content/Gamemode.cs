@@ -61,4 +61,14 @@ public static class Gamemodes
         Gamemode.Arena         => true,
         _                      => false,
     };
+
+    /// <summary> Whether the gamemode implies the absence of restart button. </summary>
+    public static bool NoRestarts(this Gamemode gm) => gm switch
+    {
+        Gamemode.Versus        => true,
+        Gamemode.Arena         => true,
+        Gamemode.ArmsRace      => true,
+        Gamemode.HideAndSeek   => true,
+        _                      => false,
+    };
 }
