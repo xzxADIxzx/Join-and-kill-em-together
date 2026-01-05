@@ -55,6 +55,7 @@ public class Privileges : Fragment
 
             LobbyController.Lobby?.Members.Each(m => LobbyConfig.Privileged.Any(p => p == m.AccId.ToString()) == upper, m => level.TextButton(m.Name, color, () =>
             {
+                if (!LobbyController.IsOwner) return;
                 if (upper)
                     LobbyConfig.Set("privileged", LobbyConfig.Get("privileged").Replace(m.AccId.ToString(), string.Empty).Replace("  ", string.Empty).Trim());
                 else
