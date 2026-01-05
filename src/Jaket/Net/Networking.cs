@@ -143,6 +143,9 @@ public static class Networking
                 if (LobbyConfig.HealBosses) Entities.Alive<Enemy>(e => e.IsBoss, e => e.Heal());
             }
 
+            else if (msg.StartsWith("#/w") && byte.TryParse(msg[3..], out byte wid) && lobby.Owner.Id == member.Id)
+                Gameflow.OnVictory(wid);
+
             else if (msg.StartsWith("#/b") && uint.TryParse(msg[3..], out uint bid) && lobby.Owner.Id == member.Id)
                 Bundle.Msg("player.banned", Name(bid));
 

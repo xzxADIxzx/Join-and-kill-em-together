@@ -93,6 +93,7 @@ public class Gameflow
             }
         }
 
+        UI.Spectator.Toggle();
         UI.Chat.DisplayText(null, false);
         Active = true;
     }
@@ -114,6 +115,13 @@ public class Gameflow
         }
         // update the info label
         UI.Spectator.Toggle();
+    }
+
+    /// <summary> Handles gamemode specific actions on team victory. </summary>
+    public static void OnVictory(byte winner)
+    {
+        Bundle.Hud("game.win", false, $"#team.No{winner}", ColorUtility.ToHtmlStringRGBA(((Team)winner).Color()));
+        Countdown();
     }
 
     #endregion
@@ -141,6 +149,12 @@ public class Gameflow
 
             return string.Join("[8] []", display);
         })));
+
+        if (LobbyController.IsOwner && health.Count(h => h > 0) <= 1 && alive.Count(a => a > 0) <= 1)
+        {
+            var winner = Teams.All.Find(t => alive[(byte)t] > 0);
+            LobbyController.Lobby?.SendChatString("#/w" + (byte)winner);
+        }
     }
 
     #endregion
