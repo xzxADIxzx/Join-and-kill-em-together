@@ -40,7 +40,7 @@ public class Gameflow
             if (LobbyConfig.Mode != Mode.ToString().ToLower())
             {
                 Mode = Gamemodes.All.Find(m => m.ToString().ToLower() == LobbyConfig.Mode);
-                Countdown();
+                if (LobbyController.Online && LobbyController.IsOwner) LoadScn(Scene);
             }
             if (LobbyController.Offline) UI.Chat.DisplayText(null, false);
         };
