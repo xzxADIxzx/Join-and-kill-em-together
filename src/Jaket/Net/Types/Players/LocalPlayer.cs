@@ -99,6 +99,8 @@ public class LocalPlayer : Entity
 
         nm.GetHurt(damage, damage <= 3, ignoreInvincibility: damage >= 3);
 
+        if (damage >= 4) nm.ForceAddAntiHP(damage * 2, true, true, true);
+
         if (Version.DEBUG) Log.Debug($"[ENTS] Received {damage} damage");
     }
 
