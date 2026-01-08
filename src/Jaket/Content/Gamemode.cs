@@ -10,6 +10,7 @@ public enum Gamemode : byte
     ArmsRace,
     PaintTheWorld,
     HideAndSeek,
+    BossRush,
 }
 
 /// <summary> Set of different tools for working with gamemodes. </summary>
