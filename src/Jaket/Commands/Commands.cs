@@ -105,17 +105,17 @@ public static class Commands
 
             if (LobbyController.Online && !LobbyController.IsOwner) chat.Receive("[red]Only the owner of the lobby can load levels.");
 
-            else if (args.Length >= 1 && "sandbox tester".Contains(args[0]))
+            else if (args.Length >= 1 && args[0].Length >= 2 && "sandbox sbtest".Contains(args[0]))
             {
                 LoadScn("uk_construct");
                 chat.Receive("[green]Sandbox is loading...");
             }
-            else if (args.Length >= 1 && "cyber grind cg".Contains(args[0]))
+            else if (args.Length >= 1 && args[0].Length >= 2 && "cyber grind cg".Contains(args[0]))
             {
                 LoadScn("Endless");
                 chat.Receive("[green]The Cyber Grind is loading...");
             }
-            else if (args.Length >= 1 && "credits museum".Contains(args[0]))
+            else if (args.Length >= 1 && args[0].Length >= 2 && "credits museum".Contains(args[0]))
             {
                 LoadScn("CreditsMuseum2");
                 chat.Receive("[green]Museum is loading...");
@@ -137,6 +137,11 @@ public static class Commands
                 LoadScn($"Level {layer}-S");
                 chat.Receive($"[green]Level {layer}-S is loading...");
             }
+            else if (args[1] == "e" && int.TryParse(args[0], out layer) && layer >= 0 && layer <= 1)
+            {
+                LoadScn($"Level {layer}-E");
+                chat.Receive($"[green]Level {layer}-E is loading...");
+            }
             else if (args[0] == "p" && int.TryParse(args[1], out level) && level >= 1 && level <= 2)
             {
                 LoadScn($"Level P-{level}");
@@ -150,7 +155,7 @@ public static class Commands
         ([
             "Permanent Author",   "xzxADIxzx",
             "Endless Gratitude",  "Sowler",
-            "Contributors",       "Fumboy, Rey Hunter, Ardub, Kekson1a",
+            "Contributors",       "Fumboy, Rey Hunter, Ardub, Kekson1a, Atlas",
             "Translators",        "Poyozito, Fraku, Theoyeah, Doomguy, Fenicemaster, sSAR, Sowler, \n[coral]|[] xzxADIxzx, NotPhobos",
             "Testers",            "Sowler, Fenicemaster, Andru, Subjune, FruitCircuit, J'son, Dodo, \n[blue]|[] Poot Man, Rusty Umnizm",
         ]));
