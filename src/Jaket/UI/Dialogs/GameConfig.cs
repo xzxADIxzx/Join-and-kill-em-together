@@ -6,7 +6,9 @@ using UnityEngine.UI;
 
 using Jaket.Assets;
 using Jaket.Content;
+using Jaket.Net;
 using Jaket.UI.Lib;
+using Jaket.World;
 
 using static Jaket.UI.Lib.Pal;
 
@@ -20,7 +22,7 @@ public class GameConfig : Fragment
 
     public GameConfig(Transform root) : base(root, "GameConfig", true)
     {
-        Bar(556f, 776f, b =>
+        Bar(556f, 676f, b =>
         {
             b.Setup(true);
             b.Text("#gameconfig.name", 32f, 32);
@@ -43,7 +45,7 @@ public class GameConfig : Fragment
                 }));
             });
 
-            info = b.Text("keen eye", 300f, align: TextAnchor.UpperLeft, color: light);
+            info = b.Text("keen eye", 200f, align: TextAnchor.UpperLeft, color: light);
             b.Text("#gameconfig.mods", 24f, align: TextAnchor.MiddleLeft);
 
             b.Toggle("#gameconfig.slowmo", b => { });
@@ -54,11 +56,23 @@ public class GameConfig : Fragment
     public override void Toggle()
     {
         base.Toggle();
-        UI.Hide(UI.MidlGroup, this, Rebuild);
+        UI.Hide(UI.MidlGroup, this, () =>
+        {
+            selected = Gameflow.Mode;
+            Rebuild();
+        });
+        if (LobbyController.IsOwner && selected != Gameflow.Mode)
+            LobbyConfig.Mode = selected.ToString().ToLower();
     }
 
     public override void Rebuild()
     {
+        if (selected == Gamemode.Campaign)
+        {
+            info.text = Bundle.Get("gameconfig.briefs.No0");
+            return;
+        }
+
         StringBuilder builder = new();
 
         if (selected.PvP            ()) builder.Append(Bundle.Get("gameconfig.totals.pvp"));
