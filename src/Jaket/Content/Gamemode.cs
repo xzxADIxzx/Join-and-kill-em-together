@@ -17,11 +17,12 @@ public enum Gamemode : byte
 public static class Gamemodes
 {
     /// <summary> List of all of the gamemodes that is used for iterating. </summary>
-    public static Gamemode[] All = { Gamemode.Campaign, Gamemode.Manhunt, Gamemode.Versus, Gamemode.Arena, Gamemode.ArmsRace, Gamemode.PaintTheWorld, Gamemode.HideAndSeek };
+    public static Gamemode[] All = { Gamemode.Campaign, Gamemode.Manhunt, Gamemode.Versus, Gamemode.Arena, Gamemode.ArmsRace, Gamemode.PaintTheWorld, Gamemode.HideAndSeek, Gamemode.BossRush };
 
     /// <summary> Whether the gamemode implies a deadly competition between all teams. </summary>
     public static bool PvP(this Gamemode gm) => gm switch
     {
+        Gamemode.Manhunt       => true,
         Gamemode.Versus        => true,
         Gamemode.Arena         => true,
         Gamemode.ArmsRace      => true,
@@ -29,7 +30,7 @@ public static class Gamemodes
         _                      => false,
     };
 
-    /// <summary> Whether the gamemode implies team based health points. </summary>
+    /// <summary> Whether the gamemode implies team-based health points. </summary>
     public static bool HPs(this Gamemode gm) => gm switch
     {
         Gamemode.Versus        => true,

@@ -67,9 +67,9 @@ public class GameConfig : Fragment
 
     public override void Rebuild()
     {
-        if (selected == Gamemode.Campaign)
+        if (selected == Gamemode.Campaign || selected == Gamemode.BossRush)
         {
-            info.text = Bundle.Get("gameconfig.briefs.No0");
+            info.text = Bundle.Get($"gameconfig.briefs.No{(byte)selected}");
             return;
         }
 
