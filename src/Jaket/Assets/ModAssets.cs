@@ -38,7 +38,7 @@ public static class ModAssets
     /// <summary> Icons of the emotes and their glows. </summary>
     public static Sprite[] EmoteIcons, EmoteGlows;
     /// <summary> Icons of the customization elements. </summary>
-    public static Sprite[] ShopIcons;
+    public static Sprite[] ShopIcons, CardIcons;
 
     /// <summary> This font differs from the original one in support of Cyrillic alphabet. </summary>
     public static Font DefFont;
@@ -126,6 +126,7 @@ public static class ModAssets
         LoadAll(i => "emote-" + i,           EmoteIcons = new Sprite[12]);
         LoadAll(i => "emote-" + i + "-glow", EmoteGlows = new Sprite[12]);
         LoadAll(i => "shop-"  + i,           ShopIcons  = new Sprite[12]);
+        LoadAll(i => "card-"  + i,           CardIcons  = new Sprite[08]);
 
         Load<TextAsset>("V3-bestiary-entry", t => BestiaryEntry.Load(t.text, 15));
         Load<TextAsset>("shop-entries",      t =>
