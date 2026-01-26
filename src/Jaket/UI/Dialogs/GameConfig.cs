@@ -19,9 +19,13 @@ public class GameConfig : Fragment
     private Gamemode selected;
     /// <summary> Information about the selected gamemode. </summary>
     private Text info;
+    /// <summary> Checkboxes of gamemode modifiers & such. </summary>
+    private Toggle slowmo, hammer;
 
     public GameConfig(Transform root) : base(root, "GameConfig", true)
     {
+        Events.OnLobbyAction += () => { if (Shown) Rebuild(); };
+
         Bar(556f, 676f, b =>
         {
             b.Setup(true);
@@ -48,8 +52,8 @@ public class GameConfig : Fragment
             info = b.Text("keen eye", 200f, align: TextAnchor.UpperLeft, color: light);
             b.Text("#gameconfig.mods", 24f, align: TextAnchor.MiddleLeft);
 
-            b.Toggle("#gameconfig.slowmo", b => { });
-            b.Toggle("#gameconfig.hammer", b => { });
+            slowmo = b.Toggle("#gameconfig.slowmo", b => LobbyConfig.Slowmo = b);
+            hammer = b.Toggle("#gameconfig.hammer", b => LobbyConfig.Hammer = b);
         });
     }
 
@@ -76,5 +80,10 @@ public class GameConfig : Fragment
         if (selected.WaveLikeEnemies()) builder.Append(Bundle.Get("gameconfig.totals.wle"));
 
         info.text = Bundle.Format($"gameconfig.briefs.No{(byte)selected}", builder.ToString());
+
+        slowmo.isOn = LobbyConfig.Slowmo;
+        hammer.isOn = LobbyConfig.Hammer;
+
+        slowmo.interactable = hammer.interactable = LobbyController.IsOwner;
     }
 }

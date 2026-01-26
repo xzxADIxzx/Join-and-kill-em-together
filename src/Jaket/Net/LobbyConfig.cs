@@ -18,7 +18,7 @@ public static class LobbyConfig
         get => Get("name");
         set => Set("name", value ?? $"{SteamClient.Name}'s lobby");
     }
-    /// <summary> Mode of the lobby, gamemodes are used to make fun. </summary>
+    /// <summary> Mode of the lobby, gamemodes. </summary>
     public static string Mode
     {
         get => Get("mode");
@@ -40,6 +40,18 @@ public static class LobbyConfig
             "CreditsMuseum2" => "Museum",
             _ => value[6..]
         });
+    }
+    /// <summary> Whether the slow motion modifier is enabled. </summary>
+    public static bool Slowmo
+    {
+        get => Get("slowmo") == bool.TrueString;
+        set => Set("slowmo", value.ToString());
+    }
+    /// <summary> Whether the hammer madness modifier is enabled. </summary>
+    public static bool Hammer
+    {
+        get => Get("hammer") == bool.TrueString;
+        set => Set("hammer", value.ToString());
     }
     /// <summary> Whether versus aka pure chaos is allowed. </summary>
     public static bool PvPAllowed
