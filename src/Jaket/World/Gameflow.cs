@@ -22,6 +22,8 @@ public class Gameflow
     /// <summary> Whether the extant round is in the active state. </summary>
     public static bool Active;
 
+    /// <summary> Whether the slowmo gamemode modifier is enabled. </summary>
+    public static bool Slowmo;
     /// <summary> Whether respawn is locked due to gamemode logic. </summary>
     public static bool LockRespawn => Mode.HPs() && health[(byte)Networking.LocalPlayer.Team] <= 0;
 
@@ -42,6 +44,14 @@ public class Gameflow
                 Mode = Gamemodes.All.Find(m => m.ToString().ToLower() == LobbyConfig.Mode);
                 if (LobbyController.Online && LobbyController.IsOwner) LoadScn(Scene);
             }
+
+            Slowmo = LobbyConfig.Slowmo;
+
+            if (LobbyConfig.Hammer)
+                Loadouts.Set(Loadouts.Make(true, l => l.altShotgun.greenVariant = VariantOption.ForceOn));
+            else
+                Loadouts.Set(null);
+
             if (LobbyController.Offline) UI.Chat.DisplayText(null, false);
         };
         Events.OnLoad += Countdown;

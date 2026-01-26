@@ -41,7 +41,7 @@ public class Settings : Fragment
         set => pm.SetInt("jaket.chat-location", value % 3);
     }
     /// <summary> Whether freeze frames aka hitstops are disabled. </summary>
-    public static bool DisableFreezeFrames
+    public static bool DisableFreezeFrames // TODO replace w/ skip welcome message
     {
         get => pm.GetBool("jaket.disable-freeze", true);
         set => pm.SetBool("jaket.disable-freeze", value);

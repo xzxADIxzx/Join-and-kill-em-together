@@ -11,9 +11,9 @@ using Jaket.Net;
 using Jaket.Net.Admin;
 using Jaket.Net.Types;
 using Jaket.UI;
-using Jaket.UI.Dialogs;
 using Jaket.UI.Elements;
 using Jaket.UI.Fragments;
+using Jaket.World;
 
 /// <summary> Class responsible for additions to control and local display of emotes. </summary>
 public class Movement : MonoSingleton<Movement>
@@ -216,7 +216,7 @@ public class Movement : MonoSingleton<Movement>
     [HarmonyPostfix]
     static void Scale()
     {
-        if (LobbyController.Online && Settings.DisableFreezeFrames | UI.AnyDialog) Time.timeScale = 1f;
+        if (LobbyController.Online && UI.AnyDialog | Gameflow.Slowmo) Time.timeScale = Gameflow.Slowmo ? .5f : 1f;
     }
 
     [HarmonyPatch(typeof(NewMovement), nameof(NewMovement.GetHurt))]
