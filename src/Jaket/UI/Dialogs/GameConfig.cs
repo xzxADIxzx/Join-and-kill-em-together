@@ -67,13 +67,7 @@ public class GameConfig : Fragment
 
     public override void Rebuild()
     {
-        if (selected == Gamemode.Campaign || selected == Gamemode.BossRush)
-        {
-            info.text = Bundle.Get($"gameconfig.briefs.No{(byte)selected}");
-            return;
-        }
-
-        StringBuilder builder = new();
+        StringBuilder builder = new("\n\n");
 
         if (selected.PvP            ()) builder.Append(Bundle.Get("gameconfig.totals.pvp"));
         if (selected.HPs            ()) builder.Append(Bundle.Get("gameconfig.totals.hps"));
