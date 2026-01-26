@@ -26,10 +26,23 @@ public static class Loadouts
     /// <summary> Updates the current arsenal loadout. </summary>
     public static void Set(ForcedLoadout loadout)
     {
-        GunSetter.Instance.forcedLoadout = loadout ?? new();
+        loadout ??= new()
+        {
+            revolver       = new(),
+            altRevolver    = new(),
+            shotgun        = new(),
+            altShotgun     = new(),
+            nailgun        = new(),
+            altNailgun     = new(),
+            railcannon     = new(),
+            rocketLauncher = new(),
+            arm            = new(),
+        };
+
+        GunSetter.Instance.forcedLoadout = loadout;
         GunSetter.Instance.ResetWeapons();
 
-        FistControl.Instance.forcedLoadout = loadout ?? new();
+        FistControl.Instance.forcedLoadout = loadout;
         FistControl.Instance.ResetFists();
     }
 
