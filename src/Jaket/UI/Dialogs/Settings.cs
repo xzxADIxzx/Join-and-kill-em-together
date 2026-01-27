@@ -40,11 +40,11 @@ public class Settings : Fragment
         get => pm.GetInt("jaket.chat-location");
         set => pm.SetInt("jaket.chat-location", value % 3);
     }
-    /// <summary> Whether freeze frames aka hitstops are disabled. </summary>
-    public static bool DisableFreezeFrames // TODO replace w/ skip welcome message
+    /// <summary> Whether the hello message is disabled. </summary>
+    public static bool SkipHelloMessage
     {
-        get => pm.GetBool("jaket.disable-freeze", true);
-        set => pm.SetBool("jaket.disable-freeze", value);
+        get => pm.GetBool("jaket.skip-hello-message", false);
+        set => pm.SetBool("jaket.skip-hello-message", value);
     }
     /// <summary> Percentage volume of the Sam's voice. </summary>
     public static int Volume
@@ -107,7 +107,7 @@ public class Settings : Fragment
                 Rebuild();
             });
 
-            b.Toggle("#settings.freeze", b => DisableFreezeFrames = b);
+            b.Toggle("#settings.skipmsg", b => SkipHelloMessage = b);
             b.TextButton("#settings.sprays", callback: () => UI.Sprays.Toggle());
         });
         Bar(552f, b =>
@@ -152,8 +152,8 @@ public class Settings : Fragment
         // update the alignment of the chat option
         chat.transform.GetChild(0).localPosition = Vector2.down;
 
-        // update the toggle of the freeze frames
-        Content.GetChild(0).GetChild(0).GetChild(7).GetComponent<Toggle>().isOn = DisableFreezeFrames;
+        // update the toggle of the hello message
+        Content.GetChild(0).GetChild(0).GetChild(7).GetComponent<Toggle>().isOn = SkipHelloMessage;
 
         // update the colors of the feedbacker and knuckleblaster
         Events.OnHandChange.Fire();
@@ -177,7 +177,8 @@ public class Settings : Fragment
         Locale = Bundle.Codes[Bundle.Loaded];
         pm.DeleteKey("jaket.feed-color");
         pm.DeleteKey("jaket.knkl-color");
-        pm.DeleteKey("jaket.disable-freeze");
+        pm.DeleteKey("jaket.chat-location");
+        pm.DeleteKey("jaket.skip-hello-message");
         Rebuild();
     }
 

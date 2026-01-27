@@ -56,7 +56,7 @@ public class Chat : Fragment
     {
         Events.OnLoad += () =>
         {
-            if (string.IsNullOrEmpty(chat.text)) SayHello();
+            if (string.IsNullOrEmpty(chat.text) && !Settings.SkipHelloMessage) SayHello();
         };
         Events.EveryHalf += Rebuild;
 
