@@ -20,10 +20,13 @@ public class Gameflow
     /// <summary> Actual gamemode controling the flow of the game. </summary>
     public static Gamemode Mode { get; private set; }
     /// <summary> Whether the extant round is in the active state. </summary>
-    public static bool Active;
+    public static bool Active { get; private set; }
 
     /// <summary> Whether the slowmo gamemode modifier is enabled. </summary>
-    public static bool Slowmo;
+    public static bool Slowmo { get; private set; }
+    /// <summary> Whether the hammer gamemode modifier is enabled. </summary>
+    public static bool Hammer { get; private set; }
+
     /// <summary> Whether respawn is locked due to gamemode logic. </summary>
     public static bool LockRespawn => Mode.HPs() && health[(byte)Networking.LocalPlayer.Team] <= 0;
 
@@ -45,18 +48,17 @@ public class Gameflow
                 if (LobbyController.Online && LobbyController.IsOwner) LoadScn(Scene);
             }
 
-            Slowmo = LobbyConfig.Slowmo;
-
-            if (LobbyConfig.Hammer)
-                Loadouts.Set(Loadouts.Make(true, l => l.altShotgun.greenVariant = VariantOption.ForceOn));
-            else
-                Loadouts.Set(null);
-
             if (LobbyController.Offline)
             {
                 UI.Chat.DisplayText(null, false);
                 Time.timeScale = 1f;
             }
+
+            if (Hammer != LobbyConfig.Hammer) Loadouts.Set
+            (
+                (Hammer = LobbyConfig.Hammer) ? Loadouts.Make(true, l => l.altShotgun.greenVariant = VariantOption.ForceOn) : null
+            );
+            Slowmo = LobbyConfig.Slowmo;
         };
         Events.OnLoad += Countdown;
         Events.EveryHalf += () =>
@@ -69,7 +71,7 @@ public class Gameflow
     /// <summary> Counts a few seconds down before restarting the round. </summary>
     public static void Countdown()
     {
-        if (Mode == Gamemode.Campaign)
+        if (Mode == Gamemode.Campaign || Mode == Gamemode.BossRush)
         {
             Restart();
             return;
