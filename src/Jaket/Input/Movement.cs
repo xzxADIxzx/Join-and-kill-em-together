@@ -216,7 +216,7 @@ public class Movement : MonoSingleton<Movement>
     [HarmonyPostfix]
     static void Scale()
     {
-        if (LobbyController.Online && UI.AnyDialog | Gameflow.Slowmo) Time.timeScale = Gameflow.Slowmo ? .5f : 1f;
+        if (LobbyController.Online) Time.timeScale = Gameflow.Slowmo ? .5f : 1f;
     }
 
     [HarmonyPatch(typeof(NewMovement), nameof(NewMovement.GetHurt))]
