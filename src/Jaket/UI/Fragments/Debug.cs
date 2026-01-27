@@ -18,7 +18,7 @@ public class Debug : Fragment
     static Transform cc => CameraController.Instance.transform;
 
     /// <summary> Warehouses containing a lot of diverse information. </summary>
-    private Data readBs, sentBs, readMs, writeMs, entityMs, targetMs, totalMs, flushMs;
+    private Data readBs, sentBs, readMs, writeMs, entityMs, commonMs, totalMs, flushMs;
     /// <summary> Labels displaying diverse information about network. </summary>
     private Text entities, players, isowner, loading, gamemode, active, slowmo, hammer;
 
@@ -41,7 +41,7 @@ public class Debug : Fragment
             {
                 b.Setup(true);
                 b.Text("ENTITY UPDATE", 24f, out (entityMs = new(97)).Label, color: blue);
-                b.Text("TARGET UPDATE", 24f, out (targetMs = new(97)).Label, color: Darker(blue));
+                b.Text("COMMON UPDATE", 24f, out (commonMs = new(97)).Label, color: Darker(blue));
                 b.Text("TOTAL TIME   ", 24f, out (totalMs  = new(97)).Label, color: purple);
                 b.Text("FLUSH TIME   ", 24f, out (flushMs  = new(97)).Label, color: Darker(purple));
             });
@@ -75,7 +75,7 @@ public class Debug : Fragment
             Build(timeGraph, readMs);
             Build(timeGraph, writeMs);
             Build(timeGraph, entityMs);
-            Build(timeGraph, targetMs);
+            Build(timeGraph, commonMs);
             Build(timeGraph, totalMs);
             Build(timeGraph, flushMs);
         });
@@ -94,7 +94,7 @@ public class Debug : Fragment
         readMs  .Enqueue(Stats.ReadMs,   v => $"{v:0.000}ms");
         writeMs .Enqueue(Stats.WriteMs,  v => $"{v:0.000}ms");
         entityMs.Enqueue(Stats.EntityMs, v => $"{v:0.000}ms");
-        targetMs.Enqueue(Stats.TargetMs, v => $"{v:0.000}ms");
+        commonMs.Enqueue(Stats.CommonMs, v => $"{v:0.000}ms");
         totalMs .Enqueue(Stats.TotalMs,  v => $"{v:0.000}ms");
         flushMs .Enqueue(Stats.FlushMs,  v => $"{v:0.000}ms");
 
@@ -107,7 +107,7 @@ public class Debug : Fragment
         readMs  .Project(timePeak);
         writeMs .Project(timePeak);
         entityMs.Project(timePeak);
-        targetMs.Project(timePeak);
+        commonMs.Project(timePeak);
         totalMs .Project(timePeak);
         flushMs .Project(timePeak);
 
@@ -126,7 +126,7 @@ public class Debug : Fragment
         hammer.color  = Gameflow.Hammer ? green : red;
     }
 
-    public void Clear() => new Data[] { readBs, sentBs, readMs, writeMs, entityMs, targetMs, totalMs, flushMs }.Each(d => d.Clear());
+    public void Clear() => new Data[] { readBs, sentBs, readMs, writeMs, entityMs, commonMs, totalMs, flushMs }.Each(d => d.Clear());
 
     public void Raycast()
     {

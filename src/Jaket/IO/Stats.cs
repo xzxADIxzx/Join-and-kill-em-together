@@ -15,8 +15,8 @@ public static class Stats
 
     /// <summary> Time spent reading and writing in milliseconds. </summary>
     public static float ReadMs, WriteMs;
-    /// <summary> Time spent updating entities and targets in milliseconds. </summary>
-    public static float EntityMs, TargetMs;
+    /// <summary> Time spent updating entities and others in milliseconds. </summary>
+    public static float EntityMs, CommonMs;
     /// <summary> Time spent flushing data and total time in milliseconds. </summary>
     public static float TotalMs, FlushMs;
 
@@ -30,13 +30,13 @@ public static class Stats
         Subticks = 0;
 
         // count the total time spent
-        TotalMs = ReadMs + WriteMs + FlushMs + EntityMs + TargetMs;
+        TotalMs = ReadMs + WriteMs + FlushMs + EntityMs + CommonMs;
 
         // flush the current frame to the debug fragment
         if (Version.DEBUG || UI.Debug.Shown) UI.Debug.Rebuild();
 
         ReadBs = SentBs = 0;
-        ReadMs = WriteMs = EntityMs = TargetMs = TotalMs = FlushMs = 0f;
+        ReadMs = WriteMs = EntityMs = CommonMs = TotalMs = FlushMs = 0f;
     };
 
     /// <summary> Measures the time of execution of the given action. </summary>
