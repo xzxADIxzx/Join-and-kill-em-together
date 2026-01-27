@@ -20,7 +20,7 @@ public class Debug : Fragment
     /// <summary> Warehouses containing a lot of diverse information. </summary>
     private Data readBs, sentBs, readMs, writeMs, entityMs, targetMs, totalMs, flushMs;
     /// <summary> Labels displaying diverse information about network. </summary>
-    private Text entities, players, isowner, loading, gamemode, isactive;
+    private Text entities, players, isowner, loading, gamemode, active, slowmo, hammer;
 
     public Debug(Transform root) : base(root, "Debug", false) => Component<Bar>(Rect("Content", new(0f, 220f, 1920f, 440f, new(.5f, 0f))).gameObject, b =>
     {
@@ -57,7 +57,9 @@ public class Debug : Fragment
             {
                 b.Setup(true);
                 b.Text("GAMEMODE     ", 24f, out gamemode);
-                b.Text("IS ACTIVE    ", 24f, out isactive);
+                b.Text("IS ACTIVE    ", 24f, out active);
+                b.Text("SLOWMO       ", 24f, out slowmo);
+                b.Text("HAMMER       ", 24f, out hammer);
             });
         });
         b.Subbar(256f, s =>
@@ -116,8 +118,12 @@ public class Debug : Fragment
         loading.text  = Networking.Loading.ToString().ToUpper();
         loading.color = Networking.Loading ? green : red;
         gamemode.text = Gameflow.Mode.ToString();
-        isactive.text = Gameflow.Active.ToString().ToUpper();
-        isactive.color= Gameflow.Active ? green : red;
+        active.text   = Gameflow.Active.ToString().ToUpper();
+        active.color  = Gameflow.Active ? green : red;
+        slowmo.text   = Gameflow.Slowmo.ToString().ToUpper();
+        slowmo.color  = Gameflow.Slowmo ? green : red;
+        hammer.text   = Gameflow.Hammer.ToString().ToUpper();
+        hammer.color  = Gameflow.Hammer ? green : red;
     }
 
     public void Clear() => new Data[] { readBs, sentBs, readMs, writeMs, entityMs, targetMs, totalMs, flushMs }.Each(d => d.Clear());
