@@ -52,7 +52,11 @@ public class Gameflow
             else
                 Loadouts.Set(null);
 
-            if (LobbyController.Offline) UI.Chat.DisplayText(null, false);
+            if (LobbyController.Offline)
+            {
+                UI.Chat.DisplayText(null, false);
+                Time.timeScale = 1f;
+            }
         };
         Events.OnLoad += Countdown;
         Events.EveryHalf += () =>
