@@ -45,8 +45,8 @@ public static class Loadouts
         FistControl.Instance.forcedLoadout = loadout;
         FistControl.Instance.ResetFists();
 
-        // pick any available weapon
         GunControl.Instance.YesWeapon();
+        Events.OnHandChange.Fire();
     }
 
     /// <summary> Makes a new loadout with or without arms equipped. </summary>
