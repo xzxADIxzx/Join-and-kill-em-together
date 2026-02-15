@@ -83,7 +83,7 @@ public static class Log
     /// <summary> Any kind of unacceptable situation. </summary>
     public static void Error(string msg) => LogLevel(Level.Error, msg);
 
-    /// <summary> Any kind of unacceptable exceptios. </summary>
+    /// <summary> Any kind of unacceptable exception. </summary>
     public static void Error(string msg, Exception ex) => LogLevel(Level.Error, $"{msg}\n{ex}");
 
     /// <summary> Log importance levels. </summary>

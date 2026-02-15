@@ -156,7 +156,7 @@ public static class Commands
             "Permanent Author",   "xzxADIxzx",
             "Endless Gratitude",  "Sowler",
             "Contributors",       "Fumboy, Rey Hunter, Ardub, Kekson1a, Atlas",
-            "Translators",        "Poyozito, Fraku, Theoyeah, Doomguy, Fenicemaster, sSAR, Sowler, \n[coral]|[] xzxADIxzx, NotPhobos",
+            "Translators",        "Poyozito, Fraku, Theoyeah, Doomguy, Fenicemaster, sSAR, Becon, \n[coral]|[] xzxADIxzx, NotPhobos",
             "Testers",            "Sowler, Fenicemaster, Andru, Subjune, FruitCircuit, J'son, Dodo, \n[blue]|[] Poot Man, Rusty Umnizm",
         ]));
     }
