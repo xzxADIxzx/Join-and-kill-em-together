@@ -297,7 +297,7 @@ public static class ActionList
 
 This is a public [orange]beta test[] of Jaket. A lot of features are either still in development or subjects to change. Full release of the mod should be expected [orange]after the fraud[] update.
 
-At this moment, the only gamemode available is [orange]Versus[], which is forced for every lobby. This gamemode includes team based health points, bonus healing after killing a player and [orange]disabled enemies spawn[]. More gamemodes are gonna be released in the near future.
+At this moment, the only gamemodes available are [orange]Versus[] & Arms Race. To learn more, open the lobby tab in a mission and press the GAMEMODES button. There you'll find description of these gamemodes and their modifiers. More gamemodes are gonna be released in the near future.
 
 [red]Thank you for your patience :heart:[]
 [12][gray]i know it's been 2 years since the last update, bruh[][]";

@@ -28,7 +28,7 @@ public class Gameflow
     public static bool Hammer { get; private set; }
 
     /// <summary> Whether respawn is locked due to gamemode logic. </summary>
-    public static bool LockRespawn => Mode.HPs() && health[(byte)Networking.LocalPlayer.Team] <= 0;
+    public static bool LockRespawn => Mode.HPs() | Mode.NoRestarts() && health[(byte)Networking.LocalPlayer.Team] <= 0;
 
     /// <summary> Number of health points given to each active team. </summary>
     private static int startHPs = 6;
@@ -45,11 +45,13 @@ public class Gameflow
             if (LobbyConfig.Mode != Mode.ToString().ToLower())
             {
                 Mode = Gamemodes.All.Find(m => m.ToString().ToLower() == LobbyConfig.Mode);
+                Active = false;
                 if (LobbyController.Online && LobbyController.IsOwner) LoadScn(Scene);
             }
 
             if (LobbyController.Offline)
             {
+                UI.Spectator.Toggle();
                 UI.Chat.DisplayText(null, false);
                 Time.timeScale = 1f;
             }
@@ -94,8 +96,10 @@ public class Gameflow
     public static void Restart()
     {
         if (Mode.PvP()) LobbyConfig.PvPAllowed = true;
-        if (Mode.HPs())
+        if (Mode.HPs() | Mode.NoRestarts())
         {
+            startHPs = Mode.HPs() ? 6 : 1;
+
             health.Clear();
             Teams.All.Each
             (
