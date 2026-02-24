@@ -143,6 +143,9 @@ public static class Networking
                 if (LobbyConfig.HealBosses) Entities.Alive<Enemy>(e => e.IsBoss, e => e.Heal());
             }
 
+            else if (msg.StartsWith("#/s") && uint.TryParse(msg[3..], out uint sid) && lobby.Owner.Id == member.Id)
+                Gameflow.OnStart(sid);
+
             else if (msg.StartsWith("#/w") && byte.TryParse(msg[3..], out byte wid) && lobby.Owner.Id == member.Id)
                 Gameflow.OnVictory(wid);
 

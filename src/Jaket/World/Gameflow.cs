@@ -34,6 +34,8 @@ public class Gameflow
     private static int startHPs = 6;
     /// <summary> Number of health points each team currently has. </summary>
     private static int[] health = new int[Teams.All.Length];
+    /// <summary> Identifiers of weapons each team has been given. </summary>
+    private static int[] weapon = new int[Teams.All.Length];
 
     #region general
 
@@ -116,6 +118,17 @@ public class Gameflow
         UI.Spectator.Toggle();
         UI.Chat.DisplayText(null, false);
         Active = true;
+    }
+
+    /// <summary> Handles gamemode specific actions on round start. </summary>
+    public static void OnStart(uint data)
+    {
+        if (Mode == Gamemode.ArmsRace)
+        {
+            Teams.All.Each(t => weapon[(byte)t] = (int)data >> (byte)t * 5 & 0x1F);
+
+            Loadouts.Set(Loadouts.Make(false, (byte)weapon[(byte)Networking.LocalPlayer.Team]));
+        }
     }
 
     /// <summary> Handles gamemode specific actions on player death. </summary>
