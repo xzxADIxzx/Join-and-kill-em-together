@@ -61,6 +61,39 @@ public static class Loadouts
         return loadout;
     }
 
+    /// <summary> Makes a new loadout with a specified gun equipped. </summary>
+    public static ForcedLoadout Make(bool arms, byte weapon) => weapon switch
+    {
+        0  => Make(arms, l => l.revolver      .blueVariant  = VariantOption.ForceOn),
+        1  => Make(arms, l => l.revolver      .greenVariant = VariantOption.ForceOn),
+        2  => Make(arms, l => l.revolver      .redVariant   = VariantOption.ForceOn),
+        3  => Make(arms, l => l.altRevolver   .blueVariant  = VariantOption.ForceOn),
+        4  => Make(arms, l => l.altRevolver   .greenVariant = VariantOption.ForceOn),
+        5  => Make(arms, l => l.altRevolver   .redVariant   = VariantOption.ForceOn),
+
+        6  => Make(arms, l => l.shotgun       .blueVariant  = VariantOption.ForceOn),
+        7  => Make(arms, l => l.shotgun       .greenVariant = VariantOption.ForceOn),
+        8  => Make(arms, l => l.shotgun       .redVariant   = VariantOption.ForceOn),
+        9  => Make(arms, l => l.altShotgun    .blueVariant  = VariantOption.ForceOn),
+        10 => Make(arms, l => l.altShotgun    .greenVariant = VariantOption.ForceOn),
+        11 => Make(arms, l => l.altShotgun    .redVariant   = VariantOption.ForceOn),
+
+        12 => Make(arms, l => l.nailgun       .blueVariant  = VariantOption.ForceOn),
+        13 => Make(arms, l => l.nailgun       .greenVariant = VariantOption.ForceOn),
+        14 => Make(arms, l => l.nailgun       .redVariant   = VariantOption.ForceOn),
+        15 => Make(arms, l => l.altNailgun    .blueVariant  = VariantOption.ForceOn),
+        16 => Make(arms, l => l.altNailgun    .greenVariant = VariantOption.ForceOn),
+        17 => Make(arms, l => l.altNailgun    .redVariant   = VariantOption.ForceOn),
+
+        18 => Make(arms, l => l.railcannon    .blueVariant  = VariantOption.ForceOn),
+        19 => Make(arms, l => l.railcannon    .greenVariant = VariantOption.ForceOn),
+        20 => Make(arms, l => l.railcannon    .redVariant   = VariantOption.ForceOn),
+        21 => Make(arms, l => l.rocketLauncher.blueVariant  = VariantOption.ForceOn),
+        22 => Make(arms, l => l.rocketLauncher.greenVariant = VariantOption.ForceOn),
+        23 => Make(arms, l => l.rocketLauncher.redVariant   = VariantOption.ForceOn),
+        _  => null
+    };
+
     /// <summary> Merges two loadouts with equipped option priority. </summary>
     public static ForcedLoadout Merge(ForcedLoadout a, ForcedLoadout b)
     {
