@@ -69,6 +69,7 @@ public class Gameflow
         {
             if (LobbyController.Offline || !Active) return;
             if (Mode.HPs()) UpdateHPs();
+            if (Mode == Gamemode.ArmsRace) UpdateHPs(false); // TODO arms race should prob have its own update loop 
         };
     }
 
@@ -114,6 +115,12 @@ public class Gameflow
                 return;
             }
         }
+        if (Mode == Gamemode.ArmsRace && LobbyController.IsOwner)
+        {
+            int data = 0;
+            Teams.All.Each(t => data |= Random.Range(0, 24) << (byte)t * 5);
+            LobbyController.Lobby?.SendChatString("#/s" + data);
+        }
 
         UI.Spectator.Toggle();
         UI.Chat.DisplayText(null, false);
@@ -134,7 +141,7 @@ public class Gameflow
     /// <summary> Handles gamemode specific actions on player death. </summary>
     public static void OnDeath(Friend member)
     {
-        if (Mode.HPs())
+        if (Mode.HPs() | Mode.NoRestarts())
         {
             if (member.IsMe)
                 health[(byte)(Networking.LocalPlayer.Team)]--;
@@ -161,14 +168,14 @@ public class Gameflow
     #endregion
     #region specific
 
-    private static void UpdateHPs()
+    private static void UpdateHPs(bool display = true)
     {
         int[] alive = new int[8];
         Networking.Entities.Player(p => p.Health > 0, p => alive[(byte)p.Team]++);
         if (nm.hp > 0)
             alive[(byte)Networking.LocalPlayer.Team]++;
 
-        UI.Chat.DisplayText(string.Join("  ", Teams.All.Cast(t => health[(byte)t] > 0 || alive[(byte)t] > 0, t =>
+        if (display) UI.Chat.DisplayText(string.Join("  ", Teams.All.Cast(t => health[(byte)t] > 0 || alive[(byte)t] > 0, t =>
         {
             var common = ColorUtility.ToHtmlStringRGBA(       t.Color() );
             var dimmed = ColorUtility.ToHtmlStringRGBA(Darker(t.Color()));
