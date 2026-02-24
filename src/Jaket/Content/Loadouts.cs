@@ -116,7 +116,7 @@ public static class Loadouts
             altNailgun     = MergeSet(a.altNailgun    , b.altNailgun    ),
             railcannon     = MergeSet(a.railcannon    , b.railcannon    ),
             rocketLauncher = MergeSet(a.rocketLauncher, b.rocketLauncher),
-            arm = new()
+            arm = a.arm
         };
     }
 }

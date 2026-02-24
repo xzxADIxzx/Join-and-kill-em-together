@@ -154,6 +154,16 @@ public class Gameflow
             nm.ForceAddAntiHP(-100 / fraction);
             nm.GetHealth(100 / fraction, true);
         }
+        if (Mode == Gamemode.ArmsRace)
+        {
+            var team = Networking.GetTeam(member);
+            var dead = Networking.Entities.Count(e => e is RemotePlayer p && p.Team == team && p.Health > 0) == 0;
+            if (dead) Loadouts.Set(Loadouts.Merge
+            (
+                GunSetter.Instance.forcedLoadout,
+                Loadouts.Make(false, (byte)weapon[(byte)team])
+            ));
+        }
         // update the info label
         UI.Spectator.Toggle();
     }
