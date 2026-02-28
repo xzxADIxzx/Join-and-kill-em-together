@@ -124,7 +124,7 @@ public static class Commands
                 chat.Receive("[red]Insufficient number of arguments.");
             else if
             (
-                int.TryParse(args[0], out int layer) && layer >= 0 && layer <= 7 &&
+                int.TryParse(args[0], out int layer) && layer >= 0 && layer <= 8 &&
                 int.TryParse(args[1], out int level) && level >= 1 && level <= 5 &&
                 (layer == 0 || level != 5) && (layer != 3 && layer != 6 || level <= 2)
             )

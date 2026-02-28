@@ -173,7 +173,7 @@ public class Rocket : OwnableEntity
         if (__instance.name != "O") __result = __instance.name == "S";
     }
 
-    [HarmonyPatch(typeof(Grenade), nameof(Grenade.Collision))]
+    [HarmonyPatch(typeof(Grenade), nameof(Grenade.Collision), [typeof(Collider)])]
     [HarmonyPrefix]
     static bool Damage(Grenade __instance, Collider other) => Entities.Damage.Deal<Rocket>(__instance, (eid, tid, ally, _) =>
     {
