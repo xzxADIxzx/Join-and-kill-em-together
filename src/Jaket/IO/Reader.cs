@@ -71,12 +71,9 @@ public unsafe struct Reader
 
     public void Floats(ref Entity.Float x, ref Entity.Float y, ref Entity.Float z)
     {
-        x.Prev = x.Next;
-        y.Prev = y.Next;
-        z.Prev = z.Next;
-        x.Next = *(float*)Inc(4);
-        y.Next = *(float*)Inc(4);
-        z.Next = *(float*)Inc(4);
+        x.Set(*(float*)Inc(4));
+        y.Set(*(float*)Inc(4));
+        z.Set(*(float*)Inc(4));
     }
 
     public string String()

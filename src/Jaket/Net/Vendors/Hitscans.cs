@@ -138,7 +138,7 @@ public class Hitscans : Vendor
             {
                 if (Version.DEBUG) Log.Debug($"[HARM] Patched hitscans via transpilers");
 
-                yield return new CodeInstruction(System.Reflection.Emit.OpCodes.Ldloc_S, 0x08);
+                yield return new CodeInstruction(System.Reflection.Emit.OpCodes.Ldloc_S, 0x09);
                 yield return new CodeInstruction(System.Reflection.Emit.OpCodes.Ldloc_S, 0x0B);
                 yield return CodeInstruction.Call(typeof(Hitscans), nameof(Dmg), [typeof(EnemyIdentifier), typeof(float)]);
             }
