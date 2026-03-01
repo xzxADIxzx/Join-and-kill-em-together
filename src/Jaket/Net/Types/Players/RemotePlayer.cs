@@ -87,7 +87,7 @@ public class RemotePlayer : Entity, Screwdriver.Screwable
     #endregion
     #region logic
 
-    public override void Create() => Assign(ModAssets.CreateDoll(new(bodyX.Prev = bodyX.Next, bodyY.Prev = bodyY.Next, bodyZ.Prev = bodyZ.Next)).AddComponent<Agent>());
+    public override void Create() => Assign(ModAssets.CreateDoll(new(bodyX.Init, bodyY.Init, bodyZ.Init)).AddComponent<Agent>());
 
     public override void Assign(Agent agent)
     {

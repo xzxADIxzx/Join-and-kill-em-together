@@ -44,7 +44,7 @@ public class Cannon : OwnableEntity
     #endregion
     #region logic
 
-    public override void Create() => Assign(Entities.Projectiles.Make(Type, new(x.Prev = x.Next, y.Prev = y.Next, z.Prev = z.Next)).AddComponent<Agent>());
+    public override void Create() => Assign(Entities.Projectiles.Make(Type, new(x.Init, y.Init, z.Init)).AddComponent<Agent>());
 
     public override void Assign(Agent agent)
     {

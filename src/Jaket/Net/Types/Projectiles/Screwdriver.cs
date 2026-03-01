@@ -63,7 +63,7 @@ public class Screwdriver : OwnableEntity
     #endregion
     #region logic
 
-    public override void Create() => Assign(Entities.Projectiles.Make(Type, new(posX.Prev = posX.Next, posY.Prev = posY.Next, posZ.Prev = posZ.Next)).AddComponent<Agent>());
+    public override void Create() => Assign(Entities.Projectiles.Make(Type, new(posX.Init, posY.Init, posZ.Init)).AddComponent<Agent>());
 
     public override void Assign(Agent agent)
     {

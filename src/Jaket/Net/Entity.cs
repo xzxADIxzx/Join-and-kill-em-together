@@ -137,6 +137,9 @@ public abstract class Entity
         /// <summary> Numbers to extrapolate. </summary>
         private float prev, next;
 
+        /// <summary> Initializes the struct. </summary>
+        public float Init => prev = next = Prev = Next;
+
         /// <summary> Updates the boundaries. </summary>
         public void Set(float value)
         {
