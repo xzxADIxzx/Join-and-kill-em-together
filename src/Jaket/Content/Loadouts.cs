@@ -1,5 +1,7 @@
 namespace Jaket.Content;
 
+using Jaket.Input;
+
 /// <summary> Set of loadouts used to correctly limit arsenal. </summary>
 public static class Loadouts
 {
@@ -47,6 +49,9 @@ public static class Loadouts
 
         GunControl.Instance.YesWeapon();
         Events.OnHandChange.Fire();
+
+        // prevent dead players from getting weapons
+        Movement.UpdateState();
     }
 
     /// <summary> Makes a new loadout with or without arms equipped. </summary>
