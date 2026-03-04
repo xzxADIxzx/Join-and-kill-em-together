@@ -76,7 +76,7 @@ public class Gameflow
     /// <summary> Counts a few seconds down before restarting the round. </summary>
     public static void Countdown()
     {
-        if (Mode == Gamemode.Campaign || Mode == Gamemode.BossRush)
+        if (Mode == Gamemode.Campaign || Mode == Gamemode.BossRush || Mode == Gamemode.Hardcore)
         {
             Restart();
             return;

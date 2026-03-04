@@ -78,6 +78,7 @@ public static class Gamemodes
         Gamemode.Arena         => true,
         Gamemode.ArmsRace      => true,
         Gamemode.HideAndSeek   => true,
+        Gamemode.Hardcore      => true,
         _                      => false,
     };
 }
