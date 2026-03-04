@@ -135,6 +135,8 @@ public class Gameflow
             Teams.All.Each(t => weapon[(byte)t] = (int)data >> (byte)t * 5 & 0x1F);
 
             Loadouts.Set(Loadouts.Make(false, (byte)weapon[(byte)Networking.LocalPlayer.Team]));
+
+            nm.GetHealth(100, true);
         }
     }
 
