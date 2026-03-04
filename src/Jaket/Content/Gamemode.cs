@@ -11,13 +11,14 @@ public enum Gamemode : byte
     PaintTheWorld,
     HideAndSeek,
     BossRush,
+    Hardcore,
 }
 
 /// <summary> Set of different tools for working with gamemodes. </summary>
 public static class Gamemodes
 {
     /// <summary> List of all of the gamemodes that is used for iterating. </summary>
-    public static Gamemode[] All = { Gamemode.Campaign, Gamemode.Manhunt, Gamemode.Versus, Gamemode.Arena, Gamemode.ArmsRace, Gamemode.PaintTheWorld, Gamemode.HideAndSeek, Gamemode.BossRush };
+    public static Gamemode[] All = { Gamemode.Campaign, Gamemode.Hardcore, Gamemode.Manhunt, Gamemode.Versus, Gamemode.Arena, Gamemode.ArmsRace, Gamemode.PaintTheWorld, Gamemode.HideAndSeek, Gamemode.BossRush };
 
     /// <summary> Whether the gamemode implies a deadly kind of competition. </summary>
     public static bool PvP(this Gamemode gm) => gm switch

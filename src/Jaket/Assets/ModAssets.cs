@@ -126,7 +126,7 @@ public static class ModAssets
         LoadAll(i => "emote-" + i,           EmoteIcons = new Sprite[12]);
         LoadAll(i => "emote-" + i + "-glow", EmoteGlows = new Sprite[12]);
         LoadAll(i => "shop-"  + i,           ShopIcons  = new Sprite[12]);
-        LoadAll(i => "card-"  + i,           CardIcons  = new Sprite[08]);
+        LoadAll(i => "card-"  + i,           CardIcons  = new Sprite[09]);
 
         Load<TextAsset>("V3-bestiary-entry", t => BestiaryEntry.Load(t.text, 15));
         Load<TextAsset>("shop-entries",      t =>
