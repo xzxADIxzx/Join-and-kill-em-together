@@ -69,7 +69,7 @@ public class Gameflow
         {
             if (LobbyController.Offline || !Active) return;
             if (Mode.HPs()) UpdateHPs();
-            if (Mode.WTO()) UpdateHPs(false); // TODO arms race should prob have its own update loop 
+            if (Mode.WTO()) UpdateWTO();
         };
     }
 
@@ -180,14 +180,14 @@ public class Gameflow
     #endregion
     #region specific
 
-    private static void UpdateHPs(bool display = true)
+    private static void UpdateHPs()
     {
         int[] alive = new int[8];
         Networking.Entities.Player(p => p.Health > 0, p => alive[(byte)p.Team]++);
         if (nm.hp > 0)
             alive[(byte)Networking.LocalPlayer.Team]++;
 
-        if (display) UI.Chat.DisplayText(string.Join("  ", Teams.All.Cast(t => health[(byte)t] > 0 || alive[(byte)t] > 0, t =>
+        UI.Chat.DisplayText(string.Join("  ", Teams.All.Cast(t => health[(byte)t] > 0 || alive[(byte)t] > 0, t =>
         {
             var common = ColorUtility.ToHtmlStringRGBA(       t.Color() );
             var dimmed = ColorUtility.ToHtmlStringRGBA(Darker(t.Color()));
@@ -208,6 +208,21 @@ public class Gameflow
             var winner = Teams.All.Find(t => alive[(byte)t] > 0);
             LobbyController.Lobby?.SendChatString("#/w" + (byte)winner);
         }
+    }
+
+    private static void UpdateWTO()
+    {
+        if (!LobbyController.IsOwner) return;
+
+        var winner = Team.None;
+        var single = true;
+
+        Networking.Entities.Player(p => p.Health > 0, p =>
+        {
+            if (winner == Team.None) winner = p.Team;
+            if (winner != p.Team   ) single = false ;
+        });
+        if (single) LobbyController.Lobby?.SendChatString("#/w" + (byte)winner);
     }
 
     #endregion
