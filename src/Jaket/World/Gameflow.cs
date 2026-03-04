@@ -69,7 +69,7 @@ public class Gameflow
         {
             if (LobbyController.Offline || !Active) return;
             if (Mode.HPs()) UpdateHPs();
-            if (Mode == Gamemode.ArmsRace) UpdateHPs(false); // TODO arms race should prob have its own update loop 
+            if (Mode.WTO()) UpdateHPs(false); // TODO arms race should prob have its own update loop 
         };
     }
 
@@ -99,7 +99,7 @@ public class Gameflow
     public static void Restart()
     {
         if (Mode.PvP()) LobbyConfig.PvPAllowed = true;
-        if (Mode.HPs() | Mode.NoRestarts())
+        if (Mode.HPs() || Mode.NoRestarts())
         {
             startHPs = Mode.HPs() ? 6 : 1;
 
@@ -115,7 +115,7 @@ public class Gameflow
                 return;
             }
         }
-        if (Mode == Gamemode.ArmsRace && LobbyController.IsOwner)
+        if (Mode.WTO() && LobbyController.IsOwner)
         {
             int data = 0;
             Teams.All.Each(t => data |= Random.Range(0, 24) << (byte)t * 5);
@@ -130,7 +130,7 @@ public class Gameflow
     /// <summary> Handles gamemode specific actions on round start. </summary>
     public static void OnStart(uint data)
     {
-        if (Mode == Gamemode.ArmsRace)
+        if (Mode.WTO())
         {
             Teams.All.Each(t => weapon[(byte)t] = (int)data >> (byte)t * 5 & 0x1F);
 
@@ -143,7 +143,7 @@ public class Gameflow
     /// <summary> Handles gamemode specific actions on player death. </summary>
     public static void OnDeath(Friend member)
     {
-        if (Mode.HPs() | Mode.NoRestarts())
+        if (Mode.HPs() || Mode.NoRestarts())
         {
             if (member.IsMe)
                 health[(byte)(Networking.LocalPlayer.Team)]--;
@@ -156,7 +156,7 @@ public class Gameflow
             nm.ForceAddAntiHP(-100 / fraction);
             nm.GetHealth(100 / fraction, true);
         }
-        if (Mode == Gamemode.ArmsRace)
+        if (Mode.WTO())
         {
             var team = Networking.GetTeam(member);
             var dead = Networking.Entities.Count(e => e is RemotePlayer p && p.Team == team && p.Health > 0) == 0;

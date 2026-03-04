@@ -19,7 +19,7 @@ public static class Gamemodes
     /// <summary> List of all of the gamemodes that is used for iterating. </summary>
     public static Gamemode[] All = { Gamemode.Campaign, Gamemode.Manhunt, Gamemode.Versus, Gamemode.Arena, Gamemode.ArmsRace, Gamemode.PaintTheWorld, Gamemode.HideAndSeek, Gamemode.BossRush };
 
-    /// <summary> Whether the gamemode implies a deadly competition between all teams. </summary>
+    /// <summary> Whether the gamemode implies a deadly kind of competition. </summary>
     public static bool PvP(this Gamemode gm) => gm switch
     {
         Gamemode.Manhunt       => true,
@@ -30,7 +30,7 @@ public static class Gamemodes
         _                      => false,
     };
 
-    /// <summary> Whether the gamemode implies team-based health points. </summary>
+    /// <summary> Whether the gamemode implies a team-based respawn limitation. </summary>
     public static bool HPs(this Gamemode gm) => gm switch
     {
         Gamemode.Versus        => true,
@@ -38,11 +38,17 @@ public static class Gamemodes
         _                      => false,
     };
 
+    /// <summary> Whether the gamemode implies a team-based arsenal limitation. </summary>
+    public static bool WTO(this Gamemode gm) => gm switch
+    {
+        Gamemode.ArmsRace      => true,
+        _                      => false,
+    };
+
     /// <summary> Whether the gamemode implies healing after killing a player. </summary>
     public static bool HealOnKill(this Gamemode gm) => gm switch
     {
         Gamemode.Versus        => true,
-        Gamemode.HideAndSeek   => true,
         _                      => false,
     };
 
