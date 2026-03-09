@@ -3,6 +3,7 @@ namespace Jaket.Net.Types;
 using HarmonyLib;
 using System.Collections;
 using System.Collections.Generic;
+using ULTRAKILL.Portal;
 using UnityEngine;
 
 using Jaket.Assets;
@@ -84,6 +85,7 @@ public class TeamCoin : OwnableEntity
         agent.Get(out rs);
         agent.Get(out cs);
         agent.Get(out source);
+        agent.GetOrAddComponent<SimplePortalTraveler>().SetType(PortalTravellerType.PLAYER_PROJECTILE);
 
         OnTransfer = () =>
         {
@@ -405,6 +407,10 @@ public class TeamCoin : OwnableEntity
         }
         else return true;
     }
+
+    [HarmonyPatch(typeof(Coin), "Update")]
+    [HarmonyPrefix]
+    static bool Update() => false;
 
     [HarmonyPatch(typeof(Coin), nameof(Coin.DelayedReflectRevolver))]
     [HarmonyPrefix]
