@@ -1,5 +1,6 @@
 namespace Jaket.Net.Types;
 
+using ULTRAKILL.Portal;
 using UnityEngine;
 
 using Jaket.Assets;
@@ -96,6 +97,7 @@ public class RemotePlayer : Entity, Screwdriver.Screwable
         agent.Get(out enemyId);
         agent.Get(out cs);
         agent.Get(out Voice);
+        agent.GetOrAddComponent<PortalAwareRenderer>();
 
         Doll ??= new(() =>
         {
