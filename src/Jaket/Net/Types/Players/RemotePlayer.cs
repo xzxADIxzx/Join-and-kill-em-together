@@ -70,6 +70,8 @@ public class RemotePlayer : Entity, Screwdriver.Screwable
     {
         LastUpdate = Time.time;
 
+        if (bodyX.Jump || bodyY.Jump || bodyZ.Jump) Events.Post(Doll.WingTrail.Clear);
+
         r.Floats(ref bodyX, ref bodyY, ref bodyZ);
         r.Floats(ref hookX, ref hookY, ref hookZ);
 

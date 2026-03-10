@@ -68,6 +68,8 @@ public class TeamCoin : OwnableEntity
     {
         if (ReadOwner(ref r)) return;
 
+        if (x.Jump || y.Jump || z.Jump) rs.Each(r => { if (r is TrailRenderer trail) Events.Post(trail.Clear); });
+
         r.Floats(ref x, ref y, ref z);
     }
 
