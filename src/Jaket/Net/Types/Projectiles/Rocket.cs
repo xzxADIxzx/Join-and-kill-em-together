@@ -97,7 +97,7 @@ public class Rocket : OwnableEntity
         else
         {
             if (agent.Parent != null) agent.Parent = null;
-            agent.Position = new(posX.Get(delta),      posY.Get(delta),      posZ.Get(delta)     );
+            agent.Position = new(posX.GetAware(delta), posY.GetAware(delta), posZ.GetAware(delta));
             agent.Rotation = new(rotX.GetAngle(delta), rotY.GetAngle(delta), rotZ.GetAngle(delta));
         }
         cs.Each(c => c.enabled = !riding);

@@ -139,23 +139,36 @@ public abstract class Entity
 
         /// <summary> Initializes the struct. </summary>
         public float Init => prev = next = Prev = Next;
+        /// <summary> Whether the num jumped. </summary>
+        public readonly bool Jump => Mathf.Abs(Next - Prev) > 20f;
 
         /// <summary> Updates the boundaries. </summary>
         public void Set(float value)
         {
+            bool jumped = Jump;
+            float delta = next - prev;
+
             Prev = Next;
             Next = value;
 
-            prev = next;
-            if (Mathf.Abs(Next - Prev) > .1f)
+            prev = jumped ? Prev : next;
+
+            if (Jump)
+            {
+                next = prev + delta;
+            }
+            else if (Mathf.Abs(Next - Prev) > .1f)
+            {
                 next = value + (Next - Prev) * .3f;
-            else
-            if (Mathf.Abs(Next - next) > .4f)
+            }
+            else if (Mathf.Abs(Next - next) > .4f)
+            {
                 prev = next = value;
+            }
         }
 
-        /// <summary> Returns an intermediate value. </summary>
-        public readonly float Get(float delta) => Mathf.Lerp(prev, next, delta * Networking.TICKS_PER_SECOND);
+        /// <summary> Returns an intermediate value, taking into account the portal nature of fraud. </summary>
+        public readonly float GetAware(float delta) => Mathf.Lerp(prev, next, delta * Networking.TICKS_PER_SECOND);
 
         /// <summary> Returns an intermediate value, taking into account the cyclic nature of angles. </summary>
         public readonly float GetAngle(float delta) => Mathf.LerpAngle(Prev, Next, delta * Networking.TICKS_PER_SECOND);

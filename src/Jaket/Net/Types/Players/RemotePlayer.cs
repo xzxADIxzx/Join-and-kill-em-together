@@ -131,8 +131,8 @@ public class RemotePlayer : Entity, Screwdriver.Screwable
         }
         else if (Health == 0) Disassemble();
 
-        agent.Position     = new(bodyX.Get(delta), bodyY.Get(delta), bodyZ.Get(delta));
-        Doll.Hook.position = new(hookX.Get(delta), hookY.Get(delta), hookZ.Get(delta));
+        agent.Position     = new(bodyX.GetAware(delta), bodyY.GetAware(delta), bodyZ.GetAware(delta));
+        Doll.Hook.position = new(hookX.GetAware(delta), hookY.GetAware(delta), hookZ.GetAware(delta));
         agent.Rotation = new(0f, bodyRotation.GetAngle(delta));
         Doll.HeadAngle =         headRotation.GetAngle(delta);
 

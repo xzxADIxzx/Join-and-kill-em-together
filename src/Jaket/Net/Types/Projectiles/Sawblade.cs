@@ -76,7 +76,7 @@ public class Sawblade : OwnableEntity
     {
         if (IsOwner) return;
 
-        agent.Position = new(x.Get(delta), y.Get(delta), z.Get(delta));
+        agent.Position = new(x.GetAware(delta), y.GetAware(delta), z.GetAware(delta));
         nail.punchable = true;
 
         if (nail.punched)

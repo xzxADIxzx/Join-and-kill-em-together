@@ -54,7 +54,7 @@ public class Core : Entity
     {
         if (IsOwner) return;
 
-        agent.Position = new(x.Get(delta), y.Get(delta), z.Get(delta));
+        agent.Position = new(x.GetAware(delta), y.GetAware(delta), z.GetAware(delta));
     }
 
     public override void Damage(Reader r) { }

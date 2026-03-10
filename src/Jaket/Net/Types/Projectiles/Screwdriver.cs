@@ -106,7 +106,7 @@ public class Screwdriver : OwnableEntity
     {
         if (IsOwner) return;
 
-        agent.Position = new(posX.Get(delta),      posY.Get(delta),      posZ.Get(delta)     );
+        agent.Position = new(posX.GetAware(delta), posY.GetAware(delta), posZ.GetAware(delta));
         agent.Rotation = new(rotX.GetAngle(delta), rotY.GetAngle(delta), rotZ.GetAngle(delta));
 
         rs.Each(r => { if (r is TrailRenderer t) t.emitting = target == 0u; });
