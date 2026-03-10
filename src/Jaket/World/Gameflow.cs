@@ -214,7 +214,7 @@ public class Gameflow
     {
         if (!LobbyController.IsOwner) return;
 
-        var winner = Team.None;
+        var winner = NewMovement.Instance.hp > 0 ? Networking.LocalPlayer.Team : Team.None;
         var single = true;
 
         Networking.Entities.Player(p => p.Health > 0, p =>
