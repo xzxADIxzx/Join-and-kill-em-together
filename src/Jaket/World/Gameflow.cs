@@ -212,7 +212,7 @@ public class Gameflow
 
     private static void UpdateWTO()
     {
-        if (!LobbyController.IsOwner) return;
+        if (!LobbyController.IsOwner || health.Count(h => h > 0) > 1) return;
 
         var winner = NewMovement.Instance.hp > 0 ? Networking.LocalPlayer.Team : Team.None;
         var single = true;
