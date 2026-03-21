@@ -129,6 +129,7 @@ public enum EntityType : byte
     SawbladeCommon,
     SawbladeFodder,
     SawbladeHeated,
+    Magnet,
     Screwdriver,
     Rocket,
     Cannonball,
