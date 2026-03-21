@@ -30,6 +30,7 @@ public static class Patches
         typeof(Pin),
         typeof(Sawblade),
         typeof(Screwdriver),
+        typeof(Magnet),
         typeof(Rocket),
         typeof(Cannon),
         typeof(Damage),
