@@ -32,5 +32,9 @@ public abstract class Enemy : OwnableEntity
         return true;
     }
 
+    [HarmonyPatch(typeof(global::Enemy), nameof(global::Enemy.OnTravel))]
+    [HarmonyPrefix]
+    static bool Fraud(EnemyScript ___script) => ___script != null;
+
     #endregion
 }
