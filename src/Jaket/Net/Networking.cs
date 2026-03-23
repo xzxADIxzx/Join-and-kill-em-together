@@ -146,8 +146,8 @@ public static class Networking
             else if (msg.StartsWith("#/s") && uint.TryParse(msg[3..], out uint sid) && lobby.Owner.Id == member.Id)
                 Gameflow.OnStart(sid);
 
-            else if (msg.StartsWith("#/w") && byte.TryParse(msg[3..], out byte wid) && lobby.Owner.Id == member.Id)
-                Gameflow.OnVictory(wid);
+            else if (msg.StartsWith("#/v") && byte.TryParse(msg[3..], out byte vid) && lobby.Owner.Id == member.Id)
+                Gameflow.OnVictory(vid);
 
             else if (msg.StartsWith("#/b") && uint.TryParse(msg[3..], out uint bid) && lobby.Owner.Id == member.Id)
                 Bundle.Msg("player.banned", Name(bid));

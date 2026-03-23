@@ -206,7 +206,7 @@ public class Gameflow
         if (LobbyController.IsOwner && health.Count(h => h > 0) <= 1 && alive.Count(a => a > 0) <= 1)
         {
             var winner = Teams.All.Find(t => alive[(byte)t] > 0);
-            LobbyController.Lobby?.SendChatString("#/w" + (byte)winner);
+            LobbyController.Lobby?.SendChatString("#/v" + (byte)winner);
         }
     }
 
@@ -222,7 +222,7 @@ public class Gameflow
             if (winner == Team.None) winner = p.Team;
             if (winner != p.Team   ) single = false ;
         });
-        if (single) LobbyController.Lobby?.SendChatString("#/w" + (byte)winner);
+        if (single) LobbyController.Lobby?.SendChatString("#/v" + (byte)winner);
     }
 
     #endregion
