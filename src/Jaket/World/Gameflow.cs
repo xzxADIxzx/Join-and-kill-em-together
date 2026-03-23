@@ -100,7 +100,9 @@ public class Gameflow
         if (Mode.HPs() || Mode.NoRestarts())
         {
             Teams.All.Each(t => health[(byte)t] = byte.MaxValue);
-            if (health.Count(h => h != 0) <= 1) // TODO update Gameflow.Count
+            Count(out var sated, out _, out _);
+
+            if (sated.Count(c => c) <= 1)
             {
                 Bundle.Ext("game.lone-team");
                 return;
@@ -170,14 +172,25 @@ public class Gameflow
     #endregion
     #region specific
 
-    private static void Count(out byte[] alive, out Team champ)
+    private static void Count(out bool[] sated, out byte[] alive, out Team champ)
     {
+        sated = new bool[Teams.All.Length];
         alive = new byte[Teams.All.Length];
         champ = Team.None;
+
+        sated[(byte)Networking.LocalPlayer.Team] = true;
+        var s = sated;
+        Networking.Entities.Player(p => s[(byte)p.Team] = true);
 
         if (nm.hp > 0) alive[(byte)Networking.LocalPlayer.Team]++;
         var a = alive;
         Networking.Entities.Player(p => p.Health > 0, p => a[(byte)p.Team]++);
+
+        Teams.All.Each
+        (
+            t => health[(byte)t] != byte.MaxValue && !s[(byte)t],
+            t => health[(byte)t] = byte.MaxValue
+        );
 
         Teams.All.Each
         (
@@ -193,7 +206,7 @@ public class Gameflow
 
     private static void UpdateHPs()
     {
-        Count(out var alive, out var champ);
+        Count(out _, out var alive, out var champ);
 
         UI.Chat.DisplayText(string.Join("  ", Teams.All.Cast(t => health[(byte)t] != byte.MaxValue & health[(byte)t] > 0 || alive[(byte)t] > 0, t =>
         {
@@ -216,7 +229,7 @@ public class Gameflow
 
     private static void UpdateWTO()
     {
-        Count(out _, out var champ);
+        Count(out _, out _, out var champ);
 
         if (LobbyController.IsOwner && champ != Team.None) LobbyController.Lobby?.SendChatString("#/v" + (byte)champ);
     }
