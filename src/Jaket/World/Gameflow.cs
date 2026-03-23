@@ -30,12 +30,10 @@ public class Gameflow
     /// <summary> Whether respawn is locked due to gamemode logic. </summary>
     public static bool LockRespawn => Mode.HPs() | Mode.NoRestarts() && health[(byte)Networking.LocalPlayer.Team] <= 0;
 
-    /// <summary> Number of health points given to each active team. </summary>
-    private static int startHPs = 6;
     /// <summary> Number of health points each team currently has. </summary>
-    private static int[] health = new int[Teams.All.Length];
+    private static byte[] health = new byte[Teams.All.Length];
     /// <summary> Identifiers of weapons each team has been given. </summary>
-    private static int[] weapon = new int[Teams.All.Length];
+    private static byte[] weapon = new byte[Teams.All.Length];
 
     #region general
 
@@ -101,15 +99,8 @@ public class Gameflow
         if (Mode.PvP()) LobbyConfig.PvPAllowed = true;
         if (Mode.HPs() || Mode.NoRestarts())
         {
-            startHPs = Mode.HPs() ? 6 : 1;
-
-            health.Clear();
-            Teams.All.Each
-            (
-                t => Networking.LocalPlayer.Team == t || Networking.Entities.Count(e => e is RemotePlayer p && p.Team == t) > 0,
-                t => health[(byte)t] = startHPs
-            );
-            if (health.Count(h => h != 0) <= 1)
+            Teams.All.Each(t => health[(byte)t] = byte.MaxValue);
+            if (health.Count(h => h != 0) <= 1) // TODO update Gameflow.Count
             {
                 Bundle.Ext("game.lone-team");
                 return;
@@ -132,9 +123,9 @@ public class Gameflow
     {
         if (Mode.WTO())
         {
-            Teams.All.Each(t => weapon[(byte)t] = (int)data >> (byte)t * 5 & 0x1F);
+            Teams.All.Each(t => weapon[(byte)t] = (byte)( (int)data >> (byte)t * 5 & 0x1F ));
 
-            Loadouts.Set(Loadouts.Make(false, (byte)weapon[(byte)Networking.LocalPlayer.Team]));
+            Loadouts.Set(Loadouts.Make(false, weapon[(byte)Networking.LocalPlayer.Team]));
 
             nm.GetHealth(100, true);
         }
@@ -163,66 +154,71 @@ public class Gameflow
             if (dead) Loadouts.Set(Loadouts.Merge
             (
                 GunSetter.Instance.forcedLoadout,
-                Loadouts.Make(false, (byte)weapon[(byte)team])
+                Loadouts.Make(false, weapon[(byte)team])
             ));
         }
-        // update the info label
-        UI.Spectator.Toggle();
+        UI.Spectator.Toggle(); // update the label
     }
 
     /// <summary> Handles gamemode specific actions on team victory. </summary>
-    public static void OnVictory(byte winner)
+    public static void OnVictory(byte champ)
     {
-        Bundle.Hud("game.win", false, $"#team.No{winner}", ColorUtility.ToHtmlStringRGBA(((Team)winner).Color()));
+        Bundle.Hud("game.win", false, $"#team.No{champ}", ColorUtility.ToHtmlStringRGBA(((Team)champ).Color()));
         Countdown();
     }
 
     #endregion
     #region specific
 
+    private static void Count(out byte[] alive, out Team champ)
+    {
+        alive = new byte[Teams.All.Length];
+        champ = Team.None;
+
+        if (nm.hp > 0) alive[(byte)Networking.LocalPlayer.Team]++;
+        var a = alive;
+        Networking.Entities.Player(p => p.Health > 0, p => a[(byte)p.Team]++);
+
+        Teams.All.Each
+        (
+            t => health[(byte)t] == byte.MaxValue && a[(byte)t] > 0,
+            t => health[(byte)t] = (byte)(Mode.HPs() ? 6 : 1)
+        );
+
+        if (health.Count(h => h != byte.MaxValue) >= 2 && health.Count(h => h != byte.MaxValue && h > 0) <= 1 && alive.Count(a => a > 0) <= 1)
+        {
+            champ = Teams.All.Find(t => a[(byte)t] > 0);
+        }
+    }
+
     private static void UpdateHPs()
     {
-        int[] alive = new int[8];
-        Networking.Entities.Player(p => p.Health > 0, p => alive[(byte)p.Team]++);
-        if (nm.hp > 0)
-            alive[(byte)Networking.LocalPlayer.Team]++;
+        Count(out var alive, out var champ);
 
-        UI.Chat.DisplayText(string.Join("  ", Teams.All.Cast(t => health[(byte)t] > 0 || alive[(byte)t] > 0, t =>
+        UI.Chat.DisplayText(string.Join("  ", Teams.All.Cast(t => health[(byte)t] != byte.MaxValue & health[(byte)t] > 0 || alive[(byte)t] > 0, t =>
         {
             var common = ColorUtility.ToHtmlStringRGBA(       t.Color() );
             var dimmed = ColorUtility.ToHtmlStringRGBA(Darker(t.Color()));
-            var display = new string[startHPs];
+            var display = new string[6];
 
-            for (int i = 0; i < startHPs; i++) display[i]
+            for (int i = 0; i < 6; i++) display[i]
                 = i < health[(byte)t]
                 ? $"[#{common}]:heart:[]"
-                : i < alive [(byte)t]
+                : i <  alive[(byte)t]
                 ? $"[#{dimmed}]:heart:[]"
                 : " ";
 
             return string.Join("[8] []", display);
         })));
 
-        if (LobbyController.IsOwner && health.Count(h => h > 0) <= 1 && alive.Count(a => a > 0) <= 1)
-        {
-            var winner = Teams.All.Find(t => alive[(byte)t] > 0);
-            LobbyController.Lobby?.SendChatString("#/v" + (byte)winner);
-        }
+        if (LobbyController.IsOwner && champ != Team.None) LobbyController.Lobby?.SendChatString("#/v" + (byte)champ);
     }
 
     private static void UpdateWTO()
     {
-        if (!LobbyController.IsOwner || health.Count(h => h > 0) > 1) return;
+        Count(out _, out var champ);
 
-        var winner = NewMovement.Instance.hp > 0 ? Networking.LocalPlayer.Team : Team.None;
-        var single = true;
-
-        Networking.Entities.Player(p => p.Health > 0, p =>
-        {
-            if (winner == Team.None) winner = p.Team;
-            if (winner != p.Team   ) single = false ;
-        });
-        if (single) LobbyController.Lobby?.SendChatString("#/v" + (byte)winner);
+        if (LobbyController.IsOwner && champ != Team.None) LobbyController.Lobby?.SendChatString("#/v" + (byte)champ);
     }
 
     #endregion
