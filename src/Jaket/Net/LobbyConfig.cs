@@ -53,6 +53,12 @@ public static class LobbyConfig
         get => Get("hammer") == bool.TrueString;
         set => Set("hammer", value.ToString());
     }
+    /// <summary> Whether the bleeding modifier is enabled. </summary>
+    public static bool Bleedy
+    {
+        get => Get("bleedy") == bool.TrueString;
+        set => Set("bleedy", value.ToString());
+    }
     /// <summary> Whether versus aka pure chaos is allowed. </summary>
     public static bool PvPAllowed
     {

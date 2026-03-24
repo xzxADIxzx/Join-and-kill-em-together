@@ -26,7 +26,8 @@ public class Gameflow
     public static bool Slowmo { get; private set; }
     /// <summary> Whether the hammer gamemode modifier is enabled. </summary>
     public static bool Hammer { get; private set; }
-
+    /// <summary> Whether the bleedy gamemode modifier is enabled. </summary>
+    public static bool Bleedy { get; private set; }
     /// <summary> Whether respawn is locked due to gamemode logic. </summary>
     public static bool LockRespawn => Mode.HPs() | Mode.NoRestarts() && health[(byte)Networking.LocalPlayer.Team] <= 0;
 
@@ -61,6 +62,7 @@ public class Gameflow
                 (Hammer = LobbyConfig.Hammer) ? Loadouts.Make(true, l => l.altShotgun.greenVariant = VariantOption.ForceOn) : null
             );
             Slowmo = LobbyConfig.Slowmo;
+            Bleedy = LobbyConfig.Bleedy;
         };
         Events.OnLoad += Countdown;
         Events.EveryHalf += () =>
@@ -68,6 +70,8 @@ public class Gameflow
             if (LobbyController.Offline || !Active) return;
             if (Mode.HPs()) UpdateHPs();
             if (Mode.WTO()) UpdateWTO();
+
+            if (Bleedy) nm.GetHurt(1, Mode != Gamemode.Hardcore, 0f);
         };
     }
 
@@ -102,7 +106,7 @@ public class Gameflow
             Teams.All.Each(t => health[(byte)t] = byte.MaxValue);
             Count(out var sated, out _, out _);
 
-            if (sated.Count(c => c) <= 1)
+            if (sated.Count(c => c) <= 1 && Mode != Gamemode.Hardcore)
             {
                 Bundle.Ext("game.lone-team");
                 return;

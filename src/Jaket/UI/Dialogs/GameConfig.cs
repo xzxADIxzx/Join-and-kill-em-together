@@ -20,13 +20,13 @@ public class GameConfig : Fragment
     /// <summary> Information about the selected gamemode. </summary>
     private Text info;
     /// <summary> Checkboxes of gamemode modifiers & such. </summary>
-    private Toggle slowmo, hammer;
+    private Toggle slowmo, hammer, bleedy;
 
     public GameConfig(Transform root) : base(root, "GameConfig", true)
     {
         Events.OnLobbyAction += () => { if (Shown) Rebuild(); };
 
-        Bar(556f, 676f, b =>
+        Bar(556f, 716f, b =>
         {
             b.Setup(true);
             b.Text("#gameconfig.name", 32f, 32);
@@ -54,6 +54,7 @@ public class GameConfig : Fragment
 
             slowmo = b.Toggle("#gameconfig.slowmo", b => LobbyConfig.Slowmo = b);
             hammer = b.Toggle("#gameconfig.hammer", b => LobbyConfig.Hammer = b);
+            bleedy = b.Toggle("#gameconfig.bleedy", b => LobbyConfig.Bleedy = b);
         });
     }
 
@@ -83,7 +84,8 @@ public class GameConfig : Fragment
 
         slowmo.isOn = LobbyConfig.Slowmo;
         hammer.isOn = LobbyConfig.Hammer;
+        bleedy.isOn = LobbyConfig.Bleedy;
 
-        slowmo.interactable = hammer.interactable = LobbyController.IsOwner;
+        slowmo.interactable = hammer.interactable = bleedy.interactable = LobbyController.IsOwner;
     }
 }
