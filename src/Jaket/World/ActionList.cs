@@ -295,12 +295,22 @@ public static class ActionList
         string info =
 @"[31][b][red]!!! WARNING !!! WARNING !!! WARNING !!![][][]
 
-This is a public [orange]beta test[] of Jaket. A lot of features are either still in development or subjects to change. Full release of the mod should be expected [orange]after the fraud[] update.
+This is a public [orange]beta test[] of Jaket. A lot of features are either still in development or subjects to change. Full release of the mod should be expected soon, but don't place your hops on it. It [orange]won't have Act I & II support[], for that you would need to wait a little bit more.
+[12][i][gray]I know you've been waiting more than enough, but I can't work on the project all the time.[][][]
+[12][i][gray]If you didn't know, I develop Jaket in solo.[][][]
 
-At this moment, the only gamemodes available are [orange]Versus[] & Arms Race. To learn more, open the lobby tab in a mission and press the GAMEMODES button. There you'll find description of these gamemodes and their modifiers. More gamemodes are gonna be released in the near future.
+In this beta only [orange]Versus & Arms Race[] gamemodes are available. To start a match, open the lobby tab in a mission and press the [b]GAMEMODES[] button. You'll find the description of these gamemodes and their modifiers. More gamemodes will be released in the near future.
+[12][i][gray]Yes, you can technically play fraud, but no - enemies won't sync.[][][]
 
-[red]Thank you for your patience :heart:[]
-[12][gray]i know it's been 2 years since the last update, bruh[][]";
+I also wanted to say [red]thank YOU[] for your patience [red]:heart:[]
+I know it's been two years since the last update, but I am, unfortunately, a human being too.
+
+
+[31][b][red]!!! WARNING !!! WARNING !!! WARNING !!![][][]
+[63][b][red]WARNING !!! WARNING[][][]
+[31][b][red]!!! WARNING !!! WARNING !!! WARNING !!![][][]
+[63][b][red]WARNING !!! WARNING[][][]
+[31][b][red]!!! WARNING !!! WARNING !!! WARNING !!![][][]";
 
         ActionType.Find(l, "Main Menu (1)/V1", r =>
         {
