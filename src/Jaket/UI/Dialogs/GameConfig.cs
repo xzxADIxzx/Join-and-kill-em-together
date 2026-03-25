@@ -24,6 +24,9 @@ public class GameConfig : Fragment
     /// <summary> Checkboxes of gamemode modifiers & such. </summary>
     private Toggle slowmo, hammer, bleedy;
 
+    /// <summary> Preview cards. </summary>
+    private Image[] cards = new Image[Gamemodes.All.Length];
+
     public GameConfig(Transform root) : base(root, "GameConfig", true)
     {
         Events.OnLobbyAction += () => { if (Shown) Rebuild(); };
@@ -38,7 +41,7 @@ public class GameConfig : Fragment
                 s.Setup(false, 0f);
                 Events.Post(() => ModAssets.CardIcons.All(t => t != null), () => Gamemodes.All.Each(m =>
                 {
-                    var img = s.Image(ModAssets.CardIcons[(byte)m], 220f).transform;
+                    var img = (cards[(byte)m] = s.Image(ModAssets.CardIcons[(byte)m], 220f)).transform;
                     var btn = Builder.Rect("Mode", img, Lib.Rect.Fill                );
                     var txt = Builder.Rect("Text", btn, Lib.Rect.Fill with { Y = 8f });
 
@@ -91,5 +94,8 @@ public class GameConfig : Fragment
         bleedy.isOn = LobbyConfig.Bleedy;
 
         slowmo.interactable = hammer.interactable = bleedy.interactable = LobbyController.IsOwner;
+
+        cards.Each(c => c.color = white);
+        cards[(byte)selected].color = red;
     }
 }
