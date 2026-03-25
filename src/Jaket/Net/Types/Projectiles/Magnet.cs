@@ -87,5 +87,10 @@ public class Magnet : OwnableEntity
         if (__instance.TryGetComponent(out Agent a) && a.Patron is Magnet m && !m.Hidden) m.Kill();
     }
 
+    [HarmonyPatch(typeof(global::Magnet), "OnTriggerEnter")]
+    [HarmonyPatch(typeof(global::Magnet), "OnTriggerExit")]
+    [HarmonyPrefix]
+    static bool Laggy(Collider other) => other.attachedRigidbody?.name != "I";
+
     #endregion
 }
