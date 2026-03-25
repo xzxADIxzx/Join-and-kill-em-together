@@ -17,6 +17,8 @@ public class GameConfig : Fragment
 {
     /// <summary> Gamemode whose preview card is selected. </summary>
     private Gamemode selected;
+    /// <summary> Scrollable container with all the cards. </summary>
+    private Bar scroll;
     /// <summary> Information about the selected gamemode. </summary>
     private Text info;
     /// <summary> Checkboxes of gamemode modifiers & such. </summary>
@@ -31,7 +33,7 @@ public class GameConfig : Fragment
             b.Setup(true);
             b.Text("#gameconfig.name", 32f, 32);
 
-            Component<Bar>(b.ScrollH(Gamemodes.All.Length * 228f - 8f, 300f).content.gameObject, s =>
+            scroll = Component<Bar>(b.ScrollH(Gamemodes.All.Length * 228f - 8f, 300f).content.gameObject, s =>
             {
                 s.Setup(false, 0f);
                 Events.Post(() => ModAssets.CardIcons.All(t => t != null), () => Gamemodes.All.Each(m =>
@@ -65,6 +67,8 @@ public class GameConfig : Fragment
         {
             selected = Gameflow.Mode;
             Rebuild();
+
+            scroll.transform.localPosition = Vector3.left * 228f * (Gamemodes.All.IndexOf(selected) - Gamemodes.All.Length / 2);
         });
         if (LobbyController.IsOwner && selected != Gameflow.Mode)
             LobbyConfig.Mode = selected.ToString().ToLower();
