@@ -11,6 +11,8 @@ public abstract class Enemy : OwnableEntity
 {
     /// <summary> Whether the enemy is a boss. </summary>
     public bool IsBoss;
+    /// <summary> Whether the enemy is blessed. </summary>
+    public bool Blessed;
 
     public Enemy(uint id, EntityType type) : base(id, type) { }
 

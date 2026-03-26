@@ -88,7 +88,7 @@ public class Coins : Vendor
             }
         }
         {
-            Networking.Entities.Alive<Enemy>(e => e.Type != EntityType.Idol, e => Check(e.WeakPoint));
+            Networking.Entities.Alive<Enemy>(e => e.Type != EntityType.Idol && !e.Blessed, e => Check(e.WeakPoint));
             if (target)
             {
                 isEnemy = true;
