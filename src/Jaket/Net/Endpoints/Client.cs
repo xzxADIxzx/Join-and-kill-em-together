@@ -102,7 +102,7 @@ public class Client : Endpoint, IConnectionManager
         Stats.MeasureTime(ref Stats.WriteMs, () =>
         {
             if (Networking.Loading) return;
-            ents.ClientPool(pool = ++pool % 4, e => Networking.Send(PacketType.Snapshot, e.BufferSize, w =>
+            ents.ClientPool(pool = ++pool % 4, 4, e => Networking.Send(PacketType.Snapshot, e.BufferSize, w =>
             {
                 w.Id(e.Id);
                 w.Enum(e.Type);

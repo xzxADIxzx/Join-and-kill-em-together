@@ -139,7 +139,7 @@ public class Server : Endpoint, ISocketManager
         Stats.MeasureTime(ref Stats.WriteMs, () =>
         {
             if (Networking.Loading) return;
-            ents.ServerPool(pool = ++pool % 4, e => Networking.Send(PacketType.Snapshot, e.BufferSize, w =>
+            ents.ServerPool(pool = ++pool % 4, 4, e => Networking.Send(PacketType.Snapshot, e.BufferSize, w =>
             {
                 w.Id(e.Id);
                 w.Enum(e.Type);

@@ -87,9 +87,9 @@ public class Pools
     public void Player(Pred<Player> pred, Cons<Player> cons) => Each(0, 1, e => { if (!e.Hidden && e is Player p && pred(p)) cons(p); });
 
     /// <summary> Iterates each visible entity in the given server pool. </summary>
-    public void ServerPool(int i, Cons<Entity> cons)         => Each(i, 4, e => { if (!e.Hidden) cons(e); });
+    public void ServerPool(int i, int s, Cons<Entity> cons)  => Each(i, s, e => { if (!e.Hidden) cons(e); });
     /// <summary> Iterates each visible entity in the given client pool. </summary>
-    public void ClientPool(int i, Cons<Entity> cons)         => Each(i, 4, e => { if (!e.Hidden && e.IsOwner) cons(e); });
+    public void ClientPool(int i, int s, Cons<Entity> cons)  => Each(i, s, e => { if (!e.Hidden && e.IsOwner) cons(e); });
 
     /// <summary> Counts the number of entities that are suitable for the given predicate. </summary>
     public int Count(Pred<Entity> pred)
