@@ -42,6 +42,11 @@ public class Spectator : Fragment
     {
         Events.EveryHalf += () =>
         {
+            if (Shown) Shader.SetGlobalFloat
+            (
+                "_Deathness",
+                Random.value / (3f + Random.value)
+            );
             if (LobbyController.Online && Special) UpdateAlive();
         };
 
@@ -147,6 +152,7 @@ public class Spectator : Fragment
     static void Sequence(DeathSequence __instance) => Events.Post(() =>
     {
         __instance.gameObject.SetActive(false);
+        PostProcessV2_Handler.Instance.DeathEffect(true);
 
         UI.Spectator.Toggle();
         UI.Spectator.Reset();
