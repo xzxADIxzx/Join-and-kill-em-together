@@ -52,7 +52,7 @@ public class Gameflow
 
             if (LobbyController.Offline)
             {
-                UI.Spectator.Toggle();
+                UI.Spectator.Rebuild();
                 UI.Chat.DisplayText(null, false);
                 Time.timeScale = 1f;
             }
@@ -119,7 +119,7 @@ public class Gameflow
             LobbyController.Lobby?.SendChatString("#/s" + data);
         }
 
-        UI.Spectator.Toggle();
+        UI.Spectator.Rebuild();
         UI.Chat.DisplayText(null, false);
         Active = true;
     }
@@ -163,7 +163,7 @@ public class Gameflow
                 Loadouts.Make(false, weapon[(byte)team])
             ));
         }
-        UI.Spectator.Toggle(); // update the label
+        UI.Spectator.Rebuild();
     }
 
     /// <summary> Handles gamemode specific actions on team victory. </summary>

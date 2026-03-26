@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using ImageType = UnityEngine.UI.Image.Type;
 
 using Jaket.Assets;
+using Jaket.Content;
 using Jaket.Input;
 using Jaket.Net;
 using Jaket.Net.Types;
@@ -21,15 +22,13 @@ public class Spectator : Fragment
     static NewMovement nm => NewMovement.Instance;
     static CameraController cc => CameraController.Instance;
 
-    /// <summary> Whether the current scene has a special info text. </summary>
+    /// <summary> Whether the current scene has a special behavior. </summary>
     public static bool Special => Scene == "Endless" || Scene == "Level 0-S";
 
-    /// <summary> Information about keybindings that are usable at the moment. </summary>
+    /// <summary> Text imitating machine's terminal. </summary>
     private Text info;
-    /// <summary> Flash that displays the I See You texture. </summary>
+    /// <summary> Image displaying a mysterious eye. </summary>
     private Image dead;
-    /// <summary> Time of the last death of the local player. </summary>
-    private float DeathTime;
 
     /// <summary> Third person camera position. </summary>
     private Vector3 position;
@@ -47,12 +46,13 @@ public class Spectator : Fragment
                 "_Deathness",
                 Random.value / (3f + Random.value)
             );
-            if (LobbyController.Online && Special) UpdateAlive();
+            if (LobbyController.Online && Special | Gameflow.Mode == Gamemode.Hardcore) UpdateAlive();
         };
 
-        // TODO something like the original death scren terminal, perhaps?
-        info = Builder.Text(Fill("Info"), "", 96, white with { a = semi.a }, TextAnchor.MiddleCenter);
-        dead = Builder.Image(Fill("Flash"), Tex.Dead, white, ImageType.Simple);
+        info = Builder.Text(Fill("Info"), "hi", 24, white, TextAnchor.UpperLeft);
+        dead = Builder.Image(Fill("Eye"), Tex.Dead, white, ImageType.Simple);
+
+        info.rectTransform.sizeDelta = Vector2.one * -128f;
 
         Component<HudOpenEffect>(dead.gameObject, e =>
         {
@@ -68,19 +68,26 @@ public class Spectator : Fragment
 
     public override void Toggle()
     {
-        Content.gameObject.SetActive(Shown = NewMovement.Instance.dead);
-        DeathTime = Time.time;
-
-        if (Shown) info.text = Bundle.Format
-        (
-            "spect",
-            Keybind.SpectNext.FormatValue(),
-            Keybind.SpectPrev.FormatValue(),
-            Special || Gameflow.LockRespawn
-                ? Bundle.Format("spect.special", Scene == "Endless" ? "#spect.cg" : Scene == "Level 0-S" ? "#spect.zs" : "#spect.gm")
-                : "#spect.default"
-        );
+        Content.gameObject.SetActive(Shown);
+        PostProcessV2_Handler.Instance.DeathEffect(Shown);
     }
+
+    public override void Rebuild() => info.text = Bundle.Format
+    (
+        "spect",
+        Keybind.SpectNext.FormatValue(),
+        Keybind.SpectPrev.FormatValue(),
+        Special || Gameflow.LockRespawn ? "#spect.perm" : "#spect.temp",
+        Special
+        ? (
+            Scene == "Endless" ? "#spect.waves" : "#spect.death"
+        ) :
+        Gameflow.LockRespawn
+        ? (
+            Gameflow.Mode == Gamemode.Hardcore ? "#spect.death" : "#spect.round"
+        ) :
+        "#spect.press"
+    );
 
     #region camera
 
@@ -104,9 +111,10 @@ public class Spectator : Fragment
     public void UpdateInput()
     {
         if (UI.AnyDialog) return;
-        if (Input.GetKeyDown(KeyCode.R) && !Special && !Gameflow.LockRespawn && Time.time - DeathTime >= 1f)
+        if (Input.GetKeyDown(KeyCode.R) && !Special && !Gameflow.LockRespawn)
         {
-            Content.gameObject.SetActive(Shown = false);
+            Shown = false;
+            Toggle();
             Events.Post(StatsManager.Instance.Restart);
         }
 
@@ -123,7 +131,8 @@ public class Spectator : Fragment
     public void UpdateAlive()
     {
         if (CyberGrind.PlayersAlive() > 0) return;
-        Content.gameObject.SetActive(Shown = false);
+        Shown = false;
+        Toggle();
 
         if (Scene == "Endless")
         {
@@ -145,7 +154,7 @@ public class Spectator : Fragment
 
     [HarmonyPatch(typeof(StatsManager), nameof(StatsManager.Restart))]
     [HarmonyPrefix]
-    static bool Restart() => !UI.Spectator.Shown;
+    static bool Restart() => !nm.deathSequence.gameObject.activeSelf && !UI.Spectator.Shown;
 
     [HarmonyPatch(typeof(DeathSequence), nameof(DeathSequence.EndSequence))]
     [HarmonyPostfix]
@@ -154,7 +163,9 @@ public class Spectator : Fragment
         __instance.gameObject.SetActive(false);
         PostProcessV2_Handler.Instance.DeathEffect(true);
 
+        UI.Spectator.Shown = true;
         UI.Spectator.Toggle();
+        UI.Spectator.Rebuild();
         UI.Spectator.Reset();
     });
 
