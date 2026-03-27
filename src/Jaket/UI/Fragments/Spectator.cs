@@ -140,7 +140,7 @@ public class Spectator : Fragment
             if (rank.savedTime == 0f) rank.GameOver();
         }
         else if (LobbyController.IsOwner) StatsManager.Instance.Restart();
-    }
+    } // TODO move to Gameflow
 
     public void Reset()
     {

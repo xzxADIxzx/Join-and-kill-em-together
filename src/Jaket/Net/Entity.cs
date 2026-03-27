@@ -140,7 +140,7 @@ public abstract class Entity
         /// <summary> Initializes the struct. </summary>
         public float Init => prev = next = Prev = Next;
         /// <summary> Whether the num jumped. </summary>
-        public readonly bool Jump => Mathf.Abs(Next - Prev) > 20f;
+        public readonly bool Jump => Mathf.Abs(Next - Prev) > 10f;
 
         /// <summary> Updates the boundaries. </summary>
         public void Set(float value)
@@ -157,11 +157,11 @@ public abstract class Entity
             {
                 next = prev + delta;
             }
-            else if (Mathf.Abs(Next - Prev) > .1f)
+            else if (Mathf.Abs(Next - Prev) > .08f)
             {
                 next = value + (Next - Prev) * .3f;
             }
-            else if (Mathf.Abs(Next - next) > .4f)
+            else if (Mathf.Abs(Next - next) > .32f)
             {
                 prev = next = value;
             }

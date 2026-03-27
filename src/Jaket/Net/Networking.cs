@@ -20,9 +20,9 @@ using Jaket.World;
 public static class Networking
 {
     /// <summary> Number of snapshots to be sent per second. </summary>
-    public const int TICKS_PER_SECOND = 15;
+    public const int TICKS_PER_SECOND = 20;
     /// <summary> Number of subticks in a tick, i.e. each tick is divided into equal gaps in which snapshots of equal number of entities are sent. </summary>
-    public const int SUBTICKS_PER_TICK = 4;
+    public const int SUBTICKS_PER_TICK = 3;
 
     /// <summary> Server endpoint, updated by the owner of the lobby. </summary>
     public static Server Server = new();

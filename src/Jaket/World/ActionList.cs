@@ -76,7 +76,7 @@ public static class ActionList
         #region 0-S
         l = "Level 0-S";
 
-        ActionType.Find(l, "PauseMenu/Restart Mission", b => b.GetComponent<Button>().interactable = LobbyController.IsOwner);
+        ActionType.Find(l, "PauseMenu/Restart Mission", b => b.GetComponent<Button>().interactable = LobbyController.IsOwner); // TODO switch to hardcore instead?
 
         ActionType.Run(l, () => NewMovement.Instance.modNoJump = true);
 
