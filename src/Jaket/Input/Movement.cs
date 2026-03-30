@@ -42,10 +42,10 @@ public class Movement : MonoSingleton<Movement>
         {
             if (ch.cheatsEnabled && LobbyController.Online && !Administration.Privileged)
             {
-                ch.cheatsEnabled = false;
                 cm.transform.Find("Cheats Overlay").Each(c => c.gameObject.SetActive(false));
+                cm.idToCheat.Values.Each(cm.DisableCheat);
 
-                (Get("idToCheat", cm) as Dictionary<string, ICheat>).Values.Each(cm.DisableCheat);
+                ch.cheatsEnabled = false;
                 Bundle.Hud("unprivileged");
             }
             if (ac.majorEnabled && LobbyController.Online)

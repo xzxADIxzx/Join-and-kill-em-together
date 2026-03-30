@@ -121,23 +121,6 @@ public static class Tools
     /// <summary> Returns metadata of a method. </summary>
     public static MethodInfo Method<T>(string name) => AccessTools.Method(typeof(T), name);
 
-    /// <summary> Gets the value of a field with the given name. </summary>
-    public static object Get<T>(string name, T t) => Field<T>(name).GetValue(t);
-    /// <summary> Sets the value of a field with the given name. </summary>
-    public static void Set<T>(string name, T t, object value) => Field<T>(name).SetValue(t, value);
-
-    /// <summary> Calls a method with the given name. </summary>
-    public static void Call<T>(string name, T t, params object[] args) => AccessTools.Method(typeof(T), name).Invoke(t, args);
-    /// <summary> Calls a method with the given name and a single boolean argument. </summary>
-    public static void Call<T>(string name, T t, bool arg) => AccessTools.Method(typeof(T), name, new[] { typeof(bool) }).Invoke(t, new object[] { arg });
-
-    /// <summary> Returns the event of pressing the button. </summary>
-    public static UnityEvent GetClick(GameObject btn)
-    {
-        var pointer = btn.GetComponents<MonoBehaviour>()[2]; // so much pain over the private class ControllerPointer
-        return AccessTools.Property(pointer.GetType(), "OnPressed").GetValue(pointer) as UnityEvent;
-    }
-
     #endregion
     #region enumerable
 

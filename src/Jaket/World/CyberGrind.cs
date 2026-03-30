@@ -52,7 +52,7 @@ public class CyberGrind
     {
         // TODO replace with a patch
         // start a new wave with the synced pattern
-        Call("NextWave", grid);
+        grid.NextWave();
 
         // do not reset any value if it is the first load
         var col = grid.GetComponent<Collider>();

@@ -61,7 +61,7 @@ public static class ActionType
     {
         ResFind<Button>().Each(o => IsReal(o) && o.Path() == path, o =>
         {
-            GetClick(o.gameObject).Invoke();
+            o.GetComponent<ControllerPointer>().OnPressed.Invoke();
             o.interactable = false;
             perform?.Invoke(o.transform);
         });

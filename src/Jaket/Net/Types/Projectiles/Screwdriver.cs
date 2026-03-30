@@ -90,11 +90,11 @@ public class Screwdriver : OwnableEntity
             if (!IsOwner)
             {
                 harp.CancelInvoke();
-                Set("stopped",  harp, false);
-                Set("drilling", harp, false);
+                harp.stopped = false;
+                harp.drilling = false;
             }
 
-            Set("aud", harp, source);
+            harp.aud = source;
         };
 
         Locked = false;
