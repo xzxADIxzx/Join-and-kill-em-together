@@ -56,6 +56,7 @@ public class Emotes : MonoSingleton<Emotes>
         // stop sliding to prevent preview from falling underground
         nm.playerCollider.height = 3.5f;
         nm.gc.transform.localPosition = new(0f, -1.256f, 0f);
+        nm.ResetGravity();
 
         // restart the coroutine if the emote is not infinite
         StopCoroutine("Clear");
