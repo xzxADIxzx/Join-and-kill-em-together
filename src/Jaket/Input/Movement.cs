@@ -127,9 +127,6 @@ public class Movement : MonoSingleton<Movement>
         {
             UI.Spectator.UpdateInput();
             UI.Spectator.UpdateCamera(!nm.dead && Emotes.Ends);
-
-            // turn on gravity, because if the taunt was launched on the ground, then it is disabled by default
-            nm.rb.useGravity = true;
         }
 
         if (!nm.dead) nm.rb.constraints = UI.AnyDialog

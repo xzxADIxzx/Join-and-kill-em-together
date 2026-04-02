@@ -74,6 +74,7 @@ public static class Gamemodes
     /// <summary> Whether the gamemode implies the absence of restart button. </summary>
     public static bool NoRestarts(this Gamemode gm) => gm switch
     {
+        Gamemode.Manhunt       => true,
         Gamemode.Versus        => true,
         Gamemode.Arena         => true,
         Gamemode.ArmsRace      => true,

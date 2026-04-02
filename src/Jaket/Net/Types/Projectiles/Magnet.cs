@@ -51,7 +51,7 @@ public class Magnet : OwnableEntity
         agent.Get(out TrailRenderer trail);
 
         rb.isKinematic   = !IsOwner;
-        trail.startColor = (Networking.Entities[Owner] is RemotePlayer p && p != null ? p.Team : Networking.LocalPlayer.Team).Color() with { a = .4f };
+        trail.startColor = (Networking.Entities[Owner] is RemotePlayer p ? p.Team : Networking.LocalPlayer.Team).Color() with { a = .4f };
     }
 
     public override void Update(float delta)
