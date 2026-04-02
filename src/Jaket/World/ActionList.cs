@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net;
+using Jaket.UI.Fragments;
 using Jaket.UI.Lib;
 
 /// <summary> List of all interactions with the world. Will replenish over time. </summary>
@@ -75,8 +76,6 @@ public static class ActionList
         #endregion
         #region 0-S
         l = "Level 0-S";
-
-        ActionType.Find(l, "PauseMenu/Restart Mission", b => b.GetComponent<Button>().interactable = LobbyController.IsOwner); // TODO switch to hardcore instead?
 
         ActionType.Run(l, () => NewMovement.Instance.modNoJump = true);
 
@@ -259,8 +258,6 @@ public static class ActionList
         #region endless
         l = "Endless";
 
-        ActionType.Find(l, "PauseMenu/Restart Mission", b => b.GetComponent<Button>().interactable = LobbyController.IsOwner);
-
         #endregion
         #region museum
         l = "CreditsMuseum2";
@@ -277,7 +274,7 @@ public static class ActionList
 
         ActionType.Find(l, "PauseMenu/Restart Checkpoint", b =>
         {
-            if (Gameflow.Mode.NoRestarts())
+            if (Gameflow.Mode.NoRestarts() || Spectator.Special)
             {
                 b.GetComponentsInParent<PauseMenu>(true).Each(Dest);
                 b.GetComponent<Button>().interactable = false;
@@ -285,7 +282,11 @@ public static class ActionList
         });
         ActionType.Find(l, "PauseMenu/Restart Mission", b =>
         {
-            if (Gameflow.Mode.NoRestarts()) b.GetComponent<Button>().interactable = LobbyController.IsOwner;
+            if (Gameflow.Mode.NoRestarts() || Spectator.Special)
+            {
+                b.GetComponentsInParent<PauseMenu>(true).Each(Dest);
+                b.GetComponent<Button>().interactable = LobbyController.IsOwner;
+            }
         });
 
         #endregion
