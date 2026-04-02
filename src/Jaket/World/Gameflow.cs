@@ -9,6 +9,7 @@ using Jaket.Content;
 using Jaket.Net;
 using Jaket.Net.Types;
 using Jaket.UI;
+using Jaket.UI.Fragments;
 
 using static Jaket.UI.Lib.Pal;
 
@@ -70,6 +71,7 @@ public class Gameflow
             if (LobbyController.Offline || !Active) return;
             if (Mode.HPs()) UpdateHPs();
             if (Mode.WTO()) UpdateWTO();
+            if (Mode == Gamemode.Hardcore || Spectator.Special) UpdateRES();
 
             if (Bleedy) nm.GetHurt(1, Mode != Gamemode.Hardcore, 0f);
         };
@@ -236,6 +238,22 @@ public class Gameflow
         Count(out _, out _, out var champ);
 
         if (LobbyController.IsOwner && champ != Team.None) LobbyController.Lobby?.SendChatString("#/v" + (byte)champ);
+    }
+
+    private static void UpdateRES()
+    {
+        if (nm.hp > 0 || Networking.Entities.Count(e => e is RemotePlayer p && p.Health > 0) > 0) return;
+
+        if (Scene == "Endless")
+        {
+            var rank = nm.GetComponentInChildren<FinalCyberRank>();
+            if (rank.savedTime == 0f) rank.GameOver();
+        }
+        else if (LobbyController.IsOwner)
+        {
+            UI.Spectator.Shown = false;
+            StatsManager.Instance.Restart();
+        }
     }
 
     #endregion

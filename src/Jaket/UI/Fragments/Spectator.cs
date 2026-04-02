@@ -39,15 +39,11 @@ public class Spectator : Fragment
 
     public Spectator(Transform root) : base(root, "Spectator", false)
     {
-        Events.EveryHalf += () =>
-        {
-            if (Shown) Shader.SetGlobalFloat
-            (
-                "_Deathness",
-                Random.value / (3f + Random.value)
-            );
-            if (LobbyController.Online && Special | Gameflow.Mode == Gamemode.Hardcore) UpdateAlive();
-        };
+        Events.EveryHalf += () => Shader.SetGlobalFloat
+        (
+            "_Deathness",
+            Random.value / (3f + Random.value)
+        );
 
         info = Builder.Text(Fill("Info"), "hi", 24, white, TextAnchor.UpperLeft);
         dead = Builder.Image(Fill("Eye"), Tex.Dead, white, ImageType.Simple);
@@ -128,20 +124,6 @@ public class Spectator : Fragment
         if (targetPlayer >= LobbyController.Lobby?.MemberCount) targetPlayer = 0;
     }
 
-    public void UpdateAlive()
-    {
-        if (CyberGrind.PlayersAlive() > 0) return;
-        Shown = false;
-        Toggle();
-
-        if (Scene == "Endless")
-        {
-            var rank = nm.GetComponentInChildren<FinalCyberRank>();
-            if (rank.savedTime == 0f) rank.GameOver();
-        }
-        else if (LobbyController.IsOwner) StatsManager.Instance.Restart();
-    } // TODO move to Gameflow
-
     public void Reset()
     {
         position = new();
@@ -161,7 +143,6 @@ public class Spectator : Fragment
     static void Sequence(DeathSequence __instance) => Events.Post(() =>
     {
         __instance.gameObject.SetActive(false);
-        PostProcessV2_Handler.Instance.DeathEffect(true);
 
         UI.Spectator.Shown = true;
         UI.Spectator.Toggle();
