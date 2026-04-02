@@ -7,13 +7,10 @@ using Jaket.Net;
 
 public static class Loading
 {
-    [HarmonyPatch(typeof(SceneHelper), nameof(SceneHelper.LoadScene))]
+    [HarmonyPatch(typeof(SceneHelper), nameof(SceneHelper.LoadSceneAsync))]
+    [HarmonyPatch(typeof(SceneHelper), nameof(SceneHelper.RestartSceneAsync))]
     [HarmonyPostfix]
     static void Load() => Events.OnLoadingStart.Fire();
-
-    [HarmonyPatch(typeof(SceneHelper), nameof(SceneHelper.RestartScene))]
-    [HarmonyPostfix]
-    static void Rest() => Events.OnLoadingStart.Fire();
 
     [HarmonyPatch(typeof(FinalRank), nameof(FinalRank.LevelChange))]
     [HarmonyPrefix]
