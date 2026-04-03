@@ -45,6 +45,11 @@ public class Enemies
         Types[EntityType.Johninator] = typeof(V2);
     }
 
+// TODO Security System Parts & Brain have the same enemy type
+// TODO Both stages of Minotaur have the same enemy type
+// TODO Johninator has the same enemy type as V2 (although there is a type for this enemy, but it's unused)
+// TODO Flesh Eye & Skull have the same enemy type as Drone
+
     /// <summary> Finds the entity type by enemy class and type, taking into account the fact that some enemies have the same types. </summary>
     public static EntityType Type(EnemyIdentifier id)
     {
