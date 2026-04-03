@@ -1,6 +1,7 @@
 namespace Jaket.UI.Lib;
 
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 /// <summary> List of textures used to build the interface. </summary>
 public static class Tex
@@ -21,21 +22,20 @@ public static class Tex
     /// <summary> Loads the textures from memory. </summary>
     public static void Load()
     {
-        var all = ResFind<Sprite>();
-        Sprite Find(string name) => all.Find(s => s.name == name);
+        static Sprite Load(string path) => Addressables.LoadAssetAsync<Sprite>($"Assets/Textures/UI/{path}.png").WaitForCompletion();
 
-        Fill = Find("Round_FillLarge");
-        Back = Find("Round_VertHandle_Invert 1");
-        Dash = Find("StripesMaskSM");
-        Small = Find("Round_BorderSmall");
-        Large = Find("Round_BorderLarge");
-        Hort = Find("Round_HorizHandle_Invert");
-        Vert = Find("Round_VertHandle_Invert");
-        Mark = Find("Check");
-        Mask = Find("Round_SliderFill");
-        Circle = Find("circle");
-        Shadow = Find("weaponwheelbackground");
-        Dead = Find("ISeeYou");
+        Fill   = Load("Controls/Round_FillLarge"          );
+        Back   = Load("Controls/Round_VertHandle_Invert 1");
+        Dash   = Load("Controls/StripesMaskSM"            );
+        Small  = Load("Controls/Round_BorderSmall"        );
+        Large  = Load("Controls/Round_BorderLarge"        );
+        Hort   = Load("Controls/Round_HorizHandle_Invert" );
+        Vert   = Load("Controls/Round_VertHandle_Invert"  );
+        Mark   = Load("Controls/Check"                    );
+        Mask   = Load("Controls/Round_SliderFill"         );
+        Circle = Load("circle"                            );
+        Shadow = Load("weaponwheelbackground"             );
+        Dead   = Load("ISeeYou"                           );
     }
 
     /// <summary> Returns the scale of the given sprite. </summary>
