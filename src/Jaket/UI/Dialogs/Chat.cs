@@ -73,7 +73,7 @@ public class Chat : Fragment
 
         Component<CanvasGroup>(chatBg.gameObject, g =>
         {
-            Component<Bar>(chatBg.gameObject, b => b.Update(() => Lerp(g, Shown || Time.time - lastUpdate < 8f)));
+            Component<Bar>(chatBg.gameObject, b => b.Update(() => Lerp(g, chat.text.Length > 0 && Shown | Time.time - lastUpdate < 8f)));
             g.blocksRaycasts = false;
         });
         Component<CanvasGroup>(infoBg.gameObject, g =>
