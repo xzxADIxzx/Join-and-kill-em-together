@@ -52,7 +52,7 @@ public class Chat : Fragment
     /// <summary> Index of the currently viewed message in the history. </summary>
     private int index;
 
-    public Chat(Transform root) : base(root, "Chat", true)
+    public Chat(Transform root) : base(root, "Chat", true, hide: () => Events.Post(() => UI.Chat.field.gameObject.SetActive(UI.Chat.Shown = false)))
     {
         Events.OnLoad += () =>
         {
@@ -68,9 +68,6 @@ public class Chat : Fragment
 
         field = Builder.Field(Rect("Input", new(0f, 36f, -32, 40f, new(0f, 0f), new(1f, 0f))), Tex.Fill, invi, "#chat.tip", 24, OnFocusLost);
         field.characterLimit = MAX_LENGTH;
-
-        Content.gameObject.SetActive(true);
-        Content = field.transform; // hacky
 
         static void Lerp(CanvasGroup group, bool target) => group.alpha = Mathf.Lerp(group.alpha, target ? 1f : 0f, Time.deltaTime * 12f);
 
@@ -88,8 +85,8 @@ public class Chat : Fragment
 
     public override void Toggle()
     {
-        base.Toggle();
-        this.Rebuild();
+        field.gameObject.SetActive(Shown = !Shown);
+        Rebuild();
         UI.Hide(UI.LeftGroup, this, () =>
         {
             field.textComponent.color = white;
