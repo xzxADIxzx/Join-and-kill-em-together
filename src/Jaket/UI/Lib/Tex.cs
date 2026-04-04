@@ -1,7 +1,8 @@
 namespace Jaket.UI.Lib;
 
 using UnityEngine;
-using UnityEngine.AddressableAssets;
+
+using Jaket.Assets;
 
 /// <summary> List of textures used to build the interface. </summary>
 public static class Tex
@@ -22,21 +23,22 @@ public static class Tex
     /// <summary> Loads the textures from memory. </summary>
     public static void Load()
     {
-        static Sprite Load(string path) => Addressables.LoadAssetAsync<Sprite>($"Assets/Textures/UI/{path}.png").WaitForCompletion();
-
-        Fill   = Load("Controls/Round_FillLarge"          );
-        Back   = Load("Controls/Round_VertHandle_Invert 1");
-        Dash   = Load("Controls/StripesMaskSM"            );
-        Small  = Load("Controls/Round_BorderSmall"        );
-        Large  = Load("Controls/Round_BorderLarge"        );
-        Hort   = Load("Controls/Round_HorizHandle_Invert" );
-        Vert   = Load("Controls/Round_VertHandle_Invert"  );
-        Mark   = Load("Controls/Check"                    );
-        Mask   = Load("Controls/Round_SliderFill"         );
-        Circle = Load("circle"                            );
-        Shadow = Load("weaponwheelbackground"             );
-        Dead   = Load("ISeeYou"                           );
+        GameAssets.Sprite("Controls/Round_FillLarge.png",           s => Fill   = s);
+        GameAssets.Sprite("Controls/Round_VertHandle_Invert 1.png", s => Back   = s);
+        GameAssets.Sprite("Controls/StripesMaskSM.png",             s => Dash   = s);
+        GameAssets.Sprite("Controls/Round_BorderSmall.png",         s => Small  = s);
+        GameAssets.Sprite("Controls/Round_BorderLarge.png",         s => Large  = s);
+        GameAssets.Sprite("Controls/Round_HorizHandle_Invert.png",  s => Hort   = s);
+        GameAssets.Sprite("Controls/Round_VertHandle_Invert.png",   s => Vert   = s);
+        GameAssets.Sprite("Controls/Check.png",                     s => Mark   = s);
+        GameAssets.Sprite("Controls/Round_SliderFill.png",          s => Mask   = s);
+        GameAssets.Sprite("circle.png",                             s => Circle = s);
+        GameAssets.Sprite("weaponwheelbackground.png",              s => Shadow = s);
+        GameAssets.Sprite("ISeeYou.png",                            s => Dead   = s);
     }
+
+    /// <summary> Executes the task after loading sprites. </summary>
+    public static void OnLoad(Runnable task) => Events.Post(() => Fill & Back & Dash & Small & Large & Hort & Vert & Mark & Mask & Circle & Shadow & Dead, task);
 
     /// <summary> Returns the scale of the given sprite. </summary>
     public static float Scale(Sprite sprite) => sprite == Mask ? 5f : new[] { Fill, Back, Dash, Small, Large, Vert }.Any(s => s == sprite) ? 4f : 1f;

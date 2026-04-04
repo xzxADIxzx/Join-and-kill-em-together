@@ -137,7 +137,7 @@ public class Movement : MonoSingleton<Movement>
 
     private void OnGUI()
     {
-        if (UI.Settings.Rebinding != null) UI.Settings.RebindUpdate();
+        if (UI.Settings?.Rebinding != null) UI.Settings.RebindUpdate();
     }
 
     #endregion

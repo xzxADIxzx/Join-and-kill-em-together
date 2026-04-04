@@ -19,7 +19,7 @@ public static class UI
     public static bool Focused => Focus && Focus.TryGetComponent(out InputField f) && f.isActiveAndEnabled;
 
     /// <summary> Whether any dialog is visible. </summary>
-    public static bool AnyDialog => Dialogs.Any(d => d.Shown) || (OptionsManager.Instance?.paused ?? false);
+    public static bool AnyDialog => (Dialogs?.Any(d => d.Shown) ?? false) || (OptionsManager.Instance?.paused ?? false);
 
     #region dialogs
 
@@ -59,7 +59,7 @@ public static class UI
     #endregion
 
     /// <summary> Builds all of the interface elements: fragments, dialogs and so on. </summary>
-    public static void Build()
+    public static void Build() => Tex.OnLoad(() =>
     {
         static void Fix() => Events.Post(() =>
         {
@@ -67,7 +67,7 @@ public static class UI
             Component<Canvas>(HudMessageReceiver.Instance.gameObject, c =>
             {
                 c.overrideSorting = true;
-                c.sortingOrder = 4200 + 1;
+                c.sortingOrder = 4242;
             });
         });
         Fix();
@@ -99,7 +99,7 @@ public static class UI
         MidlGroup = new Fragment[] { LobbyList, GameConfig, Privileges, Sprays };
 
         Log.Info($"[FACE] Builded {Dialogs.Length} dialogs and {Fragments.Length} fragments");
-    }
+    });
 
     /// <summary> Hides all of the elements in the given group except the fragment. </summary>
     public static void Hide(Fragment[] group, Fragment frag)

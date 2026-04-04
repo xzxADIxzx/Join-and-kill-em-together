@@ -26,6 +26,9 @@ public static class GameAssets
     /// <summary> Loads a sound by the given path. </summary>
     public static void Sound(string path, Cons<AudioClip> cons) => LoadAsync($"Assets/Sounds/{path}", cons);
 
+    /// <summary> Loads a sprite by the given path. </summary>
+    public static void Sprite(string path, Cons<Sprite> cons) => LoadAsync($"Assets/Textures/UI/{path}", cons);
+
     #endregion
     #region content
 
