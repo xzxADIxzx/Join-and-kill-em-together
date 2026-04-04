@@ -140,7 +140,7 @@ public static class Networking
 
                 Gameflow.OnDeath(member);
 
-                if (LobbyConfig.HealBosses) Entities.Alive<Enemy>(e => e.IsBoss, e => e.Heal());
+                if (LobbyConfig.HealBosses) Entities.Alive<Enemy>(e => e.Boss, e => e.Heal());
             }
 
             else if (msg.StartsWith("#/s") && uint.TryParse(msg[3..], out uint sid) && lobby.Owner.Id == member.Id)

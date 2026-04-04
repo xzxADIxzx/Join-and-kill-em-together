@@ -189,6 +189,8 @@ public class RemotePlayer : Entity, Screwdriver.Screwable
 
     /// <summary> Approximate position of the player used by spectators and indicators. </summary>
     public Vector3 Position => agent == null ? Vector3.zero : agent.Position + Vector3.up * 2.5f;
+    /// <summary> Target of the player used by enemies. </summary>
+    public EnemyTarget Target => new(enemyId);
 
     /// <summary> Breaks the player doll into multiple peaces. </summary>
     public void Disassemble()

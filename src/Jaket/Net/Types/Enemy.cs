@@ -1,12 +1,5 @@
 /*
 {
-    Float x, y, z;
-
-    /// <summary> Whether the enemy is a boss. </summary>
-    public bool IsBoss;
-    /// <summary> The max health of the boss. </summary>
-    public float InitialHealth;
-
     /// <summary> Increases the health of the enemy and adds a boss bar when certain conditions are reached. </summary>
     protected void Boss(bool cond, float bossHealth, int layers = 1, string nameOverride = null)
     {
@@ -60,26 +53,6 @@
 
     /// <summary> This method is called only after the remote death of the enemy. </summary>
     public virtual void Kill() => EnemyId.InstaKill();
-
-    #endregion
-    #region health
-
-    /// <summary> Sets the health of the enemy to the given value. </summary>
-    public void SetHealth(float health)
-    {
-        if (EnemyId.drone) EnemyId.drone.health = health;
-        if (EnemyId.spider) EnemyId.spider.health = health;
-        if (EnemyId.zombie) EnemyId.zombie.health = health;
-        if (EnemyId.statue) EnemyId.statue.health = health;
-        if (EnemyId.machine) EnemyId.machine.health = health;
-    }
-
-    /// <summary> Heals the boss using the formula <c>InitialHealth / PlayersCount</c>. </summary>
-    public void HealBoss()
-    {
-        EnemyId.ForceGetHealth();
-        SetHealth(Mathf.Min(InitialHealth, EnemyId.health + InitialHealth / (LobbyController.Lobby?.MemberCount ?? 1f)));
-    }
 
     #endregion
 }

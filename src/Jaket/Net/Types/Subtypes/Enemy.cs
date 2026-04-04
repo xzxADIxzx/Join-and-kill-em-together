@@ -9,17 +9,55 @@ using Jaket.World;
 /// <summary> Abstract entity of any enemy type. </summary>
 public abstract class Enemy : OwnableEntity
 {
+    Agent agent;
+    Cache<RemotePlayer> player;
+    EnemyIdentifier enemyId;
+    global::Enemy enemy;
+    BossHealthBar bossbar;
+
     /// <summary> Whether the enemy is a boss. </summary>
-    public bool IsBoss;
-    /// <summary> Whether the enemy is blessed. </summary>
-    public bool Blessed;
+    public bool Boss;
+    /// <summary> Whether the enemy is idoled. </summary>
+    public bool Blessed => enemyId.Blessed;
+
+    /// <summary> Initial health of the enemy. </summary>
+    private float InitHealth;
+    /// <summary> PostPPP health of the enemy. </summary>
+    private float PostHealth;
 
     public Enemy(uint id, EntityType type) : base(id, type) { }
 
-    public void Heal() { } // TODO remake enemies (again)
+    #region logic
 
-    public abstract Transform WeakPoint { get; }
+    public virtual Transform WeakPoint => enemyId.weakPoint?.transform ?? agent.transform;
 
+    public virtual void Heal() => enemy.health = Mathf.Min(PostHealth, enemy.health + PostHealth / (LobbyController.Lobby?.MemberCount ?? 1f));
+
+    public virtual float Rate(RemotePlayer target) => (target.Position - agent.Position).sqrMagnitude;
+
+    public override void Assign(Agent agent)
+    {
+        (this.agent = agent).Patron = this;
+
+        agent.Get(out enemyId);
+        agent.Get(out enemy);
+        agent.Get(out bossbar, true);
+
+        OnTransfer = () =>
+        {
+            player = Owner;
+            if (IsOwner)
+                enemyId.target = EnemyTarget.TrackPlayer();
+            else
+                enemyId.target = player.Value?.Target;
+        };
+
+        Boss = bossbar; // non-owners will read this value to create a bossbar
+
+        OnTransfer();
+    }
+
+    #endregion
     #region harmony
 
     [HarmonyPatch(typeof(EnemyIdentifier), "Start")]
@@ -33,6 +71,10 @@ public abstract class Enemy : OwnableEntity
         }
         return true;
     }
+
+    [HarmonyPatch(typeof(EnemyIdentifier), nameof(EnemyIdentifier.UpdateTarget))]
+    [HarmonyPrefix]
+    static bool Focus() => false;
 
     [HarmonyPatch(typeof(global::Enemy), nameof(global::Enemy.OnTravel))]
     [HarmonyPrefix]

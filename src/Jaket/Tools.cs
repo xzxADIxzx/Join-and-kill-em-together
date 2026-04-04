@@ -246,7 +246,7 @@ public static class Tools
     #region entities
 
     /// <summary> Whether the type is an enemy. </summary>
-    public static bool IsEnemy     (this EntityType type) => type >= EntityType.Filth        && type <= EntityType.Brain;
+    public static bool IsEnemy     (this EntityType type) => type >= EntityType.Filth        && type <= EntityType.Sisyphus;
 
     /// <summary> Whether the type is an item. </summary>
     public static bool IsItem      (this EntityType type) => type >= EntityType.SkullBlue    && type <= EntityType.Sowler;
