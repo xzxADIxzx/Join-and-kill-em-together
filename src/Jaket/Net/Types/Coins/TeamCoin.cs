@@ -390,7 +390,7 @@ public class TeamCoin : OwnableEntity
     #endregion
     #region harmony
 
-    [HarmonyPatch(typeof(Coin), "Start")]
+    [HarmonyPatch(typeof(Coin), nameof(Coin.Start))]
     [HarmonyPrefix]
     static bool Start(Coin __instance)
     {
@@ -398,7 +398,7 @@ public class TeamCoin : OwnableEntity
         return false;
     }
 
-    [HarmonyPatch(typeof(Coin), "OnCollisionEnter")]
+    [HarmonyPatch(typeof(Coin), nameof(Coin.OnCollisionEnter))]
     [HarmonyPrefix]
     static bool Death(Coin __instance, Collision collision)
     {
@@ -410,7 +410,7 @@ public class TeamCoin : OwnableEntity
         else return true;
     }
 
-    [HarmonyPatch(typeof(Coin), "Update")]
+    [HarmonyPatch(typeof(Coin), nameof(Coin.Update))]
     [HarmonyPrefix]
     static bool Update() => false;
 

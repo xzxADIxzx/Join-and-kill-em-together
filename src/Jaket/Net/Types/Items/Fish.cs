@@ -51,7 +51,7 @@ public class Fish : Item
     #endregion
     #region harmony
 
-    [HarmonyPatch(typeof(FishCooker), "OnTriggerEnter")]
+    [HarmonyPatch(typeof(FishCooker), nameof(FishCooker.OnTriggerEnter))]
     [HarmonyPrefix]
     static bool Cook(Collider other, bool ___unusable)
     {
@@ -79,7 +79,7 @@ public class Fish : Item
         else return true;
     }
 
-    [HarmonyPatch(typeof(BaitItem), "OnTriggerEnter")]
+    [HarmonyPatch(typeof(BaitItem), nameof(BaitItem .OnTriggerEnter))]
     [HarmonyPrefix]
     static bool Bait(Collider other, BaitItem __instance, FishDB[] ___supportedWaters, FishObject[] ___attractFish, GameObject ___consumedPrefab, bool ___silentFail)
     {

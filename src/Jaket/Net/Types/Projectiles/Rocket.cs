@@ -123,7 +123,7 @@ public class Rocket : OwnableEntity
     #endregion
     #region harmony
 
-    [HarmonyPatch(typeof(Grenade), "Start")]
+    [HarmonyPatch(typeof(Grenade), nameof(Grenade.Start))]
     [HarmonyPrefix]
     static void Start(Grenade __instance)
     {

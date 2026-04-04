@@ -93,7 +93,7 @@ public class Hitscans : Vendor
 
     static bool wall;
 
-    [HarmonyPatch(typeof(RevolverBeam), "Start")]
+    [HarmonyPatch(typeof(RevolverBeam), nameof(RevolverBeam.Start))]
     [HarmonyPostfix]
     static void Start(RevolverBeam __instance, LineRenderer ___lr)
     {
@@ -102,16 +102,16 @@ public class Hitscans : Vendor
         wall = false;
     }
 
-    [HarmonyPatch(typeof(RevolverBeam), "Shoot")]
+    [HarmonyPatch(typeof(RevolverBeam), nameof(RevolverBeam.Shoot))]
     [HarmonyPrefix]
     static void Hide() => Networking.Entities.Player(p => p.Team.Ally(), p => p.Toggle(false));
 
-    [HarmonyPatch(typeof(RevolverBeam), "Shoot")]
+    [HarmonyPatch(typeof(RevolverBeam), nameof(RevolverBeam.Shoot))]
     [HarmonyPostfix]
     static void Show() => Networking.Entities.Player(p => p.Team.Ally(), p => p.Toggle(true));
 
-    [HarmonyPatch(typeof(RevolverBeam), "HitSomething")]
-    [HarmonyPatch(typeof(RevolverBeam), "PiercingShotCheck")]
+    [HarmonyPatch(typeof(RevolverBeam), nameof(RevolverBeam.HitSomething))]
+    [HarmonyPatch(typeof(RevolverBeam), nameof(RevolverBeam.PiercingShotCheck))]
     [HarmonyTranspiler]
     static Ins Wall(Ins instructions)
     {
@@ -128,7 +128,7 @@ public class Hitscans : Vendor
         }
     }
 
-    [HarmonyPatch(typeof(RevolverBeam), "ExecuteHits")]
+    [HarmonyPatch(typeof(RevolverBeam), nameof(RevolverBeam.ExecuteHits))]
     [HarmonyTranspiler]
     static Ins Call(Ins instructions)
     {

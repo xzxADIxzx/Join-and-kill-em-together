@@ -11,7 +11,7 @@ public static class ArmsPatch
 {
     static EnemyIdentifier caught;
 
-    [HarmonyPatch(typeof(HookArm), "FixedUpdate")]
+    [HarmonyPatch(typeof(HookArm), nameof(HookArm.FixedUpdate))]
     [HarmonyPostfix]
     static void Hook(bool ___forcingFistControl, Vector3 ___hookPoint, HookState ___state, EnemyIdentifier ___caughtEid, bool ___lightTarget)
     {
@@ -29,7 +29,7 @@ public static class ArmsPatch
 
     static bool parried;
 
-    [HarmonyPatch(typeof(Punch), "ActiveEnd")]
+    [HarmonyPatch(typeof(Punch), nameof(global::Punch.ActiveEnd))]
     [HarmonyPrefix]
     static void Punch()
     {

@@ -60,7 +60,7 @@ public abstract class Enemy : OwnableEntity
     #endregion
     #region harmony
 
-    [HarmonyPatch(typeof(EnemyIdentifier), "Start")]
+    [HarmonyPatch(typeof(EnemyIdentifier), nameof(EnemyIdentifier.Start))]
     [HarmonyPrefix]
     static bool Start(EnemyIdentifier __instance)
     {

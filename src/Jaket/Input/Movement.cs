@@ -2,7 +2,6 @@ namespace Jaket.Input;
 
 using GameConsole;
 using HarmonyLib;
-using System.Collections.Generic;
 using UnityEngine;
 
 using Jaket.Assets;
@@ -65,9 +64,9 @@ public class Movement : MonoSingleton<Movement>
 
         if (UI.Focused || UI.Settings.Rebinding != null) return;
 
-        if (Keybind.LobbyTab.Tap())   UI.LobbyTab.Toggle();
+        if (Keybind.LobbyTab  .Tap()) UI.LobbyTab  .Toggle();
         if (Keybind.PlayerList.Tap()) UI.PlayerList.Toggle();
-        if (Keybind.Settings.Tap())   UI.Settings.Toggle();
+        if (Keybind.Settings  .Tap()) UI.Settings  .Toggle();
         if (Keybind.PlayerInds.Tap()) UI.PlayerInds.Toggle();
         if (Keybind.PlayerInfo.Tap()) UI.PlayerInfo.Toggle();
 
@@ -209,7 +208,7 @@ public class Movement : MonoSingleton<Movement>
     [HarmonyPostfix]
     static void Pause() => UpdateState();
 
-    [HarmonyPatch(typeof(OptionsManager), "LateUpdate")]
+    [HarmonyPatch(typeof(OptionsManager), nameof(OptionsManager.LateUpdate))]
     [HarmonyPostfix]
     static void Scale()
     {
@@ -231,7 +230,7 @@ public class Movement : MonoSingleton<Movement>
     }
 
     [HarmonyPatch(typeof(NewMovement), nameof(NewMovement.GetHurt))]
-    [HarmonyPrefix]
+    [HarmonyPostfix]
     static void Invincibility(ref float ___hurtInvincibility)
     {
         if (LobbyController.Online && ___hurtInvincibility > .08f) ___hurtInvincibility = .08f;
@@ -239,20 +238,20 @@ public class Movement : MonoSingleton<Movement>
 
     [HarmonyPatch(typeof(CheatsManager),    nameof(CheatsManager.HandleCheatBind))]
     [HarmonyPatch(typeof(CheatsController), nameof(CheatsController.Update))]
-    [HarmonyPatch(typeof(ULTRAKILL.Cheats.Noclip), "UpdateTick")]
-    [HarmonyPatch(typeof(ULTRAKILL.Cheats.Flight), "Update")]
-    [HarmonyPatch(typeof(Grenade), "Update")]
+    [HarmonyPatch(typeof(ULTRAKILL.Cheats.Noclip), nameof(ULTRAKILL.Cheats.Noclip.UpdateTick))]
+    [HarmonyPatch(typeof(ULTRAKILL.Cheats.Flight), nameof(ULTRAKILL.Cheats.Flight.Update))]
+    [HarmonyPatch(typeof(Grenade), nameof(Grenade.Update))]
     [HarmonyPrefix]
     static bool GrenadeRide() => !(UI.AnyDialog || Emotes.Current != 0xFF || nm.dead);
 
-    [HarmonyPatch(typeof(WeaponWheel), "OnEnable")]
+    [HarmonyPatch(typeof(WeaponWheel), nameof(WeaponWheel.OnEnable))]
     [HarmonyPrefix]
     static void Superiority()
     {
         if (UI.Emote.Shown) WeaponWheel.Instance.gameObject.SetActive(false);
     }
 
-    [HarmonyPatch(typeof(CameraFrustumTargeter), "CurrentTarget", MethodType.Setter)]
+    [HarmonyPatch(typeof(CameraFrustumTargeter), nameof(CameraFrustumTargeter.CurrentTarget), MethodType.Setter)]
     [HarmonyPrefix]
     static void LoosersLove(ref Collider value)
     {

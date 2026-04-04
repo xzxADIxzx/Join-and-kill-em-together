@@ -179,7 +179,7 @@ public class World
         Perform("window", new(__instance.transform.position.x, __instance.transform.position.z));
     }
 
-    [HarmonyPatch(typeof(StatueActivator), "Start")]
+    [HarmonyPatch(typeof(StatueActivator), nameof(StatueActivator.Start))]
     [HarmonyPostfix]
     static void Activate(StatueActivator __instance)
     {

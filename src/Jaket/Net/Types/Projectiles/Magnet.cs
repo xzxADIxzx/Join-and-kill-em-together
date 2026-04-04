@@ -73,22 +73,22 @@ public class Magnet : OwnableEntity
     #endregion
     #region harmony
 
-    [HarmonyPatch(typeof(Harpoon), "Start")]
+    [HarmonyPatch(typeof(Harpoon), nameof(Harpoon.Start))]
     [HarmonyPrefix]
     static void Start(Harpoon __instance)
     {
         if (__instance && !__instance.drill) Entities.Projectiles.Sync(__instance.gameObject);
     }
 
-    [HarmonyPatch(typeof(Harpoon), "OnDestroy")]
+    [HarmonyPatch(typeof(Harpoon), nameof(Harpoon.OnDestroy))]
     [HarmonyPrefix]
     static void Death(Harpoon __instance)
     {
         if (__instance.TryGetComponent(out Agent a) && a.Patron is Magnet m && !m.Hidden) m.Kill();
     }
 
-    [HarmonyPatch(typeof(global::Magnet), "OnTriggerEnter")]
-    [HarmonyPatch(typeof(global::Magnet), "OnTriggerExit")]
+    [HarmonyPatch(typeof(global::Magnet), nameof(global::Magnet.OnTriggerEnter))]
+    [HarmonyPatch(typeof(global::Magnet), nameof(global::Magnet.OnTriggerExit))]
     [HarmonyPrefix]
     static bool Laggy(Collider other) => other.attachedRigidbody?.name != "I";
 

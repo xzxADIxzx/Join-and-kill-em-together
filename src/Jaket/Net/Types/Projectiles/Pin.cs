@@ -92,21 +92,21 @@ public class Pin : OwnableEntity
     #endregion
     #region harmony
 
-    [HarmonyPatch(typeof(Nail), "Start")]
+    [HarmonyPatch(typeof(Nail), nameof(Nail.Start))]
     [HarmonyPrefix]
     static void Start(Nail __instance)
     {
         if (__instance && !__instance.sawblade && !__instance.chainsaw) Entities.Projectiles.Sync(__instance.gameObject);
     }
 
-    [HarmonyPatch(typeof(Nail), "OnDestroy")]
+    [HarmonyPatch(typeof(Nail), nameof(Nail.OnDestroy))]
     [HarmonyPrefix]
     static void Death(Nail __instance)
     {
         if (__instance.TryGetComponent(out Agent a) && a.Patron is Pin p && !p.Hidden) p.Kill();
     }
 
-    [HarmonyPatch(typeof(Punch), "BlastCheck")]
+    [HarmonyPatch(typeof(Punch), nameof(Punch.BlastCheck))]
     [HarmonyPrefix]
     static void Blast(bool ___holdingInput)
     {
@@ -121,7 +121,7 @@ public class Pin : OwnableEntity
         });
     }
 
-    [HarmonyPatch(typeof(Nail), "DamageEnemy")]
+    [HarmonyPatch(typeof(Nail), nameof(Nail.DamageEnemy))]
     [HarmonyPrefix]
     static bool Damage(Nail __instance, EnemyIdentifier eid) => Entities.Damage.Deal<Pin>(__instance, (eid, tid, ally, _) =>
     {

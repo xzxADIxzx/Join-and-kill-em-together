@@ -100,7 +100,7 @@ public class Cannon : OwnableEntity
     #endregion
     #region harmony
 
-    [HarmonyPatch(typeof(Cannonball), "Start")]
+    [HarmonyPatch(typeof(Cannonball), nameof(Cannonball.Start))]
     [HarmonyPrefix]
     static void Start(Cannonball __instance)
     {

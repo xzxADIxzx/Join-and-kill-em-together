@@ -123,14 +123,14 @@ public class Screwdriver : OwnableEntity
     #endregion
     #region harmony
 
-    [HarmonyPatch(typeof(Harpoon), "Start")]
+    [HarmonyPatch(typeof(Harpoon), nameof(Harpoon.Start))]
     [HarmonyPrefix]
     static void Start(Harpoon __instance)
     {
         if (__instance && __instance.drill) Entities.Projectiles.Sync(__instance.gameObject);
     }
 
-    [HarmonyPatch(typeof(Harpoon), "OnDestroy")]
+    [HarmonyPatch(typeof(Harpoon), nameof(Harpoon.OnDestroy))]
     [HarmonyPrefix]
     static void Death(Harpoon __instance)
     {
@@ -144,7 +144,7 @@ public class Screwdriver : OwnableEntity
         if (__instance.TryGetComponent(out Agent a) && a.Patron is Screwdriver s) { s.TakeOwnage(); s.target = 0u; }
     }
 
-    [HarmonyPatch(typeof(Punch), "ActiveEnd")]
+    [HarmonyPatch(typeof(Punch), nameof(global::Punch.ActiveEnd))]
     [HarmonyPrefix]
     static void Punch() => Networking.Entities.Alive<Screwdriver>(s => s.target == AccId, s =>
     {
@@ -154,7 +154,7 @@ public class Screwdriver : OwnableEntity
         TimeController.Instance.ParryFlash();
     });
 
-    [HarmonyPatch(typeof(Harpoon), "OnTriggerEnter")]
+    [HarmonyPatch(typeof(Harpoon), nameof(Harpoon.OnTriggerEnter))]
     [HarmonyPrefix]
     static bool Damage(Harpoon __instance, Collider other, float ___damageLeft) => Entities.Damage.Deal<Screwdriver>(__instance, (eid, tid, ally, screwdriver) =>
     {

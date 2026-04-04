@@ -8,7 +8,7 @@ using Jaket.Net;
 
 public static class RichPresence
 {
-    [HarmonyPatch(typeof(DiscordController), "SendActivity")]
+    [HarmonyPatch(typeof(DiscordController), nameof(DiscordController.SendActivity))]
     [HarmonyPrefix]
     static void Discord(ref Activity ___cachedActivity)
     {
@@ -19,7 +19,7 @@ public static class RichPresence
         ___cachedActivity.Party.Size.MaxSize     = LobbyController.Lobby?.MaxMembers  ?? 0;
     }
 
-    [HarmonyPatch(typeof(DiscordController), "OnApplicationQuit")]
+    [HarmonyPatch(typeof(DiscordController), nameof(DiscordController.OnApplicationQuit))]
     [HarmonyPrefix]
     static bool Discord() => false; // I'd honestly been trying to figure it out, but at some point I just gave up
 

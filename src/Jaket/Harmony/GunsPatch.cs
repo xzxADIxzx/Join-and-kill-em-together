@@ -37,7 +37,7 @@ public static class GunsPatch
         ___variationColoredRenderers.Each(r => r.Properties(b => b.SetColor("_EmissiveColor", color), true));
     }
 
-    [HarmonyPatch(typeof(GroundCheck), "Update")]
+    [HarmonyPatch(typeof(GroundCheck), nameof(GroundCheck.Update))]
     [HarmonyPrefix]
     static void Shock(GroundCheck __instance)
     {
@@ -54,7 +54,7 @@ public static class GunsPatch
         if (Version.DEBUG) Log.Debug("[GUNS] Caught shockwave explosion");
     }
 
-    [HarmonyPatch(typeof(Punch), "BlastCheck")]
+    [HarmonyPatch(typeof(Punch), nameof(Punch.BlastCheck))]
     [HarmonyPrefix]
     static void Blast(bool ___holdingInput)
     {
@@ -71,7 +71,7 @@ public static class GunsPatch
         if (Version.DEBUG) Log.Debug("[GUNS] Caught blastwave explosion");
     }
 
-    [HarmonyPatch(typeof(Shotgun), "Shoot")]
+    [HarmonyPatch(typeof(Shotgun), nameof(Shotgun.Shoot))]
     [HarmonyPrefix]
     static void PumpShotgun(Shotgun __instance)
     {
@@ -88,7 +88,7 @@ public static class GunsPatch
         if (Version.DEBUG) Log.Debug("[GUNS] Caught shotgun explosion");
     }
 
-    [HarmonyPatch(typeof(ShotgunHammer), "ImpactEffects")]
+    [HarmonyPatch(typeof(ShotgunHammer), nameof(ShotgunHammer.ImpactEffects))]
     [HarmonyPrefix]
     static void PumpHammer(ShotgunHammer __instance, bool ___forceWeakHit, int ___tier)
     {

@@ -99,14 +99,14 @@ public class Sawblade : OwnableEntity
     #endregion
     #region harmony
 
-    [HarmonyPatch(typeof(Nail), "Start")]
+    [HarmonyPatch(typeof(Nail), nameof(Nail.Start))]
     [HarmonyPrefix]
     static void Start(Nail __instance)
     {
         if (__instance && __instance.sawblade && !__instance.chainsaw) Entities.Projectiles.Sync(__instance.gameObject);
     }
 
-    [HarmonyPatch(typeof(Nail), "SawBreak")]
+    [HarmonyPatch(typeof(Nail), nameof(Nail.SawBreak))]
     [HarmonyPrefix]
     static bool Break(Nail __instance)
     {
@@ -121,7 +121,7 @@ public class Sawblade : OwnableEntity
         else return true;
     }
 
-    [HarmonyPatch(typeof(Nail), "RemoveTime")]
+    [HarmonyPatch(typeof(Nail), nameof(Nail.RemoveTime))]
     [HarmonyPrefix]
     static bool Death(Nail __instance)
     {
@@ -133,7 +133,7 @@ public class Sawblade : OwnableEntity
         else return true;
     }
 
-    [HarmonyPatch(typeof(Nail), "DamageEnemy")]
+    [HarmonyPatch(typeof(Nail), nameof(Nail.DamageEnemy))]
     [HarmonyPrefix]
     static bool Damage(Nail __instance, EnemyIdentifier eid) => Entities.Damage.Deal<Sawblade>(__instance, (eid, tid, ally, _) =>
     {

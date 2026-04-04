@@ -110,7 +110,7 @@ public class Plushie : Item
     #endregion
     #region harmony
 
-    [HarmonyPatch(typeof(ItemTrigger), "OnTriggerEnter")]
+    [HarmonyPatch(typeof(ItemTrigger), nameof(ItemTrigger.OnTriggerEnter))]
     [HarmonyPrefix]
     static bool Trash(ItemTrigger __instance, Collider other)
     {
