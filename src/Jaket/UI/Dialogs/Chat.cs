@@ -69,18 +69,13 @@ public class Chat : Fragment
         field = Builder.Field(Rect("Input", new(0f, 36f, -32, 40f, new(0f, 0f), new(1f, 0f))), Tex.Fill, invi, "#chat.tip", 24, OnFocusLost);
         field.characterLimit = MAX_LENGTH;
 
-        static void Lerp(CanvasGroup group, bool target) => group.alpha = Mathf.Lerp(group.alpha, target ? 1f : 0f, Time.deltaTime * 12f);
-
-        Component<CanvasGroup>(chatBg.gameObject, g =>
+        static void Lerp(RectTransform rect, Prov<bool> target) => Component<CanvasGroup>(rect.gameObject, g =>
         {
-            Component<Bar>(chatBg.gameObject, b => b.Update(() => Lerp(g, chat.text.Length > 0 && Shown | Time.time - lastUpdate < 8f)));
+            g.GetOrAddComponent<Bar>().Update(() => g.alpha = Mathf.Lerp(g.alpha, target() ? 1f : 0f, Time.deltaTime * 12f));
             g.blocksRaycasts = false;
         });
-        Component<CanvasGroup>(infoBg.gameObject, g =>
-        {
-            Component<Bar>(infoBg.gameObject, b => b.Update(() => Lerp(g, info.text != LOVEYOU)));
-            g.blocksRaycasts = false;
-        });
+        Lerp(chatBg, () => chat.text.Length > 0 && Shown | Time.time - lastUpdate < 8f);
+        Lerp(infoBg, () => info.text != LOVEYOU);
     }
 
     public override void Toggle()
