@@ -31,8 +31,14 @@ public enum EntityType : byte
     Guttertank,
     SecuritySystem,
     RocketLauncher,
+    RocketLauncher1st,
+    RocketLauncher2nd,
     Mortar,
+    Mortar1st,
+    Mortar2nd,
     Tower,
+    Tower1st,
+    Tower2nd,
     Brain,
 
     Malicious,
@@ -57,6 +63,7 @@ public enum EntityType : byte
     Rodent2nd,
     Mandalore,
     Johninator,
+    Puppet,
 
     FleshPrison,
     FleshPanopticon,

@@ -32,6 +32,74 @@ public static class GameAssets
     #endregion
     #region content
 
+    /// <summary> List of internal paths of all enemies. </summary>
+    public static readonly string[] Enemies =
+    {
+        "Enemies/Filth.prefab",
+        "Enemies/Stray.prefab",
+        "Enemies/Schism.prefab",
+        "Enemies/Soldier.prefab",
+        "Enemies/MinosArm.prefab",
+        "Enemies/MinosBoss.prefab",
+        "Enemies/Stalker.prefab",
+        "Enemies/Sisyphus.prefab",
+        "Enemies/Ferryman.prefab",
+        "Enemies/MirrorReaper.prefab",
+
+        "Enemies/SwordsMachine NonBoss.prefab",
+        "Enemies/Drone.prefab",
+        "Enemies/Streetcleaner.prefab",
+        "Enemies/V2.prefab",
+        "Enemies/Mindflayer.prefab",
+        "Enemies/V2 Green Arm Variant.prefab",
+        "Enemies/Turret.prefab",
+        "Enemies/Gutterman.prefab",
+        "Enemies/Guttertank.prefab",
+        "", // security system
+        "Enemies/CentaurRocketLauncherStand.prefab",
+        "", // rocket launcher 1st
+        "", // rocket launcher 2nd
+        "Enemies/CentaurMortar.prefab",
+        "", // mortar 1st
+        "", // mortar 2nd
+        "Enemies/CentaurTower.prefab",
+        "", // tower 1st
+        "", // tower 2nd
+        "Enemies/Brain.prefab",
+
+        "Enemies/Malicious Face.prefab",
+        "Enemies/Cerberus.prefab",
+        "Enemies/Mass.prefab",
+        "Enemies/Idol.prefab",
+        "", // leviathan
+        "Enemies/Mannequin.prefab",
+        "Enemies/MinotaurChase.prefab",
+        "Enemies/Minotaur.prefab",
+        "Enemies/Deathcatcher.prefab",
+        "", // garyon
+
+        "Enemies/Gabriel.prefab",
+        "Enemies/Virtue.prefab",
+        "Enemies/Gabriel 2nd.prefab",
+        "Enemies/Providence.prefab",
+        "Enemies/Power.prefab",
+
+        "Enemies/Wicked.prefab",
+        "Enemies/Cancerous Rodent.prefab",
+        "Enemies/Very Cancerous Rodent.prefab",
+        "Enemies/Mandalore.prefab",
+        "Enemies/Big Johninator.prefab",
+        "Enemies/Puppet.prefab",
+
+        "Enemies/Flesh Prison.prefab",
+        "Enemies/Flesh Panopticon.prefab",
+        "Enemies/DroneFlesh.prefab",
+        "Enemies/DroneSkull Variant.prefab",
+        "Enemies/DroneFleshCamera Variant.prefab",
+        "Enemies/MinosPrime.prefab",
+        "Enemies/SisyphusPrime.prefab",
+    };
+
     /// <summary> List of internal paths of all items. </summary>
     public static readonly string[] Items =
     {
