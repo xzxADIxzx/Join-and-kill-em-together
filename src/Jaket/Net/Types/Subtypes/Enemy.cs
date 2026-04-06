@@ -4,7 +4,6 @@ using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Content;
-using Jaket.World;
 
 /// <summary> Abstract entity of any enemy type. </summary>
 public abstract class Enemy : OwnableEntity
@@ -62,14 +61,9 @@ public abstract class Enemy : OwnableEntity
 
     [HarmonyPatch(typeof(EnemyIdentifier), nameof(EnemyIdentifier.Start))]
     [HarmonyPrefix]
-    static bool Start(EnemyIdentifier __instance)
+    static void Start(EnemyIdentifier __instance)
     {
-        if (Gameflow.Mode.NoCommonEnemies() && !__instance.GetComponent<Agent>()) // TODO somehow skip it for wave enemies
-        {
-            Imdt(__instance.gameObject);
-            return false;
-        }
-        return true;
+        if (__instance) Entities.Enemies.Sync(__instance.gameObject, __instance.IsSandboxEnemy);
     }
 
     [HarmonyPatch(typeof(EnemyIdentifier), nameof(EnemyIdentifier.UpdateTarget))]
