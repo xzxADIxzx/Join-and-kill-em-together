@@ -14,11 +14,13 @@ public class Enemies : Vendor
     public void Load()
     {
         EntityType counter = EntityType.Filth;
-        GameAssets.Enemies.Each(w => !string.IsNullOrWhiteSpace(w), w =>
+        GameAssets.Enemies.Each(w =>
         {
             byte index = (byte)counter++;
             GameAssets.Prefab(w, p => Vendor.Prefabs[index] = p);
         });
+
+        Vendor.Prefabs[(byte)EntityType.Malicious] = Vendor.Prefabs[(byte)EntityType.Malicious].transform.parent.gameObject;
     }
 
     public EntityType Type(GameObject obj)
@@ -30,7 +32,7 @@ public class Enemies : Vendor
             p => p && p.TryGetComponent(out EnemyIdentifier e)
                    && e.enemyType        == enemyId.enemyType
                    && e.overrideFullName == enemyId.overrideFullName
-                   && e.weakPoint.name   == enemyId.weakPoint.name
+                   && e.weakPoint?.name  == enemyId.weakPoint?.name
         );
         else return EntityType.None;
     }
@@ -41,7 +43,7 @@ public class Enemies : Vendor
 
         var obj = Inst(Vendor.Prefabs[(byte)type], position);
 
-        return type == EntityType.Malicious ? obj.transform.Find("Body").gameObject : obj;
+        return obj;
     }
 
     public void Sync(GameObject obj, params bool[] args)

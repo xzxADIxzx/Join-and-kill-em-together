@@ -13,21 +13,6 @@ using Jaket.Net.Types;
 /// <summary> List of all enemies in the game and some useful methods. </summary>
 public class Enemies
 {
-    /// <summary> Spawns an enemy with the given type. </summary>
-    public static Entity Instantiate(EntityType type)
-    {
-        // EnemyId of Malicious Face and Cerberus is in a child object
-        // https://discord.com/channels/1132614140414935070/1132614140876292190/1146507403102257162
-        var obj = type != EntityType.MaliciousFace && type != EntityType.Cerberus
-            ? Entities.Mark(Prefabs[type - EntityType.Filth].gameObject)
-            : Entities.Mark(Prefabs[type - EntityType.Filth].transform.parent.gameObject).transform.GetChild(0).gameObject;
-
-        // repeat this, since only the parental object was renamed
-        obj.name = "Net";
-
-        return obj.AddComponent(Types[type]) as Entity;
-    }
-
     /// <summary> Synchronizes the enemy between network members. </summary>
     public static bool Sync(EnemyIdentifier enemyId)
     {
