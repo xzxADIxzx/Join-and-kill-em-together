@@ -39,19 +39,20 @@ public abstract class Enemy : OwnableEntity
         (this.agent = agent).Patron = this;
 
         agent.Get(out enemyId);
-        agent.Get(out enemy);
+        agent.Get(out enemy, true);
         agent.Get(out bossbar, true);
 
         OnTransfer = () =>
         {
             player = Owner;
             if (IsOwner)
-                enemyId.target = EnemyTarget.TrackPlayer();
+                enemyId.target = EnemyTarget.TrackPlayerIfAllowed();
             else
                 enemyId.target = player.Value?.Target;
         };
 
         Boss = bossbar; // non-owners will read this value to create a bossbar
+        Locked = false;
 
         OnTransfer();
     }

@@ -130,7 +130,7 @@ public class Debug : Fragment
 
     public void Raycast()
     {
-        if (Physics.Raycast(cc.position, cc.forward, out var hit, float.MaxValue, EnvMask | 0x400000))
+        if (Physics.Raycast(cc.position, cc.forward, out var hit, float.MaxValue, EnvMask | 0x401000))
         {
             var agent = hit.collider.GetComponentInParent<Entity.Agent>();
             if (agent)
