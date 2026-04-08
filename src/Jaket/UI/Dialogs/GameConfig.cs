@@ -54,7 +54,7 @@ public class GameConfig : Fragment
                 }));
             });
 
-            info = b.Text("keen eye", 200f, align: TextAnchor.UpperLeft, color: light);
+            info = b.Text("keen eye", 200f, align: TextAnchor.UpperLeft, size: 21, color: light);
             b.Text("#gameconfig.mods", 24f, align: TextAnchor.MiddleLeft);
 
             slowmo = b.Toggle("#gameconfig.slowmo", b => LobbyConfig.Slowmo = b);
