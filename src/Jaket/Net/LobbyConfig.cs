@@ -10,7 +10,7 @@ public static class LobbyConfig
     public static string Client
     {
         get => Get("client");
-        set => Set("client", value);
+        set => Set("client", value ?? "jaket");
     }
     /// <summary> Name of the lobby, obviously. </summary>
     public static string Name
@@ -24,7 +24,7 @@ public static class LobbyConfig
         get => Get("mode");
         set => Set("mode", value ?? "campaign");
     }
-    /// <summary> Mission that is loaded in the lobby. </summary>
+    /// <summary> Mission loaded at the moment. </summary>
     public static string Level
     {
         get => Get("level");
@@ -38,28 +38,28 @@ public static class LobbyConfig
             "uk_construct"   => "Sandbox",
             "Endless"        => "Cyber Grind",
             "CreditsMuseum2" => "Museum",
-            _ => value[6..]
+            _                => value[6..]
         });
     }
-    /// <summary> Whether the slow motion modifier is enabled. </summary>
+    /// <summary> Whether the slowmo modifier is enabled. </summary>
     public static bool Slowmo
     {
         get => Get("slowmo") == bool.TrueString;
         set => Set("slowmo", value.ToString());
     }
-    /// <summary> Whether the hammer madness modifier is enabled. </summary>
+    /// <summary> Whether the hammer modifier is enabled. </summary>
     public static bool Hammer
     {
         get => Get("hammer") == bool.TrueString;
         set => Set("hammer", value.ToString());
     }
-    /// <summary> Whether the bleeding modifier is enabled. </summary>
+    /// <summary> Whether the bleedy modifier is enabled. </summary>
     public static bool Bleedy
     {
         get => Get("bleedy") == bool.TrueString;
         set => Set("bleedy", value.ToString());
     }
-    /// <summary> Whether versus aka pure chaos is allowed. </summary>
+    /// <summary> Whether versus/pure chaos is allowed. </summary>
     public static bool PvPAllowed
     {
         get => Get("allow-pvp") == bool.TrueString;
@@ -78,10 +78,10 @@ public static class LobbyConfig
         set => Set("heal-bosses", value.ToString());
     }
     /// <summary> Fraction of the initial health that is added to bosses for each player. </summary>
-    public static float PPP
+    public static int PPP
     {
-        get => int.TryParse(Get("ppp"), out int ppp) ? ppp / 8f : 0f;
-        set => Set("ppp", ((int)value).ToString());
+        get => int.TryParse(Get("ppp"), out int ppp) ? ppp : 0;
+        set => Set("ppp", value.ToString());
     }
     /// <summary> List of privileged players, they can use cheats. </summary>
     public static IEnumerable<string> Privileged
@@ -89,7 +89,7 @@ public static class LobbyConfig
         get => Get("privileged").Split(' ');
         set => Set("privileged", string.Join(' ', value));
     }
-    /// <summary> List of banned players, account ids to be accurate. </summary>
+    /// <summary> List of banned players, accounts to be accurate. </summary>
     public static IEnumerable<string> Banned
     {
         get => Get("banned").Split(' ');
@@ -99,18 +99,18 @@ public static class LobbyConfig
     /// <summary> Resets the lobby config to its default value. </summary>
     public static void Reset()
     {
-        Client = "jaket";
+        Client = null;
         Name = null;
         Mode = null;
         Level = Scene;
 
         PvPAllowed = true;
-        ModsAllowed = false;
+        ModsAllowed = true;
         HealBosses = true;
         Privileged = [AccId.ToString()];
     }
 
-    /// <summary> Sets lobby data by the given key to the given value. </summary>
+    /// <summary> Sets lobby data by the given key. </summary>
     public static void Set(string key, string value) => LobbyController.Lobby?.SetData(key, value);
 
     /// <summary> Gets lobby data by the given key. </summary>

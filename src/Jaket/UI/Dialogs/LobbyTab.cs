@@ -78,7 +78,7 @@ public class LobbyTab : Fragment
             mod = b.Toggle("#lobby-tab.allow-mod", b => LobbyConfig.ModsAllowed = b);
 
             b.Text("#lobby-tab.ppp-desc", 48f, 16, light, TextAnchor.MiddleLeft);
-            ppp = b.Slider(0, 16, i => LobbyConfig.PPP = i, "#lobby-tab.ppp-name", i => $"{(int)(i / 8f * 100f)}PPP");
+            ppp = b.Slider(0, 20, i => LobbyConfig.PPP = i, "#lobby-tab.ppp-name", i => $"{i * 10}PPP");
 
             bosses = b.Toggle("#lobby-tab.heal-bosses", b => LobbyConfig.HealBosses = b);
 
@@ -131,7 +131,7 @@ public class LobbyTab : Fragment
         pvp.isOn = LobbyConfig.PvPAllowed;
         mod.isOn = LobbyConfig.ModsAllowed;
         bosses.isOn = LobbyConfig.HealBosses;
-        ppp.value = LobbyConfig.PPP * 8f;
+        ppp.value = LobbyConfig.PPP;
 
         foreach (var toggle in new Selectable[] { pvp, mod, bosses, ppp })
         {

@@ -186,6 +186,7 @@ public class Bar : MonoBehaviour
     public Slider Slider(int min, int max, Cons<int> callback, string text, Func<int, string> format)
     {
         Text(text, 32f, out var display);
+        display.text = format(0);
         return Slider(min, max, value =>
         {
             display.text = format(value);
