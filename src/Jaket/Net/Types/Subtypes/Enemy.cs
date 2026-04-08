@@ -55,10 +55,41 @@ public abstract class Enemy : OwnableEntity
         Boss = bossbar; // non-owners will read this value to create a bossbar
         Locked = false;
 
+        InitHealth = enemy?.health ?? 0f;
+        PostHealth = InitHealth * (1f + LobbyConfig.PPP / 10f * (LobbyController.Lobby?.MemberCount - 1 ?? 0));
+
         OnTransfer();
     }
 
     public override void Damage(Reader r) => Entities.Damage.Deal(enemyId, r.Float());
+
+    public override void Killed(Reader r, int left)
+    {
+        if (Type != EntityType.Gutterman && Type != EntityType.Malicious && Type != EntityType.Providence)
+            Hidden = true;
+        else
+            LastHidden = Time.time + 240f;
+
+        if (left >= 1 && r.Bool())
+            ; // TODO research enemies
+        else
+            Dest(agent.gameObject);
+
+        if (left >= 1 && r.Bool())
+        {
+            Boss = true;
+            PostHealth = enemy.health = r.Float();
+
+            int layers = r.Int();
+            if (layers == 0) return;
+
+            bossbar ??= agent.GetOrAddComponent<BossHealthBar>();
+            bossbar.healthLayers = new HealthLayer[layers];
+
+            for (int i = 0; i < layers; i++) bossbar.healthLayers[i] = new() { health = PostHealth / layers };
+            BossBarManager.Instance.bossBarsToRemove.Enqueue(bossbar.bossBarId);
+        }
+    }
 
     #endregion
     #region harmony
