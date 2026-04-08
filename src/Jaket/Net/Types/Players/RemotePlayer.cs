@@ -100,6 +100,7 @@ public class RemotePlayer : Entity, Screwdriver.Screwable
         agent.Get(out cs);
         agent.Get(out Voice);
         agent.GetOrAddComponent<PortalAwareRenderer>();
+        agent.GetComponentInChildren<Light>().GetOrAddComponent<PortalAwareLight>();
 
         Doll ??= new(() =>
         {
