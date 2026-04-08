@@ -9,7 +9,7 @@ public static class GameAssets
     #region loading
 
     /// <summary> Asynchronously loads an asset by the given path. </summary>
-    public static void LoadAsync<T>(string path, Cons<T> cons) { if (path != "") Addressables.LoadAssetAsync<T>(path).Task.ContinueWith(t => cons(t.Result)); }
+    public static void LoadAsync<T>(string path, Cons<T> cons) { if (path.Contains('.')) Addressables.LoadAssetAsync<T>(path).Task.ContinueWith(t => cons(t.Result)); }
 
     /// <summary> Loads a prefab by the given path. </summary>
     public static void Prefab(string path, Cons<GameObject> cons) => LoadAsync(path.StartsWith("p/") ? $"Assets/Particles/{path[2..]}" : $"Assets/Prefabs/{path}", cons);

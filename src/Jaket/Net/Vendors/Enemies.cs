@@ -20,7 +20,11 @@ public class Enemies : Vendor
             GameAssets.Prefab(w, p => Vendor.Prefabs[index] = p);
         });
 
-        Vendor.Prefabs[(byte)EntityType.Malicious] = Vendor.Prefabs[(byte)EntityType.Malicious].transform.parent.gameObject;
+        Events.Post
+        (
+            () => Vendor.Prefabs[(byte)EntityType.Malicious],
+            () => Vendor.Prefabs[(byte)EntityType.Malicious] = Vendor.Prefabs[(byte)EntityType.Malicious].transform.Find("Body").gameObject
+        );
     }
 
     public EntityType Type(GameObject obj)
