@@ -4,6 +4,7 @@ using UnityEngine;
 
 using Jaket.Assets;
 using Jaket.Content;
+using Jaket.Net.Types;
 using Jaket.World;
 
 using static Entities;
@@ -25,6 +26,8 @@ public class Enemies : Vendor
             () => Vendor.Prefabs[(byte)EntityType.Malicious],
             () => Vendor.Prefabs[(byte)EntityType.Malicious] = Vendor.Prefabs[(byte)EntityType.Malicious].transform.Find("Body").gameObject
         );
+
+        for (EntityType i = EntityType.SecuritySystem; i <= EntityType.Brain; i++) Vendor.Suppliers[(byte)i] = (id, type) => new Earthmover(id, type);
     }
 
     public EntityType Type(GameObject obj)

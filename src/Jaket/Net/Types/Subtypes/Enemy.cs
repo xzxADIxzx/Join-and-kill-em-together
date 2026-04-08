@@ -4,6 +4,7 @@ using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Content;
+using Jaket.IO;
 
 /// <summary> Abstract entity of any enemy type. </summary>
 public abstract class Enemy : OwnableEntity
@@ -20,9 +21,9 @@ public abstract class Enemy : OwnableEntity
     public bool Blessed => enemyId.Blessed;
 
     /// <summary> Initial health of the enemy. </summary>
-    private float InitHealth;
+    public float InitHealth;
     /// <summary> PostPPP health of the enemy. </summary>
-    private float PostHealth;
+    public float PostHealth;
 
     public Enemy(uint id, EntityType type) : base(id, type) { }
 
@@ -56,6 +57,8 @@ public abstract class Enemy : OwnableEntity
 
         OnTransfer();
     }
+
+    public override void Damage(Reader r) => Entities.Damage.Deal(enemyId, r.Float());
 
     #endregion
     #region harmony
