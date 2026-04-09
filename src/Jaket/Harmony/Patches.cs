@@ -23,6 +23,7 @@ public static class Patches
     {
         typeof(TeamCoin),
         typeof(Enemy),
+        typeof(Husk),
         typeof(Item),
         typeof(Fish),
         typeof(Plushie),

@@ -1,32 +1,4 @@
 /*
-namespace Jaket.ObsoletePatches;
-
-using HarmonyLib;
-using UnityEngine;
-
-using Jaket.Content;
-using Jaket.Net;
-
-[HarmonyPatch(typeof(EnemyIdentifier))]
-public class EnemyPatch
-{
-    [HarmonyPrefix]
-    [HarmonyPatch("Start")]
-    static bool Spawn(EnemyIdentifier __instance) => Enemies.Sync(__instance);
-
-    [HarmonyPrefix]
-    [HarmonyPatch(nameof(EnemyIdentifier.Death), typeof(bool))]
-    static void Death(EnemyIdentifier __instance) => Enemies.SyncDeath(__instance);
-
-    [HarmonyPrefix]
-    [HarmonyPatch("UpdateTarget")]
-    static bool Skip() => Time.frameCount % 8 == 0;
-
-    [HarmonyPostfix]
-    [HarmonyPatch("UpdateTarget")]
-    static void Target(EnemyIdentifier __instance) => Enemies.FindTarget(__instance);
-}
-
 [HarmonyPatch]
 public class LogicPatch
 {

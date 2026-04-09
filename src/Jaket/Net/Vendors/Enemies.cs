@@ -27,7 +27,8 @@ public class Enemies : Vendor
             () => Vendor.Prefabs[(byte)EntityType.Malicious] = Vendor.Prefabs[(byte)EntityType.Malicious].transform.Find("Body").gameObject
         );
 
-        for (EntityType i = EntityType.SecuritySystem; i <= EntityType.Brain; i++) Vendor.Suppliers[(byte)i] = (id, type) => new Earthmover(id, type);
+        for (EntityType i = EntityType.Filth;          i <= EntityType.Soldier; i++) Vendor.Suppliers[(byte)i] = (id, type) => new Husk      (id, type);
+        for (EntityType i = EntityType.SecuritySystem; i <= EntityType.Brain;   i++) Vendor.Suppliers[(byte)i] = (id, type) => new Earthmover(id, type);
     }
 
     public EntityType Type(GameObject obj)

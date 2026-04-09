@@ -19,7 +19,7 @@ public class Earthmover : Enemy
 
     #region snapshot
 
-    public override int BufferSize => 11;
+    public override int BufferSize => Type == EntityType.Brain ? 11 : 9;
 
     public override void Write(Writer w)
     {
@@ -88,12 +88,6 @@ public class Earthmover : Enemy
             if (door1.open != idol1) if (idol1) door1.Open(); else door1.Close();
             if (door2.open != idol2) if (idol2) door2.Open(); else door2.Close();
         }
-    }
-
-    public override void Killed(Reader r, int left)
-    {
-        Hidden = true; // TODO update enemy huh
-        Dest(left >= 1 ? agent : agent.gameObject);
     }
 
     #endregion

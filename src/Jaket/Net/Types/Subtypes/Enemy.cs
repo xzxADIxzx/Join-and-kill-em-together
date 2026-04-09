@@ -46,6 +46,7 @@ public abstract class Enemy : OwnableEntity
         OnTransfer = () =>
         {
             player = Owner;
+
             if (IsOwner)
                 enemyId.target = EnemyTarget.TrackPlayerIfAllowed();
             else
@@ -75,7 +76,7 @@ public abstract class Enemy : OwnableEntity
         else
             Dest(agent.gameObject);
 
-        if (left >= 1 && r.Bool())
+        if (left >= 2 && r.Bool())
         {
             Boss = true;
             PostHealth = enemy.health = r.Float();
