@@ -1,6 +1,7 @@
 namespace Jaket.Net.Types;
 
 using HarmonyLib;
+using UnityEngine;
 using UnityEngine.AI;
 
 using Jaket.Content;
@@ -11,28 +12,40 @@ public class Husk : Enemy
 {
     Agent agent;
     Float x, y, z;
+    Animator animator;
     NavMeshAgent nma;
-    ZombieMelee filth;
+    ZombieMelee scr1;
+    ZombieProjectiles scr2;
+
+    int running = Animator.StringToHash("Running");
 
     /// <summary> Type of an attack being used. </summary>
     private byte attack, lastAttack;
+    /// <summary> Whether the enemy is running. </summary>
+    private bool moving, lastMoving;
 
     public Husk(uint id, EntityType type) : base(id, type) { }
 
     #region snapshot
 
-    public override int BufferSize => 21;
+    public override int BufferSize => 23;
 
     public override void Write(Writer w)
     {
         WriteOwner(ref w);
 
         if (IsOwner)
+        {
             w.Vector(agent.Position);
+            w.Byte(attack);
+            w.Bool(animator.GetBool(running));
+        }
         else
+        {
             w.Floats(x, y, z);
-
-        w.Byte(attack);
+            w.Byte(attack);
+            w.Bool(moving);
+        }
     }
 
     public override void Read(Reader r)
@@ -40,8 +53,8 @@ public class Husk : Enemy
         if (ReadOwner(ref r)) return;
 
         r.Floats(ref x, ref y, ref z);
-
         attack = r.Byte();
+        moving = r.Bool();
     }
 
     #endregion
@@ -53,24 +66,28 @@ public class Husk : Enemy
     {
         base.Assign(this.agent = agent);
 
+        agent.Get(out animator);
         agent.Get(out nma);
-        agent.Get(out filth, true);
+        agent.Get(out scr1, true);
+        agent.Get(out scr2, true);
     }
 
     public override void Update(float delta)
     {
-        nma.enabled    = IsOwner;
-        filth?.enabled = IsOwner;
+        scr1?.enabled = IsOwner;
+        scr2?.enabled = IsOwner;
 
         if (IsOwner) return;
 
+        nma  .enabled  = false;
         agent.Position = new(x.GetAware(delta), y.GetAware(delta), z.GetAware(delta));
 
         if (lastAttack != attack) switch (lastAttack = attack)
         {
-            case 1: filth?.Swing();      break;
-            case 2: filth?.JumpAttack(); break;
+            case 1: scr1?.Swing();      scr2?.Swing(); break;
+            case 2: scr1?.JumpAttack(); scr2?.Melee(); break;
         }
+        if (lastMoving != moving) animator.SetBool(running, lastMoving = moving);
     }
 
     #endregion
@@ -88,6 +105,13 @@ public class Husk : Enemy
     static void Jumpy(ZombieMelee __instance)
     {
         if (__instance.TryGetComponent(out Agent a) && a.Patron is Husk h) h.attack = 2;
+    }
+
+    [HarmonyPatch(typeof(ZombieMelee), nameof(ZombieMelee.DamageEnd))]
+    [HarmonyPrefix]
+    static void Zeros(ZombieMelee __instance)
+    {
+        if (__instance.TryGetComponent(out Agent a) && a.Patron is Husk h) h.attack = 0;
     }
 
     #endregion
