@@ -114,5 +114,27 @@ public class Husk : Enemy
         if (__instance.TryGetComponent(out Agent a) && a.Patron is Husk h) h.attack = 0;
     }
 
+    [HarmonyPatch(typeof(ZombieProjectiles), nameof(ZombieProjectiles.Swing))]
+    [HarmonyPrefix]
+    static void Swing(ZombieProjectiles __instance)
+    {
+        if (__instance.TryGetComponent(out Agent a) && a.Patron is Husk h) h.attack = 1;
+    }
+
+    [HarmonyPatch(typeof(ZombieProjectiles), nameof(ZombieProjectiles.Melee))]
+    [HarmonyPrefix]
+    static void Melee(ZombieProjectiles __instance)
+    {
+        if (__instance.TryGetComponent(out Agent a) && a.Patron is Husk h) h.attack = 2;
+    }
+
+    [HarmonyPatch(typeof(ZombieProjectiles), nameof(ZombieProjectiles.DamageEnd))]
+    [HarmonyPatch(typeof(ZombieProjectiles), nameof(ZombieProjectiles.MeleeDamageEnd))]
+    [HarmonyPrefix]
+    static void Zeros(ZombieProjectiles __instance)
+    {
+        if (__instance.TryGetComponent(out Agent a) && a.Patron is Husk h) h.attack = 0;
+    }
+
     #endregion
 }
