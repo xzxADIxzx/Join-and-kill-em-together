@@ -37,7 +37,7 @@ public static class GunsPatch
         ___variationColoredRenderers.Each(r => r.Properties(b => b.SetColor("_EmissiveColor", color), true));
     }
 
-    [HarmonyPatch(typeof(GroundCheck), nameof(GroundCheck.Update))]
+    [HarmonyPatch(typeof(GroundCheck), nameof(GroundCheck.UpdateState))]
     [HarmonyPrefix]
     static void Shock(GroundCheck __instance)
     {
