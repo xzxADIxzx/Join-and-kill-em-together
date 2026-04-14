@@ -2,6 +2,7 @@ namespace Jaket;
 
 using BepInEx.Bootstrap;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine.Networking;
 
 using Jaket.Assets;
@@ -23,6 +24,8 @@ public static class Version
 
     /// <summary> Readable version includes beta tag. </summary>
     public static string Readable => DEBUG ? $"{CURRENT}-beta" : CURRENT;
+    /// <summary> Hash of the current build's commit. </summary>
+    public static string Hash => Assembly.GetCallingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion[^40..^32];
 
     /// <summary> List of mods compatible with Jaket. </summary>
     public static string[] Compatible = { "Jaket" };

@@ -75,11 +75,13 @@ public class Fragment
     /// <summary> Adds a bar, it displays the current version of the project. </summary>
     protected void VersionBar()
     {
-        var bar = Builder.Rect("Version", Sidebar.transform, new(0f, 36f, 480f - 36f, 40f, new(.5f, 0f)));
-        var txt = Builder.Rect("Text", bar, Lib.Rect.Fill);
+        var bar = Builder.Rect("Version", Sidebar.transform, new(0f, 48f, 480f - 32f, 64f, new(.5f, 0f)));
+        var txt = Builder.Rect("Text", bar, Lib.Rect.Fill with { Y =  12f });
+        var sub = Builder.Rect("Hash", bar, Lib.Rect.Fill with { Y = -16f });
 
         Builder.Image(bar, Tex.Fill, semi, ImageType.Sliced, 3f);
         Builder.Text(txt, $"Jaket version is {Version.Readable}", 24, gray, TextAnchor.MiddleCenter);
+        Builder.Text(sub, $"Built from commit of {Version.Hash}", 16, gray, TextAnchor.MiddleCenter);
     }
 
     #endregion
