@@ -11,11 +11,11 @@ using Jaket.IO;
 public class Husk : Enemy
 {
     Agent agent;
-    Float x, y, z;
-    Animator animator;
+    Float x, y, z, r;
     NavMeshAgent nma;
     ZombieMelee scr1;
     ZombieProjectiles scr2;
+    Animator animator;
 
     int running = Animator.StringToHash("Running");
 
@@ -28,7 +28,7 @@ public class Husk : Enemy
 
     #region snapshot
 
-    public override int BufferSize => 23;
+    public override int BufferSize => 27;
 
     public override void Write(Writer w)
     {
@@ -37,12 +37,16 @@ public class Husk : Enemy
         if (IsOwner)
         {
             w.Vector(agent.Position);
+            w.Float(agent.Rotation.y);
+
             w.Byte(attack);
             w.Bool(animator.GetBool(running));
         }
         else
         {
             w.Floats(x, y, z);
+            w.Float(r.Next);
+
             w.Byte(attack);
             w.Bool(moving);
         }
@@ -53,6 +57,8 @@ public class Husk : Enemy
         if (ReadOwner(ref r)) return;
 
         r.Floats(ref x, ref y, ref z);
+        this.r.Set(r.Float());
+
         attack = r.Byte();
         moving = r.Bool();
     }
@@ -79,8 +85,10 @@ public class Husk : Enemy
 
         if (IsOwner) return;
 
-        nma  .enabled  = false;
         agent.Position = new(x.GetAware(delta), y.GetAware(delta), z.GetAware(delta));
+        agent.Rotation = new(agent.Rotation.x,  r.GetAngle(delta), agent.Rotation.z );
+
+        nma.enabled = false;
 
         if (lastAttack != attack) switch (lastAttack = attack)
         {
