@@ -37,7 +37,7 @@ public abstract class Enemy : OwnableEntity
 
     public override void Assign(Agent agent)
     {
-        (this.agent = agent).Patron = this;
+        base.Assign(this.agent = agent);
 
         agent.Get(out enemyId);
         agent.Get(out enemy, true);

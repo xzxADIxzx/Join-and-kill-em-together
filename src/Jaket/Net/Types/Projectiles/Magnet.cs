@@ -45,7 +45,7 @@ public class Magnet : OwnableEntity
 
     public override void Assign(Agent agent)
     {
-        (this.agent = agent).Patron = this;
+        base.Assign(this.agent = agent);
 
         agent.Get(out Rigidbody rb);
         agent.Get(out TrailRenderer trail);

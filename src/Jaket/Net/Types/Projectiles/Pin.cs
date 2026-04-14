@@ -47,7 +47,7 @@ public class Pin : OwnableEntity
 
     public override void Assign(Agent agent)
     {
-        (this.agent = agent).Patron = this;
+        base.Assign(this.agent = agent);
 
         agent.Get(out rb);
         agent.Get(out rs);

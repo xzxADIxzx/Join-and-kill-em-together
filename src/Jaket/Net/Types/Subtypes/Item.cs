@@ -69,7 +69,7 @@ public abstract class Item : OwnableEntity
 
     public override void Assign(Agent agent)
     {
-        (this.agent = agent).Patron = this;
+        base.Assign(this.agent = agent);
 
         agent.Get(out rb, true);
         agent.Get(out itemId);
