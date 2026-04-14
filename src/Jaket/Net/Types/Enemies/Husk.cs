@@ -18,6 +18,7 @@ public class Husk : Enemy
     Animator animator;
 
     int running = Animator.StringToHash("Running");
+    int runmult = Animator.StringToHash("RunSpeed");
 
     /// <summary> Type of an attack being used. </summary>
     private byte attack, lastAttack;
@@ -95,7 +96,11 @@ public class Husk : Enemy
             case 1: scr1?.Swing();      scr2?.Swing(); break;
             case 2: scr1?.JumpAttack(); scr2?.Melee(); break;
         }
-        if (lastMoving != moving) animator.SetBool(running, lastMoving = moving);
+        if (lastMoving != moving)
+        {
+            animator.SetBool(running, lastMoving = moving);
+            animator.SetFloat(runmult, 1f);
+        }
     }
 
     #endregion
