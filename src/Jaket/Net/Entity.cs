@@ -72,37 +72,54 @@ public abstract class Entity
         /// <summary> Entity that owns the agent and has to be updated every frame. </summary>
         public Entity Patron;
 
-        /// <summary> Gets a component of the given type or logs an error. </summary>
-        public void Get<T>(out T t, bool nullable = false) where T : Component
+        /// <summary> Adds a single component of the given type or logs an error. </summary>
+        public void Add<T>(out T t, bool nullable = false, string path = null) where T : Component
         {
-            t = GetComponent<T>();
-            if (!t && !nullable) Log.Error($"[ENTS] Couldn't get a component of type {typeof(T)}");
+            if (!Find(path, out var o)) { t = null; return; }
+
+            if (!o.TryGetComponent(out t))
+                t = o.AddComponent<T>();
+            else if (!nullable)
+                Log.Error($"[ENTS] Couldn't add a component of type {typeof(T)}");
         }
 
-        /// <summary> Gets components of the given type or logs an error. </summary>
-        public void Get<T>(out T[] t, bool nullable = false) where T : Component
+        /// <summary> Gets a single component of the given type or logs an error. </summary>
+        public void Get<T>(out T t, bool nullable = false, string path = null) where T : Component
         {
-            t = GetComponentsInChildren<T>();
-            if (t.Length == 0 && !nullable) Log.Error($"[ENTS] Couldn't get components of type {typeof(T)}");
+            if (!Find(path, out var o)) { t = null; return; }
+
+            if (t = o.GetComponentInChildren<T>())
+                return;
+            else if (!nullable)
+                Log.Error($"[ENTS] Couldn't get a component of type {typeof(T)}");
         }
 
-        /// <summary> Removes a component of the given type or logs an error. </summary>
-        public void Rem<T>(bool nullable = false) where T : Component
+        /// <summary> Gets several components of the given type or logs an error. </summary>
+        public void Get<T>(out T[] t, bool nullable = false, string path = null) where T : Component
         {
-            if (TryGetComponent(out T t))
+            if (!Find(path, out var o)) { t = null; return; }
+
+            if ((t = o.GetComponentsInChildren<T>()).Length != 0)
+                return;
+            else if (!nullable)
+                Log.Error($"[ENTS] Couldn't get a component of type {typeof(T)}");
+        }
+
+        /// <summary> Removes a single component of the given type or logs an error. </summary>
+        public void Rem<T>(bool nullable = false, string path = null) where T : Component
+        {
+            if (!Find(path, out var o)) return;
+
+            if (o.TryGetComponent(out T t))
                 Dest(t);
             else if (!nullable)
-                Log.Error($"[ENTS] Couldn't remove a component of type {typeof(T)}");
+                Log.Error($"[ENTS] Couldn't rem a component of type {typeof(T)}");
         }
 
-        /// <summary> Removes a child with the given path or logs an error. </summary>
-        public void Rem(string path, bool nullable = false)
+        /// <summary> Removes a child gameobject of the given path or logs an error. </summary>
+        public void Rem   (bool nullable = false, string path = null)
         {
-            var child = transform.Find(path)?.gameObject;
-            if (child)
-                Dest(child);
-            else if (!nullable)
-                Log.Error($"[ENTS] Couldn't remove a child with path {path}");
+            if (Find(path, out var o)) Dest(o);
         }
 
         public Transform Parent
@@ -127,6 +144,16 @@ public abstract class Entity
         }
 
         private void Update() => Stats.MeasureTime(ref Stats.EntityMs, () => Patron.Update(Time.time - Patron.LastUpdate));
+
+        private bool Find(string path, out GameObject obj)
+        {
+            if (obj = path == null ? gameObject : transform.Find(path)?.gameObject) return true;
+            else
+            {
+                Log.Error($"[ENTS] Couldn't find a child of path {path ?? "null"}");
+                return false;
+            }
+        }
     }
 
     /// <summary> Widely used structure that interpolates floating point numbers. </summary>

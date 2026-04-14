@@ -99,8 +99,8 @@ public class RemotePlayer : Entity, Screwdriver.Screwable
         agent.Get(out enemyId);
         agent.Get(out cs);
         agent.Get(out Voice);
-        agent.GetOrAddComponent<PortalAwareRenderer>();
-        agent.GetComponentInChildren<Light>().GetOrAddComponent<PortalAwareLight>();
+        agent.Add<PortalAwareRenderer>(out _);
+        agent.Add<PortalAwareLight>(out _, path: "Doll/Model/Metarig/Spine 0/Trail");
 
         Doll ??= new(() =>
         {

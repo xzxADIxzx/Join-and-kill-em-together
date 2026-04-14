@@ -24,11 +24,11 @@ public class Plushie : Item
         base.Assign(this.agent = agent);
 
         agent.Get(out itemId);
-        agent.Rem("GlassesHitbox");
+        agent.Rem(true, "GlassesHitbox");
 
         itemId.onPickUp.onActivate.AddListener(() =>
         {
-            agent.Rem("RageEffect(Clone)", true);
+            agent.Rem(true, "RageEffect(Clone)");
             agent.StopAllCoroutines();
 
             if (Type == EntityType.xzxADIxzx) agent.StartCoroutine(ShakeYourHead(42));

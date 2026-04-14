@@ -71,12 +71,8 @@ public class Earthmover : Enemy
         base.Assign(this.agent = agent);
 
         agent.Get(out enemy);
-
-        if (Type == EntityType.Brain)
-        {
-            agent.transform.Find("../IdolPod/Cylinder"    ).TryGetComponent(out door1);
-            agent.transform.Find("../IdolPod (1)/Cylinder").TryGetComponent(out door2);
-        }
+        agent.Get(out door1, true, "../IdolPod/Cylinder"    );
+        agent.Get(out door2, true, "../IdolPod (1)/Cylinder");
     }
 
     public override void Update(float delta)
