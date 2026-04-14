@@ -93,7 +93,7 @@ public class Cannon : OwnableEntity
         if (left >= 1 && r.Bool())
         {
             var pos = agent.Position;
-            GameAssets.Prefab("Attacks and Projectiles/Explosions/Explosion Big.prefab", p => Inst(p, pos));
+            GameAssets.Prefab("Attacks and Projectiles/Explosions/Explosion Big.prefab", p => Inst(p, pos)); // TODO either call ball.Explode or grab the prefab from the ball itself
         }
     }
 

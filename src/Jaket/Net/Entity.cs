@@ -1,5 +1,6 @@
 namespace Jaket.Net;
 
+using System.Collections;
 using UnityEngine;
 
 using Jaket.Content;
@@ -120,6 +121,17 @@ public abstract class Entity
         public void Rem   (bool nullable = false, string path = null)
         {
             if (Find(path, out var o)) Dest(o);
+        }
+
+        /// <summary> Runs the given callback after the specified number of seconds. </summary>
+        public void Run   (Runnable callback, float time)
+        {
+            static IEnumerator Wait(Runnable callback, float time)
+            {
+                yield return new WaitForSeconds(time);
+                callback();
+            }
+            StartCoroutine(Wait(callback, time));
         }
 
         public Transform Parent

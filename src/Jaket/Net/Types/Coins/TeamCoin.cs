@@ -1,7 +1,6 @@
 namespace Jaket.Net.Types;
 
 using HarmonyLib;
-using System.Collections;
 using System.Collections.Generic;
 using ULTRAKILL.Portal;
 using UnityEngine;
@@ -195,7 +194,7 @@ public class TeamCoin : OwnableEntity
 
         Kill(5, w => { w.Id(AccId); w.Bool(isPlayer); });
 
-        agent.StartCoroutine(CallDelayed(Reflect, isPlayer ? 1.2f : .1f));
+        agent.Run(Reflect, isPlayer ? 1.2f : .1f);
     }
 
     public void Reflect()
@@ -326,19 +325,11 @@ public class TeamCoin : OwnableEntity
         cs.Each(c => c.enabled = false);
         coin.enabled = false;
 
-        agent.StartCoroutine(CallDelayed(Activate, .1f));
-        agent.StartCoroutine(CallDelayed(Double, .35f));
-        agent.StartCoroutine(CallDelayed(DoubleEnd, .417f));
-        agent.StartCoroutine(CallDelayed(Triple, 1f));
-        if (IsOwner)
-            agent.StartCoroutine(CallDelayed(() => Kill(), 5f));
-    }
-
-    /// <summary> Calls the method after the specified number of seconds. </summary>
-    public IEnumerator CallDelayed(Runnable call, float time)
-    {
-        yield return new WaitForSeconds(time);
-        call();
+        agent.Run(Activate, .1f);
+        agent.Run(Double, .35f);
+        agent.Run(DoubleEnd, .417f);
+        agent.Run(Triple, 1f);
+        agent.Run(() => { if (IsOwner) Kill(); }, 5f);
     }
 
     /// <summary> Activates the coin and colliders. </summary>

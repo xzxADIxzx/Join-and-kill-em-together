@@ -71,7 +71,8 @@ public class LocalPlayer : Entity
         w.Byte((byte)Mathf.Floor(WeaponCharges.Instance.raicharge * 2f));
 
         w.Player(Team, weapon, Emotes.Current, Emotes.Rps, UI.Chat.Shown);
-        w.Bools(
+        w.Bools
+        (
             nm.walking,
             sliding,
             !nm.gc.onGround,
@@ -79,7 +80,8 @@ public class LocalPlayer : Entity
             nm.boost && !sliding,
             nm.ridingRocket,
             Hook != Vector3.zero,
-            fc.shopping);
+            fc.shopping
+        );
     }
 
     public override void Read(Reader r) { }
