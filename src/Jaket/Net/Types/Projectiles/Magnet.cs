@@ -90,7 +90,7 @@ public class Magnet : OwnableEntity
     [HarmonyPatch(typeof(global::Magnet), nameof(global::Magnet.OnTriggerEnter))]
     [HarmonyPatch(typeof(global::Magnet), nameof(global::Magnet.OnTriggerExit))]
     [HarmonyPrefix]
-    static bool Laggy(Collider other) => other.attachedRigidbody?.name != "I";
+    static bool Laggy(Collider other) => other.attachedRigidbody?.name[0] != 'R';
 
     #endregion
 }

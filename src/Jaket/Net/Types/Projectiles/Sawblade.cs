@@ -65,8 +65,6 @@ public class Sawblade : OwnableEntity
                 else
                     r.material.color = team.Color();
             });
-
-            agent.name = IsOwner ? "O" : "I";
         };
 
         Locked = false;

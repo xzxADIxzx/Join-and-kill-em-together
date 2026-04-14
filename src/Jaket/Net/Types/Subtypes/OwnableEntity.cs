@@ -8,6 +8,8 @@ using Jaket.IO;
 /// <summary> Abstract entity of any type whose ownership can be transferred at any time. </summary>
 public abstract class OwnableEntity : Entity
 {
+    Agent agent;
+
     /// <summary> Action to be performed upon transfer. </summary>
     public Runnable OnTransfer;
     /// <summary> Time of the last ownership transfer. </summary>
@@ -22,6 +24,15 @@ public abstract class OwnableEntity : Entity
 
     public OwnableEntity(uint id, EntityType type) : base(id, type) { Locked = false; }
 
+    #region logic
+
+    public virtual string Name => $"{(IsOwner ? 'L' : 'R')}#{GetType().Name}";
+
+    public override void Assign(Agent agent) => (this.agent = agent).Patron = this;
+
+    #endregion
+    #region ownership
+
     /// <summary> Transfers the ownership to the local player. </summary>
     public void TakeOwnage()
     {
@@ -31,6 +42,20 @@ public abstract class OwnableEntity : Entity
         Owner = AccId;
         Locked = true;
 
+        agent.name = Name;
+        OnTransfer?.Invoke();
+    }
+
+    /// <summary> Transfers the ownership to the given player. </summary>
+    public void GiveOwnage(uint id)
+    {
+        if (Locked) return;
+        if (Version.DEBUG) Log.Debug($"[ENTS] Transferred the ownership of {Id} from {Owner} to {id}");
+
+        Owner = id;
+        Locked = true;
+
+        agent.name = Name;
         OnTransfer?.Invoke();
     }
 
@@ -43,15 +68,9 @@ public abstract class OwnableEntity : Entity
         LastUpdate = Time.time;
 
         var id = r.Id();
-        if (id != Owner && !Locked)
-        {
-            if (Version.DEBUG) Log.Debug($"[ENTS] Transferred the ownership of {Id} from {Owner} to {id}");
-
-            Owner = id;
-            Locked = true;
-
-            OnTransfer?.Invoke();
-        }
+        if (id != Owner) GiveOwnage(id);
         return IsOwner;
     }
+
+    #endregion
 }

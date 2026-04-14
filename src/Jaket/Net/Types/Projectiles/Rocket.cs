@@ -63,6 +63,8 @@ public class Rocket : OwnableEntity
     #endregion
     #region logic
 
+    public override string Name => $"{(IsOwner ? 'L' : frozen ? 'F' : 'R')}#Rocket";
+
     public override void Create() => Assign(Entities.Projectiles.Make(Type, new(posX.Init, posY.Init, posZ.Init)).AddComponent<Agent>());
 
     public override void Assign(Agent agent)
@@ -88,7 +90,7 @@ public class Rocket : OwnableEntity
 
     public override void Update(float delta)
     {
-        agent.name = IsOwner ? "O" : frozen ? "S" : "R";
+        agent.name = Name;
 
         if (IsOwner) return;
 
@@ -170,7 +172,7 @@ public class Rocket : OwnableEntity
     [HarmonyPostfix]
     static void Stop(Grenade __instance, ref bool __result)
     {
-        if (__instance.name != "O") __result = __instance.name == "S";
+        if (__instance.name[0] != 'L') __result = __instance.name[0] == 'F';
     }
 
     [HarmonyPatch(typeof(Grenade), nameof(Grenade.Collision), [typeof(Collider)])]
