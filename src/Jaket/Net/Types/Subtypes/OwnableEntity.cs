@@ -21,6 +21,8 @@ public abstract class OwnableEntity : Entity
         get => Time.time - LastTransfer < .4f;
         set => LastTransfer = value ? Time.time : float.NegativeInfinity;
     }
+    /// <summary> Whether the entity is to be transferred to a new owner on the next snapshot. </summary>
+    public uint TransferTo;
 
     public OwnableEntity(uint id, EntityType type) : base(id, type) { Locked = false; }
 
@@ -28,7 +30,11 @@ public abstract class OwnableEntity : Entity
 
     public virtual string Name => $"{(IsOwner ? 'L' : 'R')}#{GetType().Name}";
 
-    public override void Assign(Agent agent) => (this.agent = agent).Patron = this;
+    public override void Assign(Agent agent)
+    {
+        (this.agent = agent).Patron = this;
+        agent.name = Name;
+    }
 
     #endregion
     #region ownership
@@ -42,33 +48,40 @@ public abstract class OwnableEntity : Entity
         Owner = AccId;
         Locked = true;
 
-        agent.name = Name;
+        agent?.name = Name;
         OnTransfer?.Invoke();
     }
 
     /// <summary> Transfers the ownership to the given player. </summary>
     public void GiveOwnage(uint id)
     {
-        if (Locked) return;
+        if (Owner == id || Locked) return;
         if (Version.DEBUG) Log.Debug($"[ENTS] Transferred the ownership of {Id} from {Owner} to {id}");
 
         Owner = id;
         Locked = true;
 
-        agent.name = Name;
+        agent?.name = Name;
         OnTransfer?.Invoke();
     }
 
     /// <summary> Writes the entity's owner into a snapshot. </summary>
-    protected void WriteOwner(ref Writer w) => w.Id(Owner);
+    protected void WriteOwner(ref Writer w)
+    {
+        if (TransferTo != 0u)
+        {
+            GiveOwnage(TransferTo);
+            TransferTo = 0u;
+        }
+        w.Id(Owner);
+    }
 
     /// <summary> Reads the entity's owner from a snapshot. </summary>
     protected bool ReadOwner(ref Reader r)
     {
         LastUpdate = Time.time;
 
-        var id = r.Id();
-        if (id != Owner) GiveOwnage(id);
+        GiveOwnage(r.Id());
         return IsOwner;
     }
 

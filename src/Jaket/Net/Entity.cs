@@ -124,14 +124,18 @@ public abstract class Entity
         }
 
         /// <summary> Runs the given callback after the specified number of seconds. </summary>
-        public void Run   (Runnable callback, float time)
+        public void Run   (Runnable callback, float time, bool repeating = false)
         {
-            static IEnumerator Wait(Runnable callback, float time)
+            static IEnumerator Run(Runnable callback, float time, bool repeating)
             {
-                yield return new WaitForSeconds(time);
-                callback();
+                do
+                {
+                    yield return new WaitForSeconds(time);
+                    callback();
+                }
+                while (repeating);
             }
-            StartCoroutine(Wait(callback, time));
+            StartCoroutine(Run(callback, time, repeating));
         }
 
         public Transform Parent
