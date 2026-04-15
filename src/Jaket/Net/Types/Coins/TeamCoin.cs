@@ -86,7 +86,7 @@ public class TeamCoin : OwnableEntity
         agent.Get(out rs);
         agent.Get(out cs);
         agent.Get(out source);
-        agent.GetOrAddComponent<SimplePortalTraveler>().SetType(PortalTravellerType.PLAYER_PROJECTILE);
+        agent.Add(out SimplePortalTraveler t); t.SetType(PortalTravellerType.PLAYER_PROJECTILE);
 
         OnTransfer = () =>
         {
@@ -113,7 +113,7 @@ public class TeamCoin : OwnableEntity
 
     public override void Update(float delta)
     {
-        if (IsOwner) return;
+        if (IsOwner || Hidden) return;
 
         agent.Position = new(x.GetAware(delta), y.GetAware(delta), z.GetAware(delta));
     }
@@ -127,7 +127,7 @@ public class TeamCoin : OwnableEntity
         if (left >= 5)
         {
             Locked = false;
-            ReadOwner(ref r);
+            GiveOwnage(r.Id());
             Reset();
             if (r.Bool()) Quadruple();
         }
@@ -176,6 +176,7 @@ public class TeamCoin : OwnableEntity
             {
                 this.beam = beam;
                 target = player.Value.Doll.Head.transform;
+                player = AccId;
                 isPlayer = true;
                 isEnemy = false;
 
