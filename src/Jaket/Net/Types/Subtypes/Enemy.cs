@@ -31,7 +31,11 @@ public abstract class Enemy : OwnableEntity
 
     public virtual Transform WeakPoint => enemyId.weakPoint?.transform ?? agent.transform;
 
+    public virtual EnemyTarget Tracked => enemyId.target = IsOwner ? EnemyTarget.TrackPlayerIfAllowed() : player.Value?.Target;
+
     public virtual void Heal() => enemy.health = Mathf.Min(PostHealth, enemy.health + PostHealth / (LobbyController.Lobby?.MemberCount ?? 1f));
+
+    public virtual float Rate(LocalPlayer target) => (NewMovement.Instance.transform.position - agent.Position).sqrMagnitude;
 
     public virtual float Rate(RemotePlayer target) => (target.Position - agent.Position).sqrMagnitude;
 
@@ -46,11 +50,27 @@ public abstract class Enemy : OwnableEntity
         OnTransfer = () =>
         {
             player = Owner;
+            _ = Tracked;
 
-            if (IsOwner)
-                enemyId.target = EnemyTarget.TrackPlayerIfAllowed();
-            else
-                enemyId.target = player.Value?.Target;
+            agent.StopAllCoroutines();
+            agent.Run(() => _ = Tracked, 1f, true);
+
+            if (IsOwner) agent.Run(() =>
+            {
+                var rate = Rate(Networking.LocalPlayer);
+                var best = Networking.LocalPlayer.Id;
+
+                Networking.Entities.Player(p => p.Health > 0, p =>
+                {
+                    var test = Rate(p);
+                    if (test < rate)
+                    {
+                        rate = test;
+                        best = p.Id;
+                    }
+                });
+                TransferTo = best;
+            }, 4f, true);
         };
 
         Boss = bossbar; // non-owners will read this value to create a bossbar

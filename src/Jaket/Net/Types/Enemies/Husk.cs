@@ -81,6 +81,8 @@ public class Husk : Enemy
 
     public override void Update(float delta)
     {
+        if (Locked) { nma.enabled = false; scr1?.enabled = false; scr2?.enabled = false; return; }
+
         scr1?.enabled = IsOwner;
         scr2?.enabled = IsOwner;
 
