@@ -3,22 +3,17 @@ namespace Jaket.Net.Types;
 using HarmonyLib;
 using UnityEngine;
 
-using Jaket.Assets;
 using Jaket.Content;
 using Jaket.IO;
 
 /// <summary> Tangible entity of the cannonball type. </summary>
-public class Cannon : OwnableEntity
+public class Cannon : Projectile
 {
     Agent agent;
     Float x, y, z;
-    Cache<RemotePlayer> player;
-    Team team => player.Value?.Team ?? Networking.LocalPlayer.Team;
-    Rigidbody rb;
     Cannonball ball;
-    Renderer[] rs;
 
-    public Cannon(uint id, EntityType type) : base(id, type) { }
+    public Cannon(uint id, EntityType type) : base(id, type, true, false) { }
 
     #region snapshot
 
@@ -50,30 +45,8 @@ public class Cannon : OwnableEntity
     {
         base.Assign(this.agent = agent);
 
-        agent.Get(out rb);
         agent.Get(out ball);
-        agent.Get(out rs);
         agent.Rem<FloatingPointErrorPreventer>();
-
-        OnTransfer = () =>
-        {
-            player = Owner;
-
-            if (!IsOwner) rb.isKinematic = false;
-            rs.Each(r =>
-            {
-                if (r is TrailRenderer t)
-                    t.startColor = team.Color() with { a = .4f };
-                if (r is MeshRenderer m)
-                    m.material.color = team.Color() * 100f;
-                else
-                    r.material.color = team.Color();
-            });
-        };
-
-        Locked = false;
-
-        OnTransfer();
     }
 
     public override void Update(float delta)
@@ -88,13 +61,13 @@ public class Cannon : OwnableEntity
     public override void Killed(Reader r, int left)
     {
         Hidden = true;
-        ball.Break();
+        Dest(agent.gameObject);
 
         if (left >= 1 && r.Bool())
-        {
-            var pos = agent.Position;
-            GameAssets.Prefab("Attacks and Projectiles/Explosions/Explosion Big.prefab", p => Inst(p, pos)); // TODO either call ball.Explode or grab the prefab from the ball itself
-        }
+            Inst(ball.breakEffect,           IsOwner ? agent.Position : new(x.Init, y.Init, z.Init));
+
+        if (left >= 2 && r.Bool())
+            Inst(ball.interruptionExplosion, IsOwner ? agent.Position : new(x.Init, y.Init, z.Init));
     }
 
     #endregion
@@ -104,61 +77,48 @@ public class Cannon : OwnableEntity
     [HarmonyPrefix]
     static void Start(Cannonball __instance)
     {
-        if (__instance) Entities.Projectiles.Sync(__instance.gameObject);
+        if (__instance && __instance.physicsCannonball) Entities.Projectiles.Sync(__instance.gameObject);
     }
 
     [HarmonyPatch(typeof(Cannonball), nameof(Cannonball.Break))]
     [HarmonyPrefix]
-    static bool Break(Cannonball __instance)
+    static bool Break(Cannonball __instance) => Kill<Cannon>(__instance, e =>
     {
-        if (__instance.TryGetComponent(out Agent a) && a.Patron is Cannon c)
-        {
-            // it's called after death to spawn some nice particles
-            if (c.Hidden) return true;
-
-            if (c.IsOwner) c.Kill();
-            return false;
-        }
-        else return true;
-    }
+        if (e.IsOwner) e.Kill(1, w => w.Bool(true));
+    });
 
     [HarmonyPatch(typeof(Cannonball), nameof(Cannonball.Explode))]
     [HarmonyPrefix]
-    static bool Death(Cannonball __instance)
+    static bool Death(Cannonball __instance) => Kill<Cannon>(__instance, e =>
     {
-        if (__instance.TryGetComponent(out Agent a) && a.Patron is Cannon c)
-        {
-            c.Kill(1, w => w.Bool(true));
-            return false;
-        }
-        else return true;
-    }
+        e.Kill(2, w => { w.Bool(true); w.Bool(true); });
+    });
 
     [HarmonyPatch(typeof(Cannonball), nameof(Cannonball.Launch))]
     [HarmonyPrefix]
     static void Parry(Cannonball __instance)
     {
-        if (__instance.TryGetComponent(out Agent a) && a.Patron is Cannon c) c.TakeOwnage();
+        if (__instance.TryGetEntity(out Cannon c)) c.TakeOwnage();
     }
 
     [HarmonyPatch(typeof(Cannonball), nameof(Cannonball.Unlaunch))]
     [HarmonyPrefix]
     static void Throw(Cannonball __instance)
     {
-        if (__instance.TryGetComponent(out Agent a) && a.Patron is Cannon c) c.TakeOwnage();
+        if (__instance.TryGetEntity(out Cannon c)) c.TakeOwnage();
     }
 
     [HarmonyPatch(typeof(Cannonball), nameof(Cannonball.Collide))]
     [HarmonyPrefix]
-    static bool Damage(Cannonball __instance, Collider other, Rigidbody ___rb) => Entities.Damage.Deal<Cannon>(__instance, (eid, tid, ally, _) =>
+    static bool Damage(Cannonball __instance, Collider other) => Deal<Cannon>(__instance, (eid, tid, ally, _) =>
     {
         if (ally || __instance.hitEnemies.Contains(eid)) return false;
 
-        float damage = __instance.forceMaxSpeed ? __instance.damage : Mathf.Min(__instance.damage, ___rb.velocity.magnitude * .15f);
+        float damage = __instance.forceMaxSpeed ? __instance.damage : Mathf.Min(__instance.damage, __instance.rb.velocity.magnitude * .15f);
 
         Entities.Damage.Deal(tid, damage);
         return true;
-    }, other);
+    }, other: other);
 
     #endregion
 }
