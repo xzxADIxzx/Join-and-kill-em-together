@@ -95,7 +95,7 @@ public class TeamCoin : OwnableEntity
             rs.Each(r =>
             {
                 if (r is TrailRenderer t)
-                    t.startColor = team.Color() with { a = .4f };
+                    t.startColor = team.Color() with { a = .6f };
                 else
                 {
                     r.material.mainTexture = ModAssets.CoinTexture;

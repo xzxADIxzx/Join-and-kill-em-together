@@ -11,6 +11,7 @@ using System.Reflection;
 using UnityEngine;
 
 using Jaket.Content;
+using Jaket.Net;
 
 /// <summary> Set of different tools for simplifying life and systematization of code. </summary>
 public static class Tools
@@ -106,10 +107,13 @@ public static class Tools
     /// <summary> Default environment raycast mask. </summary>
     public static readonly int EnvMask = LayerMaskDefaults.Get(LMD.Environment);
 
+    /// <summary> Gets an entity of the given type. </summary>
+    public static bool TryGetEntity<T>(this Component comp, out T entity) where T : Entity => (entity = comp.TryGetComponent(out Entity.Agent a) && a.Patron is T t ? t : null) != null;
+
     /// <summary> Whether the item is placed on an altar. </summary>
     public static bool Placed(this ItemIdentifier itemId) => itemId.transform.parent?.gameObject.layer == 22;
 
-    /// <summary> Path of the component in the scene hierarchy. </summary>
+    /// <summary> Path of the component in the hierarchy. </summary>
     public static string Path(this Component comp) => $"{comp.transform.parent?.name}/{comp.name}";
 
     #endregion
