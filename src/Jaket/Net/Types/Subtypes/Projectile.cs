@@ -59,8 +59,8 @@ public abstract class Projectile : OwnableEntity
         {
             player = Owner;
 
-            if (!IsOwner && enableKm) rb.isKinematic = true;
-            if (IsOwner && disableKm) rb.isKinematic = false;
+            if (!IsOwner && enableKm && rb) rb.isKinematic = true;
+            if (IsOwner && disableKm && rb) rb.isKinematic = false;
 
             rs.Each(Paint);
         };

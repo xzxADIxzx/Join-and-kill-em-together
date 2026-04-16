@@ -28,7 +28,7 @@ public static class Patches
         typeof(Fish),
         typeof(Plushie),
         typeof(Core),
-        typeof(Pin),
+        typeof(Nail),
         typeof(Sawblade),
         typeof(Screwdriver),
         typeof(Magnet),
