@@ -76,6 +76,7 @@ public class Chat : Fragment
         });
         Lerp(chatBg, () => chat.text.Length > 0 && Shown | Time.time - lastUpdate < 8f);
         Lerp(infoBg, () => info.text != LOVEYOU);
+        Rebuild();
     }
 
     public override void Toggle()
