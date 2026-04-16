@@ -27,11 +27,12 @@ The project features multiplayer support for ULTRAKILL, which includes multiple 
    * Extended coins mechanics
    * Voting system to skip cutscenes or choose dialogs
 * Synchronization of everything
-   * Players: their weapons & colors, arms and hook, animations, particles, explosions and even their head rotation
+   * Players: their weapons & colors, arms and hook, animations and taunts, particles, explosions and even their head rotation
    * All hitscans from players and enemies
    * All projectiles: nails, sawblades, rockets and etc.
    * All sorts of items such as torches, skulls, plushies and so on
    * All sorts of actions happening during missions
+   * All sorts of interactions between players and enemies
    * Synchronization of enemies and their various behavior
    * Synchronization of bosses and their unique attacks
    * Synchronization of the Cyber Grind
@@ -43,12 +44,12 @@ The project features multiplayer support for ULTRAKILL, which includes multiple 
    * English    by xzxADIxzx
    * Filipino   by Fraku
    * French     by Theoyeah
-   * German     by Doomguy
+   * German     by Nocturne & Doomguy
    * Italian    by Fenicemaster & sSAR
    * Polish     by Becon
    * Russian    by xzxADIxzx
    * Spanish    by NotPhobos
-   * Ukrainian  by Sowler
+   * Ukrainian  by Repenkos & Sowler
 
 ## Installation
 Before installing, it's important to know that the mod requires BepInEx to work.   
