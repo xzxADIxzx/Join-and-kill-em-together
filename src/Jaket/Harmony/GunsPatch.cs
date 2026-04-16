@@ -56,9 +56,9 @@ public static class GunsPatch
 
     [HarmonyPatch(typeof(Punch), nameof(Punch.BlastCheck))]
     [HarmonyPrefix]
-    static void Blast(bool ___holdingInput)
+    static void Blast(Punch __instance)
     {
-        if (LobbyController.Offline || !___holdingInput) return;
+        if (LobbyController.Offline || !__instance.heldAction.IsPressed()) return;
 
         Networking.Send(PacketType.Punch, 29, w =>
         {

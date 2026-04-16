@@ -31,6 +31,7 @@
     <Reference Include="$(ManagedPath)/plog.dll" />
 
     <Reference Include="$(ManagedPath)/Unity.Addressables.dll" />
+    <Reference Include="$(ManagedPath)/Unity.InputSystem.dll" />
     <Reference Include="$(ManagedPath)/Unity.ResourceManager.dll" />
     <Reference Include="$(ManagedPath)/Unity.TextMeshPro.dll" />
     <Reference Include="$(ManagedPath)/UnityEngine.UI.dll" />

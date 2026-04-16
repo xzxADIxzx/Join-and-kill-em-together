@@ -99,9 +99,9 @@ public class Nail : Projectile
 
     [HarmonyPatch(typeof(Punch), nameof(Punch.BlastCheck))]
     [HarmonyPrefix]
-    static void Blast(bool ___holdingInput)
+    static void Blast(Punch __instance)
     {
-        if (___holdingInput) Networking.Entities.Alive<Nail>(e => e.rb && (e.agent.Position - NewMovement.Instance.transform.position).sqrMagnitude < 100f, e =>
+        if (__instance.heldAction.IsPressed()) Networking.Entities.Alive<Nail>(e => e.rb && (e.agent.Position - NewMovement.Instance.transform.position).sqrMagnitude < 100f, e =>
         {
             e.agent.StopAllCoroutines();
             e.agent.Run(e.MasterKill, 5f);
