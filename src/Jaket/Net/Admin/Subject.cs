@@ -14,7 +14,7 @@ public class Subject
     private Ratekeeper
 
     warns   = new(3f, .02f),
-    packets = new(Networking.TICKS_PER_SECOND * 120f, Networking.TICKS_PER_SECOND * 80f),
+    packets = new(Networking.TICKS_PER_SECOND * 128f, Networking.TICKS_PER_SECOND * 96f),
     hitscns = new(64f, 16f),
     commons = new(12f, 8f);
 
@@ -23,7 +23,7 @@ public class Subject
 
     defpool = new(24),
     project = new(24),
-    flashes = new(32),
+    flashes = new(48),
     harpoon = new(4);
 
     public Subject(uint id) => Id = id;
