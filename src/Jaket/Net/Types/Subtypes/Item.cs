@@ -79,7 +79,7 @@ public abstract class Item : OwnableEntity
             player = Owner;
             if (IsOwner) return;
 
-            if (rb) rb.isKinematic = true;
+            rb?.isKinematic = true;
             if (Networking.LocalPlayer.Holding == this)
             {
                 FistControl.Instance.currentPunch.ForceThrow();

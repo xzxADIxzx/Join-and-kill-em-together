@@ -3,6 +3,7 @@ namespace Jaket.Net.Types;
 using UnityEngine;
 
 using Jaket.Content;
+using Jaket.IO;
 
 /// <summary> Abstract entity of any projectile type. </summary>
 public abstract class Projectile : OwnableEntity
@@ -25,6 +26,12 @@ public abstract class Projectile : OwnableEntity
 
     #region logic
 
+    public virtual void MasterKill()
+    {
+        if (IsOwner) Kill();
+        if (Version.DEBUG) Log.Debug($"[ENTS] Killed an entity {Id} due to lifetime expiration");
+    }
+
     public virtual void Paint(Renderer renderer)
     {
         if (renderer is TrailRenderer trailingTail)
@@ -46,7 +53,7 @@ public abstract class Projectile : OwnableEntity
         agent.Get(out rb);
         agent.Get(out rs);
         agent.Get(out cs);
-        agent.Run(() => { if (IsOwner) Kill(); }, 120f);
+        agent.Run(MasterKill, 90f);
 
         OnTransfer = () =>
         {
@@ -61,6 +68,8 @@ public abstract class Projectile : OwnableEntity
         Locked = false;
         OnTransfer();
     }
+
+    public override void Damage(Reader r) { }
 
     #endregion
     #region patch

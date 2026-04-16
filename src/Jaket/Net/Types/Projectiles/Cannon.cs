@@ -56,8 +56,6 @@ public class Cannon : Projectile
         agent.Position = new(x.GetAware(delta), y.GetAware(delta), z.GetAware(delta));
     }
 
-    public override void Damage(Reader r) { }
-
     public override void Killed(Reader r, int left)
     {
         Hidden = true;
