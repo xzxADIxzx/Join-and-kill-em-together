@@ -19,13 +19,16 @@ public abstract class Projectile : OwnableEntity
 
     /// <summary> Whether the kinematic mode should be toggled on transfer. </summary>
     private bool disableKm, enableKm;
+    /// <summary> Whether the collision mode should be toggled on transfer. </summary>
+    private bool ignoreCl;
     /// <summary> Position of the projectile shared among tangible classes. </summary>
     protected Float x, y, z;
 
-    public Projectile(uint id, EntityType type, bool enableKm, bool disableKm) : base(id, type)
+    public Projectile(uint id, EntityType type, bool enableKm, bool disableKm, bool ignoreCl) : base(id, type)
     {
         this.disableKm = disableKm;
         this.enableKm = enableKm;
+        this.ignoreCl = ignoreCl;
     }
 
     #region snapshot
@@ -97,6 +100,7 @@ public abstract class Projectile : OwnableEntity
             if (IsOwner && disableKm && rb) rb.isKinematic = false;
 
             rs.Each(Paint);
+            UpdateIgnore();
         };
 
         Locked = false;
@@ -108,15 +112,20 @@ public abstract class Projectile : OwnableEntity
         if (!IsOwner) agent.Position = new(x.GetAware(delta), y.GetAware(delta), z.GetAware(delta));
     }
 
+    public virtual void UpdateIgnore()
+    {
+        if (ignoreCl) Networking.Entities.Player(p => cs.Each(c => p.Toggle(c)));
+    }
+
     public override void Damage(Reader r) { }
 
     #endregion
     #region patch
 
     /// <summary> Invokes the patch logic if the provided object is an entity. </summary>
-    public static bool Kill<T>(Component instance, Cons<T> patch) where T : Entity
+    public static bool Kill<T>(Component instance, Cons<T> patch, bool onlyAlive = false) where T : Entity
     {
-        if (instance.TryGetEntity(out T t))
+        if (instance.TryGetEntity(out T t) && !(onlyAlive && t.Hidden))
         {
             patch(t);
             return false;

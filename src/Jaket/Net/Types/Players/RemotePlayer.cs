@@ -185,6 +185,8 @@ public class RemotePlayer : Entity, Screwdriver.Screwable
 
     public void Toggle(bool on) => cs.Each(c => c, c => c.enabled = on);
 
+    public void Toggle(Collider other) => cs.Each(c => c, c => Physics.IgnoreCollision(c, other, Team.Ally()));
+
     #endregion
     #region other
 
