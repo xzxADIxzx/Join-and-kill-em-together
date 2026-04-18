@@ -12,7 +12,7 @@ public class Nail : Projectile
     Agent agent;
     Rigidbody rb;
 
-    public Nail(uint id, EntityType type) : base(id, type, true, true) { }
+    public Nail(uint id, EntityType type) : base(id, type, true, true, true) { }
 
     #region logic
 
@@ -87,8 +87,6 @@ public class Nail : Projectile
     [HarmonyPrefix]
     static bool Damage(global::Nail __instance, EnemyIdentifier eid) => Deal<Nail>(__instance, (eid, tid, ally, e) =>
     {
-        if (ally) return false;
-
         e.agent.StopAllCoroutines();
         e.agent.Run(e.MasterKill, 90f);
 

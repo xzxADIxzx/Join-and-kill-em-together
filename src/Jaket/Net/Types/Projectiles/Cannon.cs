@@ -12,7 +12,7 @@ public class Cannon : Projectile
     Agent agent;
     Cannonball ball;
 
-    public Cannon(uint id, EntityType type) : base(id, type, true, false) { }
+    public Cannon(uint id, EntityType type) : base(id, type, true, false, false) { }
 
     #region logic
 

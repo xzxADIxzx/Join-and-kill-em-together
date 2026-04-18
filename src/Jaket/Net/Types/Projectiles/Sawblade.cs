@@ -12,7 +12,7 @@ public class Sawblade : Projectile
     Agent agent;
     global::Nail nail;
 
-    public Sawblade(uint id, EntityType type) : base(id, type, true, true) { }
+    public Sawblade(uint id, EntityType type) : base(id, type, true, true, false) { }
 
     #region logic
 

@@ -13,7 +13,7 @@ public class Core : Projectile
     Agent agent;
     Grenade gr;
 
-    public Core(uint id, EntityType type) : base(id, type, true, true) { }
+    public Core(uint id, EntityType type) : base(id, type, true, true, true) { }
 
     #region logic
 
@@ -79,18 +79,6 @@ public class Core : Projectile
     {
         e.Kill();
     });
-
-    [HarmonyPatch(typeof(Grenade), nameof(Grenade.Collision), [typeof(Collider), typeof(Vector3)])]
-    [HarmonyPrefix]
-    static bool Damage(Grenade __instance, Collider other) => Deal<Core>(__instance, (eid, tid, ally, e) =>
-    {
-        if (ally)
-        {
-            e.Ignore(other);
-            return false;
-        }
-        else return true;
-    }, other: other);
 
     #endregion
 }
