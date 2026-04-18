@@ -117,6 +117,12 @@ public abstract class Projectile : OwnableEntity
         if (ignoreCl) Networking.Entities.Player(p => cs.Each(c => p.Toggle(c)));
     }
 
+    public virtual void UpdateRocket(bool riding)
+    {
+        if (riding) player.Value?.Acquire(agent);
+        cs.Each(c => c.enabled = riding);
+    }
+
     public override void Damage(Reader r) { }
 
     #endregion
