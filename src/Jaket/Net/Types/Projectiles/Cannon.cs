@@ -10,36 +10,11 @@ using Jaket.IO;
 public class Cannon : Projectile
 {
     Agent agent;
-    Float x, y, z;
     Cannonball ball;
 
     public Cannon(uint id, EntityType type) : base(id, type, true, false) { }
 
-    #region snapshot
-
-    public override int BufferSize => 21;
-
-    public override void Write(Writer w)
-    {
-        WriteOwner(ref w);
-
-        if (IsOwner)
-            w.Vector(agent.Position);
-        else
-            w.Floats(x, y, z);
-    }
-
-    public override void Read(Reader r)
-    {
-        if (ReadOwner(ref r)) return;
-
-        r.Floats(ref x, ref y, ref z);
-    }
-
-    #endregion
     #region logic
-
-    public override void Create() => Assign(Entities.Projectiles.Make(Type, new(x.Init, y.Init, z.Init)).AddComponent<Agent>());
 
     public override void Assign(Agent agent)
     {
@@ -47,13 +22,6 @@ public class Cannon : Projectile
 
         agent.Get(out ball);
         agent.Rem<FloatingPointErrorPreventer>();
-    }
-
-    public override void Update(float delta)
-    {
-        if (IsOwner) return;
-
-        agent.Position = new(x.GetAware(delta), y.GetAware(delta), z.GetAware(delta));
     }
 
     public override void Killed(Reader r, int left)

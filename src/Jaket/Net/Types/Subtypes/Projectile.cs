@@ -17,6 +17,8 @@ public abstract class Projectile : OwnableEntity
 
     /// <summary> Whether the kinematic mode should be toggled on transfer. </summary>
     private bool disableKm, enableKm;
+    /// <summary> Position of the projectile shared among tangible classes. </summary>
+    protected Float x, y, z;
 
     public Projectile(uint id, EntityType type, bool enableKm, bool disableKm) : base(id, type)
     {
@@ -24,6 +26,28 @@ public abstract class Projectile : OwnableEntity
         this.enableKm = enableKm;
     }
 
+    #region snapshot
+
+    public override int BufferSize => 21;
+
+    public override void Write(Writer w)
+    {
+        WriteOwner(ref w);
+
+        if (IsOwner)
+            w.Vector(agent.Position);
+        else
+            w.Floats(x, y, z);
+    }
+
+    public override void Read(Reader r)
+    {
+        if (ReadOwner(ref r)) return;
+
+        r.Floats(ref x, ref y, ref z);
+    }
+
+    #endregion
     #region logic
 
     public virtual void MasterKill()
@@ -46,6 +70,8 @@ public abstract class Projectile : OwnableEntity
         }
     }
 
+    public override void Create() => Assign(Entities.Projectiles.Make(Type, new(x.Init, y.Init, z.Init)).AddComponent<Agent>());
+
     public override void Assign(Agent agent)
     {
         base.Assign(this.agent = agent);
@@ -67,6 +93,11 @@ public abstract class Projectile : OwnableEntity
 
         Locked = false;
         OnTransfer();
+    }
+
+    public override void Update(float delta)
+    {
+        if (!IsOwner) agent.Position = new(x.GetAware(delta), y.GetAware(delta), z.GetAware(delta));
     }
 
     public override void Damage(Reader r) { }
