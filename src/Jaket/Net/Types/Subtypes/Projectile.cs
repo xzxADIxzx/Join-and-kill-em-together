@@ -5,6 +5,8 @@ using UnityEngine;
 using Jaket.Content;
 using Jaket.IO;
 
+using static Jaket.UI.Lib.Pal;
+
 /// <summary> Abstract entity of any projectile type. </summary>
 public abstract class Projectile : OwnableEntity
 {
@@ -59,7 +61,13 @@ public abstract class Projectile : OwnableEntity
     public virtual void Paint(Renderer renderer)
     {
         if (renderer is TrailRenderer trailingTail)
+        {
             trailingTail.startColor = team.Color() with { a = .6f };
+            trailingTail.endColor   = white        with { a = .0f };
+        }
+
+        else if (renderer is SpriteRenderer sprite)
+            sprite.color            = team.Color();
         else
             renderer.material.color = team.Color();
 
