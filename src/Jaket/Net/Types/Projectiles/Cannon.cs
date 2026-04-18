@@ -62,21 +62,21 @@ public class Cannon : Projectile
 
     [HarmonyPatch(typeof(Cannonball), nameof(Cannonball.Launch))]
     [HarmonyPrefix]
-    static void Parry(Cannonball __instance)
+    static void Parry(Cannonball __instance) => Kill<Cannon>(__instance, e =>
     {
-        if (__instance.TryGetEntity(out Cannon c)) c.TakeOwnage();
-    }
+        e.TakeOwnage();
+    });
 
     [HarmonyPatch(typeof(Cannonball), nameof(Cannonball.Unlaunch))]
     [HarmonyPrefix]
-    static void Throw(Cannonball __instance)
+    static void Throw(Cannonball __instance) => Kill<Cannon>(__instance, e =>
     {
-        if (__instance.TryGetEntity(out Cannon c)) c.TakeOwnage();
-    }
+        e.TakeOwnage();
+    });
 
     [HarmonyPatch(typeof(Cannonball), nameof(Cannonball.Collide))]
     [HarmonyPrefix]
-    static bool Damage(Cannonball __instance, Collider other) => Deal<Cannon>(__instance, (eid, tid, ally, _) =>
+    static bool Damage(Cannonball __instance, Collider other) => Deal<Cannon>(__instance, (eid, tid, ally, e) =>
     {
         if (ally || __instance.hitEnemies.Contains(eid)) return false;
 

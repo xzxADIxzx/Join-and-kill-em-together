@@ -66,7 +66,7 @@ public class Sawblade : Projectile
 
     [HarmonyPatch(typeof(global::Nail), nameof(global::Nail.SawBreak))]
     [HarmonyPrefix]
-    static void Death(global::Nail __instance) => Kill<Sawblade>(__instance, e =>
+    static bool Death(global::Nail __instance) => Kill<Sawblade>(__instance, e =>
     {
         if (e.IsOwner) e.Kill(1, w => w.Bool(true));
     });
@@ -87,7 +87,7 @@ public class Sawblade : Projectile
 
     [HarmonyPatch(typeof(global::Nail), nameof(global::Nail.DamageEnemy))]
     [HarmonyPrefix]
-    static bool Damage(global::Nail __instance, EnemyIdentifier eid) => Deal<Sawblade>(__instance, (eid, tid, ally, _) =>
+    static bool Damage(global::Nail __instance, EnemyIdentifier eid) => Deal<Sawblade>(__instance, (eid, tid, ally, e) =>
     {
         if (ally) { __instance.hitAmount += 1f; return false; }
 
