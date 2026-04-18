@@ -17,8 +17,8 @@ public static class Tex
     public static Sprite Mark, Mask;
     /// <summary> Hollow circle and circular shadow. </summary>
     public static Sprite Circle, Shadow;
-    /// <summary> I see you. </summary>
-    public static Sprite Dead;
+    /// <summary> I see you and muzzle flash. </summary>
+    public static Sprite Dead, Flash;
 
     /// <summary> Loads the textures from memory. </summary>
     public static void Load()
@@ -35,6 +35,7 @@ public static class Tex
         GameAssets.Sprite("circle.png",                             s => Circle = s);
         GameAssets.Sprite("weaponwheelbackground.png",              s => Shadow = s);
         GameAssets.Sprite("ISeeYou.png",                            s => Dead   = s);
+        GameAssets.Sprite("s/muzzleflashshotgun 1.png",             s => Flash  = s);
     }
 
     /// <summary> Executes the task after loading sprites. </summary>

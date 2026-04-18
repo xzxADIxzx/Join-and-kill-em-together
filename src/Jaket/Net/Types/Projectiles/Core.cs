@@ -5,49 +5,33 @@ using UnityEngine;
 
 using Jaket.Content;
 using Jaket.IO;
+using Jaket.UI.Lib;
 
 /// <summary> Tangible entity of the core type. </summary>
-public class Core : Entity
+public class Core : Projectile
 {
     Agent agent;
-    Float x, y, z;
-    Rigidbody rb;
-    Grenade grenade;
+    Grenade gr;
 
-    public Core(uint id, EntityType type) : base(id, type) { }
+    public Core(uint id, EntityType type) : base(id, type, true, true) { }
 
-    #region snapshot
-
-    public override int BufferSize => 17;
-
-    public override void Write(Writer w)
-    {
-        if (IsOwner)
-            w.Vector(agent.Position);
-        else
-            w.Floats(x, y, z);
-    }
-
-    public override void Read(Reader r)
-    {
-        r.Floats(ref x, ref y, ref z);
-    }
-
-    #endregion
     #region logic
 
-    public override void Create() => Assign(Entities.Projectiles.Make(Type, new(x.Init, y.Init, z.Init)).AddComponent<Agent>());
+    public override void Paint(Renderer renderer)
+    {
+        base.Paint(renderer);
+        if (renderer is MeshRenderer m) m.material.mainTexture = null;
+        if (renderer is SpriteRenderer s) s.sprite = Tex.Flash;
+    }
 
     public override void Assign(Agent agent)
     {
-        (this.agent = agent).Patron = this;
+        base.Assign(this.agent = agent);
 
-        agent.Get(out rb);
-        agent.Get(out grenade);
+        agent.Get(out gr);
         agent.Rem<FloatingPointErrorPreventer>();
+        agent.Rem<DestroyOnCheckpointRestart>();
         agent.Rem<RemoveOnTime>();
-
-        rb.isKinematic = !IsOwner;
     }
 
     public override void Update(float delta)
@@ -55,9 +39,9 @@ public class Core : Entity
         if (IsOwner) return;
 
         agent.Position = new(x.GetAware(delta), y.GetAware(delta), z.GetAware(delta));
-    }
 
-    public override void Damage(Reader r) { }
+        if (gr.hooked) TakeOwnage();
+    }
 
     public override void Killed(Reader r, int left)
     {
@@ -67,9 +51,9 @@ public class Core : Entity
         if (left >= 1) // normal (environment), super (any beam), ultra (malicious)
         {
             r.Bools(out var harmless, out var big, out var super, out var ultra, out _, out _, out _, out _);
-            grenade.Explode(big, harmless, super, ultra ? 2f : 1f, ultra);
+            gr.Explode(big, harmless, super, ultra ? 2f : 1f, ultra);
         }
-        grenade.enemy = true; // check coins
+        gr.enemy = true; // check coins
     }
 
     #endregion
@@ -84,37 +68,29 @@ public class Core : Entity
 
     [HarmonyPatch(typeof(Grenade), nameof(Grenade.Explode))]
     [HarmonyPrefix]
-    static bool Break(Grenade __instance, bool harmless, bool big, bool super, bool ultrabooster)
+    static bool Death(Grenade __instance, bool harmless, bool big, bool super, bool ultrabooster) => Kill<Core>(__instance, e =>
     {
-        if (__instance.TryGetComponent(out Agent a) && a.Patron is Core c)
-        {
-            // it's called after death to spawn some nice explosions
-            if (c.Hidden) return true;
-
-            c.Kill(1, w => w.Bools(harmless, big, super, ultrabooster));
-            return false;
-        }
-        else return true;
-    }
+        e.Kill(1, w => w.Bools(harmless, big, super, ultrabooster));
+    }, true);
 
     [HarmonyPatch(typeof(Grenade), nameof(Grenade.GrenadeBeam))]
     [HarmonyPrefix]
-    static void Death(Grenade __instance)
+    static void Beamy(Grenade __instance) => Kill<Core>(__instance, e =>
     {
-        if (__instance.TryGetComponent(out Agent a) && a.Patron is Core c) c.Kill();
-    }
+        e.Kill();
+    });
 
-    [HarmonyPatch(typeof(Grenade), nameof(Grenade.Collision), [typeof(Collider)])]
+    [HarmonyPatch(typeof(Grenade), nameof(Grenade.Collision), [typeof(Collider), typeof(Vector3)])]
     [HarmonyPrefix]
-    static bool Damage(Grenade __instance, Collider other) => Entities.Damage.Deal<Core>(__instance, (eid, tid, ally, _) =>
+    static bool Damage(Grenade __instance, Collider other) => Deal<Core>(__instance, (eid, tid, ally, e) =>
     {
         if (ally)
         {
-            Physics.IgnoreCollision(__instance.GetComponent<Collider>(), other);
+            e.Ignore(other);
             return false;
         }
         else return true;
-    }, other);
+    }, other: other);
 
     #endregion
 }
