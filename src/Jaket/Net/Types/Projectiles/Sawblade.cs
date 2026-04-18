@@ -7,69 +7,28 @@ using Jaket.Content;
 using Jaket.IO;
 
 /// <summary> Tangible entity of any sawblade type. </summary>
-public class Sawblade : OwnableEntity
+public class Sawblade : Projectile
 {
     Agent agent;
-    Float x, y, z;
-    Cache<RemotePlayer> player;
-    Team team => player.Value?.Team ?? Networking.LocalPlayer.Team;
-    Rigidbody rb;
-    Nail nail;
-    Renderer[] rs;
+    global::Nail nail;
 
-    public Sawblade(uint id, EntityType type) : base(id, type) { }
+    public Sawblade(uint id, EntityType type) : base(id, type, true, true) { }
 
-    #region snapshot
-
-    public override int BufferSize => 21;
-
-    public override void Write(Writer w)
-    {
-        WriteOwner(ref w);
-
-        if (IsOwner)
-            w.Vector(agent.Position);
-        else
-            w.Floats(x, y, z);
-    }
-
-    public override void Read(Reader r)
-    {
-        if (ReadOwner(ref r)) return;
-
-        r.Floats(ref x, ref y, ref z);
-    }
-
-    #endregion
     #region logic
 
-    public override void Create() => Assign(Entities.Projectiles.Make(Type, new(x.Init, y.Init, z.Init)).AddComponent<Agent>());
+    public override void Paint(Renderer renderer)
+    {
+        base.Paint(renderer);
+        if (renderer is MeshRenderer m) m.material.color *= 2f;
+    }
 
     public override void Assign(Agent agent)
     {
         base.Assign(this.agent = agent);
 
-        agent.Get(out rb);
         agent.Get(out nail);
-        agent.Get(out rs);
-
-        OnTransfer = () =>
-        {
-            player = Owner;
-
-            rb.isKinematic = !IsOwner;
-            rs.Each(r =>
-            {
-                if (r is TrailRenderer t)
-                    t.startColor = team.Color() with { a = .4f };
-                else
-                    r.material.color = team.Color();
-            });
-        };
-
-        Locked = false;
-
-        OnTransfer();
+        agent.Rem<DestroyOnCheckpointRestart>();
+        agent.Run(MasterKill, 15f);
     }
 
     public override void Update(float delta)
@@ -82,70 +41,57 @@ public class Sawblade : OwnableEntity
         if (nail.punched)
         {
             TakeOwnage();
-            rb.velocity = (Punch.GetParryLookTarget() - agent.Position).normalized * 200f;
+            nail.rb.velocity = (Punch.GetParryLookTarget() - agent.Position).normalized * 200f;
         }
     }
-
-    public override void Damage(Reader r) { }
 
     public override void Killed(Reader r, int left)
     {
         Hidden = true;
-        nail.SawBreak();
+        Dest(agent.gameObject);
+
+        if (left >= 1 && r.Bool())
+            Inst(nail.sawBreakEffect, agent.Position);
     }
 
     #endregion
     #region harmony
 
-    [HarmonyPatch(typeof(Nail), nameof(Nail.Start))]
+    [HarmonyPatch(typeof(global::Nail), nameof(global::Nail.Start))]
     [HarmonyPrefix]
-    static void Start(Nail __instance)
+    static void Start(global::Nail __instance)
     {
-        if (__instance && __instance.sawblade && !__instance.chainsaw) Entities.Projectiles.Sync(__instance.gameObject);
+        if (__instance && __instance.sawblade && !__instance.chainsaw && !__instance.enemy) Entities.Projectiles.Sync(__instance.gameObject);
     }
 
-    [HarmonyPatch(typeof(Nail), nameof(Nail.SawBreak))]
+    [HarmonyPatch(typeof(global::Nail), nameof(global::Nail.SawBreak))]
     [HarmonyPrefix]
-    static bool Break(Nail __instance)
+    static void Death(global::Nail __instance) => Kill<Sawblade>(__instance, e =>
     {
-        if (__instance.TryGetComponent(out Agent a) && a.Patron is Sawblade s)
-        {
-            // it's called after death to spawn some nice particles
-            if (s.Hidden) return true;
+        if (e.IsOwner) e.Kill(1, w => w.Bool(true));
+    });
 
-            if (s.IsOwner) s.Kill();
-            return false;
-        }
-        else return true;
-    }
-
-    [HarmonyPatch(typeof(Nail), nameof(Nail.RemoveTime))]
+    [HarmonyPatch(typeof(global::Nail), nameof(global::Nail.MagnetCaught))]
     [HarmonyPrefix]
-    static bool Death(Nail __instance)
+    static void Catch(global::Nail __instance) => Events.Post(() =>
     {
-        if (__instance.TryGetComponent(out Agent a) && a.Patron is Sawblade s)
-        {
-            if (s.IsOwner) s.Kill();
-            return false;
-        }
-        else return true;
-    }
+        if (__instance.TryGetEntity(out Sawblade s)) s.agent.StopAllCoroutines();
+    });
 
-    [HarmonyPatch(typeof(Nail), nameof(Nail.DamageEnemy))]
+    [HarmonyPatch(typeof(global::Nail), nameof(global::Nail.MagnetRelease))]
     [HarmonyPrefix]
-    static bool Damage(Nail __instance, EnemyIdentifier eid) => Entities.Damage.Deal<Sawblade>(__instance, (eid, tid, ally, _) =>
+    static void Freed(global::Nail __instance) => Events.Post(() =>
     {
-        if (ally) { __instance.hitAmount += 1; return false; }
+        if (__instance.TryGetEntity(out Sawblade s)) s.agent.Run(s.MasterKill, 15f);
+    });
 
-        float fodder = eid.enemyType switch
-        {
-            EnemyType.Filth   => 2.0f,
-            EnemyType.Stray   => 2.0f,
-            EnemyType.Schism  => 1.5f,
-            EnemyType.Soldier => 1.5f,
-            EnemyType.Stalker => 1.5f,
-            _                 => 1.0f,
-        };
+    [HarmonyPatch(typeof(global::Nail), nameof(global::Nail.DamageEnemy))]
+    [HarmonyPrefix]
+    static bool Damage(global::Nail __instance, EnemyIdentifier eid) => Deal<Sawblade>(__instance, (eid, tid, ally, _) =>
+    {
+        if (ally) { __instance.hitAmount += 1f; return false; }
+
+        float fodder = __instance.GetFodderDamageMultiplier(eid.enemyType);
         float damage = __instance.damage * (__instance.punched ? 2f : 1f) * (__instance.fodderDamageBoost ? fodder : 1f);
 
         Entities.Damage.Deal(tid, damage);
