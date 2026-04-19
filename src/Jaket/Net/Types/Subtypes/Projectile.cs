@@ -120,7 +120,7 @@ public abstract class Projectile : OwnableEntity
     public virtual void UpdateRocket(bool riding)
     {
         if (riding) player.Value?.Acquire(agent);
-        cs.Each(c => c.enabled = riding);
+        cs.Each(c => c.enabled = !riding);
     }
 
     public override void Damage(Reader r) { }

@@ -80,5 +80,9 @@ public class Core : Projectile
         e.Kill();
     });
 
+    [HarmonyPatch(typeof(Grenade), nameof(Grenade.Collision), [typeof(Collider), typeof(Vector3)])]
+    [HarmonyPrefix]
+    static bool Damage(Grenade __instance) => __instance.name[0] == 'L';
+
     #endregion
 }
