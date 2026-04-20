@@ -5,20 +5,17 @@ using UnityEngine;
 
 using Jaket.Content;
 using Jaket.IO;
+using Jaket.UI.Lib;
 
 /// <summary> Tangible entity of the screwdriver type. </summary>
-public class Screwdriver : OwnableEntity
+public class Screwdriver : Projectile
 {
     Agent agent;
     Float posX, posY, posZ, rotX, rotY, rotZ;
     Cache<Entity> target;
-    Cache<RemotePlayer> player;
-    Team team => player.Value?.Team ?? Networking.LocalPlayer.Team;
-    Rigidbody rb;
     Harpoon harp;
-    Renderer[] rs;
 
-    public Screwdriver(uint id, EntityType type) : base(id, type) { }
+    public Screwdriver(uint id, EntityType type) : base(id, type, true, true, false) { }
 
     #region snapshot
 
@@ -51,17 +48,18 @@ public class Screwdriver : OwnableEntity
         r.Floats(ref posX, ref posY, ref posZ);
         r.Floats(ref rotX, ref rotY, ref rotZ);
 
-        var id = r.Id();
-        if (id != target && harp)
-        {
-            if (target.Value is Screwable o) o?.Update(harp, target);
-            target = id;
-            if (target.Value is Screwable n) n?.Update(harp, target);
-        }
+        target = r.Id();
     }
 
     #endregion
     #region logic
+
+    public override void Paint(Renderer renderer)
+    {
+        base.Paint(renderer);
+        if (renderer is MeshRenderer m) m.material.mainTexture = null;
+        if (renderer is SpriteRenderer s) s.sprite = Tex.Flash;
+    }
 
     public override void Create() => Assign(Entities.Projectiles.Make(Type, new(posX.Init, posY.Init, posZ.Init)).AddComponent<Agent>());
 
@@ -69,37 +67,9 @@ public class Screwdriver : OwnableEntity
     {
         base.Assign(this.agent = agent);
 
-        agent.Get(out rb);
         agent.Get(out harp);
-        agent.Get(out rs);
-        agent.Get(out AudioSource source);
-
-        OnTransfer = () =>
-        {
-            player = Owner;
-
-            rb.isKinematic = !IsOwner;
-            rs.Each(r =>
-            {
-                if (r is TrailRenderer t)
-                    t.startColor = team.Color() with { a = .4f };
-                else
-                    r.material.color = team.Color() * 8f;
-            });
-
-            if (!IsOwner)
-            {
-                harp.CancelInvoke();
-                harp.stopped = false;
-                harp.drilling = false;
-            }
-
-            harp.aud = source;
-        };
-
-        Locked = false;
-
-        OnTransfer();
+        agent.Get(out harp.aud);
+        agent.Rem<TimeBomb>();
     }
 
     public override void Update(float delta)
@@ -109,15 +79,19 @@ public class Screwdriver : OwnableEntity
         agent.Position = new(posX.GetAware(delta), posY.GetAware(delta), posZ.GetAware(delta));
         agent.Rotation = new(rotX.GetAngle(delta), rotY.GetAngle(delta), rotZ.GetAngle(delta));
 
-        rs.Each(r => { if (r is TrailRenderer t) t.emitting = target == 0u; });
+        harp.stopped     = false;
+        harp.drilling    = false;
+        harp.target      = null;
+        harp.tr.emitting = target == 0u;
     }
-
-    public override void Damage(Reader r) { }
 
     public override void Killed(Reader r, int left)
     {
         Hidden = true;
-        if (agent) Dest(agent.gameObject);
+        Dest(agent.gameObject);
+
+        if (left >= 1 && r.Bool())
+            Inst(harp.breakEffect, agent.Position);
     }
 
     #endregion
@@ -130,48 +104,56 @@ public class Screwdriver : OwnableEntity
         if (__instance && __instance.drill) Entities.Projectiles.Sync(__instance.gameObject);
     }
 
+    [HarmonyPatch(typeof(Harpoon), nameof(Harpoon.DestroyIfNotHit))]
+    [HarmonyPatch(typeof(Harpoon), nameof(Harpoon.MasterDestroy))]
+    [HarmonyPatch(typeof(Harpoon), nameof(Harpoon.SlowUpdate))]
+    [HarmonyPrefix]
+    static bool Break(Harpoon __instance) => false;
+
     [HarmonyPatch(typeof(Harpoon), nameof(Harpoon.OnDestroy))]
     [HarmonyPrefix]
-    static void Death(Harpoon __instance)
+    static bool Death(Harpoon __instance) => Kill<Screwdriver>(__instance, e =>
     {
-        if (__instance.TryGetComponent(out Agent a) && a.Patron is Screwdriver s && !s.Hidden) s.Kill();
-    }
+        if (!e.Hidden) e.Kill(1, w => w.Bool(true));
+    });
 
     [HarmonyPatch(typeof(Harpoon), nameof(Harpoon.Punched))]
     [HarmonyPrefix]
-    static void Parry(Harpoon __instance)
+    static void Parry(Harpoon __instance) => Kill<Screwdriver>(__instance, e =>
     {
-        if (__instance.TryGetComponent(out Agent a) && a.Patron is Screwdriver s) { s.TakeOwnage(); s.target = 0u; }
-    }
+        e.TakeOwnage();
+        e.target = 0u;
+    });
 
     [HarmonyPatch(typeof(Punch), nameof(global::Punch.ActiveEnd))]
     [HarmonyPrefix]
-    static void Punch() => Networking.Entities.Alive<Screwdriver>(s => s.target == AccId, s =>
+    static void Punch()
     {
-        s.harp.transform.forward  = CameraController.Instance.transform.forward;
-        s.harp.transform.position = CameraController.Instance.GetDefaultPos();
-        s.harp.Punched();
-        TimeController.Instance.ParryFlash();
-    });
+        if (FistControl.Instance.currentPunch.type != FistType.Standard) return;
+
+        Networking.Entities.Alive<Screwdriver>(s => s.target == AccId, s =>
+        {
+            s.harp.transform.forward  = CameraController.Instance.transform.forward;
+            s.harp.transform.position = CameraController.Instance.transform.position;
+            s.harp.Punched();
+
+            TimeController.Instance.ParryFlash();
+            FistControl.Instance.currentPunch.anim.Play("Hook", 0, .065f);
+            global::Punch.GetParryLookTarget();
+        });
+    }
 
     [HarmonyPatch(typeof(Harpoon), nameof(Harpoon.OnTriggerEnter))]
     [HarmonyPrefix]
-    static bool Damage(Harpoon __instance, Collider other, float ___damageLeft) => Entities.Damage.Deal<Screwdriver>(__instance, (eid, tid, ally, screwdriver) =>
+    static bool Damage(Harpoon __instance, Collider other) => Deal<Screwdriver>(__instance, (eid, tid, ally, e) =>
     {
-        if (ally || eid.drillers.Contains(__instance)) return false;
+        if (ally || __instance.target?.eid == eid) return false;
 
-        screwdriver.target = tid;
+        e.target = tid;
 
-        Entities.Damage.Deal(tid, ___damageLeft);
+        Entities.Damage.Deal(tid, __instance.damageLeft);
         return true;
-    }, other);
+    }, other: other);
 
     #endregion
-
-    /// <summary> Any kind of entity that a screwdriver can be attached to. </summary>
-    public interface Screwable
-    {
-        /// <summary> Updates the attachment state of the given screwdriver. </summary>
-        public void Update(Harpoon harpoon, uint target);
-    }
 }

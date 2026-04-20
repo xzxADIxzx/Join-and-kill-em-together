@@ -14,7 +14,7 @@ using static Entities;
 /// There are multiple instances of this entity, representing players whose machines are connected to the local one.
 /// The snapshot structure of this entity is identical to the local player structure.
 /// </summary>
-public class RemotePlayer : Entity, Screwdriver.Screwable
+public class RemotePlayer : Entity
 {
     Agent agent;
     Float bodyX, bodyY, bodyZ, hookX, hookY, hookZ, bodyRotation, headRotation;
@@ -172,15 +172,6 @@ public class RemotePlayer : Entity, Screwdriver.Screwable
         Dest(agent);
         Dest(Doll.Hand.gameObject);
         Events.OnTeamChange.Fire();
-    }
-
-    public void Update(Harpoon harpoon, uint target)
-    {
-        if (target == Id)
-        {
-            if (!enemyId.drillers.Contains(harpoon)) enemyId.drillers.Add(harpoon);
-        }
-        else enemyId.drillers.Remove(harpoon);
     }
 
     public void Toggle(bool on) => cs.Each(c => c, c => c.enabled = on);
