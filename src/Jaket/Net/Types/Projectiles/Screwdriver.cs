@@ -83,6 +83,9 @@ public class Screwdriver : Projectile
         harp.drilling    = false;
         harp.target      = null;
         harp.tr.emitting = target == 0u;
+
+        if (harp.fj               ) Dest(harp.fj               );
+        if (harp.currentDrillSound) Dest(harp.currentDrillSound);
     }
 
     public override void Killed(Reader r, int left)
