@@ -225,7 +225,11 @@ public class RemotePlayer : Entity
                 Component<PhysicalShockwave>(Inst(Vendor.Prefabs[(byte)EntityType.Shockwave], r.Vector()), s => { s.force = 11250f * r.Float(); s.hasHurtPlayer = false; }, true);
                 break;
             case 0x02:
-                Inst(Vendor.Prefabs[(byte)EntityType.Blastwave], r.Vector(), Quaternion.Euler(r.Vector()));
+                Inst(Vendor.Prefabs[(byte)EntityType.Blastwave], r.Vector(), Quaternion.Euler(r.Vector())).GetComponentsInChildren<Explosion>().Each(e =>
+                {
+                    e.canHit = AffectedSubjects.All;
+                    e.playerDamageOverride = Team.Ally() ? 0 : 12;
+                });
                 break;
             case 0x03:
                 Inst(Vendor.Prefabs[(byte)EntityType.ShotgunExplosion], r.Vector(), Quaternion.Euler(r.Vector())).GetComponentsInChildren<Explosion>().Each(e =>
