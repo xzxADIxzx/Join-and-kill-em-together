@@ -45,8 +45,7 @@ public class Core : Projectile
 
     public override void Killed(Reader r, int left)
     {
-        Hidden = true;
-        Dest(agent.gameObject);
+        base.Killed(r, left);
 
         if (left >= 1) // normal (environment), super (any beam), ultra (malicious)
         {

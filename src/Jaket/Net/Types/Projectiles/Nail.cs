@@ -4,7 +4,6 @@ using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Content;
-using Jaket.IO;
 
 /// <summary> Tangible entity of any nail type. </summary>
 public class Nail : Projectile
@@ -25,12 +24,6 @@ public class Nail : Projectile
         agent.Run(MasterKill, 5f);
 
         if (!IsOwner) agent.Rem<CapsuleCollider>();
-    }
-
-    public override void Killed(Reader r, int left)
-    {
-        Hidden = true;
-        Dest(agent.gameObject);
     }
 
     #endregion

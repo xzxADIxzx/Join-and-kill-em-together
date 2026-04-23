@@ -102,8 +102,7 @@ public class Rocket : Projectile
 
     public override void Killed(Reader r, int left)
     {
-        Hidden = true;
-        Dest(agent.gameObject);
+        base.Killed(r, left);
 
         if (left >= 1) // harmless (environment), normal (entity), big (any beam), super (midair), ultra (malicious)
         {

@@ -90,8 +90,7 @@ public class Screwdriver : Projectile
 
     public override void Killed(Reader r, int left)
     {
-        Hidden = true;
-        Dest(agent.gameObject);
+        base.Killed(r, left);
 
         if (left >= 1 && r.Bool())
             Inst(harp.breakEffect, agent.Position);

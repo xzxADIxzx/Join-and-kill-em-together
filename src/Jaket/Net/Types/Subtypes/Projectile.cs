@@ -125,6 +125,12 @@ public abstract class Projectile : OwnableEntity
 
     public override void Damage(Reader r) { }
 
+    public override void Killed(Reader r, int left)
+    {
+        Hidden = true;
+        if (agent) Dest(agent.gameObject);
+    }
+
     #endregion
     #region patch
 
