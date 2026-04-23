@@ -71,8 +71,17 @@ public class Magnet : Projectile
 
         agent.Position = new(posX.GetAware(delta), posY.GetAware(delta), posZ.GetAware(delta));
         agent.Rotation = new(rotX.GetAngle(delta), rotY.GetAngle(delta), rotZ.GetAngle(delta));
+        bomb.activated = false;
 
-        bomb.activated = counting && bomb.timer > Time.deltaTime;
+        if (counting)
+        {
+            bomb.timer     = Mathf.MoveTowards(bomb.timer,     0f, Time.deltaTime);
+            bomb.beeptimer = Mathf.MoveTowards(bomb.beeptimer, 0f, Time.deltaTime);
+
+            if (bomb.beeptimer == 0f)
+                bomb.Beep();
+        }
+        if (bomb.beeper) bomb.beeper.transform.localScale = Vector3.Lerp(bomb.beeper.transform.localScale, Vector3.zero, Time.deltaTime * 5f);
     }
 
     public override void Killed(Reader r, int left)
@@ -104,6 +113,10 @@ public class Magnet : Projectile
     [HarmonyPatch(typeof(global::Magnet), nameof(global::Magnet.OnTriggerExit))]
     [HarmonyPrefix]
     static bool Laggy(Collider other) => other.attachedRigidbody?.name[0] != 'R';
+
+    [HarmonyPatch(typeof(Harpoon), nameof(Harpoon.OnTriggerEnter))]
+    [HarmonyPrefix]
+    static bool Damage(Harpoon __instance, Collider other) => Deal<Magnet>(__instance, (eid, tid, ally, e) => true, other: other);
 
     #endregion
 }
