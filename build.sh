@@ -27,6 +27,7 @@ then
     echo "    -h display this text"
     echo "    -r use release configuration"
     echo "    -d deploy to a directory"
+    echo "    -D deploy to an archive"
     echo "    -i ignore the path file"
     exit 0
 fi
@@ -46,7 +47,7 @@ fi
 # endregion
 # region deploy
 
-if echo $1 | grep -q "d"
+if echo $1 | grep -qi "d"
 then
     region "Deploying the built version..."
 
@@ -58,9 +59,14 @@ then
 
     location=$(echo $1 | grep -q "r" && echo Release || echo Debug)
 
-    cp bin/$location/netstandard2.1/Jaket.dll $2
-    cp assets/assets.bundle $2
-    cp assets/bundles/*.properties $2
+    if echo $1 | grep -q "d"
+    then
+        cp bin/$location/netstandard2.1/Jaket.dll $2
+        cp assets/assets.bundle $2
+        cp assets/bundles/*.properties $2
+    else
+        zip -qj $2/Jaket.zip bin/$location/netstandard2.1/Jaket.dll manifest.json README.md assets/assets.bundle assets/bundles/*
+    fi
 fi
 
 # endregion
