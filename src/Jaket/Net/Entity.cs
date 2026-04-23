@@ -200,9 +200,9 @@ public abstract class Entity
             {
                 next = prev + delta;
             }
-            else if (Mathf.Abs(Next - Prev) > .08f)
+            else if (Mathf.Abs(Next - Prev) > .01f)
             {
-                next = value + (Next - Prev) * .3f;
+                next = value + (Next - Prev) * .28f;
             }
             else if (Mathf.Abs(Next - next) > .32f)
             {
