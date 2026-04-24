@@ -11,6 +11,7 @@ using System.Reflection;
 using UnityEngine;
 
 using Jaket.Content;
+using Jaket.Harmony;
 using Jaket.Net;
 
 /// <summary> Set of different tools for simplifying life and systematization of code. </summary>
@@ -123,6 +124,23 @@ public static class Tools
     public static FieldInfo Field<T>(string name) => AccessTools.Field(typeof(T), name);
     /// <summary> Returns metadata of a method. </summary>
     public static MethodInfo Method<T>(string name) => AccessTools.Method(typeof(T), name);
+
+    /// <summary> Iterates all attributes of static methods.  </summary>
+    public static void Attributes(Cons<MethodInfo, IEnumerable<System.Attribute>> cons) => Assembly.GetCallingAssembly().GetTypes().Each(t =>
+    {
+        t.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Static).Each(m => cons(m, m.GetCustomAttributes()));
+    });
+
+    /// <summary> Applies all patches from the attributes. </summary>
+    public static void Apply<T>(MethodInfo method, IEnumerable<System.Attribute> attrs, HarmonyLib.Harmony harmony) where T : Harmony.Patch => attrs.Each(a =>
+    {
+        if (a is T t)
+        {
+            if (attrs.Any(a => a is Prefix    )) harmony.Patch(t.Target, prefix:     new(method, 42));
+            if (attrs.Any(a => a is Postfix   )) harmony.Patch(t.Target, postfix:    new(method, 42));
+            if (attrs.Any(a => a is Transpiler)) harmony.Patch(t.Target, transpiler: new(method, 42));
+        }
+    });
 
     #endregion
     #region enumerable
