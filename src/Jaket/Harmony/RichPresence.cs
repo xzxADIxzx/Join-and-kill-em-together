@@ -1,30 +1,27 @@
 namespace Jaket.Harmony;
 
 using Discord;
-using HarmonyLib;
 using Steamworks;
 
 using Jaket.Net;
 
 public static class RichPresence
 {
-    [HarmonyPatch(typeof(DiscordController), nameof(DiscordController.SendActivity))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(DiscordController), nameof(DiscordController.SendActivity))]
+    [Prefix]
     static void Discord(ref Activity ___cachedActivity)
     {
-        if (LobbyController.Offline) return;
-
         ___cachedActivity.State                  = "Multiplayer via Jaket";
         ___cachedActivity.Party.Size.CurrentSize = LobbyController.Lobby?.MemberCount ?? 0;
         ___cachedActivity.Party.Size.MaxSize     = LobbyController.Lobby?.MaxMembers  ?? 0;
     }
 
-    [HarmonyPatch(typeof(DiscordController), nameof(DiscordController.OnApplicationQuit))]
-    [HarmonyPrefix]
+    [StaticPatch(typeof(DiscordController), nameof(DiscordController.OnApplicationQuit))]
+    [Prefix]
     static bool Discord() => false; // I'd honestly been trying to figure it out, but at some point I just gave up
 
-    [HarmonyPatch(typeof(SteamController), nameof(SteamController.FetchSceneActivity))]
-    [HarmonyPrefix]
+    [StaticPatch(typeof(SteamController), nameof(SteamController.FetchSceneActivity))]
+    [Prefix]
     static void Steam()
     {
         /* group friends according to the lobby they are joined to
@@ -44,12 +41,10 @@ public static class RichPresence
         }
     }
 
-    [HarmonyPatch(typeof(SteamFriends), nameof(SteamFriends.SetRichPresence))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(SteamFriends), nameof(SteamFriends.SetRichPresence))]
+    [Prefix]
     static void Steam(string key, ref string value)
     {
-        if (LobbyController.Offline) return;
-
         // #AtCyberGrind is a localization string for Cyber Grind, just "%difficulty% | Cyber Grind: Wave %wave%" without setting its values
         if (key == "wave") value += " | Multiplayer via Jaket";
 

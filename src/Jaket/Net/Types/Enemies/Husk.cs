@@ -1,10 +1,10 @@
 namespace Jaket.Net.Types;
 
-using HarmonyLib;
 using UnityEngine;
 using UnityEngine.AI;
 
 using Jaket.Content;
+using Jaket.Harmony;
 using Jaket.IO;
 
 /// <summary> Tangible entity of any husk type. </summary>
@@ -108,47 +108,47 @@ public class Husk : Enemy
     #endregion
     #region harmony
 
-    [HarmonyPatch(typeof(ZombieMelee), nameof(ZombieMelee.Swing))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(ZombieMelee), nameof(ZombieMelee.Swing))]
+    [Prefix]
     static void Swing(ZombieMelee __instance)
     {
-        if (__instance.TryGetComponent(out Agent a) && a.Patron is Husk h) h.attack = 1;
+        if (__instance.TryGetEntity(out Husk h)) h.attack = 1;
     }
 
-    [HarmonyPatch(typeof(ZombieMelee), nameof(ZombieMelee.JumpAttack))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(ZombieMelee), nameof(ZombieMelee.JumpAttack))]
+    [Prefix]
     static void Jumpy(ZombieMelee __instance)
     {
-        if (__instance.TryGetComponent(out Agent a) && a.Patron is Husk h) h.attack = 2;
+        if (__instance.TryGetEntity(out Husk h)) h.attack = 2;
     }
 
-    [HarmonyPatch(typeof(ZombieMelee), nameof(ZombieMelee.DamageEnd))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(ZombieMelee), nameof(ZombieMelee.DamageEnd))]
+    [Prefix]
     static void Zeros(ZombieMelee __instance)
     {
-        if (__instance.TryGetComponent(out Agent a) && a.Patron is Husk h) h.attack = 0;
+        if (__instance.TryGetEntity(out Husk h)) h.attack = 0;
     }
 
-    [HarmonyPatch(typeof(ZombieProjectiles), nameof(ZombieProjectiles.Swing))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(ZombieProjectiles), nameof(ZombieProjectiles.Swing))]
+    [Prefix]
     static void Swing(ZombieProjectiles __instance)
     {
-        if (__instance.TryGetComponent(out Agent a) && a.Patron is Husk h) h.attack = 1;
+        if (__instance.TryGetEntity(out Husk h)) h.attack = 1;
     }
 
-    [HarmonyPatch(typeof(ZombieProjectiles), nameof(ZombieProjectiles.Melee))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(ZombieProjectiles), nameof(ZombieProjectiles.Melee))]
+    [Prefix]
     static void Melee(ZombieProjectiles __instance)
     {
-        if (__instance.TryGetComponent(out Agent a) && a.Patron is Husk h) h.attack = 2;
+        if (__instance.TryGetEntity(out Husk h)) h.attack = 2;
     }
 
-    [HarmonyPatch(typeof(ZombieProjectiles), nameof(ZombieProjectiles.DamageEnd))]
-    [HarmonyPatch(typeof(ZombieProjectiles), nameof(ZombieProjectiles.MeleeDamageEnd))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(ZombieProjectiles), nameof(ZombieProjectiles.DamageEnd))]
+    [DynamicPatch(typeof(ZombieProjectiles), nameof(ZombieProjectiles.MeleeDamageEnd))]
+    [Prefix]
     static void Zeros(ZombieProjectiles __instance)
     {
-        if (__instance.TryGetComponent(out Agent a) && a.Patron is Husk h) h.attack = 0;
+        if (__instance.TryGetEntity(out Husk h)) h.attack = 0;
     }
 
     #endregion

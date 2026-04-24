@@ -1,9 +1,9 @@
 namespace Jaket.Net.Types;
 
-using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Content;
+using Jaket.Harmony;
 using Jaket.IO;
 
 /// <summary> Tangible entity of any sawblade type. </summary>
@@ -56,36 +56,36 @@ public class Sawblade : Projectile
     #endregion
     #region harmony
 
-    [HarmonyPatch(typeof(global::Nail), nameof(global::Nail.Start))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(global::Nail), nameof(global::Nail.Start))]
+    [Prefix]
     static void Start(global::Nail __instance)
     {
         if (__instance && __instance.sawblade && !__instance.chainsaw && !__instance.enemy) Entities.Projectiles.Sync(__instance.gameObject);
     }
 
-    [HarmonyPatch(typeof(global::Nail), nameof(global::Nail.SawBreak))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(global::Nail), nameof(global::Nail.SawBreak))]
+    [Prefix]
     static bool Death(global::Nail __instance) => Kill<Sawblade>(__instance, e =>
     {
         if (e.IsOwner) e.Kill(1, w => w.Bool(true));
     });
 
-    [HarmonyPatch(typeof(global::Nail), nameof(global::Nail.MagnetCaught))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(global::Nail), nameof(global::Nail.MagnetCaught))]
+    [Prefix]
     static void Catch(global::Nail __instance) => Events.Post(() =>
     {
         if (__instance.TryGetEntity(out Sawblade s)) s.agent.StopAllCoroutines();
     });
 
-    [HarmonyPatch(typeof(global::Nail), nameof(global::Nail.MagnetRelease))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(global::Nail), nameof(global::Nail.MagnetRelease))]
+    [Prefix]
     static void Freed(global::Nail __instance) => Events.Post(() =>
     {
         if (__instance.TryGetEntity(out Sawblade s)) s.agent.Run(s.MasterKill, 15f);
     });
 
-    [HarmonyPatch(typeof(global::Nail), nameof(global::Nail.DamageEnemy))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(global::Nail), nameof(global::Nail.DamageEnemy))]
+    [Prefix]
     static bool Damage(global::Nail __instance, EnemyIdentifier eid) => Deal<Sawblade>(__instance, (eid, tid, ally, e) =>
     {
         if (ally) { __instance.hitAmount += 1f; return false; }

@@ -1,11 +1,11 @@
 namespace Jaket.Input;
 
 using GameConsole;
-using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Assets;
 using Jaket.Content;
+using Jaket.Harmony;
 using Jaket.Net;
 using Jaket.Net.Admin;
 using Jaket.Net.Types;
@@ -200,23 +200,20 @@ public class Movement : MonoSingleton<Movement>
     #endregion
     #region harmony
 
-    [HarmonyPatch(typeof(OptionsManager), nameof(OptionsManager.Pause))]
-    [HarmonyPrefix]
+    [StaticPatch(typeof(OptionsManager), nameof(OptionsManager.Pause))]
+    [Prefix]
     static void Fixes(ref GunControl ___gc) => ___gc = GunControl.Instance; // idk why, but it keeps happening randomly
 
-    [HarmonyPatch(typeof(OptionsManager), nameof(OptionsManager.UnPause))]
-    [HarmonyPostfix]
+    [StaticPatch(typeof(OptionsManager), nameof(OptionsManager.UnPause))]
+    [Postfix]
     static void Pause() => UpdateState();
 
-    [HarmonyPatch(typeof(OptionsManager), nameof(OptionsManager.LateUpdate))]
-    [HarmonyPostfix]
-    static void Scale()
-    {
-        if (LobbyController.Online) Time.timeScale = Gameflow.Slowmo ? .5f : 1f;
-    }
+    [DynamicPatch(typeof(OptionsManager), nameof(OptionsManager.LateUpdate))]
+    [Postfix]
+    static void Scale() => Time.timeScale = Gameflow.Slowmo ? .5f : 1f;
 
-    [HarmonyPatch(typeof(NewMovement), nameof(NewMovement.GetHurt))]
-    [HarmonyPrefix]
+    [StaticPatch(typeof(NewMovement), nameof(NewMovement.GetHurt))]
+    [Prefix]
     static void Death(NewMovement __instance, int damage, bool invincible, bool ignoreInvincibility)
     {
         if (invincible && __instance.gameObject.layer == 15 && !ignoreInvincibility) return;
@@ -229,33 +226,33 @@ public class Movement : MonoSingleton<Movement>
         }
     }
 
-    [HarmonyPatch(typeof(NewMovement), nameof(NewMovement.GetHurt))]
-    [HarmonyPostfix]
+    [DynamicPatch(typeof(NewMovement), nameof(NewMovement.GetHurt))]
+    [Postfix]
     static void Invincibility(ref float ___hurtInvincibility)
     {
-        if (LobbyController.Online && ___hurtInvincibility > .08f) ___hurtInvincibility = .08f;
+        if (___hurtInvincibility > .08f) ___hurtInvincibility = .08f;
     }
 
-    [HarmonyPatch(typeof(CheatsManager),    nameof(CheatsManager.HandleCheatBind))]
-    [HarmonyPatch(typeof(CheatsController), nameof(CheatsController.Update))]
-    [HarmonyPatch(typeof(ULTRAKILL.Cheats.Noclip), nameof(ULTRAKILL.Cheats.Noclip.UpdateTick))]
-    [HarmonyPatch(typeof(ULTRAKILL.Cheats.Flight), nameof(ULTRAKILL.Cheats.Flight.Update))]
-    [HarmonyPatch(typeof(Grenade), nameof(Grenade.Update))]
-    [HarmonyPrefix]
+    [StaticPatch(typeof(CheatsManager),           nameof(CheatsManager.HandleCheatBind))]
+    [StaticPatch(typeof(CheatsController),        nameof(CheatsController.Update))]
+    [StaticPatch(typeof(ULTRAKILL.Cheats.Noclip), nameof(ULTRAKILL.Cheats.Noclip.UpdateTick))]
+    [StaticPatch(typeof(ULTRAKILL.Cheats.Flight), nameof(ULTRAKILL.Cheats.Flight.Update))]
+    [StaticPatch(typeof(Grenade),                 nameof(Grenade.Update))]
+    [Prefix]
     static bool GrenadeRide() => !(UI.AnyDialog || Emotes.Current != 0xFF || nm.dead);
 
-    [HarmonyPatch(typeof(WeaponWheel), nameof(WeaponWheel.OnEnable))]
-    [HarmonyPrefix]
+    [StaticPatch(typeof(WeaponWheel), nameof(WeaponWheel.OnEnable))]
+    [Prefix]
     static void Superiority()
     {
         if (UI.Emote.Shown) WeaponWheel.Instance.gameObject.SetActive(false);
     }
 
-    [HarmonyPatch(typeof(CameraFrustumTargeter), nameof(CameraFrustumTargeter.CurrentTarget), MethodType.Setter)]
-    [HarmonyPrefix]
+    [StaticPatch(typeof(CameraFrustumTargeter), nameof(CameraFrustumTargeter.CurrentTarget), HarmonyLib.MethodType.Setter)]
+    [Prefix]
     static void LoosersLove(ref Collider value)
     {
-        if (value && value.TryGetComponent(out Entity.Agent a) && a.Patron is RemotePlayer p && p.Team.Ally()) value = null;
+        if (value && value.TryGetEntity(out RemotePlayer p) && p.Team.Ally()) value = null;
     }
 
     #endregion

@@ -1,6 +1,5 @@
 namespace Jaket.Harmony;
 
-using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Content;
@@ -8,24 +7,24 @@ using Jaket.Net;
 
 public static class GunsPatch
 {
-    [HarmonyPatch(typeof(GunControl), nameof(GunControl.SwitchWeapon))]
-    [HarmonyPostfix]
+    [StaticPatch(typeof(GunControl), nameof(GunControl.SwitchWeapon))]
+    [Postfix]
     static void Switch() => Events.OnHandChange.Fire();
 
-    [HarmonyPatch(typeof(GunControl), nameof(GunControl.ForceWeapon))]
-    [HarmonyPostfix]
+    [StaticPatch(typeof(GunControl), nameof(GunControl.ForceWeapon))]
+    [Postfix]
     static void Forced() => Events.OnHandChange.Fire();
 
-    [HarmonyPatch(typeof(GunColorGetter), nameof(GunColorGetter.UpdateColor))]
-    [HarmonyPrefix]
+    [StaticPatch(typeof(GunColorGetter), nameof(GunColorGetter.UpdateColor))]
+    [Prefix]
     static bool Colors(GunColorGetter __instance) => __instance.GetComponentInParent<Entity.Agent>() == null;
 
-    [HarmonyPatch(typeof(WeaponIcon), nameof(WeaponIcon.UpdateIcon))]
-    [HarmonyPrefix]
+    [StaticPatch(typeof(WeaponIcon), nameof(WeaponIcon.UpdateIcon))]
+    [Prefix]
     static bool HudFix(WeaponIcon __instance) => __instance.GetComponentInParent<Entity.Agent>() == null;
 
-    [HarmonyPatch(typeof(WeaponIcon), nameof(WeaponIcon.UpdateIcon))]
-    [HarmonyPostfix]
+    [StaticPatch(typeof(WeaponIcon), nameof(WeaponIcon.UpdateIcon))]
+    [Postfix]
     static void MatFix(WeaponIcon __instance, Renderer[] ___variationColoredRenderers)
     {
         var color = ColorBlindSettings.Instance.variationColors[(int)__instance.weaponDescriptor.variationColor];
@@ -37,11 +36,11 @@ public static class GunsPatch
         ___variationColoredRenderers.Each(r => r.Properties(b => b.SetColor("_EmissiveColor", color), true));
     }
 
-    [HarmonyPatch(typeof(GroundCheck), nameof(GroundCheck.UpdateState))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(GroundCheck), nameof(GroundCheck.UpdateState))]
+    [Prefix]
     static void Shock(GroundCheck __instance)
     {
-        if (LobbyController.Offline || __instance.superJumpChance <= 0f || __instance.superJumpChance >= Time.deltaTime || !NewMovement.Instance.stillHolding) return;
+        if (__instance.superJumpChance <= 0f || __instance.superJumpChance >= Time.deltaTime || !NewMovement.Instance.stillHolding) return;
 
         Networking.Send(PacketType.Punch, 21, w =>
         {
@@ -54,11 +53,11 @@ public static class GunsPatch
         if (Version.DEBUG) Log.Debug("[GUNS] Caught shockwave explosion");
     }
 
-    [HarmonyPatch(typeof(Punch), nameof(Punch.BlastCheck))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(Punch), nameof(Punch.BlastCheck))]
+    [Prefix]
     static void Blast(Punch __instance)
     {
-        if (LobbyController.Offline || !__instance.heldAction.IsPressed()) return;
+        if (!__instance.heldAction.IsPressed()) return;
 
         Networking.Send(PacketType.Punch, 29, w =>
         {
@@ -71,11 +70,11 @@ public static class GunsPatch
         if (Version.DEBUG) Log.Debug("[GUNS] Caught blastwave explosion");
     }
 
-    [HarmonyPatch(typeof(Shotgun), nameof(Shotgun.Shoot))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(Shotgun), nameof(Shotgun.Shoot))]
+    [Prefix]
     static void PumpShotgun(Shotgun __instance)
     {
-        if (LobbyController.Offline || __instance.variation != 1 || __instance.primaryCharge != 3) return;
+        if (__instance.variation != 1 || __instance.primaryCharge != 3) return;
 
         Networking.Send(PacketType.Punch, 29, w =>
         {
@@ -88,12 +87,10 @@ public static class GunsPatch
         if (Version.DEBUG) Log.Debug("[GUNS] Caught shotgun explosion");
     }
 
-    [HarmonyPatch(typeof(ShotgunHammer), nameof(ShotgunHammer.ImpactEffects))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(ShotgunHammer), nameof(ShotgunHammer.ImpactEffects))]
+    [Prefix]
     static void PumpHammer(ShotgunHammer __instance, bool ___forceWeakHit, int ___tier)
     {
-        if (LobbyController.Offline) return;
-
         Networking.Send(PacketType.Punch, 29, w =>
         {
             w.Id(AccId);

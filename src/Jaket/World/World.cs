@@ -1,10 +1,10 @@
 namespace Jaket.World;
 
-using HarmonyLib;
 using UnityEngine;
 using UnityEngine.UI;
 
 using Jaket.Content;
+using Jaket.Harmony;
 using Jaket.Input;
 using Jaket.IO;
 using Jaket.Net;
@@ -158,50 +158,50 @@ public class World
     #endregion
     #region harmony
 
-    [HarmonyPatch(typeof(ObjectActivator), nameof(ObjectActivator.Activate), typeof(bool))]
-    [HarmonyPostfix]
+    [DynamicPatch(typeof(ObjectActivator), nameof(ObjectActivator.Activate), typeof(bool))]
+    [Postfix]
     static void Activate(ObjectActivator __instance)
     {
         Perform(__instance.Path(), default);
     }
 
-    [HarmonyPatch(typeof(Button), "Press")]
-    [HarmonyPostfix]
+    [DynamicPatch(typeof(Button), "Press")]
+    [Postfix]
     static void Activate(Button __instance)
     {
         Perform(__instance.Path(), default);
     }
 
-    [HarmonyPatch(typeof(Glass), nameof(Glass.Shatter))]
-    [HarmonyPostfix]
+    [DynamicPatch(typeof(Glass), nameof(Glass.Shatter))]
+    [Postfix]
     static void Activate(Glass __instance)
     {
         Perform("window", new(__instance.transform.position.x, __instance.transform.position.z));
     }
 
-    [HarmonyPatch(typeof(StatueActivator), nameof(StatueActivator.Start))]
-    [HarmonyPostfix]
+    [DynamicPatch(typeof(StatueActivator), nameof(StatueActivator.Start))]
+    [Postfix]
     static void Activate(StatueActivator __instance)
     {
         Perform("statue", new(__instance.transform.position.x, __instance.transform.position.z));
     }
 
-    [HarmonyPatch(typeof(LimboSwitch), nameof(LimboSwitch.Pressed))]
-    [HarmonyPostfix]
+    [DynamicPatch(typeof(LimboSwitch), nameof(LimboSwitch.Pressed))]
+    [Postfix]
     static void Activate(LimboSwitch __instance)
     {
         Perform("switch", new(__instance.transform.position.x, __instance.transform.position.z));
     }
 
-    [HarmonyPatch(typeof(Flammable), nameof(Flammable.Burn))]
-    [HarmonyPostfix]
+    [DynamicPatch(typeof(Flammable), nameof(Flammable.Burn))]
+    [Postfix]
     static void Activate(Flammable __instance)
     {
         if (__instance.name == "Flammable") Perform("flammable", new(__instance.transform.position.x, __instance.transform.position.z));
     }
 
-    [HarmonyPatch(typeof(ActivateArena), nameof(ActivateArena.Activate))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(ActivateArena), nameof(ActivateArena.Activate))]
+    [Prefix]
     static void Activate(ActivateArena __instance)
     {
         Perform("arena", new(__instance.transform.position.x, __instance.transform.position.z));
@@ -209,15 +209,15 @@ public class World
         __instance.doors = [];
     }
 
-    [HarmonyPatch(typeof(FinalDoor), nameof(FinalDoor.Open))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(FinalDoor), nameof(FinalDoor.Open))]
+    [Prefix]
     static void Activate(FinalDoor __instance)
     {
         Perform("final", new(__instance.transform.position.x, __instance.transform.position.z));
     }
 
-    [HarmonyPatch(typeof(CheckPoint), nameof(CheckPoint.ActivateCheckPoint))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(CheckPoint), nameof(CheckPoint.ActivateCheckPoint))]
+    [Prefix]
     static bool Activate(CheckPoint __instance)
     {
         if (sm.currentCheckPoint && sm.currentCheckPoint != __instance)
@@ -236,8 +236,8 @@ public class World
         return false;
     }
 
-    [HarmonyPatch(typeof(CheckPoint), nameof(CheckPoint.OnRespawn))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(CheckPoint), nameof(CheckPoint.OnRespawn))]
+    [Prefix]
     static bool Respawn(CheckPoint __instance)
     {
         __instance.onRestart?.Invoke();
@@ -247,8 +247,8 @@ public class World
         return false;
     }
 
-    [HarmonyPatch(typeof(Door), nameof(Door.Optimize))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(Door), nameof(Door.Optimize))]
+    [Prefix]
     static bool Unload() => false;
 
     #endregion

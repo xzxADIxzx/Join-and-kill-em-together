@@ -1,12 +1,12 @@
 namespace Jaket.Net.Types;
 
-using HarmonyLib;
 using System.Collections.Generic;
 using ULTRAKILL.Portal;
 using UnityEngine;
 
 using Jaket.Assets;
 using Jaket.Content;
+using Jaket.Harmony;
 using Jaket.IO;
 
 using static Jaket.UI.Lib.Pal;
@@ -200,7 +200,7 @@ public class TeamCoin : OwnableEntity
 
     public void Reflect()
     {
-        if (target && target.TryGetComponent(out Agent a) && a.Patron is TeamCoin c)
+        if (target && target.TryGetEntity(out TeamCoin c))
         {
             c.chain = chain;
             c.power = power + 1;
@@ -382,19 +382,19 @@ public class TeamCoin : OwnableEntity
     #endregion
     #region harmony
 
-    [HarmonyPatch(typeof(Coin), nameof(Coin.Start))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(Coin), nameof(Coin.Start))]
+    [Prefix]
     static bool Start(Coin __instance)
     {
         if (__instance) Entities.Coins.Sync(__instance.gameObject);
         return false;
     }
 
-    [HarmonyPatch(typeof(Coin), nameof(Coin.OnCollisionEnter))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(Coin), nameof(Coin.OnCollisionEnter))]
+    [Prefix]
     static bool Death(Coin __instance, Collision collision)
     {
-        if (__instance.TryGetComponent(out Agent a) && a.Patron is TeamCoin c && LayerMaskDefaults.IsMatchingLayer(collision.gameObject.layer, LMD.Environment))
+        if (__instance.TryGetEntity(out TeamCoin c) && LayerMaskDefaults.IsMatchingLayer(collision.gameObject.layer, LMD.Environment))
         {
             if (c.IsOwner) c.Kill();
             return false;
@@ -402,31 +402,31 @@ public class TeamCoin : OwnableEntity
         else return true;
     }
 
-    [HarmonyPatch(typeof(Coin), nameof(Coin.Update))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(Coin), nameof(Coin.Update))]
+    [Prefix]
     static bool Update() => false;
 
-    [HarmonyPatch(typeof(Coin), nameof(Coin.DelayedReflectRevolver))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(Coin), nameof(Coin.DelayedReflectRevolver))]
+    [Prefix]
     static bool Reflect(Coin __instance, GameObject beam)
     {
-        if (__instance.TryGetComponent(out Agent a) && a.Patron is TeamCoin c) c.Reflect(beam);
+        if (__instance.TryGetEntity(out TeamCoin c)) c.Reflect(beam);
         return false;
     }
 
-    [HarmonyPatch(typeof(Coin), nameof(Coin.DelayedPunchflection))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(Coin), nameof(Coin.DelayedPunchflection))]
+    [Prefix]
     static bool Punch(Coin __instance)
     {
-        if (__instance.TryGetComponent(out Agent a) && a.Patron is TeamCoin c) c.Punch();
+        if (__instance.TryGetEntity(out TeamCoin c)) c.Punch();
         return false;
     }
 
-    [HarmonyPatch(typeof(Coin), nameof(Coin.Bounce))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(Coin), nameof(Coin.Bounce))]
+    [Prefix]
     static bool Bounce(Coin __instance)
     {
-        if (__instance.TryGetComponent(out Agent a) && a.Patron is TeamCoin c) c.Bounce();
+        if (__instance.TryGetEntity(out TeamCoin c)) c.Bounce();
         return false;
     }
 

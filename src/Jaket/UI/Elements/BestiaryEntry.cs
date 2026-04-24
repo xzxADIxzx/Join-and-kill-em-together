@@ -1,11 +1,11 @@
 namespace Jaket.UI.Elements;
 
-using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 using Jaket.Assets;
+using Jaket.Harmony;
 
 /// <summary> Additional entry to insert into the bestiary. </summary>
 [Serializable]
@@ -24,8 +24,8 @@ public struct BestiaryEntry
 
     #region harmony
 
-    [HarmonyPatch(typeof(EnemyInfoPage), nameof(EnemyInfoPage.UpdateInfo))]
-    [HarmonyPrefix]
+    [StaticPatch(typeof(EnemyInfoPage), nameof(EnemyInfoPage.UpdateInfo))]
+    [Prefix]
     static void Inject(ref SpawnableObjectsDatabase ___objects)
     {
         // the database is either already patched or not vanilla at all

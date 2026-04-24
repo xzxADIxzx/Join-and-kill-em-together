@@ -1,11 +1,11 @@
 namespace Jaket.Net.Types;
 
-using HarmonyLib;
 using System.Collections;
 using UnityEngine;
 
 using Jaket.Assets;
 using Jaket.Content;
+using Jaket.Harmony;
 
 /// <summary> Tangible entity of any plushie type. </summary>
 public class Plushie : Item
@@ -110,8 +110,8 @@ public class Plushie : Item
     #endregion
     #region harmony
 
-    [HarmonyPatch(typeof(ItemTrigger), nameof(ItemTrigger.OnTriggerEnter))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(ItemTrigger), nameof(ItemTrigger.OnTriggerEnter))]
+    [Prefix]
     static bool Trash(ItemTrigger __instance, Collider other)
     {
         var agent = other.GetComponentInParent<Agent>();

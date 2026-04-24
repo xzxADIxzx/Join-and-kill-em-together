@@ -1,9 +1,9 @@
 namespace Jaket.Net.Types;
 
-using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Content;
+using Jaket.Harmony;
 
 /// <summary> Tangible entity of any nail type. </summary>
 public class Nail : Projectile
@@ -29,37 +29,37 @@ public class Nail : Projectile
     #endregion
     #region harmony
 
-    [HarmonyPatch(typeof(global::Nail), nameof(global::Nail.Start))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(global::Nail), nameof(global::Nail.Start))]
+    [Prefix]
     static void Start(global::Nail __instance)
     {
         if (__instance && !__instance.sawblade && !__instance.chainsaw && !__instance.enemy) Entities.Projectiles.Sync(__instance.gameObject);
     }
 
-    [HarmonyPatch(typeof(global::Nail), nameof(global::Nail.RemoveTime))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(global::Nail), nameof(global::Nail.RemoveTime))]
+    [Prefix]
     static bool Break(global::Nail __instance) => false;
 
-    [HarmonyPatch(typeof(global::Nail), nameof(global::Nail.OnDestroy))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(global::Nail), nameof(global::Nail.OnDestroy))]
+    [Prefix]
     static void Death(global::Nail __instance) => Kill<Nail>(__instance, e => { if (!e.Hidden) e.Kill(); });
 
-    [HarmonyPatch(typeof(global::Nail), nameof(global::Nail.MagnetCaught))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(global::Nail), nameof(global::Nail.MagnetCaught))]
+    [Prefix]
     static void Catch(global::Nail __instance) => Events.Post(() =>
     {
         if (__instance.TryGetEntity(out Nail n)) n.agent.StopAllCoroutines();
     });
 
-    [HarmonyPatch(typeof(global::Nail), nameof(global::Nail.MagnetRelease))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(global::Nail), nameof(global::Nail.MagnetRelease))]
+    [Prefix]
     static void Freed(global::Nail __instance) => Events.Post(() =>
     {
         if (__instance.TryGetEntity(out Nail n)) n.agent.Run(n.MasterKill, 5f);
     });
 
-    [HarmonyPatch(typeof(Punch), nameof(Punch.BlastCheck))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(Punch), nameof(Punch.BlastCheck))]
+    [Prefix]
     static void Blast(Punch __instance)
     {
         if (__instance.heldAction.IsPressed()) Networking.Entities.Alive<Nail>(e => e.rb && (e.agent.Position - NewMovement.Instance.transform.position).sqrMagnitude < 100f, e =>
@@ -76,8 +76,8 @@ public class Nail : Projectile
         });
     }
 
-    [HarmonyPatch(typeof(global::Nail), nameof(global::Nail.DamageEnemy))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(global::Nail), nameof(global::Nail.DamageEnemy))]
+    [Prefix]
     static bool Damage(global::Nail __instance, EnemyIdentifier eid) => Deal<Nail>(__instance, (eid, tid, ally, e) =>
     {
         e.agent.StopAllCoroutines();

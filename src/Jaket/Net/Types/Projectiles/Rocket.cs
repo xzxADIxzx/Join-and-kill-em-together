@@ -1,9 +1,9 @@
 namespace Jaket.Net.Types;
 
-using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Content;
+using Jaket.Harmony;
 using Jaket.IO;
 using Jaket.UI.Lib;
 
@@ -115,29 +115,29 @@ public class Rocket : Projectile
     #endregion
     #region harmony
 
-    [HarmonyPatch(typeof(Grenade), nameof(Grenade.Start))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(Grenade), nameof(Grenade.Start))]
+    [Prefix]
     static void Start(Grenade __instance)
     {
         if (__instance && __instance.rocket && !__instance.enemy) Entities.Projectiles.Sync(__instance.gameObject);
     }
 
-    [HarmonyPatch(typeof(Grenade), nameof(Grenade.Explode))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(Grenade), nameof(Grenade.Explode))]
+    [Prefix]
     static bool Death(Grenade __instance, bool harmless, bool big, bool super, bool ultrabooster) => Kill<Rocket>(__instance, e =>
     {
         e.Kill(1, w => w.Bools(harmless, big, super, ultrabooster));
     }, true);
 
-    [HarmonyPatch(typeof(Grenade), nameof(Grenade.GrenadeBeam))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(Grenade), nameof(Grenade.GrenadeBeam))]
+    [Prefix]
     static void Beamy(Grenade __instance) => Kill<Rocket>(__instance, e =>
     {
         e.Kill();
     });
 
-    [HarmonyPatch(typeof(Grenade), nameof(Grenade.PlayerRideStart))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(Grenade), nameof(Grenade.PlayerRideStart))]
+    [Prefix]
     static bool Ride(Grenade __instance)
     {
         if (__instance.TryGetEntity(out Rocket r))
@@ -151,8 +151,8 @@ public class Rocket : Projectile
         else return true;
     }
 
-    [HarmonyPatch(typeof(Grenade), nameof(Grenade.frozen), MethodType.Getter)]
-    [HarmonyPostfix]
+    [DynamicPatch(typeof(Grenade), nameof(Grenade.frozen), HarmonyLib.MethodType.Getter)]
+    [Postfix]
     static void Stop(Grenade __instance, ref bool __result)
     {
         if (__instance.name[0] != 'L') __result = __instance.name[0] == 'F';

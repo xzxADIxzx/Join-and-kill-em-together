@@ -1,10 +1,10 @@
 namespace Jaket.Net.Vendors;
 
-using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Assets;
 using Jaket.Content;
+using Jaket.Harmony;
 
 using static Entities;
 
@@ -49,8 +49,8 @@ public class Damage : Vendor
     #endregion
     #region harmony
 
-    [HarmonyPatch(typeof(EnemyIdentifier), nameof(EnemyIdentifier.DeliverDamage))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(EnemyIdentifier), nameof(EnemyIdentifier.DeliverDamage))]
+    [Prefix]
     static void MeleeDmg(EnemyIdentifier __instance, float multiplier)
     {
         if (__instance.dead || multiplier == 0f) return;

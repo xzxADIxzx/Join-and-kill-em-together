@@ -1,9 +1,9 @@
 namespace Jaket.Net.Types;
 
-using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Content;
+using Jaket.Harmony;
 using Jaket.IO;
 using Jaket.UI.Lib;
 
@@ -99,36 +99,36 @@ public class Screwdriver : Projectile
     #endregion
     #region harmony
 
-    [HarmonyPatch(typeof(Harpoon), nameof(Harpoon.Start))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(Harpoon), nameof(Harpoon.Start))]
+    [Prefix]
     static void Start(Harpoon __instance)
     {
         if (__instance && __instance.drill) Entities.Projectiles.Sync(__instance.gameObject);
     }
 
-    [HarmonyPatch(typeof(Harpoon), nameof(Harpoon.DestroyIfNotHit))]
-    [HarmonyPatch(typeof(Harpoon), nameof(Harpoon.MasterDestroy))]
-    [HarmonyPatch(typeof(Harpoon), nameof(Harpoon.SlowUpdate))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(Harpoon), nameof(Harpoon.DestroyIfNotHit))]
+    [DynamicPatch(typeof(Harpoon), nameof(Harpoon.MasterDestroy))]
+    [DynamicPatch(typeof(Harpoon), nameof(Harpoon.SlowUpdate))]
+    [Prefix]
     static bool Break(Harpoon __instance) => false;
 
-    [HarmonyPatch(typeof(Harpoon), nameof(Harpoon.OnDestroy))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(Harpoon), nameof(Harpoon.OnDestroy))]
+    [Prefix]
     static bool Death(Harpoon __instance) => Kill<Screwdriver>(__instance, e =>
     {
         if (!e.Hidden) e.Kill(1, w => w.Bool(true));
     });
 
-    [HarmonyPatch(typeof(Harpoon), nameof(Harpoon.Punched))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(Harpoon), nameof(Harpoon.Punched))]
+    [Prefix]
     static void Parry(Harpoon __instance) => Kill<Screwdriver>(__instance, e =>
     {
         e.TakeOwnage();
         e.target = 0u;
     });
 
-    [HarmonyPatch(typeof(Punch), nameof(global::Punch.ActiveEnd))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(Punch), nameof(global::Punch.ActiveEnd))]
+    [Prefix]
     static void Punch()
     {
         if (FistControl.Instance.currentPunch.type != FistType.Standard) return;
@@ -145,8 +145,8 @@ public class Screwdriver : Projectile
         });
     }
 
-    [HarmonyPatch(typeof(Harpoon), nameof(Harpoon.OnTriggerEnter))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(Harpoon), nameof(Harpoon.OnTriggerEnter))]
+    [Prefix]
     static bool Damage(Harpoon __instance, Collider other) => Deal<Screwdriver>(__instance, (eid, tid, ally, e) =>
     {
         if (ally || __instance.target?.eid == eid) return false;

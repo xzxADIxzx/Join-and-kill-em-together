@@ -1,9 +1,9 @@
 namespace Jaket.Net.Types;
 
-using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Content;
+using Jaket.Harmony;
 using Jaket.IO;
 using Jaket.UI.Lib;
 
@@ -58,29 +58,29 @@ public class Core : Projectile
     #endregion
     #region harmony
 
-    [HarmonyPatch(typeof(Grenade), nameof(Grenade.Start))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(Grenade), nameof(Grenade.Start))]
+    [Prefix]
     static void Start(Grenade __instance)
     {
         if (__instance && !__instance.rocket && !__instance.enemy) Entities.Projectiles.Sync(__instance.gameObject);
     }
 
-    [HarmonyPatch(typeof(Grenade), nameof(Grenade.Explode))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(Grenade), nameof(Grenade.Explode))]
+    [Prefix]
     static bool Death(Grenade __instance, bool harmless, bool big, bool super, bool ultrabooster) => Kill<Core>(__instance, e =>
     {
         e.Kill(1, w => w.Bools(harmless, big, super, ultrabooster));
     }, true);
 
-    [HarmonyPatch(typeof(Grenade), nameof(Grenade.GrenadeBeam))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(Grenade), nameof(Grenade.GrenadeBeam))]
+    [Prefix]
     static void Beamy(Grenade __instance) => Kill<Core>(__instance, e =>
     {
         e.Kill();
     });
 
-    [HarmonyPatch(typeof(Grenade), nameof(Grenade.Collision), [typeof(Collider), typeof(Vector3)])]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(Grenade), nameof(Grenade.Collision), [typeof(Collider), typeof(Vector3)])]
+    [Prefix]
     static bool Damage(Grenade __instance) => __instance.name[0] == 'L';
 
     #endregion

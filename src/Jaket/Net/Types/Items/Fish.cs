@@ -1,10 +1,10 @@
 namespace Jaket.Net.Types;
 
-using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Assets;
 using Jaket.Content;
+using Jaket.Harmony;
 
 /// <summary> Tangible entity of any fish type. </summary>
 public class Fish : Item
@@ -51,8 +51,8 @@ public class Fish : Item
     #endregion
     #region harmony
 
-    [HarmonyPatch(typeof(FishCooker), nameof(FishCooker.OnTriggerEnter))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(FishCooker), nameof(FishCooker.OnTriggerEnter))]
+    [Prefix]
     static bool Cook(Collider other, bool ___unusable)
     {
         var agent = other.GetComponentInParent<Agent>();
@@ -79,8 +79,8 @@ public class Fish : Item
         else return true;
     }
 
-    [HarmonyPatch(typeof(BaitItem), nameof(BaitItem .OnTriggerEnter))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(BaitItem), nameof(BaitItem .OnTriggerEnter))]
+    [Prefix]
     static bool Bait(Collider other, BaitItem __instance, FishDB[] ___supportedWaters, FishObject[] ___attractFish, GameObject ___consumedPrefab, bool ___silentFail)
     {
         var agent = __instance.GetComponentInParent<Agent>();

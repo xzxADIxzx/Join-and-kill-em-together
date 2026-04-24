@@ -1,9 +1,9 @@
 namespace Jaket.Net.Types;
 
-using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Content;
+using Jaket.Harmony;
 using Jaket.IO;
 
 /// <summary> Tangible entity of the cannonball type. </summary>
@@ -38,43 +38,43 @@ public class Cannon : Projectile
     #endregion
     #region harmony
 
-    [HarmonyPatch(typeof(Cannonball), nameof(Cannonball.Start))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(Cannonball), nameof(Cannonball.Start))]
+    [Prefix]
     static void Start(Cannonball __instance)
     {
         if (__instance && __instance.physicsCannonball) Entities.Projectiles.Sync(__instance.gameObject);
     }
 
-    [HarmonyPatch(typeof(Cannonball), nameof(Cannonball.Break))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(Cannonball), nameof(Cannonball.Break))]
+    [Prefix]
     static bool Break(Cannonball __instance) => Kill<Cannon>(__instance, e =>
     {
         if (e.IsOwner) e.Kill(1, w => w.Bool(true));
     });
 
-    [HarmonyPatch(typeof(Cannonball), nameof(Cannonball.Explode))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(Cannonball), nameof(Cannonball.Explode))]
+    [Prefix]
     static bool Death(Cannonball __instance) => Kill<Cannon>(__instance, e =>
     {
         e.Kill(2, w => { w.Bool(true); w.Bool(true); });
     });
 
-    [HarmonyPatch(typeof(Cannonball), nameof(Cannonball.Launch))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(Cannonball), nameof(Cannonball.Launch))]
+    [Prefix]
     static void Parry(Cannonball __instance) => Kill<Cannon>(__instance, e =>
     {
         e.TakeOwnage();
     });
 
-    [HarmonyPatch(typeof(Cannonball), nameof(Cannonball.Unlaunch))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(Cannonball), nameof(Cannonball.Unlaunch))]
+    [Prefix]
     static void Throw(Cannonball __instance) => Kill<Cannon>(__instance, e =>
     {
         e.TakeOwnage();
     });
 
-    [HarmonyPatch(typeof(Cannonball), nameof(Cannonball.Collide))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(Cannonball), nameof(Cannonball.Collide))]
+    [Prefix]
     static bool Damage(Cannonball __instance, Collider other) => Deal<Cannon>(__instance, (eid, tid, ally, e) =>
     {
         if (ally || __instance.hitEnemies.Contains(eid)) return false;

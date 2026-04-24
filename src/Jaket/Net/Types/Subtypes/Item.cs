@@ -1,10 +1,10 @@
 namespace Jaket.Net.Types;
 
-using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Assets;
 using Jaket.Content;
+using Jaket.Harmony;
 using Jaket.IO;
 
 /// <summary> Abstract entity of any item type, except books. </summary>
@@ -148,8 +148,8 @@ public abstract class Item : OwnableEntity
     #endregion
     #region harmony
 
-    [HarmonyPatch(typeof(ItemIdentifier), MethodType.Constructor)]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(ItemIdentifier), null, HarmonyLib.MethodType.Constructor)]
+    [Prefix]
     static void Start(ItemIdentifier __instance) => Events.Post(() =>
     {
         if (__instance) Entities.Items.Sync(__instance.gameObject, true);

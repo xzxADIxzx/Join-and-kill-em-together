@@ -5,6 +5,7 @@ using UnityEngine;
 
 using Jaket.Assets;
 using Jaket.Content;
+using Jaket.Harmony;
 
 using static Entities;
 
@@ -93,8 +94,8 @@ public class Hitscans : Vendor
 
     static bool wall;
 
-    [HarmonyPatch(typeof(RevolverBeam), nameof(RevolverBeam.Start))]
-    [HarmonyPostfix]
+    [DynamicPatch(typeof(RevolverBeam), nameof(RevolverBeam.Start))]
+    [Postfix]
     static void Start(RevolverBeam __instance, LineRenderer ___lr)
     {
         __instance.alternateStartPoint = ___lr.GetPosition(1);
@@ -102,17 +103,17 @@ public class Hitscans : Vendor
         wall = false;
     }
 
-    [HarmonyPatch(typeof(RevolverBeam), nameof(RevolverBeam.Shoot))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(RevolverBeam), nameof(RevolverBeam.Shoot))]
+    [Prefix]
     static void Hide() => Networking.Entities.Player(p => p.Team.Ally(), p => p.Toggle(false));
 
-    [HarmonyPatch(typeof(RevolverBeam), nameof(RevolverBeam.Shoot))]
-    [HarmonyPostfix]
+    [DynamicPatch(typeof(RevolverBeam), nameof(RevolverBeam.Shoot))]
+    [Postfix]
     static void Show() => Networking.Entities.Player(p => p.Team.Ally(), p => p.Toggle(true));
 
-    [HarmonyPatch(typeof(RevolverBeam), nameof(RevolverBeam.HitSomething))]
-    [HarmonyPatch(typeof(RevolverBeam), nameof(RevolverBeam.PiercingShotCheck))]
-    [HarmonyTranspiler]
+    [DynamicPatch(typeof(RevolverBeam), nameof(RevolverBeam.HitSomething))]
+    [DynamicPatch(typeof(RevolverBeam), nameof(RevolverBeam.PiercingShotCheck))]
+    [Transpiler]
     static Ins Wall(Ins instructions)
     {
         foreach (var ins in instructions)
@@ -128,8 +129,8 @@ public class Hitscans : Vendor
         }
     }
 
-    [HarmonyPatch(typeof(RevolverBeam), nameof(RevolverBeam.ExecuteHits))]
-    [HarmonyTranspiler]
+    [DynamicPatch(typeof(RevolverBeam), nameof(RevolverBeam.ExecuteHits))]
+    [Transpiler]
     static Ins Call(Ins instructions)
     {
         foreach (var ins in instructions)

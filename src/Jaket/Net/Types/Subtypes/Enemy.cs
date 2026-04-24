@@ -1,9 +1,9 @@
 namespace Jaket.Net.Types;
 
-using HarmonyLib;
 using UnityEngine;
 
 using Jaket.Content;
+using Jaket.Harmony;
 using Jaket.IO;
 
 /// <summary> Abstract entity of any enemy type. </summary>
@@ -115,19 +115,19 @@ public abstract class Enemy : OwnableEntity
     #endregion
     #region harmony
 
-    [HarmonyPatch(typeof(EnemyIdentifier), nameof(EnemyIdentifier.Start))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(EnemyIdentifier), nameof(EnemyIdentifier.Start))]
+    [Prefix]
     static void Start(EnemyIdentifier __instance)
     {
         if (__instance) Entities.Enemies.Sync(__instance.gameObject, __instance.IsSandboxEnemy);
     }
 
-    [HarmonyPatch(typeof(EnemyIdentifier), nameof(EnemyIdentifier.UpdateTarget))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(EnemyIdentifier), nameof(EnemyIdentifier.UpdateTarget))]
+    [Prefix]
     static bool Focus() => false;
 
-    [HarmonyPatch(typeof(global::Enemy), nameof(global::Enemy.OnTravel))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(global::Enemy), nameof(global::Enemy.OnTravel))]
+    [Prefix]
     static bool Fraud(EnemyScript ___script) => ___script != null;
 
     #endregion

@@ -1,32 +1,30 @@
 namespace Jaket.Harmony;
 
-using HarmonyLib;
-
 using Jaket.Assets;
 using Jaket.Net;
 
 public static class Loading
 {
-    [HarmonyPatch(typeof(SceneHelper), nameof(SceneHelper.LoadSceneAsync))]
-    [HarmonyPatch(typeof(SceneHelper), nameof(SceneHelper.RestartSceneAsync))]
-    [HarmonyPostfix]
+    [StaticPatch(typeof(SceneHelper), nameof(SceneHelper.LoadSceneAsync))]
+    [StaticPatch(typeof(SceneHelper), nameof(SceneHelper.RestartSceneAsync))]
+    [Postfix]
     static void Load() => Events.OnLoadingStart.Fire();
 
-    [HarmonyPatch(typeof(FinalRank), nameof(FinalRank.LevelChange))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(FinalRank), nameof(FinalRank.LevelChange))]
+    [Prefix]
     static bool After()
     {
-        if (LobbyController.Offline || LobbyController.IsOwner) return true;
+        if (LobbyController.IsOwner) return true;
 
         Bundle.Hud("load-mission");
         return false;
     }
 
-    [HarmonyPatch(typeof(AbruptLevelChanger), nameof(AbruptLevelChanger.AbruptChangeLevel))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(AbruptLevelChanger), nameof(AbruptLevelChanger.AbruptChangeLevel))]
+    [Prefix]
     static bool Other() => After();
 
-    [HarmonyPatch(typeof(AbruptLevelChanger), nameof(AbruptLevelChanger.GoToSavedLevel))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(AbruptLevelChanger), nameof(AbruptLevelChanger.GoToSavedLevel))]
+    [Prefix]
     static bool Saved() => After();
 }
