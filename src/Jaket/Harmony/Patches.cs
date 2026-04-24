@@ -1,15 +1,8 @@
 namespace Jaket.Harmony;
 
 using HarmonyLib;
-using System;
 
-using Jaket.Input;
 using Jaket.Net;
-using Jaket.Net.Types;
-using Jaket.Net.Vendors;
-using Jaket.UI.Elements;
-using Jaket.UI.Fragments;
-using Jaket.World;
 
 /// <summary> Class responsible for managing the harmony patches. </summary>
 public static class Patches
@@ -19,36 +12,6 @@ public static class Patches
     /// <summary> Whether the source code of the game is patched. </summary>
     public static bool Patched;
 
-    public static Type[] DynamicTypes =
-    {
-        typeof(TeamCoin),
-        typeof(Enemy),
-        typeof(Husk),
-        typeof(Item),
-        typeof(Fish),
-        typeof(Plushie),
-        typeof(Core),
-        typeof(Nail),
-        typeof(Sawblade),
-        typeof(Screwdriver),
-        typeof(Magnet),
-        typeof(Rocket),
-        typeof(Cannon),
-        typeof(Damage),
-        typeof(Hitscans),
-        typeof(Spectator),
-        typeof(World),
-    };
-    public static Type[] StaticTypes =
-    {
-        typeof(ArmsPatch),
-        typeof(GunsPatch),
-        typeof(Loading),
-        typeof(RichPresence),
-        typeof(Movement),
-        typeof(BestiaryEntry),
-    };
-
     /// <summary> Subscribes to several events for proper work. </summary>
     public static void Load() => Events.OnLobbyAction += () =>
     {
@@ -56,17 +19,17 @@ public static class Patches
 
         if (LobbyController.Online && !Patched)
         {
-            DynamicTypes.Each(t => Dynamic.CreateClassProcessor(t, true).Patch());
+            Attributes((m, attrs) => Apply<DynamicPatch>(m, attrs, Dynamic));
             Patched = true;
 
-            Log.Info($"[HARM] Applied {Dynamic.GetPatchedMethods().Count()} dynamic patches from {DynamicTypes.Length} classes");
+            Log.Info($"[HARM] Applied {Dynamic.GetPatchedMethods().Count()} dynamic patches");
         }
         if (LobbyController.Offline && Patched)
         {
             Dynamic.UnpatchSelf();
             Patched = false;
 
-            Log.Info($"[HARM] Unapplied all dynamic patches from {DynamicTypes.Length} classes");
+            Log.Info($"[HARM] Unapplied all dynamic patches");
         }
     };
 
@@ -74,8 +37,8 @@ public static class Patches
     public static void LoadStatic()
     {
         Static ??= new("xzxADIxzx.Jaket.Static");
-        StaticTypes.Each(t => Static.CreateClassProcessor(t, true).Patch());
+        Attributes((m, attrs) => Apply<StaticPatch>(m, attrs, Static));
 
-        Log.Info($"[HARM] Applied {Static.GetPatchedMethods().Count()} static patches from {StaticTypes.Length} classes");
+        Log.Info($"[HARM] Applied {Static.GetPatchedMethods().Count()} static patches");
     }
 }
