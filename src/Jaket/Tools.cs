@@ -128,7 +128,7 @@ public static class Tools
     /// <summary> Iterates all attributes of static methods.  </summary>
     public static void Attributes(Cons<MethodInfo, IEnumerable<System.Attribute>> cons) => Assembly.GetCallingAssembly().GetTypes().Each(t =>
     {
-        t.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Static).Each(m => cons(m, m.GetCustomAttributes()));
+        t.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Static | BindingFlags.NonPublic).Each(m => cons(m, m.GetCustomAttributes()));
     });
 
     /// <summary> Applies all patches from the attributes. </summary>
@@ -136,9 +136,9 @@ public static class Tools
     {
         if (a is T t)
         {
-            if (attrs.Any(a => a is Prefix    )) harmony.Patch(t.Target, prefix:     new(method, 42));
-            if (attrs.Any(a => a is Postfix   )) harmony.Patch(t.Target, postfix:    new(method, 42));
-            if (attrs.Any(a => a is Transpiler)) harmony.Patch(t.Target, transpiler: new(method, 42));
+            if (attrs.Any(a => a is Prefix    )) harmony.Patch(t.Target, prefix:     t.GetPatch(method));
+            if (attrs.Any(a => a is Postfix   )) harmony.Patch(t.Target, postfix:    t.GetPatch(method));
+            if (attrs.Any(a => a is Transpiler)) harmony.Patch(t.Target, transpiler: t.GetPatch(method));
         }
     });
 

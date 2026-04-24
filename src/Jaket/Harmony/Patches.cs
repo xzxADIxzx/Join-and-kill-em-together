@@ -37,6 +37,7 @@ public static class Patches
     public static void LoadStatic()
     {
         Static ??= new("xzxADIxzx.Jaket.Static");
+
         Attributes((m, attrs) => Apply<StaticPatch>(m, attrs, Static));
 
         Log.Info($"[HARM] Applied {Static.GetPatchedMethods().Count()} static patches");

@@ -5,6 +5,7 @@ using System;
 using System.Reflection;
 
 /// <summary> Attribute that defines a target of the patch. </summary>
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
 public class Patch : Attribute
 {
     /// <summary> Class containing the target. </summary>
@@ -13,9 +14,17 @@ public class Patch : Attribute
     private string name;
     /// <summary> Arguments, null if any type. </summary>
     private Type[] args;
+    /// <summary> Signature, null if any type. </summary>
+    private MethodType? sign;
 
     /// <summary> Target method to be patched. </summary>
-    public MethodInfo Target => AccessTools.Method(type, name, args);
+    public MethodBase Target => sign switch
+    {
+        MethodType.Constructor => AccessTools.Constructor   (type, args),
+        MethodType.Getter      => AccessTools.PropertyGetter(type, name),
+        MethodType.Setter      => AccessTools.PropertySetter(type, name),
+        _                      => AccessTools.Method        (type, name, args),
+    };
 
     public Patch(Type type, string name)
     {
@@ -27,6 +36,13 @@ public class Patch : Attribute
     {
         this.args = args;
     }
+
+    public Patch(Type type, string name, MethodType sign) : this(type, name)
+    {
+        this.sign = sign;
+    }
+
+    public HarmonyMethod GetPatch(MethodInfo method) => new(method, Priority.High) { methodType = sign };
 }
 
 /// <summary> Attribute that defines a dynamic patch. </summary>
@@ -35,6 +51,8 @@ public class DynamicPatch : Patch
     public DynamicPatch(Type type, string name) : base(type, name) { }
 
     public DynamicPatch(Type type, string name, params Type[] args) : base(type, name, args) { }
+
+    public DynamicPatch(Type type, string name, MethodType sign) : base(type, name, sign) { }
 }
 
 /// <summary> Attribute that defines a static patch. </summary>
@@ -43,6 +61,8 @@ public class StaticPatch : Patch
     public StaticPatch(Type type, string name) : base(type, name) { }
 
     public StaticPatch(Type type, string name, params Type[] args) : base(type, name, args) { }
+
+    public StaticPatch(Type type, string name, MethodType sign) : base(type, name, sign) { }
 }
 
 /// <summary> Attribute that defines a prefix. </summary>
