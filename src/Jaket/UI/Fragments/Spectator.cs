@@ -44,6 +44,7 @@ public class Spectator : Fragment
             "_Deathness",
             Random.value / (3f + Random.value)
         );
+        Events.EveryHalf += () => Shader.SetGlobalFloat("_RandomNoiseStrength", .1f);
 
         info = Builder.Text(Fill("Info"), "hi", 24, white, TextAnchor.UpperLeft);
         dead = Builder.Image(Fill("Eye"), Tex.Dead, white, ImageType.Simple);
@@ -66,6 +67,7 @@ public class Spectator : Fragment
     {
         Content.gameObject.SetActive(Shown);
         PostProcessV2_Handler.Instance.DeathEffect(Shown);
+        PostProcessV2_Handler.Instance.WickedEffect(Shown);
     }
 
     public override void Rebuild() => info.text = Bundle.Format

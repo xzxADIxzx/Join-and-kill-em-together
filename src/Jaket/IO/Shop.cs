@@ -30,9 +30,9 @@ public static class Shop
         for (int i = 0, s = 0, e = 0; i < Entries.Length; i++)
         {
             s = json.IndexOf('{', e);
-            e = json.IndexOf('}', s);
+            e = json.IndexOf('}', s) + 1;
 
-            Entries[i] = JsonUtility.FromJson<ShopEntry>(json.Substring(s, e - s + 1));
+            Entries[i] = JsonUtility.FromJson<ShopEntry>(json[s..e]);
         }
     }
 
