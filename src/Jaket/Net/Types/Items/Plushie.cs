@@ -120,8 +120,8 @@ public class Plushie : Item
             if (agent.Patron is Item i && i.IsOwner && __instance.targetType == ItemType.CustomKey1)
             {
                 if (i.Type == EntityType.xzxADIxzx) Trash(__instance);
-                if (i.Type == EntityType.Sowler) Trash(other);
-                if (i.Type != EntityType.Sowler) i.Kill(1, w => w.Bool(true));
+                if (i.Type == EntityType.Sowler   ) Trash(other);
+                if (i.Type != EntityType.Sowler   ) i.Kill(1, w => w.Bool(true));
             }
             return false;
         }
@@ -145,6 +145,9 @@ public class Plushie : Item
             white.SetActive(false);
             music.SetActive(false);
 
+            PostProcessV2_Handler.Instance.DeathEffect(true);
+            PostProcessV2_Handler.Instance.WickedEffect(true);
+
             act.events.onActivate.AddListener(() =>
             {
                 rnd.defaultPitch = 1f;
@@ -154,6 +157,9 @@ public class Plushie : Item
                 black.SetActive(false);
                 white.SetActive(true);
                 music.SetActive(true);
+
+                PostProcessV2_Handler.Instance.DeathEffect(false);
+                PostProcessV2_Handler.Instance.WickedEffect(false);
             });
         }
     }
@@ -164,33 +170,29 @@ public class Plushie : Item
         var cam = CameraController.Instance.transform;
         var owl = col.transform.parent.parent;
 
+        if (owl.transform.childCount >= 3 && owl.TryGetEntity(out Item i))
+        {
+            GameAssets.Prefab("Attacks and Projectiles/Hitscan Beams/Lighting Beam Reflected.prefab", p => Events.Post(() =>
+            {
+                Inst(p, owl.transform.position + Vector3.up * 12f, Quaternion.Euler(90f, 0f, 0f));
+                i.Kill();
+            }));
+            return;
+        }
+        Tools.Create("warn", owl);
+
         owl.position = cam.position - mov.forward * 6f - Vector3.up;
         owl.LookAt(cam);
         col.attachedRigidbody.isKinematic = true;
 
-        GameAssets.Sound("Voices/Gabriel/gab_Intro1d.ogg", c =>
-        {
-            var src = Component<AudioSource>(owl.gameObject, src =>
-            {
-                src.clip = c;
-                src.rolloffMode = AudioRolloffMode.Linear;
-                src.Play();
-            });
-            var act = Component<ObjectActivator>(owl.gameObject, act =>
-            {
-                act.ActivateDelayed(5f);
-                act.events = new() { onActivate = new() };
-                act.events.onActivate.AddListener(() => { Dest(src); Dest(act); });
-            });
-        });
         GameAssets.Prefab("p/Enemies/RageEffect.prefab", p =>
         {
             p = Inst(p, owl);
 
-            p.transform.localPosition = Vector3.up  * .3f;
-            p.transform.localScale    = Vector3.one * .8f;
+            p.transform.localPosition = new(-.1f, .3f, 0f);
+            p.transform.localScale    = new(.7f, .7f, .7f);
 
-            p.GetComponentsInChildren<AudioSource>().Each(s => s.volume = .2f);
+            p.GetComponentsInChildren<AudioSource>().Each(s => s.volume = .4f);
             p.GetComponentInChildren<MeshRenderer>().material.color = new(1f, 0f, 120f);
         });
     }
