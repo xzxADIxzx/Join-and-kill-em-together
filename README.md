@@ -80,5 +80,7 @@ All you need to compile the project is .NET SDK 10.0 and Git.
 5. Either copy them to the plugins folder or archive them for publishing.   
    The `build.sh` script does it automatically when you run `./build.sh -rid <deploy-path>`
 
+> **Note:** To build on Windows, you can use `python build.py <operations> [deploy-directory]`
+
 ## Afterword
 If you have any questions, feel free to ping [me](https://github.com/xzxADIxzx) in our [Discord](https://discord.gg/USpt3hCBgn) server. I am very grateful to everyone who supports the project, reports bugs or suggests new ideas. Thank you!
