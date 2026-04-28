@@ -76,7 +76,7 @@ public abstract class Entity
         /// <summary> Adds a single component of the given type or logs an error. </summary>
         public void Add<T>(out T t, bool nullable = false, string path = null) where T : Component
         {
-            if (!Find(path, out var o)) { t = null; return; }
+            if (!Find(nullable, path, out var o)) { t = null; return; }
 
             if (!o.TryGetComponent(out t))
                 t = o.AddComponent<T>();
@@ -87,7 +87,7 @@ public abstract class Entity
         /// <summary> Gets a single component of the given type or logs an error. </summary>
         public void Get<T>(out T t, bool nullable = false, string path = null) where T : Component
         {
-            if (!Find(path, out var o)) { t = null; return; }
+            if (!Find(nullable, path, out var o)) { t = null; return; }
 
             if (t = o.GetComponentInChildren<T>())
                 return;
@@ -98,7 +98,7 @@ public abstract class Entity
         /// <summary> Gets several components of the given type or logs an error. </summary>
         public void Get<T>(out T[] t, bool nullable = false, string path = null) where T : Component
         {
-            if (!Find(path, out var o)) { t = null; return; }
+            if (!Find(nullable, path, out var o)) { t = null; return; }
 
             if ((t = o.GetComponentsInChildren<T>()).Length != 0)
                 return;
@@ -109,7 +109,7 @@ public abstract class Entity
         /// <summary> Removes a single component of the given type or logs an error. </summary>
         public void Rem<T>(bool nullable = false, string path = null) where T : Component
         {
-            if (!Find(path, out var o)) return;
+            if (!Find(nullable, path, out var o)) return;
 
             if (o.TryGetComponent(out T t))
                 Dest(t);
@@ -120,7 +120,7 @@ public abstract class Entity
         /// <summary> Removes a child gameobject of the given path or logs an error. </summary>
         public void Rem   (bool nullable = false, string path = null)
         {
-            if (Find(path, out var o)) Dest(o);
+            if (Find(nullable, path, out var o)) Dest(o);
         }
 
         /// <summary> Runs the given callback after the specified number of seconds. </summary>
@@ -161,12 +161,12 @@ public abstract class Entity
 
         private void Update() => Stats.MeasureTime(ref Stats.EntityMs, () => Patron.Update(Time.time - Patron.LastUpdate));
 
-        private bool Find(string path, out GameObject obj)
+        private bool Find(bool nullable, string path, out GameObject obj)
         {
             if (obj = path == null ? gameObject : transform.Find(path)?.gameObject) return true;
             else
             {
-                Log.Error($"[ENTS] Couldn't find a child of path {path ?? "null"}");
+                if (!nullable) Log.Error($"[ENTS] Couldn't find a child of path {path ?? "null"}");
                 return false;
             }
         }
