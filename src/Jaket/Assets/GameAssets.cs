@@ -128,8 +128,9 @@ public static class GameAssets
 
         "Items/DevPlushies/DevPlushie (Hakita).prefab",
         "Items/DevPlushies/DevPlushie (PITR).prefab",
-        "Items/DevPlushies/DevPlushie (Dawg).prefab",
         "Items/DevPlushies/DevPlushie (Heckteck).prefab",
+        "Items/DevPlushies/DevPlushie (Dawg).prefab",
+        "Items/DevPlushies/DevPlushie (Hazeluff).prefab",
         "Items/DevPlushies/DevPlushie (CabalCrow) Variant.prefab",
         "Items/DevPlushies/DevPlushie (Lucas).prefab",
         "Items/DevPlushies/DevPlushie (Zombie).prefab",
@@ -137,25 +138,29 @@ public static class GameAssets
         "Items/DevPlushies/DevPlushie (Jericho).prefab",
         "Items/DevPlushies/DevPlushie (BigRock).prefab",
         "Items/DevPlushies/DevPlushie (Mako).prefab",
+        "Items/DevPlushies/DevPlushie (Rhiannon).prefab",
         "Items/DevPlushies/DevPlushie (FlyingDog).prefab",
         "Items/DevPlushies/DevPlushie (Sam).prefab",
-        "Items/DevPlushies/DevPlushie (Salad).prefab",
         "Items/DevPlushies/DevPlushie (Meganeko).prefab",
         "Items/DevPlushies/DevPlushie (KGC).prefab",
         "Items/DevPlushies/DevPlushie (HEALTH - BJ).prefab",
         "Items/DevPlushies/DevPlushie (HEALTH - Jake).prefab",
         "Items/DevPlushies/DevPlushie (HEALTH - John).prefab",
         "Items/DevPlushies/DevPlushie (King Gizzard).prefab",
+        "Items/DevPlushies/DevPlushie (Vylet).prefab",
         "Items/DevPlushies/DevPlushie (Quetzal).prefab",
         "Items/DevPlushies/DevPlushie (Gianni).prefab",
         "Items/DevPlushies/DevPlushie (Weyte).prefab",
         "Items/DevPlushies/DevPlushie (Lenval).prefab",
+        "Items/DevPlushies/DevPlushie (Kenna).prefab",
         "Items/DevPlushies/DevPlushie (Joy).prefab",
         "Items/DevPlushies/DevPlushie (Mandy).prefab",
         "Items/DevPlushies/DevPlushie (Cameron).prefab",
         "Items/DevPlushies/DevPlushie (Dalia).prefab",
         "Items/DevPlushies/DevPlushie (Tucker).prefab",
         "Items/DevPlushies/DevPlushie (Scott).prefab",
+        "Items/DevPlushies/DevPlushie (Keaton).prefab",
+        "Items/DevPlushies/DevPlushie (Salad).prefab",
         "Items/DevPlushies/DevPlushie (Jacob).prefab",
         "Items/DevPlushies/DevPlushie (Vvizard).prefab",
         "Items/DevPlushies/DevPlushie.prefab",
@@ -164,7 +169,7 @@ public static class GameAssets
     /// <summary> List of readable names of all plushies. </summary>
     public static readonly string[] Plushies =
     {
-        "hakita", "pitr", "victoria", "heckteck", "cabalcrow", "lucas", "zombie", "francis", "jericho", "bigrock", "mako", "flyingdog", "samuel", "salad", "meganeko", "kgc", "benjamin", "jake", "john", "lizard", "quetzal", "gianni", "weyte", "lenval", "joy", "mandy", "cameron", "dalia", "tucker", "scott", "jacob", "vvizard", "v1", "v2", "v3", "xzxadixzx", "owlnotsowler"
+        "hakita", "pitr", "heckteck", "victoriadawg", "hazeluff", "cabalcrow", "lucas", "zombie", "francis", "jericho", "bigrock", "mako", "rhiannon", "flyingdog", "samuel", "meganeko", "kgc", "benjamin", "jake", "john", "lizard", "vylet", "quetzal", "gianni", "weyte", "lenval", "kenna", "joy", "mandy", "cameron", "dalia", "tucker", "scott", "aaron", "salad", "jacob", "vvizard", "v1", "v2", "v3", "xzxadixzx", "owlnotsowler"
     };
 
     /// <summary> List of internal paths of all weapons. </summary>

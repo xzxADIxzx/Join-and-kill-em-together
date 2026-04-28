@@ -78,14 +78,14 @@ public static class Commands
 
         Handler.Register("plushies", "Display the list of all plushies", args => Print
         ([
-            "Leading Developers", "Hakita, Pitr, Victoria",
-            "Programmers",        "Heckteck, CabalCrow, Lucas, Zombie",
-            "Artists",            "Francis, Jericho, BigRock, Mako, FlyingDog, Samuel, Salad",
-            "Composers",          "Meganeko, KGC, Benjamin, Jake, John, Lizard, Quetzal",
-            "Voice Actors",       "Gianni, Weyte, Lenval, Joy, Mandy",
-            "Quality Assurance",  "Cameron, Dalia, Tucker, Scott",
-            "Other",              "Jacob, Vvizard",
-            "Machines",           "V1, V2, V3, xzxADIxzx, Sowler",
+            "Leading Developers", "Hakita, Pitr, Heckteck, Victoria",
+            "Programmers",        "Hazeluff, CabalCrow, Lucas, Zombie",
+            "Artists",            "Francis, Jericho, BigRock, Mako, Rhiannon, FlyingDog, Samuel",
+            "Composers",          "Meganeko, KGC, Benjamin, Jake, John, Lizard, Vylet, Quetzal",
+            "Voice Actors",       "Gianni, Weyte, Lenval, Kenna, Joy, Mandy",
+            "Quality Assurance",  "Cameron, Dalia, Tucker, Scott, Aaron",
+            "Other",              "Salad, Jacob, Vvizard",
+            "Jaket",              "V1, V2, V3, xzxADIxzx, Sowler",
         ]));
 
         Handler.Register("plushie", "<name>", "Spawn a plushie by name", args =>
