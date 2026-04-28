@@ -104,6 +104,8 @@ public class Rocket : Projectile
     {
         base.Killed(r, left);
 
+        if (!IsOwner) agent.Position = new(posX.Init, posY.Init, posZ.Init);
+
         if (left >= 1) // harmless (environment), normal (entity), big (any beam), super (midair), ultra (malicious)
         {
             r.Bools(out var harmless, out var big, out var super, out var ultra, out _, out _, out _, out _);

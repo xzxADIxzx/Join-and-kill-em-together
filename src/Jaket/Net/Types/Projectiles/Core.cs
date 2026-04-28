@@ -47,6 +47,8 @@ public class Core : Projectile
     {
         base.Killed(r, left);
 
+        if (!IsOwner) agent.Position = new(x.Init, y.Init, z.Init);
+
         if (left >= 1) // normal (environment), super (any beam), ultra (malicious)
         {
             r.Bools(out var harmless, out var big, out var super, out var ultra, out _, out _, out _, out _);
