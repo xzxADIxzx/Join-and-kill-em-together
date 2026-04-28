@@ -228,6 +228,9 @@ public static class GameAssets
         "Attacks and Projectiles/Harpoon Malicious.prefab",
         "Attacks and Projectiles/Rocket.prefab",
         "Attacks and Projectiles/Cannonball.prefab",
+        "Attacks and Projectiles/Projectile.prefab",
+        "Attacks and Projectiles/Projectile Beamable.prefab",
+        "Attacks and Projectiles/Projectile Spread.prefab",
     };
 
     /// <summary> List of internal paths of all explosions. </summary>
