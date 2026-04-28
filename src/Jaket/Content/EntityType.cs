@@ -205,6 +205,9 @@ public enum EntityType : byte
     Screwdriver,
     Rocket,
     Cannonball,
+    Projectile,
+    ProjectileBeamable,
+    ProjectileSpread,
 
     #endregion
     #region explosions
