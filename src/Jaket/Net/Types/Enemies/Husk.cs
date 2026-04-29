@@ -151,5 +151,10 @@ public class Husk : Enemy
         if (__instance.TryGetEntity(out Husk h)) h.attack = 0;
     }
 
+    [DynamicPatch(typeof(ZombieProjectiles), nameof(ZombieProjectiles.ThrowProjectile))]
+    [DynamicPatch(typeof(ZombieProjectiles), nameof(ZombieProjectiles.ShootProjectile))]
+    [Prefix]
+    static bool Peace(ZombieProjectiles __instance) => __instance.name[0] == 'L';
+
     #endregion
 }
