@@ -194,6 +194,7 @@ public enum EntityType : byte
     #endregion
     #region projectiles
 
+    Shell,
     Core,
     NailCommon,
     NailFodder,
@@ -205,9 +206,8 @@ public enum EntityType : byte
     Screwdriver,
     Rocket,
     Cannonball,
-    Projectile,
-    ProjectileBeamable,
-    ProjectileSpread,
+    ProjectileHell,
+    ProjectileBeam,
 
     #endregion
     #region explosions

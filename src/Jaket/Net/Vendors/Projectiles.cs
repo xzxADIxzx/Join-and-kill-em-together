@@ -33,8 +33,8 @@ public class Projectiles : Vendor
 
     public EntityType Type(GameObject obj) => Vendor.Find
     (
-        EntityType.Core,
-        EntityType.Cannonball,
+        EntityType.Shell,
+        EntityType.ProjectileBeam,
         p => p.name.Length == obj?.name.Length - 7 && (obj?.name.Contains(p.name) ?? false)
     );
 
