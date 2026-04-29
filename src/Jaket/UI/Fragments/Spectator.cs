@@ -1,6 +1,5 @@
 namespace Jaket.UI.Fragments;
 
-using HarmonyLib;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,6 +7,7 @@ using ImageType = UnityEngine.UI.Image.Type;
 
 using Jaket.Assets;
 using Jaket.Content;
+using Jaket.Harmony;
 using Jaket.Input;
 using Jaket.Net;
 using Jaket.Net.Types;
@@ -136,12 +136,12 @@ public class Spectator : Fragment
     #endregion
     #region harmony
 
-    [HarmonyPatch(typeof(StatsManager), nameof(StatsManager.Restart))]
-    [HarmonyPrefix]
+    [DynamicPatch(typeof(StatsManager), nameof(StatsManager.Restart))]
+    [Prefix]
     static bool Restart() => !nm.deathSequence.gameObject.activeSelf && !UI.Spectator.Shown;
 
-    [HarmonyPatch(typeof(DeathSequence), nameof(DeathSequence.EndSequence))]
-    [HarmonyPostfix]
+    [DynamicPatch(typeof(DeathSequence), nameof(DeathSequence.EndSequence))]
+    [Prefix]
     static void Sequence(DeathSequence __instance) => Events.Post(() =>
     {
         __instance.gameObject.SetActive(false);
