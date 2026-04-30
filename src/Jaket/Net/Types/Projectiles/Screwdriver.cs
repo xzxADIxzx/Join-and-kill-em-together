@@ -127,7 +127,7 @@ public class Screwdriver : Projectile
         e.target = 0u;
     });
 
-    [DynamicPatch(typeof(Punch), nameof(global::Punch.ActiveEnd))]
+    [DynamicPatch(typeof(Punch), nameof(global::Punch.ActiveStart))]
     [Prefix]
     static void Punch()
     {
