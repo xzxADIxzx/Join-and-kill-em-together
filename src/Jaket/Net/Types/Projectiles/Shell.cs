@@ -90,6 +90,14 @@ public class Shell : Projectile
         e.TakeOwnage();
     });
 
+    [DynamicPatch(typeof(ProjectileSpread), nameof(ProjectileSpread.Start))]
+    [Postfix]
+    static void Spread(ProjectileSpread __instance)
+    {
+        __instance.projectile.name += "(Clone)";
+        Entities.Projectiles.Sync(__instance.projectile);
+    }
+
     [DynamicPatch(typeof(global::Projectile), nameof(global::Projectile.Collided))]
     [Prefix]
     static bool Damage(global::Projectile __instance, Collider other) => Deal<Shell>(__instance, (eid, tid, ally, e) =>
