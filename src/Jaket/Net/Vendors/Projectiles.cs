@@ -13,13 +13,14 @@ public class Projectiles : Vendor
 {
     public void Load()
     {
-        EntityType counter = EntityType.Core;
+        EntityType counter = EntityType.Shell;
         GameAssets.Projectiles.Each(w =>
         {
             byte index = (byte)counter++;
             GameAssets.Prefab(w, p => Vendor.Prefabs[index] = p);
         });
 
+        for (EntityType i = EntityType.Shell;          i <= EntityType.Shell;          i++) Vendor.Suppliers[(byte)i] = (id, type) => new Shell      (id, type);
         for (EntityType i = EntityType.Core;           i <= EntityType.Core;           i++) Vendor.Suppliers[(byte)i] = (id, type) => new Core       (id, type);
         for (EntityType i = EntityType.NailCommon;     i <= EntityType.NailHeated;     i++) Vendor.Suppliers[(byte)i] = (id, type) => new Nail       (id, type);
         for (EntityType i = EntityType.SawbladeCommon; i <= EntityType.SawbladeHeated; i++) Vendor.Suppliers[(byte)i] = (id, type) => new Sawblade   (id, type);
@@ -27,6 +28,7 @@ public class Projectiles : Vendor
         for (EntityType i = EntityType.Screwdriver;    i <= EntityType.Screwdriver;    i++) Vendor.Suppliers[(byte)i] = (id, type) => new Screwdriver(id, type);
         for (EntityType i = EntityType.Rocket;         i <= EntityType.Rocket;         i++) Vendor.Suppliers[(byte)i] = (id, type) => new Rocket     (id, type);
         for (EntityType i = EntityType.Cannonball;     i <= EntityType.Cannonball;     i++) Vendor.Suppliers[(byte)i] = (id, type) => new Cannon     (id, type);
+        for (EntityType i = EntityType.ProjectileHell; i <= EntityType.ProjectileBeam; i++) Vendor.Suppliers[(byte)i] = (id, type) => new Shell      (id, type);
 
         Events.OnTeamChange += () => Networking.Entities.Alive<Projectile>(p => p.UpdateIgnore());
     }

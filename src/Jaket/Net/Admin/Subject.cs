@@ -85,7 +85,7 @@ public class Subject
         {
             if (type == EntityType.Screwdriver)
                 harpoon.Add(entity);
-            else if (type >= EntityType.NailCommon && type <= EntityType.NailHeated)
+            else if (type == EntityType.Shell || type >= EntityType.NailCommon && type <= EntityType.NailHeated)
                 flashes.Add(entity);
             else
                 project.Add(entity);
