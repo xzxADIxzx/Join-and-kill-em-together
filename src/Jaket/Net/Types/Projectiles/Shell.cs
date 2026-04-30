@@ -37,6 +37,12 @@ public class Shell : Projectile
         agent.Run(MasterKill, 15f);
     }
 
+    public override void Update(float delta)
+    {
+        proj.enabled = IsOwner;
+        base.Update(delta);
+    }
+
     public override void Killed(Reader r, int left)
     {
         base.Killed(r, left);
