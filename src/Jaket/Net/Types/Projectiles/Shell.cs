@@ -69,6 +69,13 @@ public class Shell : Projectile
         if (__instance) Entities.Projectiles.Sync(__instance.gameObject);
     }
 
+    [DynamicPatch(typeof(global::Projectile), nameof(global::Projectile.OnDestroy))]
+    [Prefix]
+    static void Break(global::Projectile __instance) => Kill<Shell>(__instance, e =>
+    {
+        e.Kill();
+    }, true);
+
     [DynamicPatch(typeof(global::Projectile), nameof(global::Projectile.CreateExplosionEffect))]
     [Prefix]
     static bool Death(global::Projectile __instance) => Kill<Shell>(__instance, e =>
