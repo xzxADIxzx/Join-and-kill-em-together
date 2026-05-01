@@ -45,11 +45,9 @@ public class Core : Projectile
 
     public override void Killed(Reader r, int left)
     {
-        base.Killed(r, left);
+        base.Killed(r, left); r.Skip(12);
 
-        if (!IsOwner) agent.Position = new(x.Init, y.Init, z.Init);
-
-        if (left >= 1) // normal (environment), super (any beam), ultra (malicious)
+        if (left >= 13) // normal (environment), super (any beam), ultra (malicious)
         {
             r.Bools(out var harmless, out var big, out var super, out var ultra, out _, out _, out _, out _);
             gr.Explode(big, harmless, super, ultra ? 2f : 1f, ultra);
@@ -71,7 +69,7 @@ public class Core : Projectile
     [Prefix]
     static bool Death(Grenade __instance, bool harmless, bool big, bool super, bool ultrabooster) => Kill<Core>(__instance, e =>
     {
-        e.Kill(1, w => w.Bools(harmless, big, super, ultrabooster));
+        e.Kill(13, w => { w.Vector(e.agent.Position); w.Bools(harmless, big, super, ultrabooster); });
     }, true);
 
     [DynamicPatch(typeof(Grenade), nameof(Grenade.GrenadeBeam))]

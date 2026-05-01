@@ -45,9 +45,9 @@ public class Shell : Projectile
 
     public override void Killed(Reader r, int left)
     {
-        base.Killed(r, left);
+        base.Killed(r, left); r.Skip(12);
 
-        if (left >= 1)
+        if (left >= 13)
         {
             if (r.Bool())
             {
@@ -80,7 +80,7 @@ public class Shell : Projectile
     [Prefix]
     static bool Death(global::Projectile __instance) => Kill<Shell>(__instance, e =>
     {
-        e.Kill(1, w => w.Bool(__instance.parried));
+        e.Kill(13, w => { w.Vector(e.agent.Position); w.Bool(__instance.parried); });
     }, true);
 
     [DynamicPatch(typeof(Punch), nameof(Punch.ParryProjectile))]

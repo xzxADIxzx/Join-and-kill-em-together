@@ -102,11 +102,9 @@ public class Rocket : Projectile
 
     public override void Killed(Reader r, int left)
     {
-        base.Killed(r, left);
+        base.Killed(r, left); r.Skip(12);
 
-        if (!IsOwner) agent.Position = new(posX.Init, posY.Init, posZ.Init);
-
-        if (left >= 1) // harmless (environment), normal (entity), big (any beam), super (midair), ultra (malicious)
+        if (left >= 13) // harmless (environment), normal (entity), big (any beam), super (midair), ultra (malicious)
         {
             r.Bools(out var harmless, out var big, out var super, out var ultra, out _, out _, out _, out _);
             gr.Explode(big, harmless, super, ultra ? 2f : 1f, ultra);
@@ -128,7 +126,7 @@ public class Rocket : Projectile
     [Prefix]
     static bool Death(Grenade __instance, bool harmless, bool big, bool super, bool ultrabooster) => Kill<Rocket>(__instance, e =>
     {
-        e.Kill(1, w => w.Bools(harmless, big, super, ultrabooster));
+        e.Kill(13, w => { w.Vector(e.agent.Position); w.Bools(harmless, big, super, ultrabooster); });
     }, true);
 
     [DynamicPatch(typeof(Grenade), nameof(Grenade.GrenadeBeam))]

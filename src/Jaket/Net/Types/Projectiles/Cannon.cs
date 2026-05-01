@@ -26,13 +26,13 @@ public class Cannon : Projectile
 
     public override void Killed(Reader r, int left)
     {
-        base.Killed(r, left);
+        base.Killed(r, left); r.Skip(12);
 
-        if (left >= 1 && r.Bool())
-            Inst(ball.breakEffect,           IsOwner ? agent.Position : new(x.Init, y.Init, z.Init));
+        if (left >= 13 && r.Bool())
+            Inst(ball.breakEffect, agent.Position);
 
-        if (left >= 2 && r.Bool())
-            Inst(ball.interruptionExplosion, IsOwner ? agent.Position : new(x.Init, y.Init, z.Init));
+        if (left >= 14 && r.Bool())
+            Inst(ball.interruptionExplosion, agent.Position);
     }
 
     #endregion
@@ -49,14 +49,14 @@ public class Cannon : Projectile
     [Prefix]
     static bool Break(Cannonball __instance) => Kill<Cannon>(__instance, e =>
     {
-        if (e.IsOwner) e.Kill(1, w => w.Bool(true));
+        if (e.IsOwner) e.Kill(13, w => { w.Vector(e.agent.Position); w.Bool(true); });
     });
 
     [DynamicPatch(typeof(Cannonball), nameof(Cannonball.Explode))]
     [Prefix]
     static bool Death(Cannonball __instance) => Kill<Cannon>(__instance, e =>
     {
-        e.Kill(2, w => { w.Bool(true); w.Bool(true); });
+        e.Kill(14, w => { w.Vector(e.agent.Position); w.Bool(true); w.Bool(true); });
     });
 
     [DynamicPatch(typeof(Cannonball), nameof(Cannonball.Launch))]

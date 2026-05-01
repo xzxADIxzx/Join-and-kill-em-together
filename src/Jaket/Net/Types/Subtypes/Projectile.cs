@@ -129,6 +129,7 @@ public abstract class Projectile : OwnableEntity
     {
         Hidden = true;
         if (agent) Dest(agent.gameObject);
+        if (left >= 12) agent.Position = r.Vector();
     }
 
     #endregion
