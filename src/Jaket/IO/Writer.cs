@@ -1,5 +1,6 @@
 namespace Jaket.IO;
 
+using System.Runtime.CompilerServices;
 using System.Text;
 using UnityEngine;
 
@@ -8,37 +9,33 @@ using Jaket.Net;
 
 /// <summary>
 /// Widely used structure that writes both basic and complex data types into unmanaged memory.
-/// Be <b>extremely careful</b> as there is no memory bounds checking. 
+/// Be <b>extremely careful</b> as there is no memory bounds check. 
 /// </summary>
 public unsafe struct Writer
 {
     /// <summary> Pointer to the beginning of the allocated memory. </summary>
     public readonly Ptr Memory;
-    /// <summary> Number of bytes written, often the memory is not fully utilized. </summary>
-    public int Position { get; private set; }
+    /// <summary> Pointer to the beginning of the writing position. </summary>
+    private nint position;
 
-    /// <summary> Wraps the given memory into a writer. </summary>
-    public Writer(Ptr memory) => Memory = memory;
+    /// <summary> Wraps the given memory pointer into a writer. </summary>
+    public Writer(Ptr memory) => position = (Memory = memory);
 
-    /// <summary> Moves the position by the given number of bytes. </summary>
-    public void* Inc(int bytesCount)
-    {
-        Position += bytesCount;
-        return (Memory + Position - bytesCount).ToPointer();
-    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void* Inc(nint bytesCount) => (void*)((position += bytesCount) - bytesCount);
 
     /// <summary> Skips the given number of bytes. </summary>
-    public void Skip(int bytesCount) => Position += bytesCount;
+    public void Skip(nint bytesCount) => position += bytesCount;
 
     #region basic
 
-    public void Bool (bool  value) => *(byte*) Inc(1) = value ? byte.MaxValue : byte.MinValue;
+    public void Bool (bool  value) => *(byte *)Inc(1) = value ? byte.MaxValue : byte.MinValue;
 
-    public void Byte (byte  value) => *(byte*) Inc(1) = value;
+    public void Byte (byte  value) => *(byte *)Inc(1) = value;
 
-    public void Id   (uint  value) => *(uint*) Inc(4) = value;
+    public void Id   (uint  value) => *(uint *)Inc(4) = value;
 
-    public void Int  (int   value) => *(int*)  Inc(4) = value;
+    public void Int  (int   value) => *(int  *)Inc(4) = value;
 
     public void Float(float value) => *(float*)Inc(4) = value;
 
@@ -49,7 +46,7 @@ public unsafe struct Writer
 
     public void Enum(EntityType value) => *(EntityType*)Inc(1) = value;
 
-    public void Enum(Team       value) => *(Team*)      Inc(1) = value;
+    public void Enum(Team       value) => *(Team      *)Inc(1) = value;
 
     #endregion
     #region complex
@@ -86,12 +83,7 @@ public unsafe struct Writer
         Bytes(bytes);
     }
 
-    public void Vector(Vector3 value)
-    {
-        Float(value.x);
-        Float(value.y);
-        Float(value.z);
-    }
+    public void Vector(Vector3 value) => *(Vector3*)Inc(12) = value;
 
     public void Color(Color32 value) => Int(value.rgba);
 

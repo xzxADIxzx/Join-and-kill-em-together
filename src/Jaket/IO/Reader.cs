@@ -1,5 +1,6 @@
 namespace Jaket.IO;
 
+using System.Runtime.CompilerServices;
 using System.Text;
 using UnityEngine;
 
@@ -8,37 +9,33 @@ using Jaket.Net;
 
 /// <summary>
 /// Widely used structure that reads both basic and complex data types from unmanaged memory.
-/// Be <b>extremely careful</b> as there is no memory bounds checking. 
+/// Be <b>extremely careful</b> as there is no memory bounds check. 
 /// </summary>
 public unsafe struct Reader
 {
     /// <summary> Pointer to the beginning of the allocated memory. </summary>
     public readonly Ptr Memory;
-    /// <summary> Number of bytes read, sometimes the memory is not fully utilized. </summary>
-    public int Position { get; private set; }
+    /// <summary> Pointer to the beginning of the reading position. </summary>
+    private nint position;
 
-    /// <summary> Wraps the given memory into a reader. </summary>
-    public Reader(Ptr memory) => Memory = memory;
+    /// <summary> Wraps the given memory pointer into a reader. </summary>
+    public Reader(Ptr memory) => position = (Memory = memory);
 
-    /// <summary> Moves the position by the given number of bytes. </summary>
-    public void* Inc(int bytesCount)
-    {
-        Position += bytesCount;
-        return (Memory + Position - bytesCount).ToPointer();
-    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void* Inc(nint bytesCount) => (void*)((position += bytesCount) - bytesCount);
 
     /// <summary> Skips the given number of bytes. </summary>
-    public void Skip(int bytesCount) => Position += bytesCount;
+    public void Skip(nint bytesCount) => position += bytesCount;
 
     #region basic
 
-    public bool  Bool () => *(byte*) Inc(1) == byte.MaxValue;
+    public bool  Bool () => *(byte *)Inc(1) == byte.MaxValue;
 
-    public byte  Byte () => *(byte*) Inc(1);
+    public byte  Byte () => *(byte *)Inc(1);
 
-    public uint  Id   () => *(uint*) Inc(4);
+    public uint  Id   () => *(uint *)Inc(4);
 
-    public int   Int  () => *(int*)  Inc(4);
+    public int   Int  () => *(int  *)Inc(4);
 
     public float Float() => *(float*)Inc(4);
 
@@ -49,7 +46,7 @@ public unsafe struct Reader
 
     public EntityType EntityType() => *(EntityType*)Inc(1);
 
-    public Team       Team      () => *(Team*)      Inc(1);
+    public Team       Team      () => *(Team      *)Inc(1);
 
     #endregion
     #region complex
@@ -86,7 +83,7 @@ public unsafe struct Reader
         return Encoding.ASCII.GetString(bytes);
     }
 
-    public Vector3 Vector() => new(Float(), Float(), Float());
+    public Vector3 Vector() => *(Vector3*)Inc(12);
 
     public Color32 Color() => new(Byte(), Byte(), Byte(), Byte());
 
