@@ -147,6 +147,9 @@ public class RemotePlayer : Entity
         Doll.Update();
         enemyId.machine.health = 4242f;
 
+        // make rockets do kaboom
+        if (Doll.Falling) enemyId.timeSinceSpawned = 0f;
+
         if (LastTeam != Team)
         {
             Doll.ApplyTeam(LastTeam = Team);
