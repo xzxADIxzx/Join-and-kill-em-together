@@ -27,26 +27,29 @@ public unsafe struct Reader
         return (Memory + Position - bytesCount).ToPointer();
     }
 
+    /// <summary> Skips the given number of bytes. </summary>
+    public void Skip(int bytesCount) => Position += bytesCount;
+
     #region basic
 
-    public bool Bool()             => *(byte*)Inc(1) == byte.MaxValue;
+    public bool  Bool () => *(byte*) Inc(1) == byte.MaxValue;
 
-    public byte Byte()             => *(byte*)Inc(1);
+    public byte  Byte () => *(byte*) Inc(1);
 
-    public uint Id()               => *(uint*)Inc(4);
+    public uint  Id   () => *(uint*) Inc(4);
 
-    public int Int()               => *(int*)Inc(4);
+    public int   Int  () => *(int*)  Inc(4);
 
-    public float Float()           => *(float*)Inc(4);
+    public float Float() => *(float*)Inc(4);
 
     #endregion
     #region enums
 
-    public PacketType PacketType()     => *(PacketType*)Inc(1);
+    public PacketType PacketType() => *(PacketType*)Inc(1);
 
-    public EntityType EntityType()     => *(EntityType*)Inc(1);
+    public EntityType EntityType() => *(EntityType*)Inc(1);
 
-    public Team Team()                 => *(Team*)Inc(1);
+    public Team       Team      () => *(Team*)      Inc(1);
 
     #endregion
     #region complex

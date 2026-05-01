@@ -27,15 +27,18 @@ public unsafe struct Writer
         return (Memory + Position - bytesCount).ToPointer();
     }
 
+    /// <summary> Skips the given number of bytes. </summary>
+    public void Skip(int bytesCount) => Position += bytesCount;
+
     #region basic
 
-    public void Bool(bool value)   => *(byte*)Inc(1)  = value ? byte.MaxValue : byte.MinValue;
+    public void Bool (bool  value) => *(byte*) Inc(1) = value ? byte.MaxValue : byte.MinValue;
 
-    public void Byte(byte value)   => *(byte*)Inc(1)  = value;
+    public void Byte (byte  value) => *(byte*) Inc(1) = value;
 
-    public void Id(uint value)     => *(uint*)Inc(4)  = value;
+    public void Id   (uint  value) => *(uint*) Inc(4) = value;
 
-    public void Int(int value)     => *(int*)Inc(4)   = value;
+    public void Int  (int   value) => *(int*)  Inc(4) = value;
 
     public void Float(float value) => *(float*)Inc(4) = value;
 
@@ -46,7 +49,7 @@ public unsafe struct Writer
 
     public void Enum(EntityType value) => *(EntityType*)Inc(1) = value;
 
-    public void Enum(Team value)       => *(Team*)Inc(1)       = value;
+    public void Enum(Team       value) => *(Team*)      Inc(1) = value;
 
     #endregion
     #region complex
