@@ -1,11 +1,11 @@
 namespace Jaket.Net.Types;
 
+using ULTRAKILL.Enemy;
 using UnityEngine;
 
 using Jaket.Content;
 using Jaket.Harmony;
 using Jaket.IO;
-using ULTRAKILL.Enemy;
 
 /// <summary> Tangible entity of the shell or any projectile type. </summary>
 public class Shell : Projectile
@@ -54,7 +54,6 @@ public class Shell : Projectile
                 proj.boosted = Type == EntityType.Shell;
                 proj.explosionEffect = Entities.Vendor.Prefabs[(byte)EntityType.ShotgunExplosion];
             }
-            proj.KeepTrail();
             proj.CreateExplosionEffect();
         }
     }
