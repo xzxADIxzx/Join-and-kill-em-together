@@ -143,10 +143,12 @@ public class Gameflow
     {
         if (Mode.HPs() || Mode.NoRestarts())
         {
+            static void Dec(byte id) { if (health[id] > 0 && health[id] != byte.MaxValue) health[id]--; }
+
             if (member.IsMe)
-                health[(byte)(Networking.LocalPlayer.Team)]--;
+                Dec((byte)(Networking.LocalPlayer                           ).Team);
             else
-                health[(byte)(Networking.Entities[member.AccId] as RemotePlayer).Team]--;
+                Dec((byte)(Networking.Entities[member.AccId] as RemotePlayer).Team);
         }
         if (Mode.HealOnKill())
         {
