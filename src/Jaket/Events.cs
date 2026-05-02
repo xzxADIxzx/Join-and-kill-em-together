@@ -61,7 +61,7 @@ public class Events : MonoBehaviour
         };
 
         SteamMatchmaking.OnLobbyDataChanged += lobby => OnLobbyAction.Fire();
-        SteamMatchmaking.OnLobbyEntered += lobby => OnLobbyEnter.Fire();
+        SteamMatchmaking.OnLobbyEntered += lobby => Post(OnLobbyEnter.Fire);
 
         SteamFriends.OnGameLobbyJoinRequested += (lobby, id) => OnLobbyInvite.Fire(lobby);
 

@@ -98,6 +98,8 @@ public class Client : Endpoint, IConnectionManager
 
     public override void Update()
     {
+        if (Manager == null) return;
+
         Stats.MeasureTime(ref Stats.ReadMs, () => Manager.Receive());
         Stats.MeasureTime(ref Stats.WriteMs, () =>
         {
