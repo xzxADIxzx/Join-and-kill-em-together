@@ -113,6 +113,7 @@ public class Gameflow
                 Bundle.Ext("game.lone-team");
                 return;
             }
+            else if (!nm.dead) nm.GetHealth(100, true);
         }
         if (Mode.WTO() && LobbyController.IsOwner)
         {
@@ -134,8 +135,6 @@ public class Gameflow
             Teams.All.Each(t => weapon[(byte)t] = (byte)( (int)data >> (byte)t * 5 & 0x1F ));
 
             Loadouts.Set(Loadouts.Make(false, weapon[(byte)Networking.LocalPlayer.Team]));
-
-            nm.GetHealth(100, true);
         }
     }
 
