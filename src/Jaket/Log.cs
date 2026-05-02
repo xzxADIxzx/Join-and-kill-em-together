@@ -3,9 +3,6 @@ namespace Jaket;
 using System;
 using System.Collections.Generic;
 
-using Logger = plog.Logger;
-using PLevel = plog.Models.Level;
-
 using Jaket.IO;
 
 using static Jaket.UI.Lib.Pal;
@@ -28,8 +25,8 @@ public static class Log
     /// <summary> Logs that are being written at the moment. </summary>
     public static List<string> Writing;
 
-    /// <summary> Output point for Unity and in-game console. </summary>
-    public static Logger Logger;
+    /// <summary> Output point for Unity and in-game console via plog. </summary>
+    private static plog.Logger PLogger;
     /// <summary> Output point for long-term logging. </summary>
     public static string File;
 
@@ -39,21 +36,37 @@ public static class Log
         Events.InternalFlushFinish = () => Ready = true;
         Events.EveryDozen += Flush;
 
-        Logger = new("Jaket");
+        try { PLogger = new plog.Logger("Jaket"); }
+        catch (Exception ex) { UnityEngine.Debug.LogWarning($"[Jaket] Failed to create plog logger: {ex.Message}"); }
+
         File = Files.Join(Files.Logs, $"Logs of {Time.Replace(':', '.')}.log");
     }
 
     /// <summary> Formats and writes the message to the output points. </summary>
     public static void LogLevel(Level level, string msg)
     {
-        Logger.Record(level == Level.Debug ? $"<color={Gray}>{msg}</color>" : msg, level switch
+        // Use plog if available, fall back to Unity logging
+        try
         {
-            Level.Debug   => PLevel.Info,
-            Level.Info    => PLevel.Info,
-            Level.Warning => PLevel.Warning,
-            Level.Error   => PLevel.Error,
-            _             => PLevel.Off,
-        });
+            PLogger?.Record(level == Level.Debug ? $"<color={Gray}>{msg}</color>" : msg, level switch
+            {
+                Level.Debug   => plog.Models.Level.Info,
+                Level.Info    => plog.Models.Level.Info,
+                Level.Warning => plog.Models.Level.Warning,
+                Level.Error   => plog.Models.Level.Error,
+                _             => plog.Models.Level.Off,
+            });
+        }
+        catch
+        {
+            // plog API changed, fall back to Unity console
+            switch (level)
+            {
+                case Level.Error:   UnityEngine.Debug.LogError($"[Jaket] {msg}");   break;
+                case Level.Warning: UnityEngine.Debug.LogWarning($"[Jaket] {msg}"); break;
+                default:            UnityEngine.Debug.Log($"[Jaket] {msg}");         break;
+            }
+        }
 
         ToWrite.Add($"[{Time}] [{(char)level}] {msg}");
         if (ToWrite.Count >= STORAGE_CAPACITY) Flush();
