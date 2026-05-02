@@ -82,7 +82,7 @@ public static class Networking
         };
         Events.OnLoad += () =>
         {
-            Clear();
+            Entities.Each(e => e != LocalPlayer, e => e.Hidden = true);
             Loading = false;
         };
 
@@ -91,19 +91,12 @@ public static class Networking
         Events.OnLobbyEnter += () =>
         {
             if (LobbyController.IsOwner)
-            {
-                // open the server so people can join
                 Server.Open();
-                // clear the pools so people join clean server
-                Clear();
-            }
             else
-            {
-                // establish a connection with the owner of the lobby
                 Client.Connect(LobbyController.Lobby.Value.Owner.Id);
-                // prevent objects from loading before the scene is loaded
-                Loading = true;
-            }
+
+            Loading = !LobbyController.IsOwner;
+            Clear();
         };
 
         Events.OnMemberJoin += member =>
