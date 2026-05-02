@@ -9,6 +9,8 @@ using Jaket.IO;
 /// <summary> Abstract entity of any enemy type. </summary>
 public abstract class Enemy : OwnableEntity
 {
+    static NewMovement nm => NewMovement.Instance;
+
     Agent agent;
     Cache<RemotePlayer> player;
     EnemyIdentifier enemyId;
@@ -35,7 +37,7 @@ public abstract class Enemy : OwnableEntity
 
     public virtual void Heal() => enemy.health = Mathf.Min(PostHealth, enemy.health + PostHealth / (LobbyController.Lobby?.MemberCount ?? 1f));
 
-    public virtual float Rate(LocalPlayer target) => (NewMovement.Instance.transform.position - agent.Position).sqrMagnitude;
+    public virtual float Rate(LocalPlayer target) => nm.dead ? float.MaxValue : (nm.transform.position - agent.Position).sqrMagnitude;
 
     public virtual float Rate(RemotePlayer target) => (target.Position - agent.Position).sqrMagnitude;
 
