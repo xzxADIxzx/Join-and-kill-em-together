@@ -12,7 +12,7 @@ public struct Privilege
     private float last;
 
     /// <summary> Whether the subject is allowed to engage in fraud. </summary>
-    public readonly bool Has => privileged || Time.time - last < 3f;
+    public readonly bool Has => privileged || Time.time - last < 2f;
 
     /// <summary> Updates the privilege according to the given list. </summary>
     public void Update(IEnumerable<string> list, uint id)

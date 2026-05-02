@@ -70,7 +70,7 @@ public static class Networking
         Client.Create();
 
         Events.EveryTick += Update;
-        Events.EveryDozen += Optimize;
+        Events.EveryTick += Optimize;
 
         Events.OnLoad        += () => WasMultiplayerUsed  = LobbyController.Online;
         Events.OnLobbyAction += () => WasMultiplayerUsed |= LobbyController.Online;
@@ -82,7 +82,7 @@ public static class Networking
         };
         Events.OnLoad += () =>
         {
-            Entities.Each(e => e != LocalPlayer, e => e.Hidden = true);
+            Clear(true);
             Loading = false;
         };
 
@@ -176,14 +176,24 @@ public static class Networking
     /// <summary> Optimizes the pools by removing hidden entities, making the hashmap lighter. </summary>
     public static void Optimize()
     {
-        if (LobbyController.Online) Entities.Each(e => Time.time - e.LastHidden >= 4f, e => Entities.Remove(e.Id));
+        if (LobbyController.Online) Entities.Each(e => Time.time - e.LastHidden >= 2f, e => Entities.Remove(e.Id));
     }
 
     /// <summary> Clears the pools, but pushes the local player back, as it must always be in. </summary>
-    public static void Clear()
+    public static void Clear(bool leave = false)
     {
-        Entities.Player(p => p.Killed(default, -1));
-        Entities.Clear();
+        if (leave) Entities.Each(e => e != LocalPlayer, e =>
+        {
+            if (e is RemotePlayer)
+                e.LastHidden = 0f;
+            else
+                e.Hidden = true;
+        });
+        else
+        {
+            Entities.Player(p => p.Killed(default, -1));
+            Entities.Clear();
+        }
         LocalPlayer.Push();
     }
 

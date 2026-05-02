@@ -166,9 +166,6 @@ public class RemotePlayer : Entity
 
     public override void Killed(Reader r, int left)
     {
-        // the player is already destroyed
-        if (agent == null) return;
-
         Hidden = true;
         Header.Hide();
         Disassemble();
