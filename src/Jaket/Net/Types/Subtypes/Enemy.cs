@@ -35,6 +35,8 @@ public abstract class Enemy : OwnableEntity
 
     public virtual EnemyTarget Tracked => enemyId.target = IsOwner ? EnemyTarget.TrackPlayerIfAllowed() : player.Value?.Target;
 
+    public virtual bool Remain => false;
+
     public virtual void Heal() => enemy.health = Mathf.Min(PostHealth, enemy.health + PostHealth / (LobbyController.Lobby?.MemberCount ?? 1f));
 
     public virtual float Rate(LocalPlayer target) => nm.dead ? float.MaxValue : (nm.transform.position - agent.Position).sqrMagnitude;
@@ -88,15 +90,22 @@ public abstract class Enemy : OwnableEntity
 
     public override void Killed(Reader r, int left)
     {
-        if (Type != EntityType.Gutterman && Type != EntityType.Malicious && Type != EntityType.Providence)
+        if (left == 0)
+        {
             Hidden = true;
-        else
-            LastHidden = Time.time + 240f;
+            if (agent) Dest(agent.gameObject);
+        }
 
         if (left >= 1 && r.Bool())
-            ; // TODO research enemies
-        else
-            Dest(agent.gameObject);
+        {
+            if (Remain)
+                LastHidden = Time.time + 240f;
+            else
+                Hidden = true;
+
+            Killed(r.Bool());
+            return;
+        }
 
         if (left >= 2 && r.Bool())
         {
@@ -114,6 +123,18 @@ public abstract class Enemy : OwnableEntity
         }
     }
 
+    public virtual void Killed(bool explode)
+    {
+        if (Version.DEBUG) Log.Debug($"[ENTS] Killed an entity {Id} due to being {(explode ? "exploded" : "damaged")}");
+
+        if (explode)
+            enemyId.Explode();
+        else
+            enemyId.InstaKill();
+
+        Dest(agent);
+    }
+
     #endregion
     #region harmony
 
@@ -122,6 +143,20 @@ public abstract class Enemy : OwnableEntity
     static void Start(EnemyIdentifier __instance)
     {
         if (__instance) Entities.Enemies.Sync(__instance.gameObject, __instance.IsSandboxEnemy);
+    }
+
+    [DynamicPatch(typeof(EnemyIdentifier), nameof(EnemyIdentifier.Explode))]
+    [Prefix]
+    static void Break(EnemyIdentifier __instance)
+    {
+        if (__instance.TryGetEntity(out Enemy e) && !e.Hidden) e.Kill(2, w => { w.Bool(true); w.Bool(true); });
+    }
+
+    [DynamicPatch(typeof(EnemyIdentifier), nameof(EnemyIdentifier.ProcessDeath))]
+    [Prefix]
+    static void Death(EnemyIdentifier __instance)
+    {
+        if (__instance.TryGetEntity(out Enemy e) && !e.Hidden) e.Kill(2, w => { w.Bool(true); w.Bool(false); });
     }
 
     [DynamicPatch(typeof(EnemyIdentifier), nameof(EnemyIdentifier.UpdateTarget))]
