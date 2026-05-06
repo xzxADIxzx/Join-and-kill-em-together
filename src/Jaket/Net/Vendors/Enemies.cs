@@ -1,5 +1,6 @@
 namespace Jaket.Net.Vendors;
 
+using Sandbox;
 using UnityEngine;
 
 using Jaket.Assets;
@@ -29,6 +30,8 @@ public class Enemies : Vendor
 
         for (EntityType i = EntityType.Filth;          i <= EntityType.Soldier; i++) Vendor.Suppliers[(byte)i] = (id, type) => new Husk      (id, type);
         for (EntityType i = EntityType.SecuritySystem; i <= EntityType.Brain;   i++) Vendor.Suppliers[(byte)i] = (id, type) => new Earthmover(id, type);
+
+        Events.OnLoad += () => ResFind<EnemySpawnableInstance>().Each(IsReal, Dest);
     }
 
     public EntityType Type(GameObject obj)
