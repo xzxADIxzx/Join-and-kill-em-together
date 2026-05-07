@@ -20,11 +20,6 @@ public class Husk : Enemy
     int running = Animator.StringToHash("Running");
     int runmult = Animator.StringToHash("RunSpeed");
 
-    /// <summary> Type of an attack being used. </summary>
-    private byte attack, lastAttack;
-    /// <summary> Whether the enemy is running. </summary>
-    private bool moving, lastMoving;
-
     public Husk(uint id, EntityType type) : base(id, type) { }
 
     #region snapshot
@@ -40,7 +35,7 @@ public class Husk : Enemy
             w.Vector(agent.Position);
             w.Float(agent.Rotation.y);
 
-            w.Byte(attack);
+            w.Byte(Attack);
             w.Bool(animator.GetBool(running));
         }
         else
@@ -48,8 +43,8 @@ public class Husk : Enemy
             w.Floats(x, y, z);
             w.Float(r.Next);
 
-            w.Byte(attack);
-            w.Bool(moving);
+            w.Byte(Attack);
+            w.Bool(Moving);
         }
     }
 
@@ -60,8 +55,8 @@ public class Husk : Enemy
         r.Floats(ref x, ref y, ref z);
         this.r.Set(r.Float());
 
-        attack = r.Byte();
-        moving = r.Bool();
+        Attack = r.Byte();
+        Moving = r.Bool();
     }
 
     #endregion
@@ -93,14 +88,14 @@ public class Husk : Enemy
 
         nma.enabled = false;
 
-        if (lastAttack != attack) switch (lastAttack = attack)
+        if (LastAttack != Attack) switch (LastAttack = Attack)
         {
             case 1: scr1?.Swing();      scr2?.Swing(); break;
             case 2: scr1?.JumpAttack(); scr2?.Melee(); break;
         }
-        if (lastMoving != moving)
+        if (LastMoving != Moving)
         {
-            animator.SetBool(running, lastMoving = moving);
+            animator.SetBool(running, LastMoving = Moving);
             animator.SetFloat(runmult, 1f);
         }
     }
@@ -112,35 +107,35 @@ public class Husk : Enemy
     [Prefix]
     static void Swing(ZombieMelee __instance)
     {
-        if (__instance.TryGetEntity(out Husk h)) h.attack = 1;
+        if (__instance.TryGetEntity(out Husk h)) h.Attack = 1;
     }
 
     [DynamicPatch(typeof(ZombieMelee), nameof(ZombieMelee.JumpAttack))]
     [Prefix]
     static void Jumpy(ZombieMelee __instance)
     {
-        if (__instance.TryGetEntity(out Husk h)) h.attack = 2;
+        if (__instance.TryGetEntity(out Husk h)) h.Attack = 2;
     }
 
     [DynamicPatch(typeof(ZombieMelee), nameof(ZombieMelee.DamageEnd))]
     [Prefix]
     static void Zeros(ZombieMelee __instance)
     {
-        if (__instance.TryGetEntity(out Husk h)) h.attack = 0;
+        if (__instance.TryGetEntity(out Husk h)) h.Attack = 0;
     }
 
     [DynamicPatch(typeof(ZombieProjectiles), nameof(ZombieProjectiles.Swing))]
     [Prefix]
     static void Swing(ZombieProjectiles __instance)
     {
-        if (__instance.TryGetEntity(out Husk h)) h.attack = 1;
+        if (__instance.TryGetEntity(out Husk h)) h.Attack = 1;
     }
 
     [DynamicPatch(typeof(ZombieProjectiles), nameof(ZombieProjectiles.Melee))]
     [Prefix]
     static void Melee(ZombieProjectiles __instance)
     {
-        if (__instance.TryGetEntity(out Husk h)) h.attack = 2;
+        if (__instance.TryGetEntity(out Husk h)) h.Attack = 2;
     }
 
     [DynamicPatch(typeof(ZombieProjectiles), nameof(ZombieProjectiles.DamageEnd))]
@@ -148,7 +143,7 @@ public class Husk : Enemy
     [Prefix]
     static void Zeros(ZombieProjectiles __instance)
     {
-        if (__instance.TryGetEntity(out Husk h)) h.attack = 0;
+        if (__instance.TryGetEntity(out Husk h)) h.Attack = 0;
     }
 
     [DynamicPatch(typeof(ZombieProjectiles), nameof(ZombieProjectiles.ThrowProjectile))]

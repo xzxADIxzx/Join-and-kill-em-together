@@ -22,6 +22,11 @@ public abstract class Enemy : OwnableEntity
     /// <summary> Whether the enemy is idoled. </summary>
     public bool Blessed => enemyId.Blessed;
 
+    /// <summary> Whether the enemy is acting. </summary>
+    public byte Attack, LastAttack = byte.MaxValue;
+    /// <summary> Whether the enemy is moving. </summary>
+    public bool Moving, LastMoving;
+
     /// <summary> Initial health of the enemy. </summary>
     public float InitHealth;
     /// <summary> PostPPP health of the enemy. </summary>
