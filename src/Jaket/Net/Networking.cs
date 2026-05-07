@@ -70,7 +70,7 @@ public static class Networking
         Client.Create();
 
         Events.EveryTick += Update;
-        Events.EveryTick += Optimize;
+        Events.EveryHalf += Optimize;
 
         Events.OnLoad        += () => WasMultiplayerUsed  = LobbyController.Online;
         Events.OnLobbyAction += () => WasMultiplayerUsed |= LobbyController.Online;

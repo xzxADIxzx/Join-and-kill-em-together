@@ -99,7 +99,7 @@ public class Events : MonoBehaviour
     private void Start()
     {
         InvokeRepeating("Tick", 1f, 1f / Networking.TICKS_PER_SECOND / Networking.SUBTICKS_PER_TICK);
-        InvokeRepeating("Half", 1f, 0.5f);
+        InvokeRepeating("Half", 1f, .42f);
         InvokeRepeating("Dozen", 1f, 12f);
     }
 
