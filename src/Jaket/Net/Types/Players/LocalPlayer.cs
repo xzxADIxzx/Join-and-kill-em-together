@@ -114,7 +114,7 @@ public class LocalPlayer : Entity
     /// <summary> Synchronizes the suit in half a second after being called. </summary>
     public IEnumerator SyncDelayed()
     {
-        yield return new WaitForSeconds(.5f);
+        yield return new WaitForSeconds(1f);
         SyncSuit();
     }
 

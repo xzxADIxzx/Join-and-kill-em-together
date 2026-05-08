@@ -20,7 +20,7 @@ public class Malicious : Enemy
 
     #region snapshot
 
-    public override int BufferSize => 27;
+    public override int BufferSize => 30;
 
     public override void Write(Writer w)
     {
@@ -39,7 +39,7 @@ public class Malicious : Enemy
         {
             w.Floats(x, y, z);
 
-            w.Float(r.Next);
+            w.Float(p.Next);
             w.Float(r.Next);
 
             w.Byte(Attack);
@@ -102,6 +102,7 @@ public class Malicious : Enemy
             Inst(scr.breakParticle, scr.transform.position, scr.transform.rotation);
             Dest(scr.gameObject);
         }
+        scr.spiderCorpseBroken = true; // skip original
     }
 
     #endregion
@@ -123,14 +124,14 @@ public class Malicious : Enemy
 
     [DynamicPatch(typeof(MaliciousFace), nameof(MaliciousFace.BeamFire))]
     [Prefix]
-    static bool Peace(MaliciousFace __instance) => __instance.isBeamPortalBlocked |= __instance.name[0] == 'R';
+    static void Peace(MaliciousFace __instance) => __instance.isBeamPortalBlocked |= __instance.name[0] == 'R';
 
     [DynamicPatch(typeof(MaliciousFace), nameof(MaliciousFace.ShootProj))]
     [Prefix]
     static bool Peaoe(MaliciousFace __instance) => __instance.name[0] == 'L';
 
     [DynamicPatch(typeof(MaliciousFace), nameof(MaliciousFace.BreakCorpse))]
-    [Postfix]
+    [Prefix]
     static void Break(MaliciousFace __instance) => Networking.Entities.Each
     (
         e => e is Malicious m && m.scr == __instance,
