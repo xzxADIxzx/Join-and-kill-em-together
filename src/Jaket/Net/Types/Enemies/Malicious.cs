@@ -63,6 +63,15 @@ public class Malicious : Enemy
 
     public override bool Remain => agent;
 
+    public override void Rage(bool enraged)
+    {
+        base.Rage(enraged);
+        if (enraged)
+            scr.Enrage();
+        else
+            scr.UnEnrage();
+    }
+
     public override void Create() => Assign(Entities.Enemies.Make(Type, new(x.Init, y.Init, z.Init)).AddComponent<Agent>());
 
     public override void Assign(Agent agent)
@@ -89,7 +98,7 @@ public class Malicious : Enemy
 
         if (LastAttack != Attack) switch (LastAttack = Attack)
         {
-            case 1: scr.ChargeBeam(default); break;
+            case 1: scr.beamsAmount = scr.isEnraged ? 2 : 1; scr.ChargeBeam(default); break;
         }
         if (scr.currentCE) scr.BeamChargeUpdate();
     }
@@ -129,6 +138,13 @@ public class Malicious : Enemy
     [DynamicPatch(typeof(MaliciousFace), nameof(MaliciousFace.ShootProj))]
     [Prefix]
     static bool Peaoe(MaliciousFace __instance) => __instance.name[0] == 'L';
+
+    [DynamicPatch(typeof(MaliciousFace), nameof(MaliciousFace.Enrage))]
+    [Prefix]
+    static void Siege(MaliciousFace __instance)
+    {
+        if (__instance.TryGetEntity(out Malicious m) && !m.Enraged) m.Enrage();
+    }
 
     [DynamicPatch(typeof(MaliciousFace), nameof(MaliciousFace.BreakCorpse))]
     [Prefix]

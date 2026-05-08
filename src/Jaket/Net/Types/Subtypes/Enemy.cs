@@ -19,6 +19,8 @@ public abstract class Enemy : OwnableEntity
 
     /// <summary> Whether the enemy is a boss. </summary>
     public bool Boss;
+    /// <summary> Whether the enemy is madden. </summary>
+    public bool Enraged;
     /// <summary> Whether the enemy is idoled. </summary>
     public bool Blessed => enemyId.Blessed;
 
@@ -36,6 +38,14 @@ public abstract class Enemy : OwnableEntity
 
     #region logic
 
+    public void Enrage(bool enraged = true) => Kill(4, w =>
+    {
+        w.Bool(false);
+        w.Bool(false);
+        w.Bool(true);
+        w.Bool(enraged);
+    });
+
     public virtual Transform WeakPoint => enemyId.weakPoint?.transform ?? agent.transform;
 
     public virtual EnemyTarget Tracked => enemyId.target = IsOwner ? EnemyTarget.TrackPlayerIfAllowed() : player.Value?.Target;
@@ -43,6 +53,8 @@ public abstract class Enemy : OwnableEntity
     public virtual bool Remain => false;
 
     public virtual void Heal() => enemy.health = Mathf.Min(PostHealth, enemy.health + PostHealth / (LobbyController.Lobby?.MemberCount ?? 1f));
+
+    public virtual void Rage(bool enraged) => Enraged = enraged;
 
     public virtual float Rate(LocalPlayer target) => nm.dead ? float.MaxValue : (nm.transform.position - agent.Position).sqrMagnitude;
 
@@ -126,6 +138,8 @@ public abstract class Enemy : OwnableEntity
             for (int i = 0; i < layers; i++) bossbar.healthLayers[i] = new() { health = PostHealth / layers };
             BossBarManager.Instance.bossBarsToRemove.Enqueue(bossbar.bossBarId);
         }
+
+        if (left >= 3 && r.Bool()) Rage(r.Bool());
     }
 
     public virtual void Killed(bool explode)
