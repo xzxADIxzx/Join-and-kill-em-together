@@ -61,7 +61,7 @@ public class Malicious : Enemy
     #endregion
     #region logic
 
-    public override bool Remain => true;
+    public override bool Remain => agent;
 
     public override void Create() => Assign(Entities.Enemies.Make(Type, new(x.Init, y.Init, z.Init)).AddComponent<Agent>());
 
@@ -86,6 +86,12 @@ public class Malicious : Enemy
         pr.eulerAngles = new(p.GetAngle(delta), r.GetAngle(delta), 0f               );
 
         nma.enabled = false;
+
+        if (LastAttack != Attack) switch (LastAttack = Attack)
+        {
+            case 1: scr.ChargeBeam(default); break;
+        }
+        if (scr.currentCE) scr.BeamChargeUpdate();
     }
 
     public override void Killed(bool explode)
@@ -93,10 +99,43 @@ public class Malicious : Enemy
         base.Killed(explode);
         if (explode)
         {
-            Hidden = true;
-            scr.BreakCorpse();
+            Inst(scr.breakParticle, scr.transform.position, scr.transform.rotation);
+            Dest(scr.gameObject);
         }
     }
+
+    #endregion
+    #region harmony
+
+    [DynamicPatch(typeof(MaliciousFace), nameof(MaliciousFace.ChargeBeam))]
+    [Prefix]
+    static void Beamy(MaliciousFace __instance)
+    {
+        if (__instance.TryGetEntity(out Malicious m)) m.Attack = 1;
+    }
+
+    [DynamicPatch(typeof(MaliciousFace), nameof(MaliciousFace.StopWaiting))]
+    [Prefix]
+    static void Zeros(MaliciousFace __instance)
+    {
+        if (__instance.TryGetEntity(out Malicious m)) m.Attack = 0;
+    }
+
+    [DynamicPatch(typeof(MaliciousFace), nameof(MaliciousFace.BeamFire))]
+    [Prefix]
+    static bool Peace(MaliciousFace __instance) => __instance.isBeamPortalBlocked |= __instance.name[0] == 'R';
+
+    [DynamicPatch(typeof(MaliciousFace), nameof(MaliciousFace.ShootProj))]
+    [Prefix]
+    static bool Peaoe(MaliciousFace __instance) => __instance.name[0] == 'L';
+
+    [DynamicPatch(typeof(MaliciousFace), nameof(MaliciousFace.BreakCorpse))]
+    [Postfix]
+    static void Break(MaliciousFace __instance) => Networking.Entities.Each
+    (
+        e => e is Malicious m && m.scr == __instance,
+        e => e.Kill(2, w => { w.Bool(true); w.Bool(true); })
+    );
 
     #endregion
 }
