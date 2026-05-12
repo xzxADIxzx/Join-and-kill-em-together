@@ -143,13 +143,6 @@ public class Malicious : Enemy
     [Prefix]
     static bool Peaoe(MaliciousFace __instance) => __instance.name[0] == 'L';
 
-    [DynamicPatch(typeof(MaliciousFace), nameof(MaliciousFace.Enrage))]
-    [Prefix]
-    static void Siege(MaliciousFace __instance)
-    {
-        if (__instance.TryGetEntity(out Malicious m) && !m.Enraged) m.Enrage();
-    }
-
     [DynamicPatch(typeof(MaliciousFace), nameof(MaliciousFace.BreakCorpse))]
     [Prefix]
     static void Break(MaliciousFace __instance) => Networking.Entities.Each
@@ -157,6 +150,20 @@ public class Malicious : Enemy
         e => e is Malicious m && m.scr == __instance,
         e => e.Kill(2, w => { w.Bool(true); w.Bool(true); })
     );
+
+    [DynamicPatch(typeof(MaliciousFace), nameof(MaliciousFace.Enrage))]
+    [Prefix]
+    static void Enrage(MaliciousFace __instance)
+    {
+        if (__instance.TryGetEntity(out Malicious m) && !m.Enraged) m.Enrage(true);
+    }
+
+    [DynamicPatch(typeof(MaliciousFace), nameof(MaliciousFace.UnEnrage))]
+    [Prefix]
+    static void Unrage(MaliciousFace __instance)
+    {
+        if (__instance.TryGetEntity(out Malicious m) && m.Enraged) m.Enrage(false);
+    }
 
     #endregion
 }
