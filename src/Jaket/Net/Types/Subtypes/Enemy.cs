@@ -101,6 +101,15 @@ public abstract class Enemy : OwnableEntity
         PostHealth = InitHealth * (1f + LobbyConfig.PPP / 10f * (LobbyController.Lobby?.MemberCount - 1 ?? 0));
 
         OnTransfer();
+
+        if (Boss) agent.Run(() => Kill(10, w =>
+        {
+            w.Bool(false);
+            w.Bool(true);
+
+            w.Float(PostHealth);
+            w.Int(bossbar.healthLayers.Length);
+        }), .1f);
     }
 
     public override void Damage(Reader r) => Entities.Damage.Deal(enemyId, r.Float());
