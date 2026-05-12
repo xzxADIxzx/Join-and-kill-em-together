@@ -51,6 +51,39 @@ public static class ActionList
 
         ActionType.Window(l);
 
+        ActionType.Find(l, "3 - Gun Room/TitleActivator", t => Component<ObjectActivator>(t.gameObject, o =>
+        {
+            var prev = o.events.toDisActivateObjects;
+            var next = o.events.toDisActivateObjects = [prev[0]];
+
+            o.events.onActivate.AddListener(() =>
+            {
+                var blck = prev.Find(o => o.name == "Blockers").transform;
+
+                blck.GetChild(0).GetComponentsInChildren<Renderer>().Each(Dest);
+                blck.GetChild(1).gameObject.SetActive(false);
+                blck.GetChild(2).gameObject.SetActive(false);
+            });
+            o.events.toActivateObjects.Each(o => o.name == "Cube", o => o.GetComponents<Collider>().Each(Dest));
+        }, true));
+
+        ActionType.Find(l, "AltStartFiller/AltStart", t => Component<ObjectActivator>(t.gameObject, o =>
+        {
+            var prev = o.events.toDisActivateObjects;
+            var next = o.events.toDisActivateObjects = [prev[0], prev[^1]];
+
+            o.events.onActivate.AddListener(() =>
+            {
+                prev[4].GetComponentsInChildren<Renderer>().Each(Dest);
+                prev[5].gameObject.SetActive(false);
+                prev[8].gameObject.SetActive(false);
+            });
+        }, true));
+
+        ActionType.Find(l, "13 - Malicious Face Arena/13 Nonstuff", t => Dest(t.GetChild(0))); // unloader
+
+        ActionType.Act(l, "13 Content(Clone)/Trigger"); // boss
+
         #endregion
         #region 0-2
         l = "Level 0-2";
@@ -300,7 +333,7 @@ This is a public [orange]beta test[] of Jaket. A lot of features are either stil
 [12][i][gray]I know you've been waiting more than enough, but I can't work on the project all the time.[][][]
 [12][i][gray]If you didn't know, I develop Jaket in solo.[][][]
 
-In this beta only [orange]Versus & Arms Race[] gamemodes are available. To start a match, open the lobby tab in a mission and press the [b]GAMEMODES[] button. You'll find the description of these gamemodes and their modifiers. More gamemodes will be released in the near future.
+In this beta only [orange]PRELUDE[]'s campaign is available. To start a match, open the lobby tab in a mission and press the [b]GAMEMODES[] button. You'll find the description of these gamemodes and their modifiers. More gamemodes will be released in the near future.
 [12][i][gray]Yes, you can technically play fraud, but no - enemies won't sync.[][][]
 
 I also wanted to say [red]thank YOU[] for your patience [red]:heart:[]
