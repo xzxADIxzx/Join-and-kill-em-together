@@ -223,3 +223,31 @@ public enum EntityType : byte
 
     #endregion
 }
+
+/// <summary> Set of different tools for working with types. </summary>
+public static class EntityTypes
+{
+    /// <summary> Whether the type is an enemy.     </summary>
+    public static bool IsEnemy     (this EntityType type) => type >= EntityType.Filth        && type <= EntityType.Sisyphus;
+
+    /// <summary> Whether the type is an item.      </summary>
+    public static bool IsItem      (this EntityType type) => type >= EntityType.SkullBlue    && type <= EntityType.Sowler;
+
+    /// <summary> Whether the type is a fish.       </summary>
+    public static bool IsFish      (this EntityType type) => type >= EntityType.FishFunny    && type <= EntityType.FishBurnt;
+
+    /// <summary> Whether the type is a plushie.    </summary>
+    public static bool IsPlushie   (this EntityType type) => type >= EntityType.Hakita       && type <= EntityType.Sowler;
+
+    /// <summary> Whether the type is a weapon.     </summary>
+    public static bool IsWeapon    (this EntityType type) => type >= EntityType.RevolverBlue && type <= EntityType.RocketlRed;
+
+    /// <summary> Whether the type is a hitscan.    </summary>
+    public static bool IsHitscan   (this EntityType type) => type >= EntityType.Beam         && type <= EntityType.BeamHammer;
+
+    /// <summary> Whether the type is a projectile. </summary>
+    public static bool IsProjectile(this EntityType type) => type >= EntityType.Shell        && type <= EntityType.ProjectileBeam;
+
+    /// <summary> Whether the type is an explosion. </summary>
+    public static bool IsExplosion (this EntityType type) => type >= EntityType.Shockwave    && type <= EntityType.HammerParticleHeavy;
+}
