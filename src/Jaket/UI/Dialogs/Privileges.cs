@@ -47,13 +47,13 @@ public class Privileges : Fragment
         {
             var upper = level == this.upper;
 
-            if (LobbyController.Lobby?.Members.All(m => LobbyConfig.Privileged.Any(p => p == m.AccId.ToString()) != upper) ?? true) continue;
+            if (LobbyController.Lobby?.Members.All(m => LobbyConfig.Privileged.Has(m.AccId.ToString()) != upper) ?? true) continue;
 
             var color = upper ? green : red;
 
             level.Text(upper ? "#privileges.upper" : "#privileges.lower", 24f, 24, color, TextAnchor.MiddleLeft);
 
-            LobbyController.Lobby?.Members.Each(m => LobbyConfig.Privileged.Any(p => p == m.AccId.ToString()) == upper, m => level.TextButton(m.Name, color, () =>
+            LobbyController.Lobby?.Members.Each(m => LobbyConfig.Privileged.Has(m.AccId.ToString()) == upper, m => level.TextButton(m.Name, color, () =>
             {
                 if (!LobbyController.IsOwner) return;
                 if (upper)

@@ -32,7 +32,7 @@ public static class Administration
                 if (uint.TryParse(s, out uint id)) Banned.Add(id);
             });
 
-            Privileged = LobbyConfig.Privileged.Any(s => s == AccId.ToString());
+            Privileged = LobbyConfig.Privileged.Has(AccId.ToString());
         };
 
         Events.OnLobbyEnter += () =>

@@ -42,5 +42,5 @@ public static class Tex
     public static void OnLoad(Runnable task) => Events.Post(() => Fill & Back & Dash & Small & Large & Hort & Vert & Mark & Mask & Circle & Shadow & Dead, task);
 
     /// <summary> Returns the scale of the given sprite. </summary>
-    public static float Scale(Sprite sprite) => sprite == Mask ? 5f : new[] { Fill, Back, Dash, Small, Large, Vert }.Any(s => s == sprite) ? 4f : 1f;
+    public static float Scale(Sprite sprite) => sprite == Mask ? 5f : new[] { Fill, Back, Dash, Small, Large, Vert }.Has(sprite) ? 4f : 1f;
 }

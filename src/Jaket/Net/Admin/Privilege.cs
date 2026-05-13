@@ -17,7 +17,7 @@ public struct Privilege
     /// <summary> Updates the privilege according to the given list. </summary>
     public void Update(IEnumerable<string> list, uint id)
     {
-        bool has = list.Any(s => s == id.ToString());
+        bool has = list.Has(id.ToString());
         if (!has && privileged) last = Time.time;
         privileged = has;
     }

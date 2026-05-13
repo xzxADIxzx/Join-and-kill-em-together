@@ -32,7 +32,7 @@ public static class LobbyController
         // and leave it if local player is banned
         Events.OnLobbyAction += () =>
         {
-            if (Online && !IsOwner && LobbyConfig.Banned.Any(b => b == AccId.ToString()))
+            if (Online && !IsOwner && LobbyConfig.Banned.Has(AccId.ToString()))
             {
                 // notify the player to avoid confusion
                 Bundle.Hud2NS("lobby.banned");

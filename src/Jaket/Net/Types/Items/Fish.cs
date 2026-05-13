@@ -88,7 +88,7 @@ public class Fish : Item
         {
             if (agent.Patron is Item i && i.IsOwner && other.TryGetComponent(out Water w) && w.fishDB)
             {
-                if (___supportedWaters.Any(s => s == w.fishDB))
+                if (___supportedWaters.Has(w.fishDB))
                 {
                     Bundle.Hud("bait.took");
 

@@ -205,7 +205,7 @@ public class Settings : Fragment
         var current = Event.current;
         if (current.isKey || current.isMouse)
         {
-            if (current.isMouse && Keybind.Dangerous.Any(b => b == Rebinding)) return;
+            if (current.isMouse && Keybind.Dangerous.Has(Rebinding)) return;
 
             Events.Post(() => Rebinding = null);
             Events.Post(Rebuild);

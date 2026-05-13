@@ -55,7 +55,7 @@ public class Damage : Vendor
     {
         if (__instance.dead || multiplier == 0f) return;
 
-        if (Melee.Any(t => t == __instance.hitter) && __instance.TryGetComponent(out Entity.Agent a)) Entities.Damage.Deal(a.Patron.Id, multiplier);
+        if (Melee.Has(__instance.hitter) && __instance.TryGetComponent(out Entity.Agent a)) Entities.Damage.Deal(a.Patron.Id, multiplier);
 
         if (Version.DEBUG) Log.Debug($"[ENTS] Damage of {multiplier} units was dealt by {__instance.hitter}");
     }
