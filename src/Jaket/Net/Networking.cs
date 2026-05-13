@@ -143,7 +143,7 @@ public static class Networking
                 Gameflow.OnVictory(vid);
 
             else if (msg.StartsWith("#/b") && uint.TryParse(msg[3..], out uint bid) && lobby.Owner.Id == member.Id)
-                Bundle.Msg("player.banned", Name(bid));
+                Bundle.Msg("player.banned", bid.Name);
 
             else if (msg.StartsWith("#/r") && byte.TryParse(msg[3..], out byte rps))
                 Bundle.Msg("emote.roll", name, $"#emote.{rps}");

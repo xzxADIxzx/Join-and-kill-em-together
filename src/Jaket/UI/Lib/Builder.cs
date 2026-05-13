@@ -84,7 +84,7 @@ public static class Builder
             i.color = color;
             i.A = a; i.B = b; i.C = c; i.D = d;
 
-            if (culloff) Component<PerfectDiamond>(rect.gameObject, p => p.Diamond = i);
+            if (culloff) rect.Component<PerfectDiamond>(p => p.Diamond = i);
         });
 
     /// <summary> Makes the given diamond be visible from both sides. </summary>
@@ -244,7 +244,7 @@ public static class Builder
 
     /// <summary> Creates a canvas that is drawn on top of the main camera. </summary>
     public static Canvas Canvas(Transform rect, bool touchable) =>
-        Component<Canvas>(rect.gameObject, c => Component<CanvasScaler>((rect = c.transform).gameObject, s =>
+        Component<Canvas>(rect.gameObject, c => (rect = c.transform).Component<CanvasScaler>(s =>
         {
             c.renderMode = RenderMode.ScreenSpaceOverlay;
             s.uiScaleMode = ScaleMode.ScaleWithScreenSize;
@@ -258,7 +258,7 @@ public static class Builder
 
     /// <summary> Creates a canvas that is drawn in the world space. </summary>
     public static Canvas WorldCanvas(Transform rect, Vector3 position, Cons<Transform> cons) =>
-        Component<Canvas>(rect.gameObject, c => Component<CanvasScaler>((rect = c.transform).gameObject, s =>
+        Component<Canvas>(rect.gameObject, c => (rect = c.transform).Component<CanvasScaler>(s =>
         {
             c.renderMode = RenderMode.WorldSpace;
             s.uiScaleMode = ScaleMode.ConstantPixelSize;

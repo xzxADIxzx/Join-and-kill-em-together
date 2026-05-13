@@ -27,7 +27,7 @@ public class Header
 
     public Header(RemotePlayer player)
     {
-        Name = Name(player.Id);
+        Name = player.Id.Name;
         Player = player;
     }
 
@@ -46,7 +46,7 @@ public class Header
         var nickname = Builder.Text(Builder.Rect("Text", nicknameBg, Lib.Rect.Fill), "", 240, white, TextAnchor.MiddleCenter);
         var ellipsis = Builder.Text(Builder.Rect("Text", ellipsisBg, Lib.Rect.Huge), "", 240, white, TextAnchor.MiddleCenter);
 
-        Component<Bar>(c.gameObject, b => b.Update(() =>
+        c.Component<Bar>(b => b.Update(() =>
         {
             int health = Player.Health, dots = (int)(Time.time * 3f) % 4;
 

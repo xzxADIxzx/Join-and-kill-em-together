@@ -61,7 +61,7 @@ public class SpraySettings : Fragment
                     b.Subbar(328f, s =>
                     {
                         s.Setup(false, 0f);
-                        loaded = Component<Bar>(s.ScrollV(0f, 384f).content.gameObject, b => b.Setup(true, 0f));
+                        loaded = s.ScrollV(0f, 384f).content.Component<Bar>(b => b.Setup(true, 0f));
                         s.Slider(loaded.transform);
                     });
 

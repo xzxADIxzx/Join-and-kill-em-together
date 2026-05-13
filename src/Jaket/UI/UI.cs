@@ -64,7 +64,7 @@ public static class UI
         static void Fix() => Events.Post(() =>
         {
             HudMessageReceiver.Instance.text.font = ModAssets.TmpFont;
-            Component<Canvas>(HudMessageReceiver.Instance.gameObject, c =>
+            HudMessageReceiver.Instance.Component<Canvas>(c =>
             {
                 c.overrideSorting = true;
                 c.sortingOrder = 4242;
@@ -73,7 +73,7 @@ public static class UI
         Fix();
         Events.OnLoad += Fix;
 
-        var root = Create("UI").transform;
+        var root = Create("UI", Plugin.Instance.transform).transform;
 
         Chat = new(root);
         LobbyTab = new(root);

@@ -41,14 +41,14 @@ public class Spray : MonoBehaviour
         Builder.WorldCanvas(transform, default, c =>
         {
             var spray = SprayManager.Find(owner?.Id ?? AccId)?.Sprite ?? Tex.Mark;
-            var title = owner?.Header.Name ?? Name(AccId);
+            var title = owner?.Header.Name ?? AccId.Name;
             var width = 141f * title.Length;
 
             Builder.Image(Builder.Rect("Image", c, new(1960f, 1960f)),             spray,      white, ImageType.Filled).preserveAspect = true;
             Builder.Text (Builder.Rect("Label", c, new(480f, -880f, width, 240f)), title, 240, color, TextAnchor.MiddleCenter).transform.localEulerAngles = new(0f, 0f, 6f);
         }).sortingOrder = -1;
 
-        GetComponentsInChildren<Graphic>().Each(g => Component<Outline>(g.gameObject, o =>
+        GetComponentsInChildren<Graphic>().Each(g => g.Component<Outline>(o =>
         {
             o.effectColor = color;
             o.effectDistance = Vector2.one * 12f;

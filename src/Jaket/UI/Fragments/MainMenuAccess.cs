@@ -25,7 +25,7 @@ public class MainMenuAccess : Fragment
         var col = Random.value < .1f ? pink : green;
         var drk = Darker(col);
 
-        Component<Bar>(Rect("Content", new(-315f, -341.5f, 570f, 176f, new(1f, .5f))).gameObject, b =>
+        Rect("Content", new(-315f, -341.5f, 570f, 176f, new(1f, .5f))).Component<Bar>(b =>
         {
             b.Setup(true, 0f, 6f);
             b.Update(() =>

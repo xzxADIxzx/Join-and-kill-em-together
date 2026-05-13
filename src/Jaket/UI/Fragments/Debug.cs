@@ -22,14 +22,14 @@ public class Debug : Fragment
     /// <summary> Labels displaying diverse information about network. </summary>
     private Text entities, players, isowner, loading, gamemode, active, slowmo, hammer;
 
-    public Debug(Transform root) : base(root, "Debug", false) => Component<Bar>(Rect("Content", new(0f, 220f, 1920f, 440f, new(.5f, 0f))).gameObject, b =>
+    public Debug(Transform root) : base(root, "Debug", false) => Rect("Content", new(0f, 220f, 1920f, 440f, new(.5f, 0f))).Component<Bar>(b =>
     {
         b.Setup(true, 16f, 16f);
         b.Subbar(136f, s =>
         {
             s.Setup(false, 0f, 16f);
 
-            Component<Bar>(s.Image(Tex.Fill, 320f, semi, multiplier: 3f).gameObject, b =>
+            s.Image(Tex.Fill, 320f, semi, multiplier: 3f).Component<Bar>(b =>
             {
                 b.Setup(true);
                 b.Text("BYTES READ   ", 24f, out (readBs   = new(20)).Label, color: green);
@@ -37,7 +37,7 @@ public class Debug : Fragment
                 b.Text("READ TIME    ", 24f, out (readMs   = new(97)).Label, color: orange);
                 b.Text("WRITE TIME   ", 24f, out (writeMs  = new(97)).Label, color: Darker(orange));
             });
-            Component<Bar>(s.Image(Tex.Fill, 320f, semi, multiplier: 3f).gameObject, b =>
+            s.Image(Tex.Fill, 320f, semi, multiplier: 3f).Component<Bar>(b =>
             {
                 b.Setup(true);
                 b.Text("ENTITY UPDATE", 24f, out (entityMs = new(97)).Label, color: blue);
@@ -45,7 +45,7 @@ public class Debug : Fragment
                 b.Text("TOTAL TIME   ", 24f, out (totalMs  = new(97)).Label, color: purple);
                 b.Text("FLUSH TIME   ", 24f, out (flushMs  = new(97)).Label, color: Darker(purple));
             });
-            Component<Bar>(s.Image(Tex.Fill, 320f, semi, multiplier: 3f).gameObject, b =>
+            s.Image(Tex.Fill, 320f, semi, multiplier: 3f).Component<Bar>(b =>
             {
                 b.Setup(true);
                 b.Text("ENTITIES     ", 24f, out entities);
@@ -53,7 +53,7 @@ public class Debug : Fragment
                 b.Text("IS OWNER     ", 24f, out isowner);
                 b.Text("LOADING      ", 24f, out loading);
             });
-            Component<Bar>(s.Image(Tex.Fill, 320f, semi, multiplier: 3f).gameObject, b =>
+            s.Image(Tex.Fill, 320f, semi, multiplier: 3f).Component<Bar>(b =>
             {
                 b.Setup(true);
                 b.Text("GAMEMODE     ", 24f, out gamemode);
@@ -66,7 +66,7 @@ public class Debug : Fragment
         {
             s.Setup(false, 0f, 16f);
 
-            void Build(Image graph, Data data) => Component<UILineRenderer>(Builder.Rect("Graph", graph.transform, new(8f, 8f, 0f, 0f, new())).gameObject, g => data.Graph = g);
+            void Build(Image graph, Data data) => Builder.Rect("Graph", graph.transform, new(8f, 8f, 0f, 0f, new())).Component<UILineRenderer>(g => data.Graph = g);
             var byteGraph = s.Image(Tex.Fill, 320f,  semi, multiplier: 3f);
             var timeGraph = s.Image(Tex.Fill, 1552f, semi, multiplier: 3f);
 

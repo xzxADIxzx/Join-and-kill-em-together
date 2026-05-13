@@ -51,15 +51,15 @@ public class Spectator : Fragment
 
         info.rectTransform.sizeDelta = Vector2.one * -128f;
 
-        Component<HudOpenEffect>(dead.gameObject, e =>
+        dead.Component<HudOpenEffect>(e =>
         {
             e.reverse = true;
             e.YFirst = true;
         });
         GameAssets.Sound("UI/TV Off.wav", c =>
         {
-            Component<AudioSource>(info.gameObject, a => a.clip = c);
-            Component<AudioSource>(dead.gameObject, a => a.clip = c);
+            info.Component<AudioSource>(a => a.clip = c);
+            dead.Component<AudioSource>(a => a.clip = c);
         });
     }
 

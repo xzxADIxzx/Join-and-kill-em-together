@@ -70,7 +70,6 @@ public class Plugin : MonoBehaviour
 
         Pointers.Allocate();
         Stats.StartRecord();
-        Tools.CacheAccId();
 
         Administration.Load();
         LobbyController.Load();

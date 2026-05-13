@@ -27,7 +27,7 @@ public class Teleporter : Fragment
         decor = Builder.Image(Rect("Decor", new(64f, 2048f)), null, white, ImageType.Simple);
         decor.transform.localEulerAngles = new(0f, 0f, -24f);
 
-        Component<Bar>(Content.gameObject, b => b.Update(() =>
+        Content.Component<Bar>(b => b.Update(() =>
         {
             flash.color = white with { a = Mathf.MoveTowards(flash.color.a, 0f, Time.deltaTime) };
             decor.transform.localPosition = new(Mathf.MoveTowards(decor.transform.localPosition.x, 2048f, 8192f * Time.deltaTime), 0f);

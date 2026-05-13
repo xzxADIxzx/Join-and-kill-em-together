@@ -51,7 +51,7 @@ public static class ActionList
 
         ActionType.Window(l);
 
-        ActionType.Find(l, "3 - Gun Room/TitleActivator", t => Component<ObjectActivator>(t.gameObject, o =>
+        ActionType.Find(l, "3 - Gun Room/TitleActivator", t => t.Component<ObjectActivator>(o =>
         {
             var prev = o.events.toDisActivateObjects;
             var next = o.events.toDisActivateObjects = [prev[0]];
@@ -67,7 +67,7 @@ public static class ActionList
             o.events.toActivateObjects.Each(o => o.name == "Cube", o => o.GetComponents<Collider>().Each(Dest));
         }, true));
 
-        ActionType.Find(l, "AltStartFiller/AltStart", t => Component<ObjectActivator>(t.gameObject, o =>
+        ActionType.Find(l, "AltStartFiller/AltStart", t => t.Component<ObjectActivator>(o =>
         {
             var prev = o.events.toDisActivateObjects;
             var next = o.events.toDisActivateObjects = [prev[0], prev[^1]];

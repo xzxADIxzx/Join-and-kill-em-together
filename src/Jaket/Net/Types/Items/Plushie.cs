@@ -179,7 +179,7 @@ public class Plushie : Item
             }));
             return;
         }
-        Tools.Create("warn", owl);
+        Tools.Tools.Create("warn", owl);
 
         owl.position = cam.position - mov.forward * 6f - Vector3.up;
         owl.LookAt(cam);

@@ -38,7 +38,7 @@ public class PlayerInformation : Fragment
 
     public void Build() => Builder.WorldCanvas(Create("Info", hc.transform).transform, default, c =>
     {
-        Component<HUDPos>(c.gameObject, p =>
+        c.Component<HUDPos>(p =>
         {
             c.localPosition = new(1.06f, -.53f, 1f);
             c.localRotation = Quaternion.Euler(0f, 30f, 0f);
@@ -54,7 +54,7 @@ public class PlayerInformation : Fragment
         var height = number == 0 ? 184f : 32f + 80f * number;
 
         var root = Builder.Image(Builder.Rect("Root", c, new(97f, -224f + height / 2, 777f, height)), Tex.Fill, black, ImageType.Sliced, 1.35f);
-        Component<Bar>(root.gameObject, b =>
+        root.Component<Bar>(b =>
         {
             b.Setup(true, 20f);
             b.Update(() => root.color = black with { a = PrefsManager.Instance.GetFloat("hudBackgroundOpacity") / 100f });
@@ -80,7 +80,7 @@ public class PlayerInformation : Fragment
             playername = Text(TextAnchor.MiddleLeft),
             railcharge = Text(TextAnchor.MiddleRight);
 
-        Component<Bar>(root.gameObject, b => b.Update(() =>
+        root.Component<Bar>(b => b.Update(() =>
         {
             int health = player.Health, charge = Mathf.Min(player.Charge, 8);
 

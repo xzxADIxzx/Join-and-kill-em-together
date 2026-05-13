@@ -34,7 +34,7 @@ public class Fish : Item
     {
         base.Update(delta);
 
-        if (Type == EntityType.FishBomb && !itemId.pickedUp && !timer) timer = Component<ObjectActivator>(fish.gameObject, a =>
+        if (Type == EntityType.FishBomb && !itemId.pickedUp && !timer) timer = fish.Component<ObjectActivator>(a =>
         {
             a.ActivateDelayed(3f);
             a.events = new() { onActivate = new() };

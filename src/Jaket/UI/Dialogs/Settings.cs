@@ -121,7 +121,7 @@ public class Settings : Fragment
             b.Subbar(424f, s =>
             {
                 s.Setup(false, 0f);
-                keylist = Component<Bar>(s.ScrollV(664f, 384f).content.gameObject, b => b.Setup(true, 0f));
+                keylist = s.ScrollV(664f, 384f).content.Component<Bar>(b => b.Setup(true, 0f));
                 s.Slider(keylist.transform);
             });
         });

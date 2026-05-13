@@ -69,9 +69,9 @@ public class Chat : Fragment
         field = Builder.Field(Rect("Input", new(0f, 36f, -32, 40f, new(0f, 0f), new(1f, 0f))), Tex.Fill, invi, "#chat.tip", 24, OnFocusLost);
         field.characterLimit = MAX_LENGTH;
 
-        static void Lerp(RectTransform rect, Prov<bool> target) => Component<CanvasGroup>(rect.gameObject, g =>
+        static void Lerp(RectTransform rect, Prov<bool> target) => rect.Component<CanvasGroup>(g =>
         {
-            g.GetOrAddComponent<Bar>().Update(() => g.alpha = Mathf.Lerp(g.alpha, target() ? 1f : 0f, Time.deltaTime * 12f));
+            g.Component<Bar>(b => b.Update(() => g.alpha = Mathf.Lerp(g.alpha, target() ? 1f : 0f, Time.deltaTime * 12f)));
             g.blocksRaycasts = false;
         });
         Lerp(chatBg, () => chat.text.Length > 0 && Shown | Time.time - lastUpdate < 8f);

@@ -22,7 +22,7 @@ public class PlayerIndicators : Fragment
         Events.OnLobbyEnter += () => { if (!Shown) Toggle(); };
         Events.OnTeamChange += Rebuild;
 
-        Component<Bar>(Content.gameObject, b => b.Update(() =>
+        Content.Component<Bar>(b => b.Update(() =>
         {
             // update indicators so that they always point to their respective targets
             for (int i = 0; i < targets.Count; i++) Update(targets[i], indicators[i]);
