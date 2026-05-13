@@ -105,7 +105,7 @@ public abstract class Enemy : OwnableEntity
         if (Boss) agent.Run(() => Kill(10, w =>
         {
             w.Bool(false);
-            w.Bool(true);
+            w.Bool(enemyId.isBoss = true);
 
             w.Float(PostHealth);
             w.Int(bossbar.healthLayers.Length);
@@ -135,7 +135,7 @@ public abstract class Enemy : OwnableEntity
 
         if (left >= 2 && r.Bool())
         {
-            Boss = true;
+            Boss = enemyId.isBoss = true;
             PostHealth = enemy.health = r.Float();
 
             int layers = r.Int();
