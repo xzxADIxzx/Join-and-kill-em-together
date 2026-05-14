@@ -28,9 +28,10 @@ public class Enemies : Vendor
             () => Vendor.Prefabs[(byte)EntityType.Malicious] = Vendor.Prefabs[(byte)EntityType.Malicious].transform.Find("Body").gameObject
         );
 
-        for (EntityType i = EntityType.Filth;          i <= EntityType.Soldier;   i++) Vendor.Suppliers[(byte)i] = (id, type) => new Husk      (id, type);
-        for (EntityType i = EntityType.Malicious;      i <= EntityType.Malicious; i++) Vendor.Suppliers[(byte)i] = (id, type) => new Malicious (id, type);
-        for (EntityType i = EntityType.SecuritySystem; i <= EntityType.Brain;     i++) Vendor.Suppliers[(byte)i] = (id, type) => new Earthmover(id, type);
+        for (EntityType i = EntityType.Filth;           i <= EntityType.Soldier;         i++) Vendor.Suppliers[(byte)i] = (id, type) => new Husk           (id, type);
+        for (EntityType i = EntityType.Swordsmachine;   i <= EntityType.Swordsmachine;   i++) Vendor.Suppliers[(byte)i] = (id, type) => new Swordsmachine  (id, type);
+        for (EntityType i = EntityType.SecuritySystem;  i <= EntityType.Brain;           i++) Vendor.Suppliers[(byte)i] = (id, type) => new Earthmover     (id, type);
+        for (EntityType i = EntityType.Malicious;       i <= EntityType.Malicious;       i++) Vendor.Suppliers[(byte)i] = (id, type) => new Malicious      (id, type);
 
         Events.OnLoad += () => Events.Post(() => ResFind<EnemySpawnableInstance>().Each(IsReal, Dest));
     }

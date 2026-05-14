@@ -115,7 +115,6 @@ public class Malicious : Enemy
             Inst(scr.breakParticle, scr.transform.position, scr.transform.rotation);
             Dest(scr.gameObject);
         }
-        scr.spiderCorpseBroken = true; // skip original
     }
 
     #endregion

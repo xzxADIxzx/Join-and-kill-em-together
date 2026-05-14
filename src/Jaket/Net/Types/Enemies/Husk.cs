@@ -90,7 +90,7 @@ public class Husk : Enemy
 
         if (LastAttack != Attack) switch (LastAttack = Attack)
         {
-            case 1: scr1?.Swing();      scr2?.Swing(); break;
+            case 1: scr1?.Swing     (); scr2?.Swing(); break;
             case 2: scr1?.JumpAttack(); scr2?.Melee(); break;
         }
         if (LastMoving != Moving)

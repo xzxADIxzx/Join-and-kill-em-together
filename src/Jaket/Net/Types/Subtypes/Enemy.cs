@@ -25,7 +25,7 @@ public abstract class Enemy : OwnableEntity
     public bool Blessed => enemyId.Blessed;
 
     /// <summary> Whether the enemy is acting. </summary>
-    public byte Attack, LastAttack = byte.MaxValue;
+    public byte Attack, LastAttack;
     /// <summary> Whether the enemy is moving. </summary>
     public bool Moving, LastMoving;
 
