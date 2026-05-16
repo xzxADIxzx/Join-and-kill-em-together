@@ -90,6 +90,22 @@ public static class ActionList
 
         ActionType.Window(l);
 
+        ActionType.Dest(l, "3 Nonstuff/Swordsmachine Trigger");
+        ActionType.Dest(l, "4 - Swordsmachine Hallway/Invisible Wall");
+
+        ActionType.Dest(l, "3B Enemies/Activator");
+
+        ActionType.Find(l, "Enemies/Wave 2 Trigger", t => t.GetComponents<ObjectActivator>().Each(Dest));
+        ActionType.Find(l, "Door (Large) With Controllers (3)/Door (Large)", t => t.GetComponent<Door>().Lock());
+        ActionType.Dest(l, "7 Nonstuff/Invisible Wall");
+        ActionType.Act(l, "7 Contents(Clone)/PlayerDoorUnlocker");
+
+        ActionType.Dest(l, "5B Nonstuff/Altar"); // duplicate
+
+        ActionType.Find(l, "8 Contents(Clone)/Trigger", t => t.GetComponents<ObjectActivator>().Each(Dest));
+
+        ActionType.Act(l, "10B Contents(Clone)/Trigger"); // boss
+
         #endregion
         #region 0-3
         l = "Level 0-3";

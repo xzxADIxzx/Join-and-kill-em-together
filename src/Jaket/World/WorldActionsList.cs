@@ -17,19 +17,6 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
     // NEVER DO DESTROY IMMEDIATE IN STATIC ACTION
     public static void Load()
     {
-        #region 0-2
-        l = "Level 0-2";
-
-        StaticAction.Destroy(l, "Invisible Wall", new(0f, -7f, 163.5f));
-        StaticAction.Destroy(l, "Invisible Wall", new(-45f, -8f, 287.5f));
-        StaticAction.Destroy(l, "SwordMachine (1)", new(13f, -10f, 173f));
-        StaticAction.Destroy(l, "Activator", new(-44.5f, 0f, 157f));
-        StaticAction.Destroy(l, "SwordsMachine", new(-45f, -11f, 268f));
-        StaticAction.Destroy(l, "SwordsMachine", new(-55f, -11f, 293f));
-
-        NetAction.Sync(l, "Activator", new(-81f, 9f, 339.5f), obj => obj.parent.parent.gameObject.SetActive(true)); // boss
-
-        #endregion
         #region 0-3
         l = "Level 0-3";
 
