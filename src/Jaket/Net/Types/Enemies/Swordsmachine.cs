@@ -64,9 +64,13 @@ public class Swordsmachine : Enemy
     {
         base.Rage(enraged);
         if (enraged)
-            scr.Enrage();
-        else
-            scr.UnEnrage();
+        {
+            if (scr.enraged)
+                scr.Enrage();
+            else
+                scr.Knockdown();
+        }
+        else scr.UnEnrage();
     }
 
     public override void Create() => Assign(Entities.Enemies.Make(Type, new(x.Init, y.Init, z.Init)).AddComponent<Agent>());
@@ -85,6 +89,7 @@ public class Swordsmachine : Enemy
         if (Locked) { nma.enabled = false; scr.enabled = false; return; }
 
         scr.enabled = IsOwner;
+        scr.phaseChangeHealth = scr.firstPhase ? PostHealth / 2f : 0f;
 
         if (IsOwner) return;
 
@@ -92,9 +97,7 @@ public class Swordsmachine : Enemy
         agent.Rotation = new(agent.Rotation.x,  r.GetAngle(delta), agent.Rotation.z );
 
         nma.enabled = false;
-
         scr.targetHandle = null;
-        scr.phaseChangeHealth = scr.firstPhase ? PostHealth / 2f : 0f;
 
         if (LastAttack != Attack) switch (LastAttack = Attack)
         {
@@ -114,7 +117,7 @@ public class Swordsmachine : Enemy
             scr.EndFirstPhase();
             Hidden = false;
         }
-        base.Killed(explode);
+        else base.Killed(explode);
     }
 
     #endregion
