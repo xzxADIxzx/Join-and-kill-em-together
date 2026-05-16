@@ -141,15 +141,21 @@ public class Hitscans : Vendor
 
                 yield return new CodeInstruction(System.Reflection.Emit.OpCodes.Ldloc_S, 0x0A);
                 yield return new CodeInstruction(System.Reflection.Emit.OpCodes.Ldloc_S, 0x0C);
-                yield return CodeInstruction.Call(typeof(Hitscans), nameof(Dmg), [typeof(EnemyIdentifier), typeof(float)]);
+                yield return new CodeInstruction(System.Reflection.Emit.OpCodes.Ldloc_S, 0x0B);
+                yield return new CodeInstruction(System.Reflection.Emit.OpCodes.Ldloc_S, 0x01);
+                yield return CodeInstruction.Call(typeof(Hitscans), nameof(Dmg), [typeof(EnemyIdentifier), typeof(float), typeof(float), typeof(GameObject)]);
             }
             yield return ins;
         }
     }
 
-    static void Dmg(EnemyIdentifier id, float damage)
+    static void Dmg(EnemyIdentifier id, float damage, float crit, GameObject target)
     {
-        if (!id.dead && id.TryGetComponent(out Entity.Agent a)) Entities.Damage.Deal(a.Patron.Id, damage);
+        if (!id.dead && id.TryGetComponent(out Entity.Agent a)) Entities.Damage.Deal
+        (
+            a.Patron.Id,
+            damage + crit * damage * (target.CompareTag("Head") ? 1f : target.CompareTag("Limb") || target.CompareTag("EndLimb") ? .5f : 0f)
+        );
     }
 
     #endregion
