@@ -82,7 +82,7 @@ public static class ActionList
 
         ActionType.Find(l, "13 - Malicious Face Arena/13 Nonstuff", t => Dest(t.GetChild(0))); // unloader
 
-        ActionType.Act(l, "13 Content(Clone)/Trigger"); // boss
+        ActionType.Act(l, "13 Content/Trigger"); // boss
 
         #endregion
         #region 0-2
@@ -98,13 +98,15 @@ public static class ActionList
         ActionType.Find(l, "Enemies/Wave 2 Trigger", t => t.GetComponents<ObjectActivator>().Each(Dest));
         ActionType.Find(l, "Door (Large) With Controllers (3)/Door (Large)", t => t.GetComponent<Door>().Lock());
         ActionType.Dest(l, "7 Nonstuff/Invisible Wall");
-        ActionType.Act(l, "7 Contents(Clone)/PlayerDoorUnlocker");
+        ActionType.Act(l, "7 Contents/PlayerDoorUnlocker");
 
         ActionType.Dest(l, "5B Nonstuff/Altar"); // duplicate
 
-        ActionType.Find(l, "8 Contents(Clone)/Trigger", t => t.GetComponents<ObjectActivator>().Each(Dest));
+        ActionType.Find(l, "8 Contents/Trigger", t => t.GetComponents<ObjectActivator>().Each(Dest));
 
-        ActionType.Act(l, "10B Contents(Clone)/Trigger"); // boss
+        ActionType.Act(l, "10B Contents/Trigger"); // boss
+
+        ActionType.Find(l, "7B - Bonus Platforming/Cube (48)", t => t.localPosition += Vector3.right * 6f);
 
         #endregion
         #region 0-3

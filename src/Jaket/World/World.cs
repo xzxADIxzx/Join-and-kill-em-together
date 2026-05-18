@@ -243,8 +243,20 @@ public class World
         __instance.onRestart?.Invoke();
         __instance.toActivate?.SetActive(true);
 
-        Movement.Respawn(__instance.transform.position + Vector3.up * 1.25f, __instance.transform.eulerAngles.y);
+        Movement.Respawn(__instance.transform.position + __instance.transform.up * 1.25f, __instance.transform.eulerAngles.y);
         return false;
+    }
+
+    [DynamicPatch(typeof(CheckPoint), nameof(CheckPoint.Start))]
+    [Prefix]
+    static void Inherit(CheckPoint __instance)
+    {
+        __instance.rooms.Each(r =>
+        {
+            r.GetOrAddComponent<GoreZone>().checkpoint = __instance;
+            r.GetComponentsInChildren<Bonus>(true).Each(b => b.UpdateStatsManagerReference());
+        });
+        __instance.rooms = [];
     }
 
     [DynamicPatch(typeof(Door), nameof(Door.Optimize))]
