@@ -45,10 +45,10 @@ public class Items : Vendor
             }));
         });
 
-        Events.Post(() => ModAssets.V2        != null, () => Vendor.Prefabs[(byte)EntityType.V2       ] = ModAssets.V2       );
-        Events.Post(() => ModAssets.V3        != null, () => Vendor.Prefabs[(byte)EntityType.V3       ] = ModAssets.V3       );
-        Events.Post(() => ModAssets.xzxADIxzx != null, () => Vendor.Prefabs[(byte)EntityType.xzxADIxzx] = ModAssets.xzxADIxzx);
-        Events.Post(() => ModAssets.Sowler    != null, () => Vendor.Prefabs[(byte)EntityType.Sowler   ] = ModAssets.Sowler   );
+        Events.Post(() => ModAssets.V2,        () => Vendor.Prefabs[(byte)EntityType.V2       ] = ModAssets.V2       );
+        Events.Post(() => ModAssets.V3,        () => Vendor.Prefabs[(byte)EntityType.V3       ] = ModAssets.V3       );
+        Events.Post(() => ModAssets.xzxADIxzx, () => Vendor.Prefabs[(byte)EntityType.xzxADIxzx] = ModAssets.xzxADIxzx);
+        Events.Post(() => ModAssets.Sowler,    () => Vendor.Prefabs[(byte)EntityType.Sowler   ] = ModAssets.Sowler   );
 
         for (EntityType i = EntityType.SkullBlue; i <= EntityType.BaitFace;  i++) Vendor.Suppliers[(byte)i] = (id, type) => new CommonItem(id, type);
         for (EntityType i = EntityType.FishFunny; i <= EntityType.FishBurnt; i++) Vendor.Suppliers[(byte)i] = (id, type) => new Fish      (id, type);

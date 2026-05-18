@@ -114,11 +114,11 @@ public static class ModAssets
                 i.putDownScale    = new(.45f, .45f, .45f);
             });
         });
-        Load<AudioMixer>("sam-audio", m => Events.Post(() =>
+        Load<AudioMixer>("sam-audio", m =>
         {
             Networking.LocalPlayer.Voice.outputAudioMixerGroup = (Mixer = m).FindMatchingGroups("master")[0];
             Settings.Load();
-        }));
+        });
 
         Load<Sprite>("V3-bestiary-icon",     s => BestiaryIcon = s);
         Load<Sprite>("lobby-owner",          s => LobbyOwner   = s);

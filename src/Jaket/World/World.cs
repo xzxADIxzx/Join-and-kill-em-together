@@ -152,7 +152,7 @@ public class World
         performed[id] = true;
         a.Perform(pos[Next(id)] = p);
 
-        if (Version.DEBUG) Log.Debug($"[WRLD] Performed an action {ActionList.At(id).Path}#{id} in the inner world");
+        if (Version.DEBUG) Log.Debug($"[WRLD] Performed an action {a.Path}#{id} in the inner world");
     }
 
     #endregion
