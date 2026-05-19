@@ -33,7 +33,7 @@ public class Enemies : Vendor
         for (EntityType i = EntityType.SecuritySystem;  i <= EntityType.Brain;           i++) Vendor.Suppliers[(byte)i] = (id, type) => new Earthmover     (id, type);
         for (EntityType i = EntityType.Malicious;       i <= EntityType.Malicious;       i++) Vendor.Suppliers[(byte)i] = (id, type) => new Malicious      (id, type);
 
-        Events.OnLoad += () => Events.Post(() => ResFind<EnemySpawnableInstance>().Each(IsReal, Dest));
+        Events.OnLoad += () => ResFind<EnemySpawnableInstance>().Each(IsReal, Dest);
     }
 
     public EntityType Type(GameObject obj)
