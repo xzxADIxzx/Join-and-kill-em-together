@@ -107,12 +107,22 @@ public static class ActionList
         ActionType.Act(l, "10B Contents/Trigger"); // boss
 
         ActionType.Find(l, "7B - Bonus Platforming/Cube (48)", t => t.localPosition += Vector3.right * 6f);
+        ActionType.Find(l, "7B - Bonus Platforming/Grinders", t => t.localPosition += Vector3.right * .1f);
 
         #endregion
         #region 0-3
         l = "Level 0-3";
 
         ActionType.Window(l);
+
+        ActionType.Scr(l, "1 Content/Trigger");
+        ActionType.Scr(l, "10 Contents/Trigger");
+
+        ActionType.Turn(l, "Boss Arena Contents/CeilingDoors");
+        ActionType.Dest(l, "Boss Arena Contents/NeoBreakable");
+        ActionType.Act(l, "Boss Arena Contents/Cube (1)"); // boss
+
+        ActionType.Find(l, "11 Contents/Trigger", t => Dest(t.GetComponent<ObjectActivator>())); // unloader
 
         #endregion
         #region 0-4

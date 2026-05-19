@@ -168,9 +168,17 @@ public class Swordsmachine : Enemy
 
     [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.EndFirstPhase))]
     [Prefix]
-    static void Phase(EnemyIdentifier __instance)
+    static void Phase(SwordsMachine __instance)
     {
         if (__instance.TryGetEntity(out Swordsmachine s) && !s.Hidden) s.Kill(2, w => { w.Bool(true); w.Bool(true); });
+    }
+
+    [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.TeleportAway))]
+    [Prefix]
+    static bool Leave(SwordsMachine __instance)
+    {
+        if (__instance.TryGetEntity(out Swordsmachine s) && !s.Hidden) s.Kill();
+        return false;
     }
 
     [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.Enrage))]
