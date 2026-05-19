@@ -101,7 +101,7 @@ public class Shell : Projectile
     [Prefix]
     static bool Damage(global::Projectile __instance, Collider other) => Deal<Shell>(__instance, (eid, tid, ally, e) =>
     {
-        if (__instance.parried ? ally : EnemyIdentifier.CheckHurtException(__instance.safeEnemyType, eid.enemyType, (TargetHandle)null)) return false;
+        if (__instance.friendly ? ally : EnemyIdentifier.CheckHurtException(__instance.safeEnemyType, eid.enemyType, (TargetHandle)null)) return false;
 
         Entities.Damage.Deal(tid, __instance.damage * __instance.enemyDamageMultiplier / (__instance.friendly || __instance.playerBullet ? 4f : 10f));
         return true;
