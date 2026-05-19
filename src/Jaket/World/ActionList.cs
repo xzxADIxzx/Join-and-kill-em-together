@@ -130,6 +130,30 @@ public static class ActionList
 
         ActionType.Window(l);
 
+        static void Chamber(Transform t, int i)
+        {
+            t.name = $"CoolingChamber ({i})";
+            t.GetComponentsInChildren<ObjectActivator>(true).Each
+            (
+                o => o.delay == 2.5f,
+                o => o.events.onActivate.AddListener(() => Events.Post(() =>
+                {
+                    World.Reset(o.Path());
+                    t.GetComponentInChildren<ItemTrigger>().requests = 0;
+                }))
+            );
+        }
+
+        ActionType.Find(l, "3 Nonstuff/CoolingChamber", t => Chamber(t, 0));
+        ActionType.Find(l, "3 Nonstuff/CoolingChamber (1)", t => Chamber(t, 1));
+        ActionType.Find(l, "6 Nonstuff/CoolingChamber", t => Chamber(t, 2));
+
+        ActionType.Act(l, "CoolingChamber (0)/Sequence");
+        ActionType.Act(l, "CoolingChamber (1)/Sequence");
+        ActionType.Act(l, "CoolingChamber (2)/Sequence");
+
+        ActionType.Act(l, "Enemies/Wave 1 Trigger");
+
         #endregion
         #region 0-5
         l = "Level 0-5";

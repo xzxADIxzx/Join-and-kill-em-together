@@ -55,6 +55,13 @@ public class World
     /// <summary> Resets performed actions and their positions. </summary>
     public static void Reset() { performed.Clear(); pos.Clear(); }
 
+    /// <summary> Resets a performed action by its path. </summary>
+    public static void Reset(string path) => ActionList.Each
+    (
+        a => a.Path == path,
+        a => performed[a.Identifier] = false
+    );
+
     #region data
 
     /// <summary> Number of bytes that the world data takes in a snapshot. </summary>
