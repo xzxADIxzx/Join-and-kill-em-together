@@ -113,6 +113,13 @@ public class Swordsmachine : Enemy
     {
         if (explode)
         {
+            if (Boss) ResFind<WeaponPickUp>().Each
+            (
+                w => IsReal(w) && (w.transform.position - agent.Position).magnitude < 70f,
+                w => scr.shotgunPickUp = w.gameObject
+            );
+            scr.bossVersion = true;
+
             scr.firstPhase = false;
             scr.EndFirstPhase();
             Hidden = false;
