@@ -1,6 +1,7 @@
 namespace Jaket.World;
 
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.UI;
 
 using Jaket.Assets;
@@ -85,7 +86,26 @@ public static class ActionType
     }));
 
     /// <summary> Creates an action that synchronizes all windows. </summary>
-    public static void Window(string scene) => Find<Glass>(scene, "window", w => { w.transform.Each(Imdt); w.Shatter(); });
+    public static void Window(string scene) => Find<Glass>(scene, "window", w =>
+    {
+        if (w.isActiveAndEnabled)
+            w.Shatter();
+        else
+        {
+            w.transform.Each(Imdt);
+            w.enabled = false;
+            w.GetComponents<Collider>().Each(Imdt);
+            w.Component<NavMeshObstacle>(o =>
+            {
+                if (w.wall)
+                {
+                    o.carving = false;
+                    o.enabled = false;
+                }
+                else o.enabled = true;
+            }, true);
+        }
+    });
 
     /// <summary> Creates an action that synchronizes all statues. </summary>
     public static void Statue(string scene) => Find<StatueActivator>(scene, "statue", s => s.gameObject.SetActive(true));
@@ -100,7 +120,7 @@ public static class ActionType
     public static void Arena(string scene) => Find<ActivateArena>(scene, "arena", a => a.Activate());
 
     /// <summary> Creates an action that synchronizes all final doors. </summary>
-    public static void Final(string scene) => Find<FinalDoor>(scene, "final", d => d.Open());
+    public static void Final(string scene) => Find<FinalDoor>(scene, "final", d => { d.Open(); OnLevelStart.Instance.onStart.Invoke(); });
 
     #endregion
 }
