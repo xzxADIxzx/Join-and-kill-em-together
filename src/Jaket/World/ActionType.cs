@@ -56,6 +56,17 @@ public static class ActionType
         });
     }));
 
+    /// <summary> Creates an action that synchronizes a script activator. </summary>
+    public static void Scr(string scene, string path, Cons<Transform> perform = null) => ActionList.Add(new(scene, path, true, false, () =>
+    {
+        ResFind<ScriptActivator>().Each(o => IsReal(o) && o.Path() == path, o =>
+        {
+            o.pistons.Each(p => p.off = false);
+            o.lightpillars.Each(p => p.ActivatePillar());
+            perform?.Invoke(o.transform);
+        });
+    }));
+
     /// <summary> Creates an action that synchronizes clicks on a button. </summary>
     public static void Btn(string scene, string path, Cons<Transform> perform = null) => ActionList.Add(new(scene, path, true, false, () =>
     {

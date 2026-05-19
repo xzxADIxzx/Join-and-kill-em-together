@@ -165,6 +165,13 @@ public class World
         Perform(__instance.Path(), default);
     }
 
+    [DynamicPatch(typeof(ScriptActivator), nameof(ScriptActivator.OnTriggerEnter))]
+    [Postfix]
+    static void Activate(ScriptActivator __instance, Collider other)
+    {
+        if (other.gameObject.CompareTag("Player")) Perform(__instance.Path(), default);
+    }
+
     [DynamicPatch(typeof(Button), "Press")]
     [Postfix]
     static void Activate(Button __instance)
