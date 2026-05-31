@@ -50,6 +50,14 @@ public static class Commands
 
         Handler.Register("hello", "Resend the tips for new players", args => chat.SayHello());
 
+        Handler.Register("code", "Copy the lobby code to clipboard", args =>
+        {
+            if (LobbyController.Offline)
+                chat.Receive("[red]You aren't in a lobby yet.");
+            else
+                LobbyController.CopyCode();
+        });
+
         Handler.Register("tts-volume", "\\[0-100]", "Set the volume of TTS", args =>
         {
             if (args.Length == 0)

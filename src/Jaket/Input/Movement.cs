@@ -31,6 +31,10 @@ public class Movement : MonoSingleton<Movement>
     private Spray spray;
     /// <summary> Hold time of the emote wheel key. </summary>
     private float holdTime;
+    /// <summary> Time it takes chat to stop horizontal movement. </summary>
+    private const float CHAT_HORIZONTAL_BRAKE_TIME = .1f;
+    private static bool chatBraking, chatStopped;
+    private static float chatBrakeSpeed;
 
     #region general
 
@@ -128,11 +132,17 @@ public class Movement : MonoSingleton<Movement>
             UI.Spectator.UpdateCamera(!nm.dead && Emotes.Ends);
         }
 
-        if (!nm.dead) nm.rb.constraints = UI.AnyDialog
-            ? RigidbodyConstraints.FreezeAll
-            : Emotes.Current == 0xFF || Emotes.Current == 0x0B
-                ? RigidbodyConstraints.FreezeRotation
-                : RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
+        if (!nm.dead)
+        {
+            var horizontal = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
+
+            if (UI.AnyBlockingDialog)
+                nm.rb.constraints = RigidbodyConstraints.FreezeAll;
+            else if (UI.Chat.Shown)
+                nm.rb.constraints = chatStopped ? horizontal : RigidbodyConstraints.FreezeRotation;
+            else
+                nm.rb.constraints = Emotes.Current == 0xFF || Emotes.Current == 0x0B ? RigidbodyConstraints.FreezeRotation : horizontal;
+        }
     }
 
     private void OnGUI()
@@ -211,6 +221,46 @@ public class Movement : MonoSingleton<Movement>
     [DynamicPatch(typeof(OptionsManager), nameof(OptionsManager.LateUpdate))]
     [Postfix]
     static void Scale() => Time.timeScale = Gameflow.Slowmo ? .5f : 1f;
+
+    [StaticPatch(typeof(NewMovement), nameof(NewMovement.FixedUpdate))]
+    [Prefix]
+    static void StopChatInput(NewMovement __instance)
+    {
+        if (!__instance.dead && UI.Chat.Shown)
+            __instance.DeactivateMovement();
+    }
+
+    [StaticPatch(typeof(NewMovement), nameof(NewMovement.FixedUpdate))]
+    [Postfix]
+    static void BrakeChatMovement(NewMovement __instance)
+    {
+        if (__instance.dead || !UI.Chat.Shown)
+        {
+            chatBraking = chatStopped = false;
+            return;
+        }
+
+        if (!chatBraking)
+        {
+            if (__instance.sliding) __instance.StopSlide();
+            __instance.boost = false;
+            __instance.preSlideSpeed = 0f;
+            __instance.preDashSpeed = __instance.preDashSpeed with { x = 0f, z = 0f };
+            __instance.dodgeDirection = Vector3.zero;
+
+            var start = new Vector2(__instance.rb.velocity.x, __instance.rb.velocity.z).magnitude;
+            chatBrakeSpeed = start / CHAT_HORIZONTAL_BRAKE_TIME;
+            chatBraking = true;
+            chatStopped = start < .01f;
+        }
+
+        if (chatStopped) return;
+
+        var velocity = __instance.rb.velocity;
+        var horizontal = Vector2.MoveTowards(new(velocity.x, velocity.z), Vector2.zero, chatBrakeSpeed * Time.fixedDeltaTime);
+        __instance.rb.velocity = velocity with { x = horizontal.x, z = horizontal.y };
+        chatStopped = horizontal.sqrMagnitude < .0001f;
+    }
 
     [StaticPatch(typeof(NewMovement), nameof(NewMovement.GetHurt))]
     [Prefix]
