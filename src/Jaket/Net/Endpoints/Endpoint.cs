@@ -35,7 +35,14 @@ public abstract class Endpoint
 
         if (Networking.Loading && type != PacketType.Level && type != PacketType.ImageHeader && type != PacketType.ImageChunk) return;
 
-        handlers[(int)type](con, sender, r, size);
+        int id = (int)type;
+        if (id >= handlers.Length || handlers[id] == null)
+        {
+            Log.Warning($"[NET] Received an unhandled packet type ({id}) from {sender}");
+            return;
+        }
+
+        handlers[id](con, sender, r, size);
         Stats.ReadBs += size;
     }
 
