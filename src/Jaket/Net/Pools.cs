@@ -5,15 +5,17 @@ using Player = Types.RemotePlayer;
 /// <summary> Simple hash map divided into subtick pools. Uses unsigned integers as keys and entities as values. </summary>
 public class Pools
 {
+    /// <summary> Capacity of the hash map; must be a power of two so the key mask works. </summary>
+    private const int CAPACITY = 1024;
     /// <summary> Entries are distributed across the subtick pools; every SUBTICKS_PER_TICK-th entry belongs to the same pool. </summary>
-    private Entry[] entries = new Entry[1024];
+    private Entry[] entries = new Entry[CAPACITY];
 
     #region general
 
     /// <summary> Adds a new entry if there is no entry with the given key/id, or changes the existing one. </summary>
     public void Set(uint key, Entity value)
     {
-        ref var entry = ref entries[key & 0x3FF];
+        ref var entry = ref entries[key & (CAPACITY - 1)];
 
         while (entry != null && entry.Key != key) entry = ref entry.Next;
         entry ??= new() { Key = key };
@@ -23,7 +25,7 @@ public class Pools
     /// <summary> Returns an entity with the given key/id if any, or null. </summary>
     public Entity Get(uint key)
     {
-        var entry = entries[key & 0x3FF];
+        var entry = entries[key & (CAPACITY - 1)];
 
         while (entry != null && entry.Key != key) entry = entry.Next;
         return entry?.Value;
@@ -32,7 +34,7 @@ public class Pools
     /// <summary> Returns whether an entity with the given key/id was found in the hash map. </summary>
     public bool TryGetValue(uint key, out Entity value)
     {
-        var entry = entries[key & 0x3FF];
+        var entry = entries[key & (CAPACITY - 1)];
 
         while (entry != null && entry.Key != key) entry = entry.Next;
         value = entry?.Value;
@@ -45,7 +47,7 @@ public class Pools
     /// <summary> Removes an entity with the given key/id from the hash map. </summary>
     public void Remove(uint key)
     {
-        ref var entry = ref entries[key & 0x3FF];
+        ref var entry = ref entries[key & (CAPACITY - 1)];
 
         while (entry != null && entry.Key != key) entry = ref entry.Next;
         entry = entry?.Next;
