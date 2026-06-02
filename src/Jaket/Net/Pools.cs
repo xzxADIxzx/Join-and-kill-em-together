@@ -2,10 +2,10 @@ namespace Jaket.Net;
 
 using Player = Types.RemotePlayer;
 
-/// <summary> Simple hash map divided into four pools. Uses unsigned integers as keys and entities as values. </summary>
+/// <summary> Simple hash map divided into subtick pools. Uses unsigned integers as keys and entities as values. </summary>
 public class Pools
 {
-    /// <summary> Each fourth entry belongs to the same pool. </summary>
+    /// <summary> Entries are distributed across the subtick pools; every SUBTICKS_PER_TICK-th entry belongs to the same pool. </summary>
     private Entry[] entries = new Entry[1024];
 
     #region general

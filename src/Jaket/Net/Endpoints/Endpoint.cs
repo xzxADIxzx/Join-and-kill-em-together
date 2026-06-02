@@ -10,7 +10,7 @@ using Jaket.Net.Admin;
 public abstract class Endpoint
 {
     /// <summary> Handlers of incoming data packets. </summary>
-    protected PacketHandler[] handlers = new PacketHandler[32];
+    protected PacketHandler[] handlers = new PacketHandler[System.Enum.GetValues(typeof(PacketType)).Length];
     /// <summary> Counter showing the pool that will be included in the next snapshot. </summary>
     protected int pool;
 
