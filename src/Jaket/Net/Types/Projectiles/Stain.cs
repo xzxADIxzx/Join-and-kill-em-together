@@ -68,7 +68,7 @@ public class Stain : OwnableEntity
         OnTransfer = () =>
         {
             Wake();
-            if (IsOwner && agent) agent.gameObject.GetOrAddComponent<Gasoline.Sentinel>().Patron = this;
+            if (IsOwner && agent) agent.gameObject.GetOrAddComponent<Sentinel>().Patron = this;
         };
 
         if (IsOwner)
@@ -146,4 +146,16 @@ public class Stain : OwnableEntity
     }
 
     #endregion
+
+    /// <summary> Component that reports the destruction of its object to the entity. </summary>
+    public class Sentinel : MonoBehaviour
+    {
+        /// <summary> Entity that owns the sentinel and has to be killed on destruction. </summary>
+        public Entity Patron;
+
+        void OnDestroy()
+        {
+            if (gameObject.scene.isLoaded && !Networking.Loading && LobbyController.Online && Patron.IsOwner && !Patron.Hidden) Patron.Kill();
+        }
+    }
 }

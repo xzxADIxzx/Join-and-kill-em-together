@@ -29,11 +29,11 @@ public class Projectiles : Vendor
         for (EntityType i = EntityType.Rocket;         i <= EntityType.Rocket;         i++) Vendor.Suppliers[(byte)i] = (id, type) => new Rocket     (id, type);
         for (EntityType i = EntityType.Cannonball;     i <= EntityType.Cannonball;     i++) Vendor.Suppliers[(byte)i] = (id, type) => new Cannon     (id, type);
         for (EntityType i = EntityType.ProjectileHell; i <= EntityType.ProjectileExpl; i++) Vendor.Suppliers[(byte)i] = (id, type) => new Shell      (id, type);
-        for (EntityType i = EntityType.Gasoline;       i <= EntityType.Gasoline;       i++) Vendor.Suppliers[(byte)i] = (id, type) => new Gasoline   (id, type);
         for (EntityType i = EntityType.GasolineStain;  i <= EntityType.GasolineStain;  i++) Vendor.Suppliers[(byte)i] = (id, type) => new Stain      (id, type);
 
         Events.OnTeamChange += () => Networking.Entities.Alive<Projectile>(p => p.UpdateIgnore());
         Events.OnMemberJoin += _ => Networking.Entities.Alive<Stain>(s => s.Wake());
+        Events.EveryTick    += Gasoline.Flush;
     }
 
     public EntityType Type(GameObject obj) => Vendor.Find

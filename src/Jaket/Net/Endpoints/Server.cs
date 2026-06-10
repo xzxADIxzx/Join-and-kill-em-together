@@ -119,6 +119,12 @@ public class Server : Endpoint, ISocketManager
             Redirect(r, s, con);
         });
 
+        Listen(PacketType.Gasoline, (con, sender, r, s) =>
+        {
+            Gasoline.Spawn(r, s);
+            Redirect(r, s, con);
+        });
+
         /*
         Listen(PacketType.Vote, (con, sender, r, s) =>
         {

@@ -1,56 +1,71 @@
 namespace Jaket.Net.Types;
 
+using System.Collections.Generic;
 using UnityEngine;
 
 using Jaket.Content;
 using Jaket.Harmony;
+using Jaket.IO;
 
-/// <summary> Tangible entity of the gasoline projectile type. </summary>
-public class Gasoline : Projectile
+/// <summary>
+/// Gasoline droplets are not entities: their flight is pure ballistics, so one-shot spawn events suffice, just like hitscans.
+/// Hits are processed by the owner of the droplets and synced via gasoline stains and enemy fuel.
+/// </summary>
+public static class Gasoline
 {
-    Agent agent;
+    /// <summary> Maximum number of droplets per batch, protects against malformed packets. </summary>
+    public const int BATCH_SIZE = 8;
 
-    public Gasoline(uint id, EntityType type) : base(id, type, true, true, true) { }
+    /// <summary> Positions and velocities of the droplets sprayed by the local player since the last tick. </summary>
+    private static List<Vector3> batch = new();
 
-    #region logic
-
-    /// <summary> Gasoline is always green, no matter the team of the player that sprayed it. </summary>
-    public override void Paint(Renderer renderer) { }
-
-    public override void Assign(Agent agent)
+    /// <summary> Sends the accumulated droplets to other players. </summary>
+    public static void Flush()
     {
-        base.Assign(this.agent = agent);
-
-        agent.Run(MasterKill, 10f);
-
-        // hits are processed by the owner of the projectile and then synced via gasoline stains and enemy fuel
-        if (IsOwner)
-            agent.gameObject.AddComponent<Sentinel>().Patron = this;
-        else
-            agent.Rem<SphereCollider>();
+        if (LobbyController.Online && batch.Count > 0) Networking.Send(PacketType.Gasoline, batch.Count * 12, w => batch.Each(v => w.Vector(v)));
+        batch.Clear();
     }
 
-    #endregion
+    /// <summary> Spawns the received droplets, they are purely visual. </summary>
+    public static void Spawn(Reader r, int size)
+    {
+        for (int n = Mathf.Min((size - 1) / 24, BATCH_SIZE); n > 0; n--)
+        {
+            var obj = Entities.Projectiles.Make(EntityType.Gasoline, r.Vector());
+            obj.name = "R#Gasoline";
+
+            obj.GetComponent<Rigidbody>().velocity = r.Vector();
+            obj.AddComponent<Droplet>();
+        }
+    }
+
     #region harmony
 
     [DynamicPatch(typeof(GasolineProjectile), nameof(GasolineProjectile.Start))]
     [Prefix]
-    static void Start(GasolineProjectile __instance)
+    static void Fired(GasolineProjectile __instance)
     {
-        if (__instance) Entities.Projectiles.Sync(__instance.gameObject);
+        if (__instance && __instance.name[0] != 'R')
+        {
+            batch.Add(__instance.transform.position);
+            batch.Add(__instance.rb.velocity);
+        }
     }
+
+    [DynamicPatch(typeof(GasolineProjectile), nameof(GasolineProjectile.OnTriggerEnter))]
+    [Prefix]
+    static bool Touch(GasolineProjectile __instance) => __instance.name[0] != 'R';
 
     #endregion
 
-    /// <summary> Component that reports the destruction of its object to the entity. </summary>
-    public class Sentinel : MonoBehaviour
+    /// <summary> Component that imitates the impact behavior of a real droplet without producing any effects. </summary>
+    public class Droplet : MonoBehaviour
     {
-        /// <summary> Entity that owns the sentinel and has to be killed on destruction. </summary>
-        public Entity Patron;
+        void Start() => Destroy(gameObject, 10f);
 
-        void OnDestroy()
+        void OnTriggerEnter(Collider other)
         {
-            if (gameObject.scene.isLoaded && !Networking.Loading && LobbyController.Online && Patron.IsOwner && !Patron.Hidden) Patron.Kill();
+            if (LayerMaskDefaults.IsMatchingLayer(other.gameObject.layer, LMD.Environment)) Destroy(gameObject);
         }
     }
 }

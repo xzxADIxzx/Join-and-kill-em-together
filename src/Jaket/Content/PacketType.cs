@@ -42,5 +42,7 @@ public enum PacketType : byte
     Vote,
 
     /// <summary> Contains data of a gasoline ignition. </summary>
-    Ignition
+    Ignition,
+    /// <summary> Contains data of sprayed gasoline droplets. </summary>
+    Gasoline
 }

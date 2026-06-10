@@ -93,6 +93,8 @@ public class Client : Endpoint, IConnectionManager
 
         Listen(PacketType.Ignition, Stain.Ignite);
 
+        Listen(PacketType.Gasoline, (con, sender, r, s) => Gasoline.Spawn(r, s));
+
         /*
         Listen(PacketType.Vote, r => Votes.UpdateVote(r.Id(), r.Byte()));
         */

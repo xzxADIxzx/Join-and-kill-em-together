@@ -88,7 +88,7 @@ public class Subject
                 harpoon.Add(entity);
             else if (type == EntityType.GasolineStain)
                 gasstns.Add(entity);
-            else if (type == EntityType.Shell || type >= EntityType.NailCommon && type <= EntityType.NailHeated || type >= EntityType.ProjectileHell && type <= EntityType.Gasoline)
+            else if (type == EntityType.Shell || type >= EntityType.NailCommon && type <= EntityType.NailHeated || type >= EntityType.ProjectileHell && type <= EntityType.ProjectileExpl)
                 flashes.Add(entity);
             else
                 project.Add(entity);
