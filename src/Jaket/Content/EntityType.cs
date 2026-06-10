@@ -209,6 +209,8 @@ public enum EntityType : byte
     ProjectileHell,
     ProjectileBeam,
     ProjectileExpl,
+    Gasoline,
+    GasolineStain,
 
     #endregion
     #region explosions
@@ -247,7 +249,7 @@ public static class EntityTypes
     public static bool IsHitscan   (this EntityType type) => type >= EntityType.Beam         && type <= EntityType.BeamHammer;
 
     /// <summary> Whether the type is a projectile. </summary>
-    public static bool IsProjectile(this EntityType type) => type >= EntityType.Shell        && type <= EntityType.ProjectileExpl;
+    public static bool IsProjectile(this EntityType type) => type >= EntityType.Shell        && type <= EntityType.GasolineStain;
 
     /// <summary> Whether the type is an explosion. </summary>
     public static bool IsExplosion (this EntityType type) => type >= EntityType.Shockwave    && type <= EntityType.HammerParticleHeavy;

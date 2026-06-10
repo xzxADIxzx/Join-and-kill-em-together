@@ -91,6 +91,8 @@ public class Client : Endpoint, IConnectionManager
 
         Listen(PacketType.WorldAction, r => World.Perform(r.Byte(), new(r.Float(), r.Float())));
 
+        Listen(PacketType.Ignition, Stain.Ignite);
+
         /*
         Listen(PacketType.Vote, r => Votes.UpdateVote(r.Id(), r.Byte()));
         */

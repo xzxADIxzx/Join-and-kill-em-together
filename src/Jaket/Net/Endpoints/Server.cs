@@ -113,6 +113,12 @@ public class Server : Endpoint, ISocketManager
             Redirect(r, s, con);
         });
 
+        Listen(PacketType.Ignition, (con, sender, r, s) =>
+        {
+            Stain.Ignite(r);
+            Redirect(r, s, con);
+        });
+
         /*
         Listen(PacketType.Vote, (con, sender, r, s) =>
         {

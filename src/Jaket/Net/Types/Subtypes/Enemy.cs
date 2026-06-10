@@ -46,6 +46,19 @@ public abstract class Enemy : OwnableEntity
         w.Bool(enraged);
     });
 
+    /// <summary> Whether fuel is being applied from the network. </summary>
+    public static bool Oiling;
+
+    /// <summary> Synchronizes the gasoline fuel applied to the enemy; the sender has already applied it locally. </summary>
+    public void Oil(float amount) => Kill(8, w =>
+    {
+        w.Bool(false);
+        w.Bool(false);
+        w.Bool(false);
+        w.Bool(true);
+        w.Float(amount);
+    }, locally: false);
+
     public virtual Transform WeakPoint => enemyId.weakPoint?.transform ?? agent.transform;
 
     public virtual EnemyTarget Tracked => enemyId.target = IsOwner ? EnemyTarget.TrackPlayerIfAllowed() : player.Value?.Target;
@@ -149,6 +162,13 @@ public abstract class Enemy : OwnableEntity
         }
 
         if (left >= 3 && r.Bool()) Rage(r.Bool());
+
+        if (left == 8 && r.Bool())
+        {
+            Oiling = true;
+            enemyId.AddFlammable(r.Float());
+            Oiling = false;
+        }
     }
 
     public virtual void Killed(bool explode)
@@ -187,6 +207,13 @@ public abstract class Enemy : OwnableEntity
     static void Death(EnemyIdentifier __instance)
     {
         if (__instance.TryGetEntity(out Enemy e) && !e.Hidden) e.Kill(2, w => { w.Bool(true); w.Bool(false); });
+    }
+
+    [DynamicPatch(typeof(EnemyIdentifier), nameof(EnemyIdentifier.AddFlammable))]
+    [Postfix]
+    static void Oiled(EnemyIdentifier __instance, float amount)
+    {
+        if (!Oiling && __instance.TryGetEntity(out Enemy e) && !e.Hidden) e.Oil(amount);
     }
 
     [DynamicPatch(typeof(EnemyIdentifier), nameof(EnemyIdentifier.UpdateTarget))]

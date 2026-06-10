@@ -39,5 +39,8 @@ public enum PacketType : byte
     CyberAction,
 
     /// <summary> Player voted for an option. Voting can be different: skip of a cutscene, dialog or choice of an option. </summary>
-    Vote
+    Vote,
+
+    /// <summary> Contains data of a gasoline ignition. </summary>
+    Ignition
 }

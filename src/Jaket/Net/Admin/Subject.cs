@@ -24,7 +24,8 @@ public class Subject
     defpool = new(24),
     project = new(24),
     flashes = new(48),
-    harpoon = new(4);
+    harpoon = new(4),
+    gasstns = new(256);
 
     public Subject(uint id) => Id = id;
 
@@ -85,7 +86,9 @@ public class Subject
         {
             if (type == EntityType.Screwdriver)
                 harpoon.Add(entity);
-            else if (type == EntityType.Shell || type >= EntityType.NailCommon && type <= EntityType.NailHeated || type >= EntityType.ProjectileHell && type <= EntityType.ProjectileExpl)
+            else if (type == EntityType.GasolineStain)
+                gasstns.Add(entity);
+            else if (type == EntityType.Shell || type >= EntityType.NailCommon && type <= EntityType.NailHeated || type >= EntityType.ProjectileHell && type <= EntityType.Gasoline)
                 flashes.Add(entity);
             else
                 project.Add(entity);
