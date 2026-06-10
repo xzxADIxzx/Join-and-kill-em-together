@@ -31,6 +31,9 @@ public abstract class Entity
         set => LastHidden = value ? Time.time : float.PositiveInfinity;
     }
 
+    /// <summary> Whether the entity is dormant, such entities are not synchronized until woken up; suits static entities, as packets are sent reliably. </summary>
+    public virtual bool Dormant => false;
+
     public Entity(uint id, EntityType type) { Owner = Id = id; Type = type; Hidden = false; }
 
     /// <summary> Pushes the entity into networking pool. </summary>

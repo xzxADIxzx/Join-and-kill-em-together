@@ -14,8 +14,16 @@ public class Stain : OwnableEntity
 
     /// <summary> Placement of the stain, it never moves relative to the surface it is attached to. </summary>
     private Vector3 pos, rot;
+    /// <summary> Number of snapshots written since the last wake-up. </summary>
+    private int sent;
 
     public Stain(uint id, EntityType type) : base(id, type) { }
+
+    /// <summary> Stains never change, so they fall asleep once reliably delivered to everyone. </summary>
+    public override bool Dormant => sent >= 16;
+
+    /// <summary> Wakes the stain up, forcing it to broadcast itself again. </summary>
+    public void Wake() => sent = 0;
 
     #region snapshot
 
@@ -23,6 +31,7 @@ public class Stain : OwnableEntity
 
     public override void Write(Writer w)
     {
+        sent++;
         WriteOwner(ref w);
 
         if (IsOwner)
@@ -58,6 +67,7 @@ public class Stain : OwnableEntity
 
         OnTransfer = () =>
         {
+            Wake();
             if (IsOwner && agent) agent.gameObject.GetOrAddComponent<Gasoline.Sentinel>().Patron = this;
         };
 

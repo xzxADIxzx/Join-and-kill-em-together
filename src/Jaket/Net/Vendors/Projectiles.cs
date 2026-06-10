@@ -33,6 +33,7 @@ public class Projectiles : Vendor
         for (EntityType i = EntityType.GasolineStain;  i <= EntityType.GasolineStain;  i++) Vendor.Suppliers[(byte)i] = (id, type) => new Stain      (id, type);
 
         Events.OnTeamChange += () => Networking.Entities.Alive<Projectile>(p => p.UpdateIgnore());
+        Events.OnMemberJoin += _ => Networking.Entities.Alive<Stain>(s => s.Wake());
     }
 
     public EntityType Type(GameObject obj) => Vendor.Find
