@@ -13,7 +13,6 @@ using Jaket.Sprays;
 using Jaket.UI.Lib;
 using Jaket.World;
 
-/// <summary> Bootloader class needed to avoid destroying the mod by the game. </summary>
 [BepInPlugin("xzxADIxzx.Jaket", "Jaket", Version.CURRENT)]
 public class PluginLoader : BaseUnityPlugin
 {
@@ -93,4 +92,6 @@ public class Plugin : MonoBehaviour
 
         Log.Info("[INIT] Jaket has been initialized");
     }
+
+    private void LateUpdate() => Events.bridge.Dequeue();
 }

@@ -36,9 +36,6 @@ public static class Log
     /// <summary> Creates output points for logs. </summary>
     public static void Load()
     {
-        Events.InternalFlushFinish = () => Ready = true;
-        Events.EveryDozen += Flush;
-
         Logger = new("Jaket");
         File = Files.Join(Files.Logs, $"Logs of {Time.Replace(':', '.')}.log");
     }

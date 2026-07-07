@@ -2,7 +2,7 @@ namespace Jaket.IO;
 
 using System.Threading;
 
-/// <summary> Thread-safe stack of runnables connecting network and game threads. </summary>
+/// <summary> Thread-safe stack of runnables connecting network and main threads. </summary>
 public class Bridge
 {
     /// <summary> Head of the stack. </summary>
