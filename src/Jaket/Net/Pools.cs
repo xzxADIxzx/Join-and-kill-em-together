@@ -111,8 +111,8 @@ public class Pools
         get => Get(key);
     }
 
-    /// <summary> Hash map entry. Next can be null. </summary>
-    public class Entry
+    /// <summary> Hash map entry, next is nullable. </summary>
+    private class Entry
     {
         public uint Key;
         public Entity Value;
