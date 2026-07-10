@@ -19,10 +19,10 @@ using Jaket.World;
 /// <summary> Class responsible for updating endpoints, transmitting packets and managing entities. </summary>
 public static class Networking
 {
-    /// <summary> Number of snapshots to be sent per second. </summary>
-    public const int TICKS_PER_SECOND = 20;
-    /// <summary> Number of subticks in a tick, i.e. each tick is divided into equal gaps in which snapshots of equal number of entities are sent. </summary>
-    public const int SUBTICKS_PER_TICK = 3;
+    /// <summary> Number of snapshots per second. </summary>
+    public const int TICKS_PER_SECOND = 30;
+    /// <summary> Number of subticks per tick. </summary>
+    public const int SUBTICKS_PER_TICK = 4;
 
     /// <summary> Server endpoint, updated by the owner of the lobby. </summary>
     public static Server Server = new();
