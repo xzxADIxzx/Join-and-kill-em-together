@@ -4,6 +4,8 @@ using Steamworks;
 using Steamworks.Data;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
 using UnityEngine;
 
 using Jaket.IO;
@@ -50,7 +52,7 @@ public class Events
 
     #endregion
 
-    /// <summary> Subscribes to some internal events. </summary>
+    /// <summary> Subscribes to several events for proper work. </summary>
     public static void Load()
     {
         InternalSceneLoaded = () =>
@@ -74,12 +76,68 @@ public class Events
             DiscordController.Instance.FetchSceneActivity(Scene);
             SteamController.Instance.FetchSceneActivity(Scene);
         };
+
+        new Thread(Loop)
+        {
+            Name = "network",
+            IsBackground = true
+        }
+        .Start();
     }
 
+    #region thread
+
+    /// <summary> Runs the network loop. </summary>
+    public static void Loop()
+    {
+        long tick = Stopwatch.GetTimestamp();
+        long half = Stopwatch.GetTimestamp();
+
+        long step = Stopwatch.Frequency / Networking.TICKS_PER_SECOND / Networking.SUBTICKS_PER_TICK;
+        long hsec = Stopwatch.Frequency / 2L;
+        long spin = Stopwatch.Frequency / 1000L * 2L;
+
+        while (true)
+        {
+            Stats.Jitter += Math.Abs
+            (
+                Stopwatch.GetTimestamp() - tick
+            );
+            Stats.Measure(ref Stats.Thread, EveryTick.Fire);
+
+            if (Stopwatch.GetTimestamp() - half > hsec)
+            {
+                half = Stopwatch.GetTimestamp();
+                Post(EveryHalf.Fire);
+            }
+
+            if (Stopwatch.GetTimestamp() - tick > step)
+            {
+                Stats.Jitter += // abandon missed ticks
+                Stopwatch.GetTimestamp() - tick - step;
+                tick = Stopwatch.GetTimestamp() + step;
+            }
+            else tick += step;
+
+            long delta;
+            do
+            {
+                delta = tick - Stopwatch.GetTimestamp();
+
+                if (delta > spin)
+                    Thread.Sleep(1);
+                else
+                    Thread.SpinWait(64);
+            }
+            while (delta > 0L);
+        }
+    }
+
+    #endregion
     #region bridge
 
-    /// <inheritdoc/>
-    public static Bridge bridge = new();
+    /// <inheritdoc cref="Bridge"/>
+    private static Bridge bridge = new();
 
     /// <summary> Posts the task for execution in the main thread. </summary>
     public static void Post(Runnable task) => bridge.Enqueue(task);
@@ -91,6 +149,9 @@ public class Events
         else
             Post(() => Post(cond, task));
     }
+
+    /// <summary> Dequeues and executes all tasks, should only be called in the main thread. </summary>
+    public static void Main() => bridge.Dequeue();
 
     #endregion
 

@@ -93,5 +93,5 @@ public class Plugin : MonoBehaviour
         Log.Info("[INIT] Jaket has been initialized");
     }
 
-    private void LateUpdate() => Events.bridge.Dequeue();
+    private void LateUpdate() => Events.Main();
 }
