@@ -6,7 +6,6 @@ using UnityEngine;
 using Jaket.Assets;
 using Jaket.Harmony;
 using Jaket.Input;
-using Jaket.IO;
 using Jaket.Net;
 using Jaket.Net.Admin;
 using Jaket.Sprays;
@@ -66,9 +65,6 @@ public class Plugin : MonoBehaviour
         Commands.Commands.Load();
 
         Log.Info("[INIT] Initializing network components...");
-
-        Pointers.Allocate();
-        Stats.StartRecord();
 
         Administration.Load();
         LobbyController.Load();

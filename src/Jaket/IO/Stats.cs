@@ -1,6 +1,9 @@
 namespace Jaket.IO;
 
 using System.Diagnostics;
+using System.Threading;
+
+using Jaket.Net;
 
 /// <summary> Set of different tools for collecting and analyzing various data. </summary>
 public static class Stats
@@ -29,4 +32,19 @@ public static class Stats
 
     /// <summary> Returns the number of milliseconds in a storage. </summary>
     public static float Millis(long store) => store * 1000f / Stopwatch.Frequency;
+
+    /// <summary> Increases sent bytes counter. </summary>
+    public static void Add(int bytesCount) => Interlocked.Add(ref Sent, bytesCount);
+
+    /// <summary> Resets accumulated subticks. </summary>
+    public static void Reset()
+    {
+        if (++Subticks % (Networking.TICKS_PER_SECOND * Networking.SUBTICKS_PER_TICK) != 0) return;
+
+        Subticks = 0;
+        Received = 0;
+        Interlocked.Exchange(ref Sent, 0);
+
+        Read = Write = Entity = Common = Thread = Jitter = 0L;
+    }
 }
