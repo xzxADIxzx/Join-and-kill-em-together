@@ -3,7 +3,6 @@ namespace Jaket;
 using Steamworks;
 using Steamworks.Data;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using UnityEngine;
@@ -11,8 +10,8 @@ using UnityEngine;
 using Jaket.IO;
 using Jaket.Net;
 
-/// <summary> List of the project events and internal logic of the network ticks. </summary>
-public class Events
+/// <summary> List of the project events and internal logic of the network loop. </summary>
+public static class Events
 {
     #region events
 
@@ -155,40 +154,37 @@ public class Events
 
     #endregion
 
-    /// <summary> Safe event that will output all exceptions to the console and guarantee the execution of each listener, regardless of errors. </summary>
+    /// <summary> Guarantees the execution of all listeners regardless of errors. </summary>
     public class SafeEvent<T>
     {
-        /// <summary> Name of the event to display in logs. </summary>
-        protected string Name;
-        /// <summary> List of all event listeners. </summary>
-        protected List<Cons<T>> listeners = new();
+        protected string name;
+        protected byte amount;
+        protected Cons<T>[] listeners = new Cons<T>[byte.MaxValue + 1];
 
-        /// <summary> Fires the event, ensuring that all listeners will be executed regardless of exceptions. </summary>
+        public SafeEvent(string name) => this.name = name;
+
         public void Fire(T t)
         {
-            int amount = listeners.Count;
-            for (int i = 0; i < amount; i++)
+            for (byte i = 0; i < amount; i++)
             {
-                try { listeners[i](t); }
-                catch (Exception ex) { Log.Error($"[EVNT] Caught an exception in the {Name} event", ex); }
+                try
+                {
+                    listeners[i](t);
+                }
+                catch (Exception e) { Log.Error($"[EVNT] Caught an exception in the {name} event", e); }
             }
         }
 
-        /// <summary> Fires the event without arguments, ensuring that all listeners will be executed regardless of exceptions. </summary>
-        public void Fire() => Fire(default);
-
-        public SafeEvent(string name) => Name = name;
-
-        public static SafeEvent<T> operator +(SafeEvent<T> e, Cons<T> listener) { e.listeners.Add(listener); return e; }
-        public static SafeEvent<T> operator -(SafeEvent<T> e, Cons<T> listener) { e.listeners.Remove(listener); return e; }
+        public static SafeEvent<T> operator +(SafeEvent<T> e, Cons<T> listener) { e.listeners[e.amount++] = listener; return e; }
     }
 
-    /// <summary> Safe event that will output all exceptions to the console and guarantee the execution of each listener, regardless of errors. </summary>
+    /// <inheritdoc/>
     public class SafeEvent : SafeEvent<object>
     {
         public SafeEvent(string name) : base(name) { }
 
-        public static SafeEvent operator +(SafeEvent e, Runnable listener) { _ = e + (_ => listener()); return e; }
-        public static SafeEvent operator -(SafeEvent e, Runnable listener) { _ = e - (_ => listener()); return e; }
+        public void Fire() => Fire(null);
+
+        public static SafeEvent operator +(SafeEvent e, Runnable listener) { e.listeners[e.amount++] = _ => listener(); return e; }
     }
 }
