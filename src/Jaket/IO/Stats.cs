@@ -2,48 +2,31 @@ namespace Jaket.IO;
 
 using System.Diagnostics;
 
-using Jaket.Net;
-using Jaket.UI;
-
-/// <summary> Set of different tools for collecting various data for subsequent analysis and optimization. </summary>
+/// <summary> Set of different tools for collecting and analyzing various data. </summary>
 public static class Stats
 {
-    /// <summary> Number of subticks accumulated in the current statistics frame. </summary>
+    /// <summary> Number of subticks accumulated. </summary>
     public static int Subticks;
-    /// <summary> Number of bytes read and sent. </summary>
-    public static int ReadBs, SentBs;
+    /// <summary> Number of bytes received. </summary>
+    public static int Received;
+    /// <summary> Number of bytes sent. </summary>
+    public static int Sent;
 
-    /// <summary> Time spent reading and writing in milliseconds. </summary>
-    public static float ReadMs, WriteMs;
-    /// <summary> Time spent updating entities and others in milliseconds. </summary>
-    public static float EntityMs, CommonMs;
-    /// <summary> Time spent flushing data and total time in milliseconds. </summary>
-    public static float TotalMs, FlushMs;
+    /// <summary> Time spent reading and writing. </summary>
+    public static long Read, Write;
+    /// <summary> Time spent by the entities and other components. </summary>
+    public static long Entity, Common;
+    /// <summary> Time spent by the network thread and its jitter. </summary>
+    public static long Thread, Jitter;
 
-    /// <summary> Timer used to measure the time of performing various actions. </summary>
-    private static Stopwatch sw = new();
-
-    /// <summary> Starts recording various data. </summary>
-    public static void StartRecord() => Events.EveryTick += () =>
+    /// <summary> Measures the execution time of the given action. </summary>
+    public static void Measure(ref long store, Runnable action)
     {
-        if (++Subticks % (Networking.TICKS_PER_SECOND * Networking.SUBTICKS_PER_TICK) != 0) return;
-        Subticks = 0;
-
-        // count the total time spent
-        TotalMs = ReadMs + WriteMs + FlushMs + EntityMs + CommonMs;
-
-        // flush the current frame to the debug fragment
-        if (Version.DEBUG || UI.Debug.Shown) UI.Debug.Rebuild();
-
-        ReadBs = SentBs = 0;
-        ReadMs = WriteMs = EntityMs = CommonMs = TotalMs = FlushMs = 0f;
-    };
-
-    /// <summary> Measures the time of execution of the given action. </summary>
-    public static void MeasureTime(ref float store, Runnable action)
-    {
-        sw.Restart();
+        long s = Stopwatch.GetTimestamp();
         action();
-        store += sw.ElapsedTicks / 10000f;
+        store += Stopwatch.GetTimestamp() - s;
     }
+
+    /// <summary> Returns the number of milliseconds in a storage. </summary>
+    public static float Millis(long store) => store * 1000f / Stopwatch.Frequency;
 }
