@@ -21,7 +21,7 @@ public class Magnet : Projectile
 
     #region snapshot
 
-    public override int BufferSize => 34;
+    public override int BufferSize => 29;
 
     public override void Write(Writer w)
     {

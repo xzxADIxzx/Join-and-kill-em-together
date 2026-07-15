@@ -51,7 +51,7 @@ public class TeamCoin : OwnableEntity
 
     #region snapshot
 
-    public override int BufferSize => 21;
+    public override int BufferSize => 16;
 
     public override void Write(Writer w)
     {

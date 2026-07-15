@@ -22,7 +22,7 @@ public class Swordsmachine : Enemy
 
     #region snapshot
 
-    public override int BufferSize => 27;
+    public override int BufferSize => 22;
 
     public override void Write(Writer w)
     {

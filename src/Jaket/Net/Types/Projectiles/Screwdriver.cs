@@ -19,7 +19,7 @@ public class Screwdriver : Projectile
 
     #region snapshot
 
-    public override int BufferSize => 37;
+    public override int BufferSize => 32;
 
     public override void Write(Writer w)
     {

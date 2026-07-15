@@ -20,7 +20,7 @@ public class Malicious : Enemy
 
     #region snapshot
 
-    public override int BufferSize => 30;
+    public override int BufferSize => 25;
 
     public override void Write(Writer w)
     {

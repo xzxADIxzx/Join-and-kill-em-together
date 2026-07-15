@@ -33,7 +33,7 @@ public abstract class Projectile : OwnableEntity
 
     #region snapshot
 
-    public override int BufferSize => 21;
+    public override int BufferSize => 16;
 
     public override void Write(Writer w)
     {

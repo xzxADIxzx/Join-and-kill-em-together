@@ -19,7 +19,7 @@ public class Earthmover : Enemy
 
     #region snapshot
 
-    public override int BufferSize => Type == EntityType.Brain ? 11 : 9;
+    public override int BufferSize => Type == EntityType.Brain ? 6 : 4;
 
     public override void Write(Writer w)
     {

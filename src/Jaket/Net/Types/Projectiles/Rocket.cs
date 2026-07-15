@@ -23,7 +23,7 @@ public class Rocket : Projectile
 
     #region snapshot
 
-    public override int BufferSize => 35;
+    public override int BufferSize => 30;
 
     public override void Write(Writer w)
     {

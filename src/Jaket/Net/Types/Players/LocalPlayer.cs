@@ -55,7 +55,7 @@ public class LocalPlayer : Entity
 
     #region snapshot
 
-    public override int BufferSize => 42;
+    public override int BufferSize => 37;
 
     public override void Write(Writer w)
     {
