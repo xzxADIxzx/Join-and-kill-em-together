@@ -231,6 +231,19 @@ public static class Networking
         (cons ?? Redirect)(w.Memory, 1 + bytesCount);
     }
 
+    /// <summary> Sends the given entity. </summary>
+    public static void Send(Entity entity)
+    {
+        Writer w = new(Pointers.Allocated);
+
+        w.Enum(PacketType.Snapshot);
+        w.Id(entity.Id);
+        w.Enum(entity.Type);
+        entity.Write(w);
+
+        Redirect(w.Memory, 6 + entity.BufferSize);
+    }
+
     /// <summary> Forwards the given packet to either all of the clients or the server. </summary>
     public static void Redirect(Ptr data, int size) => Connections.Each(c => Send(c, data, size));
 

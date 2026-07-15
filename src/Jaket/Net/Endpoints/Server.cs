@@ -139,12 +139,7 @@ public class Server : Endpoint, ISocketManager
         Stats.Measure(ref Stats.Write, () =>
         {
             if (Networking.Loading) return;
-            ents.ServerPool(pool = ++pool % 3, 3, e => Networking.Send(PacketType.Snapshot, e.BufferSize, w =>
-            {
-                w.Id(e.Id);
-                w.Enum(e.Type);
-                e.Write(w);
-            }));
+            ents.ServerPool(pool = ++pool % Networking.SUBTICKS_PER_TICK, Networking.SUBTICKS_PER_TICK, Networking.Send);
         });
         Manager.Connected.Each(c => c.Flush());
     }
