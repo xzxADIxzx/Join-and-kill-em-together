@@ -159,7 +159,7 @@ public abstract class Entity
             set => transform.localScale = value;
         }
 
-        private void Update() => Stats.MeasureTime(ref Stats.EntityMs, () => Patron.Update(Time.time - Patron.LastUpdate));
+        private void Update() => Stats.Measure(ref Stats.Entity, () => Patron.Update(Time.time - Patron.LastUpdate));
 
         private bool Find(bool nullable, string path, out GameObject obj)
         {

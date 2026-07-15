@@ -12,8 +12,10 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
+using Jaket.Content;
 using Jaket.Harmony;
 using Jaket.Net;
+using Jaket.Net.Types;
 
 /// <summary> Set of different tools for simplifying life and systematization of code. </summary>
 public static class Tools
@@ -35,6 +37,11 @@ public static class Tools
     {
         /// <summary> Account identifier of the member. </summary>
         public uint AccId => member.Id.AccountId;
+
+        /// <summary> Team of the member. </summary>
+        public Team Team => member.IsMe
+            ? Networking.LocalPlayer.Team
+            : Networking.Entities.TryGetValue(member.AccId, out var e) && e is RemotePlayer p ? p.Team : Team.None;
     }
 
     #endregion

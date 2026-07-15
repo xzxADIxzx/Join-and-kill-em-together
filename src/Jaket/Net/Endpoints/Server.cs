@@ -135,8 +135,8 @@ public class Server : Endpoint, ISocketManager
 
     public override void Update()
     {
-        Stats.MeasureTime(ref Stats.ReadMs, () => Manager.Receive());
-        Stats.MeasureTime(ref Stats.WriteMs, () =>
+        Stats.Measure(ref Stats.Read, () => Manager.Receive());
+        Stats.Measure(ref Stats.Write, () =>
         {
             if (Networking.Loading) return;
             ents.ServerPool(pool = ++pool % 3, 3, e => Networking.Send(PacketType.Snapshot, e.BufferSize, w =>
@@ -146,11 +146,7 @@ public class Server : Endpoint, ISocketManager
                 e.Write(w);
             }));
         });
-        Stats.MeasureTime(ref Stats.FlushMs, () =>
-        {
-            Manager.Connected.Each(c => c.Flush());
-            Pointers.Free();
-        });
+        Manager.Connected.Each(c => c.Flush());
     }
 
     public override void Close()

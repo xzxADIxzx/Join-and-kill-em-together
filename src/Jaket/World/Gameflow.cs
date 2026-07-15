@@ -159,7 +159,7 @@ public class Gameflow
         }
         if (Mode.WTO())
         {
-            var team = Networking.GetTeam(member);
+            var team = member.Team;
             var dead = Networking.Entities.Count(e => e is RemotePlayer p && p.Team == team && p.Health > 0) == 0;
             if (dead) Loadouts.Set(Loadouts.Merge
             (

@@ -13,5 +13,5 @@ public static class Pointers
     private static Ptr memory;
 
     /// <summary> Allocates and stores a fragment of memory. </summary>
-    public static Ptr Allocate() => memory != default ? memory : memory = Marshal.AllocHGlobal(RESERVED);
+    public static Ptr Allocated => memory != default ? memory : memory = Marshal.AllocHGlobal(RESERVED);
 }

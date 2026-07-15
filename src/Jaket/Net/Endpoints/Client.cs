@@ -98,8 +98,8 @@ public class Client : Endpoint, IConnectionManager
 
     public override void Update()
     {
-        Stats.MeasureTime(ref Stats.ReadMs, () => Manager.Receive());
-        Stats.MeasureTime(ref Stats.WriteMs, () =>
+        Stats.Measure(ref Stats.Read, () => Manager.Receive());
+        Stats.Measure(ref Stats.Write, () =>
         {
             if (Networking.Loading) return;
             ents.ClientPool(pool = ++pool % 3, 3, e => Networking.Send(PacketType.Snapshot, e.BufferSize, w =>
@@ -109,11 +109,7 @@ public class Client : Endpoint, IConnectionManager
                 e.Write(w);
             }));
         });
-        Stats.MeasureTime(ref Stats.FlushMs, () =>
-        {
-            Manager.Connection.Flush();
-            Pointers.Free();
-        });
+        Manager.Connection.Flush();
     }
 
     public override void Close()

@@ -156,16 +156,18 @@ public static class Networking
                 else if (Entities.TryGetValue(member.AccId, out var e) && e is RemotePlayer p)
                     SamAPI.TryPlay(msg = msg[3..], p.Voice);
 
-                UI.Chat.Receive(msg, GetColor(member), name, Chat.TTS_TAG);
+                UI.Chat.Receive(msg, ColorUtility.ToHtmlStringRGBA(member.Team.Color()), name, Chat.TTS_TAG);
             }
             else
-                UI.Chat.Receive(msg, GetColor(member), name);
+                UI.Chat.Receive(msg, ColorUtility.ToHtmlStringRGBA(member.Team.Color()), name);
         };
     }
 
     /// <summary> Updates network logic, i.e. receives incoming data and flushes outcoming one. </summary>
     public static void Update()
     {
+        Stats.Reset();
+
         if (LobbyController.Offline) return;
         if (LobbyController.IsOwner)
             Server.Update();
@@ -206,37 +208,31 @@ public static class Networking
     }
 
     #endregion
-    #region tools
+    #region packets
 
-    /// <summary> Sends the packet to the given connection and updates statistics. </summary>
+    /// <summary> Sends the given packet. </summary>
     public static void Send(Connection con, Ptr data, int size)
     {
-        con.SendMessage(data, size);
-        Stats.SentBs += size;
+        var result = con.SendMessage(data, size);
+        if (result == Result.OK)
+            Stats.Add(size);
+        else
+            Log.Warning($"[NETW] Couldn't send a packet, the result is {result}");
     }
 
-    /// <summary> Reserves memory for a packet, writes the data there, and then redirects it. </summary>
-    public static void Send(PacketType type, int bytesCount = 0, Cons<Writer> data = null, Cons<Ptr, int> packet = null)
+    /// <summary> Makes & sends a packet. </summary>
+    public static void Send(PacketType type, int bytesCount, Cons<Writer> data, Cons<Ptr, int> cons = null)
     {
-        Writer w = new(Pointers.Reserve(bytesCount = data == null ? 1 : bytesCount + 1));
+        Writer w = new(Pointers.Allocated);
 
         w.Enum(type);
-        data?.Invoke(w);
+        data(w);
 
-        packet ??= Redirect;
-        packet(w.Memory, bytesCount);
+        (cons ?? Redirect)(w.Memory, 1 + bytesCount);
     }
 
-    /// <summary> Forwards the packet to either all of the clients or host. </summary>
+    /// <summary> Forwards the given packet to either all of the clients or the server. </summary>
     public static void Redirect(Ptr data, int size) => Connections.Each(c => Send(c, data, size));
-
-    /// <summary> Returns the team of the given member. </summary>
-    public static Team GetTeam(Friend member) => member.IsMe
-        ? LocalPlayer.Team
-        : Entities.TryGetValue(member.AccId, out var entity) && entity != null && entity is RemotePlayer player ? player.Team : Team.Yellow;
-
-    /// <summary> Returns the color of the given member's team. </summary>
-    public static string GetColor(Friend member) => ColorUtility.ToHtmlStringRGBA(GetTeam(member).Color());
 
     #endregion
 }

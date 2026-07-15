@@ -144,7 +144,7 @@ public class Bar : MonoBehaviour
 
     /// <summary> Adds a text button, it opens the profile of the given member. </summary>
     public Button ProfileButton(Friend member, bool full) =>
-        Builder.TextButton(Resolve("Profile", full ? 432f : 384f), Tex.Large, Networking.GetTeam(member).Color(), member.Name, 24, TextAnchor.MiddleCenter, () => SteamFriends.OpenUserOverlay(member.Id, "steamid"));
+        Builder.TextButton(Resolve("Profile", full ? 432f : 384f), Tex.Large, member.Team.Color(), member.Name, 24, TextAnchor.MiddleCenter, () => SteamFriends.OpenUserOverlay(member.Id, "steamid"));
 
     /// <summary> Adds a button that corresponds to the style of Discord. </summary>
     public Button DiscordButton(string text) =>
