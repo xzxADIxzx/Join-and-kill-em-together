@@ -6,12 +6,14 @@ using UnityEngine;
 using Jaket.Content;
 using Jaket.IO;
 
-/// <summary> Abstract entity of any type whose state is synchronized across the network via snapshots. </summary>
+using static Entities;
+
+/// <summary> Abstract entity of any type. </summary>
 public abstract class Entity
 {
-    /// <summary> Unique identifier of the entity, account ids are used for players. </summary>
+    /// <summary> Unique identifier of the entity, players use their account ids. </summary>
     public readonly uint Id;
-    /// <summary> Type of the entity, such as player or enemy of some kind. </summary>
+    /// <summary> Type of the entity, such as player, enemy or some sort of item. </summary>
     public readonly EntityType Type;
 
     /// <summary> Account identifier of the entity's owner. </summary>
@@ -33,28 +35,25 @@ public abstract class Entity
 
     public Entity(uint id, EntityType type) { Owner = Id = id; Type = type; Hidden = false; }
 
-    /// <summary> Pushes the entity into networking pool. </summary>
-    public void Push() => Networking.Entities[Id] = this;
+    #region snapshot
 
-    /// <summary> Kills the entity remotely and, if necessary, locally. </summary>
-    public void Kill(int bytesCount = 0, Cons<Writer> data = null, bool locally = true)
-    {
-        Networking.Send(PacketType.Death, 4 + bytesCount, w =>
-        {
-            w.Id(Id);
-            data?.Invoke(w);
-
-            // offset is formed from packet type and identifier
-            if (locally) Killed(new(w.Memory + 5), bytesCount);
-        });
-    }
-
-    /// <summary> Number of bytes that the entity takes in a snapshot. </summary>
+    /// <summary> Size of the entity's snapshot in bytes. </summary>
     public abstract int BufferSize { get; }
     /// <summary> Writes the entity data into a snapshot. </summary>
     public abstract void Write(Writer w);
     /// <summary> Reads the entity data from a snapshot. </summary>
     public abstract void Read(Reader r);
+
+    #endregion
+    #region properties
+
+    /// <summary> Whether the entity can be debugged. </summary>
+    public virtual bool Debuggable => false;
+    /// <summary> Position to draw debug elements in. </summary>
+    public virtual Vector3 DrawPos => default;
+
+    #endregion
+    #region logic
 
     /// <summary> Creates an object for manipulation. </summary>
     public abstract void Create();
@@ -66,6 +65,28 @@ public abstract class Entity
     public abstract void Damage(Reader r);
     /// <summary> Kills the entity, takes custom data. </summary>
     public abstract void Killed(Reader r, int left);
+
+    #endregion
+    #region other
+
+    /// <summary> Pushes the entity into the networking pool. </summary>
+    public void Push() => Networking.Entities[Id] = this;
+
+    /// <summary> Kills the entity both remotely and locally. </summary>
+    public void Kill(int bytesCount = 0, Cons<Writer> data = null)
+    {
+        Networking.Send(PacketType.Death, 4 + bytesCount, w =>
+        {
+            w.Id(Id);
+            data?.Invoke(w);
+        });
+        Killed(new(Pointers.Allocated + 5), bytesCount); // offset is formed from the packet type and identifier
+    }
+
+    /// <summary> Creates an object and assigns an agent. </summary>
+    protected void Create(Vendor vendor, Float x, Float y, Float z) => Assign(vendor.Make(Type, new(x.Init, y.Init, z.Init)).AddComponent<Agent>());
+
+    #endregion
 
     /// <summary> Most of the entities manipulate an object of some kind, agents implement these interactions. </summary>
     public class Agent : MonoBehaviour
