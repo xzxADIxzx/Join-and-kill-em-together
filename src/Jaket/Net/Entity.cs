@@ -94,6 +94,57 @@ public abstract class Entity
         /// <summary> Entity that owns the agent and has to be updated every frame. </summary>
         public Entity Patron;
 
+        private void Update() => Stats.Measure(ref Stats.Entity, () =>
+        {
+            position = transform.position;
+            rotation = transform.eulerAngles;
+            scale    = transform.localScale;
+
+            Patron.Update(Time.time - Patron.LastUpdate);
+        });
+
+        #region properties
+
+        /// <summary> Storage that is accessible from the network thread. </summary>
+        private Vector3 position, rotation, scale;
+
+        /// <summary> Parent of the agent. </summary>
+        public Transform Parent
+        {
+            get => transform.parent;
+            set => transform.parent = value;
+        }
+        /// <summary> Position of the agent. </summary>
+        public Vector3 Position
+        {
+            get => position;
+            set => transform.position = value;
+        }
+        /// <summary> Rotation of the agent. </summary>
+        public Vector3 Rotation
+        {
+            get => rotation;
+            set => transform.eulerAngles = value;
+        }
+        /// <summary> Scale of the agent. </summary>
+        public Vector3 Scale
+        {
+            get => scale;
+            set => transform.localScale = value;
+        }
+
+        #endregion
+        #region tools
+
+        /// <summary> Gets a single child obj of the given path or logs an error. </summary>
+        private bool Find(bool nullable, string path, out GameObject obj)
+        {
+            obj = path is null ? gameObject : transform.Find(path)?.gameObject;
+
+            if (!obj && !nullable) Log.Error($"[ENTS] Couldn't find a child object of path {path}");
+            return obj;
+        }
+
         /// <summary> Adds a single component of the given type or logs an error. </summary>
         public void Add<T>(out T t, bool nullable = false, string path = null) where T : Component
         {
@@ -138,14 +189,14 @@ public abstract class Entity
                 Log.Error($"[ENTS] Couldn't rem a component of type {typeof(T)}");
         }
 
-        /// <summary> Removes a child gameobject of the given path or logs an error. </summary>
-        public void Rem   (bool nullable = false, string path = null)
+        /// <summary> Removes a single child obj of the given path or logs an error. </summary>
+        public void Rem(bool nullable = false, string path = null)
         {
             if (Find(nullable, path, out var o)) Dest(o);
         }
 
         /// <summary> Runs the given callback after the specified number of seconds. </summary>
-        public void Run   (Runnable callback, float time, bool repeating = false)
+        public void Run(Runnable callback, float time, bool repeating = false)
         {
             static IEnumerator Run(Runnable callback, float time, bool repeating)
             {
@@ -159,38 +210,7 @@ public abstract class Entity
             StartCoroutine(Run(callback, time, repeating));
         }
 
-        public Transform Parent
-        {
-            get => transform.parent;
-            set => transform.parent = value;
-        }
-        public Vector3 Position
-        {
-            get => transform.position;
-            set => transform.position = value;
-        }
-        public Vector3 Rotation
-        {
-            get => transform.eulerAngles;
-            set => transform.eulerAngles = value;
-        }
-        public Vector3 Scale
-        {
-            get => transform.localScale;
-            set => transform.localScale = value;
-        }
-
-        private void Update() => Stats.Measure(ref Stats.Entity, () => Patron.Update(Time.time - Patron.LastUpdate));
-
-        private bool Find(bool nullable, string path, out GameObject obj)
-        {
-            if (obj = path == null ? gameObject : transform.Find(path)?.gameObject) return true;
-            else
-            {
-                if (!nullable) Log.Error($"[ENTS] Couldn't find a child of path {path ?? "null"}");
-                return false;
-            }
-        }
+        #endregion
     }
 
     /// <summary> Widely used structure that interpolates floating point numbers. </summary>

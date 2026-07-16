@@ -136,6 +136,7 @@ public abstract class Item : OwnableEntity
     public override void Killed(Reader r, int left)
     {
         Hidden = true;
+        agent.Rem();
         Dest(agent.gameObject);
 
         if (left >= 1 && r.Bool())
