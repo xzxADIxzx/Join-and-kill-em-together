@@ -29,7 +29,7 @@ public class Teleporter : Fragment
 
         Content.Component<Bar>(b => b.Update(() =>
         {
-            flash.color = white with { a = Mathf.MoveTowards(flash.color.a, 0f, Time.deltaTime) };
+            flash.color = (Color) white with { a = Mathf.MoveTowards(flash.color.a, 0f, Time.deltaTime) };
             decor.transform.localPosition = new(Mathf.MoveTowards(decor.transform.localPosition.x, 2048f, 8192f * Time.deltaTime), 0f);
 
             if (flash.color.a == 0f) Content.gameObject.SetActive(Shown = false);

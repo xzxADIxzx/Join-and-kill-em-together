@@ -16,6 +16,8 @@ using Jaket.UI;
 using Jaket.UI.Dialogs;
 using Jaket.World;
 
+using static Jaket.UI.Lib.Pal;
+
 /// <summary> Class responsible for updating endpoints, transmitting packets and managing entities. </summary>
 public static class Networking
 {
@@ -156,10 +158,10 @@ public static class Networking
                 else if (Entities.TryGetValue(member.AccId, out var e) && e is RemotePlayer p)
                     SamAPI.TryPlay(msg = msg[3..], p.Voice);
 
-                UI.Chat.Receive(msg, ColorUtility.ToHtmlStringRGBA(member.Team.Color()), name, Chat.TTS_TAG);
+                UI.Chat.Receive(msg, Int2Hex(member.Team.Color()), name, Chat.TTS_TAG);
             }
             else
-                UI.Chat.Receive(msg, ColorUtility.ToHtmlStringRGBA(member.Team.Color()), name);
+                UI.Chat.Receive(msg, Int2Hex(member.Team.Color()), name);
         };
     }
 

@@ -21,9 +21,9 @@ public static class Builder
     {
         normalColor = white,
         pressedColor = red,
-        highlightedColor = gray,
-        selectedColor = gray,
-        disabledColor = dark,
+        highlightedColor = light,
+        selectedColor = light,
+        disabledColor = heavy,
 
         colorMultiplier = 1f,
         fadeDuration = .1f
@@ -178,7 +178,7 @@ public static class Builder
             var fill = Rect("Fill", mask, Lib.Rect.Fill);
 
             Mask(mask, Tex.Mask);
-            Image(fill, Tex.Dash, dark, ImageType.Tiled);
+            Image(fill, Tex.Dash, heavy, ImageType.Tiled);
             s.fillRect = mask;
 
             var zone = Rect("Zone", rect, new(0f, 0f, -48f, -16f, Vector2.zero, Vector2.one));

@@ -43,7 +43,7 @@ public static class Log
     /// <summary> Formats and writes the message to the output points. </summary>
     public static void LogLevel(Level level, string msg)
     {
-        Logger.Record(level == Level.Debug ? $"<color={Gray}>{msg}</color>" : msg, level switch
+        Logger.Record(level == Level.Debug ? $"<color={Light}>{msg}</color>" : msg, level switch
         {
             Level.Debug   => PLevel.Info,
             Level.Info    => PLevel.Info,

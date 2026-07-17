@@ -80,8 +80,8 @@ public class Fragment
         var sub = Builder.Rect("Hash", bar, Lib.Rect.Fill with { Y = -16f });
 
         Builder.Image(bar, Tex.Fill, semi, ImageType.Sliced, 3f);
-        Builder.Text(txt, $"Jaket version is {Version.Readable}", 24, gray, TextAnchor.MiddleCenter);
-        Builder.Text(sub, $"Built from commit of {Version.Hash}", 16, gray, TextAnchor.MiddleCenter);
+        Builder.Text(txt, $"Jaket version is {Version.Readable}", 24, heavy, TextAnchor.MiddleCenter);
+        Builder.Text(sub, $"Built from commit of {Version.Hash}", 16, heavy, TextAnchor.MiddleCenter);
     }
 
     #endregion

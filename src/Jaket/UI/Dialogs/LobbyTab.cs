@@ -138,7 +138,7 @@ public class LobbyTab : Fragment
             var interactable = LobbyController.IsOwner && (toggle != pvp || !Gameflow.Mode.PvP());
 
             toggle.interactable = interactable;
-            toggle.GetComponentInChildren<Image>().color = interactable ? white : dark;
+            toggle.GetComponentInChildren<Image>().color = interactable ? white : heavy;
         }
     }
 }

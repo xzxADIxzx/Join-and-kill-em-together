@@ -23,7 +23,7 @@ public class MainMenuAccess : Fragment
         Content.GetComponent<CanvasScaler>().screenMatchMode = CanvasScaler.ScreenMatchMode.Expand;
 
         var col = Random.value < .1f ? pink : green;
-        var drk = Darker(col);
+        var drk = col.Darker;
 
         Rect("Content", new(-315f, -341.5f, 570f, 176f, new(1f, .5f))).Component<Bar>(b =>
         {

@@ -197,7 +197,7 @@ public class Chat : Fragment
     }
 
     /// <summary> Writes the given message to the chat, formatting it beforehand. </summary>
-    public void Receive(string msg, string col, string author, string tag = null) => Receive(Bundle.CutDanger($"[b][#{col}]{tag}{author}[coral]:[][][] {msg}"));
+    public void Receive(string msg, string col, string author, string tag = null) => Receive(Bundle.CutDanger($"[b][{col}]{tag}{author}[coral]:[][][] {msg}"));
 
     /// <summary> Writes the hello message to the chat. </summary>
     public void SayHello()

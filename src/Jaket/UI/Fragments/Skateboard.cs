@@ -70,7 +70,7 @@ public class Skateboard : Fragment
             bars[i].ProgressColor = boost < 100f ? cb.staminaEmptyColor : boost < 100f * (i + 1) ? cb.staminaChargingColor : cb.staminaColor;
             bars[i].SetProgress((boost - 100f * i) / 100f);
         }
-        speedometer.text = Bundle.Format("skateboard", ((int)speed).ToString(), ColorUtility.ToHtmlStringRGB(gradient.Evaluate(speed / 80f)));
+        speedometer.text = Bundle.Format("skateboard", ((int)speed).ToString(), Int2Hex(gradient.Evaluate(speed / 80f)));
 
         speed = Mathf.MoveTowards(speed, 20f, (decelerates ? 28f : 14f) * Time.deltaTime);
         boost = Mathf.MoveTowards(boost, 300f, 70f * Time.deltaTime);

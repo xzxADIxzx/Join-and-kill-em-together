@@ -173,7 +173,7 @@ public class Gameflow
     /// <summary> Handles gamemode specific actions on team victory. </summary>
     public static void OnVictory(byte champ)
     {
-        Bundle.Hud("game.win", false, $"#team.No{champ}", ColorUtility.ToHtmlStringRGBA(((Team)champ).Color()));
+        Bundle.Hud("game.win", false, $"#team.No{champ}", Int2Hex(((Team)champ).Color()));
         Countdown();
     }
 
@@ -218,15 +218,15 @@ public class Gameflow
 
         UI.Chat.DisplayText(string.Join("  ", Teams.All.Cast(t => health[(byte)t] != byte.MaxValue & health[(byte)t] > 0 || alive[(byte)t] > 0, t =>
         {
-            var common = ColorUtility.ToHtmlStringRGBA(       t.Color() );
-            var dimmed = ColorUtility.ToHtmlStringRGBA(Darker(t.Color()));
+            var common = Int2Hex(t.Color());
+            var dimmed = Int2Hex(t.Color().Darker);
             var display = new string[6];
 
             for (int i = 0; i < 6; i++) display[i]
                 = i < health[(byte)t]
-                ? $"[#{common}]:heart:[]"
+                ? $"[{common}]:heart:[]"
                 : i <  alive[(byte)t]
-                ? $"[#{dimmed}]:heart:[]"
+                ? $"[{dimmed}]:heart:[]"
                 : " ";
 
             return string.Join("[8] []", display);

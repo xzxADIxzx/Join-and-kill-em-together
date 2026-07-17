@@ -57,7 +57,7 @@ public class PlayerInformation : Fragment
         root.Component<Bar>(b =>
         {
             b.Setup(true, 20f);
-            b.Update(() => root.color = black with { a = PrefsManager.Instance.GetFloat("hudBackgroundOpacity") / 100f });
+            b.Update(() => root.color = (Color) black with { a = PrefsManager.Instance.GetFloat("hudBackgroundOpacity") / 100f });
 
             if (number == 0)
                 Builder.Text(Builder.Rect("Text", b.Image(Tex.Back, 144f, purple, multiplier: 2f).transform, Lib.Rect.Fill), "#playerinfo", 32, white, TextAnchor.MiddleCenter);
@@ -71,7 +71,7 @@ public class PlayerInformation : Fragment
     {
         RectTransform Slider(Color color) => Builder.Image(Builder.Rect("Slider", root, Lib.Rect.Fill), Tex.Fill, color, ImageType.Sliced, 2f).rectTransform;
         RectTransform
-            background = Slider(black with { a = .69f }),
+            background = Slider((Color) black with { a = .69f }),
             normhealth = Slider(cb.healthBarColor),
             overhealth = Slider(cb.overHealColor);
 

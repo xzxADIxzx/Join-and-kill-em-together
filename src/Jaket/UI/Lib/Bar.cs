@@ -8,7 +8,6 @@ using ImageType = UnityEngine.UI.Image.Type;
 
 using Jaket.Content;
 using Jaket.Input;
-using Jaket.Net;
 
 using static Pal;
 
@@ -149,14 +148,6 @@ public class Bar : MonoBehaviour
     /// <summary> Adds a button that corresponds to the style of Discord. </summary>
     public Button DiscordButton(string text) =>
         FillButton(text, discord, () => Application.OpenURL("https://discord.com/servers/join-and-kill-em-together-1132614140414935070"));
-
-    /// <summary> Adds a button that corresponds to the style of PayPal. </summary>
-    public Button PayPalButton(string text) =>
-        FillButton(text, paypal, () => Application.OpenURL("https://www.paypal.com/donate/?hosted_button_id=U5T68JC5LWEMU"));
-
-    /// <summary> Adds a button that corresponds to the style of Buy Me a Coffee. </summary>
-    public Button CoffeeButton(string text) =>
-        FillButton(text, coffee, () => Application.OpenURL("https://www.buymeacoffee.com/adithedev"));
 
     /// <summary> Adds a button, it has a label on the left. </summary>
     public Button OffsetButton(string text, Runnable callback, int size = 24, string value = "")

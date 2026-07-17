@@ -66,7 +66,7 @@ public abstract class Projectile : OwnableEntity
         if (renderer is TrailRenderer trailingTail)
         {
             trailingTail.startColor = team.Color() with { a = .6f };
-            trailingTail.endColor   = white        with { a = .0f };
+            trailingTail.endColor   = white        with { a = 0x0 };
         }
 
         else if (renderer is SpriteRenderer sprite)
