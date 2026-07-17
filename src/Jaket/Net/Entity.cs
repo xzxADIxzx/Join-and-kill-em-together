@@ -243,9 +243,9 @@ public abstract class Entity
             }
             else if (Mathf.Abs(Next - Prev) > .01f)
             {
-                next = value + (Next - Prev) * .28f;
+                next = value + (Next - Prev) * .4f;
             }
-            else if (Mathf.Abs(Next - next) > .32f)
+            else if (Mathf.Abs(Next - next) > .24f)
             {
                 prev = next = value;
             }
