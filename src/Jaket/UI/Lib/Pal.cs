@@ -2,69 +2,71 @@ namespace Jaket.UI.Lib;
 
 using UnityEngine;
 
+using static System.Globalization.NumberStyles;
+
 /// <summary> Color palette that I find appealing. </summary>
 public static class Pal
 {
+    #region palette
+
     /// <summary> Hex variants of the colors. </summary>
     public static string
 
     Clear   = "#00000000",
     Invi    = "#00000075",
     Semi    = "#000000C7",
-    Black   = "#000000",
-    Dark    = "#424242",
-    Gray    = "#727272",
-    Light   = "#B2B2B2",
-    White   = "#FFFFFF",
+    Black   = "#000000FF",
+    Heavy   = "#424242FF",
+    Light   = "#A2A2A2FF",
+    White   = "#FFFFFFFF",
 
-    Red     = "#FF3223",
-    Orange  = "#FF8800",
-    Yellow  = "#FFBB22",
-    Green   = "#32CD32",
-    Blue    = "#0096FF",
-    Pink    = "#FF77CC",
-    Purple  = "#BF90FB",
+    Red     = "#FF3223FF",
+    Orange  = "#FF8800FF",
+    Yellow  = "#FFBB22FF",
+    Green   = "#32CD32FF",
+    Blue    = "#0096FFFF",
+    Pink    = "#FF77CCFF",
+    Purple  = "#BF90FBFF",
 
-    Coral   = "#FF7F50",
-    Charge  = "#2C66CC",
-    Empty   = "#003366",
-
-    Discord = "#5865F2",
-    PayPal  = "#003087",
-    Coffee  = "#FFDD00";
+    Coral   = "#FF7F50FF",
+    Charge  = "#2C66CCFF",
+    Empty   = "#003366FF",
+    Discord = "#5865F2FF";
 
     /// <summary> Int variants of the colors. </summary>
-    public static Color
+    public static Color32
 
-    clear   = new(),
-    invi    = new(0f, 0f, 0f, .46f),
-    semi    = new(0f, 0f, 0f, .78f),
-    black   = From(0x000000),
-    dark    = From(0x424242),
-    gray    = From(0x727272),
-    light   = From(0xB2B2B2),
-    white   = From(0xFFFFFF),
+    clear   = Hex2Int(Clear  ),
+    invi    = Hex2Int(Invi   ),
+    semi    = Hex2Int(Semi   ),
+    black   = Hex2Int(Black  ),
+    heavy   = Hex2Int(Heavy  ),
+    light   = Hex2Int(Light  ),
+    white   = Hex2Int(White  ),
 
-    red     = From(0xFF3223),
-    orange  = From(0xFF8800),
-    yellow  = From(0xFFBB22),
-    green   = From(0x32CD32),
-    blue    = From(0x0096FF),
-    pink    = From(0xFF77CC),
-    purple  = From(0xBF90FB),
+    red     = Hex2Int(Red    ),
+    orange  = Hex2Int(Orange ),
+    yellow  = Hex2Int(Yellow ),
+    green   = Hex2Int(Green  ),
+    blue    = Hex2Int(Blue   ),
+    pink    = Hex2Int(Pink   ),
+    purple  = Hex2Int(Purple ),
 
-    coral   = From(0xFF7F50),
-    charge  = From(0x2C66CC),
-    empty   = From(0x003366),
+    coral   = Hex2Int(Coral  ),
+    charge  = Hex2Int(Charge ),
+    empty   = Hex2Int(Empty  ),
+    discord = Hex2Int(Discord);
 
-    discord = From(0x5865F2),
-    paypal  = From(0x003087),
-    coffee  = From(0xFFDD00);
+    /// <summary> Fixes namespace collisions. </summary>
+    public static string Gray = Light;
 
-    /// <summary> Hash map containing hex variants of the colors. </summary>
+    #endregion
+    #region strings
+
+    /// <summary> Storage of the basic colors. </summary>
     public static string[] Colors;
 
-    /// <summary> Fills the hash map with basic colors. </summary>
+    /// <summary> Fills the basic color storage. </summary>
     public static void Load()
     {
         static void Put(string name, string color)
@@ -79,9 +81,10 @@ public static class Pal
         }
 
         Put("black",   Black);
-        Put("dark",    Dark);
-        Put("gray",    Gray);
-        Put("grey",    Gray);
+        Put("dark",    Heavy);
+        Put("gray",    Heavy);
+        Put("grey",    Heavy);
+        Put("heavy",   Heavy);
         Put("light",   Light);
         Put("white",   White);
         Put("red",     Red);
@@ -98,9 +101,32 @@ public static class Pal
     /// <summary> Returns the hash of the given color name. </summary>
     public static byte Hash(string str) => (byte)(str.Length ^ (str[0] - 96 << 1) + (str[1] - 96 << 2) + (str[2] - 96 << 3));
 
-    /// <summary> Returns int version of the given hex color. </summary>
-    public static Color32 From(int hex) => new((byte)(hex >> 16 & 0xFF), (byte)(hex >> 8 & 0xFF), (byte)(hex >> 0 & 0xFF), 0xFF);
+    #endregion
+    #region convert
 
-    /// <summary> Returns darker version of the given color. </summary>
-    public static Color Darker(Color original) => Color.Lerp(original, black, .38f);
+    /// <summary> Converts hex color into int color. </summary>
+    public static Color32 Hex2Int(string hex) => new
+    (
+        byte.Parse(hex[1..3], HexNumber),
+        byte.Parse(hex[3..5], HexNumber),
+        byte.Parse(hex[5..7], HexNumber),
+        byte.Parse(hex[7..9], HexNumber)
+    );
+
+    /// <summary> Converts int color into hex color. </summary>
+    public static string Int2Hex(Color32 col) => $"#{col.r:X2}{col.g:X2}{col.b:X2}{col.a:X2}";
+
+    extension(Color32 col)
+    {
+        /// <summary> Darker version of the color. </summary>
+        public Color32 Darker => Color32.Lerp(col, black, .4f);
+    }
+
+    extension(Color   col)
+    {
+        /// <summary> Darker version of the color. </summary>
+        public Color   Darker => Color  .Lerp(col, black, .4f);
+    }
+
+    #endregion
 }
