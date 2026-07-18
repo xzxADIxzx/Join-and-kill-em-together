@@ -415,7 +415,7 @@ I know it's been two years since the last update, but I am, unfortunately, a hum
 
         ActionType.Find(l, "Main Menu (1)/V1", r =>
         {
-            var root = Builder.Rect("Warning", r, UI.Lib.Rect.Fill);
+            var root = Builder.Rect("Warning", r, new());
 
             Builder.Image(root, Tex.Back, Pal.semi, Image.Type.Sliced);
 

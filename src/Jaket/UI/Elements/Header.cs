@@ -43,8 +43,11 @@ public class Header
         var nicknameBg = Builder.Image(Builder.Rect("Nickname", c, new(0f, 120f, Width, 360f)), Tex.Fill, invi, ImageType.Sliced, .5f).rectTransform;
         var ellipsisBg = Builder.Image(Builder.Rect("Ellipsis", c, new(0f, -120f, 400f, 120f)), Tex.Fill, invi, ImageType.Sliced, .9f).rectTransform;
 
-        var nickname = Builder.Text(Builder.Rect("Text", nicknameBg, Lib.Rect.Fill), "", 240, white, TextAnchor.MiddleCenter);
-        var ellipsis = Builder.Text(Builder.Rect("Text", ellipsisBg, Lib.Rect.Huge), "", 240, white, TextAnchor.MiddleCenter);
+        var nickname = Builder.Text(Builder.Rect("Text", nicknameBg, new()), "", 240, white, TextAnchor.MiddleCenter);
+        var ellipsis = Builder.Text(Builder.Rect("Text", ellipsisBg, new()), "", 240, white, TextAnchor.MiddleCenter);
+
+        ellipsis.horizontalOverflow = HorizontalWrapMode.Overflow;
+        ellipsis.verticalOverflow   = VerticalWrapMode  .Overflow;
 
         c.Component<Bar>(b => b.Update(() =>
         {

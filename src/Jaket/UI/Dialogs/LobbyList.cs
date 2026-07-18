@@ -80,7 +80,7 @@ public class LobbyList : Fragment
             }
 
             var cont = content.TextButton(name, align: TextAnchor.MiddleLeft, callback: () => LobbyController.JoinLobby(l));
-            var rect = Builder.Rect("Info", cont.transform, Lib.Rect.Fill);
+            var rect = Builder.Rect("Info", cont.transform, new());
 
             var full = l.MemberCount <= 2 ? Green : l.MemberCount <= 4 ? Orange : Red;
             var info = $"<color={Gray}>{l.GetData("level")}</color> <color={full}>{l.MemberCount}/{l.MaxMembers}</color> ";

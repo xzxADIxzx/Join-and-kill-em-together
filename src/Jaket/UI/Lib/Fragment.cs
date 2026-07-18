@@ -44,7 +44,7 @@ public class Fragment
     protected RectTransform Rect(string name, Rect rect) => Builder.Rect(name, Content, rect);
 
     /// <summary> Adds a rectangle, it fills the fragment. </summary>
-    protected RectTransform Fill(string name) => Builder.Rect(name, Content, Lib.Rect.Fill);
+    protected RectTransform Fill(string name) => Builder.Rect(name, Content, new());
 
     /// <summary> Adds a bar, it is located on the left and has a constant width. </summary>
     protected void Bar(float height, Cons<Bar> cons)
@@ -76,8 +76,8 @@ public class Fragment
     protected void VersionBar()
     {
         var bar = Builder.Rect("Version", Sidebar.transform, new(0f, 48f, 480f - 32f, 64f, new(.5f, 0f)));
-        var txt = Builder.Rect("Text", bar, Lib.Rect.Fill with { Y =  12f });
-        var sub = Builder.Rect("Hash", bar, Lib.Rect.Fill with { Y = -16f });
+        var txt = Builder.Rect("Text", bar, new() { Y =  12f });
+        var sub = Builder.Rect("Hash", bar, new() { Y = -16f });
 
         Builder.Image(bar, Tex.Fill, semi, ImageType.Sliced, 3f);
         Builder.Text(txt, $"Jaket version is {Version.Readable}", 24, heavy, TextAnchor.MiddleCenter);

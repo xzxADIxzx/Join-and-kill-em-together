@@ -44,7 +44,7 @@ public class Skateboard : Fragment
             bars[i] = Builder.Circle(Rect("StaminaBar", new(512f, 512f)), .1f, -56 + 38 * i, 8f, color: clear);
 
         var backgrd = Builder.Image(Rect("Speedometer", new(-512f, -128f, 290f, 74f)), Tex.Back, semi, ImageType.Sliced);
-        speedometer = Builder.Text(Builder.Rect("Text", backgrd.transform, Lib.Rect.Fill), "", 24, white, TextAnchor.MiddleLeft);
+        speedometer = Builder.Text(Builder.Rect("Text", backgrd.transform, new()), "", 24, white, TextAnchor.MiddleLeft);
 
         gradient.SetKeys(new GradientColorKey[]
         {

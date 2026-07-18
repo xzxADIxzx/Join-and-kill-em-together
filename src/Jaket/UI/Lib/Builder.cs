@@ -128,7 +128,7 @@ public static class Builder
             b.colors = Colors;
             b.onClick.AddListener(callback.Invoke);
 
-            Text(Rect("Text", rect, Lib.Rect.Fill), text, size, sprite == Tex.Fill ? white : color, align);
+            Text(Rect("Text", rect, new()), text, size, sprite == Tex.Fill ? white : color, align);
         });
 
     /// <summary> Creates a button with the given sprite, color, icon and callback. </summary>
@@ -174,15 +174,15 @@ public static class Builder
         Component<Slider>(rect.gameObject, s =>
         {
             var area = Rect("Area", rect, new(-16f, 0f, -48f, -16f, Vector2.zero, Vector2.one));
-            var mask = Rect("Mask", area, Lib.Rect.Fill);
-            var fill = Rect("Fill", mask, Lib.Rect.Fill);
+            var mask = Rect("Mask", area, new());
+            var fill = Rect("Fill", mask, new());
 
             Mask(mask, Tex.Mask);
             Image(fill, Tex.Dash, heavy, ImageType.Tiled);
             s.fillRect = mask;
 
             var zone = Rect("Zone", rect, new(0f, 0f, -48f, -16f, Vector2.zero, Vector2.one));
-            var hand = Rect("Hand", zone, Lib.Rect.Fill with { Width = 32f });
+            var hand = Rect("Hand", zone, new() { Width = 32f });
 
             s.targetGraphic = Image(hand, Tex.Hort, color, ImageType.Sliced);
             s.colors = Colors;
@@ -201,7 +201,7 @@ public static class Builder
         Component<Scrollbar>(rect.gameObject, s =>
         {
             var zone = Rect("Zone", rect, new(0f, 0f, -16f, -48f, Vector2.zero, Vector2.one));
-            var hand = Rect("Hand", zone, Lib.Rect.Fill with { Height = 32f });
+            var hand = Rect("Hand", zone, new() { Height = 32f });
 
             s.targetGraphic = Image(hand, Tex.Vert, color, ImageType.Sliced);
             s.colors = Colors;
@@ -234,8 +234,8 @@ public static class Builder
         Component<InputField>(rect.gameObject, f =>
         {
             f.targetGraphic = Image(rect, sprite, color, ImageType.Sliced);
-            f.textComponent = Text(Rect("Textfield", rect, Lib.Rect.Fill with { Width = -16f, Y = 3f }), "", size, white, TextAnchor.MiddleLeft, false);
-            f.placeholder = Text(Rect("Placeholder", rect, Lib.Rect.Fill with { Width = -16f, Y = 3f }), ph, size, light, TextAnchor.MiddleLeft, false);
+            f.textComponent = Text(Rect("Textfield", rect, new() { Width = -16f, Y = 3f }), "", size, white, TextAnchor.MiddleLeft, false);
+            f.placeholder = Text(Rect("Placeholder", rect, new() { Width = -16f, Y = 3f }), ph, size, light, TextAnchor.MiddleLeft, false);
             f.onEndEdit.AddListener(callback.Invoke);
         });
 

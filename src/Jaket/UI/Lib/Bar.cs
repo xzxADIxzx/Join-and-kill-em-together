@@ -88,8 +88,8 @@ public class Bar : MonoBehaviour
     /// <summary> Adds a pair of labels with different alignment, horizontal only. </summary>
     public void Text(string text, float spc, out Text display, int size = 24, Color? color = null)
     {
-        var txt = Builder.Text(Resolve("Pair", spc),                  text, size, color ?? white, TextAnchor.MiddleLeft).transform;
-        display = Builder.Text(Builder.Rect("Display", txt, Rect.Fill), "", size, color ?? white, TextAnchor.MiddleRight);
+        var txt = Builder.Text(Resolve("Pair", spc),              text, size, color ?? white, TextAnchor.MiddleLeft).transform;
+        display = Builder.Text(Builder.Rect("Display", txt, new()), "", size, color ?? white, TextAnchor.MiddleRight);
     }
 
     #endregion

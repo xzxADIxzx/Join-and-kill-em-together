@@ -60,7 +60,7 @@ public class PlayerInformation : Fragment
             b.Update(() => root.color = (Color) black with { a = PrefsManager.Instance.GetFloat("hudBackgroundOpacity") / 100f });
 
             if (number == 0)
-                Builder.Text(Builder.Rect("Text", b.Image(Tex.Back, 144f, purple, multiplier: 2f).transform, Lib.Rect.Fill), "#playerinfo", 32, white, TextAnchor.MiddleCenter);
+                Builder.Text(Builder.Rect("Text", b.Image(Tex.Back, 144f, purple, multiplier: 2f).transform, new()), "#playerinfo", 32, white, TextAnchor.MiddleCenter);
             else
                 Networking.Entities.Player(p => p.Team.Ally(), p => Build(p, b.Resolve("Entry", 72f)));
         });
@@ -69,13 +69,13 @@ public class PlayerInformation : Fragment
 
     public void Build(RemotePlayer player, Transform root)
     {
-        RectTransform Slider(Color color) => Builder.Image(Builder.Rect("Slider", root, Lib.Rect.Fill), Tex.Fill, color, ImageType.Sliced, 2f).rectTransform;
+        RectTransform Slider(Color color) => Builder.Image(Builder.Rect("Slider", root, new()), Tex.Fill, color, ImageType.Sliced, 2f).rectTransform;
         RectTransform
             background = Slider((Color) black with { a = .69f }),
             normhealth = Slider(cb.healthBarColor),
             overhealth = Slider(cb.overHealColor);
 
-        Text Text(TextAnchor align) => Builder.Text(Builder.Rect("Text", root, Lib.Rect.Fill with { Width = -32f }), "", 40, white, align);
+        Text Text(TextAnchor align) => Builder.Text(Builder.Rect("Text", root, new() { Width = -32f }), "", 40, white, align);
         Text
             playername = Text(TextAnchor.MiddleLeft),
             railcharge = Text(TextAnchor.MiddleRight);
