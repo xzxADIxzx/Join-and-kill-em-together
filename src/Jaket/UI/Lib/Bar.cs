@@ -18,15 +18,14 @@ public class Bar : MonoBehaviour
     private bool voh;
     /// <summary> Margin from the borders and padding between the elements. </summary>
     private float margin, padding;
-    /// <summary> Amount of pixels claimed by the elements. </summary>
+    /// <summary> Number of pixels claimed by elements. </summary>
     private float filled;
     /// <summary> Action to be done in the update loop. </summary>
     private Runnable update;
     /// <summary> Rectangle that contains this element. </summary>
     private RectTransform rect;
 
-    /// <summary> Whether the bar is empty or has children. </summary>
-    public bool Empty => filled == 0f;
+    #region basic
 
     /// <summary> Sets up the basic options of the bar. </summary>
     public void Setup(bool voh, float margin = 8f, float padding = 8f)
@@ -37,7 +36,7 @@ public class Bar : MonoBehaviour
         this.padding = padding;
     }
 
-    /// <summary> Clears the bar by destroying children of it. </summary>
+    /// <summary> Removes the child elements of the bar. </summary>
     public void Clear()
     {
         rect.Each(Dest);
@@ -46,28 +45,21 @@ public class Bar : MonoBehaviour
 
     private void Update() => update?.Invoke();
 
-    /// <summary> Schedules the given runnable to be done in the update loop. </summary>
-    public void Update(Runnable update)
-    {
-        var previous = this.update;
-        this.update = () =>
-        {
-            previous?.Invoke();
-            update();
-        };
-    }
+    public void Update(Runnable update) => this.update = update;
 
-    #region base
+    #endregion
+    #region rect
 
-    /// <summary> Resolves the given size of an element and returns a rect to build the element in. </summary>
+    /// <summary> Resolves the size of an element and returns a rectangle to build the element in. </summary>
     public RectTransform Resolve(string name, float size)
     {
         float fill = (voh ? rect.sizeDelta.x : rect.sizeDelta.y) - margin * 2f;
-        float incr = (filled != 0f ? padding : margin) + size / 2f;
+        float grow = (filled == 0f ? margin : padding) + size / 2f;
 
-        var result = Builder.Rect(name, rect, new(
-            voh ? 0f : filled += incr,
-            voh ? filled -= incr : 0f,
+        var result = Builder.Rect(name, rect, new
+        (
+            voh ? 0f : filled += grow,
+            voh ? filled -= grow : 0f,
             voh ? fill : size,
             voh ? size : fill,
             voh ? new(.5f, 1f) : new(0f, .5f)
@@ -77,20 +69,30 @@ public class Bar : MonoBehaviour
         return result;
     }
 
-    /// <summary> Adds a subbar, does not configure it. </summary>
-    public void Subbar(float size, Cons<Bar> cons) =>
-        Component(Resolve("Subbar", size).gameObject, cons);
+    /// <summary> Adds a space, an utter waste of space. </summary>
+    public void Space(float size = 16f) => Resolve("Space", size);
 
-    /// <summary> Adds a label with the given text, simple yet elegant. </summary>
-    public Text Text(string text, float spc, int size = 24, Color? color = null, TextAnchor align = TextAnchor.MiddleCenter) =>
+    /// <summary> Adds a subbar, does not configure it. </summary>
+    public void Subbar(float size, Cons<Bar> cons) => Resolve("Subbar", size).Component(cons);
+
+    #endregion
+    #region text
+
+    /// <summary> Adds a text. </summary>
+    public Text Title(string text, float spc = 32f) =>
+        Builder.Text(Resolve("Text", spc), text, 32, white, TextAnchor.MiddleCenter);
+
+    /// <summary> Adds a text. </summary>
+    public Text Info(string text, float spc = 16f) =>
+        Builder.Text(Resolve("Text", spc), text, 16, light, TextAnchor.MiddleLeft);
+
+    /// <summary> Adds a text. </summary>
+    public Text Text(string text, int size = 24, Color? color = null, TextAnchor align = TextAnchor.MiddleLeft, float spc = 24f) =>
         Builder.Text(Resolve("Text", spc), text, size, color ?? white, align);
 
-    /// <summary> Adds a pair of labels with different alignment, horizontal only. </summary>
-    public void Text(string text, float spc, out Text display, int size = 24, Color? color = null)
-    {
-        var txt = Builder.Text(Resolve("Pair", spc),              text, size, color ?? white, TextAnchor.MiddleLeft).transform;
-        display = Builder.Text(Builder.Rect("Display", txt, new()), "", size, color ?? white, TextAnchor.MiddleRight);
-    }
+    /// <summary> Adds a pair. </summary>
+    public void Pair(string text, out Text cont, Color? color = null, float spc = 24f) =>
+        Builder.Pair(Resolve("Pair", spc), text, 24, color ?? white, out _, out cont);
 
     #endregion
     #region image
@@ -176,7 +178,7 @@ public class Bar : MonoBehaviour
     /// <summary> Adds a slider, also builds a pair of labels to display the slider value. </summary>
     public Slider Slider(int min, int max, Cons<int> callback, string text, Func<int, string> format)
     {
-        Text(text, 32f, out var display);
+        Pair(text, out var display);
         display.text = format(0);
         return Slider(min, max, value =>
         {
