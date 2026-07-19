@@ -2,8 +2,6 @@ namespace Jaket.UI.Lib;
 
 using UnityEngine;
 
-using ImageType = UnityEngine.UI.Image.Type;
-
 using static Pal;
 
 /// <summary> Interface fragment that contains multiple tables. </summary>
@@ -51,12 +49,13 @@ public class Fragment
     {
         Sidebar ??= Rect("Sidebar", new(256f, 0f, 480f, 0f, new(0f, 0f), new(0f, 1f))).Component<Bar>(b => b.Setup(true, 16f, 16f));
 
-        var img = Sidebar.Image(Sidebar.Empty ? Tex.Back : Tex.Fill, height, semi, scale: Sidebar.Empty ? 2f : 3f);
+        var any = Sidebar.transform.childCount > 0;
+        var img = Sidebar.Image(any ? Tex.Fill : Tex.Back, height, semi, scale: any ? 3f : 2f);
 
         img.Component(cons);
         img.Component<HudOpenEffect>(e => e.speed = 38f - height / 24f);
 
-        if (Content.Find("Deco") == null) Builder.Image(Rect("Deco", new(0f, 0f, 32f, 0f, new(0f, 0f), new(0f, 1f))), Tex.Dash, semi, ImageType.Tiled, 2f);
+        if (Content.Find("Deco") == null) Builder.Image(Rect("Deco", new(0f, 0f, 32f, 0f, new(0f, 0f), new(0f, 1f))), Tex.Dash, semi);
     }
 
     /// <summary> Adds a bar, it is located in the center and has the given size. </summary>
@@ -79,7 +78,7 @@ public class Fragment
         var txt = Builder.Rect("Text", bar, new() { Y =  12f });
         var sub = Builder.Rect("Hash", bar, new() { Y = -16f });
 
-        Builder.Image(bar, Tex.Fill, semi, ImageType.Sliced, 3f);
+        Builder.Image(bar, Tex.Fill, semi, scale: 3f);
         Builder.Text(txt, $"Jaket version is {Version.Readable}", 24, heavy);
         Builder.Text(sub, $"Built from commit of {Version.Hash}", 16, heavy);
     }

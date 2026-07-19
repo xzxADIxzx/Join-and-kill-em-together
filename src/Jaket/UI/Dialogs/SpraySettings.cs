@@ -44,7 +44,7 @@ public class SpraySettings : Fragment
         Bar(888f, 920f, b =>
         {
             b.Setup(true);
-            b.Text("#spray.name", 32f, 32);
+            b.Title("#spray.name");
 
             b.Subbar(864f, s =>
             {
@@ -53,18 +53,18 @@ public class SpraySettings : Fragment
                 {
                     b.Setup(true, 0f);
 
-                    preview = b.Image(null, 432f, white, Image.Type.Filled);
+                    preview = b.Image(null, 432f);
                     preview.preserveAspect = true;
 
                     b.Subbar(328f, s =>
                     {
                         s.Setup(false, 0f);
                         loaded = s.ScrollV(0f, 384f).content.Component<Bar>(b => b.Setup(true, 0f));
-                        s.Slider(loaded.transform);
+                        s.Slider(loaded);
                     });
 
-                    b.TextButton("#spray.refresh", callback: Refresh);
-                    b.TextButton("#spray.open", callback: OpenFolder);
+                    b.TextButton("#spray.refresh", Refresh);
+                    b.TextButton("#spray.open", OpenFolder);
                 });
                 s.Subbar(432f, b => (hidden = b).Setup(true, 0f));
             });
@@ -112,8 +112,8 @@ public class SpraySettings : Fragment
 
             var color = blacklist ? red : green;
 
-            hidden.Resolve("Space", 16f);
-            hidden.Text(blacklist ? "#spray.blacklist" : "#spray.whitelist", 24f, 24, color, TextAnchor.MiddleLeft);
+            hidden.Space();
+            hidden.Text(blacklist ? "#spray.blacklist" : "#spray.whitelist", color: color);
 
             LobbyController.Lobby?.Members.Each(m => Administration.Hidden.Contains(m.AccId) == blacklist && !m.IsMe, m => hidden.TextButton(m.Name, color, () =>
             {

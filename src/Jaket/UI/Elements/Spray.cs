@@ -42,7 +42,7 @@ public class Spray : MonoBehaviour
             var title = owner?.Header.Name ?? AccId.Name;
             var width = 141f * title.Length;
 
-            Builder.Image(Builder.Rect("Image", c, new(1960f, 1960f)),             spray,      white, Image.Type.Filled).preserveAspect = true;
+            Builder.Image(Builder.Rect("Image", c, new(1960f, 1960f            )), spray,      white).preserveAspect = true;
             Builder.Text (Builder.Rect("Label", c, new(480f, -880f, width, 240f)), title, 240, color).transform.localEulerAngles = new(0f, 0f, 6f);
         }).sortingOrder = -1;
 

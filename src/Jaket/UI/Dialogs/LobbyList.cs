@@ -27,12 +27,12 @@ public class LobbyList : Fragment
         Bar(920f, 528f, b =>
         {
             b.Setup(true);
-            b.Text("#lobby-list.name", 32f, 32);
+            b.Title("#lobby-list.name");
 
             b.Subbar(40f, s =>
             {
                 s.Setup(false, 0f);
-                refresh = s.TextButton("", spc: 256f, callback: Refresh);
+                refresh = s.TextButton("", Refresh, 256f);
                 s.Field("#lobby-list.search", t =>
                 {
                     search = t.Trim().ToLower();
@@ -44,7 +44,7 @@ public class LobbyList : Fragment
             {
                 s.Setup(false, 0f);
                 content = s.ScrollV(0f, 856f).content.Component<Bar>(b => b.Setup(true, 0f));
-                s.Slider(content.transform);
+                s.Slider(content);
             });
         });
     }
@@ -81,7 +81,7 @@ public class LobbyList : Fragment
 
                 name = $"{name[..s]}[orange]{name[s..e]}[]{name[e..]}";
             }
-            var info = $"[light]{level}[] [{(count <= 2 ? "green" : count <= 4 ? "orange" : "red")}]{count}/{max}";
+            var info = $"[light]{level}[] [{(count <= 2 ? "green" : count <= 4 ? "yellow" : count <= 6 ? "orange" : "red")}]{count}/{max}";
 
             var cont = Builder.Button(content.Resolve("Button", 40f), Tex.BrdL, white, () => LobbyController.JoinLobby(l));
 

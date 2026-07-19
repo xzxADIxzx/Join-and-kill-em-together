@@ -34,9 +34,9 @@ public class PlayerList : Fragment
         Bar(168f, b =>
         {
             b.Setup(true);
-            b.Text("#player-list.team", 32f, 32);
+            b.Title("#player-list.team");
 
-            b.Text("#player-list.info", 64f, 16, light, TextAnchor.MiddleLeft);
+            b.Info("#player-list.info", 64f);
             b.Subbar(40f, s =>
             {
                 s.Setup(false, 0f);
@@ -50,22 +50,22 @@ public class PlayerList : Fragment
         if (LobbyController.Online) Bar(LobbyController.Lobby.Value.MemberCount * 48f + (LobbyController.IsOwner ? 120f : 48f), b =>
         {
             b.Setup(true);
-            b.Text("#player-list.list", 32f, 32);
+            b.Title("#player-list.list");
 
             LobbyController.Lobby?.Members.Each(m => b.Subbar(40f, s =>
             {
                 s.Setup(false, 0f);
                 if (LobbyController.Owner == m.AccId)
                 {
-                    s.ProfileButton(m, false);
+                    s.TeamButton(m, 384f);
                     s.FillButton(ModAssets.LobbyOwner, yellow, () => Bundle.Hud("player-list.owner"));
                 }
                 else if (LobbyController.IsOwner)
                 {
-                    s.ProfileButton(m, false);
+                    s.TeamButton(m, 384f);
                     s.FillButton(ModAssets.LobbyBan, red, () => Administration.Ban(m.AccId));
                 }
-                else s.ProfileButton(m, true);
+                else s.TeamButton(m, 432f);
             }));
             if (!LobbyController.IsOwner) return;
 

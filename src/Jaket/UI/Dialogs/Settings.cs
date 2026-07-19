@@ -78,12 +78,12 @@ public class Settings : Fragment
         Bar(400f, b =>
         {
             b.Setup(true);
-            b.Text("#settings.general", 32f, 32);
+            b.Title("#settings.general");
 
             b.FillButton("#settings.reset", red, ResetGeneral);
             b.Separator();
 
-            lang = b.TextButton("", callback: () =>
+            lang = b.TextButton("", () =>
             {
                 Locale = Bundle.Codes[(Bundle.Codes.IndexOf(Locale) + 1) % Bundle.Codes.Length];
                 Rebuild();
@@ -108,12 +108,12 @@ public class Settings : Fragment
             });
 
             b.Toggle("#settings.skipmsg", b => SkipHelloMessage = b);
-            b.TextButton("#settings.sprays", callback: () => UI.Sprays.Toggle());
+            b.TextButton("#settings.sprays", () => UI.Sprays.Toggle());
         });
         Bar(552f, b =>
         {
             b.Setup(true);
-            b.Text("#settings.controls", 32f, 32);
+            b.Title("#settings.controls");
 
             b.FillButton("#settings.reset", red, ResetControls);
             b.Separator();
@@ -122,7 +122,7 @@ public class Settings : Fragment
             {
                 s.Setup(false, 0f);
                 keylist = s.ScrollV(664f, 384f).content.Component<Bar>(b => b.Setup(true, 0f));
-                s.Slider(keylist.transform);
+                s.Slider(keylist);
             });
         });
         VersionBar();

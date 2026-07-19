@@ -45,7 +45,7 @@ public class Spectator : Fragment
         Events.EveryHalf += () => Shader.SetGlobalFloat("_RandomNoiseStrength", .1f);
 
         info = Builder.Text(Fill("Info"), "hi", 24, white, TextAnchor.UpperLeft);
-        dead = Builder.Image(Fill("Eye"), Tex.Dead, white, Image.Type.Simple);
+        dead = Builder.Image(Fill("Eye"), Tex.Dead, white);
 
         info.rectTransform.sizeDelta = Vector2.one * -128f;
 

@@ -58,7 +58,7 @@ public class PlayerInformation : Fragment
             b.Update(() => root.color = (Color) black with { a = PrefsManager.Instance.GetFloat("hudBackgroundOpacity") / 100f });
 
             if (number == 0)
-                Builder.Text(Builder.Rect("Text", b.Image(Tex.Back, 144f, purple, scale: 2f).transform, new()), "#playerinfo", 32, white);
+                Builder.Text(Builder.Rect("Text", b.Image(Tex.Back, 144f, purple, scale: 2f), new()), "#playerinfo", 32, white);
             else
                 Networking.Entities.Player(p => p.Team.Ally(), p => Build(p, b.Resolve("Entry", 72f)));
         });

@@ -34,7 +34,7 @@ public class GameConfig : Fragment
         Bar(556f, 716f, b =>
         {
             b.Setup(true);
-            b.Text("#gameconfig.name", 32f, 32);
+            b.Title("#gameconfig.name");
 
             scroll = b.ScrollH(Gamemodes.All.Length * 228f - 8f, 300f).content.Component<Bar>(s =>
             {
@@ -54,8 +54,8 @@ public class GameConfig : Fragment
                 }));
             });
 
-            info = b.Text("keen eye", 200f, align: TextAnchor.UpperLeft, size: 21, color: light);
-            b.Text("#gameconfig.mods", 24f, align: TextAnchor.MiddleLeft);
+            info = b.Text("", 21, light, TextAnchor.UpperLeft, 200f);
+            b.Text("#gameconfig.mods");
 
             slowmo = b.Toggle("#gameconfig.slowmo", b => LobbyConfig.Slowmo = b);
             hammer = b.Toggle("#gameconfig.hammer", b => LobbyConfig.Hammer = b);

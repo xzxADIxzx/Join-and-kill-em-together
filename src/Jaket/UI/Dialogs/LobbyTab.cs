@@ -33,9 +33,9 @@ public class LobbyTab : Fragment
         Bar(144f, b =>
         {
             b.Setup(true);
-            b.Text("#lobby-tab.lobby", 32f, 32);
+            b.Title("#lobby-tab.lobby");
 
-            create = b.TextButton("#lobby-tab.create", callback: () =>
+            create = b.TextButton("#lobby-tab.create", () =>
             {
                 if (LobbyController.Offline)
                     LobbyController.CreateLobby();
@@ -44,26 +44,26 @@ public class LobbyTab : Fragment
 
                 Rebuild();
             });
-            invite = b.TextButton("#lobby-tab.invite", callback: LobbyController.InviteFriend);
+            invite = b.TextButton("#lobby-tab.invite", LobbyController.InviteFriend);
         });
         Bar(192f, b =>
         {
             b.Setup(true);
-            b.Text("#lobby-tab.codes", 32f, 32);
+            b.Title("#lobby-tab.codes");
 
-            copy = b.TextButton("#lobby-tab.copy", callback: LobbyController.CopyCode);
-            join = b.TextButton("#lobby-tab.join", callback: LobbyController.JoinByCode);
-            list = b.TextButton("#lobby-tab.list", callback: () => UI.LobbyList.Toggle());
+            copy = b.TextButton("#lobby-tab.copy", LobbyController.CopyCode);
+            join = b.TextButton("#lobby-tab.join", LobbyController.JoinByCode);
+            list = b.TextButton("#lobby-tab.list", () => UI.LobbyList.Toggle());
         });
-        Bar(520f, b =>
+        Bar(504f, b =>
         {
             b.Setup(true);
-            b.Text("#lobby-tab.config", 32f, 32);
+            b.Title("#lobby-tab.config");
 
             name = b.Field("#lobby-tab.name", s => LobbyConfig.Name = s);
             name.characterLimit = 30;
 
-            accessibility = b.TextButton("", callback: () =>
+            accessibility = b.TextButton("", () =>
             {
                 switch (accessLevel = ++accessLevel % 3)
                 {
@@ -77,7 +77,7 @@ public class LobbyTab : Fragment
             pvp = b.Toggle("#lobby-tab.allow-pvp", b => LobbyConfig.PvPAllowed = b);
             mod = b.Toggle("#lobby-tab.allow-mod", b => LobbyConfig.ModsAllowed = b);
 
-            b.Text("#lobby-tab.ppp-desc", 48f, 16, light, TextAnchor.MiddleLeft);
+            b.Info("#lobby-tab.ppp-desc", 48f);
             ppp = b.Slider(0, 20, i => LobbyConfig.PPP = i, "#lobby-tab.ppp-name", i => $"{i * 10}PPP");
 
             bosses = b.Toggle("#lobby-tab.heal-bosses", b => LobbyConfig.HealBosses = b);
