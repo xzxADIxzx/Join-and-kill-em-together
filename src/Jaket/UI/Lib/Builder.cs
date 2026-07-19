@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
 
-using ImageType = UnityEngine.UI.Image.Type;
 using ScaleMode = UnityEngine.UI.CanvasScaler.ScaleMode;
 
 using Jaket.Assets;
@@ -59,12 +58,12 @@ public static class Builder
     #region image
 
     /// <summary> Creates an image. </summary>
-    public static Image Image(Transform rect, Sprite sprite, Color color, ImageType type = ImageType.Sliced, float? scale = null) =>
+    public static Image Image(Transform rect, Sprite sprite, Color color, float? scale = null) =>
         Component<Image>(rect.gameObject, i =>
         {
             i.sprite = sprite;
             i.color = color;
-            i.type = type;
+            i.type = Tex.Type(sprite);
             i.pixelsPerUnitMultiplier = scale ?? Tex.Scale(sprite);
         });
 
@@ -186,8 +185,8 @@ public static class Builder
             var hand = Rect("Hand", zone, new(32f, 0f));
 
             Image(rect, Tex.BrdL, color);
-            Mask (mask, Tex.Mask);
-            Image(fill, Tex.Dash, heavy, ImageType.Tiled);
+            Mask (mask, Tex.Mask       );
+            Image(fill, Tex.Dash, heavy);
 
             s.targetGraphic = Image(hand, Tex.Hort, color);
             s.colors = Colors;

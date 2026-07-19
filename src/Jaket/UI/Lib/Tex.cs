@@ -2,6 +2,8 @@ namespace Jaket.UI.Lib;
 
 using UnityEngine;
 
+using Shape = UnityEngine.UI.Image.Type;
+
 using Jaket.Assets;
 
 /// <summary> List of textures used to build the interface. </summary>
@@ -53,5 +55,19 @@ public static class Tex
         _ when sprite == Dash => 2.0f,
         _ when sprite == Mask => 5.3f,
         _                     => 1.0f,
+    };
+
+    /// <summary> Returns the default shape of the sprite. </summary>
+    public static Shape Type (Sprite sprite) => sprite switch
+    {
+        _ when sprite == Fill => Shape.Sliced,
+        _ when sprite == Back => Shape.Sliced,
+        _ when sprite == BrdS => Shape.Sliced,
+        _ when sprite == BrdL => Shape.Sliced,
+        _ when sprite == Hort => Shape.Sliced,
+        _ when sprite == Vert => Shape.Sliced,
+        _ when sprite == Dash => Shape.Tiled,
+        _ when sprite == Mask => Shape.Sliced,
+        _                     => Shape.Simple,
     };
 }
