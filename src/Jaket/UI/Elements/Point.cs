@@ -3,8 +3,6 @@ namespace Jaket.UI.Elements;
 using UnityEngine;
 using UnityEngine.UI;
 
-using ImageType = UnityEngine.UI.Image.Type;
-
 using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net.Types;
@@ -59,21 +57,21 @@ public class Point : MonoBehaviour
 
         glow.transform.localPosition = Vector3.back * 1.6f;
 
-        Builder.WorldCanvas(Create("Cirlce", transform).transform, Vector3.back * .2f, c =>
+        Builder.Canvas(Create("Cirlce", transform).transform, Vector3.back * .2f, c =>
         {
-            circle1 = Builder.Image(Builder.Rect("Image", c, new(1280f, 1280f)), Tex.Circle, color, ImageType.Simple).rectTransform;
+            circle1 = Builder.Image(Builder.Rect("Image", c, new(1280f, 1280f)), Tex.Circle, color).rectTransform;
             circle1.localScale = Vector3.zero;
         });
 
-        Builder.WorldCanvas(Create("Cirlce", transform).transform, Vector3.back * .4f, c =>
+        Builder.Canvas(Create("Cirlce", transform).transform, Vector3.back * .4f, c =>
         {
-            circle2 = Builder.Image(Builder.Rect("Image", c, new(960f, 960f)), Tex.Circle, color, ImageType.Simple).rectTransform;
+            circle2 = Builder.Image(Builder.Rect("Image", c, new(960f, 960f)), Tex.Circle, color).rectTransform;
             circle2.localScale = Vector3.zero;
         });
 
-        Builder.WorldCanvas(Create("Diamond", transform).transform, Vector3.back * 1.6f, c =>
+        Builder.Canvas(Create("Diamond", transform).transform, Vector3.back * 1.6f, c =>
         {
-            diamond = Builder.Diamond(Builder.Rect("Image", c, new(1000f, 1000f)), color, .4f, .4f, 1f, .4f, true).rectTransform;
+            diamond = Builder.Diamond(Builder.Rect("Image", c, new(1000f, 1000f)), color, .4f, .4f, 1f, .4f).rectTransform;
             diamond.localScale = Vector3.zero;
         });
 

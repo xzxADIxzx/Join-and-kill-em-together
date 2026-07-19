@@ -3,8 +3,6 @@ namespace Jaket.UI.Dialogs;
 using UnityEngine;
 using UnityEngine.UI;
 
-using ImageType = UnityEngine.UI.Image.Type;
-
 using Jaket.Assets;
 using Jaket.IO;
 using Jaket.Net;
@@ -55,7 +53,7 @@ public class SpraySettings : Fragment
                 {
                     b.Setup(true, 0f);
 
-                    preview = b.Image(null, 432f, white, ImageType.Filled);
+                    preview = b.Image(null, 432f, white, Image.Type.Filled);
                     preview.preserveAspect = true;
 
                     b.Subbar(328f, s =>

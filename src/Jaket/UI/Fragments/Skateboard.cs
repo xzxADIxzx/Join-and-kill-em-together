@@ -4,8 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
 
-using ImageType = UnityEngine.UI.Image.Type;
-
 using Jaket.Assets;
 using Jaket.Input;
 using Jaket.UI.Lib;
@@ -43,7 +41,7 @@ public class Skateboard : Fragment
         for (int i = 0; i < 3; i++)
             bars[i] = Builder.Circle(Rect("StaminaBar", new(512f, 512f)), .1f, -56 + 38 * i, 8f, color: clear);
 
-        var backgrd = Builder.Image(Rect("Speedometer", new(-512f, -128f, 290f, 74f)), Tex.Back, semi, ImageType.Sliced);
+        var backgrd = Builder.Image(Rect("Speedometer", new(-512f, -128f, 290f, 74f)), Tex.Back, semi);
         speedometer = Builder.Text(Builder.Rect("Text", backgrd.transform, new()), "", 24, white, TextAnchor.MiddleLeft);
 
         gradient.SetKeys(new GradientColorKey[]

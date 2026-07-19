@@ -5,8 +5,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-using ImageType = UnityEngine.UI.Image.Type;
-
 using Jaket.Assets;
 using Jaket.Commands;
 using Jaket.Input;
@@ -60,8 +58,8 @@ public class Chat : Fragment
         };
         Events.EveryHalf += Rebuild;
 
-        chatBg = Builder.Image(Rect("Chat", new(640f, 30f)), Tex.Fill, invi, ImageType.Sliced).rectTransform;
-        infoBg = Builder.Image(Rect("Info", new(640f, 30f)), Tex.Fill, invi, ImageType.Sliced).rectTransform;
+        chatBg = Builder.Image(Rect("Chat", new(640f, 30f)), Tex.Fill, invi).rectTransform;
+        infoBg = Builder.Image(Rect("Info", new(640f, 30f)), Tex.Fill, invi).rectTransform;
 
         chat = Builder.Text(Builder.Rect("Text", chatBg, new() { Width = -16f, Height = -14f }), "", 16, white, TextAnchor.MiddleLeft);
         info = Builder.Text(Builder.Rect("Text", infoBg, new() { Width = -16f, Height = -14f }), "", 16, white, TextAnchor.MiddleLeft);

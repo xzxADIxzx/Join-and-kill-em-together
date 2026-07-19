@@ -3,8 +3,6 @@ namespace Jaket.UI.Fragments;
 using UnityEngine;
 using UnityEngine.UI;
 
-using ImageType = UnityEngine.UI.Image.Type;
-
 using Jaket.Assets;
 using Jaket.Input;
 using Jaket.UI.Lib;
@@ -23,8 +21,8 @@ public class Teleporter : Fragment
 
     public Teleporter(Transform root) : base(root, "Teleporter", false)
     {
-        flash = Builder.Image(Fill("Flash"),                  null, white, ImageType.Simple);
-        decor = Builder.Image(Rect("Decor", new(64f, 2048f)), null, white, ImageType.Simple);
+        flash = Builder.Image(Fill("Flash"),                  null, white);
+        decor = Builder.Image(Rect("Decor", new(64f, 2048f)), null, white);
         decor.transform.localEulerAngles = new(0f, 0f, -24f);
 
         Content.Component<Bar>(b => b.Update(() =>

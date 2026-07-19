@@ -417,7 +417,7 @@ I know it's been two years since the last update, but I am, unfortunately, a hum
         {
             var root = Builder.Rect("Warning", r, new());
 
-            Builder.Image(root, Tex.Back, Pal.semi, Image.Type.Sliced);
+            Builder.Image(root, Tex.Back, Pal.semi);
 
             var text = Builder.Rect("Text", root, new(0f, 0f, -32f, -32f, Vector2.zero, Vector2.one));
 

@@ -41,7 +41,7 @@ public class GameConfig : Fragment
                 s.Setup(false, 0f);
                 Events.Post(() => ModAssets.CardIcons.All(t => t != null), () => Gamemodes.All.Each(m =>
                 {
-                    var img = (cards[(byte)m] = s.Image(ModAssets.CardIcons[(byte)m], 220f)).transform;
+                    var img = cards[(byte)m] = s.Image(ModAssets.CardIcons[(byte)m], 220f);
                     var btn = Builder.Rect("Mode", img, new()           );
                     var txt = Builder.Rect("Text", btn, new() { Y = 8f });
 

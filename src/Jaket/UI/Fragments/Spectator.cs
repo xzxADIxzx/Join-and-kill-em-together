@@ -3,8 +3,6 @@ namespace Jaket.UI.Fragments;
 using UnityEngine;
 using UnityEngine.UI;
 
-using ImageType = UnityEngine.UI.Image.Type;
-
 using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Harmony;
@@ -47,7 +45,7 @@ public class Spectator : Fragment
         Events.EveryHalf += () => Shader.SetGlobalFloat("_RandomNoiseStrength", .1f);
 
         info = Builder.Text(Fill("Info"), "hi", 24, white, TextAnchor.UpperLeft);
-        dead = Builder.Image(Fill("Eye"), Tex.Dead, white, ImageType.Simple);
+        dead = Builder.Image(Fill("Eye"), Tex.Dead, white, Image.Type.Simple);
 
         info.rectTransform.sizeDelta = Vector2.one * -128f;
 

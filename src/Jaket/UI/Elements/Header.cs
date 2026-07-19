@@ -2,8 +2,6 @@ namespace Jaket.UI.Elements;
 
 using UnityEngine;
 
-using ImageType = UnityEngine.UI.Image.Type;
-
 using Jaket.Net.Types;
 using Jaket.UI.Lib;
 
@@ -32,19 +30,19 @@ public class Header
     }
 
     /// <summary> Assigns the header to the given transform. </summary>
-    public void Assign(Transform root) => Builder.WorldCanvas(Create("Header", Root = root).transform, Vector3.up * 4.8f, c =>
+    public void Assign(Transform root) => Builder.Canvas(Create("Header", Root = root).transform, Vector3.up * 4.8f, c =>
     {
-        RectTransform Slider(Color color) => Builder.Image(Builder.Rect("Slider", c, new(0f, -120f, 1600f, 40f)), Tex.Fill, color, ImageType.Sliced, 2f).rectTransform;
+        RectTransform Slider(Color color) => Builder.Image(Builder.Rect("Slider", c, new(0f, -120f, 1600f, 40f)), Tex.Fill, color, scale: 2f).rectTransform;
         RectTransform
             background = Slider(invi),
             normhealth = Slider(cb.healthBarColor),
             overhealth = Slider(cb.overHealColor);
 
-        var nicknameBg = Builder.Image(Builder.Rect("Nickname", c, new(0f, 120f, Width, 360f)), Tex.Fill, invi, ImageType.Sliced, .5f).rectTransform;
-        var ellipsisBg = Builder.Image(Builder.Rect("Ellipsis", c, new(0f, -120f, 400f, 120f)), Tex.Fill, invi, ImageType.Sliced, .9f).rectTransform;
+        var nicknameBg = Builder.Image(Builder.Rect("Nickname", c, new(0f, 120f, Width, 360f)), Tex.Fill, invi, scale: .5f);
+        var ellipsisBg = Builder.Image(Builder.Rect("Ellipsis", c, new(0f, -120f, 400f, 120f)), Tex.Fill, invi, scale: .9f);
 
-        var nickname = Builder.Text(Builder.Rect("Text", nicknameBg, new()), "", 240, white, TextAnchor.MiddleCenter);
-        var ellipsis = Builder.Text(Builder.Rect("Text", ellipsisBg, new()), "", 240, white, TextAnchor.MiddleCenter);
+        var nickname = Builder.Text(Builder.Rect("Text", nicknameBg, new()), "", 240, white);
+        var ellipsis = Builder.Text(Builder.Rect("Text", ellipsisBg, new()), "", 240, white);
 
         ellipsis.horizontalOverflow = HorizontalWrapMode.Overflow;
         ellipsis.verticalOverflow   = VerticalWrapMode  .Overflow;

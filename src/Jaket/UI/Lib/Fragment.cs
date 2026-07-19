@@ -51,7 +51,7 @@ public class Fragment
     {
         Sidebar ??= Rect("Sidebar", new(256f, 0f, 480f, 0f, new(0f, 0f), new(0f, 1f))).Component<Bar>(b => b.Setup(true, 16f, 16f));
 
-        var img = Sidebar.Image(Sidebar.Empty ? Tex.Back : Tex.Fill, height, semi, multiplier: Sidebar.Empty ? 2f : 3f);
+        var img = Sidebar.Image(Sidebar.Empty ? Tex.Back : Tex.Fill, height, semi, scale: Sidebar.Empty ? 2f : 3f);
 
         img.Component(cons);
         img.Component<HudOpenEffect>(e => e.speed = 38f - height / 24f);
@@ -62,14 +62,14 @@ public class Fragment
     /// <summary> Adds a bar, it is located in the center and has the given size. </summary>
     protected void Bar(float width, float height, Cons<Bar> cons)
     {
-        var img = Builder.Image(Rect("Centerbar", new(width, height)), Tex.Back, semi, ImageType.Sliced, 2f);
+        var img = Builder.Image(Rect("Centerbar", new(width, height)), Tex.Back, semi, scale: 2f);
 
         img.Component(cons);
         img.Component<HudOpenEffect>(e => e.speed = 32f);
 
-        if (Content.Find("Deco") == null) Builder.Image(Rect("Deco", new(width + 24f, height + 24f)), Tex.Large, semi, ImageType.Sliced, 2f).raycastTarget = false;
+        if (Content.Find("Deco") == null) Builder.Image(Rect("Deco", new(width + 24f, height + 24f)), Tex.Large, semi, scale: 2f).raycastTarget = false;
 
-        Builder.IconButton(Builder.Rect("Close", img.transform, new(-24f, -24f, 32f, 32f, Vector2.one)), Tex.Fill, red, Tex.Mark, 16, Toggle);
+        Builder.Button(Builder.Rect("Close", img, new(-24f, -24f, 32f, 32f, new(1f, 1f))), Tex.Fill, red, Toggle, Tex.Mark, 16);
     }
 
     /// <summary> Adds a bar, it displays the current version of the project. </summary>
@@ -80,8 +80,8 @@ public class Fragment
         var sub = Builder.Rect("Hash", bar, new() { Y = -16f });
 
         Builder.Image(bar, Tex.Fill, semi, ImageType.Sliced, 3f);
-        Builder.Text(txt, $"Jaket version is {Version.Readable}", 24, heavy, TextAnchor.MiddleCenter);
-        Builder.Text(sub, $"Built from commit of {Version.Hash}", 16, heavy, TextAnchor.MiddleCenter);
+        Builder.Text(txt, $"Jaket version is {Version.Readable}", 24, heavy);
+        Builder.Text(sub, $"Built from commit of {Version.Hash}", 16, heavy);
     }
 
     #endregion

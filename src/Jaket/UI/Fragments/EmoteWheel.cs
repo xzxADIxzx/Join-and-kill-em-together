@@ -3,8 +3,6 @@ namespace Jaket.UI.Fragments;
 using UnityEngine;
 using UnityEngine.UI.Extensions;
 
-using ImageType = UnityEngine.UI.Image.Type;
-
 using Jaket.Assets;
 using Jaket.Input;
 using Jaket.UI.Lib;
@@ -46,8 +44,8 @@ public class EmoteWheel : Fragment
                 segment = Builder.Circle(Rect("Segment", new(150f, 150f)), 1f /   6f, i * 60,       8f),
                 divider = Builder.Circle(Rect("Divider", new(640f, 640f)), 2f / 360f, i * 60 - 1, 255f),
 
-                iconGlow = Builder.Image(Rect("Glow", new(pos.x, pos.y, 284f, 150f)), null, white, ImageType.Sliced),
-                icon     = Builder.Image(Rect("Icon", new(pos.x, pos.y, 284f, 150f)), null, white, ImageType.Sliced),
+                iconGlow = Builder.Image(Rect("Glow", new(pos.x, pos.y, 284f, 150f)), null, white),
+                icon     = Builder.Image(Rect("Icon", new(pos.x, pos.y, 284f, 150f)), null, white),
             };
 
             segment.icon.transform.localEulerAngles = segment.iconGlow.transform.localEulerAngles = new(0f, 0f, 30f * (i % 3) - 30f);

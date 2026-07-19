@@ -3,8 +3,6 @@ namespace Jaket.UI.Elements;
 using UnityEngine;
 using UnityEngine.UI;
 
-using ImageType = UnityEngine.UI.Image.Type;
-
 using Jaket.Content;
 using Jaket.Net.Types;
 using Jaket.Sprays;
@@ -38,14 +36,14 @@ public class Spray : MonoBehaviour
 
     private void Start()
     {
-        Builder.WorldCanvas(transform, default, c =>
+        Builder.Canvas(transform, default, c =>
         {
             var spray = SprayManager.Find(owner?.Id ?? AccId)?.Sprite ?? Tex.Mark;
             var title = owner?.Header.Name ?? AccId.Name;
             var width = 141f * title.Length;
 
-            Builder.Image(Builder.Rect("Image", c, new(1960f, 1960f)),             spray,      white, ImageType.Filled).preserveAspect = true;
-            Builder.Text (Builder.Rect("Label", c, new(480f, -880f, width, 240f)), title, 240, color, TextAnchor.MiddleCenter).transform.localEulerAngles = new(0f, 0f, 6f);
+            Builder.Image(Builder.Rect("Image", c, new(1960f, 1960f)),             spray,      white, Image.Type.Filled).preserveAspect = true;
+            Builder.Text (Builder.Rect("Label", c, new(480f, -880f, width, 240f)), title, 240, color).transform.localEulerAngles = new(0f, 0f, 6f);
         }).sortingOrder = -1;
 
         GetComponentsInChildren<Graphic>().Each(g => g.Component<Outline>(o =>
