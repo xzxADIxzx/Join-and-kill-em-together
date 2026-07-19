@@ -159,8 +159,8 @@ public static class Builder
     public static Toggle Toggle(Transform rect, Color color, string text, int size, Cons<bool> callback) =>
         Component<Toggle>(rect.gameObject, t =>
         {
-            var checkbox = Image(Rect("Checkbox",  rect,     new(-16f, 0f, 32f, 32f, new(1f, .5f))), Tex.Small, color);
-            var checkmrk = Image(Rect("Checkmark", checkbox, new(          16f, 16f              )), Tex.Mark,  color);
+            var checkbox = Image(Rect("Checkbox",  rect,     new(-16f, 0f, 32f, 32f, new(1f, .5f))), Tex.BrdS, color);
+            var checkmrk = Image(Rect("Checkmark", checkbox, new(          16f, 16f              )), Tex.Mark, color);
 
             static ColorBlock GetColor(bool value) => Colors with { colorMultiplier = value ? 1f : .1f };
 
@@ -185,7 +185,7 @@ public static class Builder
             var zone = Rect("Zone", rect, new(0.0f, 0f, -48f, -16f, new(0f, 0f), new(1f, 1f)));
             var hand = Rect("Hand", zone, new(32f, 0f));
 
-            Image(rect, Tex.Large, color);
+            Image(rect, Tex.BrdL, color);
             Mask (mask, Tex.Mask);
             Image(fill, Tex.Dash, heavy, ImageType.Tiled);
 
@@ -207,7 +207,7 @@ public static class Builder
             var zone = Rect("Zone", rect, new(0f, 0f, -16f, -48f, new(0f, 0f), new(1f, 1f)));
             var hand = Rect("Hand", zone, new(0f, 32f));
 
-            Image(rect, Tex.Large, color);
+            Image(rect, Tex.BrdL, color);
 
             s.targetGraphic = Image(hand, Tex.Vert, color);
             s.colors = Colors;

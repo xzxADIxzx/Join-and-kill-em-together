@@ -83,10 +83,10 @@ public class LobbyList : Fragment
             }
             var info = $"[light]{level}[] [{(count <= 2 ? "green" : count <= 4 ? "orange" : "red")}]{count}/{max}";
 
-            var cont = Builder.Button(content.Resolve("Button", 40f), Tex.Large, white, () => LobbyController.JoinLobby(l));
+            var cont = Builder.Button(content.Resolve("Button", 40f), Tex.BrdL, white, () => LobbyController.JoinLobby(l));
 
-            Builder.Text(Builder.Rect("Name", cont, new() { Width = -32f }), Bundle.Parse(name), 24, white, TextAnchor.MiddleLeft);
-            Builder.Text(Builder.Rect("Info", cont, new() { Width = -32f }), Bundle.Parse(info), 24, white, TextAnchor.MiddleRight);
+            Builder.Text(Builder.Rect("Name", cont, new() { Width = -24f }), Bundle.Parse(name), 24, white, TextAnchor.MiddleLeft);
+            Builder.Text(Builder.Rect("Info", cont, new() { Width = -24f }), Bundle.Parse(info), 24, white, TextAnchor.MiddleRight);
         });
     }
 

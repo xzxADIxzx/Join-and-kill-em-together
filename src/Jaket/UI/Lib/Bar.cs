@@ -101,7 +101,7 @@ public class Bar : MonoBehaviour
 
     /// <summary> Adds an image separator, rarely used. </summary>
     public Image Separator() =>
-        Builder.Image(Resolve("Separator", 16f), Tex.Dash, red, ImageType.Tiled, 2f);
+        Builder.Image(Resolve("Separator", 16f), Tex.Dash, red, ImageType.Tiled);
 
     #endregion
     #region other

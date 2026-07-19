@@ -45,7 +45,7 @@ public class GameConfig : Fragment
                     var btn = Builder.Rect("Mode", img, new()           );
                     var txt = Builder.Rect("Text", btn, new() { Y = 8f });
 
-                    Builder.Button(btn, Tex.Large, white, () =>
+                    Builder.Button(btn, Tex.BrdL, white, () =>
                     {
                         selected = m;
                         Rebuild();

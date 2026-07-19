@@ -67,7 +67,7 @@ public class Fragment
         img.Component(cons);
         img.Component<HudOpenEffect>(e => e.speed = 32f);
 
-        if (Content.Find("Deco") == null) Builder.Image(Rect("Deco", new(width + 24f, height + 24f)), Tex.Large, semi, scale: 2f).raycastTarget = false;
+        if (Content.Find("Deco") == null) Builder.Image(Rect("Deco", new(width + 24f, height + 24f)), Tex.BrdL, semi, scale: 2f).raycastTarget = false;
 
         Builder.Button(Builder.Rect("Close", img, new(-24f, -24f, 32f, 32f, new(1f, 1f))), Tex.Fill, red, Toggle, Tex.Mark, 16);
     }
