@@ -67,7 +67,7 @@ public static class UI
             HudMessageReceiver.Instance.Component<Canvas>(c =>
             {
                 c.overrideSorting = true;
-                c.sortingOrder = 4242;
+                c.sortingOrder = 42 + 01;
             });
         });
         Fix();
