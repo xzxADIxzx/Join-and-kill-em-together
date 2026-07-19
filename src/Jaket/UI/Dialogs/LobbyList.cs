@@ -70,22 +70,23 @@ public class LobbyList : Fragment
 
         lobbies.Each(l => empty || l.GetData("name").ToLower().Contains(search), l =>
         {
-            var name = " " + Bundle.CutColors(l.GetData("name"));
+            var name = Bundle.CutColors(l.GetData("name"));
+            var level = Bundle.CutColors(l.GetData("level"));
+            int count = l.MemberCount, max = l.MaxMembers;
+
             if (!empty)
             {
-                int s = name.ToLower().IndexOf(search),
-                    e = search.Length + s;
+                int s = name.ToLower().IndexOf(search);
+                int e = s + search.Length;
 
-                name = Bundle.Parse($"{name[..s]}<color={Orange}>{name[s..e]}</color>{name[e..]}");
+                name = $"{name[..s]}[orange]{name[s..e]}[]{name[e..]}";
             }
+            var info = $"[light]{level}[] [{(count <= 2 ? "green" : count <= 4 ? "orange" : "red")}]{count}/{max}";
 
-            var cont = content.TextButton(name, align: TextAnchor.MiddleLeft, callback: () => LobbyController.JoinLobby(l));
-            var rect = Builder.Rect("Info", cont.transform, new());
+            var cont = Builder.Button(content.Resolve("Button", 40f), Tex.Large, white, () => LobbyController.JoinLobby(l));
 
-            var full = l.MemberCount <= 2 ? Green : l.MemberCount <= 4 ? Orange : Red;
-            var info = $"<color={Gray}>{l.GetData("level")}</color> <color={full}>{l.MemberCount}/{l.MaxMembers}</color> ";
-
-            Builder.Text(rect, info, 24, white, TextAnchor.MiddleRight);
+            Builder.Text(Builder.Rect("Name", cont, new() { Width = -32f }), Bundle.Parse(name), 24, white, TextAnchor.MiddleLeft);
+            Builder.Text(Builder.Rect("Info", cont, new() { Width = -32f }), Bundle.Parse(info), 24, white, TextAnchor.MiddleRight);
         });
     }
 
