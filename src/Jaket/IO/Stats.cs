@@ -39,7 +39,7 @@ public static class Stats
     /// <summary> Resets accumulated subticks. </summary>
     public static void Reset()
     {
-        if (++Subticks % (Networking.TICKS_PER_SECOND * Networking.SUBTICKS_PER_TICK) != 0) return;
+        if (Subticks++ < Networking.TICKS_PER_SECOND * Networking.SUBTICKS_PER_TICK) return;
 
         Subticks = 0;
         Received = 0;

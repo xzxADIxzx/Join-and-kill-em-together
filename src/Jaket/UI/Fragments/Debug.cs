@@ -12,132 +12,141 @@ using Jaket.World;
 
 using static Jaket.UI.Lib.Pal;
 
-/// <summary> Fragment that provides access to networking statistics. </summary>
+/// <summary> Fragment that provides access to network statistics. </summary>
 public class Debug : Fragment
 {
-    static Transform cc => CameraController.Instance.transform;
+    /// <summary> Graphs. </summary>
+    private Data[] data = { new(20), new(20), new(97), new(97), new(97), new(97), new(97), new(97) };
+    /// <summary> Labels. </summary>
+    private Text entities, players, isowner, loading, gamemode, isactive, islocked;
 
-    /// <summary> Warehouses containing a lot of diverse information. </summary>
-    private Data readBs, sentBs, readMs, writeMs, entityMs, commonMs, totalMs, flushMs;
-    /// <summary> Labels displaying diverse information about network. </summary>
-    private Text entities, players, isowner, loading, gamemode, active, slowmo, hammer;
-
-    public Debug(Transform root) : base(root, "Debug", false) => Rect("Content", new(0f, 220f, 1920f, 440f, new(.5f, 0f))).Component<Bar>(b =>
+    public Debug(Transform root) : base(root, "Debug", false)
     {
-        b.Setup(true, 16f, 16f);
-        b.Subbar(136f, s =>
+        Events.EveryTick += () =>
         {
-            s.Setup(false, 0f, 16f);
+            if (Stats.Subticks < Networking.TICKS_PER_SECOND * Networking.SUBTICKS_PER_TICK) return;
 
-            s.Image(Tex.Fill, 320f, semi, multiplier: 3f).Component<Bar>(b =>
+            data[0].Enqueue(Stats.Received);
+            data[1].Enqueue(Stats.Sent);
+            data[2].Enqueue(Stats.Millis(Stats.Read));
+            data[3].Enqueue(Stats.Millis(Stats.Write));
+            data[4].Enqueue(Stats.Millis(Stats.Entity));
+            data[5].Enqueue(Stats.Millis(Stats.Common));
+            data[6].Enqueue(Stats.Millis(Stats.Thread));
+            data[7].Enqueue(Stats.Millis(Stats.Jitter));
+
+            if (Shown) Events.Post(Rebuild);
+        };
+
+        Rect("Display", new()).Component<Bar>(b =>
+        {
+            var mark = Builder.Image(Builder.Rect("Mark", b, new(16f, 16f)), Tex.Mark, white);
+            var text = Builder.Text (Builder.Rect("Text", b, new(        )), "hi", 24, white);
+
+            b.Update(() =>
             {
-                b.Setup(true);
-                b.Text("BYTES READ   ", 24f, out (readBs   = new(20)).Label, color: green);
-                b.Text("BYTES SENT   ", 24f, out (sentBs   = new(20)).Label, color: Darker(green));
-                b.Text("READ TIME    ", 24f, out (readMs   = new(97)).Label, color: orange);
-                b.Text("WRITE TIME   ", 24f, out (writeMs  = new(97)).Label, color: Darker(orange));
-            });
-            s.Image(Tex.Fill, 320f, semi, multiplier: 3f).Component<Bar>(b =>
-            {
-                b.Setup(true);
-                b.Text("ENTITY UPDATE", 24f, out (entityMs = new(97)).Label, color: blue);
-                b.Text("COMMON UPDATE", 24f, out (commonMs = new(97)).Label, color: Darker(blue));
-                b.Text("TOTAL TIME   ", 24f, out (totalMs  = new(97)).Label, color: purple);
-                b.Text("FLUSH TIME   ", 24f, out (flushMs  = new(97)).Label, color: Darker(purple));
-            });
-            s.Image(Tex.Fill, 320f, semi, multiplier: 3f).Component<Bar>(b =>
-            {
-                b.Setup(true);
-                b.Text("ENTITIES     ", 24f, out entities);
-                b.Text("PLAYERS      ", 24f, out players);
-                b.Text("IS OWNER     ", 24f, out isowner);
-                b.Text("LOADING      ", 24f, out loading);
-            });
-            s.Image(Tex.Fill, 320f, semi, multiplier: 3f).Component<Bar>(b =>
-            {
-                b.Setup(true);
-                b.Text("GAMEMODE     ", 24f, out gamemode);
-                b.Text("IS ACTIVE    ", 24f, out active);
-                b.Text("SLOWMO       ", 24f, out slowmo);
-                b.Text("HAMMER       ", 24f, out hammer);
+                Entity best = null;
+                Vector2 pos = default;
+
+                Networking.Entities.Each(e => e.Debuggable, e =>
+                {
+                    var cen = CameraController.Instance.cam.pixelRect.size / 2f;
+                    var scr = CameraController.Instance.cam.WorldToScreenPoint(e.DrawPos);
+
+                    if (scr.z > 0f && Vector2.Distance(scr, cen) < Vector2.Distance(pos, cen))
+                    {
+                        best = e;
+                        pos = scr;
+                    }
+                });
+
+                bool found = best != null && RectTransformUtility.ScreenPointToLocalPointInRectangle(b.transform as RectTransform, pos, null, out pos);
+
+                mark.enabled = found;
+                text.enabled = found;
+                mark.rectTransform.anchoredPosition = pos;
+                text.rectTransform.anchoredPosition = pos + Vector2.down * 16f;
+
+                if (found) text.text = best.Type.ToString();
             });
         });
-        b.Subbar(256f, s =>
+
+        Rect("Content", new(0f, 220f, 1920f, 440f, new(.5f, 0f))).Component<Bar>(b =>
         {
-            s.Setup(false, 0f, 16f);
+            b.Setup(true, 16f, 16f);
+            b.Subbar(136f, s =>
+            {
+                s.Setup(false, 0f, 16f);
+                s.Image(Tex.Fill, 320f, semi, scale: 3f).Component<Bar>(b =>
+                {
+                    b.Setup(true);
+                    b.Pair("RECEIVED ", out data[0].Label, green        );
+                    b.Pair("SENT     ", out data[1].Label, green.Darker );
+                    b.Pair("READ     ", out data[2].Label, orange       );
+                    b.Pair("WRITE    ", out data[3].Label, orange.Darker);
+                });
+                s.Image(Tex.Fill, 320f, semi, scale: 3f).Component<Bar>(b =>
+                {
+                    b.Setup(true);
+                    b.Pair("ENTITY   ", out data[4].Label, blue         );
+                    b.Pair("COMMON   ", out data[5].Label, blue.Darker  );
+                    b.Pair("THREAD   ", out data[6].Label, purple       );
+                    b.Pair("JITTER   ", out data[7].Label, purple.Darker);
+                });
+                s.Image(Tex.Fill, 320f, semi, scale: 3f).Component<Bar>(b =>
+                {
+                    b.Setup(true);
+                    b.Pair("ENTITIES ", out entities);
+                    b.Pair("PLAYERS  ", out players);
+                    b.Pair("IS OWNER ", out isowner);
+                    b.Pair("LOADING  ", out loading);
+                });
+                s.Image(Tex.Fill, 320f, semi, scale: 3f).Component<Bar>(b =>
+                {
+                    b.Setup(true);
+                    b.Pair("GAMEMODE ", out gamemode);
+                    b.Pair("IS ACITVE", out isactive);
+                    b.Pair("IS LOCKED", out islocked);
+                });
+            });
+            b.Subbar(256f, s =>
+            {
+                s.Setup(false, 0f, 16f);
 
-            void Build(Image graph, Data data) => Builder.Rect("Graph", graph.transform, new(8f, 8f, 0f, 0f, new())).Component<UILineRenderer>(g => data.Graph = g);
-            var byteGraph = s.Image(Tex.Fill, 320f,  semi, multiplier: 3f);
-            var timeGraph = s.Image(Tex.Fill, 1552f, semi, multiplier: 3f);
+                var byteGraph = s.Image(Tex.Fill,  320f, semi, scale: 3f);
+                var timeGraph = s.Image(Tex.Fill, 1552f, semi, scale: 3f);
 
-            Build(byteGraph, readBs);
-            Build(byteGraph, sentBs);
-            Build(timeGraph, readMs);
-            Build(timeGraph, writeMs);
-            Build(timeGraph, entityMs);
-            Build(timeGraph, commonMs);
-            Build(timeGraph, totalMs);
-            Build(timeGraph, flushMs);
+                for (int i = 0; i < 2; i++) Builder.Rect("Graph", byteGraph, new(8f, 8f, 0f, 0f, new())).Component<UILineRenderer>(g => data[i].Graph = g);
+                for (int i = 2; i < 8; i++) Builder.Rect("Graph", timeGraph, new(8f, 8f, 0f, 0f, new())).Component<UILineRenderer>(g => data[i].Graph = g);
+            });
         });
-    });
+    }
 
     public override void Toggle()
     {
         base.Toggle();
-        UI.Hide(UI.LeftGroup, this, null);
+        UI.Hide(UI.LeftGroup, this, Rebuild);
     }
 
     public override void Rebuild()
     {
-        readBs  .Enqueue(Stats.ReadBs,   v => $"{v}bs");
-        sentBs  .Enqueue(Stats.SentBs,   v => $"{v}bs");
-        readMs  .Enqueue(Stats.ReadMs,   v => $"{v:0.000}ms");
-        writeMs .Enqueue(Stats.WriteMs,  v => $"{v:0.000}ms");
-        entityMs.Enqueue(Stats.EntityMs, v => $"{v:0.000}ms");
-        commonMs.Enqueue(Stats.CommonMs, v => $"{v:0.000}ms");
-        totalMs .Enqueue(Stats.TotalMs,  v => $"{v:0.000}ms");
-        flushMs .Enqueue(Stats.FlushMs,  v => $"{v:0.000}ms");
+        for (int i = 0; i < 2; i++) data[i].Label.text = $"{data[i][19]      }bs";
+        for (int i = 2; i < 8; i++) data[i].Label.text = $"{data[i][96]:0.000}ms";
 
-        if (!Shown) return;
-        float bytePeak = Mathf.Max(8192f, readBs.Peak(), sentBs.Peak());
-        float timePeak = totalMs.Peak();
+        for (int i = 0; i < 2; i++) data[i].Project(8192f);
+        for (int i = 2; i < 8; i++) data[i].Project(8.33f);
 
-        readBs  .Project(bytePeak);
-        sentBs  .Project(bytePeak);
-        readMs  .Project(timePeak);
-        writeMs .Project(timePeak);
-        entityMs.Project(timePeak);
-        commonMs.Project(timePeak);
-        totalMs .Project(timePeak);
-        flushMs .Project(timePeak);
-
-        entities.text = Bundle.Parse($"{Networking.Entities.Count(e => !e.Hidden)}[light]/{Networking.Entities.Count()}");
-        players.text  = Bundle.Parse($"{Networking.Connections.Count()}[light]/{LobbyController.Lobby?.MemberCount ?? 0}");
-        isowner.text  = LobbyController.IsOwner.ToString().ToUpper();
-        isowner.color = LobbyController.IsOwner ? green : red;
-        loading.text  = Networking.Loading.ToString().ToUpper();
-        loading.color = Networking.Loading ? green : red;
-        gamemode.text = Gameflow.Mode.ToString();
-        active.text   = Gameflow.Active.ToString().ToUpper();
-        active.color  = Gameflow.Active ? green : red;
-        slowmo.text   = Gameflow.Slowmo.ToString().ToUpper();
-        slowmo.color  = Gameflow.Slowmo ? green : red;
-        hammer.text   = Gameflow.Hammer.ToString().ToUpper();
-        hammer.color  = Gameflow.Hammer ? green : red;
-    }
-
-    public void Clear() => new Data[] { readBs, sentBs, readMs, writeMs, entityMs, commonMs, totalMs, flushMs }.Each(d => d.Clear());
-
-    public void Raycast()
-    {
-        if (Physics.Raycast(cc.position, cc.forward, out var hit, float.MaxValue, EnvMask | 0x401000))
-        {
-            var agent = hit.collider.GetComponentInParent<Entity.Agent>();
-            if (agent)
-                Log.Debug($"[ENTS] Caught an entity of {agent.Patron.Type} type");
-            else
-                Log.Debug($"[ENTS] Couldn't catch an entity of any kind");
-        }
+        entities.text  = Bundle.Parse($"{Networking.Entities.Count(e => !e.Hidden)}[light]/{Networking.Entities.Count()}");
+        players.text   = Bundle.Parse($"{Networking.Connections.Count()}[light]/{LobbyController.Lobby?.MemberCount ?? 0}");
+        isowner.text   = LobbyController.IsOwner.ToString().ToUpper();
+        isowner.color  = LobbyController.IsOwner ? green : red;
+        loading.text   = Networking.Loading.ToString().ToUpper();
+        loading.color  = Networking.Loading ? green : red;
+        gamemode.text  = Gameflow.Mode.ToString();
+        isactive.text  = Gameflow.Active.ToString().ToUpper();
+        isactive.color = Gameflow.Active ? green : red;
+        islocked.text  = Gameflow.LockRespawn.ToString().ToUpper();
+        islocked.color = Gameflow.LockRespawn ? green : red;
     }
 
     /// <summary> Data warehouse that can be projected onto a graph. </summary>
@@ -155,37 +164,23 @@ public class Debug : Fragment
 
         public Data(int size) => data = new float[size];
 
+        public float this[int index] => data[(start + index) % data.Length];
+
         /// <summary> Puts the value into the sequence. </summary>
-        public void Enqueue(float value, Func<float, string> format)
+        public void Enqueue(float value)
         {
             data[start] = value;
             start = (start + 1) % data.Length;
-            Label.text = format(value);
         }
-
-        /// <summary> Returns value at the given index. </summary>
-        public float At(int index) => data[(start + index) % data.Length];
 
         /// <summary> Projects the data onto the graph. </summary>
         public void Project(float peak)
         {
-            var x = -16f;
             var o = new Vector2[data.Length];
-            for (int i = 0; i < data.Length; i++) o[i] = new(x += 16f, At(i) / peak * 240f);
+            for (int i = 0; i < data.Length; i++) o[i] = new(i * 16f, Mathf.Min(this[i], peak) / peak * 240f);
 
             Graph.color = Label.color;
             Graph.Points = o;
         }
-
-        /// <summary> Returns the peak value of the sequence. </summary>
-        public float Peak()
-        {
-            float max = 0f;
-            for (int i = 0; i < data.Length; i++) if (data[i] > max) max = data[i];
-            return max;
-        }
-
-        /// <summary> Completely erases all of the stored data. </summary>
-        public void Clear() => data.Clear();
     }
 }

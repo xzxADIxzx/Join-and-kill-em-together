@@ -108,8 +108,6 @@ public class Movement : MonoSingleton<Movement>
         if (Keybind.Spectate.Tap()) Suicide();
 
         if (Input.GetKeyDown(KeyCode.F4)) UI.Debug.Toggle();
-        if (Input.GetKeyDown(KeyCode.F5)) UI.Debug.Clear();
-        if (Input.GetKeyDown(KeyCode.F6)) UI.Debug.Raycast();
     }
 
     private void LateUpdate()
