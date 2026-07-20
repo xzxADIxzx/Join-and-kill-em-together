@@ -84,7 +84,25 @@ public abstract class Entity
     }
 
     /// <summary> Creates an object and assigns an agent. </summary>
-    protected void Create(Vendor vendor, Float x, Float y, Float z) => Assign(vendor.Make(Type, new(x.Init, y.Init, z.Init)).AddComponent<Agent>());
+    protected void Create(Vendor vendor, ref Float x, ref Float y, ref Float z) => Assign(vendor.Make(Type, new(x.Init, y.Init, z.Init)).AddComponent<Agent>());
+
+    /// <summary> Hides the entity and reads a few flags. </summary>
+    protected void Killed(Reader r, int left, Agent agent, Bits bits)
+    {
+        Hidden = true;
+        bool b0, b1, b2, b3, b4, b5, b6, b7;
+
+        if (left >= 1)
+            r.Bools(out b0, out b1, out b2, out b3, out b4, out b5, out b6, out b7);
+        else
+            b0 = b1 = b2 = b3 = b4 = b5 = b6 = b7 = false;
+
+        Events.Post(() =>
+        {
+            agent?.Rem();
+            bits(b0, b1, b2, b3, b4, b5, b6, b7);
+        });
+    }
 
     #endregion
 
