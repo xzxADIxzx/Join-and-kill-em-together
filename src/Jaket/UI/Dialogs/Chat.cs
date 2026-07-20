@@ -200,7 +200,7 @@ public class Chat : Fragment
     /// <summary> Writes the hello message to the chat. </summary>
     public void SayHello()
     {
-        void Msg(string msg) => Receive(msg, "0096FF", "xzxADIxzx", BOT_TAG);
+        void Msg(string msg) => Receive(msg, "#0096FF", "xzxADIxzx", BOT_TAG);
         void Tip(params string[] tips)
         {
             var tab = "[14]     []           [gray]|[#EEE] ";

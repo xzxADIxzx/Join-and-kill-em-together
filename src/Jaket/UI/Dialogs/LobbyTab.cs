@@ -55,7 +55,7 @@ public class LobbyTab : Fragment
             join = b.TextButton("#lobby-tab.join", LobbyController.JoinByCode);
             list = b.TextButton("#lobby-tab.list", () => UI.LobbyList.Toggle());
         });
-        Bar(504f, b =>
+        Bar(512f, b =>
         {
             b.Setup(true);
             b.Title("#lobby-tab.config");
