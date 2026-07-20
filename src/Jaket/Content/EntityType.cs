@@ -215,6 +215,7 @@ public enum EntityType : byte
 
     Shockwave,
     Blastwave,
+    Harmless,
     ShotgunExplosion,
     HammerExplosionWeak,
     HammerExplosionWarm,

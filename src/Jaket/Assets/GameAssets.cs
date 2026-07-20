@@ -239,6 +239,7 @@ public static class GameAssets
     {
         "Attacks and Projectiles/PhysicalShockwavePlayer.prefab",
         "Attacks and Projectiles/Explosions/Explosion Wave.prefab",
+        "Attacks and Projectiles/Explosions/Explosion Harmless.prefab",
         "Attacks and Projectiles/Explosions/Explosion.prefab",
         "Attacks and Projectiles/Explosions/Explosion Hammer Weak.prefab",
         "Attacks and Projectiles/Explosions/Explosion Super.prefab",

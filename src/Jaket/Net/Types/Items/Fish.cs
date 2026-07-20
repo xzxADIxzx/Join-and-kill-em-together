@@ -15,9 +15,12 @@ public class Fish : Item
 
     public Fish(uint id, EntityType type) : base(id, type) { }
 
-    #region logic
+    #region properties
 
     public override Vector3 HoldRotation => new(10f, 230f, 110f);
+
+    #endregion
+    #region logic
 
     public override void Assign(Agent agent)
     {
@@ -41,8 +44,7 @@ public class Fish : Item
             a.events.onActivate.AddListener(() =>
             {
                 Killed(default, -1);
-                var pos = fish.transform.position;
-                GameAssets.Prefab("Attacks and Projectiles/Explosions/Explosion Harmless.prefab", p => Inst(p, pos));
+                Inst(Entities.Vendor.Prefabs[(byte)EntityType.Harmless], fish.transform.position);
             });
             fish.transform.Find("Bomb Fish/Fire")?.gameObject.SetActive(true);
         });
@@ -56,35 +58,35 @@ public class Fish : Item
     static bool Cook(Collider other, bool ___unusable)
     {
         var agent = other.GetComponentInParent<Agent>();
-        if (agent && Scene == "Level 5-S")
+        if (agent)
         {
-            if (agent.Patron is Item i && i.IsOwner && i.Type != EntityType.FishCooked && i.Type != EntityType.FishBurnt)
+            if (agent.Patron is Fish f && f.IsOwner && f.Type != EntityType.FishCooked && f.Type != EntityType.FishBurnt)
             {
                 if (___unusable)
                 {
                     Bundle.Hud("fish.too-small");
                     return false;
                 }
-                bool valid = i is Fish f && f.fish.fishObject.canBeCooked;
+                bool valid = f.fish.fishObject.canBeCooked;
                 if (!valid) Bundle.Hud("fish.fail");
 
                 var result = Entities.Items.Make(valid ? EntityType.FishCooked : EntityType.FishBurnt, other.transform.position);
                 if (result.TryGetComponent(out Rigidbody rb))
                     rb.velocity = (NewMovement.Instance.transform.position - other.transform.position).normalized * 18f + Vector3.up * 10f;
 
-                i.Kill(2, w => { w.Bool(false); w.Bool(true); });
+                f.Kill(1, w => w.Bools(false, true));
             }
             return false;
         }
         else return true;
     }
 
-    [DynamicPatch(typeof(BaitItem), nameof(BaitItem .OnTriggerEnter))]
+    [DynamicPatch(typeof(BaitItem), nameof(BaitItem.OnTriggerEnter))]
     [Prefix]
     static bool Bait(Collider other, BaitItem __instance, FishDB[] ___supportedWaters, FishObject[] ___attractFish, GameObject ___consumedPrefab, bool ___silentFail)
     {
         var agent = __instance.GetComponentInParent<Agent>();
-        if (agent && Scene == "Level 5-S")
+        if (agent)
         {
             if (agent.Patron is Item i && i.IsOwner && other.TryGetComponent(out Water w) && w.fishDB)
             {

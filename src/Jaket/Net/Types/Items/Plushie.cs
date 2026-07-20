@@ -15,9 +15,12 @@ public class Plushie : Item
 
     public Plushie(uint id, EntityType type) : base(id, type) { }
 
-    #region logic
+    #region properties
 
     public override Vector3 HoldRotation => new(30f, 0f, 180f);
+
+    #endregion
+    #region logic
 
     public override void Assign(Agent agent)
     {
@@ -34,7 +37,6 @@ public class Plushie : Item
             if (Type == EntityType.xzxADIxzx) agent.StartCoroutine(ShakeYourHead(42));
             if (Type == EntityType.Sowler   ) agent.StartCoroutine(Hoot());
         });
-        agent.transform.Each(c => c.gameObject.layer = 22); // the plushie of lizard has an issue with layers
     }
 
     #endregion
@@ -54,7 +56,7 @@ public class Plushie : Item
         head.localEulerAngles = new(270f, Random.value < .042f ? 45f : 0f, 0f);
     }
 
-    /// <summary> Special feature of the plushie of OwlNotSowler. </summary>
+    /// <summary> Special feature of the plushie of Sowler. </summary>
     public IEnumerator Hoot()
     {
         bool lower = false;
@@ -100,8 +102,7 @@ public class Plushie : Item
                 lower = true;
                 yield return new WaitForSeconds(Random.Range(.6f, .8f));
             }
-            else
-                yield return new WaitForSeconds(Random.Range(8f, 16f));
+            else yield return new WaitForSeconds(Random.Range(8f, 16f));
 
             #endregion
         }
@@ -121,7 +122,7 @@ public class Plushie : Item
             {
                 if (i.Type == EntityType.xzxADIxzx) Trash(__instance);
                 if (i.Type == EntityType.Sowler   ) Trash(other);
-                if (i.Type != EntityType.Sowler   ) i.Kill(1, w => w.Bool(true));
+                if (i.Type != EntityType.Sowler   ) i.Kill(1, w => w.Bools(true));
             }
             return false;
         }
@@ -172,11 +173,11 @@ public class Plushie : Item
 
         if (owl.transform.childCount >= 3 && owl.TryGetEntity(out Item i))
         {
-            GameAssets.Prefab("Attacks and Projectiles/Hitscan Beams/Lighting Beam Reflected.prefab", p => Events.Post(() =>
+            GameAssets.Prefab("Attacks and Projectiles/Hitscan Beams/Lighting Beam Reflected.prefab", p =>
             {
                 Inst(p, owl.transform.position + Vector3.up * 12f, Quaternion.Euler(90f, 0f, 0f));
                 i.Kill();
-            }));
+            });
             return;
         }
         Tools.Tools.Create("warn", owl);

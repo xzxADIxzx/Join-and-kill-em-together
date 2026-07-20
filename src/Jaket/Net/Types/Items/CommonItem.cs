@@ -9,7 +9,7 @@ public class CommonItem : Item
 {
     public CommonItem(uint id, EntityType type) : base(id, type) { }
 
-    #region logic
+    #region properties
 
     public override Vector3 HoldRotation => Type switch
     {

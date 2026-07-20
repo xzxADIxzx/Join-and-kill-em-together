@@ -27,22 +27,22 @@ public class Items : Vendor
 
         GameAssets.Prefab("Levels/Hakita.prefab", p =>
         {
-            Events.Post(() => Vendor.Prefabs[(byte)EntityType.Moon] != null, () => Events.Post(() => // damn Unity crashes w/o the second post
+            Events.Post(() => Vendor.Prefabs[(byte)EntityType.Moon] != null, () =>
             {
                 ref GameObject prefab = ref Vendor.Prefabs[(byte)EntityType.Moon];
 
                 Keep(prefab = Make(EntityType.Moon));
-                Dest(prefab.transform.Find("Fire").gameObject);
-                Dest(prefab.transform.Find("Light").gameObject);
+                Dest(prefab.transform.Find("Fire"));
+                Dest(prefab.transform.Find("Light"));
                 Dest(prefab.GetComponent<Torch>());
 
                 prefab.name = "Moon";
                 prefab.GetComponent<ItemIdentifier>().itemType = ItemType.CustomKey1;
                 Inst(p, prefab.transform).transform.localScale = Vector3.one * .1f;
-                Dest(prefab.transform.Find("Hakita(Clone)/Trigger").gameObject);
+                Dest(prefab.transform.Find("Hakita(Clone)/Trigger"));
 
                 prefab.transform.position = Vector3.down * 4242f;
-            }));
+            });
         });
 
         Events.Post(() => ModAssets.V2,        () => Vendor.Prefabs[(byte)EntityType.V2       ] = ModAssets.V2       );
@@ -54,7 +54,7 @@ public class Items : Vendor
         for (EntityType i = EntityType.FishFunny; i <= EntityType.FishBurnt; i++) Vendor.Suppliers[(byte)i] = (id, type) => new Fish      (id, type);
         for (EntityType i = EntityType.Hakita;    i <= EntityType.Sowler;    i++) Vendor.Suppliers[(byte)i] = (id, type) => new Plushie   (id, type);
 
-        void SyncAll()
+        void SyncAll() => Events.Post(() => Events.Post(() =>
         {
             if (LobbyController.Offline) return;
 
@@ -67,25 +67,19 @@ public class Items : Vendor
                 z.arenaStatuses.Each(s => s.currentStatus = 0);
                 z.reverseArenaStatuses.Each(s => s.currentStatus = 0);
             });
-        }
-        Events.OnLoad += () => Events.Post(SyncAll);
-        Events.OnLobbyEnter += () => Events.Post(SyncAll);
+        }));
+        Events.OnLoad += SyncAll;
+        Events.OnLobbyEnter += SyncAll;
     }
 
     public EntityType Type(GameObject obj)
     {
-        if (obj?.name.Contains("DevPlushie") ?? false)
-        {
-            if (obj.name == "DevPlushie (1)") return EntityType.Lenval;
-            if (obj.name.Contains("(Clone)")) obj.name = obj.name[..^7];
-
-            return Vendor.Find
-            (
-                EntityType.Hakita,
-                EntityType.Sowler,
-                p => p.name == obj.name
-            );
-        }
+        if (obj?.name.Contains("DevPlushie") ?? false) return Vendor.Find
+        (
+            EntityType.Hakita,
+            EntityType.Sowler,
+            p => p.name == obj.name || p.name == obj.name[..^7]
+        );
         if (obj?.TryGetComponent(out FishObjectReference fish) ?? false) return Vendor.Find
         (
             EntityType.FishFunny,
