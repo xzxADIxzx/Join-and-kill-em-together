@@ -365,6 +365,14 @@ public static class ActionList
         ActionType.Run(l, () => ResFind<MapIntSetter>().Each(IsReal, Dest));
         ActionType.Dest(l, "/__Gianni nightmare world");
 
+        ActionType.Find(l, "Cube (6)/DevPlushie (Heckteck) (1)", t => t.name = "DevPlushie (Heckteck)");
+        ActionType.Find(l, "Cube (4)/DevPlushie (1)", t => t.name = "DevPlushie (Lenval)");
+        ActionType.Find(l, "Theater Plushies/DevPlushie (Vylet) Variant", t => t.name = "DevPlushie (Vylet)");
+        ActionType.Find(l, "Theater Plushies/DevPlushie (Rhiannon) Variant", t => t.name = "DevPlushie (Rhiannon)");
+        ActionType.Dest(l, "Dev_Space_ (11)/Cube (4)");
+        ActionType.Dest(l, "Dev_Space_ (19)/Cube (4)");
+        ActionType.Dest(l, "Dev_Space_ (20)/Cube (4)");
+
         #endregion
         #region all
         l = "All";
