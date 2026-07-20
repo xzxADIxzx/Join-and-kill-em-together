@@ -18,7 +18,7 @@ public static class ActionType
     /// <summary> Creates an actions that places a bunch of torches. </summary>
     public static void Torches(string scene, Vector3 position) => Run(scene, () =>
     {
-        GameAssets.Prefab("Levels/Interactive/Altar (Torch) Variant.prefab", p => Events.Post(() => // damn Unity crashes w/o this
+        GameAssets.Prefab("Levels/Interactive/Altar (Torch) Variant.prefab", p =>
         {
             for (float angle = Mathf.PI * 12f / 7f; angle > 0f; angle -= Mathf.PI * 2f / 7f)
             {
@@ -28,7 +28,7 @@ public static class ActionType
                         if (!LobbyController.IsOwner) Tools.Tools.Dest(i.gameObject);
                     });
             }
-        }));
+        });
     });
 
     /// <summary> Creates an action that finds an object. </summary>
@@ -41,7 +41,7 @@ public static class ActionType
     public static void Turn(string scene, string path) => Find(scene, path, t => Events.Post(() => t.gameObject.SetActive(true)));
 
     /// <summary> Creates an action that destroys an object. </summary>
-    public static void Dest(string scene, string path) => Find(scene, path, t => Tools.Tools.Dest(t.gameObject));
+    public static void Dest(string scene, string path) => Find(scene, path, t => Events.Post(() => Tools.Tools.Dest(t.gameObject)));
 
     #endregion
     #region dynamic

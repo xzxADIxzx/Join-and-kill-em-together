@@ -8,26 +8,26 @@ public static class GameAssets
 {
     #region loading
 
-    /// <summary> Asynchronously loads an asset by the given path. </summary>
-    public static void LoadAsync<T>(string path, Cons<T> cons) { if (path.Contains('.')) Addressables.LoadAssetAsync<T>(path).Task.ContinueWith(t => cons(t.Result)); }
+    /// <summary> Asynchronously loads an asset. </summary>
+    public static void Load<T>(string path, Cons<T> cons)
+    {
+        if (path.StartsWith("Assets") && path.Contains('.')) Addressables.LoadAssetAsync<T>(path).Completed += h => { cons(h.Result); };
+    }
 
-    /// <summary> Loads a prefab by the given path. </summary>
-    public static void Prefab(string path, Cons<GameObject> cons) => LoadAsync(path.StartsWith("p/") ? $"Assets/Particles/{path[2..]}" : $"Assets/Prefabs/{path}", cons);
+    /// <summary> Loads a prefab. </summary>
+    public static void Prefab (string path, Cons<GameObject> cons) => Load(path.StartsWith("p/") ? $"Assets/Particles/{path[2..]}" : $"Assets/Prefabs/{path}", cons);
 
-    /// <summary> Loads a material by the given path. </summary>
-    public static void Material(string path, Cons<Material> cons) => LoadAsync($"Assets/Models/{path}", cons);
+    /// <summary> Loads a sprite. </summary>
+    public static void Sprite (string path, Cons<Sprite    > cons) => Load(path.StartsWith("s/") ? $"Assets/Textures/Sprites/{path[2..]}" : $"Assets/Textures/UI/{path}", cons);
 
-    /// <summary> Loads a texture by the given path. </summary>
-    public static void Texture(string path, Cons<Texture> cons) => LoadAsync($"Assets/Models/{path}", cons);
+    /// <summary> Loads a shader. </summary>
+    public static void Shader (string path, Cons<Shader    > cons) => Load($"Assets/Shaders/{path}", cons);
 
-    /// <summary> Loads a shader by the given path. </summary>
-    public static void Shader(string path, Cons<Shader> cons) => LoadAsync($"Assets/Shaders/{path}", cons);
+    /// <summary> Loads a texture. </summary>
+    public static void Texture(string path, Cons<Texture   > cons) => Load($"Assets/Models/{path}", cons);
 
-    /// <summary> Loads a sound by the given path. </summary>
-    public static void Sound(string path, Cons<AudioClip> cons) => LoadAsync($"Assets/Sounds/{path}", cons);
-
-    /// <summary> Loads a sprite by the given path. </summary>
-    public static void Sprite(string path, Cons<Sprite> cons) => LoadAsync(path.StartsWith("s/") ? $"Assets/Textures/Sprites/{path[2..]}" : $"Assets/Textures/UI/{path}", cons);
+    /// <summary> Loads a sound. </summary>
+    public static void Sound  (string path, Cons<AudioClip > cons) => Load($"Assets/Sounds/{path}", cons);
 
     #endregion
     #region content
