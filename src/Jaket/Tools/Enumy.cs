@@ -67,7 +67,7 @@ public static class Enumy
     }
 
     #endregion
-    #region each deviratives
+    #region each derivatives
 
     /// <summary> Whether all of the elements match the given predicate. </summary>
     public static bool All<T>(this IEnumerable<T> seq, Pred<T> pred)
