@@ -219,12 +219,18 @@ public static class Networking
         if (result == Result.OK)
             Stats.Add(size);
         else
-            Log.Warning($"[NETW] Couldn't send a packet, the result is {result}");
+            Log.Error($"[NETW] Couldn't send a packet, the result is {result}");
     }
 
     /// <summary> Makes & sends a packet. </summary>
     public static void Send(PacketType type, int bytesCount, Cons<Writer> data, Cons<Ptr, int> cons = null)
     {
+        if (bytesCount >= Pointers.RESERVED)
+        {
+            Log.Error($"[NETW] Couldn't send a packet, the size is {bytesCount}");
+            return;
+        }
+
         Writer w = new(Pointers.Allocated);
 
         w.Enum(type);

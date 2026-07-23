@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 public static class Pointers
 {
     /// <summary> Number of bytes allocated for each thread. </summary>
-    public const int RESERVED = 1024;
+    public const int RESERVED = 2048;
 
     [ThreadStatic]
     private static Ptr memory;
