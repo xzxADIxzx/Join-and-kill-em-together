@@ -24,9 +24,6 @@ public unsafe struct Reader
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void* Inc(nint bytesCount) => (void*)((position += bytesCount) - bytesCount);
 
-    /// <summary> Skips the given number of bytes. </summary>
-    public void Skip(nint bytesCount) => position += bytesCount;
-
     #region basic
 
     public bool  Bool () => *(byte *)Inc(1) == byte.MaxValue;
@@ -51,15 +48,16 @@ public unsafe struct Reader
     #endregion
     #region complex
 
-    public void Bools(out bool v0, out bool v1, out bool v2, out bool v3, out bool v4, out bool v5, out bool v6, out bool v7) { var value = Byte();
-        v0 = (value & 1 << 0) != 0;
-        v1 = (value & 1 << 1) != 0;
-        v2 = (value & 1 << 2) != 0;
-        v3 = (value & 1 << 3) != 0;
-        v4 = (value & 1 << 4) != 0;
-        v5 = (value & 1 << 5) != 0;
-        v6 = (value & 1 << 6) != 0;
-        v7 = (value & 1 << 7) != 0;
+    public void Bools(out bool b0, out bool b1, out bool b2, out bool b3, out bool b4, out bool b5, out bool b6, out bool b7)
+    {   var value = Byte();
+        b0 = (value & 1 << 0) != 0;
+        b1 = (value & 1 << 1) != 0;
+        b2 = (value & 1 << 2) != 0;
+        b3 = (value & 1 << 3) != 0;
+        b4 = (value & 1 << 4) != 0;
+        b5 = (value & 1 << 5) != 0;
+        b6 = (value & 1 << 6) != 0;
+        b7 = (value & 1 << 7) != 0;
     }
 
     public void Bytes(byte[] value, int start, int count)
@@ -85,7 +83,9 @@ public unsafe struct Reader
 
     public Vector3 Vector() => *(Vector3*)Inc(12);
 
-    public Color32 Color() => new(Byte(), Byte(), Byte(), Byte());
+    public Vector2 Point() => *(Vector2*)Inc(8);
+
+    public Color32 Color() => *(Color32*)Inc(4);
 
     public void Player(out Team team, out byte weapon, out byte emote, out byte rps, out bool typing)
     {
