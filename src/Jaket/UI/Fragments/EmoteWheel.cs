@@ -100,7 +100,7 @@ public class EmoteWheel : Fragment
     public void Show()
     {
         Content.gameObject.SetActive(Shown = true);
-        UI.Hide(UI.MidlGroup, this, null);
+        UI.Hide(UI.MidlGroup, this);
 
         second = false;
         Rebuild();
@@ -113,7 +113,7 @@ public class EmoteWheel : Fragment
     public void Hide()
     {
         Content.gameObject.SetActive(Shown = false);
-        UI.Hide(UI.MidlGroup, this, null);
+        UI.Hide(UI.MidlGroup, this);
 
         // randomize RPS index if the corresponding emote is selected
         if (selected == 3) Emotes.Rps = (byte)Random.Range(0, 3);

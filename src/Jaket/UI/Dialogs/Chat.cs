@@ -50,7 +50,7 @@ public class Chat : Fragment
     /// <summary> Index of the currently viewed message in the history. </summary>
     private int index;
 
-    public Chat(Transform root) : base(root, "Chat", true, hide: () => Events.Post(() => UI.Chat.field.gameObject.SetActive(UI.Chat.Shown = false)))
+    public Chat(Transform root) : base(root, "Chat", true, hide: () => UI.Chat?.field.gameObject.SetActive(UI.Chat.Shown = false))
     {
         Events.OnLoad += () =>
         {

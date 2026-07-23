@@ -14,7 +14,7 @@ public class Fragment
 
     /// <summary> Transform containing the content of the fragment. </summary>
     public Transform Content;
-    /// <summary> Vertical bar located on the left side of the fragment. </summary>
+    /// <summary> Vertical bar located on the side of the fragment. </summary>
     public Bar Sidebar;
 
     public Fragment(Transform root, string name, bool dialog, Prov<bool> cond = null, Runnable hide = null)
@@ -25,8 +25,9 @@ public class Fragment
         hide ??= () => Content.gameObject.SetActive(Shown = false);
 
         void Check() { if (cond()) hide(); }
-
         Check();
+
+        Events.Post(Check);
         Events.OnLoad += Check;
     }
 
@@ -38,10 +39,10 @@ public class Fragment
 
     #region building
 
-    /// <summary> Adds a rectangle, it is not preconfigured. </summary>
+    /// <summary> Adds a rectangle. </summary>
     protected RectTransform Rect(string name, Rect rect) => Builder.Rect(name, Content, rect);
 
-    /// <summary> Adds a rectangle, it fills the fragment. </summary>
+    /// <summary> Adds a rectangle. </summary>
     protected RectTransform Fill(string name) => Builder.Rect(name, Content, new());
 
     /// <summary> Adds a bar, it is located on the left and has a constant width. </summary>
@@ -68,13 +69,13 @@ public class Fragment
 
         if (Content.Find("Deco") == null) Builder.Image(Rect("Deco", new(width + 24f, height + 24f)), Tex.BrdL, semi, scale: 2f).raycastTarget = false;
 
-        Builder.Button(Builder.Rect("Close", img, new(-24f, -24f, 32f, 32f, new(1f, 1f))), Tex.Fill, red, Toggle, Tex.Mark, 16);
+        Builder.Button(Builder.Rect("Button", img, new(-24f, -24f, 32f, 32f, new(1f, 1f))), Tex.Fill, red, Toggle, Tex.Mark, 16);
     }
 
     /// <summary> Adds a bar, it displays the current version of the project. </summary>
     protected void VersionBar()
     {
-        var bar = Builder.Rect("Version", Sidebar.transform, new(0f, 48f, 480f - 32f, 64f, new(.5f, 0f)));
+        var bar = Builder.Rect("Version", Sidebar, new(0f, 48f, 480f - 32f, 64f, new(.5f, 0f)));
         var txt = Builder.Rect("Text", bar, new() { Y =  12f });
         var sub = Builder.Rect("Hash", bar, new() { Y = -16f });
 
