@@ -13,7 +13,7 @@ using Jaket.UI.Lib;
 public static class UI
 {
     /// <summary> Whether the player is focused. </summary>
-    public static bool Focused => (EventSystem.current?.currentSelectedGameObject?.TryGetComponent(out InputField f) ?? false) && f.isActiveAndEnabled;
+    public static bool Focused => EventSystem.current && EventSystem.current.currentSelectedGameObject && EventSystem.current.currentSelectedGameObject.TryGetComponent(out InputField f) && f.isActiveAndEnabled;
     /// <summary> Whether any dialog is visible. </summary>
     public static bool AnyDialog => (Dialogs?.Any(d => d.Shown) ?? false) || (OptionsManager.Instance?.paused ?? false);
 
