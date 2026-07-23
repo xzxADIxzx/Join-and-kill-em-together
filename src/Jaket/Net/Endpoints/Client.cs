@@ -34,8 +34,8 @@ public class Client : Endpoint, IConnectionManager
                 entity = Entities.Supply(id, type);
 
                 entity.Read(r);
-                entity.Create();
                 entity.Push();
+                Events.Post(entity.Create);
             }
         });
 
@@ -89,7 +89,13 @@ public class Client : Endpoint, IConnectionManager
             SprayDistributor.ProcessDownload(r.Id(), s - 5, r);
         });
 
-        Listen(PacketType.WorldAction, r => World.Perform(r.Byte(), new(r.Float(), r.Float())));
+        Listen(PacketType.WorldAction, r =>
+        {
+            var id = r.Byte();
+            var p = r.Point();
+
+            Events.Post(() => World.Perform(id, p));
+        });
 
         /*
         Listen(PacketType.Vote, r => Votes.UpdateVote(r.Id(), r.Byte()));

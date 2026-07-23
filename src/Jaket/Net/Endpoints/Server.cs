@@ -34,8 +34,8 @@ public class Server : Endpoint, ISocketManager
                 entity = Entities.Supply(id, type);
 
                 entity.Read(r);
-                entity.Create();
                 entity.Push();
+                Events.Post(entity.Create);
 
                 Administration.Find(sender).Handle(entity);
             }
@@ -109,7 +109,10 @@ public class Server : Endpoint, ISocketManager
 
         Listen(PacketType.WorldAction, (con, sender, r, s) =>
         {
-            World.Perform(r.Byte(), new(r.Float(), r.Float()));
+            var id = r.Byte();
+            var p = r.Point();
+
+            Events.Post(() => World.Perform(id, p));
             Redirect(r, s, con);
         });
 

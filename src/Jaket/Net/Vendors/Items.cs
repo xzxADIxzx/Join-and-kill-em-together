@@ -54,7 +54,7 @@ public class Items : Vendor
         for (EntityType i = EntityType.FishFunny; i <= EntityType.FishBurnt; i++) Vendor.Suppliers[(byte)i] = (id, type) => new Fish      (id, type);
         for (EntityType i = EntityType.Hakita;    i <= EntityType.Sowler;    i++) Vendor.Suppliers[(byte)i] = (id, type) => new Plushie   (id, type);
 
-        void SyncAll() => Events.Post(() => Events.Post(() =>
+        Events.OnLoad += () => Events.Post(() => Events.Post(() =>
         {
             if (LobbyController.Offline) return;
 
@@ -68,8 +68,6 @@ public class Items : Vendor
                 z.reverseArenaStatuses.Each(s => s.currentStatus = 0);
             });
         }));
-        Events.OnLoad += SyncAll;
-        Events.OnLobbyEnter += SyncAll;
     }
 
     public EntityType Type(GameObject obj)

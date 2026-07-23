@@ -29,7 +29,7 @@ public static class ActionList
         if (i < all.Length)
             (all[i] = action).Identifier = i;
         else
-            Log.Warning($"[WRLD] Out of identifiers for actions");
+            Log.Error($"[WRLD] Out of identifiers for actions");
     }
 
     /// <summary> Iterates each action in the global list that is suitable for the current scene and predicate. </summary>
