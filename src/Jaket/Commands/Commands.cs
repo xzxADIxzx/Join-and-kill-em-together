@@ -51,7 +51,7 @@ public static class Commands
 
         Handler.Register("hello", "Resend the tips for new players", args => chat.SayHello());
 
-        Handler.Register("mute", "<name>", "Locally silence a player's voice, messages and sprays", args =>
+        static void Silence(string[] args, bool mute)
         {
             if (LobbyController.Offline)
             {
@@ -67,32 +67,16 @@ public static class Commands
             int count = 0;
             LobbyController.Lobby?.Members.Each(m => !m.IsMe && m.Name.Contains(args[0]), m =>
             {
-                if (!Administration.Muted.Contains(m.AccId)) Administration.Muted.Add(m.AccId);
-                count++;
+                if (mute) { Administration.Mute(m.AccId); count++; }
+                else if (Administration.IsMuted(m.AccId)) { Administration.Unmute(m.AccId); count++; }
             });
-            chat.Receive(count > 0 ? $"[green]Muted {count} player(s) matching \"{args[0]}\"." : $"[red]Couldn't find a player named {args[0]}.");
-        });
 
-        Handler.Register("unmute", "<name>", "Undo a local mute", args =>
-        {
-            if (LobbyController.Offline)
-            {
-                chat.Receive("[red]You aren't in a lobby yet.");
-                return;
-            }
-            if (args.Length == 0)
-            {
-                chat.Receive("[red]Please provide a player name.");
-                return;
-            }
+            if (count > 0) chat.Receive(mute ? $"[green]Muted {count} player(s) matching \"{args[0]}\"." : $"[orange]Unmuted {count} player(s) matching \"{args[0]}\".");
+            else chat.Receive(mute ? $"[red]Couldn't find a player named {args[0]}." : $"[red]Couldn't find a muted player named {args[0]}.");
+        }
 
-            int count = 0;
-            LobbyController.Lobby?.Members.Each(m => !m.IsMe && m.Name.Contains(args[0]), m =>
-            {
-                if (Administration.Muted.Remove(m.AccId)) count++;
-            });
-            chat.Receive(count > 0 ? $"[orange]Unmuted {count} player(s) matching \"{args[0]}\"." : $"[red]Couldn't find a muted player named {args[0]}.");
-        });
+        Handler.Register("mute", "<name>", "Locally silence a player's voice, messages and sprays", args => Silence(args, true));
+        Handler.Register("unmute", "<name>", "Undo a local mute", args => Silence(args, false));
 
         Handler.Register("tts-volume", "\\[0-100]", "Set the volume of TTS", args =>
         {

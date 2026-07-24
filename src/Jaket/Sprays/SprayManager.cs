@@ -69,7 +69,7 @@ public static class SprayManager
             Bundle.Hud("spray.choose");
             return null;
         }
-        if (Administration.Hidden.Contains(owner) || Administration.Muted.Contains(owner) || !SpraySettings.Enabled) return null;
+        if (Administration.Hidden.Contains(owner) || Administration.IsMuted(owner) || !SpraySettings.Enabled) return null;
 
         return owner == AccId ? Selected : Remote.TryGetValue(owner, out var s) ? s : null;
     }

@@ -60,20 +60,16 @@ public class PlayerList : Fragment
                     s.ProfileButton(m, false);
                     s.FillButton(ModAssets.LobbyOwner, yellow, () => Bundle.Hud("player-list.owner"));
                 }
-                else if (LobbyController.IsOwner)
-                {
-                    s.ProfileButton(m, false);
-                    s.FillButton(ModAssets.LobbyBan, red, () => Administration.Ban(m.AccId));
-                }
                 else if (m.IsMe) s.ProfileButton(m, true);
                 else
                 {
                     s.ProfileButton(m, false);
-                    s.FillButton("♪", Administration.Muted.Contains(m.AccId) ? red : gray, () =>
+                    s.FillButton("♪", Administration.IsMuted(m.AccId) ? red : gray, () =>
                     {
-                        if (!Administration.Muted.Remove(m.AccId)) Administration.Muted.Add(m.AccId);
+                        Administration.ToggleMute(m.AccId);
                         Rebuild();
                     });
+                    if (LobbyController.IsOwner) s.FillButton(ModAssets.LobbyBan, red, () => Administration.Ban(m.AccId));
                 }
             }));
             if (!LobbyController.IsOwner) return;

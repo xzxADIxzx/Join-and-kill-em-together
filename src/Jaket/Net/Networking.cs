@@ -150,7 +150,7 @@ public static class Networking
 
             else if (msg.StartsWith("#/t"))
             {
-                if (!member.IsMe && Administration.Muted.Contains(member.AccId)) return;
+                if (!member.IsMe && Administration.IsMuted(member.AccId)) return;
 
                 if (member.IsMe)
                     SamAPI.TryPlay(msg = msg[3..], LocalPlayer.Voice);
@@ -160,7 +160,7 @@ public static class Networking
 
                 UI.Chat.Receive(msg, GetColor(member), name, Chat.TTS_TAG);
             }
-            else if (!member.IsMe && Administration.Muted.Contains(member.AccId)) return;
+            else if (!member.IsMe && Administration.IsMuted(member.AccId)) return;
             else
                 UI.Chat.Receive(msg, GetColor(member), name);
         };
