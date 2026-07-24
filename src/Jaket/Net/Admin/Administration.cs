@@ -12,6 +12,8 @@ public static class Administration
     public static List<uint> Hidden = new();
     /// <summary> Identifiers of banned players. </summary>
     public static List<uint> Banned = new();
+    /// <summary> Identifiers of locally muted players, whose voice, messages and sprays are suppressed. </summary>
+    public static List<uint> Muted = new();
 
     /// <summary> Whether the local player is privileged. </summary>
     public static bool Privileged;
@@ -22,7 +24,7 @@ public static class Administration
         Events.OnLobbyAction += () =>
         {
             // y'now, imma just type smth stupid here
-            if (LobbyController.Offline) return;
+            if (LobbyController.Offline) { Muted.Clear(); return; }
 
             subjects.Each(s => s?.Privilege.Update(LobbyConfig.Privileged, s.Id));
 
@@ -57,6 +59,23 @@ public static class Administration
 
         LobbyController.Lobby?.SendChatString("#/b" + id);
         LobbyConfig.Banned = Banned.ConvertAll(i => i.ToString());
+    }
+
+    /// <summary> Locally mutes the given player, suppressing their voice, messages and sprays. </summary>
+    public static void Mute(uint id) { if (!Muted.Contains(id)) Muted.Add(id); }
+
+    /// <summary> Removes the local mute from the given player. </summary>
+    public static void Unmute(uint id) => Muted.Remove(id);
+
+    /// <summary> Whether the given player is locally muted. </summary>
+    public static bool IsMuted(uint id) => Muted.Contains(id);
+
+    /// <summary> Toggles the local mute on the given player and returns the new state. </summary>
+    public static bool ToggleMute(uint id)
+    {
+        if (Muted.Remove(id)) return false;
+        Muted.Add(id);
+        return true;
     }
 
     /// <summary> Finds a subject with the given identifier or logs an error. </summary>

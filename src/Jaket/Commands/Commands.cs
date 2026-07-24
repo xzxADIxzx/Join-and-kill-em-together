@@ -5,6 +5,7 @@ using UnityEngine;
 using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net;
+using Jaket.Net.Admin;
 using Jaket.UI;
 using Jaket.UI.Dialogs;
 
@@ -49,6 +50,33 @@ public static class Commands
         });
 
         Handler.Register("hello", "Resend the tips for new players", args => chat.SayHello());
+
+        static void Silence(string[] args, bool mute)
+        {
+            if (LobbyController.Offline)
+            {
+                chat.Receive("[red]You aren't in a lobby yet.");
+                return;
+            }
+            if (args.Length == 0)
+            {
+                chat.Receive("[red]Please provide a player name.");
+                return;
+            }
+
+            int count = 0;
+            LobbyController.Lobby?.Members.Each(m => !m.IsMe && m.Name.Contains(args[0]), m =>
+            {
+                if (mute) { Administration.Mute(m.AccId); count++; }
+                else if (Administration.IsMuted(m.AccId)) { Administration.Unmute(m.AccId); count++; }
+            });
+
+            if (count > 0) chat.Receive(mute ? $"[green]Muted {count} player(s) matching \"{args[0]}\"." : $"[orange]Unmuted {count} player(s) matching \"{args[0]}\".");
+            else chat.Receive(mute ? $"[red]Couldn't find a player named {args[0]}." : $"[red]Couldn't find a muted player named {args[0]}.");
+        }
+
+        Handler.Register("mute", "<name>", "Locally silence a player's voice, messages and sprays", args => Silence(args, true));
+        Handler.Register("unmute", "<name>", "Undo a local mute", args => Silence(args, false));
 
         Handler.Register("tts-volume", "\\[0-100]", "Set the volume of TTS", args =>
         {
