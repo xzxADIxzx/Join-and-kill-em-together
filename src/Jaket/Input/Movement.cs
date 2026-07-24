@@ -194,6 +194,9 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Respawns Cyber Grind players and flashes the screen. </summary>
     public static void CyberRespawn() => Respawn(new(0f, 80f, 62.5f), 0f, true);
 
+    /// <summary> Respawns the player at the level's start (recorded by the game's start trigger, correct even on levels like 0-1) instead of reloading the whole world. </summary>
+    public static void RespawnAtStart() => Respawn(PlayerActivator.lastActivatedPosition, nm.transform.eulerAngles.y);
+
     /// <summary> Kills the player immediately. </summary>
     public static void Suicide() => nm.GetHurt(nm.hp, true, 0f, instablack: true, ignoreInvincibility: true);
 

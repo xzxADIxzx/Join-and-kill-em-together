@@ -138,7 +138,19 @@ public class Spectator : Fragment
 
     [DynamicPatch(typeof(StatsManager), nameof(StatsManager.Restart))]
     [Prefix]
-    static bool Restart() => !nm.deathSequence.gameObject.activeSelf && !UI.Spectator.Shown;
+    static bool Restart()
+    {
+        if (nm.deathSequence.gameObject.activeSelf || UI.Spectator.Shown) return false;
+
+        // soft-respawn the host instead of reloading the scene, which would reset the lobby for everyone
+        if (LobbyController.Online && LobbyController.IsOwner && !StatsManager.Instance.currentCheckPoint)
+        {
+            StatsManager.Instance.restarts++;
+            Movement.RespawnAtStart();
+            return false;
+        }
+        return true;
+    }
 
     [DynamicPatch(typeof(DeathSequence), nameof(DeathSequence.EndSequence))]
     [Prefix]
