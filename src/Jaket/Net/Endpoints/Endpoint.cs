@@ -10,7 +10,7 @@ using Jaket.Net.Admin;
 public abstract class Endpoint
 {
     /// <summary> Handlers of incoming data packets. </summary>
-    protected PacketHandler[] handlers = new PacketHandler[32];
+    protected PacketHandler[] handlers = new PacketHandler[System.Enum.GetValues(typeof(PacketType)).Length];
     /// <summary> Counter showing the pool that will be included in the next snapshot. </summary>
     protected int pool;
 
@@ -35,7 +35,14 @@ public abstract class Endpoint
 
         if (Networking.Loading && type != PacketType.Level && type != PacketType.ImageHeader && type != PacketType.ImageChunk) return;
 
-        handlers[(int)type](con, sender, r, size);
+        int id = (int)type;
+        if (id >= handlers.Length || handlers[id] == null)
+        {
+            Log.Warning($"[NET] Received an unhandled packet type ({id}) from {sender}");
+            return;
+        }
+
+        handlers[id](con, sender, r, size);
         Stats.ReadBs += size;
     }
 
