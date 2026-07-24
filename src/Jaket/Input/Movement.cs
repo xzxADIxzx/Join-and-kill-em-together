@@ -32,22 +32,11 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Hold time of the emote wheel key. </summary>
     private float holdTime;
 
-    /// <summary> Position and rotation of the level's start, captured on load to respawn the host without reloading the world. </summary>
-    private static Vector3 spawnPos;
-    private static float spawnRot;
-
     #region general
 
     private void Start()
     {
         Events.OnLoad += () => UpdateState(true);
-        Events.OnLoad += () => Events.Post(() =>
-        {
-            if (Scene == "Main Menu") return;
-
-            spawnPos = nm.transform.position;
-            spawnRot = nm.transform.eulerAngles.y;
-        });
         Events.EveryHalf += () =>
         {
             if (ch.cheatsEnabled && LobbyController.Online && !Administration.Privileged)
@@ -205,14 +194,8 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Respawns Cyber Grind players and flashes the screen. </summary>
     public static void CyberRespawn() => Respawn(new(0f, 80f, 62.5f), 0f, true);
 
-    /// <summary> Respawns the player at the level's start instead of reloading the whole world. </summary>
-    public static void RespawnAtStart()
-    {
-        // the game records the position where the level's start trigger fired, which is correct everywhere, including
-        // levels like 0-1 that teleport the player to an alternate start after load; fall back to the captured transform
-        var pos = PlayerActivator.lastActivatedPosition;
-        Respawn(pos == default ? spawnPos : pos, spawnRot);
-    }
+    /// <summary> Respawns the player at the level's start (recorded by the game's start trigger, correct even on levels like 0-1) instead of reloading the whole world. </summary>
+    public static void RespawnAtStart() => Respawn(PlayerActivator.lastActivatedPosition, nm.transform.eulerAngles.y);
 
     /// <summary> Kills the player immediately. </summary>
     public static void Suicide() => nm.GetHurt(nm.hp, true, 0f, instablack: true, ignoreInvincibility: true);
