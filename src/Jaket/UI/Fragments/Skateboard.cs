@@ -44,12 +44,12 @@ public class Skateboard : Fragment
         var backgrd = Builder.Image(Rect("Speedometer", new(-512f, -128f, 290f, 74f)), Tex.Back, semi);
         speedometer = Builder.Text(Builder.Rect("Text", backgrd.transform, new()), "", 24, white, TextAnchor.MiddleLeft);
 
-        gradient.SetKeys(new GradientColorKey[]
-        {
+        gradient.SetKeys(
+        [
             new(green,  20f / 80f),
             new(orange, 50f / 80f),
             new(red,    80f / 80f),
-        }, new GradientAlphaKey[0]);
+        ], []);
     }
 
     public override void Toggle()

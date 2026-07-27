@@ -102,7 +102,7 @@ public static class Bundle
         {
             // find the index of the next special character
             int old = pointer;
-            pointer = original.IndexOfAny(new[] { '\\', '[' }, pointer);
+            pointer = original.IndexOfAny([ '\\', '[' ], pointer);
 
             // save the piece between the previous pointer and the special character
             builder.Append(original[old..pointer]);

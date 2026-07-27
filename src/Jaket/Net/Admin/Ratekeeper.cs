@@ -3,19 +3,17 @@ namespace Jaket.Net.Admin;
 using UnityEngine;
 
 /// <summary> Keeps a specific action within the rate limit. </summary>
-public struct Ratekeeper
+public struct Ratekeeper(float limit, float rate)
 {
     /// <summary> When the counter reaches the limit, a warning is given. </summary>
-    private float limit;
+    private float limit = limit;
     /// <summary> Frequency of actions up to which the counter doesn't increase. </summary>
-    private float rate;
+    private float rate = rate;
 
     /// <summary> Counter of specific actions. </summary>
     private float counter;
     /// <summary> Last access time to the counter. </summary>
     private float last;
-
-    public Ratekeeper(float limit, float rate) { this.limit = limit; this.rate = rate; }
 
     /// <summary> Whether the action is kept within the rate limit. </summary>
     public bool Kept()

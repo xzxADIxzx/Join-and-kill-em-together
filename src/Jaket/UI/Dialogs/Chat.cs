@@ -227,14 +227,12 @@ public class Chat : Fragment
     #endregion
 
     /// <summary> Constant-size sequence of messages that stores chat history. </summary>
-    public class Messages
+    public class Messages(int size)
     {
         /// <summary> Array containing data to be stored. </summary>
-        private string[] messages;
+        private string[] messages = new string[size];
         /// <summary> Index of the start of the sequence. </summary>
         private int start;
-
-        public Messages(int size) => messages = new string[size];
 
         public string this[int index]
         {

@@ -3,10 +3,10 @@ namespace Jaket.Net.Admin;
 using Jaket.Content;
 
 /// <summary> Keeps track of various actions of a specific member. </summary>
-public class Subject
+public class Subject(uint id)
 {
     /// <summary> Identifier of the member. </summary>
-    public readonly uint Id;
+    public readonly uint Id = id;
     /// <summary> Privileges of the member. </summary>
     public Privilege Privilege;
 
@@ -25,8 +25,6 @@ public class Subject
     project = new(24),
     flashes = new(48),
     harpoon = new(4);
-
-    public Subject(uint id) => Id = id;
 
     /// <summary> Gives the member a warning if the given limit is exceeded. </summary>
     public void Warn(string reason, ref Ratekeeper limit)

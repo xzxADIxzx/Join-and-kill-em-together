@@ -155,13 +155,11 @@ public static class Events
     #endregion
 
     /// <summary> Guarantees the execution of all listeners regardless of errors. </summary>
-    public class SafeEvent<T>
+    public class SafeEvent<T>(string name)
     {
-        protected string name;
+        protected string name = name;
         protected byte amount;
         protected Cons<T>[] listeners = new Cons<T>[byte.MaxValue + 1];
-
-        public SafeEvent(string name) => this.name = name;
 
         public void Fire(T t)
         {
@@ -179,10 +177,8 @@ public static class Events
     }
 
     /// <inheritdoc/>
-    public class SafeEvent : SafeEvent<object>
+    public class SafeEvent(string name) : SafeEvent<object>(name)
     {
-        public SafeEvent(string name) : base(name) { }
-
         public void Fire() => Fire(null);
 
         public static SafeEvent operator +(SafeEvent e, Runnable listener) { e.listeners[e.amount++] = _ => listener(); return e; }

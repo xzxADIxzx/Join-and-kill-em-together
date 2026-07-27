@@ -125,15 +125,13 @@ public static class SprayDistributor
     }
 
     /// <summary> Table that controls an uploading or downloading process. </summary>
-    public class ChunkTable
+    public class ChunkTable(int size)
     {
         /// <summary> Size of the image and the amount of processed bytes. </summary>
-        public int ImageSize, Processed;
+        public int ImageSize = size, Processed;
         /// <summary> Size of the chunk to be processed on the next subtick. </summary>
         public int BytesCount => Mathf.Min(CHUNK_SIZE, ImageSize - Processed);
         /// <summary> Ratio of processed bytes to the image size. </summary>
         public float Progress => (float)Processed / ImageSize;
-
-        public ChunkTable(int size) => ImageSize = size;
     }
 }

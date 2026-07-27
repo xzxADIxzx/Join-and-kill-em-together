@@ -150,10 +150,10 @@ public class Debug : Fragment
     }
 
     /// <summary> Data warehouse that can be projected onto a graph. </summary>
-    public class Data
+    public class Data(int size)
     {
         /// <summary> Array containing data to be stored. </summary>
-        private float[] data;
+        private float[] data = new float[size];
         /// <summary> Index of the start of the sequence. </summary>
         private int start;
 
@@ -161,8 +161,6 @@ public class Debug : Fragment
         public Text Label;
         /// <summary> Graph to project the data onto. </summary>
         public UILineRenderer Graph;
-
-        public Data(int size) => data = new float[size];
 
         public float this[int index] => data[(start + index) % data.Length];
 
