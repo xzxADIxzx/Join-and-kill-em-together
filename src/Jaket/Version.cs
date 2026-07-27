@@ -8,13 +8,8 @@ using UnityEngine.Networking;
 using Jaket.Assets;
 
 /// <summary> Class that handles interactions with the repository of the mod. This includes checking for updates and fetching compatible mods. </summary>
-public static class Version
+public static partial class Version
 {
-    /// <summary> Current version of the project. </summary>
-    public const string CURRENT = "2.0.0";
-    /// <summary> Whether current build is debug. </summary>
-    public const bool DEBUG = true;
-
     /// <summary> Repository of the project to fetch the data from. </summary>
     public const string REPO = "xzxADIxzx/Join-and-kill-em-together";
     /// <summary> Json fragments preceding the name and tag of the latest version. </summary>

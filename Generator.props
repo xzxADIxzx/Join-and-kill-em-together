@@ -1,0 +1,28 @@
+<Project>
+
+  <Target Name="Generate" BeforeTargets="BeforeCompile">
+
+    <PropertyGroup>
+      <Debug Condition="$(Configuration) == Debug">true</Debug>
+      <Debug Condition="$(Configuration) != Debug">false</Debug>
+
+      <Generated>
+        namespace Jaket %3B
+
+        public static partial class Version
+        {
+            public const string CURRENT = "$(Version)" %3B
+            public const bool DEBUG = $(Debug) %3B
+        }
+      </Generated>
+    </PropertyGroup>
+
+    <WriteLinesToFile File="$(IntermediateOutputPath)/Version.g.cs" Lines="$(Generated)" Overwrite="true" WriteOnlyWhenDifferent="true" />
+
+    <ItemGroup>
+      <Compile Include="$(IntermediateOutputPath)/Version.g.cs" />
+    </ItemGroup>
+
+  </Target>
+
+</Project>

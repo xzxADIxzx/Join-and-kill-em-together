@@ -21,6 +21,7 @@
   </PropertyGroup>
 
   <Import Project="Path.props" />
+  <Import Project="Generator.props" />
 
   <ItemGroup>
 
