@@ -7,19 +7,17 @@ using UnityEngine.Networking;
 
 using Jaket.Assets;
 
-/// <summary> Class that handles interactions with the repository of the mod. This includes checking for updates and fetching compatible mods. </summary>
+/// <summary> Class responsible for interactions with the repository of the project. </summary>
 public static partial class Version
 {
-    /// <summary> Repository of the project to fetch the data from. </summary>
+    /// <summary> Repository of the project. </summary>
     public const string REPO = "xzxADIxzx/Join-and-kill-em-together";
-    /// <summary> Json fragments preceding the name and tag of the latest version. </summary>
-    public const string TAG = "\"tag_name\": \"V", NAME = "\"name\": \"";
-    /// <summary> Various access points. </summary>
+    /// <summary> Various API access points. </summary>
     public const string GITHUB_API = "https://api.github.com", GITHUB_RAW = "https://raw.githubusercontent.com";
 
-    /// <summary> Readable version includes beta tag. </summary>
+    /// <summary> Readable version of the project. </summary>
     public static string Readable => DEBUG ? $"{CURRENT}-beta" : CURRENT;
-    /// <summary> Hash of the current build's commit. </summary>
+    /// <summary> Hash of the commit of the build. </summary>
     public static string Hash => Assembly.GetCallingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion[^40..^32];
 
     /// <summary> List of mods compatible with Jaket. </summary>
@@ -41,6 +39,9 @@ public static partial class Version
         Log.Info("[UPDT] Checking for updates...");
         Fetch($"{GITHUB_API}/repos/{REPO}/releases/latest", res =>
         {
+            const string TAG = "\"tag_name\": \"V";
+            const string NAME = "\"name\": \"";
+
             int tagIndex = res.IndexOf(TAG), nameIndex = res.IndexOf(NAME);
             if (tagIndex == -1 || nameIndex == -1)
             {
@@ -53,7 +54,7 @@ public static partial class Version
 
             if (latest != CURRENT) Bundle.Hud("outdated-mod", false, CURRENT, latest, name);
         },
-        code => Log.Info($"[UPDT] {(code == 200 ? "Fetched" : "Couldn't fetch")} the latest version of the project"));
+        code => Log.Info($"[UPDT] {(code == 200L ? "Fetched" : "Couldn't fetch")} the latest version of the project"));
     }
 
     /// <summary> Fetches the list of mods that are compatible with Jaket from GitHub. </summary>
@@ -71,7 +72,8 @@ public static partial class Version
 
                 Compatible[i] = res[s..e];
             }
-        }, code =>
+        },
+        code =>
         {
             List<string> incompatible = new();
             Chainloader.PluginInfos.Keys.Each(p => Compatible.All(c => c != p), incompatible.Add);

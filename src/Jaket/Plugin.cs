@@ -15,20 +15,18 @@ using Jaket.World;
 [BepInPlugin("xzxADIxzx.Jaket", "Jaket", Version.CURRENT)]
 public class PluginLoader : BaseUnityPlugin
 {
-    private void Awake() => Events.InternalSceneLoaded = () => (Plugin.Instance ?? Create<Plugin>("Jaket")).Location = Info.Location;
+    private void Awake() => Events.InternalSceneLoaded = () => Plugin.Instance ??= Create<Plugin>("Jaket");
 }
 
-/// <summary> Plugin main class. Essentially only initializes all other components. </summary>
+/// <summary> Main class of the project that loads, initializes and stores different components of it. </summary>
 public class Plugin : MonoBehaviour
 {
-    /// <summary> Plugin instance available everywhere. </summary>
+    /// <summary> Singleton of the project. </summary>
     public static Plugin Instance;
     /// <summary> Whether the plugin has been initialized. </summary>
     public bool Initialized;
-    /// <summary> Path to the dll file of the mod. </summary>
-    public string Location;
 
-    private void Awake() => Keep(Instance = this); // save the instance of the mod for later use and prevent it from being destroyed by the game
+    private void Awake() => Keep(this);
 
     private void Start()
     {

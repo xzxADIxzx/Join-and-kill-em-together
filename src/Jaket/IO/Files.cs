@@ -2,12 +2,13 @@ namespace Jaket.IO;
 
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 
 /// <summary> Set of different tools for working with files. </summary>
 public static class Files
 {
     /// <summary> Path to the root directory. </summary>
-    public static string Root => Path.GetDirectoryName(Plugin.Instance.Location);
+    public static string Root => Path.GetDirectoryName(Assembly.GetCallingAssembly().Location);
     /// <summary> Path to the logs directory. </summary>
     public static string Logs => Path.Combine(Root, "logs");
     /// <summary> Path to the bundles directory. </summary>
