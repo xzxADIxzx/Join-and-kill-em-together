@@ -6,18 +6,32 @@
       <Debug Condition="$(Configuration) == Debug">true</Debug>
       <Debug Condition="$(Configuration) != Debug">false</Debug>
 
-      <Generated>
-        namespace Jaket %3B
+      <GeneratedVersion>
 
-        public static partial class Version
-        {
-            public const string CURRENT = "$(Version)" %3B
-            public const bool DEBUG = $(Debug) %3B
-        }
-      </Generated>
+namespace Jaket %3B
+
+public static partial class Version
+{
+    public const string CURRENT = "$(Version)" %3B
+    public const bool DEBUG = $(Debug) %3B
+}
+
+      </GeneratedVersion>
+      <GeneratedManifest>
+
+{
+    "name": "$(AssemblyName)",
+    "description": "$(Description)",
+    "version_number": "$(Version)",
+    "website_url": "https://github.com/xzxADIxzx/Join-and-kill-em-together",
+    "dependencies": [ "BepInEx-BepInExPack-5.4.2305" ]
+}
+
+      </GeneratedManifest>
     </PropertyGroup>
 
-    <WriteLinesToFile File="$(IntermediateOutputPath)/Version.g.cs" Lines="$(Generated)" Overwrite="true" WriteOnlyWhenDifferent="true" />
+    <WriteLinesToFile File="$(IntermediateOutputPath)/Version.g.cs" Lines="$(GeneratedVersion)" Overwrite="true" WriteOnlyWhenDifferent="true" />
+    <WriteLinesToFile File="$(IntermediateOutputPath)/manifest.json" Lines="$(GeneratedManifest)" Overwrite="true" WriteOnlyWhenDifferent="true" />
 
     <ItemGroup>
       <Compile Include="$(IntermediateOutputPath)/Version.g.cs" />
