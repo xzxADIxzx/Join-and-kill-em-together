@@ -61,7 +61,7 @@ public class Sawblade : Projectile
 
     [DynamicPatch(typeof(global::Nail), nameof(global::Nail.SawBreak))]
     [Prefix]
-    static bool Death(global::Nail __instance) => Kill<Sawblade>(__instance, e => { if (e.IsOwner) e.Kill(1, w => w.Bools(true)); }, true);
+    static bool Death(global::Nail __instance) => Kill<Sawblade>(__instance, e => { if (e.IsOwner) e.Kill(1, w => w.Bools(true)); });
 
     [DynamicPatch(typeof(global::Nail), nameof(global::Nail.MagnetCaught))]
     [Postfix]

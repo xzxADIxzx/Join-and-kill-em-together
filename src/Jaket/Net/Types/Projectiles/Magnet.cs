@@ -101,7 +101,7 @@ public class Magnet : Projectile
 
     [DynamicPatch(typeof(Harpoon), nameof(Harpoon.OnDestroy))]
     [Prefix]
-    static bool Death(Harpoon __instance) => Kill<Magnet>(__instance, e => e.Kill(1, w => w.Bools(true)), true);
+    static bool Death(Harpoon __instance) => Kill<Magnet>(__instance, e => e.Kill(1, w => w.Bools(true)));
 
     [DynamicPatch(typeof(global::Magnet), nameof(global::Magnet.OnTriggerEnter))]
     [DynamicPatch(typeof(global::Magnet), nameof(global::Magnet.OnTriggerExit))]

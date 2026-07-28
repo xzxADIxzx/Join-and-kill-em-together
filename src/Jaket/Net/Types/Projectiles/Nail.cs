@@ -44,7 +44,7 @@ public class Nail : Projectile
 
     [DynamicPatch(typeof(global::Nail), nameof(global::Nail.OnDestroy))]
     [Prefix]
-    static void Death(global::Nail __instance) => Kill<Nail>(__instance, e => e.Kill(), true);
+    static void Death(global::Nail __instance) => Kill<Nail>(__instance, e => e.Kill());
 
     [DynamicPatch(typeof(global::Nail), nameof(global::Nail.MagnetCaught))]
     [Postfix]

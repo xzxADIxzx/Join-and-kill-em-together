@@ -31,9 +31,6 @@ public class Shell : Projectile
         base.Assign(this.agent = agent);
 
         agent.Get(out proj);
-        agent.Rem<FloatingPointErrorPreventer>();
-        agent.Rem<DestroyOnCheckpointRestart>();
-        agent.Rem<RemoveOnTime>();
         agent.Run(MasterKill, 15f);
     }
 
@@ -43,20 +40,15 @@ public class Shell : Projectile
         base.Update(delta);
     }
 
-    public override void Killed(Reader r, int left)
+    public override void Killed(Reader r, int left) => Killed(r, left, agent, bits =>
     {
-        base.Killed(r, left); r.Skip(12);
-
-        if (left >= 13)
+        if (bits[0])
         {
-            if (r.Bool())
-            {
-                proj.boosted = Type == EntityType.Shell;
-                proj.explosionEffect = Entities.Vendor.Prefabs[(byte)EntityType.ShotgunExplosion];
-            }
-            proj.CreateExplosionEffect();
+            proj.boosted = Type == EntityType.Shell;
+            proj.explosionEffect = Entities.Vendor.Prefabs[(byte)EntityType.ShotgunExplosion];
         }
-    }
+        if (bits[1]) proj.CreateExplosionEffect();
+    });
 
     #endregion
     #region harmony
@@ -70,18 +62,12 @@ public class Shell : Projectile
 
     [DynamicPatch(typeof(global::Projectile), nameof(global::Projectile.OnDestroy))]
     [Prefix]
-    static void Break(global::Projectile __instance) => Kill<Shell>(__instance, e =>
-    {
-        e.Kill();
-    }, true);
+    static void Break(global::Projectile __instance) => Kill<Shell>(__instance, e => e.Kill());
 
     [DynamicPatch(typeof(global::Projectile), nameof(global::Projectile.CreateExplosionEffect))]
     [DynamicPatch(typeof(global::Projectile), nameof(global::Projectile.Explode))]
     [Prefix]
-    static bool Death(global::Projectile __instance) => Kill<Shell>(__instance, e =>
-    {
-        e.Kill(13, w => { w.Vector(e.agent.Position); w.Bool(__instance.parried); });
-    }, true);
+    static bool Death(global::Projectile __instance) => Kill<Shell>(__instance, e => e.Kill(1, w => w.Bools(__instance.parried, true)));
 
     [DynamicPatch(typeof(Punch), nameof(Punch.ParryProjectile))]
     [Prefix]

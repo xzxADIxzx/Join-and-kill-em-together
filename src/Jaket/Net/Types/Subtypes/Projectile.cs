@@ -140,7 +140,7 @@ public abstract class Projectile : OwnableEntity
     }
 
     /// <summary> Invokes the patch logic if the provided object is an entity. </summary>
-    public static bool Kill<T>(Component instance, Cons<T> patch, bool onlyAlive = false) where T : Entity
+    public static bool Kill<T>(Component instance, Cons<T> patch, bool onlyAlive = true) where T : Entity
     {
         if (instance.TryGetEntity(out T t) && !(onlyAlive && t.Hidden))
         {

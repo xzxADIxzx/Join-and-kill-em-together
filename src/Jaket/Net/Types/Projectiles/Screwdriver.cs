@@ -29,16 +29,14 @@ public class Screwdriver : Projectile
         {
             w.Vector(agent.Position);
             w.Vector(agent.Rotation);
-
-            w.Id(target);
         }
         else
         {
             w.Floats(posX, posY, posZ);
             w.Floats(rotX, rotY, rotZ);
-
-            w.Id(target);
         }
+
+        w.Id(target);
     }
 
     public override void Read(Reader r)
@@ -61,7 +59,7 @@ public class Screwdriver : Projectile
         if (renderer is SpriteRenderer s) s.sprite = Tex.Flash;
     }
 
-    public override void Create() => Assign(Entities.Projectiles.Make(Type, new(posX.Init, posY.Init, posZ.Init)).AddComponent<Agent>());
+    public override void Create() => Create(Entities.Projectiles, ref posX, ref posY, ref posZ);
 
     public override void Assign(Agent agent)
     {
@@ -88,13 +86,10 @@ public class Screwdriver : Projectile
         if (harp.currentDrillSound) Dest(harp.currentDrillSound);
     }
 
-    public override void Killed(Reader r, int left)
+    public override void Killed(Reader r, int left) => Killed(r, left, agent, bits =>
     {
-        base.Killed(r, left);
-
-        if (left >= 1 && r.Bool())
-            Inst(harp.breakEffect, agent.Position);
-    }
+        if (bits[0]) Inst(harp.breakEffect, agent.Position);
+    });
 
     #endregion
     #region harmony
@@ -114,10 +109,7 @@ public class Screwdriver : Projectile
 
     [DynamicPatch(typeof(Harpoon), nameof(Harpoon.OnDestroy))]
     [Prefix]
-    static bool Death(Harpoon __instance) => Kill<Screwdriver>(__instance, e =>
-    {
-        if (!e.Hidden) e.Kill(1, w => w.Bool(true));
-    });
+    static bool Death(Harpoon __instance) => Kill<Screwdriver>(__instance, e => e.Kill(1, w => w.Bools(true)));
 
     [DynamicPatch(typeof(Harpoon), nameof(Harpoon.Punched))]
     [Prefix]
