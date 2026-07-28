@@ -27,7 +27,6 @@ public class Sawblade : Projectile
         base.Assign(this.agent = agent);
 
         agent.Get(out nail);
-        agent.Rem<DestroyOnCheckpointRestart>();
         agent.Run(MasterKill, 15f);
     }
 
@@ -45,18 +44,15 @@ public class Sawblade : Projectile
         }
     }
 
-    public override void Killed(Reader r, int left)
+    public override void Killed(Reader r, int left) => Killed(r, left, agent, bits =>
     {
-        base.Killed(r, left);
-
-        if (left >= 1 && r.Bool())
-            Inst(nail.sawBreakEffect, agent.Position);
-    }
+        if (bits[0]) Inst(nail.sawBreakEffect, agent.Position);
+    });
 
     #endregion
     #region harmony
 
-    [DynamicPatch(typeof(global::Nail), nameof(global::Nail.Start))]
+    [DynamicPatch(typeof(global::Nail), nameof(global::Nail.Awake))]
     [Prefix]
     static void Start(global::Nail __instance)
     {
@@ -65,24 +61,15 @@ public class Sawblade : Projectile
 
     [DynamicPatch(typeof(global::Nail), nameof(global::Nail.SawBreak))]
     [Prefix]
-    static bool Death(global::Nail __instance) => Kill<Sawblade>(__instance, e =>
-    {
-        if (e.IsOwner) e.Kill(1, w => w.Bool(true));
-    });
+    static bool Death(global::Nail __instance) => Kill<Sawblade>(__instance, e => { if (e.IsOwner) e.Kill(1, w => w.Bools(true)); }, true);
 
     [DynamicPatch(typeof(global::Nail), nameof(global::Nail.MagnetCaught))]
-    [Prefix]
-    static void Catch(global::Nail __instance) => Events.Post(() =>
-    {
-        if (__instance.TryGetEntity(out Sawblade s)) s.agent.StopAllCoroutines();
-    });
+    [Postfix]
+    static void Catch(global::Nail __instance) => Kill<Sawblade>(__instance, e => { if (__instance.magnets.Count >= 0) e.agent.StopAllCoroutines(); });
 
     [DynamicPatch(typeof(global::Nail), nameof(global::Nail.MagnetRelease))]
-    [Prefix]
-    static void Freed(global::Nail __instance) => Events.Post(() =>
-    {
-        if (__instance.TryGetEntity(out Sawblade s)) s.agent.Run(s.MasterKill, 15f);
-    });
+    [Postfix]
+    static void Freed(global::Nail __instance) => Kill<Sawblade>(__instance, e => { if (__instance.magnets.Count <= 0) e.agent.Run(e.MasterKill, 15f); });
 
     [DynamicPatch(typeof(global::Nail), nameof(global::Nail.DamageEnemy))]
     [Prefix]

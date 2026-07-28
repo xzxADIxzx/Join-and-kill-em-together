@@ -37,7 +37,7 @@ public class Projectiles : Vendor
     (
         EntityType.Shell,
         EntityType.ProjectileExpl,
-        p => p.name.Length == obj?.name.Length - 7 && (obj?.name.Contains(p.name) ?? false)
+        p => p.name.Length == obj?.name.Length - 7 && obj.name.Contains(p.name)
     );
 
     public GameObject Make(EntityType type, Vector3 position = default, Transform parent = null)

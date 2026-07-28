@@ -56,7 +56,7 @@ public class Magnet : Projectile
     #endregion
     #region logic
 
-    public override void Create() => Assign(Entities.Projectiles.Make(Type, new(posX.Init, posY.Init, posZ.Init)).AddComponent<Agent>());
+    public override void Create() => Create(Entities.Projectiles, ref posX, ref posY, ref posZ);
 
     public override void Assign(Agent agent)
     {
@@ -84,13 +84,10 @@ public class Magnet : Projectile
         if (bomb.beeper) bomb.beeper.transform.localScale = Vector3.Lerp(bomb.beeper.transform.localScale, Vector3.zero, Time.deltaTime * 5f);
     }
 
-    public override void Killed(Reader r, int left)
+    public override void Killed(Reader r, int left) => Killed(r, left, agent, bits =>
     {
-        base.Killed(r, left);
-
-        if (left >= 1 && r.Bool())
-            Inst(bomb.explosion, agent.Position);
-    }
+        if (bits[0]) Inst(bomb.explosion, agent.Position);
+    });
 
     #endregion
     #region harmony
@@ -104,10 +101,7 @@ public class Magnet : Projectile
 
     [DynamicPatch(typeof(Harpoon), nameof(Harpoon.OnDestroy))]
     [Prefix]
-    static bool Death(Harpoon __instance) => Kill<Magnet>(__instance, e =>
-    {
-        if (!e.Hidden) e.Kill(1, w => w.Bool(true));
-    });
+    static bool Death(Harpoon __instance) => Kill<Magnet>(__instance, e => e.Kill(1, w => w.Bools(true)), true);
 
     [DynamicPatch(typeof(global::Magnet), nameof(global::Magnet.OnTriggerEnter))]
     [DynamicPatch(typeof(global::Magnet), nameof(global::Magnet.OnTriggerExit))]

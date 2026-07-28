@@ -53,13 +53,14 @@ public abstract class Projectile : OwnableEntity
     }
 
     #endregion
-    #region logic
+    #region properties
 
-    public virtual void MasterKill()
-    {
-        if (IsOwner) Kill();
-        if (Version.DEBUG) Log.Debug($"[ENTS] Killed an entity {Id} due to lifetime expiration");
-    }
+    public override bool Debuggable => agent;
+
+    public override Vector3 DrawPos => agent.Position;
+
+    #endregion
+    #region logic
 
     public virtual void Paint(Renderer renderer)
     {
@@ -81,7 +82,7 @@ public abstract class Projectile : OwnableEntity
         }
     }
 
-    public override void Create() => Assign(Entities.Projectiles.Make(Type, new(x.Init, y.Init, z.Init)).AddComponent<Agent>());
+    public override void Create() => Create(Entities.Projectiles, ref x, ref y, ref z);
 
     public override void Assign(Agent agent)
     {
@@ -90,6 +91,9 @@ public abstract class Projectile : OwnableEntity
         agent.Get(out rb);
         agent.Get(out rs);
         agent.Get(out cs);
+        agent.Rem<DestroyOnCheckpointRestart >(true);
+        agent.Rem<FloatingPointErrorPreventer>(true);
+        agent.Rem<RemoveOnTime               >(true);
         agent.Run(MasterKill, 90f);
 
         OnTransfer = () =>
@@ -125,15 +129,15 @@ public abstract class Projectile : OwnableEntity
 
     public override void Damage(Reader r) { }
 
-    public override void Killed(Reader r, int left)
-    {
-        Hidden = true;
-        if (agent) Dest(agent.gameObject);
-        if (left >= 12) agent.Position = r.Vector();
-    }
-
     #endregion
-    #region patch
+    #region other
+
+    /// <inheritdoc cref="Entity.Kill"/>
+    protected void MasterKill()
+    {
+        if (IsOwner) Kill();
+        if (Version.DEBUG) Log.Debug($"[ENTS] Killed an entity {Id} due to lifetime expiration");
+    }
 
     /// <summary> Invokes the patch logic if the provided object is an entity. </summary>
     public static bool Kill<T>(Component instance, Cons<T> patch, bool onlyAlive = false) where T : Entity

@@ -4,6 +4,7 @@ using UnityEngine;
 
 using Jaket.Content;
 using Jaket.Harmony;
+using Jaket.IO;
 
 /// <summary> Tangible entity of any nail type. </summary>
 public class Nail : Projectile
@@ -20,16 +21,17 @@ public class Nail : Projectile
         base.Assign(this.agent = agent);
 
         agent.Get(out rb);
-        agent.Rem<DestroyOnCheckpointRestart>();
         agent.Run(MasterKill, 5f);
 
         if (!IsOwner) agent.Rem<CapsuleCollider>();
     }
 
+    public override void Killed(Reader r, int left) => Killed(r, left, agent, bits => { });
+
     #endregion
     #region harmony
 
-    [DynamicPatch(typeof(global::Nail), nameof(global::Nail.Start))]
+    [DynamicPatch(typeof(global::Nail), nameof(global::Nail.Awake))]
     [Prefix]
     static void Start(global::Nail __instance)
     {
@@ -45,18 +47,12 @@ public class Nail : Projectile
     static void Death(global::Nail __instance) => Kill<Nail>(__instance, e => e.Kill(), true);
 
     [DynamicPatch(typeof(global::Nail), nameof(global::Nail.MagnetCaught))]
-    [Prefix]
-    static void Catch(global::Nail __instance) => Events.Post(() =>
-    {
-        if (__instance.TryGetEntity(out Nail n)) n.agent.StopAllCoroutines();
-    });
+    [Postfix]
+    static void Catch(global::Nail __instance) => Kill<Nail>(__instance, e => { if (__instance.magnets.Count >= 0) e.agent.StopAllCoroutines(); });
 
     [DynamicPatch(typeof(global::Nail), nameof(global::Nail.MagnetRelease))]
-    [Prefix]
-    static void Freed(global::Nail __instance) => Events.Post(() =>
-    {
-        if (__instance.TryGetEntity(out Nail n)) n.agent.Run(n.MasterKill, 5f);
-    });
+    [Postfix]
+    static void Freed(global::Nail __instance) => Kill<Nail>(__instance, e => { if (__instance.magnets.Count <= 0) e.agent.Run(e.MasterKill, 5f); });
 
     [DynamicPatch(typeof(Punch), nameof(Punch.BlastCheck))]
     [Prefix]
