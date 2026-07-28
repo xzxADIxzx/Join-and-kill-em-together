@@ -29,9 +29,6 @@ public class Core : Projectile
         base.Assign(this.agent = agent);
 
         agent.Get(out gr);
-        agent.Rem<FloatingPointErrorPreventer>();
-        agent.Rem<DestroyOnCheckpointRestart>();
-        agent.Rem<RemoveOnTime>();
     }
 
     public override void Update(float delta)
@@ -43,17 +40,14 @@ public class Core : Projectile
         if (gr.hooked) TakeOwnage();
     }
 
-    public override void Killed(Reader r, int left)
+    public override void Killed(Reader r, int left) => Killed(r, left, agent, bits =>
     {
-        base.Killed(r, left); r.Skip(12);
-
-        if (left >= 13) // normal (environment), super (any beam), ultra (malicious)
+        if (bits[0]) // normal (environment), super (any beam), ultra (malicious beam)
         {
-            r.Bools(out var harmless, out var big, out var super, out var ultra, out _, out _, out _, out _);
-            gr.Explode(big, harmless, super, ultra ? 2f : 1f, ultra);
+            gr.Explode(bits[2], bits[1], bits[3], bits[4] ? 2f : 1f, bits[4]);
+            gr.enemy = true; // see coins
         }
-        gr.enemy = true; // check coins
-    }
+    });
 
     #endregion
     #region harmony
@@ -69,17 +63,14 @@ public class Core : Projectile
     [Prefix]
     static bool Death(Grenade __instance, bool harmless, bool big, bool super, bool ultrabooster) => Kill<Core>(__instance, e =>
     {
-        e.Kill(13, w => { w.Vector(e.agent.Position); w.Bools(harmless, big, super, ultrabooster); });
-    }, true);
+        e.Kill(1, w => w.Bools(true, harmless, big, super, ultrabooster));
+    });
 
     [DynamicPatch(typeof(Grenade), nameof(Grenade.GrenadeBeam))]
     [Prefix]
-    static void Beamy(Grenade __instance) => Kill<Core>(__instance, e =>
-    {
-        e.Kill();
-    });
+    static void Beamy(Grenade __instance) => Kill<Core>(__instance, e => e.Kill());
 
-    [DynamicPatch(typeof(Grenade), nameof(Grenade.Collision), [typeof(Collider), typeof(Vector3)])]
+    [DynamicPatch(typeof(Grenade), nameof(Grenade.Collision), typeof(Collider), typeof(Vector3))]
     [Prefix]
     static bool Damage(Grenade __instance) => __instance.name[0] == 'L';
 

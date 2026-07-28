@@ -59,9 +59,12 @@ public class Rocket : Projectile
     }
 
     #endregion
-    #region logic
+    #region properties
 
     public override string Name => $"{(IsOwner ? 'L' : frozen ? 'F' : 'R')}#Rocket";
+
+    #endregion
+    #region logic
 
     public override void Paint(Renderer renderer)
     {
@@ -70,7 +73,7 @@ public class Rocket : Projectile
         if (renderer is SpriteRenderer s) s.sprite = Tex.Flash;
     }
 
-    public override void Create() => Assign(Entities.Projectiles.Make(Type, new(posX.Init, posY.Init, posZ.Init)).AddComponent<Agent>());
+    public override void Create() => Create(Entities.Projectiles, ref posX, ref posY, ref posZ);
 
     public override void Assign(Agent agent)
     {
@@ -78,9 +81,6 @@ public class Rocket : Projectile
 
         agent.Get(out ObjectActivator act, path: "LevelUpEffect"); act.events.onActivate.AddListener(() => OnTransfer());
         agent.Get(out gr);
-        agent.Rem<FloatingPointErrorPreventer>();
-        agent.Rem<DestroyOnCheckpointRestart>();
-        agent.Rem<RemoveOnTime>();
     }
 
     public override void Update(float delta)
@@ -100,17 +100,14 @@ public class Rocket : Projectile
         if (gr.hooked) TakeOwnage();
     }
 
-    public override void Killed(Reader r, int left)
+    public override void Killed(Reader r, int left) => Killed(r, left, agent, bits =>
     {
-        base.Killed(r, left); r.Skip(12);
-
-        if (left >= 13) // harmless (environment), normal (entity), big (any beam), super (midair), ultra (malicious)
+        if (bits[0]) // harmless (environment), normal (grounded entity), big (any beam), super (midair entity), ultra (malicious beam)
         {
-            r.Bools(out var harmless, out var big, out var super, out var ultra, out _, out _, out _, out _);
-            gr.Explode(big, harmless, super, ultra ? 2f : 1f, ultra);
+            gr.Explode(bits[2], bits[1], bits[3], bits[4] ? 2f : 1f, bits[4]);
+            gr.enemy = true; // see coins
         }
-        gr.enemy = true; // check coins
-    }
+    });
 
     #endregion
     #region harmony
@@ -126,15 +123,12 @@ public class Rocket : Projectile
     [Prefix]
     static bool Death(Grenade __instance, bool harmless, bool big, bool super, bool ultrabooster) => Kill<Rocket>(__instance, e =>
     {
-        e.Kill(13, w => { w.Vector(e.agent.Position); w.Bools(harmless, big, super, ultrabooster); });
-    }, true);
+        e.Kill(1, w => w.Bools(true, harmless, big, super, ultrabooster));
+    });
 
     [DynamicPatch(typeof(Grenade), nameof(Grenade.GrenadeBeam))]
     [Prefix]
-    static void Beamy(Grenade __instance) => Kill<Rocket>(__instance, e =>
-    {
-        e.Kill();
-    });
+    static void Beamy(Grenade __instance) => Kill<Rocket>(__instance, e => e.Kill());
 
     [DynamicPatch(typeof(Grenade), nameof(Grenade.PlayerRideStart))]
     [Prefix]
