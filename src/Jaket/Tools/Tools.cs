@@ -135,6 +135,8 @@ public static class Tools
     public static FieldInfo Field<T>(string name) => AccessTools.Field(typeof(T), name);
     /// <summary> Returns metadata of a method. </summary>
     public static MethodInfo Method<T>(string name) => AccessTools.Method(typeof(T), name);
+    /// <summary> Returns metadata of a method. </summary>
+    public static MethodInfo Method<T>(string name, System.Type[] args) => AccessTools.Method(typeof(T), name, args);
 
     /// <summary> Iterates all attributes of static methods.  </summary>
     public static void Attributes(Cons<MethodInfo, IEnumerable<System.Attribute>> cons) => Assembly.GetCallingAssembly().GetTypes().Each(t =>

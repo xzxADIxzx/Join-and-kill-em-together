@@ -20,10 +20,13 @@ public class Nail : Projectile
     {
         base.Assign(this.agent = agent);
 
+        agent.Get(out global::Nail nail);
         agent.Get(out rb);
         agent.Run(MasterKill, 5f);
 
         if (!IsOwner) agent.Rem<CapsuleCollider>();
+
+        if (nail.magnets.Count >= 1) agent.StopAllCoroutines();
     }
 
     public override void Killed(Reader r, int left) => Killed(r, left, agent, bits => { });
@@ -31,7 +34,7 @@ public class Nail : Projectile
     #endregion
     #region harmony
 
-    [DynamicPatch(typeof(global::Nail), nameof(global::Nail.Awake))]
+    [DynamicPatch(typeof(global::Nail), nameof(global::Nail.Start))]
     [Prefix]
     static void Start(global::Nail __instance)
     {
@@ -48,7 +51,7 @@ public class Nail : Projectile
 
     [DynamicPatch(typeof(global::Nail), nameof(global::Nail.MagnetCaught))]
     [Postfix]
-    static void Catch(global::Nail __instance) => Kill<Nail>(__instance, e => { if (__instance.magnets.Count >= 0) e.agent.StopAllCoroutines(); });
+    static void Catch(global::Nail __instance) => Kill<Nail>(__instance, e => { if (__instance.magnets.Count >= 1) e.agent.StopAllCoroutines(); });
 
     [DynamicPatch(typeof(global::Nail), nameof(global::Nail.MagnetRelease))]
     [Postfix]

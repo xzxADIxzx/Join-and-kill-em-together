@@ -28,6 +28,8 @@ public class Sawblade : Projectile
 
         agent.Get(out nail);
         agent.Run(MasterKill, 15f);
+
+        if (nail.magnets.Count >= 1) agent.StopAllCoroutines();
     }
 
     public override void Update(float delta)
@@ -52,7 +54,7 @@ public class Sawblade : Projectile
     #endregion
     #region harmony
 
-    [DynamicPatch(typeof(global::Nail), nameof(global::Nail.Awake))]
+    [DynamicPatch(typeof(global::Nail), nameof(global::Nail.Start))]
     [Prefix]
     static void Start(global::Nail __instance)
     {
@@ -65,7 +67,7 @@ public class Sawblade : Projectile
 
     [DynamicPatch(typeof(global::Nail), nameof(global::Nail.MagnetCaught))]
     [Postfix]
-    static void Catch(global::Nail __instance) => Kill<Sawblade>(__instance, e => { if (__instance.magnets.Count >= 0) e.agent.StopAllCoroutines(); });
+    static void Catch(global::Nail __instance) => Kill<Sawblade>(__instance, e => { if (__instance.magnets.Count >= 1) e.agent.StopAllCoroutines(); });
 
     [DynamicPatch(typeof(global::Nail), nameof(global::Nail.MagnetRelease))]
     [Postfix]

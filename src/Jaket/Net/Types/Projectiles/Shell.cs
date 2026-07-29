@@ -1,5 +1,6 @@
 namespace Jaket.Net.Types;
 
+using HarmonyLib;
 using ULTRAKILL.Enemy;
 using UnityEngine;
 
@@ -85,6 +86,22 @@ public class Shell : Projectile
     {
         __instance.projectile.name += "(Clone)";
         Entities.Projectiles.Sync(__instance.projectile);
+    }
+
+    [DynamicPatch(typeof(global::Projectile), nameof(global::Projectile.Collided))]
+    [Transpiler]
+    static Ins Damage(Ins instructions)
+    {
+        foreach (var ins in instructions)
+        {
+            if (ins.OperandIs(Method<Object>("Destroy", [ typeof(Object) ])))
+            {
+                if (Version.DEBUG) Log.Debug($"[HARM] Patched projectiles via transpilers");
+
+                yield return new CodeInstruction(System.Reflection.Emit.OpCodes.Pop);
+            }
+            else yield return ins;
+        }
     }
 
     [DynamicPatch(typeof(global::Projectile), nameof(global::Projectile.Collided))]

@@ -117,7 +117,7 @@ public abstract class Projectile : OwnableEntity
 
     public virtual void UpdateIgnore()
     {
-        if (ignoreCl) Networking.Entities.Player(p => cs.Each(c => p.Toggle(c)));
+        if (ignoreCl) Networking.Entities.Player(p => cs.Each(c => c, c => p.Toggle(c)));
     }
 
     public virtual void UpdateRocket(bool riding)
