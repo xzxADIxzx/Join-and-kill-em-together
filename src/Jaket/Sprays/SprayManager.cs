@@ -28,7 +28,7 @@ public static class SprayManager
         Local.Clear();
 
         Files.MakeDir(Files.Sprays);
-        Files.IterAll(f => Local.Add(new(f)), Files.Sprays, SprayImage.SUPPORTED.Split('#'));
+        Files.IterAll(Files.Sprays, f => Local.Add(new(f)), SprayImage.SUPPORTED.Split('#'));
 
         Log.Info($"[SPRY] Loaded {Local.Count} sprays: {string.Join(", ", Local.ConvertAll(s => s.Name))}");
 

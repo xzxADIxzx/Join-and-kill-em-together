@@ -8,11 +8,6 @@ using Jaket.Assets;
 /// <summary> Class responsible for saving purchases in the mod shop. </summary>
 public static class Shop
 {
-    /// <summary> Path to the file in which the purchases are saved. </summary>
-    public static string SavePath => Files.Join(GameProgressSaver.SavePath, "customization.bepis");
-    /// <summary> The first jacket is approximately in the middle of the list, but not exactly, because there are two more hats. </summary>
-    public static int FirstJacket => Entries.Length / 2 + 1;
-
     /// <summary> Cosmetic trinkets that can be bought in the terminal shop. </summary>
     public static ShopEntry[] Entries;
 
@@ -41,8 +36,8 @@ public static class Shop
     /// <summary> Saves the purchases to this save file. </summary>
     public static void SavePurchases()
     {
-        Files.Delete(SavePath);
-        Files.Write(SavePath, w =>
+        Files.Delete(Files.Purchases);
+        Files.Write(Files.Purchases, w =>
         {
             w.Write(SelectedHat);
             w.Write(SelectedJacket);
@@ -54,10 +49,10 @@ public static class Shop
     public static void LoadPurchases()
     {
         SelectedHat = 0;
-        SelectedJacket = FirstJacket;
+        SelectedJacket = Entries.Length / 2 + 1;
         Unlocked = 0L;
 
-        if (Files.Exists(SavePath)) Files.Read(SavePath, r =>
+        if (Files.Exists(Files.Purchases)) Files.Read(Files.Purchases, r =>
         {
             SelectedHat = r.ReadInt32();
             SelectedJacket = r.ReadInt32();
