@@ -11,6 +11,7 @@ using static Jaket.UI.Lib.Pal;
 public abstract class Projectile : OwnableEntity
 {
     Agent agent;
+    Float x, y, z;
     Cache<RemotePlayer> player;
     Team team => player.Value?.Team ?? Networking.LocalPlayer.Team;
     Rigidbody rb;
@@ -21,8 +22,6 @@ public abstract class Projectile : OwnableEntity
     private bool disableKm, enableKm;
     /// <summary> Whether the collision mode should be toggled on transfer. </summary>
     private bool ignoreCl;
-    /// <summary> Position of the projectile shared among tangible classes. </summary>
-    protected Float x, y, z;
 
     public Projectile(uint id, EntityType type, bool enableKm, bool disableKm, bool ignoreCl) : base(id, type)
     {

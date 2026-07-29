@@ -8,48 +8,13 @@ using Jaket.IO;
 using Jaket.UI.Lib;
 
 /// <summary> Tangible entity of the screwdriver type. </summary>
-public class Screwdriver : Projectile
+public class Screwdriver : Rotatable
 {
     Agent agent;
-    Float posX, posY, posZ, rotX, rotY, rotZ;
-    Cache<Entity> target;
     Harpoon harp;
 
-    public Screwdriver(uint id, EntityType type) : base(id, type, true, true, false) { }
+    public Screwdriver(uint id, EntityType type) : base(id, type, true, true, false, false) { }
 
-    #region snapshot
-
-    public override int BufferSize => 32;
-
-    public override void Write(Writer w)
-    {
-        WriteOwner(ref w);
-
-        if (IsOwner)
-        {
-            w.Vector(agent.Position);
-            w.Vector(agent.Rotation);
-        }
-        else
-        {
-            w.Floats(posX, posY, posZ);
-            w.Floats(rotX, rotY, rotZ);
-        }
-
-        w.Id(target);
-    }
-
-    public override void Read(Reader r)
-    {
-        if (ReadOwner(ref r)) return;
-
-        r.Floats(ref posX, ref posY, ref posZ);
-        r.Floats(ref rotX, ref rotY, ref rotZ);
-
-        target = r.Id();
-    }
-
-    #endregion
     #region logic
 
     public override void Paint(Renderer renderer)
@@ -58,8 +23,6 @@ public class Screwdriver : Projectile
         if (renderer is MeshRenderer m) m.material.mainTexture = null;
         if (renderer is SpriteRenderer s) s.sprite = Tex.Flash;
     }
-
-    public override void Create() => Create(Entities.Projectiles, ref posX, ref posY, ref posZ);
 
     public override void Assign(Agent agent)
     {
@@ -74,8 +37,7 @@ public class Screwdriver : Projectile
     {
         if (IsOwner) return;
 
-        agent.Position = new(posX.GetAware(delta), posY.GetAware(delta), posZ.GetAware(delta));
-        agent.Rotation = new(rotX.GetAngle(delta), rotY.GetAngle(delta), rotZ.GetAngle(delta));
+        base.Update(delta);
 
         harp.stopped     = false;
         harp.drilling    = false;

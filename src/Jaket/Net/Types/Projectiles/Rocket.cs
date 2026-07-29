@@ -8,57 +8,18 @@ using Jaket.IO;
 using Jaket.UI.Lib;
 
 /// <summary> Tangible entity of the rocket type. </summary>
-public class Rocket : Projectile
+public class Rocket : Rotatable
 {
     Agent agent;
-    Float posX, posY, posZ, rotX, rotY, rotZ;
     Grenade gr;
 
     /// <summary> Whether the rocket is frozen. </summary>
-    private bool frozen;
+    private bool frozen { get => b0; set => b0 = value; }
     /// <summary> Whether the player is riding. </summary>
-    private bool riding;
+    private bool riding { get => b1; set => b1 = value; }
 
-    public Rocket(uint id, EntityType type) : base(id, type, true, true, true) { }
+    public Rocket(uint id, EntityType type) : base(id, type, true, true, true, true) { }
 
-    #region snapshot
-
-    public override int BufferSize => 30;
-
-    public override void Write(Writer w)
-    {
-        WriteOwner(ref w);
-
-        if (IsOwner)
-        {
-            w.Vector(agent.Position);
-            w.Vector(agent.Rotation);
-
-            w.Bool(gr.frozen);
-            w.Bool(gr.playerRiding);
-        }
-        else
-        {
-            w.Floats(posX, posY, posZ);
-            w.Floats(rotX, rotY, rotZ);
-
-            w.Bool(frozen);
-            w.Bool(riding);
-        }
-    }
-
-    public override void Read(Reader r)
-    {
-        if (ReadOwner(ref r)) return;
-
-        r.Floats(ref posX, ref posY, ref posZ);
-        r.Floats(ref rotX, ref rotY, ref rotZ);
-
-        frozen = r.Bool();
-        riding = r.Bool();
-    }
-
-    #endregion
     #region properties
 
     public override string Name => $"{(IsOwner ? 'L' : frozen ? 'F' : 'R')}#Rocket";
@@ -73,8 +34,6 @@ public class Rocket : Projectile
         if (renderer is SpriteRenderer s) s.sprite = Tex.Flash;
     }
 
-    public override void Create() => Create(Entities.Projectiles, ref posX, ref posY, ref posZ);
-
     public override void Assign(Agent agent)
     {
         base.Assign(this.agent = agent);
@@ -87,13 +46,12 @@ public class Rocket : Projectile
     {
         agent.name = Name;
 
-        if (IsOwner) return;
+        if (IsOwner) { frozen = gr.frozen; riding = gr.playerRiding; return; }
 
         if (!riding)
         {
             if (agent.Parent != null) agent.Parent = null;
-            agent.Position = new(posX.GetAware(delta), posY.GetAware(delta), posZ.GetAware(delta));
-            agent.Rotation = new(rotX.GetAngle(delta), rotY.GetAngle(delta), rotZ.GetAngle(delta));
+            base.Update(delta);
         }
         UpdateRocket(riding);
 

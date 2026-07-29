@@ -34,7 +34,7 @@ public class Sawblade : Projectile
     {
         if (IsOwner) return;
 
-        agent.Position = new(x.GetAware(delta), y.GetAware(delta), z.GetAware(delta));
+        base.Update(delta);
         nail.punchable = true;
 
         if (nail.punched)
