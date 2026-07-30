@@ -12,7 +12,7 @@ public static class Files
     /// <summary> Path to the root directory. </summary>
     public static string Root => Path.GetDirectoryName(Assembly.GetCallingAssembly().Location);
     /// <summary> Path to the slot directory. </summary>
-    public static string Slot => Path.GetDirectoryName(GameProgressSaver.SavePath);
+    public static string Slot => Path.GetDirectoryName(GameProgressSaver.SavePath + "/");
     /// <summary> Path to the logs directory. </summary>
     public static string Logs => Join(Root, "logs");
     /// <summary> Path to the bundles directory. </summary>
