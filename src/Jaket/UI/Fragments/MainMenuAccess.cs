@@ -1,53 +1,33 @@
 namespace Jaket.UI.Fragments;
 
 using UnityEngine;
-using UnityEngine.UI;
 
 using Jaket.Net;
 using Jaket.UI.Lib;
 
 using static Jaket.UI.Lib.Pal;
 
-/// <summary> Fragment that provides access to lobbies through the main menu. </summary>
+/// <summary> Fragment that provides access to lobbies and ranks. </summary>
 public class MainMenuAccess : Fragment
 {
-    /// <summary> Vanilla element containing difficulty selection. </summary>
-    private GameObject original => CanvasController.Instance.transform.Find("Difficulty Select (1)/Interactables")?.gameObject;
-    /// <summary> Additional elements to display in the difficulty selection element. </summary>
-    private GameObject[] addition = new GameObject[5];
-
-    public MainMenuAccess(Transform root) : base(root, "MainMenuAccess", true, hide: () => UI.Access?.Toggle())
-    {
-        Content.GetComponent<CanvasScaler>().screenMatchMode = CanvasScaler.ScreenMatchMode.Expand;
-
-        var col = Random.value < .1f ? pink : green;
-        var drk = col.Darker;
-
-        Rect("Content", new(-315f, -341.5f, 570f, 176f, new(1f, .5f))).Component<Bar>(b =>
-        {
-            b.Setup(true, 0f, 6f);
-            b.Update(() =>
-            {
-                if (!original?.activeInHierarchy ?? addition[0].activeSelf) addition.Each(e => e.SetActive(false));
-            });
-
-            addition[0] = b.Image(null, 3f, col).gameObject;
-            b.Subbar(158f, s =>
-            {
-                s.Setup(true, 0f);
-
-                addition[1] = s.MenuButton("#lobby-tab.list", col, UI.LobbyList.Toggle).gameObject;
-                addition[2] = s.MenuButton("#lobby-tab.join", drk, LobbyController.JoinByCode).gameObject;
-            });
-            addition[3] = b.Image(null, 3f, drk).gameObject;
-        });
-        addition[4] = Builder.Text(Rect("Tip", new(-315f, 50f, 620f, 40f, new(1f, 0f))), "#menuaccess", 21, white).gameObject;
-
-        Content.GetComponentsInChildren<Image>().Each(i => i.pixelsPerUnitMultiplier = 4f / 1.5f);
-    }
+    public MainMenuAccess(Transform root) : base(root, "MainMenuAccess", true, cond: () => Scene == "Main Menu", hide: () => UI.Access?.Toggle()) { Toggle(); }
 
     public override void Toggle()
     {
-        if (Scene == "Main Menu" && original.TryGetComponent(out ObjectActivateInSequence seq)) Insert(ref seq.objectsToActivate, -1, addition);
+        #region difficulty
+
+        var root = CanvasController.Instance.transform.Find("Difficulty Select (1)/Interactables");
+
+        var sep1 = Builder.Image (Builder.Rect("Sep1", root, new(-210f, -170f, 380f, 02f, new(1f, .5f))), null, green       ).gameObject;
+        var sep2 = Builder.Image (Builder.Rect("Sep2", root, new(-210f, -285f, 380f, 02f, new(1f, .5f))), null, green.Darker).gameObject;
+
+        var btn1 = Builder.Button(Builder.Rect("Btn1", root, new(-210f, -200f, 380f, 50f, new(1f, .5f))), Tex.BrdL, green,        UI.LobbyList.Toggle,        "#lobby-tab.list", 24).gameObject;
+        var btn2 = Builder.Button(Builder.Rect("Btn2", root, new(-210f, -255f, 380f, 50f, new(1f, .5f))), Tex.BrdL, green.Darker, LobbyController.JoinByCode, "#lobby-tab.join", 24).gameObject;
+
+        var tips = Builder.Text  (Builder.Rect("Tips", root, new(-210f, +034f, 400f, 30f, new(1f, .0f))), "#menuaccess", 14, white).gameObject;
+
+        if (root.TryGetComponent(out ObjectActivateInSequence seq)) Insert(ref seq.objectsToActivate, -1, [ sep1, btn1, btn2, sep2, tips ]);
+
+        #endregion
     }
 }

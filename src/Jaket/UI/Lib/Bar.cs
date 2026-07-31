@@ -141,10 +141,6 @@ public class Bar : MonoBehaviour
     public Button FillButton(Sprite icon, Color color, Runnable callback, float spc = 40f) =>
         Builder.Button(Resolve("Button", spc), Tex.Fill, color, callback, icon, 24);
 
-    /// <summary> Adds a menu button. </summary>
-    public Button MenuButton(string text, Color color, Runnable callback, float spc = 75f) =>
-        Builder.Button(Resolve("Button", spc), Tex.BrdL, color, callback, text, 36);
-
     /// <summary> Adds a team button. </summary>
     public Button TeamButton(Team team,                Runnable callback, float spc = 80f) =>
         Builder.Button(Resolve("Button", spc), Tex.Fill, team.Color(), callback);

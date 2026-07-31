@@ -25,9 +25,8 @@ public class Fragment
         hide ??= () => Content.gameObject.SetActive(Shown = false);
 
         void Check() { if (cond()) hide(); }
-        Check();
 
-        Events.Post(Check);
+        Check();
         Events.OnLoad += Check;
     }
 
