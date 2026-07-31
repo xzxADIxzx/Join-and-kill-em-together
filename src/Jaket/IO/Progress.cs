@@ -61,6 +61,13 @@ public static class Progress
             ranks = new byte[48 * 6];
     }
 
+    /// <summary> Loads the rank of the certain mission. </summary>
+    public static byte Load(int mission, int difficulty)
+    {
+        if (ranks == null) Load();
+        return ranks[mission * 6 + difficulty];
+    }
+
     /// <summary> Returns the sign of the provided rank. </summary>
     public static string Sign(byte rank) => rank switch
     {
