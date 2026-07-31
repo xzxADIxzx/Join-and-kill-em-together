@@ -34,7 +34,7 @@ public static class ModAssets
     public static AudioMixer Mixer;
 
     /// <summary> Icons of the doll, crown and ban hammer. </summary>
-    public static Sprite BestiaryIcon, LobbyOwner, LobbyBan;
+    public static Sprite BestiaryIcon, LobbyOwner, LobbyBan, Mask;
     /// <summary> Icons of the emotes and their glows. </summary>
     public static Sprite[] EmoteIcons, EmoteGlows;
     /// <summary> Icons of the customization elements. </summary>
@@ -123,6 +123,7 @@ public static class ModAssets
         Load<Sprite>("V3-bestiary-icon",     s => BestiaryIcon = s);
         Load<Sprite>("lobby-owner",          s => LobbyOwner   = s);
         Load<Sprite>("lobby-ban",            s => LobbyBan     = s);
+        Load<Sprite>("mask",                 s => Mask         = s);
         LoadAll(i => "emote-" + i,           EmoteIcons = new Sprite[12]);
         LoadAll(i => "emote-" + i + "-glow", EmoteGlows = new Sprite[12]);
         LoadAll(i => "shop-"  + i,           ShopIcons  = new Sprite[12]);

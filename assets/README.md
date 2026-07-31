@@ -5,7 +5,7 @@ Small tips and instructions on how to correctly import assets into a Unity proje
 ## Preparations
 1. Create a new project on Unity version 2022.3.29, all the work is to be done there from now.
 2. Create a subfolder called `Editor` inside the assets folder.
-3. Copy the **BundleBuilder.cs** into the new folder.
+3. Copy the **Builder.cs** into the new folder.
 
 ## Common
 1. Copy the font file.
@@ -22,7 +22,7 @@ Small tips and instructions on how to correctly import assets into a Unity proje
    * Add to the bundle via the bottom window.
 
 ## Doll
-1. Export the corresponding model as fbx.
+1. Export the corresponding models as fbx.
 2. Configure all of the textures:
    * Set the texture type to `Default`
    * Set the maximum size to `1024`
@@ -31,7 +31,7 @@ Small tips and instructions on how to correctly import assets into a Unity proje
 3. Configure the throne hieroglyphs texture:
    * Find a group called `Advanced`
    * Set the non-power-of-two option to `None`
-4. Replace the corresponding meta file.
+4. Replace the corresponding meta files.
 
 ## Extra
 1. Copy the corresponding folder.
@@ -45,7 +45,7 @@ Small tips and instructions on how to correctly import assets into a Unity proje
    * Set the filter mode to `Bilinear`
    * Set the compression to `High Quality`
    * Add to the bundle via the bottom window.
-3. Configure all of the shop and lobby icons:
+3. Configure all of the shop icons:
    * Set the filter mode to `Point`
    * Set the compression to `None`
 
@@ -68,5 +68,5 @@ Small tips and instructions on how to correctly import assets into a Unity proje
    * Add to the bundle via the bottom window.
 
 ## Assembly
-1. Press `Assets`, then `Build Bundle` and wait for it to finish.
+1. Press `Assets`, then `Build Bundles` and wait for it to finish.
 2. The builded asset bundle will be located in the `Assets/Bundles` folder.
