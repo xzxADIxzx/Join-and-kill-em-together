@@ -30,6 +30,8 @@ public static class Progress
             return;
         }
 
+        if (ranks == null) Load();
+
         Save
         (
             sm.levelNumber - (sm.levelNumber >= 666 ? 621 : sm.levelNumber >= 100 ? 65 : 1),

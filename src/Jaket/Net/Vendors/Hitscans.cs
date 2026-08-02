@@ -64,7 +64,7 @@ public class Hitscans : Vendor
                 r.GetComponentsInChildren<SpriteRenderer>().Each(c => c.gameObject.layer = 24); // outdoors
                 r.transform.GetChild(0).LookAt(target);
             }
-        });
+        }, true);
         return beam.gameObject;
     }
 
