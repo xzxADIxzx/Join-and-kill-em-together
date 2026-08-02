@@ -53,8 +53,7 @@ public class SpraySettings : Fragment
                 {
                     b.Setup(true, 0f);
 
-                    preview = b.Image(null, 432f);
-                    preview.preserveAspect = true;
+                    preview = b.Image(null, 432f).PreserveAspect();
 
                     b.Subbar(328f, s =>
                     {

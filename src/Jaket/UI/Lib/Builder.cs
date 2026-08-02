@@ -104,6 +104,8 @@ public static class Builder
         }
     }
 
+    public static Image PreserveAspect(this Image image) { image.preserveAspect = true; return image; }
+
     #endregion
     #region button
 
