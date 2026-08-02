@@ -39,7 +39,16 @@ public class Client : Endpoint, IConnectionManager
             }
         });
 
-        Listen(PacketType.Hitscan, r => Entities.Hitscans.Make(r.EntityType(), r.Vector(), r.Vector(), r.Bool(), r.Byte()));
+        Listen(PacketType.Hitscan, r =>
+        {
+            var type = r.EntityType();
+            var pos1 = r.Vector();
+            var pos2 = r.Vector();
+            var wall = r.Bool();
+            var data = r.Byte();
+
+            Events.Post(() => Entities.Hitscans.Make(type, pos1, pos2, wall, data));
+        });
 
         Listen(PacketType.Damage, r =>
         {

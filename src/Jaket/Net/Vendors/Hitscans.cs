@@ -26,7 +26,7 @@ public class Hitscans : Vendor
     (
         EntityType.Beam,
         EntityType.BeamHammer,
-        p => p.name.Length == obj?.name.IndexOf('(') && (obj?.name.Contains(p.name) ?? false)
+        p => p.name.Length == obj?.name.IndexOf('(') && obj.name.Contains(p.name)
     );
 
     public GameObject Make(EntityType type, Vector3 position = default, Transform parent = null)
@@ -48,7 +48,7 @@ public class Hitscans : Vendor
         if (wall && type != EntityType.BeamReflected) Inst(beam.hitParticle, target, Quaternion.LookRotation(position - target));
 
         beam.fake = true;
-        beam.GetComponents<LineRenderer>().Each(r =>
+        beam.Component<LineRenderer>(r =>
         {
             r.SetPosition(0, position);
             r.SetPosition(1, target);
@@ -57,7 +57,7 @@ public class Hitscans : Vendor
                 r.startColor = r.endColor = ((Team)data).Color();
 
             else if (data == byte.MaxValue)
-                r.transform.GetChild(0).gameObject.SetActive(false);
+                r.transform.GetChild(0).gameObject.SetActive(false); // disable muzzleflash
 
             else
             {
@@ -80,7 +80,7 @@ public class Hitscans : Vendor
         {
             w.Enum(type);
             w.Vector(beam.transform.position + correction);
-            w.Vector(beam.alternateStartPoint);
+            w.Vector(beam.lr.GetPosition(1));
             w.Bool(wall);
 
             if (type == EntityType.BeamReflected)
@@ -96,9 +96,8 @@ public class Hitscans : Vendor
 
     [DynamicPatch(typeof(RevolverBeam), nameof(RevolverBeam.Start))]
     [Postfix]
-    static void Start(RevolverBeam __instance, LineRenderer ___lr)
+    static void Start(RevolverBeam __instance)
     {
-        __instance.alternateStartPoint = ___lr.GetPosition(1);
         Entities.Hitscans.Sync(__instance.gameObject, __instance.noMuzzleflash);
         wall = false;
     }
@@ -131,7 +130,7 @@ public class Hitscans : Vendor
 
     [DynamicPatch(typeof(RevolverBeam), nameof(RevolverBeam.ExecuteHits))]
     [Transpiler]
-    static Ins Call(Ins instructions)
+    static Ins Deal(Ins instructions)
     {
         foreach (var ins in instructions)
         {

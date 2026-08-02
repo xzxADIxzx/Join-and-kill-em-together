@@ -44,8 +44,12 @@ public class Server : Endpoint, ISocketManager
         Listen(PacketType.Hitscan, (con, sender, r, s) =>
         {
             var type = r.EntityType();
+            var pos1 = r.Vector();
+            var pos2 = r.Vector();
+            var wall = r.Bool();
+            var data = r.Byte();
 
-            Entities.Hitscans.Make(type, r.Vector(), r.Vector(), r.Bool(), r.Byte());
+            Events.Post(() => Entities.Hitscans.Make(type, pos1, pos2, wall, data));
             Redirect(r, s, con);
 
             Administration.Find(sender).Handle(type);
