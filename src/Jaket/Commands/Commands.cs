@@ -11,8 +11,6 @@ using Jaket.UI.Dialogs;
 /// <summary> Set of commands for the in-game chat. </summary>
 public static class Commands
 {
-    static Chat chat => UI.Chat;
-
     /// <summary> Default command space. </summary>
     public static CommandHandler Handler = new();
 
@@ -33,12 +31,14 @@ public static class Commands
                 content[i] = $"[{color}]| {content[i++]}[]";
                 content[i] = $"[{color}]| []{content[i++]}";
             }
-            chat.Receive(string.Join('\n', content));
+            UI.Chat.Receive(string.Join('\n', content));
         }
+
+        var chat = UI.Chat;
 
         Handler.Register("help", "Display the list of all commands", args =>
         {
-            string[] content = new string[Handler.Commands.Count * 2];
+            var content = new string[Handler.Commands.Count * 2];
             int i = 0;
             Handler.Commands.Each(c =>
             {
@@ -92,7 +92,7 @@ public static class Commands
         {
             if (args.Length == 0)
             {
-                chat.Receive("[red]Please provide a plushie name.");
+                chat.Receive("[red]No plushie name was provided.");
                 return;
             }
 
