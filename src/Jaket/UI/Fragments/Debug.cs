@@ -18,7 +18,7 @@ public class Debug : Fragment
     /// <summary> Graphs. </summary>
     private Data[] data = { new(20), new(20), new(97), new(97), new(97), new(97), new(97), new(97) };
     /// <summary> Labels. </summary>
-    private Text entities, players, isowner, loading, gamemode, isactive, islocked;
+    private Text entities, players, isowner, loading, gamemode, isactive, islocked, ping;
 
     public Debug(Transform root) : base(root, "Debug", false)
     {
@@ -107,6 +107,7 @@ public class Debug : Fragment
                     b.Pair("GAMEMODE ", out gamemode);
                     b.Pair("IS ACITVE", out isactive);
                     b.Pair("IS LOCKED", out islocked);
+                    b.Pair("PING     ", out ping);
                 });
             });
             b.Subbar(256f, s =>
@@ -147,6 +148,7 @@ public class Debug : Fragment
         isactive.color = Gameflow.Active ? green : red;
         islocked.text  = Gameflow.LockRespawn.ToString().ToUpper();
         islocked.color = Gameflow.LockRespawn ? green : red;
+        ping.text      = $"{Stats.Ping}ms";
     }
 
     /// <summary> Data warehouse that can be projected onto a graph. </summary>

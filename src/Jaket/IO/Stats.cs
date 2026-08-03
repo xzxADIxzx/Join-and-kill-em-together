@@ -14,6 +14,8 @@ public static class Stats
     public static int Received;
     /// <summary> Number of bytes sent. </summary>
     public static int Sent;
+    /// <summary> Maximum average ping between server and clients. </summary>
+    public static int Ping;
 
     /// <summary> Time spent reading and writing. </summary>
     public static long Read, Write;
@@ -33,7 +35,7 @@ public static class Stats
     /// <summary> Returns the number of milliseconds in a storage. </summary>
     public static float Millis(long store) => store * 1000f / Stopwatch.Frequency;
 
-    /// <summary> Increases sent bytes counter. </summary>
+    /// <summary> Increases the bytes counter. </summary>
     public static void Add(int bytesCount) => Interlocked.Add(ref Sent, bytesCount);
 
     /// <summary> Resets accumulated subticks. </summary>
@@ -44,6 +46,8 @@ public static class Stats
         Subticks = 0;
         Received = 0;
         Interlocked.Exchange(ref Sent, 0);
+
+        Ping = Networking.Connections.Cast(c => c.QuickStatus().Ping).Max();
 
         Read = Write = Entity = Common = Thread = Jitter = 0L;
     }
