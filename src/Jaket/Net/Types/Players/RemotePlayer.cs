@@ -201,9 +201,8 @@ public class RemotePlayer : Entity
     public void Acquire(Agent rocket)
     {
         // the agent is inaccessible outside of this class, so the check has to be done here
-        if (rocket.Parent == agent.transform) return;
+        if (rocket.Parent != agent.transform) rocket.Parent = agent.transform;
 
-        rocket.Parent = agent.transform;
         rocket.transform.localPosition = Vector3.back;
         rocket.transform.localRotation = Quaternion.identity;
     }
