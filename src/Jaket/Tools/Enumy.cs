@@ -32,6 +32,15 @@ public static class Enumy
         return -1;
     }
 
+    /// <summary> Returns the object in the given enumerable at the given index. </summary>
+    public static T At<T>(this IEnumerable<T> seq, int index, Prov<T> defaultProv = null)
+    {
+        foreach (var item in seq) if (index-- <= 0) return item;
+        return defaultProv == null
+            ? default
+            : defaultProv();
+    }
+
     #endregion
     #region count
 
@@ -49,6 +58,25 @@ public static class Enumy
         int amount = 0;
         foreach (var item in seq) if (pred(item)) amount++;
         return amount;
+    }
+
+    #endregion
+    #region extr
+
+    /// <summary> Returns the minimum value in the given enumerable. </summary>
+    public static int Min(this IEnumerable<int> seq)
+    {
+        int min = int.MaxValue;
+        foreach (var item in seq) if (item < min) min = item;
+        return min;
+    }
+
+    /// <summary> Returns the maximum value in the given enumerable. </summary>
+    public static int Max(this IEnumerable<int> seq)
+    {
+        int max = int.MinValue;
+        foreach (var item in seq) if (item > max) max = item;
+        return max;
     }
 
     #endregion
