@@ -74,6 +74,11 @@ public unsafe struct Writer
         *(float*)Inc(4) = z.Next;
     }
 
+    public void Floats(Entity.Float r)
+    {
+        *(float*)Inc(4) = r.Next;
+    }
+
     public void String(string value)
     {
         var bytes = Encoding.ASCII.GetBytes(value ?? "");

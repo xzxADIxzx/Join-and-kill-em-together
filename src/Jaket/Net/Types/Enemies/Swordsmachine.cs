@@ -16,7 +16,7 @@ public class Swordsmachine : Enemy
     SwordsMachine scr;
     Animator animator;
 
-    int running = Animator.StringToHash("Running");
+    static readonly int running = Animator.StringToHash("Running");
 
     public Swordsmachine(uint id, EntityType type) : base(id, type) { }
 
@@ -39,7 +39,7 @@ public class Swordsmachine : Enemy
         else
         {
             w.Floats(x, y, z);
-            w.Float(r.Next);
+            w.Floats(r);
 
             w.Byte(Attack);
             w.Bool(Moving);
@@ -51,7 +51,7 @@ public class Swordsmachine : Enemy
         if (ReadOwner(ref r)) return;
 
         r.Floats(ref x, ref y, ref z);
-        this.r.Set(r.Float());
+        r.Floats(ref this.r);
 
         Attack = r.Byte();
         Moving = r.Bool();
@@ -73,7 +73,7 @@ public class Swordsmachine : Enemy
         else scr.UnEnrage();
     }
 
-    public override void Create() => Assign(Entities.Enemies.Make(Type, new(x.Init, y.Init, z.Init)).AddComponent<Agent>());
+    public override void Create() => Create(Entities.Enemies, ref x, ref y, ref z);
 
     public override void Assign(Agent agent)
     {
@@ -119,7 +119,6 @@ public class Swordsmachine : Enemy
                 w => scr.shotgunPickUp = w.gameObject
             );
             scr.bossVersion = true;
-
             scr.firstPhase = false;
             scr.EndFirstPhase();
             Hidden = false;
@@ -170,7 +169,7 @@ public class Swordsmachine : Enemy
     [Prefix]
     static void Phase(SwordsMachine __instance)
     {
-        if (__instance.TryGetEntity(out Swordsmachine s) && !s.Hidden) s.Kill(2, w => { w.Bool(true); w.Bool(true); });
+        if (__instance.TryGetEntity(out Swordsmachine s) && !s.Hidden) s.Kill(1, w => w.Bools(true, true));
     }
 
     [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.TeleportAway))]

@@ -74,6 +74,11 @@ public unsafe struct Reader
         z.Set(*(float*)Inc(4));
     }
 
+    public void Floats(ref Entity.Float r)
+    {
+        r.Set(*(float*)Inc(4));
+    }
+
     public string String()
     {
         var bytes = new byte[Byte()];

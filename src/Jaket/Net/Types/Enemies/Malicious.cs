@@ -29,7 +29,6 @@ public class Malicious : Enemy
         if (IsOwner)
         {
             w.Vector(agent.Position);
-
             w.Float(pr.eulerAngles.x);
             w.Float(pr.eulerAngles.y);
 
@@ -38,9 +37,8 @@ public class Malicious : Enemy
         else
         {
             w.Floats(x, y, z);
-
-            w.Float(p.Next);
-            w.Float(r.Next);
+            w.Floats(p);
+            w.Floats(r);
 
             w.Byte(Attack);
         }
@@ -51,17 +49,19 @@ public class Malicious : Enemy
         if (ReadOwner(ref r)) return;
 
         r.Floats(ref x, ref y, ref z);
-
-        this.p.Set(r.Float());
-        this.r.Set(r.Float());
+        r.Floats(ref this.p);
+        r.Floats(ref this.r);
 
         Attack = r.Byte();
     }
 
     #endregion
-    #region logic
+    #region properties
 
     public override bool Remain => agent;
+
+    #endregion
+    #region logic
 
     public override void Rage(bool enraged)
     {
@@ -76,7 +76,7 @@ public class Malicious : Enemy
 
     public override float Rate(RemotePlayer target) => target.Health * target.Health * 2f + base.Rate(target);
 
-    public override void Create() => Assign(Entities.Enemies.Make(Type, new(x.Init, y.Init, z.Init)).AddComponent<Agent>());
+    public override void Create() => Create(Entities.Enemies, ref x, ref y, ref z);
 
     public override void Assign(Agent agent)
     {
@@ -147,7 +147,7 @@ public class Malicious : Enemy
     static void Break(MaliciousFace __instance) => Networking.Entities.Each
     (
         e => e is Malicious m && m.scr == __instance,
-        e => e.Kill(2, w => { w.Bool(true); w.Bool(true); })
+        e => e.Kill(1, w => w.Bools(true, true))
     );
 
     [DynamicPatch(typeof(MaliciousFace), nameof(MaliciousFace.Enrage))]

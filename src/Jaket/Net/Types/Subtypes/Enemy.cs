@@ -9,8 +9,6 @@ using Jaket.IO;
 /// <summary> Abstract entity of any enemy type. </summary>
 public abstract class Enemy : OwnableEntity
 {
-    static NewMovement nm => NewMovement.Instance;
-
     Agent agent;
     Cache<RemotePlayer> player;
     EnemyIdentifier enemyId;
@@ -36,15 +34,11 @@ public abstract class Enemy : OwnableEntity
 
     public Enemy(uint id, EntityType type) : base(id, type) { }
 
-    #region logic
+    #region properties
 
-    public void Enrage(bool enraged = true) => Kill(4, w =>
-    {
-        w.Bool(false);
-        w.Bool(false);
-        w.Bool(true);
-        w.Bool(enraged);
-    });
+    public override bool Debuggable => agent;
+
+    public override Vector3 DrawPos => agent.Position;
 
     public virtual Transform WeakPoint => enemyId.weakPoint?.transform ?? agent.transform;
 
@@ -52,11 +46,14 @@ public abstract class Enemy : OwnableEntity
 
     public virtual bool Remain => false;
 
+    #endregion
+    #region logic
+
     public virtual void Heal() => enemy.health = Mathf.Min(PostHealth, enemy.health + PostHealth / (LobbyController.Lobby?.MemberCount ?? 1f));
 
     public virtual void Rage(bool enraged) => Enraged = enraged;
 
-    public virtual float Rate(LocalPlayer target) => nm.dead ? float.MaxValue : (nm.transform.position - agent.Position).sqrMagnitude;
+    public virtual float Rate(LocalPlayer target) => NewMovement.Instance.dead ? float.MaxValue : (NewMovement.Instance.transform.position - agent.Position).sqrMagnitude;
 
     public virtual float Rate(RemotePlayer target) => (target.Position - agent.Position).sqrMagnitude;
 
@@ -102,11 +99,9 @@ public abstract class Enemy : OwnableEntity
 
         OnTransfer();
 
-        if (Boss) agent.Run(() => Kill(10, w =>
+        if (Boss) agent.Run(() => Kill(9, w =>
         {
-            w.Bool(false);
-            w.Bool(enemyId.isBoss = true);
-
+            w.Bools(false, false, enemyId.isBoss = true);
             w.Float(PostHealth);
             w.Int(bossbar.healthLayers.Length);
         }), .1f);
@@ -118,37 +113,40 @@ public abstract class Enemy : OwnableEntity
     {
         if (left == 0)
         {
-            Hidden = true;
-            if (agent) Dest(agent.gameObject);
+            Killed(r, left, agent, bits => { });
+            return;
         }
 
-        if (left >= 1 && r.Bool())
+        r.Bools(out var killed, out var explode, out var boss, out var rage, out var enraged, out _, out _, out _);
+
+        if (killed)
         {
             if (Remain)
                 LastHidden = Time.time + 240f;
             else
                 Hidden = true;
 
-            Killed(r.Bool());
+            Events.Post(() => Killed(explode));
             return;
         }
 
-        if (left >= 2 && r.Bool())
+        if (boss)
         {
             Boss = enemyId.isBoss = true;
             PostHealth = enemy.health = r.Float();
 
             int layers = r.Int();
-            if (layers == 0) return;
+            if (layers != 0) Events.Post(() =>
+            {
+                bossbar ??= agent.GetOrAddComponent<BossHealthBar>();
+                bossbar.healthLayers = new HealthLayer[layers];
 
-            bossbar ??= agent.GetOrAddComponent<BossHealthBar>();
-            bossbar.healthLayers = new HealthLayer[layers];
-
-            for (int i = 0; i < layers; i++) bossbar.healthLayers[i] = new() { health = PostHealth / layers };
-            BossBarManager.Instance.bossBarsToRemove.Enqueue(bossbar.bossBarId);
+                for (int i = 0; i < layers; i++) bossbar.healthLayers[i] = new() { health = PostHealth / layers };
+                BossBarManager.Instance.bossBarsToRemove.Enqueue(bossbar.bossBarId);
+            });
         }
 
-        if (left >= 3 && r.Bool()) Rage(r.Bool());
+        if (rage) Events.Post(() => Rage(enraged));
     }
 
     public virtual void Killed(bool explode)
@@ -161,9 +159,14 @@ public abstract class Enemy : OwnableEntity
             enemyId.InstaKill();
 
         enemyId.dontCountAsKills = true;
-
         Dest(agent);
     }
+
+    #endregion
+    #region other
+
+    /// <summary> Enrages the enemy both remotely and locally. </summary>
+    protected void Enrage(bool enraged = true) => Kill(1, w => w.Bools(false, false, false, true, enraged));
 
     #endregion
     #region harmony
@@ -179,14 +182,14 @@ public abstract class Enemy : OwnableEntity
     [Prefix]
     static void Break(EnemyIdentifier __instance)
     {
-        if (__instance.TryGetEntity(out Enemy e) && !e.Hidden) e.Kill(2, w => { w.Bool(true); w.Bool(true); });
+        if (__instance.TryGetEntity(out Enemy e) && !e.Hidden) e.Kill(1, w => w.Bools(true, true));
     }
 
     [DynamicPatch(typeof(EnemyIdentifier), nameof(EnemyIdentifier.ProcessDeath))]
     [Prefix]
     static void Death(EnemyIdentifier __instance)
     {
-        if (__instance.TryGetEntity(out Enemy e) && !e.Hidden) e.Kill(2, w => { w.Bool(true); w.Bool(false); });
+        if (__instance.TryGetEntity(out Enemy e) && !e.Hidden) e.Kill(1, w => w.Bools(true, false));
     }
 
     [DynamicPatch(typeof(EnemyIdentifier), nameof(EnemyIdentifier.UpdateTarget))]

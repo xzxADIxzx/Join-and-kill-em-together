@@ -40,11 +40,11 @@ public class Damage : Vendor
     });
 
     /// <summary> Delivers remote damage from the network. </summary>
-    public void Deal(EnemyIdentifier eid, float damage)
+    public void Deal(EnemyIdentifier eid, float damage) => Events.Post(() =>
     {
         eid.hitter = "network";
         eid.DeliverDamage(eid.gameObject, default, default, damage, false);
-    }
+    });
 
     #endregion
     #region harmony

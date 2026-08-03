@@ -17,8 +17,8 @@ public class Husk : Enemy
     ZombieProjectiles scr2;
     Animator animator;
 
-    int running = Animator.StringToHash("Running");
-    int runmult = Animator.StringToHash("RunSpeed");
+    static readonly int running = Animator.StringToHash("Running");
+    static readonly int runmult = Animator.StringToHash("RunSpeed");
 
     public Husk(uint id, EntityType type) : base(id, type) { }
 
@@ -41,7 +41,7 @@ public class Husk : Enemy
         else
         {
             w.Floats(x, y, z);
-            w.Float(r.Next);
+            w.Floats(r);
 
             w.Byte(Attack);
             w.Bool(Moving);
@@ -53,7 +53,7 @@ public class Husk : Enemy
         if (ReadOwner(ref r)) return;
 
         r.Floats(ref x, ref y, ref z);
-        this.r.Set(r.Float());
+        r.Floats(ref this.r);
 
         Attack = r.Byte();
         Moving = r.Bool();
@@ -62,16 +62,16 @@ public class Husk : Enemy
     #endregion
     #region logic
 
-    public override void Create() => Assign(Entities.Enemies.Make(Type, new(x.Init, y.Init, z.Init)).AddComponent<Agent>());
+    public override void Create() => Create(Entities.Enemies, ref x, ref y, ref z);
 
     public override void Assign(Agent agent)
     {
         base.Assign(this.agent = agent);
 
-        agent.Get(out animator);
         agent.Get(out nma);
         agent.Get(out scr1, true);
         agent.Get(out scr2, true);
+        agent.Get(out animator);
     }
 
     public override void Update(float delta)
