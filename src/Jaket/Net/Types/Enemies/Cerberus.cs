@@ -16,7 +16,7 @@ public class Cerberus : Enemy
     StatueBoss scr;
     Animator animator;
 
-    int running = Animator.StringToHash("Walking");
+    static readonly int running = Animator.StringToHash("Walking");
 
     public Cerberus(uint id, EntityType type) : base(id, type) { }
 
@@ -39,7 +39,7 @@ public class Cerberus : Enemy
         else
         {
             w.Floats(x, y, z);
-            w.Float(r.Next);
+            w.Floats(r);
 
             w.Byte(Attack);
             w.Bool(Moving);
@@ -51,7 +51,7 @@ public class Cerberus : Enemy
         if (ReadOwner(ref r)) return;
 
         r.Floats(ref x, ref y, ref z);
-        this.r.Set(r.Float());
+        r.Floats(ref this.r);
 
         Attack = r.Byte();
         Moving = r.Bool();
@@ -69,7 +69,7 @@ public class Cerberus : Enemy
             scr.UnEnrage();
     }
 
-    public override void Create() => Assign(Entities.Enemies.Make(Type, new(x.Init, y.Init, z.Init)).AddComponent<Agent>());
+    public override void Create() => Create(Entities.Enemies, ref x, ref y, ref z);
 
     public override void Assign(Agent agent)
     {
