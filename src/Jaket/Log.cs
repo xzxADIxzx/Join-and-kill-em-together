@@ -13,10 +13,8 @@ using static Jaket.UI.Lib.Pal;
 /// <summary> Logger used in the project for convenience. </summary>
 public static class Log
 {
-    /// <summary> Time format used by the logger. </summary>
-    public const string TIME_FORMAT = "yyyy.MM.dd HH:mm:ss";
     /// <summary> Formatted regional time. </summary>
-    public static string Time => DateTime.Now.ToString(TIME_FORMAT);
+    public static string Time => DateTime.Now.ToString("yyyy.MM.dd HH:mm:ss");
 
     /// <summary> Number of logs that are stored in memory before being written. </summary>
     public const int STORAGE_CAPACITY = 64;
@@ -28,7 +26,7 @@ public static class Log
     /// <summary> Logs that are being written at the moment. </summary>
     public static List<string> Writing;
 
-    /// <summary> Output point for Unity and in-game console. </summary>
+    /// <summary> Output point for Unity and console. </summary>
     public static Logger Logger;
     /// <summary> Output point for long-term logging. </summary>
     public static string File;
@@ -43,9 +41,15 @@ public static class Log
     /// <summary> Formats and writes the message to the output points. </summary>
     public static void LogLevel(Level level, string msg)
     {
+        if (!UnityEngine.Object.CurrentThreadIsMainThread())
+        {
+            Events.Post(() => LogLevel(level, msg));
+            return;
+        }
+
         Logger.Record(level == Level.Debug ? $"<color={Light}>{msg}</color>" : msg, level switch
         {
-            Level.Debug   => PLevel.Info,
+            Level.Debug   => PLevel.CommandLine,
             Level.Info    => PLevel.Info,
             Level.Warning => PLevel.Warning,
             Level.Error   => PLevel.Error,
@@ -89,6 +93,6 @@ public static class Log
         Debug   = 'D',
         Info    = 'I',
         Warning = 'W',
-        Error   = 'E'
+        Error   = 'E',
     }
 }
