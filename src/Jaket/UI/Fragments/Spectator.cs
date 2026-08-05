@@ -37,12 +37,12 @@ public class Spectator : Fragment
 
     public Spectator(Transform root) : base(root, "Spectator", false)
     {
-        Events.EveryHalf += () => Shader.SetGlobalFloat
+        Events.EveryHalf += () => Events.Post(() => Shader.SetGlobalFloat
         (
             "_Deathness",
             Random.value / (3f + Random.value)
-        );
-        Events.EveryHalf += () => Shader.SetGlobalFloat("_RandomNoiseStrength", .1f);
+        ));
+        Events.EveryHalf += () => Events.Post(() => Shader.SetGlobalFloat("_RandomNoiseStrength", .1f));
 
         info = Builder.Text(Fill("Info"), "hi", 24, white, TextAnchor.UpperLeft);
         dead = Builder.Image(Fill("Eye"), Tex.Dead, white);

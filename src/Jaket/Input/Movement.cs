@@ -37,7 +37,7 @@ public class Movement : MonoSingleton<Movement>
     private void Start()
     {
         Events.OnLoad += () => UpdateState(true);
-        Events.EveryHalf += () =>
+        Events.EveryHalf += () => Events.Post(() =>
         {
             if (ch.cheatsEnabled && LobbyController.Online && !Administration.Privileged)
             {
@@ -52,7 +52,7 @@ public class Movement : MonoSingleton<Movement>
                 ac.majorEnabled = false;
                 Bundle.Hud("major-assist");
             }
-        };
+        });
     }
 
     private void Update()

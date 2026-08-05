@@ -28,7 +28,7 @@ public class Client : Endpoint, IConnectionManager
             var id = r.Id();
             var type = r.EntityType();
 
-            if (ents.TryGetValue(id, out var entity)) entity.Read(r);
+            if (ents[id] is Entity entity) entity.Read(r);
             else
             {
                 entity = Entities.Supply(id, type);
@@ -52,12 +52,12 @@ public class Client : Endpoint, IConnectionManager
 
         Listen(PacketType.Damage, r =>
         {
-            if (ents.TryGetValue(r.Id(), out var e)) e.Damage(r);
+            if (ents[r.Id()] is Entity e) e.Damage(r);
         });
 
         Listen(PacketType.Death, (con, sender, r, s) =>
         {
-            if (ents.TryGetValue(r.Id(), out var e)) e.Killed(r, s - 5);
+            if (ents[r.Id()] is Entity e) e.Killed(r, s - 5);
         });
 
         Listen(PacketType.Style, r =>
@@ -117,7 +117,7 @@ public class Client : Endpoint, IConnectionManager
         Stats.Measure(ref Stats.Write, () =>
         {
             if (Networking.Loading) return;
-            ents.ClientPool(pool = ++pool % Networking.SUBTICKS_PER_TICK, Networking.SUBTICKS_PER_TICK, Networking.Send);
+            ents.ClientPool(ref pool, Networking.Send);
         });
         Manager.Connection.Flush();
     }

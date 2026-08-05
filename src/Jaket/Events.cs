@@ -107,7 +107,7 @@ public static class Events
             if (Stopwatch.GetTimestamp() - half > hsec)
             {
                 half = Stopwatch.GetTimestamp();
-                Post(EveryHalf.Fire);
+                Stats.Measure(ref Stats.Thread, EveryHalf.Fire);
             }
 
             if (Stopwatch.GetTimestamp() - tick > step)

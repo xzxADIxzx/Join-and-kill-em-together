@@ -2,7 +2,7 @@ namespace Jaket.Net;
 
 using Player = Types.RemotePlayer;
 
-/// <summary> Simple hash map divided into four pools. Uses unsigned integers as keys and entities as values. </summary>
+/// <summary> Thread-safe single-writer hash map of entities with lock-free reading. </summary>
 public class Pools
 {
     /// <summary> Each fourth entry belongs to the same pool. </summary>
@@ -10,14 +10,17 @@ public class Pools
 
     #region general
 
-    /// <summary> Adds a new entry if there is no entry with the given key/id, or changes the existing one. </summary>
+    /// <summary> Adds a new entry if there is no entity with the given key/id, or changes the existing one. </summary>
     public void Set(uint key, Entity value)
     {
         ref var entry = ref entries[key & 0x3FF];
 
         while (entry != null && entry.Key != key) entry = ref entry.Next;
-        entry ??= new() { Key = key };
-        entry.Value = value;
+
+        if (entry == null)
+            entry = new() { Key = key, Value = value };
+        else
+            entry.Value = value;
     }
 
     /// <summary> Returns an entity with the given key/id if any, or null. </summary>
@@ -29,18 +32,8 @@ public class Pools
         return entry?.Value;
     }
 
-    /// <summary> Returns whether an entity with the given key/id was found in the hash map. </summary>
-    public bool TryGetValue(uint key, out Entity value)
-    {
-        var entry = entries[key & 0x3FF];
-
-        while (entry != null && entry.Key != key) entry = entry.Next;
-        value = entry?.Value;
-        return entry != null;
-    }
-
     /// <summary> Returns whether an entity with the given key/id is present in the hash map. </summary>
-    public bool Contains(uint key) => TryGetValue(key, out _);
+    public bool Contains(uint key) => this[key] != null;
 
     /// <summary> Removes an entity with the given key/id from the hash map. </summary>
     public void Remove(uint key)
@@ -72,24 +65,24 @@ public class Pools
     }
 
     /// <summary> Iterates each nonnull entity in the hash map. </summary>
-    public void Each(Cons<Entity> cons)                      => Each(0, 1, cons);
+    public void Each         (                   Cons<Entity> cons) => Each(0, 1, cons);
     /// <summary> Iterates each nonnull entity in the hash map. </summary>
-    public void Each(Pred<Entity> pred, Cons<Entity> cons)   => Each(0, 1, e => { if (pred(e)) cons(e); });
+    public void Each         (Pred<Entity> pred, Cons<Entity> cons) => Each(0, 1, e => { if (pred(e)) cons(e); });
 
     /// <summary> Iterates each visible entity in the hash map. </summary>
-    public void Alive<T>(Cons<T> cons)                       => Each(0, 1, e => { if (!e.Hidden && e is T t) cons(t); });
+    public void Alive<Tangbl>(                   Cons<Tangbl> cons) => Each(0, 1, e => { if (!e.Hidden && e is Tangbl t           ) cons(t); });
     /// <summary> Iterates each visible entity in the hash map. </summary>
-    public void Alive<T>(Pred<T> pred, Cons<T> cons)         => Each(0, 1, e => { if (!e.Hidden && e is T t && pred(t)) cons(t); });
+    public void Alive<Tangbl>(Pred<Tangbl> pred, Cons<Tangbl> cons) => Each(0, 1, e => { if (!e.Hidden && e is Tangbl t && pred(t)) cons(t); });
 
     /// <summary> Iterates each visible player in the hash map. </summary>
-    public void Player(Cons<Player> cons)                    => Each(0, 1, e => { if (!e.Hidden && e is Player p) cons(p); });
+    public void Player       (                   Cons<Player> cons) => Each(0, 1, e => { if (!e.Hidden && e is Player p           ) cons(p); });
     /// <summary> Iterates each visible player in the hash map. </summary>
-    public void Player(Pred<Player> pred, Cons<Player> cons) => Each(0, 1, e => { if (!e.Hidden && e is Player p && pred(p)) cons(p); });
+    public void Player       (Pred<Player> pred, Cons<Player> cons) => Each(0, 1, e => { if (!e.Hidden && e is Player p && pred(p)) cons(p); });
 
-    /// <summary> Iterates each visible entity in the given server pool. </summary>
-    public void ServerPool(int i, int s, Cons<Entity> cons)  => Each(i, s, e => { if (!e.Hidden) cons(e); });
-    /// <summary> Iterates each visible entity in the given client pool. </summary>
-    public void ClientPool(int i, int s, Cons<Entity> cons)  => Each(i, s, e => { if (!e.Hidden && e.IsOwner) cons(e); });
+    /// <summary> Iterates each visible entity in the set pool. </summary>
+    public void ServerPool   (ref int pool,      Cons<Entity> cons) => Each(pool = ++pool % Networking.SUBTICKS_PER_TICK, Networking.SUBTICKS_PER_TICK, e => { if (!e.Hidden             ) cons(e); });
+    /// <summary> Iterates each visible entity in the set pool. </summary>
+    public void ClientPool   (ref int pool,      Cons<Entity> cons) => Each(pool = ++pool % Networking.SUBTICKS_PER_TICK, Networking.SUBTICKS_PER_TICK, e => { if (!e.Hidden && e.IsOwner) cons(e); });
 
     /// <summary> Counts the number of entities that are suitable for the given predicate. </summary>
     public int Count(Pred<Entity> pred)

@@ -67,7 +67,7 @@ public class Gameflow
             Bleedy = LobbyConfig.Bleedy;
         };
         Events.OnLoad += Countdown;
-        Events.EveryHalf += () =>
+        Events.EveryHalf += () => Events.Post(() =>
         {
             if (LobbyController.Offline || !Active) return;
             if (Mode.HPs()) UpdateHPs();
@@ -75,7 +75,7 @@ public class Gameflow
             if (Mode == Gamemode.Hardcore || Spectator.Special) UpdateRES();
 
             if (Bleedy) nm.GetHurt(1, Mode != Gamemode.Hardcore, 0f);
-        };
+        });
     }
 
     /// <summary> Counts a few seconds down before restarting the round. </summary>

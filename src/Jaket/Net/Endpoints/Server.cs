@@ -28,7 +28,7 @@ public class Server : Endpoint, ISocketManager
 
             if ((id == sender) != (type == EntityType.Player)) return;
 
-            if (ents.TryGetValue(id, out var entity)) entity.Read(r);
+            if (ents[id] is Entity entity) entity.Read(r);
             else
             {
                 entity = Entities.Supply(id, type);
@@ -57,7 +57,7 @@ public class Server : Endpoint, ISocketManager
 
         Listen(PacketType.Damage, (con, sender, r, s) =>
         {
-            if (ents.TryGetValue(r.Id(), out var e))
+            if (ents[r.Id()] is Entity e)
             {
                 e.Damage(r);
                 Redirect(r, s, con);
@@ -66,7 +66,7 @@ public class Server : Endpoint, ISocketManager
 
         Listen(PacketType.Death, (con, sender, r, s) =>
         {
-            if (ents.TryGetValue(r.Id(), out var e) && e is not LocalPlayer && e is not RemotePlayer)
+            if (ents[r.Id()] is Entity e && e is not LocalPlayer && e is not RemotePlayer)
             {
                 e.Killed(r, s - 5);
                 Redirect(r, s, con);
@@ -146,7 +146,7 @@ public class Server : Endpoint, ISocketManager
         Stats.Measure(ref Stats.Write, () =>
         {
             if (Networking.Loading) return;
-            ents.ServerPool(pool = ++pool % Networking.SUBTICKS_PER_TICK, Networking.SUBTICKS_PER_TICK, Networking.Send);
+            ents.ServerPool(ref pool, Networking.Send);
         });
         Manager.Connected.Each(c => c.Flush());
     }
@@ -210,7 +210,7 @@ public class Server : Endpoint, ISocketManager
     public void OnDisconnected(Connection con, ConnectionInfo info)
     {
         Log.Info($"[SERVER] {info.Identity.SteamId.AccountId} disconnected");
-        if (ents.TryGetValue(info.Identity.SteamId.AccountId, out var e) && e is RemotePlayer p) p.Kill();
+        if (ents[info.Identity.SteamId.AccountId] is RemotePlayer p) p.Kill();
     }
 
     public void OnMessage(Connection con, NetIdentity netId, Ptr data, int size, long msg, long time, int channel)

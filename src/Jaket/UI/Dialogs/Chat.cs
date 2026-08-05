@@ -56,7 +56,7 @@ public class Chat : Fragment
         {
             if (string.IsNullOrWhiteSpace(chat.text) && !Settings.SkipHelloMessage) SayHello();
         };
-        Events.EveryHalf += Rebuild;
+        Events.EveryHalf += () => Events.Post(Rebuild);
 
         chatBg = Builder.Image(Rect("Chat", new(640f, 30f)), Tex.Fill, invi).rectTransform;
         infoBg = Builder.Image(Rect("Info", new(640f, 30f)), Tex.Fill, invi).rectTransform;
