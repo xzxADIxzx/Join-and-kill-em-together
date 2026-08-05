@@ -142,6 +142,8 @@ public class Gameflow
     /// <summary> Handles gamemode specific actions on player death. </summary>
     public static void OnDeath(Friend member)
     {
+        StyleHUD.Instance.AddPoints(Mathf.RoundToInt(420f * StyleCalculator.Instance.airTime), Bundle.Parse("[green]FRATRICIDE"));
+
         if (Mode.HPs() || Mode.NoRestarts())
         {
             static void Dec(byte id) { if (health[id] > 0 && health[id] != byte.MaxValue) health[id]--; }

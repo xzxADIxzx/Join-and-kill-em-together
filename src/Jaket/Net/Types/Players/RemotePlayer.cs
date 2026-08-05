@@ -62,6 +62,8 @@ public class RemotePlayer : Entity
         w.Byte(Health);
         w.Byte(Charge);
 
+        if (Doll?.Animator == null) return;
+
         w.Player(Team, Weapon, Doll.Emote, Doll.Rps, Typing);
         Doll.WriteAnim(w);
     }
@@ -81,7 +83,7 @@ public class RemotePlayer : Entity
         Health = r.Byte();
         Charge = r.Byte();
 
-        if (Doll == null) return;
+        if (Doll?.Animator == null) return;
 
         r.Player(out Team, out Weapon, out Doll.Emote, out Doll.Rps, out Typing);
         Doll.ReadAnim(r);

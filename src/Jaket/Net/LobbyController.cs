@@ -100,7 +100,9 @@ public static class LobbyController
         Lobby?.Leave();
         Lobby = null;
 
-        Networking.Close();
+        Networking.Server.Close();
+        Networking.Client.Close();
+
         if (load) LoadScn("Main Menu");
 
         Events.OnLobbyAction.Fire();

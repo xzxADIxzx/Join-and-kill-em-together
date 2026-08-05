@@ -41,7 +41,7 @@ public static class Tools
         /// <summary> Team of the member. </summary>
         public Team Team => member.IsMe
             ? Networking.LocalPlayer.Team
-            : Networking.Entities.TryGetValue(member.AccId, out var e) && e is RemotePlayer p ? p.Team : Team.None;
+            : Networking.Entities[member.AccId] is RemotePlayer p ? p.Team : Team.None;
     }
 
     #endregion

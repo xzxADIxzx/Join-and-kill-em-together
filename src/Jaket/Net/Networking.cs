@@ -21,7 +21,7 @@ using static Jaket.UI.Lib.Pal;
 /// <summary> Class responsible for updating endpoints, transmitting packets and managing entities. </summary>
 public static class Networking
 {
-    /// <summary> Number of snapshots per second. </summary>
+    /// <summary> Number of ticks per second. </summary>
     public const int TICKS_PER_SECOND = 30;
     /// <summary> Number of subticks per tick. </summary>
     public const int SUBTICKS_PER_TICK = 4;
@@ -38,8 +38,6 @@ public static class Networking
 
     /// <summary> Whether any scene is loading at the moment. </summary>
     public static bool Loading;
-    /// <summary> Whether multiplayer was used in the current level. </summary>
-    public static bool WasMultiplayerUsed;
 
     /// <summary> Returns the list of all entities. </summary>
     public static Entity[] Dump
@@ -74,17 +72,15 @@ public static class Networking
         Events.EveryTick += Update;
         Events.EveryHalf += Optimize;
 
-        Events.OnLoad        += () => WasMultiplayerUsed  = LobbyController.Online;
-        Events.OnLobbyAction += () => WasMultiplayerUsed |= LobbyController.Online;
-
         Events.OnLoadingStart += () =>
         {
             if (LobbyController.Online) SceneHelper.SetLoadingSubtext(Random.value < .042f ? "I love you" : "/// MULTIPLAYER VIA JAKET ///");
             Loading = true;
         };
+
         Events.OnLoad += () =>
         {
-            Clear(true);
+            Entities.Each(e => e != LocalPlayer && e is not RemotePlayer, e => e.Hidden = true);
             Loading = false;
         };
 
@@ -97,8 +93,10 @@ public static class Networking
             else
                 Client.Connect(LobbyController.Lobby.Value.Owner.Id);
 
+            Entities.Clear();
+            LocalPlayer.Push();
+
             Loading = !LobbyController.IsOwner;
-            Clear();
         };
 
         Events.OnMemberJoin += member =>
@@ -131,8 +129,6 @@ public static class Networking
             {
                 Bundle.Msg("player.died", name);
 
-                StyleHUD.Instance.AddPoints(Mathf.RoundToInt(420f * StyleCalculator.Instance.airTime), Bundle.Parse("[green]FRATRICIDE"));
-
                 Gameflow.OnDeath(member);
 
                 if (LobbyConfig.HealBosses) Entities.Alive<Enemy>(e => e.Boss, e => e.Heal());
@@ -155,7 +151,7 @@ public static class Networking
                 if (member.IsMe)
                     SamAPI.TryPlay(msg = msg[3..], LocalPlayer.Voice);
 
-                else if (Entities.TryGetValue(member.AccId, out var e) && e is RemotePlayer p)
+                else if (Entities[member.AccId] is RemotePlayer p)
                     SamAPI.TryPlay(msg = msg[3..], p.Voice);
 
                 UI.Chat.Receive(msg, Int2Hex(member.Team.Color()), name, Chat.TTS_TAG);
@@ -165,8 +161,8 @@ public static class Networking
         };
     }
 
-    /// <summary> Updates network logic, i.e. receives incoming data and flushes outcoming one. </summary>
-    public static void Update()
+    /// <summary> Updates network statistics and endpoints. </summary>
+    private static void Update()
     {
         Stats.Reset();
 
@@ -177,36 +173,10 @@ public static class Networking
             Client.Update();
     }
 
-    /// <summary> Optimizes the pools by removing hidden entities, making the hashmap lighter. </summary>
-    public static void Optimize()
+    /// <summary> Optimizes the pools by removing entities. </summary>
+    private static void Optimize()
     {
         if (LobbyController.Online) Entities.Each(e => Time.time - e.LastHidden >= 2f, e => Entities.Remove(e.Id));
-    }
-
-    /// <summary> Clears the pools, but pushes the local player back, as it must always be in. </summary>
-    public static void Clear(bool leave = false)
-    {
-        if (leave) Entities.Each(e => e != LocalPlayer, e =>
-        {
-            if (e is RemotePlayer)
-                e.LastHidden = 0f;
-            else
-                e.Hidden = true;
-        });
-        else
-        {
-            Entities.Player(p => p.Killed(default, -1));
-            Entities.Clear();
-        }
-        LocalPlayer.Push();
-    }
-
-    /// <summary> Closes all of the connections and clears the pools. </summary>
-    public static void Close()
-    {
-        Clear();
-        Server.Close();
-        Client.Close();
     }
 
     #endregion
