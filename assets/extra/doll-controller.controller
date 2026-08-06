@@ -1083,7 +1083,7 @@ AnimatorController:
   - serializedVersion: 5
     m_Name: movement
     m_StateMachine: {fileID: 1136673653557033883}
-    m_Mask: {fileID: 31900000, guid: 2022881784f5ee545971649087420352, type: 2}
+    m_Mask: {fileID: 31900000, guid: 975d4321828c6d547862fdd6dfa0850e, type: 2}
     m_Motions: []
     m_Behaviours: []
     m_BlendingMode: 0
@@ -1095,7 +1095,7 @@ AnimatorController:
   - serializedVersion: 5
     m_Name: hand
     m_StateMachine: {fileID: 7266494923528639282}
-    m_Mask: {fileID: 31900000, guid: 40549c06ad5463d4c969c4edb05f2332, type: 2}
+    m_Mask: {fileID: 31900000, guid: 6cf7d1fedb240a552975992ea2b73d61, type: 2}
     m_Motions: []
     m_Behaviours: []
     m_BlendingMode: 0
@@ -1107,7 +1107,7 @@ AnimatorController:
   - serializedVersion: 5
     m_Name: emotes
     m_StateMachine: {fileID: 4357074807214817231}
-    m_Mask: {fileID: 31900000, guid: 4fb9b363096869143acfaa5123e6eeba, type: 2}
+    m_Mask: {fileID: 31900000, guid: e1cf2214fbfdafc6a81c281a5e6a989b, type: 2}
     m_Motions: []
     m_Behaviours: []
     m_BlendingMode: 0
