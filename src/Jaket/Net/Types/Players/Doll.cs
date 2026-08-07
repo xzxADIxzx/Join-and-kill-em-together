@@ -36,14 +36,7 @@ public class Doll
     /// <summary> Position in which the doll holds an item. </summary>
     public Vector3 HoldPosition => Hooking ? Hook.position : HookRoot.position;
     /// <summary> Angle of the head rotation relative to the respective bone. </summary>
-    public float HeadAngle
-    {
-        set
-        {
-            Head.localPosition = Vector3.up * .0021f; // the fuck are you doing, Unity?
-            Head.localRotation = Quaternion.Euler(value, 0f, 0f);
-        }
-    }
+    public float HeadAngle { set => Animator.SetFloat("head-angle", (90f + value) / 180f); }
 
     /// <summary> Materials of the wings, coin, skateboard and ears. </summary>
     public Material WingMat, CoinMat, SkateMat, EarsMat;

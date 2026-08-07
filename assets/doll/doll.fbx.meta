@@ -63,6 +63,12 @@ ModelImporter:
       lastFrame: 23
       loopTime: 1
     - serializedVersion: 16
+      name: doll-head
+      takeName: Metarig|Head
+      internalID: -4485324717559401194
+      lastFrame: 180
+      loopTime: 0
+    - serializedVersion: 16
       name: doll-idle
       takeName: Metarig|Idle
       internalID: 1694128141616201386
