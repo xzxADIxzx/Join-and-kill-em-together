@@ -55,12 +55,12 @@ ModelImporter:
       takeName: Metarig|Dash
       internalID: 7013284073640473031
       lastFrame: 13
-      loopTime: 1
+      loopTime: 0
     - serializedVersion: 16
       name: doll-fall
       takeName: Metarig|Fall
       internalID: 920934947348179337
-      lastFrame: 23
+      lastFrame: 24
       loopTime: 1
     - serializedVersion: 16
       name: doll-head
@@ -72,7 +72,7 @@ ModelImporter:
       name: doll-idle
       takeName: Metarig|Idle
       internalID: 1694128141616201386
-      lastFrame: 23
+      lastFrame: 24
       loopTime: 1
     - serializedVersion: 16
       name: doll-jump
@@ -180,7 +180,7 @@ ModelImporter:
       name: doll-walk
       takeName: Metarig|Walk
       internalID: 1693702656368521793
-      lastFrame: 23
+      lastFrame: 24
       loopTime: 1
     - serializedVersion: 16
       name: emote-waving
