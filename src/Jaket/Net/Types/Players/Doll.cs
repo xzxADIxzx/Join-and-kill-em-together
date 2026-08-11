@@ -1,16 +1,18 @@
 namespace Jaket.Net.Types;
 
+using ULTRAKILL.Portal;
 using UnityEngine;
 
 using Jaket.Assets;
 using Jaket.Content;
+using Jaket.Input;
 using Jaket.IO;
 
 /// <summary>
 /// Doll of a player, remote from network or local from emotes.
-/// Responsible for the visual part of the player, i.e. suits and animations.
+/// Responsible for the visual part of the player.
 /// </summary>
-public class Doll
+public class Doll : Entity
 {
     /// <summary> Animation controller of the doll. </summary>
     public Animator Animator;
@@ -47,70 +49,152 @@ public class Doll
     /// <summary> Winch of the hook. </summary>
     public LineRenderer HookWinch;
 
-    public Doll(Runnable onEmote) => OnEmote = onEmote;
+    public Doll() : base(AccId, EntityType.None) { }
 
-    /// <summary> Assigns the doll to the given transform. </summary>
-    public void Assign(Transform root)
+    #region snapshot
+
+    public override int BufferSize => 17;
+
+    public override void Write(Writer w)
     {
-        Animator = (Root = root).GetComponentInChildren<Animator>();
-        Transform
-            mod = root.Find("Model"),
-            rig = root.Find("Model/Metarig");
+        Renderer r = null;
+        var weapon = GunControl.Instance.currentWeapon;
+        var custom = (weapon?.GetComponentInChildren<GunColorGetter>()?.TryGetComponent(out r) ?? false) && r.material.name.Contains("Custom");
 
-        Head       = rig.Find("Spine 0/Spine 1/Spine 2#");
-        Hand       = rig.Find("Spine 0/Right Shoulder/Right Elbow/Right Wrist");
-        Hook       = rig.Find("Hook");
-        HookRoot   = rig.Find("Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm");
-        Throne     = rig.Find("Throne");
-        Coin       = mod.Find("Coin");
-        Skateboard = mod.Find("Skateboard");
-        Suits      = mod.Find("Suits");
+        w.Enum(Networking.LocalPlayer.Team);
+        w.Enum(Entities.Weapons.Type(weapon));
 
-        // parameters of the hand transform are overwritten on weapon swap
-        Hand = Create("Weapons Root", Hand).transform;
+        w.Byte(Shop.SelectedHat);
+        w.Byte(Shop.SelectedJacket);
 
-        WingMat    = mod.Find("Doll").GetComponent<Renderer>().materials[1];
-        CoinMat    = Coin.GetComponent<Renderer>().material;
-        SkateMat   = Skateboard.GetComponent<Renderer>().material;
-        EarsMat    = Suits.Find("Big Ears").GetComponent<Renderer>().material;
-        WingTrail  = root.GetComponentInChildren<TrailRenderer>();
-        WingLight  = root.GetComponentInChildren<Light>();
-        HookWinch  = root.GetComponentInChildren<LineRenderer>(true);
-
-        // update the material and texture of the hook winch to match the original
-        if (HookWinch) HookWinch.material = HookArm.Instance.GetComponent<LineRenderer>().material;
+        w.Bool(custom);
+        if (custom) r.Properties(b =>
+        {
+            w.Color(b.GetColor("_CustomColor1"));
+            w.Color(b.GetColor("_CustomColor2"));
+            w.Color(b.GetColor("_CustomColor3"));
+        });
     }
 
-    /// <summary> Updates the animation controller state. </summary>
-    public void Update()
+    public override void Read(Reader r)
     {
+        var team = r.Team();
+        var weap = r.EntityType();
+
+        if (Team != team) Events.Post(() =>
+        {
+            Team = team;
+            Events.OnTeamChange.Fire();
+
+            WingMat.mainTexture = SkateMat.mainTexture = EarsMat.mainTexture = ModAssets.WingTextures[(byte)team];
+            CoinMat.color = team.Color();
+
+            WingTrail.startColor = team.Color() with { a = .2f };
+            WingLight.     color = team.Color();
+        });
+
+        if (Weapon != weap) Events.Post(() =>
+        {
+            Weapon = weap;
+
+            Hand.Each(Dest);
+            if (weap == EntityType.None) return;
+
+            Entities.Weapons.Make(weap, parent: Hand);
+            Transformations.Apply(weap, target: Hand);
+        });
+
+        var hat = Shop.Entries[r.Byte()].hierarchyId;
+        var jkt = Shop.Entries[r.Byte()].hierarchyId;
+
+        Events.Post(() =>
+        {
+            Suits.Each(s => s.gameObject.SetActive(false));
+
+            if (hat != -1) Suits.GetChild(hat).gameObject.SetActive(true);
+            if (jkt != -1) Suits.GetChild(jkt).gameObject.SetActive(true);
+        });
+
+        var custom = r.Bool();
+        var color1 = r.Color();
+        var color2 = r.Color();
+        var color3 = r.Color();
+
+        Events.Post(() =>
+        {
+            Hand.GetComponentsInChildren<GunColorGetter>().Each(g => g.Component<Renderer>(r =>
+            {
+                if (custom)
+                {
+                    r.materials = g.coloredMaterials;
+                    r.Properties(b =>
+                    {
+                        b.SetColor("_CustomColor1", color1);
+                        b.SetColor("_CustomColor2", color2);
+                        b.SetColor("_CustomColor3", color3);
+                    }, true);
+                }
+                else r.materials = g.defaultMaterials;
+            }, true));
+        });
+    }
+
+    #endregion
+    #region logic
+
+    public override void Create() { }
+
+    public override void Assign(Agent agent)
+    {
+        agent.Get(out Root);
+        agent.Get(out Head,  path: "Doll/Metarig/Hips/Spine 0/Spine 1/Spine 2");
+        agent.Get(out Hand,  path: "Doll/Metarig/Hips/Spine 0/Right Shoulder/Right Elbow/Right Wrist/Right Palm");
+        agent.Get(out Reel,  path: "Doll/Metarig/Hips/Spine 0/Left Shoulder/Left Elbow/Left Wrist/Left Palm");
+        agent.Get(out Hook,  path: "Doll/Models/Hook");
+        agent.Get(out Chair, path: "Doll/Models/Throne");
+        agent.Get(out Coin,  path: "Doll/Models/Coin");
+        agent.Get(out Skate, path: "Doll/Models/Skateboard");
+        agent.Get(out Suits, path: "Doll/Suits");
+
+        agent.Get(out Animator);
+        agent.Get(out WingTrail, true);
+        agent.Get(out WingLight, true);
+        agent.Get(out HookWinch, true);
+
+        agent.Get(out Renderer rw, path: "Doll/Models/Doll"      ); WingMat  = rw.materials[1];
+        agent.Get(out Renderer rc, path: "Doll/Models/Coin"      ); CoinMat  = rc.materials[0];
+        agent.Get(out Renderer rs, path: "Doll/Models/Skateboard"); SkateMat = rs.materials[0];
+        agent.Get(out Renderer re, path: "Doll/Suits/Big Ears"   ); EarsMat  = re.materials[0];
+
+        agent.Add<PortalAwareRenderer>(out _);
+        agent.Add<PortalAwareLight>(out _, path: "Doll/Metarig/Hips/Spine 0/Trail");
+
+        Hand = Tools.Tools.Create("Weapons Root", Hand).transform;
+        HookWinch?.material = HookArm.Instance.GetComponent<LineRenderer>().material;
+    }
+
+    public override void Update(float delta)
+    {
+        if (Falling && !Animator.GetBool("falling")) Animator.SetTrigger("jump");
+
         Animator.SetBool("walking", Walking);
         Animator.SetBool("sliding", Sliding);
         Animator.SetBool("falling", Falling);
-        Animator.SetBool("dashing", Dashing);
         Animator.SetBool("riding", Riding);
         Animator.SetBool("hooking", Hooking);
         Animator.SetBool("shopping", Shopping);
-
-        if (WasFalling != Falling && (WasFalling = Falling)) Animator.SetTrigger("jump");
-        if (WasHooking != Hooking)
-        {
-            Hook.position = HookRoot.position;
-            Hook.gameObject.SetActive(WasHooking = Hooking);
-        }
 
         if (LastEmote != Emote)
         {
             Animator.SetTrigger("show-emote");
             Animator.SetInteger("emote", LastEmote = Emote);
             Animator.SetInteger("rps", Rps);
-            OnEmote();
 
-            Throne    .gameObject.SetActive(Emote == 0x06);
-            Coin      .gameObject.SetActive(Emote == 0x07);
-            Skateboard.gameObject.SetActive(Emote == 0x0B);
+            Hand .gameObject.SetActive(Emote == 0xFF);
+            Chair.gameObject.SetActive(Emote == 0x06);
+            Coin .gameObject.SetActive(Emote == 0x07);
+            Skate.gameObject.SetActive(Emote == 0x0B);
         }
-        if (LastEmote == 0x08) HeadAngle = -20f;
 
         if (Sliding && SlidParticle == null)
         {
@@ -131,96 +215,27 @@ public class Doll
         else if (!Slaming && SlamParticle != null) Dest(SlamParticle.gameObject);
     }
 
-    /// <summary> Spawns a preview of the given emote with the given style. </summary>
-    public static void Preview(byte emote, byte rps, int hat, int jacket, Team team)
-    {
-        var preview = Inst(ModAssets.DollPreview, NewMovement.Instance.transform).transform;
-        var doll = new Doll(() => { });
+    public override void Damage(Reader r) { }
 
-        preview.localPosition = new(0f, -1.5f);
-        preview.localScale *= 2.5f;
-
-        doll.Emote = emote;
-        doll.Rps = rps;
-        doll.Hat = hat;
-        doll.Jacket = jacket;
-
-        doll.Assign(preview);
-        doll.ApplyTeam(team);
-        doll.ApplySuit();
-        doll.Update();
-    }
-
-    #region apply
-
-    /// <summary> Applies the given team to the doll. </summary>
-    public void ApplyTeam(Team team)
-    {
-        WingMat.mainTexture = SkateMat.mainTexture = EarsMat.mainTexture = ModAssets.WingTextures[(int)team];
-        CoinMat.color = team.Color();
-
-        if (WingTrail) WingTrail.startColor = team.Color() with { a = .2f };
-        if (WingLight) WingLight.color      = team.Color();
-    }
-
-    /// <summary> Applies the given item to the doll. </summary>
-    public void ApplyItem(byte item)
-    {
-        Hand.Each(Dest);
-        if (item == 0xFF) return;
-
-        Entities.Weapons.Make(EntityType.RevolverBlue + item, parent: Hand);
-        Transformations.Apply(EntityType.RevolverBlue + item, Hand);
-    }
-
-    /// <summary> Applies the saved suit to the doll. </summary>
-    public void ApplySuit()
-    {
-        Suits.Each(s => s.gameObject.SetActive(false));
-
-        int hat = Shop.Entries[Hat].hierarchyId;
-        if (hat != -1) Suits.GetChild(hat).gameObject.SetActive(true);
-
-        int jacket = Shop.Entries[Jacket].hierarchyId;
-        if (jacket != -1) Suits.GetChild(jacket).gameObject.SetActive(true);
-
-        Hand.GetComponentsInChildren<GunColorGetter>().Each(g =>
-        {
-            var renderer = g.GetComponent<Renderer>();
-            if (CustomColors)
-            {
-                renderer.materials = g.coloredMaterials;
-                renderer.Properties(b =>
-                {
-                    b.SetColor("_CustomColor1", Color1);
-                    b.SetColor("_CustomColor2", Color2);
-                    b.SetColor("_CustomColor3", Color3);
-                }, true);
-            }
-            else renderer.materials = g.defaultMaterials;
-        });
-    }
+    public override void Killed(Reader r, int left) { }
 
     #endregion
-    #region state
+    #region other
 
-    /// <summary> Writes the animation state into a snapshot. </summary>
-    public void WriteAnim(Writer w) => w.Bools(Walking, Sliding, Falling, Slaming, Dashing, Riding, Hooking, Shopping);
-
-    /// <summary> Reads the animation state from a snapshot. </summary>
-    public void ReadAnim(Reader r) => r.Bools(out Walking, out Sliding, out Falling, out Slaming, out Dashing, out Riding, out Hooking, out Shopping);
-
-    /// <summary> Reads the style of the suit from a packet. </summary>
-    public void ReadSuit(Reader r)
+    /// <summary> Creates a preview of the local player. </summary>
+    public static void Preview() => Component<Agent>(Inst(ModAssets.DollPreview, NewMovement.Instance.transform), a =>
     {
-        Hat = r.Int();
-        Jacket = r.Int();
-
-        CustomColors = r.Bool();
-        if (CustomColors) { Color1 = r.Color(); Color2 = r.Color(); Color3 = r.Color(); }
-
-        ApplySuit();
+        Doll doll = new()
+        {
+            Emote = Emotes.Current,
+            Rps = Emotes.Rps
+        };
+        doll.Assign(a);
+        doll.Write(new(Pointers.Allocated));
+        doll.Read(new(Pointers.Allocated));
+        doll.Update(0);
     }
+    ).transform.localPosition = Vector3.down * 1.5f;
 
     #endregion
 }

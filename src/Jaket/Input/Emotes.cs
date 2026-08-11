@@ -4,7 +4,6 @@ using System.Collections;
 using UnityEngine;
 
 using Jaket.Assets;
-using Jaket.IO;
 using Jaket.Net;
 using Jaket.Net.Types;
 using Jaket.UI;
@@ -50,7 +49,7 @@ public class Emotes : MonoSingleton<Emotes>
 
         if (emote == 0xFF) return;
 
-        Doll.Preview(emote, Rps, Shop.SelectedHat, Shop.SelectedJacket, Networking.LocalPlayer.Team);
+        Doll.Preview();
         Bundle.Hud("emote.info", true);
 
         // stop sliding to prevent preview from falling underground

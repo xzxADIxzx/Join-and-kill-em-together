@@ -12,7 +12,7 @@ public static class Shop
     public static ShopEntry[] Entries;
 
     /// <summary> Hat and jacket chosen by the player. </summary>
-    public static int SelectedHat, SelectedJacket;
+    public static byte SelectedHat, SelectedJacket;
     /// <summary> Bit mask containing purchased trinkets. </summary>
     public static ulong Unlocked;
 
@@ -49,13 +49,13 @@ public static class Shop
     public static void LoadPurchases()
     {
         SelectedHat = 0;
-        SelectedJacket = Entries.Length / 2 + 1;
+        SelectedJacket = (byte)(Entries.Length / 2 + 1);
         Unlocked = 0L;
 
         if (Files.Exists(Files.Purchases)) Files.Read(Files.Purchases, r =>
         {
-            SelectedHat = r.ReadInt32();
-            SelectedJacket = r.ReadInt32();
+            SelectedHat = r.ReadByte();
+            SelectedJacket = r.ReadByte();
             Unlocked = r.ReadUInt64();
         });
     }

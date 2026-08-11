@@ -62,7 +62,7 @@ public class Client : Endpoint, IConnectionManager
 
         Listen(PacketType.Style, r =>
         {
-            if (ents[r.Id()] is RemotePlayer p) p.Doll.ReadSuit(r);
+            if (ents[r.Id()] is RemotePlayer p) p.Doll.Read(r);
         });
 
         Listen(PacketType.Punch, r =>
