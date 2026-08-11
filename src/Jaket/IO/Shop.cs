@@ -70,7 +70,7 @@ public static class Shop
     public static void Unlock(int entryId) => Unlocked |= 1U << entryId;
 
     /// <summary> Returns the icon of the given entry. </summary>
-    public static Sprite Icon(int entryId) => ModAssets.ShopIcons[Entries[entryId].historicalId];
+    public static Sprite Icon(int entryId) => ModAssets.ShopIcons[Entries[entryId].permanent];
 
     #endregion
 }
@@ -79,9 +79,9 @@ public static class Shop
 public class ShopEntry
 {
     /// <summary> This id is assigned to a new entry once and never changes, so that purchases are not discarded after adding new entries. </summary>
-    public int historicalId;
+    public int permanent;
     /// <summary> This id may change and displays the position of purchase in the suits hierarchy. </summary>
-    public int hierarchyId;
+    public int hierarchy;
     /// <summary> Cost of the entry in Ps. </summary>
     public int cost;
 }

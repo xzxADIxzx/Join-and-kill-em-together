@@ -96,8 +96,8 @@ public class Doll : Entity
             Transformations.Apply(weap, target: Hand);
         });
 
-        var hat = Shop.Entries[r.Byte()].hierarchyId;
-        var jkt = Shop.Entries[r.Byte()].hierarchyId;
+        var hat = Shop.Entries[r.Byte()].hierarchy;
+        var jkt = Shop.Entries[r.Byte()].hierarchy;
 
         Events.Post(() =>
         {
