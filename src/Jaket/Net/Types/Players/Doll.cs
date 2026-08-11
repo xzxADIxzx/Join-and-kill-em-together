@@ -14,40 +14,32 @@ using Jaket.IO;
 /// </summary>
 public class Doll : Entity
 {
-    /// <summary> Animation controller of the doll. </summary>
-    public Animator Animator;
-    /// <summary> Animation booleans that affect the state machine. </summary>
-    public bool Walking, Sliding, Falling, Slaming, Dashing, Riding, Hooking, Shopping, WasFalling, WasHooking;
+    global::Enemy enemy;
+    Animator animator;
+    TrailRenderer wingTrail;
+    Light wingLight;
+    LineRenderer hookWinch;
+    Material wings, coin, skate, ears;
 
-    /// <summary> Emote that is playing at the moment. </summary>
-    public byte Emote, LastEmote = 0xFF, Rps;
-    /// <summary> Event that is triggered when emote changes. </summary>
-    public Runnable OnEmote;
+    /// <summary> Present value of the state machine.  </summary>
+    public bool Walking, Sliding, Falling, Slaming, Riding, Hooking, Shopping;
+    /// <summary> Identifier of the played animation. </summary>
+    public byte Emote, Rps, LastEmote = 0xFF;
 
-    /// <summary> Hat and jacket that are worn by the doll. </summary>
-    public int Hat, Jacket;
-    /// <summary> Whether custom weapon colors are used. </summary>
-    public bool CustomColors;
-    /// <summary> Custom weapon colors themselves. </summary>
-    public Color32 Color1, Color2, Color3;
+    /// <summary> Team required for versus mechanics. </summary>
+    public Team Team = Team.None;
+    /// <summary> Identifier of the displayed weapon. </summary>
+    public EntityType Weapon = EntityType.None;
 
-    /// <summary> Transforms of different parts of the doll. </summary>
-    public Transform Root, Head, Hand, Hook, HookRoot, Throne, Coin, Skateboard, Suits;
-    /// <summary> Sliding and slaming particles transforms. </summary>
+    /// <summary> Various parts of the doll. </summary>
+    public Transform Root, Head, Hand, Reel, Hook, Chair, Coin, Skate, Suits;
+    /// <summary> Various particles/effects. </summary>
     public Transform SlidParticle, SlamParticle;
-    /// <summary> Position in which the doll holds an item. </summary>
-    public Vector3 HoldPosition => Hooking ? Hook.position : HookRoot.position;
-    /// <summary> Angle of the head rotation relative to the respective bone. </summary>
-    public float HeadAngle { set => Animator.SetFloat("head-angle", (90f + value) / 180f); }
 
-    /// <summary> Materials of the wings, coin, skateboard and ears. </summary>
-    public Material WingMat, CoinMat, SkateMat, EarsMat;
-    /// <summary> Trail of the wings. </summary>
-    public TrailRenderer WingTrail;
-    /// <summary> Light of the wings. </summary>
-    public Light WingLight;
-    /// <summary> Winch of the hook. </summary>
-    public LineRenderer HookWinch;
+    /// <summary> Position to hold items in. </summary>
+    public Vector3 HoldPosition => Hooking ? Hook.position : Reel.position;
+    /// <summary> Rotation of the doll head. </summary>
+    public float HeadAngle { set => animator.SetFloat("head-angle", (90f + value) / 180f); }
 
     public Doll() : base(AccId, EntityType.None) { }
 
@@ -86,11 +78,11 @@ public class Doll : Entity
             Team = team;
             Events.OnTeamChange.Fire();
 
-            WingMat.mainTexture = SkateMat.mainTexture = EarsMat.mainTexture = ModAssets.WingTextures[(byte)team];
-            CoinMat.color = team.Color();
+            wings.mainTexture = skate.mainTexture = ears.mainTexture = ModAssets.WingTextures[(byte)team];
+            coin.color = team.Color();
 
-            WingTrail.startColor = team.Color() with { a = .2f };
-            WingLight.     color = team.Color();
+            wingTrail.startColor = team.Color() with { a = .2f };
+            wingLight.     color = team.Color();
         });
 
         if (Weapon != weap) Events.Post(() =>
@@ -156,39 +148,40 @@ public class Doll : Entity
         agent.Get(out Skate, path: "Doll/Models/Skateboard");
         agent.Get(out Suits, path: "Doll/Suits");
 
-        agent.Get(out Animator);
-        agent.Get(out WingTrail, true);
-        agent.Get(out WingLight, true);
-        agent.Get(out HookWinch, true);
+        agent.Get(out enemy);
+        agent.Get(out animator);
+        agent.Get(out wingTrail, true);
+        agent.Get(out wingLight, true);
+        agent.Get(out hookWinch, true);
 
-        agent.Get(out Renderer rw, path: "Doll/Models/Doll"      ); WingMat  = rw.materials[1];
-        agent.Get(out Renderer rc, path: "Doll/Models/Coin"      ); CoinMat  = rc.materials[0];
-        agent.Get(out Renderer rs, path: "Doll/Models/Skateboard"); SkateMat = rs.materials[0];
-        agent.Get(out Renderer re, path: "Doll/Suits/Big Ears"   ); EarsMat  = re.materials[0];
+        agent.Get(out Renderer rw, path: "Doll/Models/Doll"      ); wings = rw.materials[1];
+        agent.Get(out Renderer rc, path: "Doll/Models/Coin"      ); coin  = rc.materials[0];
+        agent.Get(out Renderer rs, path: "Doll/Models/Skateboard"); skate = rs.materials[0];
+        agent.Get(out Renderer re, path: "Doll/Suits/Big Ears"   ); ears  = re.materials[0];
 
         agent.Add<PortalAwareRenderer>(out _);
-        agent.Add<PortalAwareLight>(out _, path: "Doll/Metarig/Hips/Spine 0/Trail");
+        agent.Add<PortalAwareLight>(out _, true, "Doll/Metarig/Hips/Spine 0/Trail");
 
         Hand = Tools.Tools.Create("Weapons Root", Hand).transform;
-        HookWinch?.material = HookArm.Instance.GetComponent<LineRenderer>().material;
+        hookWinch?.material = HookArm.Instance.GetComponent<LineRenderer>().material;
     }
 
     public override void Update(float delta)
     {
-        if (Falling && !Animator.GetBool("falling")) Animator.SetTrigger("jump");
+        if (Falling && !animator.GetBool("falling")) animator.SetTrigger("jump");
 
-        Animator.SetBool("walking", Walking);
-        Animator.SetBool("sliding", Sliding);
-        Animator.SetBool("falling", Falling);
-        Animator.SetBool("riding", Riding);
-        Animator.SetBool("hooking", Hooking);
-        Animator.SetBool("shopping", Shopping);
+        animator.SetBool("walking", Walking);
+        animator.SetBool("sliding", Sliding);
+        animator.SetBool("falling", Falling);
+        animator.SetBool("riding", Riding);
+        animator.SetBool("hooking", Hooking);
+        animator.SetBool("shopping", Shopping);
 
         if (LastEmote != Emote)
         {
-            Animator.SetTrigger("show-emote");
-            Animator.SetInteger("emote", LastEmote = Emote);
-            Animator.SetInteger("rps", Rps);
+            animator.SetTrigger("show-emote");
+            animator.SetInteger("emote", LastEmote = Emote);
+            animator.SetInteger("rps", Rps);
 
             Hand .gameObject.SetActive(Emote == 0xFF);
             Chair.gameObject.SetActive(Emote == 0x06);
@@ -203,7 +196,7 @@ public class Doll : Entity
             SlidParticle.localEulerAngles = new(  0f, 180f,   0f);
             SlidParticle.localScale       = new(1.5f,   1f,  .8f);
         }
-        else if (!Sliding && SlidParticle != null) Dest(SlidParticle.gameObject);
+        else if (!Sliding && SlidParticle != null) Dest(SlidParticle);
 
         if (Slaming && SlamParticle == null)
         {
@@ -212,12 +205,25 @@ public class Doll : Entity
             SlamParticle.localEulerAngles = new( 90f,   0f,   0f);
             SlamParticle.localScale       = new(1.2f,  .6f,   1f);
         }
-        else if (!Slaming && SlamParticle != null) Dest(SlamParticle.gameObject);
+        else if (!Slaming && SlamParticle != null) Dest(SlamParticle);
+
+        Hook.gameObject.SetActive(Hooking);
+        Hook.LookAt(Reel);
+        Hook.Rotate(Vector3.up * 180f, Space.Self);
+        hookWinch.SetPosition(0, Reel.position);
+        hookWinch.SetPosition(1, Hook.position);
     }
 
     public override void Damage(Reader r) { }
 
-    public override void Killed(Reader r, int left) { }
+    public override void Killed(Reader r, int left)
+    {
+        enemy.GoLimp();
+        if (wingTrail   ) Dest(wingTrail   );
+        if (wingLight   ) Dest(wingLight   );
+        if (SlidParticle) Dest(SlidParticle);
+        if (SlamParticle) Dest(SlamParticle);
+    }
 
     #endregion
     #region other
@@ -236,6 +242,9 @@ public class Doll : Entity
         doll.Update(0);
     }
     ).transform.localPosition = Vector3.down * 1.5f;
+
+    /// <summary> Clears the trail of the model's wings. </summary>
+    public void Clear() { if (wingTrail) wingTrail.Clear(); }
 
     #endregion
 }

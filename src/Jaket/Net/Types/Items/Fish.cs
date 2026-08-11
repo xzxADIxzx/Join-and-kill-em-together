@@ -43,7 +43,7 @@ public class Fish : Item
             a.events = new() { onActivate = new() };
             a.events.onActivate.AddListener(() =>
             {
-                Killed(default, -1);
+                Killed(default, default);
                 Inst(Entities.Vendor.Prefabs[(byte)EntityType.Harmless], fish.transform.position);
             });
             fish.transform.Find("Bomb Fish/Fire")?.gameObject.SetActive(true);
