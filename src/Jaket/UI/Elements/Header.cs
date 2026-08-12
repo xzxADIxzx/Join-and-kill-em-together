@@ -10,50 +10,42 @@ using static Jaket.UI.Lib.Pal;
 /// <summary> Element that displays the state of a player. </summary>
 public class Header
 {
-    static CameraController cc => CameraController.Instance;
-    static ColorBlindSettings cb => ColorBlindSettings.Instance;
-
     /// <summary> Nickname of the player taken from Steam. </summary>
     public string Name;
-    /// <summary> Width of the label displaying nickname. </summary>
-    public float Width => Name.Length * 141f + 160f;
-
-    /// <summary> Player itself whose state is displayed. </summary>
-    public RemotePlayer Player;
     /// <summary> Transform to build the header canvas in. </summary>
     public Transform Root;
 
-    public Header(RemotePlayer player)
+    /// <summary> Assigns the given player to the header. </summary>
+    public void Assign(RemotePlayer player) => Builder.Canvas(Create("Header", Root = player.Doll.Root).transform, Vector3.up * 4.6f, c =>
     {
-        Name = player.Id.Name;
-        Player = player;
-    }
+        var cc = CameraController.Instance;
+        var cb = ColorBlindSettings.Instance;
 
-    /// <summary> Assigns the header to the given transform. </summary>
-    public void Assign(Transform root) => Builder.Canvas(Create("Header", Root = root).transform, Vector3.up * 4.8f, c =>
-    {
-        RectTransform Slider(Color color) => Builder.Image(Builder.Rect("Slider", c, new(0f, -120f, 1600f, 40f)), Tex.Fill, color, scale: 2f).rectTransform;
+        var name = Name = player.Id.Name;
+        var wdth = Name.Length * 141f + 160f;
+
+        RectTransform Bar(Color color) => Builder.Image(Builder.Rect("Bar", c, new(0f, -120f, 1600f, 40f)), Tex.Fill, color, scale: 2f).rectTransform;
         RectTransform
-            background = Slider(invi),
-            normhealth = Slider(cb.healthBarColor),
-            overhealth = Slider(cb.overHealColor);
+            background = Bar(invi),
+            normhealth = Bar(cb.healthBarColor),
+            overhealth = Bar(cb.overHealColor);
 
-        var nicknameBg = Builder.Image(Builder.Rect("Nickname", c, new(0f, 120f, Width, 360f)), Tex.Fill, invi, scale: .5f);
+        var nicknameBg = Builder.Image(Builder.Rect("Nickname", c, new(0f, +120f, wdth, 360f)), Tex.Fill, invi, scale: .5f);
         var ellipsisBg = Builder.Image(Builder.Rect("Ellipsis", c, new(0f, -120f, 400f, 120f)), Tex.Fill, invi, scale: .9f);
 
-        var nickname = Builder.Text(Builder.Rect("Text", nicknameBg, new()), "", 240, white);
-        var ellipsis = Builder.Text(Builder.Rect("Text", ellipsisBg, new()), "", 240, white);
+        var nickname = Builder.Text(Builder.Rect("Text", nicknameBg, new()), name, 240, white);
+        var ellipsis = Builder.Text(Builder.Rect("Text", ellipsisBg, new()), "hi", 240, white);
 
         ellipsis.horizontalOverflow = HorizontalWrapMode.Overflow;
         ellipsis.verticalOverflow   = VerticalWrapMode  .Overflow;
 
         c.Component<Bar>(b => b.Update(() =>
         {
-            int health = Player.Health, dots = (int)(Time.time * 3f) % 4;
+            int health = player.Health, dots = (int)(Time.time * 3f) % 4;
 
-            ellipsisBg.gameObject.SetActive(Player.Typing);
+            ellipsisBg.gameObject.SetActive(player.Typing);
 
-            nickname.text = $"<color={(health > 0 ? White : Red)}>{Name}</color>";
+            nickname.color = health > 0 ? white : red;
             ellipsis.text = $"<b>{new string('.', dots)}<color={Gray}>{new string('.', 3 - dots)}</color></b>";
 
             normhealth.sizeDelta = new(health <= 000 ? 0f : 16f * Mathf.Clamp(health - 000, 3, 100), 40f);
@@ -64,6 +56,9 @@ public class Header
         }));
     });
 
-    /// <summary> Hides the header by destroying the canvas. </summary>
-    public void Hide() => Dest(Root.Find("Header").gameObject);
+    /// <summary> Shows the header. </summary>
+    public void Show() => Root.Find("Header").gameObject.SetActive(true);
+
+    /// <summary> Hides the header. </summary>
+    public void Hide() => Root.Find("Header").gameObject.SetActive(false);
 }
