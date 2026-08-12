@@ -179,7 +179,7 @@ public abstract class Entity
         {
             if (!Find(nullable, path, out var o)) { t = null; return; }
 
-            if (t = o.GetComponentInChildren<T>())
+            if (t = o.GetComponentInChildren<T>(true))
                 return;
             else if (!nullable)
                 Log.Error($"[ENTS] Couldn't get a component of type {typeof(T)}");

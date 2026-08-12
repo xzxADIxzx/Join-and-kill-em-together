@@ -112,7 +112,7 @@ public class Doll : Entity
         var color2 = r.Color();
         var color3 = r.Color();
 
-        Events.Post(() =>
+        Events.Post(() => Events.Post(() =>
         {
             Hand.GetComponentsInChildren<GunColorGetter>().Each(g => g.Component<Renderer>(r =>
             {
@@ -128,7 +128,7 @@ public class Doll : Entity
                 }
                 else r.materials = g.defaultMaterials;
             }, true));
-        });
+        }));
     }
 
     #endregion
@@ -207,6 +207,8 @@ public class Doll : Entity
         }
         else if (!Slaming && SlamParticle != null) Dest(SlamParticle);
 
+        if (!hookWinch) return;
+
         Hook.gameObject.SetActive(Hooking);
         Hook.LookAt(Reel);
         Hook.Rotate(Vector3.up * 180f, Space.Self);
@@ -240,6 +242,7 @@ public class Doll : Entity
         doll.Write(new(Pointers.Allocated));
         doll.Read(new(Pointers.Allocated));
         doll.Update(0);
+        Dest(a);
     }
     ).transform.localPosition = Vector3.down * 1.5f;
 

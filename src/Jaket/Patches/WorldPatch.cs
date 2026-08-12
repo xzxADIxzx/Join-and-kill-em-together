@@ -34,7 +34,7 @@ public class ActionPatch
         if (LobbyController.Online && LobbyController.IsOwner) World.SyncAction(__instance, 6);
     }
 }
-*/
+
 [HarmonyPatch(typeof(IntermissionController))]
 public class LovelyPatch
 {
@@ -45,3 +45,4 @@ public class LovelyPatch
         if (LobbyController.Online) Votes.Name(__instance.GetComponent<Text>(), ref __instance.preText);
     }
 }
+*/

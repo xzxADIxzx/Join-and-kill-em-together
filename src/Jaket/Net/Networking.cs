@@ -80,7 +80,7 @@ public static class Networking
 
         Events.OnLoad += () =>
         {
-            Entities.Each(e => e != LocalPlayer && e is not RemotePlayer, e => e.Hidden = true);
+            Entities.Each(e => e != LocalPlayer, e => { if (e is RemotePlayer) e.Update(default); else e.Hidden = true; });
             Loading = false;
         };
 
