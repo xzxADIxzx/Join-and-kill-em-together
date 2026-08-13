@@ -78,10 +78,6 @@ public static class Tools
     #endregion
     #region unity
 
-    public static GameObject Inst(GameObject obj)                                                => Object.Instantiate(obj                                           );
-    public static GameObject Inst(GameObject obj, Transform parent)                              => Object.Instantiate(obj, parent                                   );
-    public static GameObject Inst(GameObject obj, Vector3 position, Quaternion? rotation = null) => Object.Instantiate(obj, position, rotation ?? Quaternion.identity);
-
     public static void Dest(Object obj) => Object.Destroy          (obj);
     public static void Imdt(Object obj) => Object.DestroyImmediate (obj);
     public static void Keep(Object obj) => Object.DontDestroyOnLoad(obj);

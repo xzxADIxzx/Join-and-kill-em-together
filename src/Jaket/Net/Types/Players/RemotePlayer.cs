@@ -226,14 +226,14 @@ public class RemotePlayer : Entity
                 Inst(Vendor.Prefabs[(byte)EntityType.Shockwave], r.Vector()).Get<PhysicalShockwave>(s => { s.force = 5000f * 2.25f * r.Float(); s.hasHurtPlayer = false; });
                 break;
             case 0x02:
-                Inst(Vendor.Prefabs[(byte)EntityType.Blastwave], r.Vector(), Quaternion.Euler(r.Vector())).GetComponentsInChildren<Explosion>().Each(e =>
+                Inst(Vendor.Prefabs[(byte)EntityType.Blastwave], r.Vector(), r.Vector()).GetComponentsInChildren<Explosion>().Each(e =>
                 {
                     e.canHit = AffectedSubjects.All;
                     e.playerDamageOverride = Team.Ally() ? 0 : 12;
                 });
                 break;
             case 0x03:
-                Inst(Vendor.Prefabs[(byte)EntityType.ShotgunExplosion], r.Vector(), Quaternion.Euler(r.Vector())).GetComponentsInChildren<Explosion>().Each(e =>
+                Inst(Vendor.Prefabs[(byte)EntityType.ShotgunExplosion], r.Vector(), r.Vector()).GetComponentsInChildren<Explosion>().Each(e =>
                 {
                     e.enemyDamageMultiplier = 1f;
                     e.damage = 50;
@@ -243,9 +243,9 @@ public class RemotePlayer : Entity
             default:
                 Vector3 pos = r.Vector(), rot = r.Vector();
 
-                Inst(Vendor.Prefabs[(byte)EntityType.HammerParticleLight + tier], pos, Quaternion.Euler(rot));
+                Inst(Vendor.Prefabs[(byte)EntityType.HammerParticleLight + tier], pos, rot);
                 if (chrg == 0) return;
-                Inst(Vendor.Prefabs[(byte)EntityType.HammerExplosionWeak + temp], pos, Quaternion.Euler(rot)).GetComponentsInChildren<Explosion>().Each(e =>
+                Inst(Vendor.Prefabs[(byte)EntityType.HammerExplosionWeak + temp], pos, rot).GetComponentsInChildren<Explosion>().Each(e =>
                 {
                     if (chrg <= 2)
                     {

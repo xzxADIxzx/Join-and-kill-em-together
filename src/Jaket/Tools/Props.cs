@@ -47,4 +47,19 @@ public static class Props
     public static void Get(this Renderer renderer, Cons<MaterialPropertyBlock> cons) => Properties(renderer, cons);
 
     #endregion
+    #region instances
+
+    /// <summary> Instantiates the object. </summary>
+    public static T Inst<T>(T obj) where T : Object => Object.Instantiate(obj);
+
+    /// <summary> Instantiates the object. </summary>
+    public static T Inst<T>(T obj, Transform parent) where T : Object => Object.Instantiate(obj, parent);
+
+    /// <summary> Instantiates the object at the specified world position. </summary>
+    public static T Inst<T>(T obj, Vector3 position, Quaternion? rotation = null) where T : Object => Object.Instantiate(obj, position, rotation ?? Quaternion.identity);
+
+    /// <summary> Instantiates the object at the specified world position. </summary>
+    public static T Inst<T>(T obj, Vector3 position, Vector3 rotation) where T : Object => Object.Instantiate(obj, position, Quaternion.Euler(rotation));
+
+    #endregion
 }

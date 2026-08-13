@@ -175,7 +175,7 @@ public class Plushie : Item
         {
             GameAssets.Prefab("Attacks and Projectiles/Hitscan Beams/Lighting Beam Reflected.prefab", p =>
             {
-                Inst(p, owl.transform.position + Vector3.up * 12f, Quaternion.Euler(90f, 0f, 0f));
+                Inst(p, owl.transform.position + Vector3.up * 12f, Vector3.right * 90f);
                 i.Kill();
             });
             return;

@@ -49,7 +49,7 @@ public class MainMenuAccess : Fragment
                 var next = l.transform.Find("Stats/Rank(Clone)") as RectTransform;
 
                 if (next) Dest(next);
-                next = Inst(prev.gameObject, root).transform as RectTransform;
+                next = Inst(prev, root);
 
                 if (l.levelNumber == 666 || l.levelNumber == 100)
                 {
