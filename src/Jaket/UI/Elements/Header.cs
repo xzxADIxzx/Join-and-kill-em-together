@@ -39,7 +39,7 @@ public class Header
         ellipsis.horizontalOverflow = HorizontalWrapMode.Overflow;
         ellipsis.verticalOverflow   = VerticalWrapMode  .Overflow;
 
-        c.Component<Bar>(b => b.Update(() =>
+        c.Add<Bar>(b => b.Update(() =>
         {
             int health = player.Health, dots = (int)(Time.time * 3f) % 4;
 

@@ -52,7 +52,7 @@ public class EmoteWheel : Fragment
             segment.SetActive(false);
         }
 
-        Content.Component<Bar>(b => b.Update(() =>
+        Content.Add<Bar>(b => b.Update(() =>
         {
             // some code from the weapon wheel that I don't understand
             direction = Vector2.ClampMagnitude(direction + InputManager.Instance.InputSource.WheelLook.ReadValue<Vector2>() / 12f, 1f);

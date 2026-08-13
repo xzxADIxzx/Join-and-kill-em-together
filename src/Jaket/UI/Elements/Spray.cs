@@ -24,15 +24,14 @@ public class Spray : MonoBehaviour
     public float Lifetime;
 
     /// <summary> Spawns a spray at the given position. </summary>
-    public static Spray Spawn(Vector3 position, Vector3 direction, Team team, RemotePlayer owner = null) =>
-        Component<Spray>(Create("Spray"), s =>
-        {
-            s.position = position;
-            s.direction = -direction;
+    public static Spray Spawn(Vector3 position, Vector3 direction, Team team, RemotePlayer owner = null) => Create("Spray").Add<Spray>(s =>
+    {
+        s.position = position;
+        s.direction = -direction;
 
-            s.color = team.Color() with { a = .5f };
-            s.owner = owner;
-        });
+        s.color = team.Color() with { a = .5f };
+        s.owner = owner;
+    });
 
     private void Start()
     {
@@ -46,7 +45,7 @@ public class Spray : MonoBehaviour
             Builder.Text (Builder.Rect("Label", c, new(480f, -880f, width, 240f)), title, 240, color).transform.localEulerAngles = new(0f, 0f, 6f);
         }).sortingOrder = -1;
 
-        GetComponentsInChildren<Graphic>().Each(g => g.Component<Outline>(o =>
+        GetComponentsInChildren<Graphic>().Each(g => g.Add<Outline>(o =>
         {
             o.effectColor = color;
             o.effectDistance = Vector2.one * 12f;

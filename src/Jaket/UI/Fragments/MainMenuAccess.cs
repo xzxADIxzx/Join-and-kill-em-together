@@ -70,12 +70,12 @@ public class MainMenuAccess : Fragment
                     root.anchoredPosition = new(-11f, -260f);
                 }
 
-                next.Component<Image>(i =>
+                next.Get<Image>(i =>
                 {
                     i.sprite = rank == 6 ? l.filledPanel : l.unfilledPanel;
                     i.color = rank == 6 ? new(255, 175, 0, 255) : white;
-                }, true);
-                next.Find("Text").Component<TMPro.TextMeshProUGUI>(t => t.text = Progress.Sign(rank), true);
+                });
+                next.Find("Text").Get<TMPro.TextMeshProUGUI>(t => t.text = Progress.Sign(rank));
 
                 Builder.Image(Builder.Rect("Icon", next, new()), ModAssets.Mask, white with { a = invi.a }).PreserveAspect().transform.SetAsFirstSibling();
             });

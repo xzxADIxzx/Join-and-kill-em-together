@@ -71,7 +71,7 @@ public class Bar : MonoBehaviour
     public void Space(float size = 16f) => Resolve("Space", size);
 
     /// <summary> Adds a subbar, does not configure it. </summary>
-    public void Subbar(float size, Cons<Bar> cons) => Resolve("Subbar", size).Component(cons);
+    public void Subbar(float size, Cons<Bar> cons) => Resolve("Subbar", size).Add(cons);
 
     #endregion
     #region text

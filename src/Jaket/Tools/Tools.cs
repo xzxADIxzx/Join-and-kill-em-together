@@ -1,5 +1,6 @@
 global using Jaket.Tools; // delegates
 global using static Jaket.Tools.Enumy;
+global using static Jaket.Tools.Props;
 global using static Jaket.Tools.Tools;
 global using Ptr = System.IntPtr;
 global using Ins = System.Collections.Generic.IEnumerable<HarmonyLib.CodeInstruction>;
@@ -73,17 +74,6 @@ public static class Tools
 
     /// <summary> Creates a new object and assigns it to the given transform. </summary>
     public static T Create<T>(string name, Transform parent = null) where T : Component => Create(name, parent ?? Plugin.Instance?.transform).AddComponent<T>();
-
-    /// <summary> Adds or gets a component of the given type and consumes it. </summary>
-    public static T Component<T>(GameObject obj, Cons<T> cons, bool get = false) where T : Component
-    {
-        var t = get ? obj.GetComponent<T>() : obj.AddComponent<T>();
-        cons(t);
-        return t;
-    }
-
-    /// <summary> Adds or gets a component of the given type and consumes it. </summary>
-    public static T Component<T>(this Component comp, Cons<T> cons, bool get = false) where T : Component => Component(comp.gameObject, cons, get);
 
     /// <summary> Gets and optionally sets material properties. </summary>
     public static void Properties(this Renderer renderer, Cons<MaterialPropertyBlock> cons, bool set = false)

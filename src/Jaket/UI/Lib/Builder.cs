@@ -16,10 +16,10 @@ public static class Builder
     #region rect
 
     /// <summary> Creates a rect. </summary>
-    public static RectTransform Rect(string name, Transform parent, Rect rect) => Component<RectTransform>(Create(name, parent.transform), rect.Apply);
+    public static RectTransform Rect(string name, Transform parent, Rect rect) => Create(name, parent.transform).Add<RectTransform>(rect.Apply);
 
     /// <summary> Creates a rect. </summary>
-    public static RectTransform Rect(string name, Component parent, Rect rect) => Component<RectTransform>(Create(name, parent.transform), rect.Apply);
+    public static RectTransform Rect(string name, Component parent, Rect rect) => Create(name, parent.transform).Add<RectTransform>(rect.Apply);
 
     #endregion
     #region mask
@@ -246,7 +246,7 @@ public static class Builder
 
     /// <summary> Creates a canvas. </summary>
     public static Canvas Canvas(Transform rect, bool touchable) =>
-        Component<Canvas>(rect.gameObject, c => (rect = c.transform).Component<CanvasScaler>(s =>
+        Component<Canvas>(rect.gameObject, c => (rect = c.transform).Add<CanvasScaler>(s =>
         {
             c.renderMode = RenderMode.ScreenSpaceOverlay;
             s.uiScaleMode = ScaleMode.ScaleWithScreenSize;
@@ -255,12 +255,12 @@ public static class Builder
             s.matchWidthOrHeight = 1f;
             s.referenceResolution = new(1920f, 1080f);
 
-            if (touchable) rect.Component<GraphicRaycaster>(_ => { });
+            if (touchable) rect.Add<GraphicRaycaster>(_ => { });
         }));
 
     /// <summary> Creates a canvas. </summary>
     public static Canvas Canvas(Transform rect, Vector3 position, Cons<Transform> cons) =>
-        Component<Canvas>(rect.gameObject, c => (rect = c.transform).Component<CanvasScaler>(s =>
+        Component<Canvas>(rect.gameObject, c => (rect = c.transform).Add<CanvasScaler>(s =>
         {
             c.renderMode = RenderMode.WorldSpace;
             s.uiScaleMode = ScaleMode.ConstantPixelSize;

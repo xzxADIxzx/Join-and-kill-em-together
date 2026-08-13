@@ -51,7 +51,7 @@ public static class ActionList
 
         ActionType.Window(l);
 
-        ActionType.Find(l, "3 - Gun Room/TitleActivator", t => t.Component<ObjectActivator>(o =>
+        ActionType.Find(l, "3 - Gun Room/TitleActivator", t => t.Get<ObjectActivator>(o =>
         {
             var prev = o.events.toDisActivateObjects;
             var next = o.events.toDisActivateObjects = [prev[0]];
@@ -65,9 +65,9 @@ public static class ActionList
                 blck.GetChild(2).gameObject.SetActive(false);
             });
             o.events.toActivateObjects.Each(o => o.name == "Cube", o => o.GetComponents<Collider>().Each(Dest));
-        }, true));
+        }));
 
-        ActionType.Find(l, "AltStartFiller/AltStart", t => t.Component<ObjectActivator>(o =>
+        ActionType.Find(l, "AltStartFiller/AltStart", t => t.Get<ObjectActivator>(o =>
         {
             var prev = o.events.toDisActivateObjects;
             var next = o.events.toDisActivateObjects = [prev[0], prev[^1]];
@@ -78,7 +78,7 @@ public static class ActionList
                 prev[5].gameObject.SetActive(false);
                 prev[8].gameObject.SetActive(false);
             });
-        }, true));
+        }));
 
         ActionType.Find(l, "13 - Malicious Face Arena/13 Nonstuff", t => Dest(t.GetChild(0))); // unloader
 
@@ -158,14 +158,14 @@ public static class ActionList
         #region 0-5
         l = "Level 0-5";
 
-        ActionType.Find(l, "4 Contents/Cube", t => t.Component<ObjectActivator>(o => o.events.toDisActivateObjects[0] = null, true));
-        ActionType.Find(l, "4 Contents/Enemies", t => t.Component<ActivateNextWaveHP>(o =>
+        ActionType.Find(l, "4 Contents/Cube", t => t.Get<ObjectActivator>(o => o.events.toDisActivateObjects[0] = null));
+        ActionType.Find(l, "4 Contents/Enemies", t => t.Get<ActivateNextWaveHP>(o =>
         {
             if (LobbyController.IsOwner)
                 o.health = 74f;
             else
                 Dest(o);
-        }, true));
+        }));
 
         ActionType.Act(l, "4 Contents/Cube"); // boss
         ActionType.Act(l, "StatueFake (1)/StatueActivator"); // boss

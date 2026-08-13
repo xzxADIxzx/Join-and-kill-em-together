@@ -29,26 +29,25 @@ public class Point : MonoBehaviour
     public float Lifetime;
 
     /// <summary> Spawns a point at the given position. </summary>
-    public static Point Spawn(Vector3 position, Vector3 direction, Team team, RemotePlayer owner = null) =>
-        Component<Point>(Create("Point"), p =>
-        {
-            p.position = position;
-            p.direction = -direction;
+    public static Point Spawn(Vector3 position, Vector3 direction, Team team, RemotePlayer owner = null) => Create("Point").Add<Point>(p =>
+    {
+        p.position = position;
+        p.direction = -direction;
 
-            p.color = team.Color() with { a = .5f };
-            p.owner = owner;
-        });
+        p.color = team.Color() with { a = .5f };
+        p.owner = owner;
+    });
 
     private void Start()
     {
-        if (owner != null) line = Component<LineRenderer>(gameObject, l =>
+        if (owner != null) line = gameObject.Add<LineRenderer>(l =>
         {
             l.startColor = l.endColor = color;
             l.widthMultiplier = 0f;
             l.material.shader = ModAssets.Additv;
         });
 
-        glow = Component<Light>(Create("Light", transform), l =>
+        glow = Create("Light", transform).Add<Light>(l =>
         {
             l.color = color;
             l.intensity = 0f;

@@ -95,7 +95,7 @@ public static class ActionType
             w.transform.Each(Imdt);
             w.enabled = false;
             w.GetComponents<Collider>().Each(Imdt);
-            w.Component<NavMeshObstacle>(o =>
+            w.Get<NavMeshObstacle>(o =>
             {
                 if (w.wall)
                 {
@@ -103,7 +103,7 @@ public static class ActionType
                     o.enabled = false;
                 }
                 else o.enabled = true;
-            }, true);
+            });
         }
     });
 

@@ -47,13 +47,13 @@ public class Fragment
     /// <summary> Adds a bar, it is located on the left and has a constant width. </summary>
     protected void Bar(float height, Cons<Bar> cons)
     {
-        Sidebar ??= Rect("Sidebar", new(256f, 0f, 480f, 0f, new(0f, 0f), new(0f, 1f))).Component<Bar>(b => b.Setup(true, 16f, 16f));
+        Sidebar ??= Rect("Sidebar", new(256f, 0f, 480f, 0f, new(0f, 0f), new(0f, 1f))).Add<Bar>(b => b.Setup(true, 16f, 16f));
 
         var any = Sidebar.transform.childCount > 0;
         var img = Sidebar.Image(any ? Tex.Fill : Tex.Back, height, semi, scale: any ? 3f : 2f);
 
-        img.Component(cons);
-        img.Component<HudOpenEffect>(e => e.speed = 38f - height / 24f);
+        img.Add(cons);
+        img.Add<HudOpenEffect>(e => e.speed = 38f - height / 24f);
 
         if (Content.Find("Deco") == null) Builder.Image(Rect("Deco", new(0f, 0f, 32f, 0f, new(0f, 0f), new(0f, 1f))), Tex.Dash, semi);
     }
@@ -63,8 +63,8 @@ public class Fragment
     {
         var img = Builder.Image(Rect("Centerbar", new(width, height)), Tex.Back, semi, scale: 2f);
 
-        img.Component(cons);
-        img.Component<HudOpenEffect>(e => e.speed = 32f);
+        img.Add(cons);
+        img.Add<HudOpenEffect>(e => e.speed = 32f);
 
         if (Content.Find("Deco") == null) Builder.Image(Rect("Deco", new(width + 24f, height + 24f)), Tex.BrdL, semi, scale: 2f).raycastTarget = false;
 

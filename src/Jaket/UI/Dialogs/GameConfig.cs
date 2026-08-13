@@ -36,7 +36,7 @@ public class GameConfig : Fragment
             b.Setup(true);
             b.Title("#gameconfig.name");
 
-            scroll = b.ScrollH(Gamemodes.All.Length * 228f - 8f, 300f).content.Component<Bar>(s =>
+            scroll = b.ScrollH(Gamemodes.All.Length * 228f - 8f, 300f).content.Add<Bar>(s =>
             {
                 s.Setup(false, 0f);
                 Events.Post(() => ModAssets.CardIcons.All(t => t != null), () => Gamemodes.All.Each(m =>

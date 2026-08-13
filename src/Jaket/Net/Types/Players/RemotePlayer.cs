@@ -223,7 +223,7 @@ public class RemotePlayer : Entity
                 Doll.Animator?.SetTrigger(r.Bool() ? "parry" : "punch");
                 break;
             case 0x01:
-                Component<PhysicalShockwave>(Inst(Vendor.Prefabs[(byte)EntityType.Shockwave], r.Vector()), s => { s.force = 11250f * r.Float(); s.hasHurtPlayer = false; }, true);
+                Inst(Vendor.Prefabs[(byte)EntityType.Shockwave], r.Vector()).Get<PhysicalShockwave>(s => { s.force = 5000f * 2.25f * r.Float(); s.hasHurtPlayer = false; });
                 break;
             case 0x02:
                 Inst(Vendor.Prefabs[(byte)EntityType.Blastwave], r.Vector(), Quaternion.Euler(r.Vector())).GetComponentsInChildren<Explosion>().Each(e =>

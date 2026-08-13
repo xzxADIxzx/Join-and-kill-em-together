@@ -38,7 +38,7 @@ public class Debug : Fragment
             if (Shown) Events.Post(Rebuild);
         };
 
-        Rect("Display", new()).Component<Bar>(b =>
+        Rect("Display", new()).Add<Bar>(b =>
         {
             var mark = Builder.Image(Builder.Rect("Mark", b, new(16f, 16f)), Tex.Mark, white);
             var text = Builder.Text (Builder.Rect("Text", b, new(        )), "hi", 24, white);
@@ -71,13 +71,13 @@ public class Debug : Fragment
             });
         });
 
-        Rect("Content", new(0f, 220f, 1920f, 440f, new(.5f, 0f))).Component<Bar>(b =>
+        Rect("Content", new(0f, 220f, 1920f, 440f, new(.5f, 0f))).Add<Bar>(b =>
         {
             b.Setup(true, 16f, 16f);
             b.Subbar(136f, s =>
             {
                 s.Setup(false, 0f, 16f);
-                s.Image(Tex.Fill, 320f, semi, scale: 3f).Component<Bar>(b =>
+                s.Image(Tex.Fill, 320f, semi, scale: 3f).Add<Bar>(b =>
                 {
                     b.Setup(true);
                     b.Pair("RECEIVED ", out data[0].Label, green        );
@@ -85,7 +85,7 @@ public class Debug : Fragment
                     b.Pair("READ     ", out data[2].Label, orange       );
                     b.Pair("WRITE    ", out data[3].Label, orange.Darker);
                 });
-                s.Image(Tex.Fill, 320f, semi, scale: 3f).Component<Bar>(b =>
+                s.Image(Tex.Fill, 320f, semi, scale: 3f).Add<Bar>(b =>
                 {
                     b.Setup(true);
                     b.Pair("ENTITY   ", out data[4].Label, blue         );
@@ -93,7 +93,7 @@ public class Debug : Fragment
                     b.Pair("THREAD   ", out data[6].Label, purple       );
                     b.Pair("JITTER   ", out data[7].Label, purple.Darker);
                 });
-                s.Image(Tex.Fill, 320f, semi, scale: 3f).Component<Bar>(b =>
+                s.Image(Tex.Fill, 320f, semi, scale: 3f).Add<Bar>(b =>
                 {
                     b.Setup(true);
                     b.Pair("ENTITIES ", out entities);
@@ -101,7 +101,7 @@ public class Debug : Fragment
                     b.Pair("IS OWNER ", out isowner);
                     b.Pair("LOADING  ", out loading);
                 });
-                s.Image(Tex.Fill, 320f, semi, scale: 3f).Component<Bar>(b =>
+                s.Image(Tex.Fill, 320f, semi, scale: 3f).Add<Bar>(b =>
                 {
                     b.Setup(true);
                     b.Pair("GAMEMODE ", out gamemode);
@@ -117,8 +117,8 @@ public class Debug : Fragment
                 var byteGraph = s.Image(Tex.Fill,  320f, semi, scale: 3f);
                 var timeGraph = s.Image(Tex.Fill, 1552f, semi, scale: 3f);
 
-                for (int i = 0; i < 2; i++) Builder.Rect("Graph", byteGraph, new(8f, 8f, 0f, 0f, new())).Component<UILineRenderer>(g => data[i].Graph = g);
-                for (int i = 2; i < 8; i++) Builder.Rect("Graph", timeGraph, new(8f, 8f, 0f, 0f, new())).Component<UILineRenderer>(g => data[i].Graph = g);
+                for (int i = 0; i < 2; i++) Builder.Rect("Graph", byteGraph, new(8f, 8f, 0f, 0f, new())).Add<UILineRenderer>(g => data[i].Graph = g);
+                for (int i = 2; i < 8; i++) Builder.Rect("Graph", timeGraph, new(8f, 8f, 0f, 0f, new())).Add<UILineRenderer>(g => data[i].Graph = g);
             });
         });
     }

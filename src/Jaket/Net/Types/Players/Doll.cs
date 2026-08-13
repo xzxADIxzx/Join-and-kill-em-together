@@ -114,7 +114,7 @@ public class Doll : Entity
 
         Events.Post(() => Events.Post(() =>
         {
-            Hand.GetComponentsInChildren<GunColorGetter>().Each(g => g.Component<Renderer>(r =>
+            Hand.GetComponentsInChildren<GunColorGetter>().Each(g => g.Get<Renderer>(r =>
             {
                 if (custom)
                 {
@@ -127,7 +127,7 @@ public class Doll : Entity
                     }, true);
                 }
                 else r.materials = g.defaultMaterials;
-            }, true));
+            }));
         }));
     }
 
@@ -231,7 +231,7 @@ public class Doll : Entity
     #region other
 
     /// <summary> Creates a preview of the local player. </summary>
-    public static void Preview() => Component<Agent>(Inst(ModAssets.DollPreview, NewMovement.Instance.transform), a =>
+    public static void Preview() => Inst(ModAssets.DollPreview, NewMovement.Instance.transform).Add<Agent>(a =>
     {
         Doll doll = new()
         {
@@ -242,9 +242,8 @@ public class Doll : Entity
         doll.Write(new(Pointers.Allocated));
         doll.Read(new(Pointers.Allocated));
         doll.Update(0);
-        Dest(a);
     }
-    ).transform.localPosition = Vector3.down * 1.5f;
+    ).Get<Agent>(Dest).transform.localPosition = Vector3.down * 1.5f;
 
     /// <summary> Clears the trail of the model's wings. </summary>
     public void Clear() { if (wingTrail) wingTrail.Clear(); }

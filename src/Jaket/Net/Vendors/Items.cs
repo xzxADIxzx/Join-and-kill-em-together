@@ -109,7 +109,7 @@ public class Items : Vendor
 
         if (type.IsFish())
         {
-            obj.transform.parent = Component<FishObjectReference>(Inst(FishTemplate, position), f =>
+            obj.transform.parent = Inst(FishTemplate, position).Add<FishObjectReference>(f =>
             {
                 f.fishObject = ResFind<FishObject>().Find(o => o.worldObject == Vendor.Prefabs[(byte)type]);
             }).transform;

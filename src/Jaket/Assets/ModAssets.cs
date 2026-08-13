@@ -93,7 +93,7 @@ public static class ModAssets
         Load<GameObject>("DevPlushie (xzxADIxzx)", p =>
         {
             UpdtMaterials(xzxADIxzx = p, new(1.4f, 1.4f, 1.4f));
-            Component<ItemIdentifier>(p, i =>
+            p.Add<ItemIdentifier>(i =>
             {
                 GameAssets.Prefab("p/SoundBubbles/SqueakyToy.prefab", p => i.pickUpSound = p);
                 i.reverseTransformSettings = true;
@@ -105,7 +105,7 @@ public static class ModAssets
         Load<GameObject>("DevPlushie (Sowler)", p =>
         {
             UpdtMaterials(Sowler = p);
-            Component<ItemIdentifier>(p, i =>
+            p.Add<ItemIdentifier>(i =>
             {
                 GameAssets.Prefab("p/SoundBubbles/SqueakyToy.prefab", p => i.pickUpSound = p);
                 i.reverseTransformSettings = true;

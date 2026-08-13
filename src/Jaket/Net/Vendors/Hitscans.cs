@@ -48,7 +48,7 @@ public class Hitscans : Vendor
         if (wall && type != EntityType.BeamReflected) Inst(beam.hitParticle, target, Quaternion.LookRotation(position - target));
 
         beam.fake = true;
-        beam.Component<LineRenderer>(r =>
+        beam.Get<LineRenderer>(r =>
         {
             r.SetPosition(0, position);
             r.SetPosition(1, target);
@@ -64,7 +64,7 @@ public class Hitscans : Vendor
                 r.GetComponentsInChildren<SpriteRenderer>().Each(c => c.gameObject.layer = 24); // outdoors
                 r.transform.GetChild(0).LookAt(target);
             }
-        }, true);
+        });
         return beam.gameObject;
     }
 
