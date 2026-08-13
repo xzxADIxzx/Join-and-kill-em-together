@@ -122,7 +122,7 @@ public static class ActionList
         ActionType.Dest(l, "Boss Arena Contents/NeoBreakable");
         ActionType.Act(l, "Boss Arena Contents/Cube (1)"); // boss
 
-        ActionType.Find(l, "11 Contents/Trigger", t => Dest(t.GetComponent<ObjectActivator>())); // unloader
+        ActionType.Find(l, "11 Contents/Trigger", t => t.Get<ObjectActivator>(Dest)); // unloader
 
         #endregion
         #region 0-4

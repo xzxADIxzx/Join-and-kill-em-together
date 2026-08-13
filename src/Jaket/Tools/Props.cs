@@ -61,5 +61,29 @@ public static class Props
     /// <summary> Instantiates the object at the specified world position. </summary>
     public static T Inst<T>(T obj, Vector3 position, Vector3 rotation) where T : Object => Object.Instantiate(obj, position, Quaternion.Euler(rotation));
 
+    /// <summary> Reliably destroys the object. </summary>
+    public static void Dest(Object obj)
+    {
+        if (obj is Transform transform)
+            Object.Destroy(transform.gameObject);
+        else
+            Object.Destroy(obj);
+    }
+
+    /// <summary> Immediately destroys the object. </summary>
+    public static void Imdt(Object obj)
+    {
+        if (obj is Transform transform)
+            Object.DestroyImmediate(transform.gameObject);
+        else
+            Object.DestroyImmediate(obj);
+    }
+
+    /// <summary> Keeps the object. </summary>
+    public static void Keep(Object obj) => Object.DontDestroyOnLoad(obj);
+
+    /// <summary> Iterates the children. </summary>
+    public static void Each(this Transform parent, Cons<Transform> cons) { foreach (Transform child in parent) cons(child); }
+
     #endregion
 }

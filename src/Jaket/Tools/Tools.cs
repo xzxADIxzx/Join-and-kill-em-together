@@ -78,14 +78,6 @@ public static class Tools
     #endregion
     #region unity
 
-    public static void Dest(Object obj) => Object.Destroy          (obj);
-    public static void Imdt(Object obj) => Object.DestroyImmediate (obj);
-    public static void Keep(Object obj) => Object.DontDestroyOnLoad(obj);
-
-    public static void Each(this Transform parent, Cons<Transform> cons) { foreach (Transform child in parent) cons(child); }
-    public static void Dest(Transform transform) => Dest(transform.gameObject);
-    public static void Imdt(Transform transform) => Imdt(transform.gameObject);
-
     public static T[] ResFind<T>() where T : Object => Resources.FindObjectsOfTypeAll<T>();
     public static GameObject ObjFind(string name) => GameObject.Find(name);
 

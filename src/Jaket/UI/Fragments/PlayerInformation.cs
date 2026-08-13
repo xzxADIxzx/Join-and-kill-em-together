@@ -30,7 +30,7 @@ public class PlayerInformation : Fragment
 
     public override void Rebuild()
     {
-        Imdt(hc.transform.Find("Info")?.gameObject);
+        Imdt(hc.transform.Find("Info"));
         if (Shown) Build();
     }
 

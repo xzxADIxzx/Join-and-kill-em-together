@@ -41,7 +41,7 @@ public class Emotes : MonoSingleton<Emotes>
         Current = emote;
         StartTime = Time.time;
 
-        Dest(nm.transform.Find("Doll Preview(Clone)")?.gameObject);
+        Dest(nm.transform.Find("Doll Preview(Clone)"));
         Movement.UpdateState();
 
         UI.Spectator.Reset();

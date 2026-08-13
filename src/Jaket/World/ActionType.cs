@@ -25,7 +25,7 @@ public static class ActionType
                 Inst(p, position + new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * 2f, new Vector3(0f, -angle * 180f / Mathf.PI, 0f))
                     .GetComponentsInChildren<ItemIdentifier>().Each(i =>
                     {
-                        if (!LobbyController.IsOwner) Tools.Tools.Dest(i.gameObject);
+                        if (!LobbyController.IsOwner) Props.Dest(i.gameObject);
                     });
             }
         });
@@ -41,7 +41,7 @@ public static class ActionType
     public static void Turn(string scene, string path) => Find(scene, path, t => Events.Post(() => t.gameObject.SetActive(true)));
 
     /// <summary> Creates an action that destroys an object. </summary>
-    public static void Dest(string scene, string path) => Find(scene, path, t => Events.Post(() => Tools.Tools.Dest(t.gameObject)));
+    public static void Dest(string scene, string path) => Find(scene, path, t => Events.Post(() => Props.Dest(t)));
 
     #endregion
     #region dynamic
