@@ -75,16 +75,6 @@ public static class Tools
     /// <summary> Creates a new object and assigns it to the given transform. </summary>
     public static T Create<T>(string name, Transform parent = null) where T : Component => Create(name, parent ?? Plugin.Instance?.transform).AddComponent<T>();
 
-    /// <summary> Gets and optionally sets material properties. </summary>
-    public static void Properties(this Renderer renderer, Cons<MaterialPropertyBlock> cons, bool set = false)
-    {
-        MaterialPropertyBlock block = new();
-        renderer.GetPropertyBlock(block);
-
-        cons(block);
-        if (set) renderer.SetPropertyBlock(block);
-    }
-
     #endregion
     #region unity
 

@@ -28,4 +28,23 @@ public static class Props
     public static T Get<T>(this Component comp, Cons<T> cons) where T : Component => Component(comp.gameObject, cons, true);
 
     #endregion
+    #region properties
+
+    /// <summary> Sets or gets properties of the given renderer and materials. </summary>
+    public static void Properties(Renderer renderer, Cons<MaterialPropertyBlock> cons, bool set = false)
+    {
+        MaterialPropertyBlock block = new();
+
+        renderer.GetPropertyBlock(block);
+        cons(block);
+        if (set) renderer.SetPropertyBlock(block);
+    }
+
+    /// <summary> Sets properties of the given renderer and materials. </summary>
+    public static void Set(this Renderer renderer, Cons<MaterialPropertyBlock> cons) => Properties(renderer, cons, true);
+
+    /// <summary> Gets properties of the given renderer and materials. </summary>
+    public static void Get(this Renderer renderer, Cons<MaterialPropertyBlock> cons) => Properties(renderer, cons);
+
+    #endregion
 }

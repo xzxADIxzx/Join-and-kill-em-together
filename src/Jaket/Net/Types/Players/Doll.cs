@@ -60,11 +60,11 @@ public class Doll : Entity
         w.Byte(Shop.SelectedJacket);
 
         w.Bool(custom);
-        if (custom) r.Properties(b =>
+        if (custom) r.Get(p =>
         {
-            w.Color(b.GetColor("_CustomColor1"));
-            w.Color(b.GetColor("_CustomColor2"));
-            w.Color(b.GetColor("_CustomColor3"));
+            w.Color(p.GetColor("_CustomColor1"));
+            w.Color(p.GetColor("_CustomColor2"));
+            w.Color(p.GetColor("_CustomColor3"));
         });
     }
 
@@ -119,12 +119,12 @@ public class Doll : Entity
                 if (custom)
                 {
                     r.materials = g.coloredMaterials;
-                    r.Properties(b =>
+                    r.Set(p =>
                     {
-                        b.SetColor("_CustomColor1", color1);
-                        b.SetColor("_CustomColor2", color2);
-                        b.SetColor("_CustomColor3", color3);
-                    }, true);
+                        p.SetColor("_CustomColor1", color1);
+                        p.SetColor("_CustomColor2", color2);
+                        p.SetColor("_CustomColor3", color3);
+                    });
                 }
                 else r.materials = g.defaultMaterials;
             }));

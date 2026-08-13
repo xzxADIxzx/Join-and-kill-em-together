@@ -31,9 +31,9 @@ public static class GunsPatch
 
         if (__instance.GetComponentInParent<Entity.Agent>() == null) return;
 
-        if (__instance.TryGetComponent(out Revolver r)) r.screenMR?.Properties(b => b.SetColor("_Color", color), true);
+        if (__instance.TryGetComponent(out Revolver r)) r.screenMR?.Set(p => p.SetColor("_Color", color));
 
-        ___variationColoredRenderers.Each(r => r.Properties(b => b.SetColor("_EmissiveColor", color), true));
+        ___variationColoredRenderers.Each(r => r.Set(p => p.SetColor("_EmissiveColor", color)));
     }
 
     [DynamicPatch(typeof(GroundCheck), nameof(GroundCheck.UpdateState))]
