@@ -76,13 +76,10 @@ public static class Tools
     public static T Create<T>(string name, Transform parent = null) where T : Component => Create(name, parent ?? Plugin.Instance?.transform).AddComponent<T>();
 
     #endregion
-    #region unity
+    #region world
 
     public static T[] ResFind<T>() where T : Object => Resources.FindObjectsOfTypeAll<T>();
     public static GameObject ObjFind(string name) => GameObject.Find(name);
-
-    #endregion
-    #region world
 
     /// <summary> Default environment raycast mask. </summary>
     public static readonly int EnvMask = LayerMaskDefaults.Get(LMD.Environment);

@@ -237,12 +237,12 @@ public class Chat : Fragment
 
         public string this[int index]
         {
-            set => messages[(start + index) % messages.Length] = value;
-            get => messages[(start + index) % messages.Length];
+            set => messages[(start + index) % size] = value;
+            get => messages[(start + index) % size];
         }
 
         /// <summary> Moves the start of the sequence back. </summary>
-        public void Move() => start = (messages.Length + start - 1) % messages.Length;
+        public void Move() => start = (size + start - 1) % size;
 
         /// <summary> Returns all values that are not null. </summary>
         public IEnumerable<string> NonNulls(int amount)

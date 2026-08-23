@@ -164,20 +164,20 @@ public class Debug : Fragment
         /// <summary> Graph to project the data onto. </summary>
         public UILineRenderer Graph;
 
-        public float this[int index] => data[(start + index) % data.Length];
+        public float this[int index] => data[(start + index) % size];
 
         /// <summary> Puts the value into the sequence. </summary>
         public void Enqueue(float value)
         {
             data[start] = value;
-            start = (start + 1) % data.Length;
+            start = (start + 1) % size;
         }
 
         /// <summary> Projects the data onto the graph. </summary>
         public void Project(float peak)
         {
-            var o = new Vector2[data.Length];
-            for (int i = 0; i < data.Length; i++) o[i] = new(i * 16f, Mathf.Min(this[i], peak) / peak * 240f);
+            var o = new Vector2[size];
+            for (int i = 0; i < size; i++) o[i] = new(i * 16f, Mathf.Min(this[i], peak) / peak * 240f);
 
             Graph.color = Label.color;
             Graph.Points = o;
