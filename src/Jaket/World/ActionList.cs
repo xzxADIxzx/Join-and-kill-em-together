@@ -421,7 +421,7 @@ I know it's been two years since the last update, but I am, unfortunately, a hum
 [63][b][red]WARNING !!! WARNING[][][]
 [31][b][red]!!! WARNING !!! WARNING !!! WARNING !!![][][]";
 
-        ActionType.Find(l, "Main Menu (1)/V1", r =>
+        ActionType.Find(l, "Main Menu (1)/V1", r => Tex.OnLoad(() =>
         {
             var root = Builder.Rect("Warning", r, new());
 
@@ -430,7 +430,7 @@ I know it's been two years since the last update, but I am, unfortunately, a hum
             var text = Builder.Rect("Text", root, new(0f, 0f, -32f, -32f, Vector2.zero, Vector2.one));
 
             Builder.Text(text, Bundle.Parse(info), 24, Pal.white, TextAnchor.UpperLeft);
-        });
+        }));
 
         // TODO remove later
         Each(a => a.Scene == "Main Menu", a => a.Perform(default));

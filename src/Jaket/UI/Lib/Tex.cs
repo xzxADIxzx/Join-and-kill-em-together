@@ -41,7 +41,7 @@ public static class Tex
     }
 
     /// <summary> Executes the task after loading sprites. </summary>
-    public static void OnLoad(Runnable task) => Events.Post(() => Fill & Back & BrdS & BrdL & Hort & Vert & Dash & Mask & Mark & Circle & Shadow & Dead & Flash, task);
+    public static void OnLoad(Runnable task) => Events.Post(() => ModAssets.DefFont & ModAssets.TmpFont & Fill & Back & BrdS & BrdL & Hort & Vert & Dash & Mask & Mark & Circle & Shadow & Dead & Flash, task);
 
     /// <summary> Returns the default scale of the sprite. </summary>
     public static float Scale(Sprite sprite) => sprite switch

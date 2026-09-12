@@ -44,7 +44,7 @@ public class Point : MonoBehaviour
         {
             l.startColor = l.endColor = color;
             l.widthMultiplier = 0f;
-            l.material.shader = ModAssets.Additv;
+            l.material.shader = ModAssets.Additive;
         });
 
         glow = Create("Light", transform).Add<Light>(l =>
@@ -74,7 +74,7 @@ public class Point : MonoBehaviour
             diamond.localScale = Vector3.zero;
         });
 
-        GetComponentsInChildren<Graphic>().Each(g => (g.material = Instantiate(g.material)).shader = ModAssets.Additv);
+        GetComponentsInChildren<Graphic>().Each(g => (g.material = Instantiate(g.material)).shader = ModAssets.Additive);
 
         transform.position = position;
         transform.rotation = Quaternion.LookRotation(direction);

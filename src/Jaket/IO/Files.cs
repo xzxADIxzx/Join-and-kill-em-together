@@ -20,6 +20,8 @@ public static class Files
     /// <summary> Path to the sprays directory. </summary>
     public static string Sprays => Join(Root, "../../sprays");
 
+    /// <summary> Path to the assets file. </summary>
+    public static string Assets => Join(Root, "assets.bundle");
     /// <summary> Path to the purchases file. </summary>
     public static string Purchases => Join(Slot, "purchases.jaket");
     /// <summary> Path to the progress file. </summary>

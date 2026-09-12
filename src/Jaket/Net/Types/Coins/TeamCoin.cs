@@ -98,7 +98,7 @@ public class TeamCoin : OwnableEntity
                     t.startColor = team.Color() with { a = .6f };
                 else
                 {
-                    r.material.mainTexture = ModAssets.CoinTexture;
+                    r.material.mainTexture = ModAssets.CoinTextures[0];
                     r.material.color = team.Color();
                 }
             });

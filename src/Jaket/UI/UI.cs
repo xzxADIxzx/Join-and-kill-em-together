@@ -57,7 +57,7 @@ public static class UI
     /// <summary> Builds the interface. </summary>
     public static void Build() => Tex.OnLoad(() =>
     {
-        static void Fix() => Events.Post(() =>
+        static void Fix()
         {
             HudMessageReceiver.Instance.text.font = ModAssets.TmpFont;
             HudMessageReceiver.Instance.Add<UnityEngine.Canvas>(c =>
@@ -65,9 +65,9 @@ public static class UI
                 c.overrideSorting = true;
                 c.sortingOrder = 42 + 01;
             });
-        });
+        }
         Fix();
-        Events.OnLoad += Fix;
+        Events.OnLoad += () => Events.Post(Fix);
 
         var root = Create("UI", Plugin.Instance.transform).transform;
 

@@ -231,7 +231,7 @@ public class Doll : Entity
     #region other
 
     /// <summary> Creates a preview of the local player. </summary>
-    public static void Preview() => Inst(ModAssets.DollPreview, NewMovement.Instance.transform).Add<Agent>(a =>
+    public static void Preview() => Inst(ModAssets.Preview, NewMovement.Instance.transform).Add<Agent>(a =>
     {
         Doll doll = new()
         {
