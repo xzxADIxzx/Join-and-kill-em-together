@@ -126,6 +126,11 @@ public static class GameAssets
         "Fishing/Fishes/Shark Fish.prefab",
         "Fishing/Fishes/Burnt Stuff.prefab",
 
+        "Levels/Decorations/OfficeVendingMachine.prefab",
+        "Levels/Decorations/OfficeVendingMachine.prefab",
+        "Levels/Decorations/OfficeVendingMachine.prefab",
+        "Levels/Decorations/OfficeVendingMachine.prefab",
+
         "Items/DevPlushies/DevPlushie (Hakita).prefab",
         "Items/DevPlushies/DevPlushie (PITR).prefab",
         "Items/DevPlushies/DevPlushie (Heckteck).prefab",

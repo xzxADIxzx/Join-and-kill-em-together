@@ -99,6 +99,11 @@ public enum EntityType : byte
     FishShark,
     FishBurnt,
 
+    SnackCan,
+    SnackChips,
+    SnackBar,
+    SnackSoda,
+
     Hakita,
     Pitr,
     Heckteck,
@@ -229,27 +234,36 @@ public enum EntityType : byte
 /// <summary> Set of different tools for working with types. </summary>
 public static class EntityTypes
 {
+    /// <summary> Whether the type is a player.     </summary>
+    public static bool IsPlayer    (this EntityType type) => type >= EntityType.Player               && type <= EntityType.Player              ;
+
+    /// <summary> Whether the type is a coin.       </summary>
+    public static bool IsCoin      (this EntityType type) => type >= EntityType.Coin                 && type <= EntityType.Coin                ;
+
     /// <summary> Whether the type is an enemy.     </summary>
-    public static bool IsEnemy     (this EntityType type) => type >= EntityType.Filth        && type <= EntityType.Sisyphus;
+    public static bool IsEnemy     (this EntityType type) => type >= EntityType.Filth                && type <= EntityType.Sisyphus            ;
 
     /// <summary> Whether the type is an item.      </summary>
-    public static bool IsItem      (this EntityType type) => type >= EntityType.SkullBlue    && type <= EntityType.Sowler;
+    public static bool IsItem      (this EntityType type) => type >= EntityType.SkullBlue            && type <= EntityType.Sowler              ;
 
     /// <summary> Whether the type is a fish.       </summary>
-    public static bool IsFish      (this EntityType type) => type >= EntityType.FishFunny    && type <= EntityType.FishBurnt;
+    public static bool IsFish      (this EntityType type) => type >= EntityType.FishFunny            && type <= EntityType.FishBurnt           ;
+
+    /// <summary> Whether the type is a snack.      </summary>
+    public static bool IsSnack     (this EntityType type) => type >= EntityType.SnackCan             && type <= EntityType.SnackSoda           ;
 
     /// <summary> Whether the type is a plushie.    </summary>
-    public static bool IsPlushie   (this EntityType type) => type >= EntityType.Hakita       && type <= EntityType.Sowler;
+    public static bool IsPlushie   (this EntityType type) => type >= EntityType.Hakita               && type <= EntityType.Sowler              ;
 
     /// <summary> Whether the type is a weapon.     </summary>
-    public static bool IsWeapon    (this EntityType type) => type >= EntityType.RevolverBlue && type <= EntityType.RocketlRed;
+    public static bool IsWeapon    (this EntityType type) => type >= EntityType.RevolverBlue         && type <= EntityType.RocketlRed          ;
 
     /// <summary> Whether the type is a hitscan.    </summary>
-    public static bool IsHitscan   (this EntityType type) => type >= EntityType.Beam         && type <= EntityType.BeamHammer;
+    public static bool IsHitscan   (this EntityType type) => type >= EntityType.Beam                 && type <= EntityType.BeamHammer          ;
 
     /// <summary> Whether the type is a projectile. </summary>
-    public static bool IsProjectile(this EntityType type) => type >= EntityType.Shell        && type <= EntityType.ProjectileExpl;
+    public static bool IsProjectile(this EntityType type) => type >= EntityType.Shell                && type <= EntityType.ProjectileExpl      ;
 
     /// <summary> Whether the type is an explosion. </summary>
-    public static bool IsExplosion (this EntityType type) => type >= EntityType.Shockwave    && type <= EntityType.HammerParticleHeavy;
+    public static bool IsExplosion (this EntityType type) => type >= EntityType.Shockwave            && type <= EntityType.HammerParticleHeavy ;
 }
