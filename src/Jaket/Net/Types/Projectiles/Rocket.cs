@@ -92,7 +92,7 @@ public class Rocket : Rotatable
     [Prefix]
     static bool Ride(Grenade __instance)
     {
-        if (__instance.TryGetEntity(out Rocket r))
+        if (__instance.HasEntity(out Rocket r))
         {
             // someone else is riding the rocket
             if (r.riding) return false;

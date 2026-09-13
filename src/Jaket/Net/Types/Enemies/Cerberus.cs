@@ -117,28 +117,28 @@ public class Cerberus : Enemy
     [Prefix]
     static void Stomp(StatueBoss __instance)
     {
-        if (__instance.TryGetEntity(out Cerberus c)) c.Attack = 1;
+        if (__instance.HasEntity(out Cerberus c)) c.Attack = 1;
     }
 
     [DynamicPatch(typeof(StatueBoss), nameof(StatueBoss.Tackle))]
     [Prefix]
     static void Melee(StatueBoss __instance)
     {
-        if (__instance.TryGetEntity(out Cerberus c)) c.Attack = 2;
+        if (__instance.HasEntity(out Cerberus c)) c.Attack = 2;
     }
 
     [DynamicPatch(typeof(StatueBoss), nameof(StatueBoss.Throw))]
     [Prefix]
     static void Throw(StatueBoss __instance)
     {
-        if (__instance.TryGetEntity(out Cerberus c)) c.Attack = 3;
+        if (__instance.HasEntity(out Cerberus c)) c.Attack = 3;
     }
 
     [DynamicPatch(typeof(StatueBoss), nameof(StatueBoss.StopAction))]
     [Prefix]
     static void Zeros(StatueBoss __instance)
     {
-        if (__instance.TryGetEntity(out Cerberus c)) c.Attack = 0;
+        if (__instance.HasEntity(out Cerberus c)) c.Attack = 0;
     }
 
     [DynamicPatch(typeof(StatueBoss), nameof(StatueBoss.OrbSpawn))]
@@ -149,14 +149,14 @@ public class Cerberus : Enemy
     [Prefix]
     static void Enrage(StatueBoss __instance)
     {
-        if (__instance.TryGetEntity(out Cerberus c) && !c.Enraged) c.Enrage(true);
+        if (__instance.HasEntity(out Cerberus c) && !c.Enraged) c.Enrage(true);
     }
 
     [DynamicPatch(typeof(StatueBoss), nameof(StatueBoss.UnEnrage))]
     [Prefix]
     static void Unrage(StatueBoss __instance)
     {
-        if (__instance.TryGetEntity(out Cerberus c) && c.Enraged) c.Enrage(false);
+        if (__instance.HasEntity(out Cerberus c) && c.Enraged) c.Enrage(false);
     }
 
     #endregion

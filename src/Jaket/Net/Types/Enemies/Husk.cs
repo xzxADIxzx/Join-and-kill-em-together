@@ -107,35 +107,35 @@ public class Husk : Enemy
     [Prefix]
     static void Swing(ZombieMelee __instance)
     {
-        if (__instance.TryGetEntity(out Husk h)) h.Attack = 1;
+        if (__instance.HasEntity(out Husk h)) h.Attack = 1;
     }
 
     [DynamicPatch(typeof(ZombieMelee), nameof(ZombieMelee.JumpAttack))]
     [Prefix]
     static void Jumpy(ZombieMelee __instance)
     {
-        if (__instance.TryGetEntity(out Husk h)) h.Attack = 2;
+        if (__instance.HasEntity(out Husk h)) h.Attack = 2;
     }
 
     [DynamicPatch(typeof(ZombieMelee), nameof(ZombieMelee.DamageEnd))]
     [Prefix]
     static void Zeros(ZombieMelee __instance)
     {
-        if (__instance.TryGetEntity(out Husk h)) h.Attack = 0;
+        if (__instance.HasEntity(out Husk h)) h.Attack = 0;
     }
 
     [DynamicPatch(typeof(ZombieProjectiles), nameof(ZombieProjectiles.Swing))]
     [Prefix]
     static void Swing(ZombieProjectiles __instance)
     {
-        if (__instance.TryGetEntity(out Husk h)) h.Attack = 1;
+        if (__instance.HasEntity(out Husk h)) h.Attack = 1;
     }
 
     [DynamicPatch(typeof(ZombieProjectiles), nameof(ZombieProjectiles.Melee))]
     [Prefix]
     static void Melee(ZombieProjectiles __instance)
     {
-        if (__instance.TryGetEntity(out Husk h)) h.Attack = 2;
+        if (__instance.HasEntity(out Husk h)) h.Attack = 2;
     }
 
     [DynamicPatch(typeof(ZombieProjectiles), nameof(ZombieProjectiles.DamageEnd))]
@@ -143,7 +143,7 @@ public class Husk : Enemy
     [Prefix]
     static void Zeros(ZombieProjectiles __instance)
     {
-        if (__instance.TryGetEntity(out Husk h)) h.Attack = 0;
+        if (__instance.HasEntity(out Husk h)) h.Attack = 0;
     }
 
     [DynamicPatch(typeof(ZombieProjectiles), nameof(ZombieProjectiles.ThrowProjectile))]

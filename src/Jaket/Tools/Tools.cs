@@ -84,9 +84,6 @@ public static class Tools
     /// <summary> Default environment raycast mask. </summary>
     public static readonly int EnvMask = LayerMaskDefaults.Get(LMD.Environment);
 
-    /// <summary> Gets an entity of the given type. </summary>
-    public static bool TryGetEntity<T>(this Component comp, out T entity) where T : Entity => (entity = comp.TryGetComponent(out Entity.Agent a) && a.Patron is T t ? t : null) != null;
-
     /// <summary> Whether the item is placed on an altar. </summary>
     public static bool Placed(this ItemIdentifier itemId) => itemId.transform.parent?.gameObject.layer == 22;
 

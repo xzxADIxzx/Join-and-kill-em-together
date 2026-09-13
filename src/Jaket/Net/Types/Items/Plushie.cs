@@ -171,7 +171,7 @@ public class Plushie : Item
         var cam = CameraController.Instance.transform;
         var owl = col.transform.parent.parent;
 
-        if (owl.transform.childCount >= 3 && owl.TryGetEntity(out Item i))
+        if (owl.transform.childCount >= 3 && owl.HasEntity(out Item i))
         {
             GameAssets.Prefab("Attacks and Projectiles/Hitscan Beams/Lighting Beam Reflected.prefab", p =>
             {

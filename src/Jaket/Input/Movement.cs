@@ -250,7 +250,7 @@ public class Movement : MonoSingleton<Movement>
     [Prefix]
     static void LoosersLove(ref Collider value)
     {
-        if (value && value.TryGetEntity(out RemotePlayer p) && p.Team.Ally()) value = null;
+        if (value && value.HasEntity(out RemotePlayer p) && p.Team.Ally()) value = null;
     }
 
     #endregion

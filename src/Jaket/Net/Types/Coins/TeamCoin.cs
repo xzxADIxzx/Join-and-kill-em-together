@@ -200,7 +200,7 @@ public class TeamCoin : OwnableEntity
 
     public void Reflect()
     {
-        if (target && target.TryGetEntity(out TeamCoin c))
+        if (target && target.HasEntity(out TeamCoin c))
         {
             c.chain = chain;
             c.power = power + 1;
@@ -394,7 +394,7 @@ public class TeamCoin : OwnableEntity
     [Prefix]
     static bool Death(Coin __instance, Collision collision)
     {
-        if (__instance.TryGetEntity(out TeamCoin c) && LayerMaskDefaults.IsMatchingLayer(collision.gameObject.layer, LMD.Environment))
+        if (__instance.HasEntity(out TeamCoin c) && LayerMaskDefaults.IsMatchingLayer(collision.gameObject.layer, LMD.Environment))
         {
             if (c.IsOwner) c.Kill();
             return false;
@@ -410,7 +410,7 @@ public class TeamCoin : OwnableEntity
     [Prefix]
     static bool Reflect(Coin __instance, GameObject beam)
     {
-        if (__instance.TryGetEntity(out TeamCoin c)) c.Reflect(beam);
+        if (__instance.HasEntity(out TeamCoin c)) c.Reflect(beam);
         return false;
     }
 
@@ -418,7 +418,7 @@ public class TeamCoin : OwnableEntity
     [Prefix]
     static bool Punch(Coin __instance)
     {
-        if (__instance.TryGetEntity(out TeamCoin c)) c.Punch();
+        if (__instance.HasEntity(out TeamCoin c)) c.Punch();
         return false;
     }
 
@@ -426,7 +426,7 @@ public class TeamCoin : OwnableEntity
     [Prefix]
     static bool Bounce(Coin __instance)
     {
-        if (__instance.TryGetEntity(out TeamCoin c)) c.Bounce();
+        if (__instance.HasEntity(out TeamCoin c)) c.Bounce();
         return false;
     }
 

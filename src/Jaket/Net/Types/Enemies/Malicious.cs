@@ -124,14 +124,14 @@ public class Malicious : Enemy
     [Prefix]
     static void Beamy(MaliciousFace __instance)
     {
-        if (__instance.TryGetEntity(out Malicious m)) m.Attack = 1;
+        if (__instance.HasEntity(out Malicious m)) m.Attack = 1;
     }
 
     [DynamicPatch(typeof(MaliciousFace), nameof(MaliciousFace.StopWaiting))]
     [Prefix]
     static void Zeros(MaliciousFace __instance)
     {
-        if (__instance.TryGetEntity(out Malicious m)) m.Attack = 0;
+        if (__instance.HasEntity(out Malicious m)) m.Attack = 0;
     }
 
     [DynamicPatch(typeof(MaliciousFace), nameof(MaliciousFace.BeamFire))]
@@ -154,14 +154,14 @@ public class Malicious : Enemy
     [Prefix]
     static void Enrage(MaliciousFace __instance)
     {
-        if (__instance.TryGetEntity(out Malicious m) && !m.Enraged) m.Enrage(true);
+        if (__instance.HasEntity(out Malicious m) && !m.Enraged) m.Enrage(true);
     }
 
     [DynamicPatch(typeof(MaliciousFace), nameof(MaliciousFace.UnEnrage))]
     [Prefix]
     static void Unrage(MaliciousFace __instance)
     {
-        if (__instance.TryGetEntity(out Malicious m) && m.Enraged) m.Enrage(false);
+        if (__instance.HasEntity(out Malicious m) && m.Enraged) m.Enrage(false);
     }
 
     #endregion

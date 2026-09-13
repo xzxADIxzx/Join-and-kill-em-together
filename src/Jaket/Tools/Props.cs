@@ -2,6 +2,8 @@ namespace Jaket.Tools;
 
 using UnityEngine;
 
+using Jaket.Net;
+
 /// <summary> Set of different tools for simplifying life and systematization of code. </summary>
 public static class Props
 {
@@ -84,6 +86,33 @@ public static class Props
 
     /// <summary> Iterates the children. </summary>
     public static void Each(this Transform parent, Cons<Transform> cons) { foreach (Transform child in parent) cons(child); }
+
+    #endregion
+    #region entities
+
+    /// <summary> Gets an agent of any entity type. </summary>
+    public static bool HasAgent(this GameObject obj, out Entity.Agent agent) => obj.TryGetComponent(out agent);
+
+    /// <summary> Gets an agent of any entity type. </summary>
+    public static bool HasAgent(this Component comp, out Entity.Agent agent) => comp.TryGetComponent(out agent);
+
+    /// <summary> Gets an agent of any entity type. </summary>
+    public static bool HasAgent(this GameObject obj) => HasAgent(obj, out _);
+
+    /// <summary> Gets an agent of any entity type. </summary>
+    public static bool HasAgent(this Component comp) => HasAgent(comp, out _);
+
+    /// <summary> Gets an entity of the given type. </summary>
+    public static bool HasEntity<T>(this GameObject obj, out T entity) where T : Entity => (entity = obj.TryGetComponent(out Entity.Agent a) ? a.Patron as T : null) != null;
+
+    /// <summary> Gets an entity of the given type. </summary>
+    public static bool HasEntity<T>(this Component comp, out T entity) where T : Entity => (entity = comp.TryGetComponent(out Entity.Agent a) ? a.Patron as T : null) != null;
+
+    /// <summary> Gets an entity of the given type. </summary>
+    public static bool HasEntity<T>(this GameObject obj) where T : Entity => HasEntity<T>(obj, out _);
+
+    /// <summary> Gets an entity of the given type. </summary>
+    public static bool HasEntity<T>(this Component comp) where T : Entity => HasEntity<T>(comp, out _);
 
     #endregion
 }

@@ -141,7 +141,7 @@ public abstract class Projectile : OwnableEntity
     /// <summary> Invokes the patch logic if the provided object is an entity. </summary>
     public static bool Kill<T>(Component instance, Cons<T> patch, bool onlyAlive = true) where T : Entity
     {
-        if (instance.TryGetEntity(out T t) && !(onlyAlive && t.Hidden))
+        if (instance.HasEntity(out T t) && !(onlyAlive && t.Hidden))
         {
             patch(t);
             return false;
@@ -152,7 +152,7 @@ public abstract class Projectile : OwnableEntity
     /// <summary> Invokes the patch logic if the hitten collider is an entity. </summary>
     public static bool Deal<T>(Component instance, Patch<T> patch, Agent agent = null, Collider other = null, EnemyIdentifier eid = null) where T : Entity
     {
-        if (instance.TryGetEntity(out T t))
+        if (instance.HasEntity(out T t))
         {
             if (!eid && !other.TryGetComponent(out eid)) eid = other.GetComponent<EnemyIdentifierIdentifier>()?.eid;
             if (!eid || !eid.TryGetComponent(out agent)) return t.IsOwner;

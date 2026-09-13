@@ -182,14 +182,14 @@ public abstract class Enemy : OwnableEntity
     [Prefix]
     static void Break(EnemyIdentifier __instance)
     {
-        if (__instance.TryGetEntity(out Enemy e) && !e.Hidden) e.Kill(1, w => w.Bools(true, true));
+        if (__instance.HasEntity(out Enemy e) && !e.Hidden) e.Kill(1, w => w.Bools(true, true));
     }
 
     [DynamicPatch(typeof(EnemyIdentifier), nameof(EnemyIdentifier.ProcessDeath))]
     [Prefix]
     static void Death(EnemyIdentifier __instance)
     {
-        if (__instance.TryGetEntity(out Enemy e) && !e.Hidden) e.Kill(1, w => w.Bools(true, false));
+        if (__instance.HasEntity(out Enemy e) && !e.Hidden) e.Kill(1, w => w.Bools(true, false));
     }
 
     [DynamicPatch(typeof(EnemyIdentifier), nameof(EnemyIdentifier.UpdateTarget))]

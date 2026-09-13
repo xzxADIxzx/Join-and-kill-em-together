@@ -133,28 +133,28 @@ public class Swordsmachine : Enemy
     [Prefix]
     static void Combo(SwordsMachine __instance)
     {
-        if (__instance.TryGetEntity(out Swordsmachine s)) s.Attack = 1;
+        if (__instance.HasEntity(out Swordsmachine s)) s.Attack = 1;
     }
 
     [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.RunningSwing))]
     [Prefix]
     static void Swing(SwordsMachine __instance)
     {
-        if (__instance.TryGetEntity(out Swordsmachine s)) s.Attack = 2;
+        if (__instance.HasEntity(out Swordsmachine s)) s.Attack = 2;
     }
 
     [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.SwordThrow))]
     [Prefix]
     static void Throw(SwordsMachine __instance)
     {
-        if (__instance.TryGetEntity(out Swordsmachine s)) s.Attack = 3;
+        if (__instance.HasEntity(out Swordsmachine s)) s.Attack = 3;
     }
 
     [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.SwordSpiral))]
     [Prefix]
     static void Twist(SwordsMachine __instance)
     {
-        if (__instance.TryGetEntity(out Swordsmachine s)) s.Attack = 4;
+        if (__instance.HasEntity(out Swordsmachine s)) s.Attack = 4;
     }
 
     [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.DamageStop))]
@@ -162,21 +162,21 @@ public class Swordsmachine : Enemy
     [Prefix]
     static void Zeros(SwordsMachine __instance)
     {
-        if (__instance.TryGetEntity(out Swordsmachine s)) s.Attack = 0;
+        if (__instance.HasEntity(out Swordsmachine s)) s.Attack = 0;
     }
 
     [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.EndFirstPhase))]
     [Prefix]
     static void Phase(SwordsMachine __instance)
     {
-        if (__instance.TryGetEntity(out Swordsmachine s) && !s.Hidden) s.Kill(1, w => w.Bools(true, true));
+        if (__instance.HasEntity(out Swordsmachine s) && !s.Hidden) s.Kill(1, w => w.Bools(true, true));
     }
 
     [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.TeleportAway))]
     [Prefix]
     static bool Leave(SwordsMachine __instance)
     {
-        if (__instance.TryGetEntity(out Swordsmachine s) && !s.Hidden) s.Kill();
+        if (__instance.HasEntity(out Swordsmachine s) && !s.Hidden) s.Kill();
         return false;
     }
 
@@ -184,14 +184,14 @@ public class Swordsmachine : Enemy
     [Prefix]
     static void Enrage(SwordsMachine __instance)
     {
-        if (__instance.TryGetEntity(out Swordsmachine s) && !s.Enraged) s.Enrage(true);
+        if (__instance.HasEntity(out Swordsmachine s) && !s.Enraged) s.Enrage(true);
     }
 
     [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.UnEnrage))]
     [Prefix]
     static void Unrage(SwordsMachine __instance)
     {
-        if (__instance.TryGetEntity(out Swordsmachine s) && s.Enraged) s.Enrage(false);
+        if (__instance.HasEntity(out Swordsmachine s) && s.Enraged) s.Enrage(false);
     }
 
     #endregion

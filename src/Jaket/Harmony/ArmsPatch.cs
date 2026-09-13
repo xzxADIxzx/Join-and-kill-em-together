@@ -19,7 +19,7 @@ public static class ArmsPatch
         if (___state == HookState.Pulling && ___caughtEid && ___lightTarget)
         {
             if (caught == ___caughtEid) return;
-            if ((caught = ___caughtEid).TryGetEntity(out Enemy e)) e.TakeOwnage();
+            if ((caught = ___caughtEid).HasEntity(out Enemy e)) e.TakeOwnage();
         }
         else caught = null;
     }
