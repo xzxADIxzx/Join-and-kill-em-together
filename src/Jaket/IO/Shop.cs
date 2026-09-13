@@ -29,6 +29,8 @@ public static class Shop
 
             Entries[i] = JsonUtility.FromJson<ShopEntry>(json[s..e]);
         }
+
+        LoadPurchases();
     }
 
     #region save & load

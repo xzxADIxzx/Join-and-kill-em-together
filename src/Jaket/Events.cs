@@ -157,13 +157,12 @@ public static class Events
     /// <summary> Guarantees the execution of all listeners regardless of errors. </summary>
     public class SafeEvent<T>(string name)
     {
-        protected string name = name;
-        protected byte amount;
+        protected byte count;
         protected Cons<T>[] listeners = new Cons<T>[byte.MaxValue + 1];
 
         public void Fire(T t)
         {
-            for (byte i = 0; i < amount; i++)
+            for (byte i = 0; i < count; i++)
             {
                 try
                 {
@@ -173,7 +172,7 @@ public static class Events
             }
         }
 
-        public static SafeEvent<T> operator +(SafeEvent<T> e, Cons<T> listener) { e.listeners[e.amount++] = listener; return e; }
+        public static SafeEvent<T> operator +(SafeEvent<T> e, Cons<T> listener) { e.listeners[e.count++] = listener; return e; }
     }
 
     /// <inheritdoc/>
@@ -181,6 +180,6 @@ public static class Events
     {
         public void Fire() => Fire(null);
 
-        public static SafeEvent operator +(SafeEvent e, Runnable listener) { e.listeners[e.amount++] = _ => listener(); return e; }
+        public static SafeEvent operator +(SafeEvent e, Runnable listener) { e.listeners[e.count++] = _ => listener(); return e; }
     }
 }
