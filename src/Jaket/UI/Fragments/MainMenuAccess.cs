@@ -17,6 +17,14 @@ public class MainMenuAccess : Fragment
 
     public override void Toggle()
     {
+        #region version
+
+        CanvasController.Instance.transform.Find("Main Menu (1)/LeftSide/Text (3)").GetComponentsInChildren<TMPro.TextMeshProUGUI>(true).Each(t =>
+        {
+            t.text += $"\nJAKET V{Version.Readable}";
+        });
+
+        #endregion
         #region lobbies
 
         var root = CanvasController.Instance.transform.Find("Difficulty Select (1)/Interactables");
