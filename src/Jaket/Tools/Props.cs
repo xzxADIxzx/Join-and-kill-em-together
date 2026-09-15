@@ -90,6 +90,18 @@ public static class Props
     #endregion
     #region entities
 
+    /// <summary> Gets an identifier of the object. </summary>
+    public static bool HasIdentifier(this GameObject obj, out Entity.Identifier identifier) => obj.TryGetComponent(out identifier);
+
+    /// <summary> Gets an identifier of the object. </summary>
+    public static bool HasIdentifier(this Component comp, out Entity.Identifier identifier) => comp.TryGetComponent(out identifier);
+
+    /// <summary> Gets an identifier of the object. </summary>
+    public static bool HasIdentifier(this GameObject obj) => HasAgent(obj, out _);
+
+    /// <summary> Gets an identifier of the object. </summary>
+    public static bool HasIdentifier(this Component comp) => HasAgent(comp, out _);
+
     /// <summary> Gets an agent of any entity type. </summary>
     public static bool HasAgent(this GameObject obj, out Entity.Agent agent) => obj.TryGetComponent(out agent);
 

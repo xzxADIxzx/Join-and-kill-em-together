@@ -93,6 +93,8 @@ public static class Tools
     #endregion
     #region reflection
 
+    /// <summary> Returns metadata of a constructor. </summary>
+    public static ConstructorInfo Constructor<T>(System.Type[] args) => AccessTools.Constructor(typeof(T), args);
     /// <summary> Returns metadata of a field. </summary>
     public static FieldInfo Field<T>(string name) => AccessTools.Field(typeof(T), name);
     /// <summary> Returns metadata of a method. </summary>

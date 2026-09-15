@@ -3,6 +3,7 @@ namespace Jaket.Net;
 using System.Collections.Generic;
 using UnityEngine;
 
+using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net.Types;
 using Jaket.Net.Vendors;
@@ -51,7 +52,7 @@ public static class Entities
             uint sector = AccId / factor;
 
             // the range of all possible identifiers is divided into eight equal sectors
-            List<uint>[] sectors = [[], [], [], [], [], [], [], []];
+            List<uint>[] sectors = [ [], [], [], [], [], [], [], [] ];
 
             // lobby members are distributed among these sectors according to their identifiers
             LobbyController.Lobby?.Members.Each(m => sectors[m.AccId / factor].Add(m.AccId));
@@ -76,15 +77,38 @@ public static class Entities
     }
 
     /// <summary> Vendors are responsible for their respective group of entity types. </summary>
-    public interface Vendor
+    public abstract class Vendor
     {
         /// <summary> Prefabs of the objects manipulated by entities. </summary>
         public static GameObject[] Prefabs = new GameObject[byte.MaxValue + 1];
         /// <summary> Suppliers that provide the entities themselves. </summary>
         public static Supplier[] Suppliers = new Supplier[byte.MaxValue + 1];
 
-        /// <summary> Returns the index of the prefab that is suitable for the given predicate in the given range. </summary>
-        public static EntityType Find(EntityType from, EntityType to, Pred<GameObject> pred)
+        /// <summary> Fills the specified range with prefabs loaded from the given list of internal addressable paths. </summary>
+        protected void Fill(EntityType from, EntityType to, string[] list)
+        {
+            var counter = from;
+            list.Each(p =>
+            {
+                var idx = counter++;
+                GameAssets.Prefab(p, p => (Prefabs[(byte)idx] = p).Add<Entity.Identifier>(i => i.Type = idx));
+            });
+            if (counter != ++to) Log.Warning($"[ENTS] Prefabs of the vendor {GetType().Name} do not match up with the specified range");
+        }
+
+        /// <summary> Fills the specified range with a supplier generated from the given entity type using reflection. </summary>
+        protected void Fill<T>(EntityType from, EntityType to) where T : Entity
+        {
+            var constructor = Constructor<T>([ typeof(uint), typeof(EntityType) ]);
+
+            for (EntityType i = from; i <= to; i++)
+            {
+                Suppliers[(byte)i] = (id, type) => (T)constructor.Invoke([ id, type ]);
+            }
+        }
+
+        /// <summary> Returns the index of the prefab that is suitable for the given predicate in the specified range. </summary>
+        protected EntityType Find(EntityType from, EntityType to, Pred<GameObject> pred)
         {
             for (EntityType i = from; i <= to; i++)
             {

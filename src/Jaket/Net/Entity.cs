@@ -106,6 +106,13 @@ public abstract class Entity
 
     #endregion
 
+    /// <summary> Simple component that defines the entity type of an object. </summary>
+    public class Identifier : MonoBehaviour
+    {
+        /// <summary> Underlying type of the entity. </summary>
+        public EntityType Type;
+    }
+
     /// <summary> Most of the entities manipulate an object of some kind, agents implement these interactions. </summary>
     public class Agent : MonoBehaviour
     {
