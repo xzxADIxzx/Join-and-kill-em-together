@@ -106,9 +106,9 @@ public static class ModAssets
         Load<GameObject>("Doll", p => LoadMaterials(Doll = p));
         Load<GameObject>("Doll Preview", p => LoadMaterials(Preview = p));
 
-        Events.Post(() => Entities.Vendor.Prefabs[(byte)EntityType.Moon], () =>
+        Events.Post(() => Entities.Vendor.Prefabs[(byte)EntityType.Torch], () =>
         {
-            Keep(Moon = Entities.Items.Make(EntityType.Moon));
+            Keep(Moon = Entities.Items.Make(EntityType.Torch));
             Dest(Moon.transform.Find("Fire"));
             Dest(Moon.transform.Find("Light"));
 

@@ -32,6 +32,12 @@ public static class GameAssets
     #endregion
     #region content
 
+    /// <summary> List of internal paths of all coins. </summary>
+    public static readonly string[] Coins =
+    {
+        "Attacks and Projectiles/Coin.prefab",
+    };
+
     /// <summary> List of internal paths of all enemies. </summary>
     public static readonly string[] Enemies =
     {
@@ -107,8 +113,9 @@ public static class GameAssets
         "Items/SkullRed.prefab",
         "Items/Soap.prefab",
         "Items/Torch.prefab",
-        "Items/Torch.prefab",
+        "", // moon
         "Items/Florp Throwable.prefab",
+
         "Fishing/Apple Bait.prefab",
         "Fishing/Maurice Bait.prefab",
 

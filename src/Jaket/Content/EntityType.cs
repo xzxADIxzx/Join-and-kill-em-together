@@ -82,6 +82,7 @@ public enum EntityType : byte
     Torch,
     Moon,
     Florp,
+
     BaitApple,
     BaitFace,
 
@@ -245,6 +246,9 @@ public static class EntityTypes
 
     /// <summary> Whether the type is an item.      </summary>
     public static bool IsItem      (this EntityType type) => type >= EntityType.SkullBlue            && type <= EntityType.Sowler              ;
+
+    /// <summary> Whether the type is a bait.       </summary>
+    public static bool IsBait      (this EntityType type) => type >= EntityType.BaitApple            && type <= EntityType.BaitFace            ;
 
     /// <summary> Whether the type is a fish.       </summary>
     public static bool IsFish      (this EntityType type) => type >= EntityType.FishFunny            && type <= EntityType.FishBurnt           ;

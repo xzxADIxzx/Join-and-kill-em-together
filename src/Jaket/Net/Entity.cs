@@ -84,7 +84,7 @@ public abstract class Entity
     }
 
     /// <summary> Creates an object and assigns an agent. </summary>
-    protected void Create(Vendor vendor, ref Float x, ref Float y, ref Float z) => Assign(vendor.Make(Type, new(x.Init, y.Init, z.Init)).AddComponent<Agent>());
+    protected void Create(Vendor vendor, ref Float x, ref Float y, ref Float z) => vendor.Make(Type, new(x.Init, y.Init, z.Init)).Add<Agent>(Assign);
 
     /// <summary> Hides the entity and reads a few flags. </summary>
     protected void Killed(Reader r, int left, Agent agent, Bits bits)

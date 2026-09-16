@@ -72,7 +72,7 @@ public class Subject(uint id)
         }
         else if (type.IsItem())
         {
-            if (Privilege.Has || type.IsFish() || type.IsPlushie() || type == EntityType.BaitApple || type == EntityType.BaitFace)
+            if (Privilege.Has || type.IsBait() || type.IsFish() || type.IsSnack() || type.IsPlushie())
             {
                 defpool.Add(entity);
                 Warn("flood of entities", ref commons);
