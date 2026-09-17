@@ -57,8 +57,8 @@ public class Header
     });
 
     /// <summary> Shows the header. </summary>
-    public void Show() => Root.Find("Header").gameObject.SetActive(true);
+    public void Show() => Root.ObjFind("Header").SetActive(true);
 
     /// <summary> Hides the header. </summary>
-    public void Hide() => Root.Find("Header").gameObject.SetActive(false);
+    public void Hide() => Root.ObjFind("Header").SetActive(false);
 }

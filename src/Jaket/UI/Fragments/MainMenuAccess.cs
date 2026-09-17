@@ -19,7 +19,7 @@ public class MainMenuAccess : Fragment
     {
         #region version
 
-        CanvasController.Instance.transform.Find("Main Menu (1)/LeftSide/Text (3)").GetComponentsInChildren<TMPro.TextMeshProUGUI>(true).Each(t =>
+        CanvasController.Instance.DefFind("Main Menu (1)/LeftSide/Text (3)").GetComponentsInChildren<TMPro.TextMeshProUGUI>(true).Each(t =>
         {
             t.text += $"\nJAKET V{Version.Readable}";
         });
@@ -27,7 +27,7 @@ public class MainMenuAccess : Fragment
         #endregion
         #region lobbies
 
-        var root = CanvasController.Instance.transform.Find("Difficulty Select (1)/Interactables");
+        var root = CanvasController.Instance.DefFind("Difficulty Select (1)/Interactables");
 
         var sep1 = Builder.Image (Builder.Rect("Sep1", root, new(-210f, -170f, 380f, 02f, new(1f, .5f))), null, green       ).gameObject;
         var sep2 = Builder.Image (Builder.Rect("Sep2", root, new(-210f, -285f, 380f, 02f, new(1f, .5f))), null, green.Darker).gameObject;
@@ -52,9 +52,9 @@ public class MainMenuAccess : Fragment
                     PrefsManager.Instance.GetInt("difficulty")
                 );
 
-                var root = l.transform.Find("Stats"            ) as RectTransform;
-                var prev = l.transform.Find("Stats/Rank"       ) as RectTransform;
-                var next = l.transform.Find("Stats/Rank(Clone)") as RectTransform;
+                var root = l.DefFind("Stats"            ) as RectTransform;
+                var prev = l.DefFind("Stats/Rank"       ) as RectTransform;
+                var next = l.DefFind("Stats/Rank(Clone)") as RectTransform;
 
                 if (next) Dest(next);
                 next = Inst(prev, root);
@@ -83,7 +83,7 @@ public class MainMenuAccess : Fragment
                     i.sprite = rank == 6 ? l.filledPanel : l.unfilledPanel;
                     i.color = rank == 6 ? new(255, 175, 0, 255) : white;
                 });
-                next.Find("Text").Get<TMPro.TextMeshProUGUI>(t => t.text = Progress.Sign(rank));
+                next.DefFind("Text").Get<TMPro.TextMeshProUGUI>(t => t.text = Progress.Sign(rank));
 
                 Builder.Image(Builder.Rect("Icon", next, new()), ModAssets.Mask, white with { a = invi.a }).PreserveAspect().transform.SetAsFirstSibling();
             });

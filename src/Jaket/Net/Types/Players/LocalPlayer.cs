@@ -48,8 +48,8 @@ public class LocalPlayer : Entity
         };
         Events.OnTeamChange += () =>
         {
-            var shine = nm.transform.Find("Point Light");
-            if (shine) shine.GetComponent<Light>().color = LobbyController.Offline ? Color.white : Team.Color();
+            var shine = nm.DefFind("Point Light");
+            if (shine) shine.Get<Light>(l => l.color = LobbyController.Offline ? white : Team.Color());
         };
     }
 
@@ -145,13 +145,13 @@ public class LocalPlayer : Entity
     /// <summary> Recolors the hands seen in first person and caches some values. </summary>
     public void Recolor()
     {
-        var main = cw?.transform.GetChild(0).Find("RightArm");
+        var main = cw?.transform.GetChild(0).DefFind("RightArm");
         if (main) main.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = ModAssets.HandTexture(0);
 
-        var feed = fc?.transform.Find("Arm Blue(Clone)");
+        var feed = fc?.DefFind("Arm Blue(Clone)");
         if (feed) feed.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = ModAssets.HandTexture(1);
 
-        var knkl = fc?.transform.Find("Arm Red(Clone)");
+        var knkl = fc?.DefFind("Arm Red(Clone)");
         if (knkl) knkl.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = ModAssets.HandTexture(2);
 
         var type = Entities.Weapons.Type(cw);

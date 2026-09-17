@@ -9,6 +9,7 @@ namespace Jaket.Tools;
 
 using HarmonyLib;
 using Steamworks;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
@@ -78,9 +79,6 @@ public static class Tools
     #endregion
     #region world
 
-    public static T[] ResFind<T>() where T : Object => Resources.FindObjectsOfTypeAll<T>();
-    public static GameObject ObjFind(string name) => GameObject.Find(name);
-
     /// <summary> Default environment raycast mask. </summary>
     public static readonly int EnvMask = LayerMaskDefaults.Get(LMD.Environment);
 
@@ -94,22 +92,22 @@ public static class Tools
     #region reflection
 
     /// <summary> Returns metadata of a constructor. </summary>
-    public static ConstructorInfo Constructor<T>(System.Type[] args) => AccessTools.Constructor(typeof(T), args);
+    public static ConstructorInfo Constructor<T>(Type[] args) => AccessTools.Constructor(typeof(T), args);
     /// <summary> Returns metadata of a field. </summary>
     public static FieldInfo Field<T>(string name) => AccessTools.Field(typeof(T), name);
     /// <summary> Returns metadata of a method. </summary>
     public static MethodInfo Method<T>(string name) => AccessTools.Method(typeof(T), name);
     /// <summary> Returns metadata of a method. </summary>
-    public static MethodInfo Method<T>(string name, System.Type[] args) => AccessTools.Method(typeof(T), name, args);
+    public static MethodInfo Method<T>(string name, Type[] args) => AccessTools.Method(typeof(T), name, args);
 
     /// <summary> Iterates all attributes of static methods.  </summary>
-    public static void Attributes(Cons<MethodInfo, IEnumerable<System.Attribute>> cons) => Assembly.GetCallingAssembly().GetTypes().Each(t =>
+    public static void Attributes(Cons<MethodInfo, IEnumerable<Attribute>> cons) => Assembly.GetCallingAssembly().GetTypes().Each(t =>
     {
         t.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Static | BindingFlags.NonPublic).Each(m => cons(m, m.GetCustomAttributes()));
     });
 
     /// <summary> Applies all patches from the attributes. </summary>
-    public static void Apply<T>(MethodInfo method, IEnumerable<System.Attribute> attrs, Harmony harmony) where T : Jaket.Harmony.Patch => attrs.Each(a =>
+    public static void Apply<T>(MethodInfo method, IEnumerable<Attribute> attrs, Harmony harmony) where T : Jaket.Harmony.Patch => attrs.Each(a =>
     {
         if (a is T t)
         {

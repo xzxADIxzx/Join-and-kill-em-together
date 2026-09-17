@@ -59,7 +59,7 @@ public class CyberGrind
         if (col.enabled)
         {
             col.enabled = false; // start the timer and the music
-            ObjFind("Everything").transform.Find("Timer").gameObject.SetActive(true);
+            ObjFind("Everything").ObjFind("Timer").SetActive(true);
             return;
         }
 

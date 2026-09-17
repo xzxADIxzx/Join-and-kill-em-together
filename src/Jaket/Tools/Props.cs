@@ -127,4 +127,25 @@ public static class Props
     public static bool HasEntity<T>(this Component comp) where T : Entity => HasEntity<T>(comp, out _);
 
     #endregion
+    #region searches
+
+    /// <summary> Finds all objects of the given type. </summary>
+    public static T[] ResFind<T>() where T : Object => Resources.FindObjectsOfTypeAll<T>();
+
+    /// <summary> Finds game object by the given path. </summary>
+    public static GameObject ObjFind(string path) => GameObject.Find(path);
+
+    /// <summary> Finds a child by the given path. </summary>
+    public static GameObject ObjFind(this GameObject obj, string path) => obj.transform.Find(path)?.gameObject;
+
+    /// <summary> Finds a child by the given path. </summary>
+    public static GameObject ObjFind(this Component comp, string path) => comp.transform.Find(path)?.gameObject;
+
+    /// <summary> Finds a child by the given path. </summary>
+    public static Transform DefFind(this GameObject obj, string path) => obj.transform.Find(path);
+
+    /// <summary> Finds a child by the given path. </summary>
+    public static Transform DefFind(this Component comp, string path) => comp.transform.Find(path);
+
+    #endregion
 }

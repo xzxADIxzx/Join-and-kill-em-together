@@ -361,8 +361,8 @@ public class TeamCoin : OwnableEntity
         effect.GetComponentsInChildren<SpriteRenderer  >(true).Each(Dest);
         effect.GetComponentsInChildren<SpriteController>(true).Each(Dest);
 
-        effect.transform.Find("MuzzleFlash/muzzleflash/Particle System").localScale = Vector3.one * .42f;
-        effect.transform.Find("MuzzleFlash/muzzleflash"                ).gameObject.SetActive(true);
+        effect.DefFind("MuzzleFlash/muzzleflash/Particle System").localScale = Vector3.one * .42f;
+        effect.ObjFind("MuzzleFlash/muzzleflash"                ).SetActive(true);
         var col = effect.GetComponentInChildren<ParticleSystem        >().colorOverLifetime;
         var mat = effect.GetComponentInChildren<ParticleSystemRenderer>().material;
         col.color = new(clear, black);

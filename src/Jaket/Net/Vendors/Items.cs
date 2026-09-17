@@ -94,7 +94,7 @@ public class Items : Vendor
                 f.fishObject = ResFind<FishObject>().Find(o => o.worldObject == Prefabs[(byte)type]);
             }
             ).transform;
-            obj.transform.localRotation = obj.transform.Find("../Dummy Object").localRotation; // it is some sort of template
+            obj.transform.localRotation = obj.DefFind("../Dummy Object").localRotation; // it is some sort of template
             obj = obj.transform.parent.gameObject;
         }
 

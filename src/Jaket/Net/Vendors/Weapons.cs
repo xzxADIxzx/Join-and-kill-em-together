@@ -39,7 +39,7 @@ public class Weapons : Vendor
             "Nailgun New New/Armature/Main/Barrel_R/Barrel_R (1)",
             "ImpactHammer/Armature/Root/MotorSpinner/SpinSprite",
         }
-        ) Dest(obj.transform.Find(path));
+        ) Dest(obj.DefFind(path));
 
         foreach (var comp in new Type[]
         {

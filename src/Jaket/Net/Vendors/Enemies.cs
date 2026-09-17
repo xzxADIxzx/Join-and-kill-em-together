@@ -20,7 +20,7 @@ public class Enemies : Vendor
         Events.Post
         (
             () => Prefabs[(byte)EntityType.Malicious],
-            () => Prefabs[(byte)EntityType.Malicious] = Prefabs[(byte)EntityType.Malicious].transform.Find("Body").gameObject
+            () => Prefabs[(byte)EntityType.Malicious] = Prefabs[(byte)EntityType.Malicious].ObjFind("Body")
         );
 
         Fill<Husk           >(EntityType.Filth,           EntityType.Soldier        );

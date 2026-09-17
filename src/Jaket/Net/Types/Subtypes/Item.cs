@@ -140,7 +140,7 @@ public abstract class Item : OwnableEntity
 
     public override void Killed(Reader r, int left) => Killed(r, left, agent, bits =>
     {
-        if (bits[0]) Physics.OverlapSphere(agent.Position, 4f, 1 << 22).Each(c => c.transform.Find("../ThatExplosionGif")?.gameObject.SetActive(true));
+        if (bits[0]) Physics.OverlapSphere(agent.Position, 4f, 1 << 22).Each(c => c.ObjFind("../ThatExplosionGif")?.SetActive(true));
 
         if (bits[1]) GameAssets.Prefab("p/Environment/HotSand.prefab", p => Inst(p, new(8.25f, -8.25f, 74.25f), null));
     });

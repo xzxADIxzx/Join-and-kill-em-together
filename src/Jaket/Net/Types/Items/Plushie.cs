@@ -45,7 +45,7 @@ public class Plushie : Item
     /// <summary> Special feature of the plushie of xzxADIxzx. </summary>
     public IEnumerator ShakeYourHead(int shakes)
     {
-        var head = agent.transform.Find("Model/Head");
+        var head = agent.DefFind("Model/Head");
 
         while (shakes-- > 1)
         {
@@ -131,8 +131,8 @@ public class Plushie : Item
 
     static void Trash(ItemTrigger trigger)
     {
-        var black = Inst(ObjFind("SORT ME").transform.Find("OBJECT Activator Gianni world enemies/time of day changer").gameObject);
-        var white = Inst(ObjFind("SORT ME").transform.Find("time of day reverser").gameObject);
+        var black = Inst(ObjFind("SORT ME").ObjFind("OBJECT Activator Gianni world enemies/time of day changer"));
+        var white = Inst(ObjFind("SORT ME").ObjFind("time of day reverser"));
         var music = ObjFind("Music");
 
         var gif = trigger.onEvent.toActivateObjects[0];

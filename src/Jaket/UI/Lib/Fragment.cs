@@ -55,7 +55,7 @@ public class Fragment
         img.Add(cons);
         img.Add<HudOpenEffect>(e => e.speed = 38f - height / 24f);
 
-        if (Content.Find("Deco") == null) Builder.Image(Rect("Deco", new(0f, 0f, 32f, 0f, new(0f, 0f), new(0f, 1f))), Tex.Dash, semi);
+        if (!Content.DefFind("Deco")) Builder.Image(Rect("Deco", new(0f, 0f, 32f, 0f, new(0f, 0f), new(0f, 1f))), Tex.Dash, semi);
     }
 
     /// <summary> Adds a bar, it is located in the center and has the given size. </summary>
@@ -66,7 +66,7 @@ public class Fragment
         img.Add(cons);
         img.Add<HudOpenEffect>(e => e.speed = 32f);
 
-        if (Content.Find("Deco") == null) Builder.Image(Rect("Deco", new(width + 24f, height + 24f)), Tex.BrdL, semi, scale: 2f).raycastTarget = false;
+        if (!Content.DefFind("Deco")) Builder.Image(Rect("Deco", new(width + 24f, height + 24f)), Tex.BrdL, semi, scale: 2f).raycastTarget = false;
 
         Builder.Button(Builder.Rect("Button", img, new(-24f, -24f, 32f, 32f, new(1f, 1f))), Tex.Fill, red, Toggle, Tex.Mark, 16);
     }

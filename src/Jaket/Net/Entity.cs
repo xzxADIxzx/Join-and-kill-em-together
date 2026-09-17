@@ -164,7 +164,7 @@ public abstract class Entity
         /// <summary> Gets a single child obj of the given path or logs an error. </summary>
         private bool Find(bool nullable, string path, out GameObject obj)
         {
-            obj = this == null ? null : path == null ? gameObject : transform.Find(path)?.gameObject;
+            obj = this == null ? null : path == null ? gameObject : gameObject.ObjFind(path);
 
             if (!obj && !nullable) Log.Error($"[ENTS] Couldn't find a child object of path {path}");
             return obj;

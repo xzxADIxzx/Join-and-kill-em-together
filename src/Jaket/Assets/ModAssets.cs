@@ -109,8 +109,8 @@ public static class ModAssets
         Events.Post(() => Entities.Vendor.Prefabs[(byte)EntityType.Torch], () =>
         {
             Keep(Moon = Entities.Items.Make(EntityType.Torch));
-            Dest(Moon.transform.Find("Fire"));
-            Dest(Moon.transform.Find("Light"));
+            Dest(Moon.DefFind("Fire"));
+            Dest(Moon.DefFind("Light"));
 
             Moon.name = "Moon";
             Moon.Get<ItemIdentifier>(i => i.itemType = ItemType.CustomKey1);
@@ -124,7 +124,7 @@ public static class ModAssets
 
         GameAssets.Prefab("Levels/Decorations/OfficeVendingMachine.prefab", p =>
         {
-            p = p.transform.Find("CoinMechanism/Spawner/VendingMachine_Items").gameObject;
+            p = p.ObjFind("CoinMechanism/Spawner/VendingMachine_Items");
 
             Keep(Can   = Inst(p));
             Keep(Chips = Inst(p));
