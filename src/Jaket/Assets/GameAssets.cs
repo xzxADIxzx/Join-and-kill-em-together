@@ -32,6 +32,12 @@ public static class GameAssets
     #endregion
     #region content
 
+    /// <summary> List of readable names of all melee damage types. </summary>
+    public static readonly string[] Melee =
+    {
+        "coin", "punch", "heavypunch", "hook", "ground slam", "drill", "drillpunch", "hammer", "shotgunzone", "chainsawzone",
+    };
+
     /// <summary> List of internal paths of all coins. </summary>
     public static readonly string[] Coins =
     {
@@ -133,10 +139,10 @@ public static class GameAssets
         "Fishing/Fishes/Shark Fish.prefab",
         "Fishing/Fishes/Burnt Stuff.prefab",
 
-        "Levels/Decorations/OfficeVendingMachine.prefab",
-        "Levels/Decorations/OfficeVendingMachine.prefab",
-        "Levels/Decorations/OfficeVendingMachine.prefab",
-        "Levels/Decorations/OfficeVendingMachine.prefab",
+        "", // can
+        "", // chips
+        "", // bar
+        "", // soda
 
         "Items/DevPlushies/DevPlushie (Hakita).prefab",
         "Items/DevPlushies/DevPlushie (PITR).prefab",

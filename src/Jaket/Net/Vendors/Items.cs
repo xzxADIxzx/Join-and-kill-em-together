@@ -15,14 +15,19 @@ public class Items : Vendor
     {
         Fill(EntityType.SkullBlue, EntityType.V1, GameAssets.Items);
 
-        Events.Post(() => ModAssets.Moon,      () => Prefabs[(byte)EntityType.Moon     ] = ModAssets.Moon     );
-        Events.Post(() => ModAssets.V2,        () => Prefabs[(byte)EntityType.V2       ] = ModAssets.V2       );
-        Events.Post(() => ModAssets.V3,        () => Prefabs[(byte)EntityType.V3       ] = ModAssets.V3       );
-        Events.Post(() => ModAssets.xzxADIxzx, () => Prefabs[(byte)EntityType.xzxADIxzx] = ModAssets.xzxADIxzx);
-        Events.Post(() => ModAssets.Sowler,    () => Prefabs[(byte)EntityType.Sowler   ] = ModAssets.Sowler   );
+        Events.Post(() => ModAssets.Moon,      () => Prefabs[(byte)EntityType.Moon      ] = ModAssets.Moon     );
+        Events.Post(() => ModAssets.Can,       () => Prefabs[(byte)EntityType.SnackCan  ] = ModAssets.Can      );
+        Events.Post(() => ModAssets.Chips,     () => Prefabs[(byte)EntityType.SnackChips] = ModAssets.Chips    );
+        Events.Post(() => ModAssets.Bar,       () => Prefabs[(byte)EntityType.SnackBar  ] = ModAssets.Bar      );
+        Events.Post(() => ModAssets.Soda,      () => Prefabs[(byte)EntityType.SnackSoda ] = ModAssets.Soda     );
+        Events.Post(() => ModAssets.V2,        () => Prefabs[(byte)EntityType.V2        ] = ModAssets.V2       );
+        Events.Post(() => ModAssets.V3,        () => Prefabs[(byte)EntityType.V3        ] = ModAssets.V3       );
+        Events.Post(() => ModAssets.xzxADIxzx, () => Prefabs[(byte)EntityType.xzxADIxzx ] = ModAssets.xzxADIxzx);
+        Events.Post(() => ModAssets.Sowler,    () => Prefabs[(byte)EntityType.Sowler    ] = ModAssets.Sowler   );
 
         Fill<CommonItem     >(EntityType.SkullBlue,       EntityType.BaitFace       );
         Fill<Fish           >(EntityType.FishFunny,       EntityType.FishBurnt      );
+        Fill<CommonItem     >(EntityType.SnackCan,        EntityType.SnackSoda      );
         Fill<Plushie        >(EntityType.Hakita,          EntityType.Sowler         );
 
         Events.OnLoad += () => Events.Post(() => Events.Post(() =>

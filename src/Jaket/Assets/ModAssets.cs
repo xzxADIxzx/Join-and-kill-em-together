@@ -38,7 +38,7 @@ public static class ModAssets
     public static Sprite[] ShopIcons, CardIcons;
 
     /// <summary> Different prefabs. </summary>
-    public static GameObject Doll, Preview, Moon, V2, V3, xzxADIxzx, Sowler;
+    public static GameObject Doll, Preview, Moon, Template, Can, Chips, Bar, Soda, V2, V3, xzxADIxzx, Sowler;
     /// <summary> Sam's audio mixer. </summary>
     public static AudioMixer Mixer;
 
@@ -116,6 +116,39 @@ public static class ModAssets
             Moon.Get<ItemIdentifier>(i => i.itemType = ItemType.CustomKey1);
             Moon.Get<Torch>(Dest);
             Moon.transform.position = Vector3.down * 4242f;
+
+            Moon.Get<Entity.Identifier>(i => i.Type = EntityType.Moon);
+        });
+
+        GameAssets.Prefab("Fishing/Fish Pickup Template.prefab", p => Template = p);
+
+        GameAssets.Prefab("Levels/Decorations/OfficeVendingMachine.prefab", p =>
+        {
+            p = p.transform.Find("CoinMechanism/Spawner/VendingMachine_Items").gameObject;
+
+            Keep(Can   = Inst(p));
+            Keep(Chips = Inst(p));
+            Keep(Bar   = Inst(p));
+            Keep(Soda  = Inst(p));
+
+            GameObject[] snacks = [ Can, Chips, Bar, Soda ];
+
+            for (EntityType j = EntityType.SnackCan; j <= EntityType.SnackSoda; j++)
+            {
+                byte chld = j - EntityType.SnackCan;
+                var snack = snacks[chld];
+
+                snack.transform.GetChild(chld).gameObject.SetActive(true);
+                snack.name = j.ToString();
+                snack.Add<Entity.Identifier>(i => i.Type = j);
+
+                snack.Get<Randomness.RandomSetActive>(Dest);
+                snack.Get<AddForce>(Dest);
+                snack.Get<Rigidbody>(r => r.isKinematic = true);
+
+                snack.transform.position = Vector3.down * 4242f;
+                snack.SetActive(true);
+            }
         });
 
         Load<Texture>("V2-plushie", t => Events.Post(() => Entities.Vendor.Prefabs[(byte)EntityType.V1], () =>
@@ -126,6 +159,8 @@ public static class ModAssets
             V2.GetComponentInChildren<Renderer>().material.mainTexture = t;
             V2.Get<Rigidbody>(r => r.isKinematic = true);
             V2.transform.position = Vector3.down * 4242f;
+
+            V2.Get<Entity.Identifier>(i => i.Type = EntityType.V2);
         }));
         Load<Texture>("V3-plushie", t => Events.Post(() => Entities.Vendor.Prefabs[(byte)EntityType.V1], () =>
         {
@@ -135,6 +170,8 @@ public static class ModAssets
             V3.GetComponentInChildren<Renderer>().material.mainTexture = t;
             V3.Get<Rigidbody>(r => r.isKinematic = true);
             V3.transform.position = Vector3.down * 4242f;
+
+            V3.Get<Entity.Identifier>(i => i.Type = EntityType.V3);
         }));
 
         Load<GameObject>("DevPlushie (xzxADIxzx)", p =>
@@ -148,6 +185,7 @@ public static class ModAssets
                 i.putDownRotation = new(  0f, 120f,  90f);
                 i.putDownScale    = new(.50f, .50f, .50f);
             });
+            p.Add<Entity.Identifier>(i => i.Type = EntityType.xzxADIxzx);
         });
         Load<GameObject>("DevPlushie (Sowler)", p =>
         {
@@ -160,6 +198,7 @@ public static class ModAssets
                 i.putDownRotation = new(-15f, 120f,  95f);
                 i.putDownScale    = new(.45f, .45f, .45f);
             });
+            p.Add<Entity.Identifier>(i => i.Type = EntityType.Sowler);
         });
 
         Load<AudioMixer>("sam-audio", m =>
