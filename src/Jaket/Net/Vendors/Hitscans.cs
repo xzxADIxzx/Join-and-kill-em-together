@@ -12,37 +12,27 @@ using static Entities;
 /// <summary> Vendor responsible for hitscans. </summary>
 public class Hitscans : Vendor
 {
-    public void Load()
+    public override void Load()
     {
-        EntityType counter = EntityType.Beam;
-        GameAssets.Hitscans.Each(w =>
-        {
-            byte index = (byte)counter++;
-            GameAssets.Prefab(w, p => Vendor.Prefabs[index] = p);
-        });
+        Fill(EntityType.Beam, EntityType.BeamHammer, GameAssets.Hitscans);
     }
 
-    public EntityType Type(GameObject obj) => Vendor.Find
-    (
-        EntityType.Beam,
-        EntityType.BeamHammer,
-        p => p.name.Length == obj?.name.IndexOf('(') && obj.name.Contains(p.name)
-    );
+    public override EntityType Type(GameObject obj) => obj && obj.HasIdentifier(out var id) && id.Type.IsHitscan() ? id.Type : EntityType.None;
 
-    public GameObject Make(EntityType type, Vector3 position = default, Transform parent = null)
+    public override GameObject Make(EntityType type, Vector3 position = default, Transform parent = null)
     {
         if (!type.IsHitscan()) return null;
 
-        var obj = Inst(Vendor.Prefabs[(byte)type], position);
+        var obj = Inst(Prefabs[(byte)type], position);
 
-        obj.name = "beam"; // this way the vendor won't be able to determine the type of the hitscan and thus oversync it
+        obj.Get<Entity.Identifier>(Imdt); // this way the vendor won't be able to determine the type of the hitscan and thus oversync it
 
         return obj;
     }
 
     public GameObject Make(EntityType type, Vector3 position, Vector3 target, bool wall, byte data)
     {
-        var beam = Make(type, position)?.GetComponent<RevolverBeam>();
+        var beam = Make(type, position)?.Get<RevolverBeam>(_ => { });
         if (beam == null) return null;
 
         if (wall && type != EntityType.BeamReflected) Inst(beam.hitParticle, target, Quaternion.LookRotation(position - target));
@@ -68,7 +58,7 @@ public class Hitscans : Vendor
         return beam.gameObject;
     }
 
-    public void Sync(GameObject obj, params bool[] args)
+    public override void Sync(GameObject obj, params bool[] args)
     {
         var type = Type(obj);
         if (type == EntityType.None || !obj.TryGetComponent(out RevolverBeam beam)) return;

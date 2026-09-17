@@ -13,41 +13,44 @@ using static Entities;
 /// <summary> Vendor responsible for enemies. </summary>
 public class Enemies : Vendor
 {
-    public void Load()
+    public override void Load()
     {
-        EntityType counter = EntityType.Filth;
-        GameAssets.Enemies.Each(w =>
-        {
-            byte index = (byte)counter++;
-            GameAssets.Prefab(w, p => Vendor.Prefabs[index] = p);
-        });
+        Fill(EntityType.Filth, EntityType.Sisyphus, GameAssets.Enemies);
 
         Events.Post
         (
-            () => Vendor.Prefabs[(byte)EntityType.Malicious],
-            () => Vendor.Prefabs[(byte)EntityType.Malicious] = Vendor.Prefabs[(byte)EntityType.Malicious].transform.Find("Body").gameObject
+            () => Prefabs[(byte)EntityType.Malicious],
+            () => Prefabs[(byte)EntityType.Malicious] = Prefabs[(byte)EntityType.Malicious].transform.Find("Body").gameObject
         );
 
-        for (EntityType i = EntityType.Filth;           i <= EntityType.Soldier;         i++) Vendor.Suppliers[(byte)i] = (id, type) => new Husk           (id, type);
-        for (EntityType i = EntityType.Swordsmachine;   i <= EntityType.Swordsmachine;   i++) Vendor.Suppliers[(byte)i] = (id, type) => new Swordsmachine  (id, type);
-        for (EntityType i = EntityType.SecuritySystem;  i <= EntityType.Brain;           i++) Vendor.Suppliers[(byte)i] = (id, type) => new Earthmover     (id, type);
-        for (EntityType i = EntityType.Malicious;       i <= EntityType.Malicious;       i++) Vendor.Suppliers[(byte)i] = (id, type) => new Malicious      (id, type);
-        for (EntityType i = EntityType.Cerberus;        i <= EntityType.Cerberus;        i++) Vendor.Suppliers[(byte)i] = (id, type) => new Cerberus       (id, type);
+        Fill<Husk           >(EntityType.Filth,           EntityType.Soldier        );
+        Fill<Swordsmachine  >(EntityType.Swordsmachine,   EntityType.Swordsmachine  );
+        Fill<Earthmover     >(EntityType.SecuritySystem,  EntityType.Brain          );
+        Fill<Malicious      >(EntityType.Malicious,       EntityType.Malicious      );
+        Fill<Cerberus       >(EntityType.Cerberus,        EntityType.Cerberus       );
 
         Events.OnLoad += () =>
         {
-            if (LobbyController.Online)
+            if (LobbyController.Offline) return;
+
+            ResFind<SpiderLegsController  >().Each(IsReal, Imdt);
+            ResFind<SpiderLegLines        >().Each(IsReal, Imdt);
+            ResFind<EnemySpawnableInstance>().Each(IsReal, Imdt);
+            ResFind<EnemyIdentifier       >().Each(IsReal, e =>
             {
-                ResFind<EnemySpawnableInstance>().Each(IsReal, Imdt);
-                ResFind<SpiderLegLines        >().Each(IsReal, Imdt);
-                ResFind<SpiderLegsController  >().Each(IsReal, Imdt);
-            }
+                var type = Type(e.gameObject);
+                e.Add<Entity.Identifier>(i => i.Type = type);
+            });
         };
     }
 
-    public EntityType Type(GameObject obj)
+    public override EntityType Type(GameObject obj)
     {
-        if (obj?.TryGetComponent(out EnemyIdentifier enemyId) ?? false) return Vendor.Find
+        if (obj && obj.HasIdentifier(out var id)) return id.Type.IsEnemy() ? id.Type : EntityType.None;
+
+        if (Version.DEBUG) Log.Debug($"[ENTS] Missing an identifier of {(obj ? obj.name : "null")}");
+
+        if (obj && obj.TryGetComponent(out EnemyIdentifier enemyId)) return Find
         (
             EntityType.Filth,
             EntityType.Sisyphus,
@@ -59,19 +62,19 @@ public class Enemies : Vendor
         else return EntityType.None;
     }
 
-    public GameObject Make(EntityType type, Vector3 position = default, Transform parent = null)
+    public override GameObject Make(EntityType type, Vector3 position = default, Transform parent = null)
     {
         if (!type.IsEnemy()) return null;
 
-        var obj = Inst(Vendor.Prefabs[(byte)type], position);
+        var obj = Inst(Prefabs[(byte)type], position);
 
         return obj;
     }
 
-    public void Sync(GameObject obj, params bool[] args)
+    public override void Sync(GameObject obj, params bool[] args)
     {
         var type = Type(obj);
-        if (type == EntityType.None || obj.GetComponent<Entity.Agent>()) return;
+        if (type == EntityType.None || obj.HasAgent()) return;
 
         if (Gameflow.Mode.NoCommonEnemies()) Imdt(obj);
         else
@@ -82,7 +85,7 @@ public class Enemies : Vendor
                 var entity = Supply(type);
 
                 entity.Owner = AccId;
-                entity.Assign(obj.AddComponent<Entity.Agent>());
+                entity.Assign(obj.Add<Entity.Agent>(_ => { }));
                 entity.Push();
             }
             else Imdt(obj);

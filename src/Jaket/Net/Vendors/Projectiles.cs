@@ -11,53 +11,43 @@ using static Entities;
 /// <summary> Vendor responsible for projectiles. </summary>
 public class Projectiles : Vendor
 {
-    public void Load()
+    public override void Load()
     {
-        EntityType counter = EntityType.Shell;
-        GameAssets.Projectiles.Each(w =>
-        {
-            byte index = (byte)counter++;
-            GameAssets.Prefab(w, p => Vendor.Prefabs[index] = p);
-        });
+        Fill(EntityType.Shell, EntityType.ProjectileExpl, GameAssets.Projectiles);
 
-        for (EntityType i = EntityType.Shell;          i <= EntityType.Shell;          i++) Vendor.Suppliers[(byte)i] = (id, type) => new Shell      (id, type);
-        for (EntityType i = EntityType.Core;           i <= EntityType.Core;           i++) Vendor.Suppliers[(byte)i] = (id, type) => new Core       (id, type);
-        for (EntityType i = EntityType.NailCommon;     i <= EntityType.NailHeated;     i++) Vendor.Suppliers[(byte)i] = (id, type) => new Nail       (id, type);
-        for (EntityType i = EntityType.SawbladeCommon; i <= EntityType.SawbladeHeated; i++) Vendor.Suppliers[(byte)i] = (id, type) => new Sawblade   (id, type);
-        for (EntityType i = EntityType.Magnet;         i <= EntityType.Magnet;         i++) Vendor.Suppliers[(byte)i] = (id, type) => new Magnet     (id, type);
-        for (EntityType i = EntityType.Screwdriver;    i <= EntityType.Screwdriver;    i++) Vendor.Suppliers[(byte)i] = (id, type) => new Screwdriver(id, type);
-        for (EntityType i = EntityType.Rocket;         i <= EntityType.Rocket;         i++) Vendor.Suppliers[(byte)i] = (id, type) => new Rocket     (id, type);
-        for (EntityType i = EntityType.Cannonball;     i <= EntityType.Cannonball;     i++) Vendor.Suppliers[(byte)i] = (id, type) => new Cannon     (id, type);
-        for (EntityType i = EntityType.ProjectileHell; i <= EntityType.ProjectileExpl; i++) Vendor.Suppliers[(byte)i] = (id, type) => new Shell      (id, type);
+        Fill<Shell          >(EntityType.Shell,           EntityType.Shell          );
+        Fill<Core           >(EntityType.Core,            EntityType.Core           );
+        Fill<Nail           >(EntityType.NailCommon,      EntityType.NailHeated     );
+        Fill<Sawblade       >(EntityType.SawbladeCommon,  EntityType.SawbladeHeated );
+        Fill<Magnet         >(EntityType.Magnet,          EntityType.Magnet         );
+        Fill<Screwdriver    >(EntityType.Screwdriver,     EntityType.Screwdriver    );
+        Fill<Rocket         >(EntityType.Rocket,          EntityType.Rocket         );
+        Fill<Cannon         >(EntityType.Cannonball,      EntityType.Cannonball     );
+        Fill<Shell          >(EntityType.ProjectileHell,  EntityType.ProjectileExpl );
 
         Events.OnTeamChange += () => Networking.Entities.Alive<Projectile>(p => p.UpdateIgnore());
     }
 
-    public EntityType Type(GameObject obj) => Vendor.Find
-    (
-        EntityType.Shell,
-        EntityType.ProjectileExpl,
-        p => p.name.Length == obj?.name.Length - 7 && obj.name.Contains(p.name)
-    );
+    public override EntityType Type(GameObject obj) => obj && obj.HasIdentifier(out var id) && id.Type.IsProjectile() ? id.Type : EntityType.None;
 
-    public GameObject Make(EntityType type, Vector3 position = default, Transform parent = null)
+    public override GameObject Make(EntityType type, Vector3 position = default, Transform parent = null)
     {
         if (!type.IsProjectile()) return null;
 
-        var obj = Inst(Vendor.Prefabs[(byte)type], position);
+        var obj = Inst(Prefabs[(byte)type], position);
 
         return obj;
     }
 
-    public void Sync(GameObject obj, params bool[] args)
+    public override void Sync(GameObject obj, params bool[] args)
     {
         var type = Type(obj);
-        if (type == EntityType.None || obj.GetComponent<Entity.Agent>()) return;
+        if (type == EntityType.None || obj.HasAgent()) return;
 
         var entity = Supply(type);
 
         entity.Owner = AccId;
-        entity.Assign(obj.AddComponent<Entity.Agent>());
+        entity.Assign(obj.Add<Entity.Agent>(_ => { }));
         entity.Push();
     }
 }

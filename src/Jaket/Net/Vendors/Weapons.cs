@@ -11,28 +11,18 @@ using static Entities;
 /// <summary> Vendor responsible for weapons. </summary>
 public class Weapons : Vendor
 {
-    public void Load()
+    public override void Load()
     {
-        EntityType counter = EntityType.RevolverBlue;
-        GameAssets.Weapons.Each(w =>
-        {
-            byte index = (byte)counter++;
-            GameAssets.Prefab(w, p => Vendor.Prefabs[index] = p);
-        });
+        Fill(EntityType.RevolverBlue, EntityType.RocketlRed, GameAssets.Weapons);
     }
 
-    public EntityType Type(GameObject obj) => Vendor.Find
-    (
-        EntityType.RevolverBlue,
-        EntityType.RocketlRed,
-        p => p.name.Length == obj?.name.Length - 7 && obj.name.Contains(p.name)
-    );
+    public override EntityType Type(GameObject obj) => obj && obj.HasIdentifier(out var id) && id.Type.IsWeapon() ? id.Type : EntityType.None;
 
-    public GameObject Make(EntityType type, Vector3 position = default, Transform parent = null)
+    public override GameObject Make(EntityType type, Vector3 position = default, Transform parent = null)
     {
         if (!type.IsWeapon()) return null;
 
-        var obj = Inst(Vendor.Prefabs[(byte)type], parent);
+        var obj = Inst(Prefabs[(byte)type], parent);
 
         obj.SetActive(true);
         obj.GetComponentsInChildren<Renderer   >().Each(c => c.gameObject.layer = 24); // outdoors
@@ -65,5 +55,5 @@ public class Weapons : Vendor
         return obj;
     }
 
-    public void Sync(GameObject obj, params bool[] args) { }
+    public override void Sync(GameObject obj, params bool[] args) { }
 }
