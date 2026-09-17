@@ -150,10 +150,10 @@ public class Settings : Fragment
         chat.GetComponentInChildren<Text>().text = Bundle.Parse($"[i]{ChatLocation switch { 0 => "▪▫▫▫▫", 1 => "▫▫▪▫▫", _ => "▫▫▫▫▪" }}");
 
         // update the alignment of the chat option
-        chat.transform.GetChild(0).localPosition = Vector2.down;
+        chat.DefChild(0).localPosition = Vector2.down;
 
         // update the toggle of the hello message
-        Content.GetChild(0).GetChild(0).GetChild(7).GetComponent<Toggle>().isOn = SkipHelloMessage;
+        Content.DefChild(0).DefChild(0).DefChild(7).GetComponent<Toggle>().isOn = SkipHelloMessage;
 
         // update the colors of the feedbacker and knuckleblaster
         Events.OnHandChange.Fire();

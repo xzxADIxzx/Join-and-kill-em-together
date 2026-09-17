@@ -60,9 +60,9 @@ public static class ActionList
             {
                 var blck = prev.Find(o => o.name == "Blockers").transform;
 
-                blck.GetChild(0).GetComponentsInChildren<Renderer>().Each(Dest);
-                blck.GetChild(1).gameObject.SetActive(false);
-                blck.GetChild(2).gameObject.SetActive(false);
+                blck.ObjChild(0).GetComponentsInChildren<Renderer>().Each(Dest);
+                blck.ObjChild(1).SetActive(false);
+                blck.ObjChild(2).SetActive(false);
             });
             o.events.toActivateObjects.Each(o => o.name == "Cube", o => o.GetComponents<Collider>().Each(Dest));
         }));
@@ -80,7 +80,7 @@ public static class ActionList
             });
         }));
 
-        ActionType.Find(l, "13 - Malicious Face Arena/13 Nonstuff", t => Dest(t.GetChild(0))); // unloader
+        ActionType.Find(l, "13 - Malicious Face Arena/13 Nonstuff", t => Dest(t.DefChild(0))); // unloader
 
         ActionType.Act(l, "13 Content/Trigger"); // boss
 

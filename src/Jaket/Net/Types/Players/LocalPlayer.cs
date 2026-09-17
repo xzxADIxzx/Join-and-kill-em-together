@@ -145,7 +145,7 @@ public class LocalPlayer : Entity
     /// <summary> Recolors the hands seen in first person and caches some values. </summary>
     public void Recolor()
     {
-        var main = cw?.transform.GetChild(0).DefFind("RightArm");
+        var main = cw?.DefChild(0).DefFind("RightArm");
         if (main) main.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = ModAssets.HandTexture(0);
 
         var feed = fc?.DefFind("Arm Blue(Clone)");

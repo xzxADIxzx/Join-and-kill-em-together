@@ -40,7 +40,7 @@ public class Players : Vendor
         });
         obj.Add<Machine>(e => e.hurtSounds = []); // ???
 
-        obj.transform.GetChild(0).GetComponentsInChildren<Rigidbody>().Each(rb =>
+        obj.DefChild(0).GetComponentsInChildren<Rigidbody>().Each(rb =>
         {
             rb.Add<EnemyIdentifierIdentifier>(_ => { });
             rb.tag = rb.tag switch

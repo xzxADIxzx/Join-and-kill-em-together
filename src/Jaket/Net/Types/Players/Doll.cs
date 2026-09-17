@@ -103,8 +103,8 @@ public class Doll : Entity
         {
             Suits.Each(s => s.gameObject.SetActive(false));
 
-            if (hat != -1) Suits.GetChild(hat).gameObject.SetActive(true);
-            if (jkt != -1) Suits.GetChild(jkt).gameObject.SetActive(true);
+            if (hat != -1) Suits.ObjChild(hat).SetActive(true);
+            if (jkt != -1) Suits.ObjChild(jkt).SetActive(true);
         });
 
         var custom = r.Bool();

@@ -64,7 +64,7 @@ public class Items : Vendor
             EntityType.FishBurnt,
             p => p == fish.fishObject.worldObject
         );
-        return (obj && obj.transform.childCount > 0 ? obj.transform.GetChild(obj.transform.childCount - 1).name : null) switch
+        return (obj && obj.transform.childCount > 0 ? obj.DefChild(obj.transform.childCount - 1).name : null) switch
         {
             "Arch"                 => EntityType.Moon,
             "Florp"                => EntityType.Florp,

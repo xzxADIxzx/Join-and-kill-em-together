@@ -110,7 +110,7 @@ public class LobbyTab : Fragment
         invite.interactable = copy.interactable = LobbyController.Online;
 
         // the third bar shouldn't be visible at all if the lobby is null
-        Sidebar.transform.GetChild(2).gameObject.SetActive(LobbyController.Online);
+        Sidebar.ObjChild(2).SetActive(LobbyController.Online);
 
         if (LobbyController.Offline)
         {

@@ -138,7 +138,7 @@ public static class ModAssets
                 byte chld = j - EntityType.SnackCan;
                 var snack = snacks[chld];
 
-                snack.transform.GetChild(chld).gameObject.SetActive(true);
+                snack.ObjChild(chld).SetActive(true);
                 snack.name = j.ToString();
                 snack.Add<Entity.Identifier>(i => i.Type = j);
 

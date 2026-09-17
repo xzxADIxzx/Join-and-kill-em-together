@@ -47,12 +47,12 @@ public class Hitscans : Vendor
                 r.startColor = r.endColor = ((Team)data).Color();
 
             else if (data == byte.MaxValue)
-                r.transform.GetChild(0).gameObject.SetActive(false); // disable muzzleflash
+                r.ObjChild(0).SetActive(false); // disable muzzleflash
 
             else
             {
                 r.GetComponentsInChildren<SpriteRenderer>().Each(c => c.gameObject.layer = 24); // outdoors
-                r.transform.GetChild(0).LookAt(target);
+                r.DefChild(0).LookAt(target);
             }
         });
         return beam.gameObject;

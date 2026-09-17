@@ -147,5 +147,17 @@ public static class Props
     /// <summary> Finds a child by the given path. </summary>
     public static Transform DefFind(this Component comp, string path) => comp.transform.Find(path);
 
+    /// <summary> Gets a child by the given index. </summary>
+    public static GameObject ObjChild(this GameObject obj, int index) => obj.transform.GetChild(index).gameObject;
+
+    /// <summary> Gets a child by the given index. </summary>
+    public static GameObject ObjChild(this Component comp, int index) => comp.transform.GetChild(index).gameObject;
+
+    /// <summary> Gets a child by the given index. </summary>
+    public static Transform DefChild(this GameObject obj, int index) => obj.transform.GetChild(index);
+
+    /// <summary> Gets a child by the given index. </summary>
+    public static Transform DefChild(this Component comp, int index) => comp.transform.GetChild(index);
+
     #endregion
 }
