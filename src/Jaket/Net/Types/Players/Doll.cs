@@ -191,19 +191,19 @@ public class Doll : Entity
 
         if (Sliding && SlidParticle == null)
         {
-            SlidParticle = Inst(NewMovement.Instance.slideParticle, Root).transform;
-            SlidParticle.localPosition    = new(  0f,   0f, 3.5f);
+            SlidParticle = Inst(NewMovement.Instance.slideParticle.transform, Root);
+            SlidParticle.localPosition    = new(  0f,   0f,   4f);
             SlidParticle.localEulerAngles = new(  0f, 180f,   0f);
-            SlidParticle.localScale       = new(1.5f,   1f,  .8f);
+            SlidParticle.localScale       = new(1.6f,   1f,   1f);
         }
         else if (!Sliding && SlidParticle != null) Dest(SlidParticle);
 
         if (Slaming && SlamParticle == null)
         {
-            SlamParticle = Inst(NewMovement.Instance.fallParticle, Root).transform;
-            SlamParticle.localPosition    = new(  0f,   6f,   0f);
+            SlamParticle = Inst(NewMovement.Instance.fallParticle.transform, Root);
+            SlamParticle.localPosition    = new(  0f,   8f,   0f);
             SlamParticle.localEulerAngles = new( 90f,   0f,   0f);
-            SlamParticle.localScale       = new(1.2f,  .6f,   1f);
+            SlamParticle.localScale       = new(1.6f,   1f,   1f);
         }
         else if (!Slaming && SlamParticle != null) Dest(SlamParticle);
 
@@ -244,6 +244,15 @@ public class Doll : Entity
         doll.Update(0);
     }
     ).Get<Agent>(Dest).transform.localPosition = Vector3.down * 1.5f;
+
+    /// <summary> Triggers a specific oneshot animation. </summary>
+    public void Trigger(int num) => animator.SetTrigger(num switch
+    {
+        0 => "jump",
+        1 => "dash",
+        2 => "punch",
+        _ => "parry",
+    });
 
     /// <summary> Clears the trail of the model's wings. </summary>
     public void Clear() { if (wingTrail) wingTrail.Clear(); }
