@@ -60,6 +60,10 @@ public class Players : Vendor
 
     #region sounds
 
+    /// <summary> Preloaded audio clips that improve immensity. </summary>
+    private AudioClip punch, parry, heavy;
+
+    /// <summary> Plays a specific sound, animation and effect. </summary>
     public void Play(RemotePlayer player, byte type, Vector3 position, Vector3 rotation) => Events.Post(() =>
     {
         void Play(int channel, AudioClip clip, float pitch = 1f)
@@ -71,6 +75,10 @@ public class Players : Vendor
 
         var nm = NewMovement.Instance;
         var sh = SceneHelper.Instance;
+
+        if (!punch) GameAssets.Sound("Weapons/PunchSwoosh.wav",       c => punch = c);
+        if (!parry) GameAssets.Sound("Weapons/Revolver/Ricochet.wav", c => parry = c);
+        if (!heavy) GameAssets.Sound("Weapons/PunchSwooshHeavy.wav",  c => heavy = c);
 
         switch (type)
         {
@@ -103,12 +111,20 @@ public class Players : Vendor
                 });
                 break;
             case 0x07: // dash
+                player.Doll.Trigger(1);
+                Play(1, nm.dodgeSound);
                 break;
             case 0x08: // punch - feedbacker
+                player.Doll.Trigger(2);
+                Play(2, punch);
                 break;
             case 0x09: // parry - feedbacker
+                player.Doll.Trigger(3);
+                Play(2, parry);
                 break;
             case 0x0A: // punch - knuckleblaster
+                player.Doll.Trigger(2);
+                Play(2, heavy);
                 break;
             case 0x0B: // blast - knuckleblaster
                 Inst(Prefabs[(byte)EntityType.Blastwave], position, rotation).GetComponentsInChildren<Explosion>().Each(e =>
