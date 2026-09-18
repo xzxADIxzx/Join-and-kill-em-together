@@ -106,5 +106,22 @@ public class Fish : Item
         else return true;
     }
 
+    [DynamicPatch(typeof(CoinActivated), nameof(CoinActivated.OnTriggerEnter))]
+    [Prefix]
+    static bool Coin(Collider other)
+    {
+        var agent = other.GetComponentInParent<Agent>();
+        if (agent)
+        {
+            if (agent.Patron is TeamCoin c && c.IsOwner)
+            {
+                c.Kill();
+                return true;
+            }
+            return false;
+        }
+        else return true;
+    }
+
     #endregion
 }

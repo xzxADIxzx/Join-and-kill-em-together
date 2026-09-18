@@ -15,8 +15,8 @@ public class Subject(uint id)
 
     warns   = new(3f, .02f),
     packets = new(Networking.TICKS_PER_SECOND * 128f, Networking.TICKS_PER_SECOND * 96f),
-    hitscns = new(64f, 24f),
-    commons = new(12f,  8f);
+    hitscns = new(48f, 24f),
+    commons = new(16f,  8f);
 
     /// <summary> These prevent flood of entities. </summary>
     private Pool

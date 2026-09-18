@@ -58,6 +58,12 @@ public class Items : Vendor
             EntityType.Sowler,
             p => p.name == obj.name || p.name == obj.name[..^7]
         );
+        if (obj && obj.name.Contains("VendingMachine")) return Find
+        (
+            EntityType.SnackCan,
+            EntityType.SnackSoda,
+            p => p.ObjChild(0).activeSelf == obj.ObjChild(0).activeSelf && p.ObjChild(1).activeSelf == obj.ObjChild(1).activeSelf && p.ObjChild(2).activeSelf == obj.ObjChild(2).activeSelf
+        );
         if (obj && obj.TryGetComponent(out FishObjectReference fish)) return Find
         (
             EntityType.FishFunny,
