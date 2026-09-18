@@ -28,7 +28,7 @@ public static class ArmsPatch
 
     [DynamicPatch(typeof(Punch), nameof(global::Punch.ActiveEnd))]
     [Postfix]
-    static void Punch() => Networking.Send(PacketType.Punch, 6, w =>
+    static void Punch() => Networking.Send(PacketType.Sound, 6, w =>
     {
         w.Id(AccId);
         w.Byte(0x00);

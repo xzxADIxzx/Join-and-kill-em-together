@@ -78,7 +78,7 @@ public class Server : Endpoint, ISocketManager
             if (ents[sender] is RemotePlayer p && Redirect(ref r, s, con, sender)) p.Doll.Read(r);
         });
 
-        Listen(PacketType.Punch, (con, sender, r, s) =>
+        Listen(PacketType.Sound, (con, sender, r, s) =>
         {
             if (ents[sender] is RemotePlayer p && Redirect(ref r, s, con, sender)) p.Punch(r);
         });
@@ -101,12 +101,12 @@ public class Server : Endpoint, ISocketManager
             }
         });
 
-        Listen(PacketType.ImageHeader, (con, sender, r, s) =>
+        Listen(PacketType.Image, (con, sender, r, s) =>
         {
             if (Redirect(ref r, s, con, sender)) SprayDistributor.Download(sender, r.Int());
         });
 
-        Listen(PacketType.ImageChunk, (con, sender, r, s) =>
+        Listen(PacketType.Image, (con, sender, r, s) =>
         {
             if (Redirect(ref r, s, con, sender)) SprayDistributor.ProcessDownload(sender, s - 5, r);
         });

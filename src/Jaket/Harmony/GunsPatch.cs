@@ -42,7 +42,7 @@ public static class GunsPatch
     {
         if (__instance.superJumpChance <= 0f || __instance.superJumpChance >= Time.deltaTime || !NewMovement.Instance.stillHolding) return;
 
-        Networking.Send(PacketType.Punch, 21, w =>
+        Networking.Send(PacketType.Sound, 21, w =>
         {
             w.Id(AccId);
             w.Byte(0x01);
@@ -59,7 +59,7 @@ public static class GunsPatch
     {
         if (!__instance.heldAction.IsPressed()) return;
 
-        Networking.Send(PacketType.Punch, 29, w =>
+        Networking.Send(PacketType.Sound, 29, w =>
         {
             w.Id(AccId);
             w.Byte(0x02);
@@ -76,7 +76,7 @@ public static class GunsPatch
     {
         if (__instance.variation != 1 || __instance.primaryCharge != 3) return;
 
-        Networking.Send(PacketType.Punch, 29, w =>
+        Networking.Send(PacketType.Sound, 29, w =>
         {
             w.Id(AccId);
             w.Byte(0x03);
@@ -91,7 +91,7 @@ public static class GunsPatch
     [Prefix]
     static void PumpHammer(ShotgunHammer __instance, bool ___forceWeakHit, int ___tier)
     {
-        Networking.Send(PacketType.Punch, 29, w =>
+        Networking.Send(PacketType.Sound, 29, w =>
         {
             w.Id(AccId);
             w.Byte((byte)(0xF0 + (__instance.primaryCharge << 2) + (___forceWeakHit ? 0 : ___tier)));

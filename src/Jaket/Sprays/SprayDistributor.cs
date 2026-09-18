@@ -25,7 +25,8 @@ public static class SprayDistributor
     /// <summary> Initializes an uploading of an image. </summary>
     public static void Upload(uint owner, SprayImage image, Connection target)
     {
-        Networking.Send(PacketType.ImageHeader, 8, w =>
+        return;
+        Networking.Send(PacketType.Image, 8, w =>
         {
             w.Id(owner);
             w.Int(image.Data.Length);
@@ -46,6 +47,7 @@ public static class SprayDistributor
     /// <summary> Initializes a downloading of an image. </summary>
     public static void Download(uint owner, int bytesCount)
     {
+        return;
         if (bytesCount > SprayImage.MAX_IMAGE_SIZE && LobbyController.IsOwner)
         {
             Administration.Ban(owner);
@@ -69,7 +71,7 @@ public static class SprayDistributor
     {
         int bytesCount = s.Chunks.BytesCount;
 
-        Networking.Send(PacketType.ImageChunk, bytesCount + 4, w =>
+        Networking.Send(PacketType.Image, bytesCount + 4, w =>
         {
             w.Id(s.Owner);
             w.Bytes(s.Image.Data, s.Chunks.Processed, bytesCount);

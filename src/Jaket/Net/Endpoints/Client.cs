@@ -65,7 +65,7 @@ public class Client : Endpoint, IConnectionManager
             if (ents[r.Id()] is RemotePlayer p) p.Doll.Read(r);
         });
 
-        Listen(PacketType.Punch, r =>
+        Listen(PacketType.Sound, r =>
         {
             if (ents[r.Id()] is RemotePlayer p) p.Punch(r);
         });
@@ -88,12 +88,12 @@ public class Client : Endpoint, IConnectionManager
             }
         });
 
-        Listen(PacketType.ImageHeader, r =>
+        Listen(PacketType.Image, r =>
         {
             SprayDistributor.Download(r.Id(), r.Int());
         });
 
-        Listen(PacketType.ImageChunk, (con, sender, r, s) =>
+        Listen(PacketType.Image, (con, sender, r, s) =>
         {
             SprayDistributor.ProcessDownload(r.Id(), s - 5, r);
         });
