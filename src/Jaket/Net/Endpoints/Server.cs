@@ -80,7 +80,7 @@ public class Server : Endpoint, ISocketManager
 
         Listen(PacketType.Sound, (con, sender, r, s) =>
         {
-            if (ents[sender] is RemotePlayer p && Redirect(ref r, s, con, sender)) p.Punch(r);
+            if (ents[sender] is RemotePlayer p && Redirect(ref r, s, con, sender)) Entities.Players.Play(p, r.Byte(), r.Vector(), r.Vector());
         });
 
         Listen(PacketType.Point, (con, sender, r, s) =>

@@ -13,7 +13,17 @@ public class Damage : Vendor
 {
     public override void Load()
     {
-        Fill(EntityType.Shockwave, EntityType.HammerParticleHeavy, GameAssets.Explosions);
+        Fill(EntityType.Heavywave, EntityType.HammerParticleHeavy, GameAssets.Explosions);
+
+        Events.Post
+        (
+            () => Prefabs[(byte)EntityType.Heavywave],
+            () => Prefabs[(byte)EntityType.Heavywave].Get<AudioSource>(s =>
+            {
+                s.rolloffMode = AudioRolloffMode.Linear;
+                s.spatialBlend = 1f;
+            })
+        );
     }
 
     public override EntityType Type(GameObject obj) => EntityType.None;

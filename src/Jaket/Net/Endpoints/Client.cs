@@ -67,7 +67,7 @@ public class Client : Endpoint, IConnectionManager
 
         Listen(PacketType.Sound, r =>
         {
-            if (ents[r.Id()] is RemotePlayer p) p.Punch(r);
+            if (ents[r.Id()] is RemotePlayer p) Entities.Players.Play(p, r.Byte(), r.Vector(), r.Vector());
         });
 
         Listen(PacketType.Point, r =>

@@ -152,7 +152,7 @@ public static class Networking
                     SamAPI.TryPlay(msg = msg[3..], LocalPlayer.Voice);
 
                 else if (Entities[member.AccId] is RemotePlayer p)
-                    SamAPI.TryPlay(msg = msg[3..], p.Voice);
+                    SamAPI.TryPlay(msg = msg[3..], p.Voice[0]);
 
                 UI.Chat.Receive(msg, Int2Hex(member.Team.Color()), name, Chat.TTS_TAG);
             }

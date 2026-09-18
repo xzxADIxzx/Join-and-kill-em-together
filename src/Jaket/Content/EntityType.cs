@@ -219,11 +219,12 @@ public enum EntityType : byte
     #endregion
     #region explosions
 
+    Heavywave,
     Shockwave,
     Blastwave,
     Harmless,
     ShotgunExplosion,
-    HammerExplosionWeak,
+    HammerExplosionCool,
     HammerExplosionWarm,
     HammerParticleLight,
     HammerParticleMedium,
@@ -269,5 +270,5 @@ public static class EntityTypes
     public static bool IsProjectile(this EntityType type) => type >= EntityType.Shell                && type <= EntityType.ProjectileExpl      ;
 
     /// <summary> Whether the type is an explosion. </summary>
-    public static bool IsExplosion (this EntityType type) => type >= EntityType.Shockwave            && type <= EntityType.HammerParticleHeavy ;
+    public static bool IsExplosion (this EntityType type) => type >= EntityType.Heavywave            && type <= EntityType.HammerParticleHeavy ;
 }

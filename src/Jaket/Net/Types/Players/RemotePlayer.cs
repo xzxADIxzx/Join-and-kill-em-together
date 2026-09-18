@@ -32,7 +32,7 @@ public class RemotePlayer : Entity
     public byte Weapon, LastWeapon;
 
     /// <summary> Source playing the voice of the player. </summary>
-    public AudioSource Voice;
+    public AudioSource[] Voice;
     /// <summary> Whether the player is typing a message. </summary>
     public bool Typing;
 

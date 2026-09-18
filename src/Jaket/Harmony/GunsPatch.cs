@@ -17,7 +17,7 @@ public static class GunsPatch
 
     [StaticPatch(typeof(GunColorGetter), nameof(GunColorGetter.UpdateColor))]
     [Prefix]
-    static bool Colors(GunColorGetter __instance) => __instance.GetComponentInParent<Entity.Agent>() == null;
+    static bool HudFix(GunColorGetter __instance) => __instance.GetComponentInParent<Entity.Agent>() == null;
 
     [StaticPatch(typeof(WeaponIcon), nameof(WeaponIcon.UpdateIcon))]
     [Prefix]
@@ -25,15 +25,15 @@ public static class GunsPatch
 
     [StaticPatch(typeof(WeaponIcon), nameof(WeaponIcon.UpdateIcon))]
     [Postfix]
-    static void MatFix(WeaponIcon __instance, Renderer[] ___variationColoredRenderers)
+    static void MatFix(WeaponIcon __instance)
     {
-        var color = ColorBlindSettings.Instance.variationColors[(int)__instance.weaponDescriptor.variationColor];
+        var color = ColorBlindSettings.Instance.variationColors[__instance.variationColor];
 
         if (__instance.GetComponentInParent<Entity.Agent>() == null) return;
 
         if (__instance.TryGetComponent(out Revolver r)) r.screenMR?.Set(p => p.SetColor("_Color", color));
 
-        ___variationColoredRenderers.Each(r => r.Set(p => p.SetColor("_EmissiveColor", color)));
+        __instance.variationColoredRenderers.Each(r => r.Set(p => p.SetColor("_EmissiveColor", color)));
     }
 
     [DynamicPatch(typeof(GroundCheck), nameof(GroundCheck.UpdateState))]

@@ -27,7 +27,7 @@ The project features multiplayer support for ULTRAKILL, which includes multiple 
    * Extended coins mechanics
    * Voting system to skip cutscenes or choose dialogs
 * Synchronization of everything
-   * Players: their weapons & colors, arms and hook, animations and taunts, particles, explosions and even their head rotation
+   * Players: their weapons & colors, arms and hook, animations and taunts, particles, sounds, explosions and even their head rotation
    * All hitscans from players and enemies
    * All projectiles: nails, sawblades, rockets and etc.
    * All sorts of items such as torches, skulls, plushies and so on

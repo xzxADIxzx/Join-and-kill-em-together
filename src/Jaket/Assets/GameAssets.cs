@@ -255,6 +255,7 @@ public static class GameAssets
     /// <summary> List of internal paths of all explosions. </summary>
     public static readonly string[] Explosions =
     {
+        "p/DustBig.prefab",
         "Attacks and Projectiles/PhysicalShockwavePlayer.prefab",
         "Attacks and Projectiles/Explosions/Explosion Wave.prefab",
         "Attacks and Projectiles/Explosions/Explosion Harmless.prefab",
