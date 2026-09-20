@@ -1,6 +1,5 @@
 namespace Jaket.Harmony;
 
-using Jaket.Content;
 using Jaket.Net;
 
 public static class GunsPatch
@@ -34,35 +33,22 @@ public static class GunsPatch
         __instance.variationColoredRenderers.Each(r => r.Set(p => p.SetColor("_EmissiveColor", color)));
     }
 
-    [DynamicPatch(typeof(Shotgun), nameof(Shotgun.Shoot))]
+    [DynamicPatch(typeof(Shotgun), nameof(global::Shotgun.Shoot))]
     [Prefix]
-    static void PumpShotgun(Shotgun __instance)
+    static void Shotgun(Shotgun __instance)
     {
-        if (__instance.variation != 1 || __instance.primaryCharge != 3) return;
-
-        Networking.Send(PacketType.Sound, 29, w =>
+        if (__instance.variation == 1 && __instance.primaryCharge == 3)
         {
-            w.Id(AccId);
-            w.Byte(0x03);
-
-            w.Vector(CameraController.Instance.transform.position + CameraController.Instance.transform.forward);
-            w.Vector(CameraController.Instance.transform.localEulerAngles);
-        });
-        if (Version.DEBUG) Log.Debug("[GUNS] Caught shotgun explosion");
+            Entities.Players.Play(12, 1f);
+            if (Version.DEBUG) Log.Debug("[HARM] Caught shotgun explosion");
+        }
     }
 
     [DynamicPatch(typeof(ShotgunHammer), nameof(ShotgunHammer.ImpactEffects))]
     [Prefix]
-    static void PumpHammer(ShotgunHammer __instance, bool ___forceWeakHit, int ___tier)
+    static void Hammer(ShotgunHammer __instance)
     {
-        Networking.Send(PacketType.Sound, 29, w =>
-        {
-            w.Id(AccId);
-            w.Byte((byte)(0xF0 + (__instance.primaryCharge << 2) + (___forceWeakHit ? 0 : ___tier)));
-
-            w.Vector(CameraController.Instance.transform.position + CameraController.Instance.transform.forward * 2.5f);
-            w.Vector(CameraController.Instance.transform.localEulerAngles);
-        });
-        if (Version.DEBUG) Log.Debug("[GUNS] Caught hammer explosion");
+        Entities.Players.Play(0xF0 + (__instance.primaryCharge << 2) + (__instance.forceWeakHit ? 0 : __instance.tier), 2.5f);
+        if (Version.DEBUG) Log.Debug("[HARM] Caught hammer explosion");
     }
 }

@@ -43,4 +43,11 @@ public static class LegsPatch
             if (Version.DEBUG) Log.Debug("[HARM] Caught shockwave explosion");
         }
     }
+
+    [DynamicPatch(typeof(NewMovement), nameof(NewMovement.TryDash))]
+    [Prefix]
+    static void Dash(NewMovement __instance)
+    {
+        if (!__instance.modNoDashSlide && __instance.boostCharge > 100f) Entities.Players.Play(7);
+    }
 }
