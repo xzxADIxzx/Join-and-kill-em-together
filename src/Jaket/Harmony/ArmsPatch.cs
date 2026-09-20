@@ -2,7 +2,6 @@ namespace Jaket.Harmony;
 
 using UnityEngine;
 
-using Jaket.Content;
 using Jaket.Net;
 using Jaket.Net.Types;
 
@@ -12,9 +11,9 @@ public static class ArmsPatch
 
     [DynamicPatch(typeof(HookArm), nameof(HookArm.FixedUpdate))]
     [Postfix]
-    static void Hook(bool ___forcingFistControl, Vector3 ___hookPoint, HookState ___state, EnemyIdentifier ___caughtEid, bool ___lightTarget)
+    static void Hook(HookArm __instance, HookState ___state, EnemyIdentifier ___caughtEid, bool ___lightTarget)
     {
-        Networking.LocalPlayer.Hook = ___forcingFistControl ? ___hookPoint : Vector3.zero;
+        Networking.LocalPlayer.Hook = __instance.forcingFistControl ? __instance.hookPoint : Vector3.zero;
 
         if (___state == HookState.Pulling && ___caughtEid && ___lightTarget)
         {
@@ -24,20 +23,24 @@ public static class ArmsPatch
         else caught = null;
     }
 
-    static bool parried;
+    static bool parried { get { var value = field; field = false; return value; } set; }
 
     [DynamicPatch(typeof(Punch), nameof(global::Punch.ActiveEnd))]
     [Postfix]
-    static void Punch() => Networking.Send(PacketType.Sound, 6, w =>
-    {
-        w.Id(AccId);
-        w.Byte(0x00);
-
-        w.Bool(parried);
-        parried = false;
-    });
+    static void Punch() => Entities.Players.Play(FistControl.Instance.currentPunch.type == FistType.Heavy ? 10 : parried ? 9 : 8);
 
     [DynamicPatch(typeof(Punch), nameof(global::Punch.GetParryLookTarget))]
     [Postfix]
     static void Parry() => parried = true;
+
+    [DynamicPatch(typeof(Punch), nameof(global::Punch.BlastCheck))]
+    [Postfix]
+    static void Blast(Punch __instance)
+    {
+        if (__instance.heldAction.IsPressed())
+        {
+            Entities.Players.Play(11, 2f);
+            if (Version.DEBUG) Log.Debug("[HARM] Caught blastwave explosion");
+        }
+    }
 }

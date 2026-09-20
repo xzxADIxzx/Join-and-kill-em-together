@@ -53,23 +53,6 @@ public static class GunsPatch
         if (Version.DEBUG) Log.Debug("[GUNS] Caught shockwave explosion");
     }
 
-    [DynamicPatch(typeof(Punch), nameof(Punch.BlastCheck))]
-    [Prefix]
-    static void Blast(Punch __instance)
-    {
-        if (!__instance.heldAction.IsPressed()) return;
-
-        Networking.Send(PacketType.Sound, 29, w =>
-        {
-            w.Id(AccId);
-            w.Byte(0x02);
-
-            w.Vector(CameraController.Instance.GetDefaultPos() + CameraController.Instance.transform.forward * 2f);
-            w.Vector(CameraController.Instance.transform.localEulerAngles);
-        });
-        if (Version.DEBUG) Log.Debug("[GUNS] Caught blastwave explosion");
-    }
-
     [DynamicPatch(typeof(Shotgun), nameof(Shotgun.Shoot))]
     [Prefix]
     static void PumpShotgun(Shotgun __instance)

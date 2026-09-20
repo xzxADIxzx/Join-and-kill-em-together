@@ -60,6 +60,25 @@ public class Players : Vendor
 
     #region sounds
 
+    /// <summary> Distributes the sound to the network members. </summary>
+    public void Play(int type, Vector3 position, Vector3 rotation) => Networking.Send(PacketType.Sound, 29, w =>
+    {
+        w.Id(AccId);
+        w.Byte((byte)type);
+        w.Vector(position);
+        w.Vector(rotation);
+    });
+
+    /// <summary> Distributes the sound to the network members. </summary>
+    public void Play(int type, float dst)
+    {
+        var cc = CameraController.Instance.transform;
+        Play(type, cc.position + cc.forward * dst, cc.localEulerAngles);
+    }
+
+    /// <summary> Distributes the sound to the network members. </summary>
+    public void Play(int type) => Play(type, default, default);
+
     /// <summary> Preloaded audio clips that improve immensity. </summary>
     private AudioClip punch, parry, heavy;
 
