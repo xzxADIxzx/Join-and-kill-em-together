@@ -66,7 +66,7 @@ public class Server : Endpoint, ISocketManager
 
         Listen(PacketType.Death, (con, sender, r, s) =>
         {
-            if (ents[r.Id()] is Entity e && e is not LocalPlayer && e is not RemotePlayer)
+            if (ents[r.Id()] is Entity e)
             {
                 e.Killed(r, s - 5);
                 Redirect(r, s, con);

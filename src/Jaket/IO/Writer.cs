@@ -92,12 +92,13 @@ public unsafe struct Writer
 
     public void Color(Color32 value) => *(Color32*)Inc(4) = value;
 
-    public void Player(Team team, byte weapon, byte emote, byte rps, bool typing)
+    public void State(byte emote, byte rps, bool typing, Vector3 gravity)
     {
-        if (weapon == 0xFF) weapon = 0b111111;
-        if (emote  == 0xFF) emote  = 0b1111;
+        if (emote == 0xFF) emote = 0b1111;
 
-        *(short*)Inc(2) = (short)((weapon << 10) | (((byte)team) << 7) | (emote << 3) | (rps << 1) | (typing ? 1 : 0));
+        *(byte*)Inc(1) = (byte)( (emote << 3) | (rps << 1) | (typing ? 1 : 0) );
+
+        *(uint*)Inc(4) = (uint)(gravity.x / 360f * 1023) << 20 | (uint)(gravity.y / 360f * 1023) << 10 | (uint)(gravity.z / 360f * 1023);
     }
 
     #endregion

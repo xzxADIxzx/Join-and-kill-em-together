@@ -38,7 +38,7 @@ public class Spray : MonoBehaviour
         Builder.Canvas(transform, default, c =>
         {
             var spray = SprayManager.Find(owner?.Id ?? AccId)?.Sprite ?? Tex.Mark;
-            var title = owner?.Header.Name ?? AccId.Name;
+            var title = owner?.Name ?? AccId.Name;
             var width = 141f * title.Length;
 
             Builder.Image(Builder.Rect("Image", c, new(1960f, 1960f            )), spray,      white).PreserveAspect();

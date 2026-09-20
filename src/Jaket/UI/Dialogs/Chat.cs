@@ -99,7 +99,7 @@ public class Chat : Fragment
 
             if (Shown) typing[0] = Bundle.Get("chat.you");
 
-            Networking.Entities.Player(p => p.Typing && p.Id != AccId, p => typing[number++] = p.Header.Name);
+            Networking.Entities.Player(p => p.Typing && p.Id != AccId, p => typing[number++] = p.Name);
 
             if (number == 0) return null;
             if (number == 1 && Shown) return Bundle.Get("chat.you-only");

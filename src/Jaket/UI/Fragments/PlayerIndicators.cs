@@ -56,9 +56,9 @@ public class PlayerIndicators : Fragment
     {
         if (target == null || indicator == null) return;
 
-        var dst = Vector3.Distance(NewMovement.Instance.transform.position, target.Position);
+        var dst = Vector3.Distance(NewMovement.Instance.transform.position, target.DrawCntr);
         var cam = CameraController.Instance.transform;
-        var dir = target.Position - cam.position;
+        var dir = target.DrawCntr - cam.position;
 
         indicator.Arc   = Mathf.Clamp(100f - dst, 5f, 100f) * .006f;
         indicator.color = indicator.color with { a = 1f - indicator.Arc * 1.5f };

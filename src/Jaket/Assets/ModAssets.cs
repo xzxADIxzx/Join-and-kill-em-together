@@ -203,7 +203,8 @@ public static class ModAssets
 
         Load<AudioMixer>("sam-audio", m =>
         {
-            Networking.LocalPlayer.Voice.outputAudioMixerGroup = (Mixer = m).FindMatchingGroups("master")[0];
+            Networking.LocalPlayer.Create();
+            Networking.LocalPlayer.Audio[0].outputAudioMixerGroup = (Mixer = m).FindMatchingGroups("master")[0];
             Settings.Load();
         });
 

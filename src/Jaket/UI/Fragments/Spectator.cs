@@ -91,7 +91,7 @@ public class Spectator : Fragment
     {
         var camera = cc.cam.transform;
         var player = nm.dead && Networking.Entities[LobbyController.Lobby?.Members.At(targetPlayer).AccId ?? 0u] is RemotePlayer rp
-            ? rp.Position
+            ? rp.DrawCntr
             : nm.transform.position + Vector3.up;
 
         position = Vector3.MoveTowards(position, Vector3.up * (ends ? .1f : 6f), Time.deltaTime * 12f);

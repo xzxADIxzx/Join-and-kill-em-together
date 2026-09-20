@@ -55,7 +55,7 @@ public abstract class Enemy : OwnableEntity
 
     public virtual float Rate(LocalPlayer target) => NewMovement.Instance.dead ? float.MaxValue : (NewMovement.Instance.transform.position - agent.Position).sqrMagnitude;
 
-    public virtual float Rate(RemotePlayer target) => (target.Position - agent.Position).sqrMagnitude;
+    public virtual float Rate(RemotePlayer target) => (target.DrawPos - agent.Position).sqrMagnitude;
 
     public override void Assign(Agent agent)
     {

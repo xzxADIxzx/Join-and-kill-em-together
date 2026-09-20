@@ -105,7 +105,7 @@ public class Point : MonoBehaviour
         if (line)
         {
             line.SetPosition(0, transform.position);
-            line.SetPosition(1, owner.Position - Vector3.up * 2.5f);
+            line.SetPosition(1, owner.DrawPos);
         }
     }
 }

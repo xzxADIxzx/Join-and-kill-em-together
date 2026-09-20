@@ -149,10 +149,10 @@ public static class Networking
             else if (msg.StartsWith("#/t"))
             {
                 if (member.IsMe)
-                    SamAPI.TryPlay(msg = msg[3..], LocalPlayer.Voice);
+                    SamAPI.TryPlay(msg = msg[3..], LocalPlayer.Audio[0]);
 
                 else if (Entities[member.AccId] is RemotePlayer p)
-                    SamAPI.TryPlay(msg = msg[3..], p.Voice[0]);
+                    SamAPI.TryPlay(msg = msg[3..], p.Audio[0]);
 
                 UI.Chat.Receive(msg, Int2Hex(member.Team.Color()), name, Chat.TTS_TAG);
             }

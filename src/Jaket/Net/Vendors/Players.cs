@@ -33,6 +33,9 @@ public class Players : Vendor
             e.dontUnlockBestiary = true;
             e.dontCountAsKills   = true;
 
+            e.tag = "Enemy";
+            e.weakPoint = e.ObjFind("Doll/Metarig/Hips/Spine 0/Spine 1/Spine 2");
+
             e.weaknesses      = [];
             e.burners         = [];
             e.flammables      = [];
@@ -87,9 +90,9 @@ public class Players : Vendor
     {
         void Play(int channel, AudioClip clip, float pitch = 1f)
         {
-            player.Voice[channel].clip = clip;
-            player.Voice[channel].SetPitch(pitch);
-            player.Voice[channel].Play(true);
+            player.Audio[channel].clip = clip;
+            player.Audio[channel].SetPitch(pitch);
+            player.Audio[channel].Play(true);
         }
 
         var nm = NewMovement.Instance;

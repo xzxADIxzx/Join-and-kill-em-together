@@ -92,18 +92,18 @@ public unsafe struct Reader
 
     public Color32 Color() => *(Color32*)Inc(4);
 
-    public void Player(out Team team, out byte weapon, out byte emote, out byte rps, out bool typing)
+    public void State(out byte emote, out byte rps, out bool typing, out Vector3 gravity)
     {
-        short value = *(short*)Inc(2);
+        byte gen = *(byte*)Inc(1);
+        uint grv = *(uint*)Inc(4);
 
-        weapon = (byte)(value >> 10 & 0b111111);
-        team   = (Team)(value >>  7 & 0b111   );
-        emote  = (byte)(value >>  3 & 0b1111  );
-        rps    = (byte)(value >>  1 & 0b11    );
-        typing =       (value >>  0 & 0b1     ) != 0;
+        emote  = (byte)(gen >> 3 & 0b1111);
+        rps    = (byte)(gen >> 1 & 0b0011);
+        typing = 1 ==  (gen >> 0 & 0b0001);
 
-        if (weapon == 0b111111) weapon = 0xFF;
-        if (emote  == 0b1111)   emote  = 0xFF;
+        if (emote == 0b1111) emote = 0xFF;
+
+        gravity = new((grv >> 20 & 0x3FF) * 360f / 1023, (grv >> 10 & 0x3FF) * 360f / 1023, (grv >> 00 & 0x3FF) * 360f / 1023);
     }
 
     #endregion

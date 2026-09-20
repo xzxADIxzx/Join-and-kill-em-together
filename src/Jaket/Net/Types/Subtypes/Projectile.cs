@@ -122,7 +122,13 @@ public abstract class Projectile : OwnableEntity
 
     public virtual void UpdateRocket(bool riding)
     {
-        if (riding) player.Value?.Acquire(agent);
+        if (riding && player.Value != null)
+        {
+            if (agent.Parent != player.Value.Doll.Root) agent.Parent = player.Value.Doll.Root;
+
+            agent.transform.localPosition = Vector3.back;
+            agent.transform.localRotation = Quaternion.identity;
+        }
         cs.Each(c => c.enabled = !riding);
     }
 

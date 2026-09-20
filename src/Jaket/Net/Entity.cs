@@ -99,7 +99,7 @@ public abstract class Entity
 
         Events.Post(() =>
         {
-            agent?.Rem();
+            agent?.Rem(true);
             bits(b0, b1, b2, b3, b4, b5, b6, b7);
         });
     }
