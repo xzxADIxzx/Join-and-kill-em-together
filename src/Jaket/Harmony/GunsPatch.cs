@@ -1,7 +1,5 @@
 namespace Jaket.Harmony;
 
-using UnityEngine;
-
 using Jaket.Content;
 using Jaket.Net;
 
@@ -34,23 +32,6 @@ public static class GunsPatch
         if (__instance.TryGetComponent(out Revolver r)) r.screenMR?.Set(p => p.SetColor("_Color", color));
 
         __instance.variationColoredRenderers.Each(r => r.Set(p => p.SetColor("_EmissiveColor", color)));
-    }
-
-    [DynamicPatch(typeof(GroundCheck), nameof(GroundCheck.UpdateState))]
-    [Prefix]
-    static void Shock(GroundCheck __instance)
-    {
-        if (__instance.superJumpChance <= 0f || __instance.superJumpChance >= Time.deltaTime || !NewMovement.Instance.stillHolding) return;
-
-        Networking.Send(PacketType.Sound, 21, w =>
-        {
-            w.Id(AccId);
-            w.Byte(0x01);
-
-            w.Vector(__instance.transform.position);
-            w.Float(NewMovement.Instance.slamForce);
-        });
-        if (Version.DEBUG) Log.Debug("[GUNS] Caught shockwave explosion");
     }
 
     [DynamicPatch(typeof(Shotgun), nameof(Shotgun.Shoot))]

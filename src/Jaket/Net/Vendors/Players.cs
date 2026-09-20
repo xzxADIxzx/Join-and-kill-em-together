@@ -110,7 +110,7 @@ public class Players : Vendor
             case 0x02: // wall
                 Play(1, nm.jumpSound, 1.50f);
                 break;
-            case 0x03: // fail
+            case 0x03: // wall
                 Play(1, nm.jumpSound, 1.75f);
                 Play(2, nm.finalWallJump);
                 break;
@@ -127,7 +127,8 @@ public class Players : Vendor
                 {
                     s.force = 5000f * 2.25f * rotation.magnitude;
                     s.hasHurtPlayer = false;
-                });
+                }
+                ).transform.up = -rotation;
                 break;
             case 0x07: // dash
                 player.Doll.Trigger(1);
