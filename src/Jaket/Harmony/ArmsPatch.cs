@@ -1,7 +1,5 @@
 namespace Jaket.Harmony;
 
-using UnityEngine;
-
 using Jaket.Net;
 using Jaket.Net.Types;
 
@@ -11,10 +9,8 @@ public static class ArmsPatch
 
     [DynamicPatch(typeof(HookArm), nameof(HookArm.FixedUpdate))]
     [Postfix]
-    static void Hook(HookArm __instance, HookState ___state, EnemyIdentifier ___caughtEid, bool ___lightTarget)
+    static void Hook(HookState ___state, EnemyIdentifier ___caughtEid, bool ___lightTarget)
     {
-        Networking.LocalPlayer.Hook = __instance.forcingFistControl ? __instance.hookPoint : Vector3.zero;
-
         if (___state == HookState.Pulling && ___caughtEid && ___lightTarget)
         {
             if (caught == ___caughtEid) return;

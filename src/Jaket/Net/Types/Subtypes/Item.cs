@@ -87,21 +87,14 @@ public abstract class Item : OwnableEntity
             if (IsOwner) return;
 
             rb?.isKinematic = true;
-            if (Networking.LocalPlayer.Holding == this)
-            {
-                Networking.LocalPlayer.Holding = null;
+
+            if (FistControl.Instance.currentPunch.heldItem == itemId)
                 FistControl.Instance.currentPunch.PlaceHeldObject([], null);
-            }
         };
 
         itemId.onPickUp ??= new();
         itemId.onPickUp.onActivate ??= new();
-
-        itemId.onPickUp.onActivate.AddListener(() =>
-        {
-            TakeOwnage();
-            Networking.LocalPlayer.Holding = this;
-        });
+        itemId.onPickUp.onActivate.AddListener(TakeOwnage);
 
         OnTransfer();
     }

@@ -43,6 +43,7 @@ public class PlayerList : Fragment
                 Teams.All.Each(t => s.TeamButton(t, () =>
                 {
                     Networking.LocalPlayer.Team = t;
+                    Networking.LocalPlayer.Restyle();
                     Events.OnTeamChange.Fire();
                 }));
             });
