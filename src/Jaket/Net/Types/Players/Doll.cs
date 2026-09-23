@@ -70,6 +70,8 @@ public class Doll : Entity
 
     public override void Read(Reader r)
     {
+        if (enemy == null) return;
+
         var team = r.Team();
         var weap = r.EntityType();
 

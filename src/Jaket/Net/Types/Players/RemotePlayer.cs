@@ -14,7 +14,7 @@ public class RemotePlayer : Entity
 {
     Agent agent;
     Float bodyX, bodyY, bodyZ, hookX, hookY, hookZ, bodyRotation, headRotation;
-    Vector3 gravity;
+    Vector3 gravity, last;
     EnemyIdentifier enemyId;
     Collider[] cs;
 
@@ -80,6 +80,8 @@ public class RemotePlayer : Entity
 
         r.State(out Doll.Emote, out Doll.Rps, out Typing, out gravity);
         r.Bools(out Doll.Walking, out Doll.Sliding, out Doll.Falling, out Doll.Slaming, out Doll.Riding, out Doll.Hooking, out Doll.Shopping, out _);
+
+        if (last != gravity) { last = gravity; _ = bodyRotation.Init; }
     }
 
     #endregion
