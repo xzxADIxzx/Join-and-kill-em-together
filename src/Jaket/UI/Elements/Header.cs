@@ -18,9 +18,6 @@ public class Header
     /// <summary> Assigns the given player to the header. </summary>
     public void Assign(RemotePlayer player) => Builder.Canvas(Create("Header", Root = player.Doll.Root).transform, Vector3.up * 4.6f, c =>
     {
-        var cc = CameraController.Instance;
-        var cb = ColorBlindSettings.Instance;
-
         var name = Name = player.Id.Name;
         var wdth = Name.Length * 141f + 160f;
 

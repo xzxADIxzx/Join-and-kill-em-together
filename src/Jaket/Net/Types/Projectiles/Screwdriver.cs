@@ -85,16 +85,16 @@ public class Screwdriver : Rotatable
     [Prefix]
     static void Punch()
     {
-        if (FistControl.Instance.currentPunch.type != FistType.Standard) return;
+        if (fc.currentPunch.type != FistType.Standard) return;
 
         Networking.Entities.Alive<Screwdriver>(s => s.target == AccId, s =>
         {
-            s.harp.transform.forward  = CameraController.Instance.transform.forward;
-            s.harp.transform.position = CameraController.Instance.transform.position;
+            s.harp.transform.forward  = cctr.forward;
+            s.harp.transform.position = cctr.position;
             s.harp.Punched();
 
             TimeController.Instance.ParryFlash();
-            FistControl.Instance.currentPunch.anim.Play("Hook", 0, .065f);
+            fc.currentPunch.anim.Play("Hook", 0, .065f);
             global::Punch.GetParryLookTarget();
         });
     }

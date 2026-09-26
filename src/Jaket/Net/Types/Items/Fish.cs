@@ -72,7 +72,7 @@ public class Fish : Item
 
                 var result = Entities.Items.Make(valid ? EntityType.FishCooked : EntityType.FishBurnt, other.transform.position);
                 if (result.TryGetComponent(out Rigidbody rb))
-                    rb.velocity = (NewMovement.Instance.transform.position - other.transform.position).normalized * 18f + Vector3.up * 10f;
+                    rb.velocity = (nmtr.position - other.transform.position).normalized * 18f + Vector3.up * 10f;
 
                 f.Kill(1, w => w.Bools(false, true));
             }

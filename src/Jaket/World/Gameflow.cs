@@ -16,8 +16,6 @@ using static Jaket.UI.Lib.Pal;
 /// <summary> Class responsible for managing the flow of the game. </summary>
 public class Gameflow
 {
-    static NewMovement nm => NewMovement.Instance;
-
     /// <summary> Actual gamemode controling the flow of the game. </summary>
     public static Gamemode Mode { get; private set; }
     /// <summary> Whether the extant round is in the active state. </summary>
@@ -142,7 +140,7 @@ public class Gameflow
     /// <summary> Handles gamemode specific actions on player death. </summary>
     public static void OnDeath(Friend member)
     {
-        StyleHUD.Instance.AddPoints(Mathf.RoundToInt(420f * StyleCalculator.Instance.airTime), Bundle.Parse("[green]FRATRICIDE"));
+        sh.AddPoints(Mathf.RoundToInt(420f * StyleCalculator.Instance.airTime), Bundle.Parse("[green]FRATRICIDE"));
 
         if (Mode.HPs() || Mode.NoRestarts())
         {
@@ -165,7 +163,7 @@ public class Gameflow
             var dead = Networking.Entities.Count(e => e is RemotePlayer p && p.Team == team && p.Health > 0) == 0;
             if (dead) Loadouts.Set(Loadouts.Merge
             (
-                GunSetter.Instance.forcedLoadout,
+                gs.forcedLoadout,
                 Loadouts.Make(false, weapon[(byte)team])
             ));
         }
@@ -256,7 +254,7 @@ public class Gameflow
         else if (LobbyController.IsOwner)
         {
             UI.Spectator.Shown = false;
-            StatsManager.Instance.Restart();
+            sm.Restart();
         }
     }
 

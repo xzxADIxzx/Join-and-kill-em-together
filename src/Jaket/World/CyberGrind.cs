@@ -11,7 +11,6 @@ using Jaket.Net;
 public class CyberGrind
 {
     static EndlessGrid grid => EndlessGrid.Instance;
-    static NewMovement nm => NewMovement.Instance;
 
     /// <summary> Current wave number used for display on the Huge Flying Panel™. </summary>
     public static int CurrentWave;

@@ -14,7 +14,6 @@ using static Jaket.UI.Lib.Pal;
 public class PlayerInformation : Fragment
 {
     static HudController hc => HudController.Instance;
-    static ColorBlindSettings cb => ColorBlindSettings.Instance;
 
     public PlayerInformation(Transform root) : base(root, "PlayerInformation", false, cond: () => Scene == "Main Menu")
     {
@@ -55,7 +54,7 @@ public class PlayerInformation : Fragment
         root.Add<Bar>(b =>
         {
             b.Setup(true, 20f);
-            b.Update(() => root.color = (Color) black with { a = PrefsManager.Instance.GetFloat("hudBackgroundOpacity") / 100f });
+            b.Update(() => root.color = (Color) black with { a = pm.GetFloat("hudBackgroundOpacity") / 100f });
 
             if (number == 0)
                 Builder.Text(Builder.Rect("Text", b.Image(Tex.Back, 144f, purple, scale: 2f), new()), "#playerinfo", 32, white);

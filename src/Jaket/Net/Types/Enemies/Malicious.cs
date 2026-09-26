@@ -72,7 +72,7 @@ public class Malicious : Enemy
             scr.UnEnrage();
     }
 
-    public override float Rate(LocalPlayer target) => NewMovement.Instance.hp * NewMovement.Instance.hp * 2f + base.Rate(target);
+    public override float Rate(LocalPlayer target) => nm.hp * nm.hp * 2f + base.Rate(target);
 
     public override float Rate(RemotePlayer target) => target.Health * target.Health * 2f + base.Rate(target);
 

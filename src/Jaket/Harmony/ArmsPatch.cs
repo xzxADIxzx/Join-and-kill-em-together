@@ -23,7 +23,7 @@ public static class ArmsPatch
 
     [DynamicPatch(typeof(Punch), nameof(global::Punch.ActiveEnd))]
     [Postfix]
-    static void Punch() => Entities.Players.Play(FistControl.Instance.currentPunch.type == FistType.Heavy ? 10 : parried ? 9 : 8);
+    static void Punch() => Entities.Players.Play(fc.currentPunch.type == FistType.Heavy ? 10 : parried ? 9 : 8);
 
     [DynamicPatch(typeof(Punch), nameof(global::Punch.GetParryLookTarget))]
     [Postfix]

@@ -37,9 +37,9 @@ public static class LegsPatch
     [Prefix]
     static void Slam(GroundCheck __instance)
     {
-        if (__instance.superJumpChance > 0f && __instance.superJumpChance < Time.deltaTime && NewMovement.Instance.stillHolding)
+        if (__instance.superJumpChance > 0f && __instance.superJumpChance < Time.deltaTime && nm.stillHolding)
         {
-            Entities.Players.Play(6, __instance.transform.position, -__instance.transform.up * NewMovement.Instance.slamForce);
+            Entities.Players.Play(6, __instance.transform.position, -__instance.transform.up * nm.slamForce);
             if (Version.DEBUG) Log.Debug("[HARM] Caught shockwave explosion");
         }
     }

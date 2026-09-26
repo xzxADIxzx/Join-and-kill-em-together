@@ -79,7 +79,7 @@ public class Point : MonoBehaviour
         transform.position = position;
         transform.rotation = Quaternion.LookRotation(direction);
 
-        AudioSource.PlayClipAtPoint(HudMessageReceiver.Instance.GetComponent<AudioSource>()?.clip, position);
+        hm.Get<AudioSource>(s => AudioSource.PlayClipAtPoint(s.clip, position));
     }
 
     private void Update()

@@ -40,7 +40,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
 
         NetAction.Sync(l, "Cube", new(-56.6f, -21.4f, -5.9f), obj =>
         {
-            if (NewMovement.Instance.dead) Movement.Respawn(new(-60f, -8.5f, 30f), 180f);
+            if (nm.dead) Movement.Respawn(new(-60f, -8.5f, 30f), 180f);
         });
 
         #endregion
@@ -195,7 +195,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
                 sea.Find("SeaAmbiance").gameObject.SetActive(true);
                 sea.Find("SeaAmbiance (Waves)").gameObject.SetActive(true);
 
-                HudMessageReceiver.Instance?.SendHudMessage("<size=48>Haha</size>", silent: true);
+                hm.SendHudMessage("<size=48>Haha</size>", silent: true);
             });
         });
 
@@ -278,7 +278,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
 
         NetAction.Sync(l, "Closer", new(0f, 20f, 579f), obj =>
         {
-            if (NewMovement.Instance.transform.position.z < 470f) Teleporter.Tp(new(0f, 5.5f, 485f));
+            if (nmtr.position.z < 470f) Teleporter.Tp(new(0f, 5.5f, 485f));
         });
         NetAction.SyncLimbo(l, new(96.75f, 26f, 545f));
         NetAction.Sync(l, "RedSkullPickedUp", new(-23.4f, -4.7f, 581.6f));
@@ -315,7 +315,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
             door?.onFullyOpened.AddListener(() =>
             {
                 door.onFullyOpened = null;
-                HudMessageReceiver.Instance?.SendHudMessage("<size=48>What?</size>", silent: true);
+                hm.SendHudMessage("<size=48>What?</size>", silent: true);
             });
         });
         StaticAction.Find(l, "9A", new(-23.5f, 37.75f, 806.25f), obj =>
@@ -433,13 +433,6 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         l = "Level P-2";
 
         #endregion
-        #region cyber grind
-        l = "Endless";
-
-        // move the death zone, because entities spawn at the origin
-        StaticAction.Find(l, "Cube", new(-40f, 0.5f, 102.5f), obj => obj.transform.position = new(-40f, -10f, 102.5f));
-
-        #endregion
         #region unfinished
 
         // duplicate torches at levels 4-3 and P-1
@@ -468,7 +461,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
             ObjFind("Music 3").SetActive(false);
             obj.transform.parent.Find("Lights").gameObject.SetActive(false);
 
-            StatsManager.Instance.StopTimer();
+            sm.StopTimer();
         });
         NetAction.Sync("Level P-2", "PrimeIntro", new(-102f, -61.25f, -450f));
         NetAction.Sync("Level P-2", "Outro", new(-102f, -61.25f, -450f), obj =>
@@ -479,7 +472,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
             ObjFind("IntroObjects/Decorations").SetActive(false);
             ObjFind("Rain").SetActive(false);
 
-            StatsManager.Instance.StopTimer();
+            sm.StopTimer();
         });
 
         #endregion

@@ -11,9 +11,6 @@ public static class Progress
     {
         Log.Info("[SAVE] Saving the rank...");
 
-        var pf = PrefsManager.Instance;
-        var sm = StatsManager.Instance;
-
         if (SceneHelper.IsPlayingCustom)
         {
             Log.Info("[SAVE] Skipping due to the mission being custom");
@@ -24,7 +21,7 @@ public static class Progress
             Log.Info("[SAVE] Skipping due to the mission being invalid");
             return;
         }
-        if (pf.GetInt("difficulty") < 0 || pf.GetInt("difficulty") > 5)
+        if (pm.GetInt("difficulty") < 0 || pm.GetInt("difficulty") > 5)
         {
             Log.Info("[SAVE] Skipping due to the difficulty being invalid");
             return;
@@ -35,7 +32,7 @@ public static class Progress
         Save
         (
             sm.levelNumber - (sm.levelNumber >= 666 ? 621 : sm.levelNumber >= 100 ? 65 : 1),
-            pf.GetInt("difficulty"),
+            pm.GetInt("difficulty"),
             (byte)UnityEngine.Mathf.Clamp(sm.rankScore + 1, 0, 6)
         );
     }

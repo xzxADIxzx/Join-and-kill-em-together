@@ -50,8 +50,8 @@ public class Debug : Fragment
 
                 Networking.Entities.Each(e => e.Debuggable, e =>
                 {
-                    var cen = CameraController.Instance.cam.pixelRect.size / 2f;
-                    var scr = CameraController.Instance.cam.WorldToScreenPoint(e.DrawPos);
+                    var cen = cc.cam.pixelRect.size / 2f;
+                    var scr = cc.cam.WorldToScreenPoint(e.DrawPos);
 
                     if (scr.z > 0f && Vector2.Distance(scr, cen) < Vector2.Distance(pos, cen))
                     {

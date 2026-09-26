@@ -12,8 +12,6 @@ using static Jaket.UI.Lib.Pal;
 /// <summary> Dialog that is responsible for options and keybinds. </summary>
 public class Settings : Fragment
 {
-    static PrefsManager pm => PrefsManager.Instance;
-
     #region options
 
     /// <summary> Identifier of the selected localization. </summary>

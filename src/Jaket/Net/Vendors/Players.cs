@@ -73,11 +73,7 @@ public class Players : Vendor
     });
 
     /// <summary> Distributes the sound to the network members. </summary>
-    public void Play(int type, float dst)
-    {
-        var cc = CameraController.Instance.transform;
-        Play(type, cc.position + cc.forward * dst, cc.localEulerAngles);
-    }
+    public void Play(int type, float dst) => Play(type, cctr.position + cctr.forward * dst, cctr.localEulerAngles);
 
     /// <summary> Distributes the sound to the network members. </summary>
     public void Play(int type) => Play(type, default, default);
@@ -94,9 +90,6 @@ public class Players : Vendor
             player.Audio[channel].SetPitch(pitch);
             player.Audio[channel].Play(true);
         }
-
-        var nm = NewMovement.Instance;
-        var sh = SceneHelper.Instance;
 
         if (!punch) GameAssets.Sound("Weapons/PunchSwoosh.wav",       c => punch = c);
         if (!parry) GameAssets.Sound("Weapons/Revolver/Ricochet.wav", c => parry = c);
@@ -121,11 +114,11 @@ public class Players : Vendor
                 Play(2, nm.landingSound);
                 break;
             case 0x05: // land - heavy
-                sh.CreateEnviroGibs(position, rotation, 5f, 05);
+                eh.CreateEnviroGibs(position, rotation, 5f, 05);
                 Inst(Prefabs[(byte)EntityType.Heavywave], position).transform.forward = -rotation;
                 break;
             case 0x06: // land - shock
-                sh.CreateEnviroGibs(position, rotation, 5f, 10);
+                eh.CreateEnviroGibs(position, rotation, 5f, 10);
                 Inst(Prefabs[(byte)EntityType.Shockwave], position).Get<PhysicalShockwave>(s =>
                 {
                     s.force = 5000f * 2.25f * rotation.magnitude;

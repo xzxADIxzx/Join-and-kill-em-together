@@ -61,13 +61,13 @@ public class Nail : Projectile
     [Prefix]
     static void Blast(Punch __instance)
     {
-        if (__instance.heldAction.IsPressed()) Networking.Entities.Alive<Nail>(e => e.rb && (e.agent.Position - NewMovement.Instance.transform.position).sqrMagnitude < 100f, e =>
+        if (__instance.heldAction.IsPressed()) Networking.Entities.Alive<Nail>(e => e.rb && (e.agent.Position - nmtr.position).sqrMagnitude < 100f, e =>
         {
             e.agent.StopAllCoroutines();
             e.agent.Run(e.MasterKill, 5f);
 
             e.TakeOwnage();
-            e.rb.velocity = CameraController.Instance.transform.forward * 80f;
+            e.rb.velocity = cctr.forward * 80f;
             e.rb.useGravity = false;
 
             e.agent.Get(out global::Nail n); n.damage = 2f;

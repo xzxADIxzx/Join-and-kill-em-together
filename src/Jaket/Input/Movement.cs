@@ -17,10 +17,6 @@ using Jaket.World;
 /// <summary> Class responsible for additions to control and local display of emotes. </summary>
 public class Movement : MonoSingleton<Movement>
 {
-    static NewMovement nm => NewMovement.Instance;
-    static FistControl fc => FistControl.Instance;
-    static GunControl gc => GunControl.Instance;
-    static CameraController cc => CameraController.Instance;
     static AssistController ac => AssistController.Instance;
     static CheatsController ch => CheatsController.Instance;
     static CheatsManager cm => CheatsManager.Instance;
@@ -70,10 +66,10 @@ public class Movement : MonoSingleton<Movement>
         if (Keybind.PlayerInds.Tap()) UI.PlayerInds.Toggle();
         if (Keybind.PlayerInfo.Tap()) UI.PlayerInfo.Toggle();
 
-        if ((Keybind.Point.Tap() || Keybind.Spray.Tap()) && Physics.Raycast(cc.transform.position, cc.transform.forward, out var hit, float.MaxValue, EnvMask))
+        if ((Keybind.Point.Tap() || Keybind.Spray.Tap()) && Physics.Raycast(cctr.position, cctr.forward, out var hit, float.MaxValue, EnvMask))
         {
             // rotate the normal towards the local player a little so that when placed on the ground it is rotated correctly
-            var normal = Vector3.RotateTowards(hit.normal, nm.transform.position - hit.point, .001f, 0f);
+            var normal = Vector3.RotateTowards(hit.normal, nmtr.position - hit.point, .001f, 0f);
 
             if (Keybind.Point.Tap())
             {
@@ -175,8 +171,8 @@ public class Movement : MonoSingleton<Movement>
     /// <summary> Respawns the player at the given position with the given rotation. </summary>
     public static void Respawn(Vector3 position, float rotation, bool flash = false)
     {
-        StyleHUD.Instance.ComboOver();
-        StyleHUD.Instance.ResetAllFreshness();
+        sh.ComboOver();
+        sh.ResetAllFreshness();
 
         nm.Respawn();
         nm.GetHealth(0, true);
@@ -200,7 +196,7 @@ public class Movement : MonoSingleton<Movement>
 
     [StaticPatch(typeof(OptionsManager), nameof(OptionsManager.Pause))]
     [Prefix]
-    static void Fixes(ref GunControl ___gc) => ___gc = GunControl.Instance; // idk why, but it keeps happening randomly
+    static void Fixes(ref GunControl ___gc) => ___gc = gc; // idk why, but it keeps happening randomly
 
     [StaticPatch(typeof(OptionsManager), nameof(OptionsManager.UnPause))]
     [Postfix]

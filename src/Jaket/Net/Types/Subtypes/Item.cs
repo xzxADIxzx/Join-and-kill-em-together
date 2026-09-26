@@ -88,8 +88,8 @@ public abstract class Item : OwnableEntity
 
             rb?.isKinematic = true;
 
-            if (FistControl.Instance.currentPunch.heldItem == itemId)
-                FistControl.Instance.currentPunch.PlaceHeldObject([], null);
+            if (fc.currentPunch.heldItem == itemId)
+                fc.currentPunch.PlaceHeldObject([], null);
         };
 
         itemId.onPickUp ??= new();

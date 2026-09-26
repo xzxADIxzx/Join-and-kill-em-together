@@ -101,7 +101,7 @@ public static class Commands
             if (type == -1)
                 Receive($"[red]Couldn't find a plushie named {name}.");
             else
-                Entities.Items.Make(EntityType.Hakita + (byte)type, NewMovement.Instance.transform.position);
+                Entities.Items.Make(EntityType.Hakita + (byte)type, nmtr.position);
         });
 
         Handler.Register("level", "<layer> <level> / sandbox / cyber grind / museum", "Load a level", args =>

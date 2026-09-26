@@ -67,7 +67,7 @@ public class World
         w.String(Version.Hash);
         w.String(Pending ?? Scene);
 
-        w.Byte((byte)PrefsManager.Instance.GetInt("difficulty"));
+        w.Byte((byte)pm.GetInt("difficulty"));
         w.Byte((byte)performed.Count(b => b));
 
         for (int i = 0, j = 0, k = 0; i < performed.Length; i++) if (performed[i])
@@ -97,7 +97,7 @@ public class World
             Events.Post(() =>
             {
                 LoadScn(ps);
-                PrefsManager.Instance.SetInt("difficulty", diff);
+                pm.SetInt("difficulty", diff);
             });
 
             Reset();
@@ -235,9 +235,6 @@ public class World
     [Prefix]
     static bool Activate(CheckPoint __instance)
     {
-        var nm = NewMovement.Instance;
-        var sm = StatsManager.Instance;
-
         if (sm.currentCheckPoint && sm.currentCheckPoint != __instance)
         {
             if (sm.currentCheckPoint.resetOnGetOtherCheckpoint)
@@ -247,7 +244,7 @@ public class World
         }
         sm.currentCheckPoint = __instance;
 
-        if (__instance.activateEffect.RuntimeKeyIsValid() && !__instance.invisible) Inst(__instance.activateEffect.ToAsset(), nm.transform.position);
+        if (__instance.activateEffect.RuntimeKeyIsValid() && !__instance.invisible) Inst(__instance.activateEffect.ToAsset(), nmtr.position);
         if (__instance.graphic) __instance.graphic.SetActive(false);
 
         __instance.activated = true;

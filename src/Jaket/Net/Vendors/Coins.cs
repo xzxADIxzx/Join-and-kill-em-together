@@ -44,8 +44,6 @@ public class Coins : Vendor
 
     #region targeting
 
-    static Transform cc => CameraController.Instance.transform;
-
     /// <summary> Finds the most suitable target of a ricochet. </summary>
     public Transform FindTarget(TeamCoin coin, bool enemiesOnly, out bool isPlayer, out bool isEnemy, List<GameObject> chain = null)
     {
@@ -102,7 +100,7 @@ public class Coins : Vendor
     }
 
     /// <summary> Finds the target position of a punchflection. </summary>
-    public bool Punchcast(out RaycastHit hit) => Physics.Raycast(cc.position, cc.forward, out hit, float.PositiveInfinity, EnvMask);
+    public bool Punchcast(out RaycastHit hit) => Physics.Raycast(cctr.position, cctr.forward, out hit, float.PositiveInfinity, EnvMask);
 
     #endregion
 }

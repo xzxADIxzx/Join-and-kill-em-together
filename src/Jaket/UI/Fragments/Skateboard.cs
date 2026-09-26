@@ -13,9 +13,6 @@ using static Jaket.UI.Lib.Pal;
 /// <summary> Fragment that is displayed when the player is riding a skateboard. </summary>
 public class Skateboard : Fragment
 {
-    static NewMovement nm => NewMovement.Instance;
-    static ColorBlindSettings cb => ColorBlindSettings.Instance;
-
     /// <summary> Bars that display the current stamina level. </summary>
     private UICircle[] bars = new UICircle[3];
     /// <summary> Text with speedometer and info about dashes. </summary>
@@ -76,7 +73,7 @@ public class Skateboard : Fragment
         if (speed >= 80f && !decelerates)
         {
             decelerates = true;
-            particles = Inst(nm.fallParticle, nm.transform);
+            particles = Inst(nm.fallParticle, nmtr);
         }
         if (speed <= 40f && decelerates)
         {
@@ -84,16 +81,15 @@ public class Skateboard : Fragment
             Dest(particles);
         }
 
-        var player = nm.transform;
-        nm.rb.velocity = (player.forward * speed) with { y = nm.rb.velocity.y };
+        nm.rb.velocity = (nmtr.forward * speed) with { y = nm.rb.velocity.y };
 
         // prevent the front and rear wheels from falling underground
-        void Check(Vector3 pos)
+        static void Check(Vector3 pos)
         {
-            if (Physics.Raycast(pos, Vector3.down, out var hit, 1.5f, EnvMask) && hit.distance > .8f) player.position = player.position with { y = hit.point.y + 1.5f };
+            if (Physics.Raycast(pos, Vector3.down, out var hit, 1.5f, EnvMask) && hit.distance > .8f) nmtr.position = nmtr.position with { y = hit.point.y + 1.5f };
         }
-        Check(player.position + player.forward * 1.2f);
-        Check(player.position - player.forward * 1.2f);
+        Check(nmtr.position + nmtr.forward * 1.2f);
+        Check(nmtr.position - nmtr.forward * 1.2f);
     }
 
     public void UpdateInput()
@@ -108,12 +104,12 @@ public class Skateboard : Fragment
                 // major assists make it possible to dash endlessly, that's why boost charge must be clamped
                 if (boost < 0f) boost = 0f;
 
-                Inst(nm.dodgeParticle, nm.transform.position, nm.transform.rotation);
-                AudioSource.PlayClipAtPoint(nm.dodgeSound, nm.transform.position);
+                Inst(nm.dodgeParticle, nmtr.position, nmtr.rotation);
+                AudioSource.PlayClipAtPoint(nm.dodgeSound, nmtr.position);
             }
             else Inst(nm.staminaFailSound);
         }
-        nm.transform.Rotate(Vector3.up * InputManager.Instance.InputSource.Move.ReadValue<Vector2>().x * 120f * Time.deltaTime);
+        nmtr.Rotate(Vector3.up * InputManager.Instance.InputSource.Move.ReadValue<Vector2>().x * 120f * Time.deltaTime);
     }
 
     #endregion

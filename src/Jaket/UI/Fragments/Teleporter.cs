@@ -12,8 +12,6 @@ using static Jaket.UI.Lib.Pal;
 /// <summary> Fragment that is responsible for teleportation and the Very Bright Flash™. </summary>
 public class Teleporter : Fragment
 {
-    static NewMovement nm => NewMovement.Instance;
-
     /// <summary> Flash of light covering the entire screen. </summary>
     private Image flash, decor;
     /// <summary> Sound that plays after teleportation. </summary>
@@ -47,7 +45,7 @@ public class Teleporter : Fragment
     public static void Tp(Vector3 position, bool flash = true, bool insideEarthmover = true)
     {
         Movement.UpdateState();
-        nm.transform.position = position;
+        nmtr.position = position;
         nm.rb.velocity = Vector3.zero;
 
         PlayerActivatorRelay.Instance?.Activate();

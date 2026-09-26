@@ -59,8 +59,8 @@ public static class UI
     {
         static void Fix()
         {
-            HudMessageReceiver.Instance.text.font = ModAssets.TmpFont;
-            HudMessageReceiver.Instance.Add<UnityEngine.Canvas>(c =>
+            hm.text.font = ModAssets.TmpFont;
+            hm.Add<UnityEngine.Canvas>(c =>
             {
                 c.overrideSorting = true;
                 c.sortingOrder = 42 + 01;

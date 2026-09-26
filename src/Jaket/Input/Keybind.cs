@@ -7,8 +7,6 @@ using Jaket.Assets;
 /// <summary> List of all keybinds of the mod, including serious ones and those that need for a joke. </summary>
 public class Keybind
 {
-    static PrefsManager pm => PrefsManager.Instance;
-
     /// <summary> List itself. </summary>
     public static Keybind
 

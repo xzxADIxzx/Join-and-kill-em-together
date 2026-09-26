@@ -31,12 +31,7 @@ public class LocalPlayer : Entity
 
     public override void Write(Writer w)
     {
-        var nm = NewMovement.Instance;
-        var cc = CameraController.Instance;
-        var fc = FistControl.Instance;
-        var ha = HookArm.Instance;
-
-        w.Vector(nm.transform.position - nm.transform.up * (nm.sliding ? .375f : 1.5f));
+        w.Vector(nmtr.position - nmtr.up * (nm.sliding ? .375f : 1.5f));
         w.Vector(ha.state != HookState.Ready ? ha.hookPoint : Vector3.zero);
 
         w.Float(cc.rotationY);
@@ -80,15 +75,13 @@ public class LocalPlayer : Entity
             agent.Run(Restyle, 0f);
             Recolor();
         };
-        Events.OnTeamChange += () => NewMovement.Instance.DefFind("Point Light").Get<Light>(l => l.color = LobbyController.Offline ? white : Team.Color());
+        Events.OnTeamChange += () => nm.DefFind("Point Light").Get<Light>(l => l.color = LobbyController.Offline ? white : Team.Color());
     }
 
     public override void Update(float delta) { }
 
     public override void Damage(Reader r)
     {
-        var nm = NewMovement.Instance;
-
         int damage = Mathf.CeilToInt(r.Float() * 3f);
 
         nm.GetHurt(damage, damage <= 3, ignoreInvincibility: damage >= 3);
@@ -109,17 +102,14 @@ public class LocalPlayer : Entity
     /// <summary> Recolors various first person models. </summary>
     public void Recolor()
     {
-        var cw = GunControl.Instance.currentWeapon;
-        var fc = FistControl.Instance;
+        gc.currentWeapon?.DefChild(0)?.DefFind("RightArm")
+            ?.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = ModAssets.HandTexture(0);
 
-        var main = cw?.DefChild(0).DefFind("RightArm");
-        if (main) main.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = ModAssets.HandTexture(0);
+        fc.DefFind("Arm Blue(Clone)")
+            ?.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = ModAssets.HandTexture(1);
 
-        var feed = fc?.DefFind("Arm Blue(Clone)");
-        if (feed) feed.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = ModAssets.HandTexture(1);
-
-        var knkl = fc?.DefFind("Arm Red(Clone)");
-        if (knkl) knkl.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = ModAssets.HandTexture(2);
+        fc.DefFind("Arm Red(Clone)")
+            ?.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = ModAssets.HandTexture(2);
     }
 
     #endregion

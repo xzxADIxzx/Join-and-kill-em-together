@@ -2,13 +2,6 @@
 [HarmonyPatch]
 public class LogicPatch
 {
-    [HarmonyPostfix]
-    [HarmonyPatch(typeof(SwordsMachine), "Start")]
-    static void OutroSM(ref bool ___bossVersion)
-    {
-        if (LobbyController.Online && (Scene == "Level 0-2" || Scene == "Level 0-3" || Scene == "Level 1-3")) ___bossVersion = true;
-    }
-
     [HarmonyPrefix]
     [HarmonyPatch(typeof(V2), "Start")]
     static void IntroV2(V2 __instance)
@@ -21,13 +14,6 @@ public class LogicPatch
     static void OutroV2(ref bool ___bossVersion)
     {
         if (LobbyController.Online && (Scene == "Level 1-4" || Scene == "Level 4-4")) ___bossVersion = true;
-    }
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(SpiderBody), "BreakCorpse")]
-    static void BreakLogic(SpiderBody __instance)
-    {
-        if (LobbyController.Online && __instance.TryGetComponent<Entity>(out var body)) body.NetKill();
     }
 
     [HarmonyPrefix]
@@ -61,17 +47,5 @@ public class LogicPatch
     {
         if (LobbyController.Online) ___eid.totalSpeedModifier = 1f + LobbyConfig.PPP;
     }
-}
-
-[HarmonyPatch]
-public class OtherPatch
-{
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(StyleHUD), nameof(StyleHUD.AddPoints))]
-    static void StyleHudErrorFix(ref GameObject sourceWeapon) => sourceWeapon = sourceWeapon == Bullets.NetDmg ? null : sourceWeapon;
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(EventOnDestroy), "OnDestroy")]
-    static bool Destroy() => LobbyController.Offline || LobbyController.IsOwner;
 }
 */

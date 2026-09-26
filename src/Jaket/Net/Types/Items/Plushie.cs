@@ -167,23 +167,21 @@ public class Plushie : Item
 
     static void Trash(Collider col)
     {
-        var mov = NewMovement.Instance.transform;
-        var cam = CameraController.Instance.transform;
         var owl = col.transform.parent.parent;
 
-        if (owl.transform.childCount >= 3 && owl.HasEntity(out Item i))
+        if (owl.childCount >= 3 && owl.HasEntity(out Item i))
         {
             GameAssets.Prefab("Attacks and Projectiles/Hitscan Beams/Lighting Beam Reflected.prefab", p =>
             {
-                Inst(p, owl.transform.position + Vector3.up * 12f, Vector3.right * 90f);
+                Inst(p, owl.position + Vector3.up * 12f, Vector3.right * 90f);
                 i.Kill();
             });
             return;
         }
         Tools.Tools.Create("warn", owl);
 
-        owl.position = cam.position - mov.forward * 6f - Vector3.up;
-        owl.LookAt(cam);
+        owl.position = cctr.position - nmtr.forward * 6f - Vector3.up;
+        owl.LookAt(cctr);
         col.attachedRigidbody.isKinematic = true;
 
         GameAssets.Prefab("p/Enemies/RageEffect.prefab", p =>

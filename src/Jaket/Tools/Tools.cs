@@ -100,7 +100,7 @@ public static class Tools
     /// <summary> Returns metadata of a method. </summary>
     public static MethodInfo Method<T>(string name, Type[] args) => AccessTools.Method(typeof(T), name, args);
 
-    /// <summary> Iterates all attributes of static methods.  </summary>
+    /// <summary> Iterates all attributes of static methods. </summary>
     public static void Attributes(Cons<MethodInfo, IEnumerable<Attribute>> cons) => Assembly.GetCallingAssembly().GetTypes().Each(t =>
     {
         t.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Static | BindingFlags.NonPublic).Each(m => cons(m, m.GetCustomAttributes()));
@@ -116,6 +116,24 @@ public static class Tools
             if (attrs.Any(a => a is Transpiler)) harmony.Patch(t.Target, transpiler: t.GetPatch(method));
         }
     });
+
+    #endregion
+    #region singletons
+
+    public static NewMovement        nm => NewMovement       .Instance;
+    public static Transform        nmtr => NewMovement       .Instance.transform;
+    public static CameraController   cc => CameraController  .Instance;
+    public static Transform        cctr => CameraController  .Instance.transform;
+    public static FistControl        fc => FistControl       .Instance;
+    public static HookArm            ha => HookArm           .Instance;
+    public static GunControl         gc => GunControl        .Instance;
+    public static GunSetter          gs => GunSetter         .Instance;
+    public static StyleHUD           sh => StyleHUD          .Instance;
+    public static StatsManager       sm => StatsManager      .Instance;
+    public static PrefsManager       pm => PrefsManager      .Instance;
+    public static SceneHelper        eh => SceneHelper       .Instance;
+    public static HudMessageReceiver hm => HudMessageReceiver.Instance;
+    public static ColorBlindSettings cb => ColorBlindSettings.Instance;
 
     #endregion
 }

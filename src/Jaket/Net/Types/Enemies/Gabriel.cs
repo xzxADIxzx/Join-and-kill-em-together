@@ -145,7 +145,7 @@ public class Gabriel : Enemy
                 parent.parent.Find("EcstasyColors").gameObject.SetActive(false);
                 parent.parent.Find("OutroLight").gameObject.SetActive(true);
             }
-            StatsManager.Instance.StopTimer();
+            sm.StopTimer();
         }
     }
 

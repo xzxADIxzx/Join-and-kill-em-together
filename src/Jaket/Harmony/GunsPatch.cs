@@ -24,7 +24,7 @@ public static class GunsPatch
     [Postfix]
     static void MatFix(WeaponIcon __instance)
     {
-        var color = ColorBlindSettings.Instance.variationColors[__instance.variationColor];
+        var color = cb.variationColors[__instance.variationColor];
 
         if (__instance.GetComponentInParent<Entity.Agent>() == null) return;
 

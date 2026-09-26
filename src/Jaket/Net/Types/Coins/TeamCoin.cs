@@ -14,9 +14,6 @@ using static Jaket.UI.Lib.Pal;
 /// <summary> Tangible entity of the coin type. </summary>
 public class TeamCoin : OwnableEntity
 {
-    static Transform cc => CameraController.Instance.transform;
-    static StyleHUD sh => StyleHUD.Instance;
-
     Agent agent;
     Float x, y, z;
     Cache<RemotePlayer> player;
@@ -278,13 +275,13 @@ public class TeamCoin : OwnableEntity
         Vector3? pos = target
             ? target.position
             : Entities.Coins.Punchcast(out var hit)
-                ? hit.point - cc.forward
+                ? hit.point - cctr.forward
                 : null;
 
         if (pos == null) Kill();
 
         Bounce();
-        Beam(agent.Position, agent.Position = pos ?? cc.position + cc.forward * 4242f);
+        Beam(agent.Position, agent.Position = pos ?? cctr.position + cctr.forward * 4242f);
 
         rs.Each(r => { if (r is TrailRenderer t) t.Clear(); });
 

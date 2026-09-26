@@ -25,7 +25,7 @@ public class CyberGrindPatch
             pattern = CyberGrind.CurrentPattern;
 
         // respawn the host
-        if (LobbyController.IsOwner && NewMovement.Instance.dead) Movement.CyberRespawn();
+        if (LobbyController.IsOwner && nm.dead) Movement.CyberRespawn();
     }
 
     [HarmonyPrefix]

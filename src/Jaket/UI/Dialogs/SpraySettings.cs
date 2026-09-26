@@ -15,8 +15,6 @@ using static Jaket.UI.Lib.Pal;
 /// <summary> Dialog that is responsible for spray options and blacklist. </summary>
 public class SpraySettings : Fragment
 {
-    static PrefsManager pm => PrefsManager.Instance;
-
     #region options
 
     /// <summary> Spray chosen by the player. </summary>

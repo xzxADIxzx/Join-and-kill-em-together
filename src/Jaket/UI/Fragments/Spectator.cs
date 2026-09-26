@@ -17,9 +17,6 @@ using static Jaket.UI.Lib.Pal;
 /// <summary> Fragment that is displayed when the player is dead. </summary>
 public class Spectator : Fragment
 {
-    static NewMovement nm => NewMovement.Instance;
-    static CameraController cc => CameraController.Instance;
-
     /// <summary> Whether the current scene has a special behavior. </summary>
     public static bool Special => Scene == "Endless" || Scene == "Level 0-S";
 
@@ -90,9 +87,7 @@ public class Spectator : Fragment
     public void UpdateCamera(bool ends)
     {
         var camera = cc.cam.transform;
-        var player = nm.dead && Networking.Entities[LobbyController.Lobby?.Members.At(targetPlayer).AccId ?? 0u] is RemotePlayer rp
-            ? rp.DrawCntr
-            : nm.transform.position + Vector3.up;
+        var player = nm.dead && Networking.Entities[LobbyController.Lobby?.Members.At(targetPlayer).AccId ?? 0u] is RemotePlayer rp ? rp.DrawCntr : nmtr.position + nmtr.up;
 
         position = Vector3.MoveTowards(position, Vector3.up * (ends ? .1f : 6f), Time.deltaTime * 12f);
 
@@ -111,7 +106,7 @@ public class Spectator : Fragment
         {
             Shown = false;
             Toggle();
-            Events.Post(StatsManager.Instance.Restart);
+            Events.Post(sm.Restart);
         }
 
         rotation += InputManager.Instance.InputSource.Look.ReadValue<Vector2>() * 2f;

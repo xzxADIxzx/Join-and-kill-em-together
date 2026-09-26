@@ -49,7 +49,7 @@ public class MainMenuAccess : Fragment
                 byte rank = Progress.Load
                 (
                     l.levelNumber == 666 ? 44 + l.levelNumberInLayer : l.levelNumber == 100 ? l.levelNumberInLayer + 34 : l.levelNumber - 1,
-                    PrefsManager.Instance.GetInt("difficulty")
+                    pm.GetInt("difficulty")
                 );
 
                 var root = l.DefFind("Stats"            ) as RectTransform;

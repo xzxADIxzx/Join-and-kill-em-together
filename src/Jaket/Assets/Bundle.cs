@@ -35,7 +35,7 @@ public static class Bundle
         {
             if (text2Show == null) return;
 
-            HudMessageReceiver.Instance?.SendHudMessage(text2Show);
+            hm.SendHudMessage(text2Show);
             text2Show = null;
         };
 
@@ -182,10 +182,10 @@ public static class Bundle
     }
 
     /// <summary> Sends a localized message to the hud. </summary>
-    public static void Hud(string key, bool silent = false) => HudMessageReceiver.Instance?.SendHudMessage(Get(key), silent: silent);
+    public static void Hud(string key, bool silent = false) => hm.SendHudMessage(Get(key), silent: silent);
 
     /// <summary> Sends a localized & formatted message to the hud. </summary>
-    public static void Hud(string key, bool silent, params string[] args) => HudMessageReceiver.Instance?.SendHudMessage(Format(key, args), silent: silent);
+    public static void Hud(string key, bool silent, params string[] args) => hm.SendHudMessage(Format(key, args), silent: silent);
 
     /// <summary> Sends a localized message to the hud after scene loading. </summary>
     public static void Hud2NS(string key) => text2Show = Get(key);

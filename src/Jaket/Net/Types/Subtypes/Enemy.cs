@@ -53,7 +53,7 @@ public abstract class Enemy : OwnableEntity
 
     public virtual void Rage(bool enraged) => Enraged = enraged;
 
-    public virtual float Rate(LocalPlayer target) => NewMovement.Instance.dead ? float.MaxValue : (NewMovement.Instance.transform.position - agent.Position).sqrMagnitude;
+    public virtual float Rate(LocalPlayer target) => nm.dead ? float.MaxValue : (nmtr.position - agent.Position).sqrMagnitude;
 
     public virtual float Rate(RemotePlayer target) => (target.DrawPos - agent.Position).sqrMagnitude;
 

@@ -11,8 +11,6 @@ using Jaket.UI;
 /// <summary> Class responsible for playing emotes. </summary>
 public class Emotes : MonoSingleton<Emotes>
 {
-    static NewMovement nm => NewMovement.Instance;
-
     /// <summary> Array containing the length of all emotes in seconds. </summary>
     public static readonly float[] Length = { 2.458f, 4.708f, 1.833f, 2.875f, 0f, 9.083f, -1f, 10.104f, -1f, 3.292f, 0f, -1f };
     /// <summary> Identifier of the currently playing emote. </summary>

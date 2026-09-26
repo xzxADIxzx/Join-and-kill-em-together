@@ -50,7 +50,7 @@ public class Doll : Entity
     public override void Write(Writer w)
     {
         Renderer r = null;
-        var weapon = GunControl.Instance.currentWeapon;
+        var weapon = gc.currentWeapon;
         var custom = (weapon?.GetComponentInChildren<GunColorGetter>()?.TryGetComponent(out r) ?? false) && r.material.name.Contains("Custom");
 
         w.Enum(Networking.LocalPlayer.Team);
@@ -165,7 +165,7 @@ public class Doll : Entity
         agent.Add<PortalAwareLight>(out _, true, "Doll/Metarig/Hips/Spine 0/Trail");
 
         Hand = Tools.Tools.Create("Weapons Root", Hand).transform;
-        hookWinch?.material = HookArm.Instance.GetComponent<LineRenderer>().material;
+        hookWinch?.material = ha.GetComponent<LineRenderer>().material;
     }
 
     public override void Update(float delta)
@@ -193,7 +193,7 @@ public class Doll : Entity
 
         if (Sliding && SlidParticle == null)
         {
-            SlidParticle = Inst(NewMovement.Instance.slideParticle.transform, Root);
+            SlidParticle = Inst(nm.slideParticle.transform, Root);
             SlidParticle.localPosition    = new(  0f,   0f,   4f);
             SlidParticle.localEulerAngles = new(  0f, 180f,   0f);
             SlidParticle.localScale       = new(1.6f,   1f,   1f);
@@ -202,7 +202,7 @@ public class Doll : Entity
 
         if (Slaming && SlamParticle == null)
         {
-            SlamParticle = Inst(NewMovement.Instance.fallParticle.transform, Root);
+            SlamParticle = Inst(nm.fallParticle.transform, Root);
             SlamParticle.localPosition    = new(  0f,   8f,   0f);
             SlamParticle.localEulerAngles = new( 90f,   0f,   0f);
             SlamParticle.localScale       = new(1.6f,   1f,   1f);
@@ -233,7 +233,7 @@ public class Doll : Entity
     #region other
 
     /// <summary> Creates a preview of the local player. </summary>
-    public static void Preview() => Inst(ModAssets.Preview, NewMovement.Instance.transform).Add<Agent>(a =>
+    public static void Preview() => Inst(ModAssets.Preview, nmtr).Add<Agent>(a =>
     {
         Doll doll = new()
         {

@@ -41,13 +41,13 @@ public static class Loadouts
             arm            = new(),
         };
 
-        GunSetter.Instance.forcedLoadout = loadout;
-        GunSetter.Instance.ResetWeapons();
+        gs.forcedLoadout = loadout;
+        gs.ResetWeapons();
 
-        FistControl.Instance.forcedLoadout = loadout;
-        FistControl.Instance.ResetFists();
+        fc.forcedLoadout = loadout;
+        fc.ResetFists();
 
-        GunControl.Instance.YesWeapon();
+        gc.YesWeapon();
         Events.OnHandChange.Fire();
 
         // prevent dead players from getting weapons

@@ -177,7 +177,7 @@ public static class ActionList
         #region 0-S
         l = "Level 0-S";
 
-        ActionType.Run(l, () => NewMovement.Instance.modNoJump = true);
+        ActionType.Run(l, () => nm.modNoJump = true);
 
         #endregion
         #region 1-1
