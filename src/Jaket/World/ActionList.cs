@@ -49,8 +49,6 @@ public static class ActionList
         #region 0-1
         l = "Level 0-1";
 
-        ActionType.Window(l);
-
         ActionType.Fact(l, "3 - Gun Room/TitleActivator@10", true, o =>
         {
             var prev = o.events.toDisActivateObjects;
@@ -88,8 +86,6 @@ public static class ActionList
         #region 0-2
         l = "Level 0-2";
 
-        ActionType.Window(l);
-
         ActionType.Dest(l, "3 Nonstuff/Swordsmachine Trigger@09");
         ActionType.Dest(l, "3B Enemies/Activator@00");
         ActionType.Dest(l, "4 - Swordsmachine Hallway/Invisible Wall@31");
@@ -110,8 +106,6 @@ public static class ActionList
         #region 0-3
         l = "Level 0-3";
 
-        ActionType.Window(l);
-
         ActionType.Scr(l, "1 Content/Trigger@02");
         ActionType.Scr(l, "10 Contents/Trigger@03");
 
@@ -123,8 +117,6 @@ public static class ActionList
         #endregion
         #region 0-4
         l = "Level 0-4";
-
-        ActionType.Window(l);
 
         static void Chamber(Transform t, int i)
         {
@@ -154,8 +146,6 @@ public static class ActionList
         #region 0-5
         l = "Level 0-5";
 
-        ActionType.Statue(l);
-
         ActionType.Fact(l, "4 Contents/Cube@00", true, o => o.events.toDisActivateObjects[0] = null);
         ActionType.Find(l, "4 Contents/Enemies@02", t => t.Get<ActivateNextWaveHP>(o =>
         {
@@ -179,33 +169,21 @@ public static class ActionList
         #region 1-1
         l = "Level 1-1";
 
-        ActionType.Window(l);
-        ActionType.Switch(l);
-
         ActionType.Dest(l, "11 Nonstuff/Altar"); // duplicate
 
         #endregion
         #region 1-2
         l = "Level 1-2";
 
-        ActionType.Statue(l);
-        ActionType.Switch(l);
-
         #endregion
         #region 1-3
         l = "Level 1-3";
-
-        ActionType.Window(l);
-        ActionType.Statue(l);
-        ActionType.Switch(l);
 
         // TODO sync R1 - Courtyard/R1 Stuff(Clone)/Enemies/Wave 3/Trigger 'cause there are two statues
 
         #endregion
         #region 1-4
         l = "Level 1-4";
-
-        ActionType.Switch(l);
 
         #endregion
         #region 1-S
@@ -215,26 +193,17 @@ public static class ActionList
         #region 2-1
         l = "Level 2-1";
 
-        ActionType.Window(l);
-        ActionType.Statue(l);
-
         #endregion
         #region 2-2
         l = "Level 2-2";
-
-        ActionType.Statue(l);
 
         #endregion
         #region 2-3
         l = "Level 2-3";
 
-        ActionType.Window(l);
-
         #endregion
         #region 2-4
         l = "Level 2-4";
-
-        ActionType.Window(l);
 
         #endregion
         #region 2-S
@@ -244,8 +213,6 @@ public static class ActionList
         #region 3-1
         l = "Level 3-1";
 
-        ActionType.Statue(l);
-
         #endregion
         #region 3-2
         l = "Level 3-2";
@@ -254,7 +221,6 @@ public static class ActionList
         #region 4-1
         l = "Level 4-1";
 
-        ActionType.Switch(l);
         ActionType.Flammable(l);
 
         ActionType.Turn(l, "GreedTorch (2)/Flammable"); // for some reason you cannot set it on fire in vanilla game
@@ -263,15 +229,10 @@ public static class ActionList
         #region 4-2
         l = "Level 4-2";
 
-        ActionType.Window(l);
-        ActionType.Statue(l);
-        ActionType.Switch(l);
-
         #endregion
         #region 4-3
         l = "Level 4-3";
 
-        ActionType.Statue(l);
         ActionType.Flammable(l);
 
         ActionType.Torches(l, new(0f, -10f, 310f));
@@ -288,20 +249,13 @@ public static class ActionList
         #region 5-1
         l = "Level 5-1";
 
-        ActionType.Statue(l);
-
         #endregion
         #region 5-2
         l = "Level 5-2";
 
-        ActionType.Statue(l);
-
         #endregion
         #region 5-3
         l = "Level 5-3";
-
-        ActionType.Window(l);
-        ActionType.Statue(l);
 
         #endregion
         #region 5-4
@@ -323,16 +277,9 @@ public static class ActionList
         #region 7-1
         l = "Level 7-1";
 
-        ActionType.Statue(l);
-        ActionType.Switch(l);
-
         #endregion
         #region 7-2
         l = "Level 7-2";
-
-        ActionType.Window(l);
-        ActionType.Statue(l);
-        ActionType.Switch(l);
 
         #endregion
         #region 7-3
@@ -342,13 +289,9 @@ public static class ActionList
         #region 7-4
         l = "Level 7-4";
 
-        ActionType.Window(l);
-
         #endregion
         #region 7-S
         l = "Level 7-S";
-
-        ActionType.Statue(l);
 
         #endregion
         #region endless
@@ -373,6 +316,9 @@ public static class ActionList
         #region all
         l = "All";
 
+        ActionType.Window(l);
+        ActionType.Statue(l);
+        ActionType.Switch(l);
         ActionType.Arena(l);
         ActionType.Final(l);
 
