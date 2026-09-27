@@ -132,13 +132,13 @@ public static class Props
     extension(GameObject obj)
     {
         /// <summary> Path of the object in hierarchy. </summary>
-        public string Path => $"{obj.transform.parent?.name}/{obj.name}#{obj.transform.GetSiblingIndex()}";
+        public string Path => $"{obj.transform.parent?.name}/{obj.name}@{obj.transform.GetSiblingIndex():00}";
     }
 
     extension(Component comp)
     {
         /// <summary> Path of the object in hierarchy. </summary>
-        public string Path => $"{comp.transform.parent?.name}/{comp.name}#{comp.transform.GetSiblingIndex()}";
+        public string Path => $"{comp.transform.parent?.name}/{comp.name}@{comp.transform.GetSiblingIndex():00}";
     }
 
     /// <summary> Finds all objects of the given type. </summary>

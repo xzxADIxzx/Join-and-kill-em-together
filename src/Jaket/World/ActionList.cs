@@ -51,38 +51,38 @@ public static class ActionList
 
         ActionType.Window(l);
 
-        ActionType.Find(l, "3 - Gun Room/TitleActivator", t => t.Get<ObjectActivator>(o =>
+        ActionType.Fact(l, "3 - Gun Room/TitleActivator@10", true, o =>
         {
             var prev = o.events.toDisActivateObjects;
-            var next = o.events.toDisActivateObjects = [prev[0]];
+            var next = o.events.toDisActivateObjects = [ prev.Find(o => o.name == "Spot Light") ];
 
             o.events.onActivate.AddListener(() =>
             {
-                var blck = prev.Find(o => o.name == "Blockers").transform;
+                var blck = prev.Find(o => o.name == "Blockers");
 
                 blck.ObjChild(0).GetComponentsInChildren<Renderer>().Each(Dest);
                 blck.ObjChild(1).SetActive(false);
                 blck.ObjChild(2).SetActive(false);
             });
             o.events.toActivateObjects.Each(o => o.name == "Cube", o => o.GetComponents<Collider>().Each(Dest));
-        }));
+        });
 
-        ActionType.Find(l, "AltStartFiller/AltStart", t => t.Get<ObjectActivator>(o =>
+        ActionType.Fact(l, "AltStartFiller/AltStart@00", true, o =>
         {
             var prev = o.events.toDisActivateObjects;
-            var next = o.events.toDisActivateObjects = [prev[0], prev[^1]];
+            var next = o.events.toDisActivateObjects = [ prev[0], prev[^1] ];
 
             o.events.onActivate.AddListener(() =>
             {
                 prev[4].GetComponentsInChildren<Renderer>().Each(Dest);
-                prev[5].gameObject.SetActive(false);
-                prev[8].gameObject.SetActive(false);
+                prev[5].SetActive(false);
+                prev[8].SetActive(false);
             });
-        }));
+        });
 
-        ActionType.Find(l, "13 - Malicious Face Arena/13 Nonstuff", t => Dest(t.DefChild(0))); // unloader
+        ActionType.Dest(l, "13 Nonstuff/Cube (2)@00"); // unloader
 
-        ActionType.Act(l, "13 Content/Trigger"); // boss
+        ActionType.Act(l, "13 Content/Trigger@00"); // boss
 
         #endregion
         #region 0-2
@@ -90,24 +90,21 @@ public static class ActionList
 
         ActionType.Window(l);
 
-        ActionType.Dest(l, "3 Nonstuff/Swordsmachine Trigger");
-        ActionType.Dest(l, "4 - Swordsmachine Hallway/Invisible Wall");
+        ActionType.Dest(l, "3 Nonstuff/Swordsmachine Trigger@09");
+        ActionType.Dest(l, "3B Enemies/Activator@00");
+        ActionType.Dest(l, "4 - Swordsmachine Hallway/Invisible Wall@31");
 
-        ActionType.Dest(l, "3B Enemies/Activator");
+        ActionType.Fact(l, "Enemies/Wave 2 Trigger@02", false, Dest);
+        ActionType.Find(l, "Door (Large) With Controllers (3)/Door (Large)@00", t => t.Get<Door>(d => d.Lock()));
+        ActionType.Dest(l, "7 Nonstuff/Invisible Wall@11");
+        ActionType.Act(l, "7 Contents/PlayerDoorUnlocker@10");
 
-        ActionType.Find(l, "Enemies/Wave 2 Trigger", t => t.GetComponents<ObjectActivator>().Each(Dest));
-        ActionType.Find(l, "Door (Large) With Controllers (3)/Door (Large)", t => t.GetComponent<Door>().Lock());
-        ActionType.Dest(l, "7 Nonstuff/Invisible Wall");
-        ActionType.Act(l, "7 Contents/PlayerDoorUnlocker");
+        ActionType.Dest(l, "5B Nonstuff/Altar@15"); // duplicate
+        ActionType.Fact(l, "8 Contents/Trigger@00", false, Dest);
+        ActionType.Act(l, "10B Contents/Trigger@00"); // boss
 
-        ActionType.Dest(l, "5B Nonstuff/Altar"); // duplicate
-
-        ActionType.Find(l, "8 Contents/Trigger", t => t.GetComponents<ObjectActivator>().Each(Dest));
-
-        ActionType.Act(l, "10B Contents/Trigger"); // boss
-
-        ActionType.Find(l, "7B - Bonus Platforming/Cube (48)", t => t.localPosition += Vector3.right * 6f);
-        ActionType.Find(l, "7B - Bonus Platforming/Grinders", t => t.localPosition += Vector3.right * .1f);
+        ActionType.Find(l, "7B - Bonus Platforming/Cube (48)@24", t => t.localPosition += Vector3.right * 6f);
+        ActionType.Find(l, "7B - Bonus Platforming/Grinders@03", t => t.localPosition += Vector3.right * .2f);
 
         #endregion
         #region 0-3
@@ -115,14 +112,13 @@ public static class ActionList
 
         ActionType.Window(l);
 
-        ActionType.Scr(l, "1 Content/Trigger");
-        ActionType.Scr(l, "10 Contents/Trigger");
+        ActionType.Scr(l, "1 Content/Trigger@02");
+        ActionType.Scr(l, "10 Contents/Trigger@03");
 
-        ActionType.Turn(l, "Boss Arena Contents/CeilingDoors");
-        ActionType.Dest(l, "Boss Arena Contents/NeoBreakable");
-        ActionType.Act(l, "Boss Arena Contents/Cube (1)"); // boss
+        ActionType.Dest(l, "Boss Arena Contents/NeoBreakable@03");
+        ActionType.Act(l, "Boss Arena Contents/Cube (1)@01"); // boss
 
-        ActionType.Find(l, "11 Contents/Trigger", t => t.Get<ObjectActivator>(Dest)); // unloader
+        ActionType.Fact(l, "11 Contents/Trigger@01", false, Dest); // unloader
 
         #endregion
         #region 0-4
@@ -144,34 +140,34 @@ public static class ActionList
             );
         }
 
-        ActionType.Find(l, "3 Nonstuff/CoolingChamber", t => Chamber(t, 0));
-        ActionType.Find(l, "3 Nonstuff/CoolingChamber (1)", t => Chamber(t, 1));
-        ActionType.Find(l, "6 Nonstuff/CoolingChamber", t => Chamber(t, 2));
+        ActionType.Find(l, "3 Nonstuff/CoolingChamber@03", t => Chamber(t, 0));
+        ActionType.Find(l, "3 Nonstuff/CoolingChamber (1)@04", t => Chamber(t, 1));
+        ActionType.Find(l, "6 Nonstuff/CoolingChamber@17", t => Chamber(t, 2));
 
-        ActionType.Act(l, "CoolingChamber (0)/Sequence");
-        ActionType.Act(l, "CoolingChamber (1)/Sequence");
-        ActionType.Act(l, "CoolingChamber (2)/Sequence");
+        ActionType.Act(l, "CoolingChamber (0)/Sequence@05");
+        ActionType.Act(l, "CoolingChamber (1)/Sequence@05");
+        ActionType.Act(l, "CoolingChamber (2)/Sequence@05");
 
-        ActionType.Act(l, "Enemies/Wave 1 Trigger");
+        ActionType.Act(l, "Enemies/Wave 1 Trigger@00");
 
         #endregion
         #region 0-5
         l = "Level 0-5";
 
-        ActionType.Find(l, "4 Contents/Cube", t => t.Get<ObjectActivator>(o => o.events.toDisActivateObjects[0] = null));
-        ActionType.Find(l, "4 Contents/Enemies", t => t.Get<ActivateNextWaveHP>(o =>
+        ActionType.Statue(l);
+
+        ActionType.Fact(l, "4 Contents/Cube@00", true, o => o.events.toDisActivateObjects[0] = null);
+        ActionType.Find(l, "4 Contents/Enemies@02", t => t.Get<ActivateNextWaveHP>(o =>
         {
             if (LobbyController.IsOwner)
-                o.health = 74f;
+                o.health = 75f;
             else
                 Dest(o);
         }));
 
-        ActionType.Act(l, "4 Contents/Cube"); // boss
-        ActionType.Act(l, "StatueFake (1)/StatueActivator"); // boss
-        ActionType.Act(l, "Hellgate/DelayedDoorActivation");
-
-        ActionType.Turn(l, "/5 - Final Hallway");
+        ActionType.Act(l, "4 Contents/Cube@00"); // boss
+        ActionType.Act(l, "Hellgate/DelayedDoorActivation@03");
+        ActionType.Turn(l, "/5 - Final Hallway@00");
 
         #endregion
         #region 0-S
