@@ -170,21 +170,21 @@ public class World
     [Postfix]
     static void Activate(ObjectActivator __instance)
     {
-        Perform(__instance.Path(), default);
+        Perform(__instance.Path, default);
     }
 
     [DynamicPatch(typeof(ScriptActivator), nameof(ScriptActivator.OnTriggerEnter))]
     [Postfix]
     static void Activate(ScriptActivator __instance, Collider other)
     {
-        if (other.gameObject.CompareTag("Player")) Perform(__instance.Path(), default);
+        if (other.gameObject.CompareTag("Player")) Perform(__instance.Path, default);
     }
 
     [DynamicPatch(typeof(Button), "Press")]
     [Postfix]
     static void Activate(Button __instance)
     {
-        Perform(__instance.Path(), default);
+        Perform(__instance.Path, default);
     }
 
     [DynamicPatch(typeof(Glass), nameof(Glass.Shatter))]

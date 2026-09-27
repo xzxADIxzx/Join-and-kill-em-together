@@ -63,7 +63,7 @@ public static class Tools
     public static bool IsReal(Component comp) => IsReal(comp.gameObject);
 
     #endregion
-    #region build
+    #region world
 
     /// <summary> Creates a new object and assigns it to the given transform. </summary>
     public static GameObject Create(string name, Transform parent = null)
@@ -76,17 +76,11 @@ public static class Tools
     /// <summary> Creates a new object and assigns it to the given transform. </summary>
     public static T Create<T>(string name, Transform parent = null) where T : Component => Create(name, parent ?? Plugin.Instance?.transform).AddComponent<T>();
 
-    #endregion
-    #region world
-
     /// <summary> Default environment raycast mask. </summary>
     public static readonly int EnvMask = LayerMaskDefaults.Get(LMD.Environment);
 
     /// <summary> Whether the item is placed on an altar. </summary>
     public static bool Placed(this ItemIdentifier itemId) => itemId.transform.parent?.gameObject.layer == 22;
-
-    /// <summary> Path of the component in the hierarchy. </summary>
-    public static string Path(this Component comp) => $"{comp.transform.parent?.name}/{comp.name}";
 
     #endregion
     #region reflection

@@ -138,7 +138,7 @@ public static class ActionList
                 o => o.delay == 2.5f,
                 o => o.events.onActivate.AddListener(() => Events.Post(() =>
                 {
-                    World.Reset(o.Path());
+                    World.Reset(o.Path);
                     t.GetComponentInChildren<ItemTrigger>().requests = 0;
                 }))
             );

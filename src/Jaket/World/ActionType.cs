@@ -34,7 +34,7 @@ public static class ActionType
     /// <summary> Creates an action that finds an object. </summary>
     public static void Find(string scene, string path, Cons<Transform> perform) => ActionList.Add(new(scene, path, false, false, () =>
     {
-        ResFind<Transform>().Each(o => IsReal(o) && o.Path() == path, perform);
+        ResFind<Transform>().Each(o => IsReal(o) && o.Path == path, perform);
     }));
 
     /// <summary> Creates an action that turns an object on. </summary>
@@ -49,7 +49,7 @@ public static class ActionType
     /// <summary> Creates an action that synchronizes an object activator. </summary>
     public static void Act(string scene, string path, Cons<Transform> perform = null) => ActionList.Add(new(scene, path, true, false, () =>
     {
-        ResFind<ObjectActivator>().Each(o => IsReal(o) && o.Path() == path, o =>
+        ResFind<ObjectActivator>().Each(o => IsReal(o) && o.Path == path, o =>
         {
             o.gameObject.SetActive(true);
             o.Activate();
@@ -60,7 +60,7 @@ public static class ActionType
     /// <summary> Creates an action that synchronizes a script activator. </summary>
     public static void Scr(string scene, string path, Cons<Transform> perform = null) => ActionList.Add(new(scene, path, true, false, () =>
     {
-        ResFind<ScriptActivator>().Each(o => IsReal(o) && o.Path() == path, o =>
+        ResFind<ScriptActivator>().Each(o => IsReal(o) && o.Path == path, o =>
         {
             o.pistons.Each(p => p.off = false);
             o.lightpillars.Each(p => p.ActivatePillar());
@@ -71,7 +71,7 @@ public static class ActionType
     /// <summary> Creates an action that synchronizes clicks on a button. </summary>
     public static void Btn(string scene, string path, Cons<Transform> perform = null) => ActionList.Add(new(scene, path, true, false, () =>
     {
-        ResFind<Button>().Each(o => IsReal(o) && o.Path() == path, o =>
+        ResFind<Button>().Each(o => IsReal(o) && o.Path == path, o =>
         {
             o.GetComponent<ControllerPointer>().OnPressed.Invoke();
             o.interactable = false;
