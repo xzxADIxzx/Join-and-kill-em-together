@@ -77,7 +77,7 @@ public class World
             w.Byte((byte)i);
             w.Byte((byte)k);
 
-            for (j = 0; j < k; j++) { w.Float(pos[POOL * i + j].x); w.Float(pos[POOL * i + j].y); }
+            for (j = 0; j < k; j++) w.Point(pos[POOL * i + j]);
         }
     }
 
@@ -108,7 +108,7 @@ public class World
                 byte k = r.Byte();
 
                 performed[i] = true;
-                for (int j = 0; j < k; j++) pos[POOL * i + j] = new(r.Float(), r.Float());
+                for (int j = 0; j < k; j++) pos[POOL * i + j] = r.Point();
             }
         }
     }
@@ -140,8 +140,7 @@ public class World
         ActionList.Each(a => a.Dynamic && a.Path == path && !Performed(a, p), a => Networking.Send(PacketType.WorldAction, 9, w =>
         {
             w.Byte((byte)a.Identifier);
-            w.Float(p.x);
-            w.Float(p.y);
+            w.Point(p);
 
             performed[a.Identifier] = true;
             pos[Next(a.Identifier)] = p;
