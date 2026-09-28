@@ -76,12 +76,7 @@ public class Husk : Enemy
 
     public override void Update(float delta)
     {
-        if (Locked) { nma.enabled = false; scr1?.enabled = false; scr2?.enabled = false; return; }
-
-        scr1?.enabled = IsOwner;
-        scr2?.enabled = IsOwner;
-
-        if (IsOwner) return;
+        if (Lock(nma, scr1, scr2)) return;
 
         agent.Position = new(x.GetAware(delta), y.GetAware(delta), z.GetAware(delta));
         agent.Rotation = new(agent.Rotation.x,  r.GetAngle(delta), agent.Rotation.z );

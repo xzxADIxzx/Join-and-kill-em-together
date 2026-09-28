@@ -90,11 +90,7 @@ public class Cerberus : Enemy
 
     public override void Update(float delta)
     {
-        if (Locked) { nma.enabled = false; scr.enabled = false; return; }
-
-        scr.enabled = IsOwner;
-
-        if (IsOwner) return;
+        if (Lock(nma, scr)) return;
 
         agent.Position = new(x.GetAware(delta), y.GetAware(delta), z.GetAware(delta));
         agent.Rotation = new(agent.Rotation.x,  r.GetAngle(delta), agent.Rotation.z );

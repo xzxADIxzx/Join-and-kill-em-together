@@ -89,11 +89,7 @@ public class Malicious : Enemy
 
     public override void Update(float delta)
     {
-        if (Locked) { nma.enabled = false; scr.enabled = false; return; }
-
-        scr.enabled = IsOwner;
-
-        if (IsOwner) return;
+        if (Lock(nma, scr)) return;
 
         agent.Position = new(x.GetAware(delta), y.GetAware(delta), z.GetAware(delta));
         pr.eulerAngles = new(p.GetAngle(delta), r.GetAngle(delta), 0f               );

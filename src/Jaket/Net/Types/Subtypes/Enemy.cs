@@ -1,6 +1,8 @@
 namespace Jaket.Net.Types;
 
+using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.AI;
 
 using Jaket.Content;
 using Jaket.Harmony;
@@ -158,7 +160,6 @@ public abstract class Enemy : OwnableEntity
         else
             enemyId.InstaKill();
 
-        enemyId.dontCountAsKills = true;
         Dest(agent);
     }
 
@@ -167,6 +168,21 @@ public abstract class Enemy : OwnableEntity
 
     /// <summary> Enrages the enemy both remotely and locally. </summary>
     protected void Enrage(bool enraged = true) => Kill(1, w => w.Bools(false, false, false, true, enraged));
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected bool Lock(params System.ReadOnlySpan<Behaviour> scripts)
+    {
+        if (Locked)
+        {
+            foreach (var script in scripts) if (script) script.enabled = false;
+            return true;
+        }
+        else
+        {
+            foreach (var script in scripts) if (script && script is not NavMeshAgent) script.enabled = IsOwner;
+            return IsOwner;
+        }
+    }
 
     #endregion
     #region harmony
