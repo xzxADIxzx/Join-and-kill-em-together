@@ -41,7 +41,7 @@ public class Players : Vendor
             e.flammables      = [];
             e.activateOnDeath = [];
         });
-        obj.Add<global::Enemy>(_ => { });
+        obj.Add<global::Enemy>(e => e.musicRequested = true);
 
         obj.DefChild(0).GetComponentsInChildren<Rigidbody>().Each(rb =>
         {
