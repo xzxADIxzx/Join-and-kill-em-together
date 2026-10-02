@@ -80,14 +80,6 @@ public class Shell : Projectile
         if (proj.parried) proj.speed /= 2f;
     });
 
-    [DynamicPatch(typeof(ProjectileSpread), nameof(ProjectileSpread.Start))]
-    [Postfix]
-    static void Spread(ProjectileSpread __instance)
-    {
-        __instance.projectile.name += "(Clone)";
-        Entities.Projectiles.Sync(__instance.projectile);
-    }
-
     [DynamicPatch(typeof(global::Projectile), nameof(global::Projectile.Collided))]
     [Transpiler]
     static Ins Damage(Ins instructions)

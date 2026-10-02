@@ -15,6 +15,12 @@ public class Projectiles : Vendor
     {
         Fill(EntityType.Shell, EntityType.ProjectileExpl, GameAssets.Projectiles);
 
+        Events.Post
+        (
+            () => Prefabs[(byte)EntityType.ProjectileSprd],
+            () => Prefabs[(byte)EntityType.ProjectileSprd].DefFind("Projectile").Add<Entity.Identifier>(i => i.Type = EntityType.ProjectileHell)
+        );
+
         Fill<Shell          >(EntityType.Shell,           EntityType.Shell          );
         Fill<Core           >(EntityType.Core,            EntityType.Core           );
         Fill<Nail           >(EntityType.NailCommon,      EntityType.NailHeated     );

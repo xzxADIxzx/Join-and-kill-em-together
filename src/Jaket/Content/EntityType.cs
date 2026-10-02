@@ -214,6 +214,7 @@ public enum EntityType : byte
     Cannonball,
     ProjectileHell,
     ProjectileBeam,
+    ProjectileSprd,
     ProjectileExpl,
 
     #endregion
