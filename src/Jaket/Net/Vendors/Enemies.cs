@@ -25,9 +25,12 @@ public class Enemies : Vendor
 
         Fill<Husk           >(EntityType.Filth,           EntityType.Soldier        );
         Fill<Swordsmachine  >(EntityType.Swordsmachine,   EntityType.Swordsmachine  );
+        Fill<Drone          >(EntityType.Drone,           EntityType.Drone          );
         Fill<Earthmover     >(EntityType.SecuritySystem,  EntityType.Brain          );
         Fill<Malicious      >(EntityType.Malicious,       EntityType.Malicious      );
         Fill<Cerberus       >(EntityType.Cerberus,        EntityType.Cerberus       );
+        Fill<Drone          >(EntityType.Virtue,          EntityType.Virtue         );
+        Fill<Drone          >(EntityType.Providence,      EntityType.Providence     );
 
         Events.OnLoad += () =>
         {

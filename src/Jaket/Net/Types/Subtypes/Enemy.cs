@@ -115,7 +115,7 @@ public abstract class Enemy : OwnableEntity
     {
         if (left == 0)
         {
-            Killed(r, left, agent, bits => { });
+            agent?.Rem(true);
             return;
         }
 
