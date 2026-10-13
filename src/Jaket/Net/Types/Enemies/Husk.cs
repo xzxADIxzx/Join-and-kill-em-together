@@ -11,7 +11,7 @@ using Jaket.IO;
 public class Husk : Enemy
 {
     Agent agent;
-    Float x, y, z, r;
+    Float x, y, z, j;
     NavMeshAgent nma;
     ZombieMelee scr1;
     ZombieProjectiles scr2;
@@ -41,7 +41,7 @@ public class Husk : Enemy
         else
         {
             w.Floats(x, y, z);
-            w.Floats(r);
+            w.Floats(j);
 
             w.Byte(Attack);
             w.Bool(Moving);
@@ -53,7 +53,7 @@ public class Husk : Enemy
         if (ReadOwner(ref r)) return;
 
         r.Floats(ref x, ref y, ref z);
-        r.Floats(ref this.r);
+        r.Floats(ref j);
 
         Attack = r.Byte();
         Moving = r.Bool();
@@ -79,7 +79,7 @@ public class Husk : Enemy
         if (Lock(nma, scr1, scr2)) return;
 
         agent.Position = new(x.GetAware(delta), y.GetAware(delta), z.GetAware(delta));
-        agent.Rotation = new(agent.Rotation.x,  r.GetAngle(delta), agent.Rotation.z );
+        agent.Rotation = new(agent.Rotation.x,  j.GetAngle(delta), agent.Rotation.z );
 
         nma.enabled = false;
 

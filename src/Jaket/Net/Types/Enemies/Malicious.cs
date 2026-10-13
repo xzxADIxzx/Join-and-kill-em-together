@@ -11,7 +11,7 @@ using Jaket.IO;
 public class Malicious : Enemy
 {
     Agent agent;
-    Float x, y, z, p, r;
+    Float x, y, z, i, j;
     NavMeshAgent nma;
     MaliciousFace scr;
     Transform pr;
@@ -29,16 +29,14 @@ public class Malicious : Enemy
         if (IsOwner)
         {
             w.Vector(agent.Position);
-            w.Float(pr.eulerAngles.x);
-            w.Float(pr.eulerAngles.y);
+            w.Point(pr.eulerAngles);
 
             w.Byte(Attack);
         }
         else
         {
             w.Floats(x, y, z);
-            w.Floats(p);
-            w.Floats(r);
+            w.Floats(i, j);
 
             w.Byte(Attack);
         }
@@ -49,8 +47,7 @@ public class Malicious : Enemy
         if (ReadOwner(ref r)) return;
 
         r.Floats(ref x, ref y, ref z);
-        r.Floats(ref this.p);
-        r.Floats(ref this.r);
+        r.Floats(ref i, ref j);
 
         Attack = r.Byte();
     }
@@ -92,7 +89,7 @@ public class Malicious : Enemy
         if (Lock(nma, scr)) return;
 
         agent.Position = new(x.GetAware(delta), y.GetAware(delta), z.GetAware(delta));
-        pr.eulerAngles = new(p.GetAngle(delta), r.GetAngle(delta), 0f               );
+        pr.eulerAngles = new(i.GetAngle(delta), j.GetAngle(delta), 0f               );
 
         nma.enabled = false;
 

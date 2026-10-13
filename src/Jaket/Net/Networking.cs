@@ -203,7 +203,7 @@ public static class Networking
 
         Writer w = new(Pointers.Allocated);
 
-        w.Enum(type);
+        w.Packet(type);
         data(w);
 
         (cons ?? Redirect)(w.Memory, 1 + bytesCount);
@@ -214,9 +214,9 @@ public static class Networking
     {
         Writer w = new(Pointers.Allocated);
 
-        w.Enum(PacketType.Snapshot);
+        w.Packet(PacketType.Snapshot);
         w.Id(entity.Id);
-        w.Enum(entity.Type);
+        w.Entity(entity.Type);
         entity.Write(w);
 
         Redirect(w.Memory, 6 + entity.BufferSize);

@@ -39,11 +39,38 @@ public unsafe struct Reader
     #endregion
     #region enums
 
-    public PacketType PacketType() => *(PacketType*)Inc(1);
+    public PacketType Packet() => *(PacketType*)Inc(1);
 
-    public EntityType EntityType() => *(EntityType*)Inc(1);
+    public EntityType Entity() => *(EntityType*)Inc(1);
 
-    public Team       Team      () => *(Team      *)Inc(1);
+    public Team       Team  () => *(Team      *)Inc(1);
+
+    #endregion
+    #region structs
+
+    public void Floats(ref Entity.Float x, ref Entity.Float y, ref Entity.Float z)
+    {
+        x.Set(*(float*)Inc(4));
+        y.Set(*(float*)Inc(4));
+        z.Set(*(float*)Inc(4));
+    }
+
+    public void Floats(ref Entity.Float x, ref Entity.Float y)
+    {
+        x.Set(*(float*)Inc(4));
+        y.Set(*(float*)Inc(4));
+    }
+
+    public void Floats(ref Entity.Float x)
+    {
+        x.Set(*(float*)Inc(4));
+    }
+
+    public Vector3 Vector() => *(Vector3*)Inc(12);
+
+    public Vector2 Point () => *(Vector2*)Inc( 8);
+
+    public Color32 Color () => *(Color32*)Inc( 4);
 
     #endregion
     #region complex
@@ -67,30 +94,12 @@ public unsafe struct Reader
 
     public void Bytes(byte[] value) => Bytes(value, 0, value.Length);
 
-    public void Floats(ref Entity.Float x, ref Entity.Float y, ref Entity.Float z)
-    {
-        x.Set(*(float*)Inc(4));
-        y.Set(*(float*)Inc(4));
-        z.Set(*(float*)Inc(4));
-    }
-
-    public void Floats(ref Entity.Float r)
-    {
-        r.Set(*(float*)Inc(4));
-    }
-
     public string String()
     {
         var bytes = new byte[Byte()];
         Bytes(bytes);
         return Encoding.ASCII.GetString(bytes);
     }
-
-    public Vector3 Vector() => *(Vector3*)Inc(12);
-
-    public Vector2 Point() => *(Vector2*)Inc(8);
-
-    public Color32 Color() => *(Color32*)Inc(4);
 
     public void State(out byte emote, out byte rps, out bool typing, out Vector3 gravity)
     {

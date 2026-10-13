@@ -53,8 +53,8 @@ public class Doll : Entity
         var weapon = gc.currentWeapon;
         var custom = (weapon?.GetComponentInChildren<GunColorGetter>()?.TryGetComponent(out r) ?? false) && r.material.name.Contains("Custom");
 
-        w.Enum(Networking.LocalPlayer.Team);
-        w.Enum(Entities.Weapons.Type(weapon));
+        w.Team(Networking.LocalPlayer.Team);
+        w.Entity(Entities.Weapons.Type(weapon));
 
         w.Byte(Shop.SelectedHat);
         w.Byte(Shop.SelectedJacket);
@@ -73,7 +73,7 @@ public class Doll : Entity
         if (enemy == null) return;
 
         var team = r.Team();
-        var weap = r.EntityType();
+        var weap = r.Entity();
 
         if (Team != team) Events.Post(() =>
         {

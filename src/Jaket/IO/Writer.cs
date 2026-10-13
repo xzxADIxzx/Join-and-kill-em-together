@@ -39,11 +39,38 @@ public unsafe struct Writer
     #endregion
     #region enums
 
-    public void Enum(PacketType value) => *(PacketType*)Inc(1) = value;
+    public void Packet(PacketType value) => *(PacketType*)Inc(1) = value;
 
-    public void Enum(EntityType value) => *(EntityType*)Inc(1) = value;
+    public void Entity(EntityType value) => *(EntityType*)Inc(1) = value;
 
-    public void Enum(Team       value) => *(Team      *)Inc(1) = value;
+    public void Team  (Team       value) => *(Team      *)Inc(1) = value;
+
+    #endregion
+    #region structs
+
+    public void Floats(Entity.Float x, Entity.Float y, Entity.Float z)
+    {
+        *(float*)Inc(4) = x.Next;
+        *(float*)Inc(4) = y.Next;
+        *(float*)Inc(4) = z.Next;
+    }
+
+    public void Floats(Entity.Float x, Entity.Float y)
+    {
+        *(float*)Inc(4) = x.Next;
+        *(float*)Inc(4) = y.Next;
+    }
+
+    public void Floats(Entity.Float x)
+    {
+        *(float*)Inc(4) = x.Next;
+    }
+
+    public void Vector(Vector3 value) => *(Vector3*)Inc(12) = value;
+
+    public void Point (Vector2 value) => *(Vector2*)Inc( 8) = value;
+
+    public void Color (Color32 value) => *(Color32*)Inc( 4) = value;
 
     #endregion
     #region complex
@@ -67,30 +94,12 @@ public unsafe struct Writer
 
     public void Bytes(byte[] value) => Bytes(value, 0, value.Length);
 
-    public void Floats(Entity.Float x, Entity.Float y, Entity.Float z)
-    {
-        *(float*)Inc(4) = x.Next;
-        *(float*)Inc(4) = y.Next;
-        *(float*)Inc(4) = z.Next;
-    }
-
-    public void Floats(Entity.Float r)
-    {
-        *(float*)Inc(4) = r.Next;
-    }
-
     public void String(string value)
     {
         var bytes = Encoding.ASCII.GetBytes(value ?? "");
         Byte((byte)bytes.Length);
         Bytes(bytes);
     }
-
-    public void Vector(Vector3 value) => *(Vector3*)Inc(12) = value;
-
-    public void Point(Vector2 value) => *(Vector2*)Inc(8) = value;
-
-    public void Color(Color32 value) => *(Color32*)Inc(4) = value;
 
     public void State(byte emote, byte rps, bool typing, Vector3 gravity)
     {

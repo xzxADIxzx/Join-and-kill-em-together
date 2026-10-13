@@ -10,7 +10,7 @@ using Jaket.IO;
 public class Drone : Enemy
 {
     Agent agent;
-    Float x, y, z, p, r;
+    Float x, y, z, i, j;
     global::Drone scr;
 
     public Drone(uint id, EntityType type) : base(id, type) { }
@@ -26,16 +26,14 @@ public class Drone : Enemy
         if (IsOwner)
         {
             w.Vector(agent.Position);
-            w.Float(agent.Rotation.x);
-            w.Float(agent.Rotation.y);
+            w.Point(agent.Rotation);
 
             w.Byte(Attack);
         }
         else
         {
             w.Floats(x, y, z);
-            w.Floats(p);
-            w.Floats(r);
+            w.Floats(i, j);
 
             w.Byte(Attack);
         }
@@ -48,8 +46,7 @@ public class Drone : Enemy
         if (ReadOwner(ref r)) return;
 
         r.Floats(ref x, ref y, ref z);
-        r.Floats(ref this.p);
-        r.Floats(ref this.r);
+        r.Floats(ref i, ref j);
 
         Attack = r.Byte();
     }
@@ -89,7 +86,7 @@ public class Drone : Enemy
         if (Lock(scr)) return;
 
         agent.Position = new(x.GetAware(delta), y.GetAware(delta), z.GetAware(delta));
-        agent.Rotation = new(p.GetAngle(delta), r.GetAngle(delta), 0f               );
+        agent.Rotation = new(i.GetAngle(delta), j.GetAngle(delta), 0f               );
 
         if (LastAttack != Attack) switch (LastAttack = Attack)
         {

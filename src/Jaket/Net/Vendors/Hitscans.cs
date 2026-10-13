@@ -68,7 +68,7 @@ public class Hitscans : Vendor
 
         Networking.Send(PacketType.Hitscan, 27, w =>
         {
-            w.Enum(type);
+            w.Entity(type);
             w.Vector(beam.transform.position + correction);
             w.Vector(beam.lr.GetPosition(1));
             w.Bool(wall);

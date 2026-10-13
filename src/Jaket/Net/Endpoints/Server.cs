@@ -24,7 +24,7 @@ public class Server : Endpoint, ISocketManager
         Listen(PacketType.Snapshot, (con, sender, r, s) =>
         {
             var id = r.Id();
-            var type = r.EntityType();
+            var type = r.Entity();
 
             if ((id == sender) != (type == EntityType.Player)) return;
 
@@ -43,7 +43,7 @@ public class Server : Endpoint, ISocketManager
 
         Listen(PacketType.Hitscan, (con, sender, r, s) =>
         {
-            var type = r.EntityType();
+            var type = r.Entity();
             var pos1 = r.Vector();
             var pos2 = r.Vector();
             var wall = r.Bool();

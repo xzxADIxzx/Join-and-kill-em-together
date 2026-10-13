@@ -26,7 +26,7 @@ public class Client : Endpoint, IConnectionManager
         Listen(PacketType.Snapshot, r =>
         {
             var id = r.Id();
-            var type = r.EntityType();
+            var type = r.Entity();
 
             if (ents[id] is Entity entity) entity.Read(r);
             else
@@ -41,7 +41,7 @@ public class Client : Endpoint, IConnectionManager
 
         Listen(PacketType.Hitscan, r =>
         {
-            var type = r.EntityType();
+            var type = r.Entity();
             var pos1 = r.Vector();
             var pos2 = r.Vector();
             var wall = r.Bool();

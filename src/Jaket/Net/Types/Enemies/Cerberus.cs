@@ -11,7 +11,7 @@ using Jaket.IO;
 public class Cerberus : Enemy
 {
     Agent agent;
-    Float x, y, z, r;
+    Float x, y, z, j;
     NavMeshAgent nma;
     StatueBoss scr;
     Animator animator;
@@ -39,7 +39,7 @@ public class Cerberus : Enemy
         else
         {
             w.Floats(x, y, z);
-            w.Floats(r);
+            w.Floats(j);
 
             w.Byte(Attack);
             w.Bool(Moving);
@@ -51,7 +51,7 @@ public class Cerberus : Enemy
         if (ReadOwner(ref r)) return;
 
         r.Floats(ref x, ref y, ref z);
-        r.Floats(ref this.r);
+        r.Floats(ref j);
 
         Attack = r.Byte();
         Moving = r.Bool();
@@ -93,7 +93,7 @@ public class Cerberus : Enemy
         if (Lock(nma, scr)) return;
 
         agent.Position = new(x.GetAware(delta), y.GetAware(delta), z.GetAware(delta));
-        agent.Rotation = new(agent.Rotation.x,  r.GetAngle(delta), agent.Rotation.z );
+        agent.Rotation = new(agent.Rotation.x,  j.GetAngle(delta), agent.Rotation.z );
 
         nma.enabled = false;
 
