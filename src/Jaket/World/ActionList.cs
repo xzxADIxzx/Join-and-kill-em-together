@@ -169,7 +169,11 @@ public static class ActionList
         #region 1-1
         l = "Level 1-1";
 
-        ActionType.Dest(l, "11 Nonstuff/Altar"); // duplicate
+        ActionType.Dest(l, "2 Nonstuff/Cube (2)@27"); // unloader
+        ActionType.Dest(l, "2 Nonstuff/Cube (8)@29"); // unloader
+        ActionType.Dest(l, "3 - Skull Field/Altar@10"); // duplicate
+        ActionType.Dest(l, "4 - Altar Field/Altar@07"); // duplicate
+        ActionType.Dest(l, "11 Nonstuff/Altar@01"); // duplicate
 
         #endregion
         #region 1-2

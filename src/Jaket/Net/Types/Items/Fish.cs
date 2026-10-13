@@ -108,16 +108,17 @@ public class Fish : Item
 
     [DynamicPatch(typeof(CoinActivated), nameof(CoinActivated.OnTriggerEnter))]
     [Prefix]
-    static bool Coin(Collider other)
+    static bool Coin(Collider other, bool ___disableCoin)
     {
         var agent = other.GetComponentInParent<Agent>();
         if (agent)
         {
-            if (agent.Patron is TeamCoin c && c.IsOwner)
+            if (agent.Patron is TeamCoin c && c.IsOwner && ___disableCoin)
             {
                 c.Kill();
                 return true;
             }
+            else if (!___disableCoin) return true;
             return false;
         }
         else return true;
