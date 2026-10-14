@@ -160,7 +160,7 @@ public class TeamCoin : OwnableEntity
         }
         else
         {
-            eid.hitter = "coin";
+            eid.hitter = punchable ? "coin" : "revolver";
             eid.DeliverDamage(target.gameObject, Vector3.zero, target.position, power, false, 1f);
         }
     }

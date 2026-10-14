@@ -26,6 +26,7 @@ public class Enemies : Vendor
         Fill<Husk           >(EntityType.Filth,           EntityType.Soldier        );
         Fill<Swordsmachine  >(EntityType.Swordsmachine,   EntityType.Swordsmachine  );
         Fill<Drone          >(EntityType.Drone,           EntityType.Drone          );
+        Fill<Streetcleaner  >(EntityType.Streetcleaner,   EntityType.Streetcleaner  );
         Fill<Earthmover     >(EntityType.SecuritySystem,  EntityType.Brain          );
         Fill<Malicious      >(EntityType.Malicious,       EntityType.Malicious      );
         Fill<Cerberus       >(EntityType.Cerberus,        EntityType.Cerberus       );
