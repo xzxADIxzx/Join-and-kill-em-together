@@ -53,11 +53,6 @@ public class Malicious : Enemy
     }
 
     #endregion
-    #region properties
-
-    public override bool Remain => agent;
-
-    #endregion
     #region logic
 
     public override void Rage(bool enraged)
@@ -102,12 +97,19 @@ public class Malicious : Enemy
 
     public override void Killed(bool explode)
     {
-        base.Killed(explode);
-        if (explode)
+        if (Version.DEBUG) Log.Debug($"[ENTS] Killed an entity {Id} due to being {(explode ? "exploded" : "damaged")}");
+
+        if (scr && scr.eid)
         {
-            Inst(scr.breakParticle, scr.transform.position, scr.transform.rotation);
-            Dest(scr.gameObject);
+            if (explode)
+            {
+                Inst(scr.breakParticle, scr.transform.position, scr.transform.rotation);
+                Dest(scr.gameObject);
+            }
+            else scr.eid.InstaKill();
         }
+
+        LastHidden = explode ? Time.time : float.MaxValue;
     }
 
     #endregion
@@ -137,11 +139,10 @@ public class Malicious : Enemy
 
     [DynamicPatch(typeof(MaliciousFace), nameof(MaliciousFace.BreakCorpse))]
     [Prefix]
-    static void Break(MaliciousFace __instance) => Networking.Entities.Each
-    (
-        e => e is Malicious m && m.scr == __instance,
-        e => e.Kill(1, w => w.Bools(true, true))
-    );
+    static void Break(MaliciousFace __instance)
+    {
+        if (__instance.HasEntity(out Malicious m)) m.Kill(1, w => w.Bools(true, true));
+    }
 
     [DynamicPatch(typeof(MaliciousFace), nameof(MaliciousFace.Enrage))]
     [Prefix]

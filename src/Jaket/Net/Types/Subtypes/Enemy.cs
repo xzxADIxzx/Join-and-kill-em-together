@@ -46,8 +46,6 @@ public abstract class Enemy : OwnableEntity
 
     public virtual EnemyTarget Tracked => enemyId.target = IsOwner ? EnemyTarget.TrackPlayerIfAllowed() : player.Value?.Target;
 
-    public virtual bool Remain => false;
-
     #endregion
     #region logic
 
@@ -123,13 +121,8 @@ public abstract class Enemy : OwnableEntity
 
         if (killed)
         {
-            if (Remain)
-                LastHidden = Time.time + 240f;
-            else
-                Hidden = true;
-
+            Hidden = true;
             Events.Post(() => Killed(explode));
-            return;
         }
 
         if (boss)
@@ -155,10 +148,13 @@ public abstract class Enemy : OwnableEntity
     {
         if (Version.DEBUG) Log.Debug($"[ENTS] Killed an entity {Id} due to being {(explode ? "exploded" : "damaged")}");
 
-        if (explode)
-            enemyId.Explode();
-        else
-            enemyId.InstaKill();
+        if (enemyId)
+        {
+            if (explode)
+                enemyId.Explode();
+            else
+                enemyId.InstaKill();
+        }
 
         Dest(agent);
     }

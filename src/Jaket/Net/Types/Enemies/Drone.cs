@@ -52,11 +52,6 @@ public class Drone : Enemy
     }
 
     #endregion
-    #region properties
-
-    public override bool Remain => true;
-
-    #endregion
     #region logic
 
     public override void Rage(bool enraged)
@@ -79,6 +74,7 @@ public class Drone : Enemy
         base.Assign(this.agent = agent);
 
         agent.Get(out scr);
+        agent.Rem<KeepInBounds>();
     }
 
     public override void Update(float delta)
@@ -101,12 +97,14 @@ public class Drone : Enemy
     {
         if (Version.DEBUG) Log.Debug($"[ENTS] Killed an entity {Id} due to being {(explode ? "exploded" : "damaged")}");
 
-        if (scr)
+        if (scr && scr.eid)
         {
             if (explode)
                 scr.Explode();
             else
                 scr.Death();
+
+            scr.eid.Death();
         }
 
         Hidden = explode;
