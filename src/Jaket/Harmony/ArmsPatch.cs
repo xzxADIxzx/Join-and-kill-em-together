@@ -5,18 +5,11 @@ using Jaket.Net.Types;
 
 public static class ArmsPatch
 {
-    static EnemyIdentifier caught;
-
     [DynamicPatch(typeof(HookArm), nameof(HookArm.FixedUpdate))]
     [Postfix]
-    static void Hook(HookState ___state, EnemyIdentifier ___caughtEid, bool ___lightTarget)
+    static void Hook()
     {
-        if (___state == HookState.Pulling && ___caughtEid && ___lightTarget)
-        {
-            if (caught == ___caughtEid) return;
-            if ((caught = ___caughtEid).HasEntity(out Enemy e)) e.TakeOwnage();
-        }
-        else caught = null;
+        if (ha.state == HookState.Pulling && ha.caughtEid && ha.lightTarget && ha.caughtEid.name[0] == 'R' && ha.caughtEid.HasEntity(out Enemy e)) e.TakeOwnage();
     }
 
     static bool parried { get { var value = field; field = false; return value; } set; }

@@ -32,7 +32,7 @@ public class LocalPlayer : Entity
     public override void Write(Writer w)
     {
         w.Vector(nmtr.position - nmtr.up * (nm.sliding ? .375f : 1.5f));
-        w.Vector(ha.state != HookState.Ready ? ha.hookPoint : Vector3.zero);
+        w.Vector(ha.forcingFistControl ? ha.hookPoint : Vector3.zero);
 
         w.Float(cc.rotationY);
         w.Float(cc.rotationX);
@@ -48,7 +48,7 @@ public class LocalPlayer : Entity
             !nm.gc.onGround,
             nm.gc.heavyFall,
             nm.ridingRocket,
-            ha.state != HookState.Ready,
+            ha.forcingFistControl,
             fc.shopping
         );
     }
