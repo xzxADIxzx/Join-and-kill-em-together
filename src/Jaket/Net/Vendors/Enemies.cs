@@ -32,6 +32,7 @@ public class Enemies : Vendor
         Fill<Cerberus       >(EntityType.Cerberus,        EntityType.Cerberus       );
         Fill<Drone          >(EntityType.Virtue,          EntityType.Virtue         );
         Fill<Drone          >(EntityType.Providence,      EntityType.Providence     );
+        Fill<Rodent         >(EntityType.Rodent1st,       EntityType.Rodent2nd      );
 
         Events.OnLoad += () =>
         {
