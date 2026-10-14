@@ -67,7 +67,7 @@ public class Debug : Fragment
                 mark.rectTransform.anchoredPosition = pos;
                 text.rectTransform.anchoredPosition = pos + Vector2.down * 16f;
 
-                if (found) text.text = best.Type.ToString();
+                if (found) { text.text = best.Type.ToString(); mark.color = best.IsOwner ? green : red; }
             });
         });
 
