@@ -44,20 +44,6 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         });
 
         #endregion
-        #region 1-3
-        l = "Level 1-3";
-
-        StaticAction.Find(l, "Trigger", new(0f, 9.5f, 412f), obj => obj.GetComponent<ObjectActivator>().events.toDisActivateObjects[0] = null); // corridor
-
-        #endregion
-        #region 1-4
-        l = "Level 1-4";
-
-        StaticAction.Find(l, "Cube", new(0f, 11f, 612f), obj => Dest(obj.GetComponent<DoorController>()));
-
-        NetAction.Sync(l, "Cube", new(0f, -19f, 612f)); // boss
-
-        #endregion
         #region 2-4
         l = "Level 2-4";
 
@@ -410,57 +396,6 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         {
             obj.transform.parent.gameObject.SetActive(true);
             obj.transform.parent.parent.gameObject.SetActive(true);
-        });
-
-        #endregion
-        #region P-1
-        l = "Level P-1";
-
-        #endregion
-        #region P-2
-        l = "Level P-2";
-
-        #endregion
-        #region unfinished
-
-        // duplicate torches at levels 4-3 and P-1
-        StaticAction.PlaceTorches("Level P-1", new(-0.84f, -10f, 16.4f), 2f);
-
-        // disable door blocker
-        StaticAction.Find("Level P-1", "Trigger", new(360f, -568.5f, 110f), obj =>
-        {
-            obj.GetComponent<ObjectActivator>().events.toActivateObjects[4] = null;
-        });
-        StaticAction.Find("Level P-2", "FightActivator", new(-102f, -61.25f, -450f), obj =>
-        {
-            var act = obj.GetComponent<ObjectActivator>();
-            act.events.onActivate = new(); // gothic door
-            act.events.toActivateObjects[2] = null; // wall collider
-            act.events.toDisActivateObjects[1] = null; // entry collider
-            act.events.toDisActivateObjects[2] = null; // elevator
-        });
-
-        // Minos & Sisyphus have unique cutscenes and non-functional level exits
-        NetAction.Sync("Level P-1", "MinosPrimeIntro", new(405f, -598.5f, 110f));
-        NetAction.Sync("Level P-1", "End", new(405f, -598.5f, 110f), obj =>
-        {
-            obj.transform.parent.Find("Cube (2)").gameObject.SetActive(false);
-
-            ObjFind("Music 3").SetActive(false);
-            obj.transform.parent.Find("Lights").gameObject.SetActive(false);
-
-            sm.StopTimer();
-        });
-        NetAction.Sync("Level P-2", "PrimeIntro", new(-102f, -61.25f, -450f));
-        NetAction.Sync("Level P-2", "Outro", new(-102f, -61.25f, -450f), obj =>
-        {
-            obj.transform.parent.Find("Backwall").gameObject.SetActive(false);
-
-            ObjFind("BossMusics/Sisyphus").SetActive(false);
-            ObjFind("IntroObjects/Decorations").SetActive(false);
-            ObjFind("Rain").SetActive(false);
-
-            sm.StopTimer();
         });
 
         #endregion
