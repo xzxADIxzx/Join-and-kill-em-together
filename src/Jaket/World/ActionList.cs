@@ -201,7 +201,16 @@ public static class ActionList
         #region 1-3
         l = "Level 1-3";
 
-        // TODO sync R1 - Courtyard/R1 Stuff(Clone)/Enemies/Wave 3/Trigger 'cause there are two statues
+        ActionType.Run(l, () => ResFind<ObjectActivator>().Each(IsReal, o =>
+        {
+            for (int i = 0; i < o.events.toDisActivateObjects.Length; i++)
+            {
+                if (o.events.toDisActivateObjects[i].name.Contains('-')) o.events.toDisActivateObjects[i] = null;
+            }
+        }));
+
+        ActionType.Act(l, "Wave 3/Trigger@00");
+        ActionType.Act(l, "Enemies/Trigger C@08");
 
         #endregion
         #region 1-4
