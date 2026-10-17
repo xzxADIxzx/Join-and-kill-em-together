@@ -50,6 +50,8 @@ public class Rodent : Enemy
         base.Assign(this.agent = agent);
 
         agent.Get(out scr);
+
+        agent.transform.SetAsLastSibling(); // don't ask
     }
 
     public override void Update(float delta)

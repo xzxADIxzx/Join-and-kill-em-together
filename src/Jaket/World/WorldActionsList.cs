@@ -44,18 +44,6 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         });
 
         #endregion
-        #region 1-2
-        l = "Level 1-2";
-
-        // secret statue
-        NetAction.Sync(l, "Cube", new(0f, -19f, 442f));
-        NetAction.Sync(l, "Cube", new(15f, -15f, 417f));
-
-        // Very Cancerous Rodent™
-        NetAction.Sync(l, "Cube", new(-61f, -16.5f, 388.5f));
-        NetAction.Sync(l, "Cube (1)", new(-61f, -21.5f, 400.5f));
-
-        #endregion
         #region 1-3
         l = "Level 1-3";
 

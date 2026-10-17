@@ -179,6 +179,24 @@ public static class ActionList
         #region 1-2
         l = "Level 1-2";
 
+        ActionType.Dest(l, "1 Nonstuff/Altar@02"); // duplicate
+        ActionType.Dest(l, "1 Nonstuff/Altar (1)@04"); // duplicate
+        ActionType.Dest(l, "3 Nonstuff/Altar@08"); // duplicate
+
+        ActionType.Act(l, "4-2 Connector/BurningActivator@09", _ =>
+        {
+            if (Teleporter.Inside(-40f, -16f, 300f, 40f, 32f, 380f)) Teleporter.Flash();
+
+            GameAssets.Prefab("p/Breaks/BreakParticleBig.prefab", p => Inst(p, new(-20f, 24f, 400f), null));
+        });
+
+        ActionType.Act(l, "Tesla Coils/Activated@02");
+        ActionType.Act(l, "7 Stuff/Cube@01");
+        ActionType.Act(l, "Enemiues/Cube@00");
+        ActionType.Act(l, "CV11 Stuff/Cube@05");
+        ActionType.Act(l, "CV11 Stuff/Cube (1)@03");
+        ActionType.Act(l, "CV11 Stuff/Cube (2)@06");
+
         #endregion
         #region 1-3
         l = "Level 1-3";
