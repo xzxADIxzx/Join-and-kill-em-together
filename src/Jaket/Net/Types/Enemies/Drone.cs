@@ -107,7 +107,7 @@ public class Drone : Enemy
             scr.eid.Death();
         }
 
-        Hidden = explode;
+        Hidden = explode || !agent;
     }
 
     #endregion
