@@ -56,8 +56,8 @@ public static class Networking
     {
         get
         {
-            if (Server.Manager != null) foreach (var con in Server.Manager.Connected) yield return con;
-            if (Client.Manager != null) yield return Client.Manager.Connection;
+            if (Server.Ready) foreach (var con in Server.Manager.Connected) yield return con;
+            if (Client.Ready) yield return Client.Manager.Connection;
         }
     }
 
@@ -91,7 +91,7 @@ public static class Networking
             if (LobbyController.IsOwner)
                 Server.Open();
             else
-                Client.Connect(LobbyController.Lobby.Value.Owner.Id);
+                Client.Connect();
 
             Entities.Clear();
             LocalPlayer.Push();
@@ -168,9 +168,13 @@ public static class Networking
 
         if (LobbyController.Offline) return;
         if (LobbyController.IsOwner)
-            Server.Update();
+        {
+            if (Server.Ready) Server.Update();
+        }
         else
-            Client.Update();
+        {
+            if (Client.Ready) Client.Update();
+        }
     }
 
     /// <summary> Optimizes the pools by removing entities. </summary>

@@ -14,13 +14,15 @@ using Jaket.World;
 /// <summary> Endpoint of a client connection that processes socket events and server data. </summary>
 public class Client : Endpoint, IConnectionManager
 {
-    static Pools ents => Networking.Entities;
-
     /// <summary> Steam networking sockets backend. </summary>
     public ConnectionManager Manager { get; private set; }
 
+    public override bool Ready => Manager != null;
+
     public override void Create()
     {
+        var ents = Networking.Entities;
+
         Listen(PacketType.Level, World.ReadData);
 
         Listen(PacketType.Snapshot, r =>
@@ -88,16 +90,6 @@ public class Client : Endpoint, IConnectionManager
             }
         });
 
-        Listen(PacketType.Image, r =>
-        {
-            SprayDistributor.Download(r.Id(), r.Int());
-        });
-
-        Listen(PacketType.Image, (con, sender, r, s) =>
-        {
-            SprayDistributor.ProcessDownload(r.Id(), s - 5, r);
-        });
-
         Listen(PacketType.WorldAction, r =>
         {
             var id = r.Byte();
@@ -105,10 +97,6 @@ public class Client : Endpoint, IConnectionManager
 
             Events.Post(() => World.Perform(id, p));
         });
-
-        /*
-        Listen(PacketType.Vote, r => Votes.UpdateVote(r.Id(), r.Byte()));
-        */
     }
 
     public override void Update()
@@ -117,7 +105,7 @@ public class Client : Endpoint, IConnectionManager
         Stats.Measure(ref Stats.Write, () =>
         {
             if (Networking.Loading) return;
-            ents.ClientPool(ref pool, Networking.Send);
+            Networking.Entities.ClientPool(pool, Networking.Send);
         });
         Manager.Connection.Flush();
     }
@@ -128,19 +116,15 @@ public class Client : Endpoint, IConnectionManager
         Manager = null;
     }
 
-    public void Connect(SteamId id)
-    {
-        Manager = SteamNetworkingSockets.ConnectRelay<ConnectionManager>(id, 4242);
-        Manager.Interface = this;
-    }
+    public void Connect() => Manager = SteamNetworkingSockets.ConnectRelay(LobbyController.Lobby.Value.Owner.Id, 4242, this);
 
     #region manager
 
-    public void OnConnecting(ConnectionInfo info) => Log.Info("[CLIENT] Connecting...");
+    public void OnConnecting(ConnectionInfo info) => Log.Info("[CLIENT] Connecting to someone...");
 
-    public void OnConnected(ConnectionInfo info) => Log.Info("[CLIENT] Connected");
+    public void OnConnected(ConnectionInfo info) => Log.Info($"[CLIENT] Connected to {info.Identity.SteamId.AccountId}");
 
-    public void OnDisconnected(ConnectionInfo info) => Log.Info("[CLIENT] Disconnected");
+    public void OnDisconnected(ConnectionInfo info) => Log.Info($"[CLIENT] Disconnected due to {info.EndReason}");
 
     public void OnMessage(Ptr data, int size, long msg, long time, int channel) => Handle(Manager.Connection, 0u, data, size);
 

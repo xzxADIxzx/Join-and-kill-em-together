@@ -80,9 +80,9 @@ public class Pools
     public void Player       (Pred<Player> pred, Cons<Player> cons) => Each(0, 1, e => { if (!e.Hidden && e is Player p && pred(p)) cons(p); });
 
     /// <summary> Iterates each visible entity in the set pool. </summary>
-    public void ServerPool   (ref int pool,      Cons<Entity> cons) => Each(pool = ++pool % Networking.SUBTICKS_PER_TICK, Networking.SUBTICKS_PER_TICK, e => { if (!e.Hidden             ) cons(e); });
+    public void ServerPool   (int pool,          Cons<Entity> cons) => Each(pool, Networking.SUBTICKS_PER_TICK, e => { if (!e.Hidden             ) cons(e); });
     /// <summary> Iterates each visible entity in the set pool. </summary>
-    public void ClientPool   (ref int pool,      Cons<Entity> cons) => Each(pool = ++pool % Networking.SUBTICKS_PER_TICK, Networking.SUBTICKS_PER_TICK, e => { if (!e.Hidden && e.IsOwner) cons(e); });
+    public void ClientPool   (int pool,          Cons<Entity> cons) => Each(pool, Networking.SUBTICKS_PER_TICK, e => { if (!e.Hidden && e.IsOwner) cons(e); });
 
     /// <summary> Counts the number of entities that are suitable for the given predicate. </summary>
     public int Count(Pred<Entity> pred)

@@ -11,8 +11,11 @@ public abstract class Endpoint
 {
     /// <summary> Handlers of incoming data packets. </summary>
     protected PacketHandler[] handlers = new PacketHandler[32];
-    /// <summary> Counter showing the pool that will be included in the next snapshot. </summary>
-    protected int pool;
+    /// <summary> Counter showing the upcoming pool. </summary>
+    protected int pool => field = ++field % Networking.SUBTICKS_PER_TICK;
+
+    /// <summary> Whether the connection is ready. </summary>
+    public abstract bool Ready { get; }
 
     /// <summary> Creates handlers to process incoming data. </summary>
     public abstract void Create();
@@ -43,7 +46,7 @@ public abstract class Endpoint
     public void Redirect(Reader data, int size, Connection ignore) => Networking.Connections.Each(c => c != ignore, c => Networking.Send(c, data.Memory, size));
 
     /// <summary> Verifies the identifier and then forwards. </summary>
-    public bool Redirect(ref Reader data, int size, Connection ignore, uint sender)
+    public bool Redirect(Reader data, int size, Connection ignore, uint sender)
     {
         var valid = data.Id() == sender;
         if (valid) Redirect(data, size, ignore);

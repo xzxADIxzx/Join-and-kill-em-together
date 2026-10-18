@@ -14,19 +14,21 @@ using Jaket.World;
 /// <summary> Endpoint of a server connection that processes socket events and client data. </summary>
 public class Server : Endpoint, ISocketManager
 {
-    static Pools ents => Networking.Entities;
-
     /// <summary> Steam networking sockets backend. </summary>
     public SocketManager Manager { get; private set; }
 
+    public override bool Ready => Manager != null;
+
     public override void Create()
     {
+        var ents = Networking.Entities;
+
         Listen(PacketType.Snapshot, (con, sender, r, s) =>
         {
             var id = r.Id();
             var type = r.Entity();
 
-            if ((id == sender) != (type == EntityType.Player)) return;
+            if (type.IsPlayer() != (id == sender)) return;
 
             if (ents[id] is Entity entity) entity.Read(r);
             else
@@ -75,17 +77,17 @@ public class Server : Endpoint, ISocketManager
 
         Listen(PacketType.Style, (con, sender, r, s) =>
         {
-            if (ents[sender] is RemotePlayer p && Redirect(ref r, s, con, sender)) p.Doll.Read(r);
+            if (Redirect(r, s, con, sender) && ents[r.Id()] is RemotePlayer p) p.Doll.Read(r);
         });
 
         Listen(PacketType.Sound, (con, sender, r, s) =>
         {
-            if (ents[sender] is RemotePlayer p && Redirect(ref r, s, con, sender)) Entities.Players.Play(p, r.Byte(), r.Vector(), r.Vector());
+            if (Redirect(r, s, con, sender) && ents[r.Id()] is RemotePlayer p) Entities.Players.Play(p, r.Byte(), r.Vector(), r.Vector());
         });
 
         Listen(PacketType.Point, (con, sender, r, s) =>
         {
-            if (ents[sender] is RemotePlayer p && Redirect(ref r, s, con, sender))
+            if (Redirect(r, s, con, sender) && ents[r.Id()] is RemotePlayer p)
             {
                 if (p.Point) p.Point.Lifetime = 5.5f;
                 p.Point = Point.Spawn(r.Vector(), r.Vector(), p.Team, p);
@@ -94,21 +96,11 @@ public class Server : Endpoint, ISocketManager
 
         Listen(PacketType.Spray, (con, sender, r, s) =>
         {
-            if (ents[sender] is RemotePlayer p && Redirect(ref r, s, con, sender))
+            if (Redirect(r, s, con, sender) && ents[r.Id()] is RemotePlayer p)
             {
                 if (p.Spray) p.Spray.Lifetime = 58f;
                 p.Spray = Spray.Spawn(r.Vector(), r.Vector(), p.Team, p);
             }
-        });
-
-        Listen(PacketType.Image, (con, sender, r, s) =>
-        {
-            if (Redirect(ref r, s, con, sender)) SprayDistributor.Download(sender, r.Int());
-        });
-
-        Listen(PacketType.Image, (con, sender, r, s) =>
-        {
-            if (Redirect(ref r, s, con, sender)) SprayDistributor.ProcessDownload(sender, s - 5, r);
         });
 
         Listen(PacketType.WorldAction, (con, sender, r, s) =>
@@ -119,25 +111,6 @@ public class Server : Endpoint, ISocketManager
             Events.Post(() => World.Perform(id, p));
             Redirect(r, s, con);
         });
-
-        /*
-        Listen(PacketType.Vote, (con, sender, r, s) =>
-        {
-            var owner = r.Id();
-
-            // prevent an attempt to vote on behalf of another
-            if (sender != owner)
-            {
-                Administration.Ban(sender);
-                Log.Warning($"[Server] {sender} was blocked due to an attempt to vote on behalf of another");
-            }
-            else
-            {
-                Votes.UpdateVote(owner, r.Byte());
-                Redirect(r, s, con);
-            }
-        });
-        */
     }
 
     public override void Update()
@@ -146,7 +119,7 @@ public class Server : Endpoint, ISocketManager
         Stats.Measure(ref Stats.Write, () =>
         {
             if (Networking.Loading) return;
-            ents.ServerPool(ref pool, Networking.Send);
+            Networking.Entities.ServerPool(pool, Networking.Send);
         });
         Manager.Connected.Each(c => c.Flush());
     }
@@ -157,11 +130,7 @@ public class Server : Endpoint, ISocketManager
         Manager = null;
     }
 
-    public void Open()
-    {
-        Manager = SteamNetworkingSockets.CreateRelaySocket<SocketManager>(4242);
-        Manager.Interface = this;
-    }
+    public void Open() => Manager = SteamNetworkingSockets.CreateRelaySocket(4242, this);
 
     #region manager
 
@@ -189,28 +158,27 @@ public class Server : Endpoint, ISocketManager
         }
 
         // only the members of the lobby are allowed to connect
-        if (netId.IsSteamId && !LobbyController.Contains(accId))
+        if (!netId.IsSteamId || !LobbyController.Contains(accId))
         {
             Log.Debug("[SERVER] Connection is rejected: either non-steam or not in the lobby");
             con.Close();
             return;
         }
 
-        // this will be used later to find the connection by its id
         con.UserData = accId;
         con.Accept();
     }
 
     public void OnConnected(Connection con, ConnectionInfo info)
     {
-        Log.Info($"[SERVER] {info.Identity.SteamId.AccountId} connected");
+        Log.Info($"[SERVER] Cl {info.Identity.SteamId.AccountId} connected");
         Networking.Send(PacketType.Level, World.BufferSize, World.WriteData, (data, size) => Networking.Send(con, data, size));
     }
 
     public void OnDisconnected(Connection con, ConnectionInfo info)
     {
-        Log.Info($"[SERVER] {info.Identity.SteamId.AccountId} disconnected");
-        if (ents[info.Identity.SteamId.AccountId] is RemotePlayer p) p.Kill();
+        Log.Info($"[SERVER] Cl {info.Identity.SteamId.AccountId} disconnected");
+        if (Networking.Entities[info.Identity.SteamId.AccountId] is RemotePlayer p) p.Kill();
     }
 
     public void OnMessage(Connection con, NetIdentity netId, Ptr data, int size, long msg, long time, int channel)
