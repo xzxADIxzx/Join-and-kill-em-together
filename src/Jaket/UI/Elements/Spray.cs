@@ -21,7 +21,7 @@ public class Spray : MonoBehaviour
     /// <summary> Player who created the spray. </summary>
     private RemotePlayer owner;
     /// <summary> How many seconds has the spray existed. </summary>
-    public float Lifetime;
+    private float lifetime;
 
     /// <summary> Spawns a spray at the given position. </summary>
     public static Spray Spawn(Vector3 position, Vector3 direction, Team team, RemotePlayer owner = null) => Create("Spray").Add<Spray>(s =>
@@ -32,6 +32,8 @@ public class Spray : MonoBehaviour
         s.color = team.Color() with { a = .5f };
         s.owner = owner;
     });
+
+    public void Remove() => lifetime = 58f;
 
     private void Start()
     {
@@ -63,13 +65,13 @@ public class Spray : MonoBehaviour
         static float InCubic(float t) => t * t * t;
         static float InOutCubic(float t) => t < .5f ? (InCubic(t * 2f) / 2f) : (1f - InCubic((1f - t) * 2f) / 2f);
 
-        if (Lifetime > 58f)
+        if (lifetime > 58f)
         {
-            var t = InOutCubic((Lifetime - 58f) / 2f);
+            var t = InOutCubic((lifetime - 58f) / 2f);
             transform.localScale = Vector3.one * (1f - t) * .002f;
         }
 
-        if ((Lifetime += Time.deltaTime) > 60f)
+        if ((lifetime += Time.deltaTime) > 60f)
         {
             SpawnDust(1, .3f);
             Dest(gameObject);

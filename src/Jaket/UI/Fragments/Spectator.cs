@@ -87,7 +87,7 @@ public class Spectator : Fragment
     public void UpdateCamera(bool ends)
     {
         var camera = cc.cam.transform;
-        var player = nm.dead && Networking.Entities[LobbyController.Lobby?.Members.At(targetPlayer).AccId ?? 0u] is RemotePlayer rp ? rp.DrawCntr : nmtr.position + nmtr.up;
+        var player = nm.dead && Networking.Entities[LobbyController.Lobby?.Members.At(targetPlayer).AccId ?? 0u] is RemotePlayer p ? p.DrawCntr : nmtr.position + nmtr.up;
 
         position = Vector3.MoveTowards(position, Vector3.up * (ends ? .1f : 6f), Time.deltaTime * 12f);
 

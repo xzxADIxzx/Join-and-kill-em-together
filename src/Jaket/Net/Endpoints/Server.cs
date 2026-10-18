@@ -89,7 +89,7 @@ public class Server : Endpoint, ISocketManager
         {
             if (Redirect(r, s, con, sender) && ents[r.Id()] is RemotePlayer p)
             {
-                if (p.Point) p.Point.Lifetime = 5.5f;
+                p.Point?.Remove();
                 p.Point = Point.Spawn(r.Vector(), r.Vector(), p.Team, p);
             }
         });
@@ -98,7 +98,7 @@ public class Server : Endpoint, ISocketManager
         {
             if (Redirect(r, s, con, sender) && ents[r.Id()] is RemotePlayer p)
             {
-                if (p.Spray) p.Spray.Lifetime = 58f;
+                p.Spray?.Remove();
                 p.Spray = Spray.Spawn(r.Vector(), r.Vector(), p.Team, p);
             }
         });

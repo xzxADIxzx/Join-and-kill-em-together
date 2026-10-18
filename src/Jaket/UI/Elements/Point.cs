@@ -26,7 +26,7 @@ public class Point : MonoBehaviour
     /// <summary> Components that the point is made of. </summary>
     private RectTransform circle1, circle2, diamond;
     /// <summary> How many seconds has the point existed. </summary>
-    public float Lifetime;
+    private float lifetime;
 
     /// <summary> Spawns a point at the given position. </summary>
     public static Point Spawn(Vector3 position, Vector3 direction, Team team, RemotePlayer owner = null) => Create("Point").Add<Point>(p =>
@@ -37,6 +37,8 @@ public class Point : MonoBehaviour
         p.color = team.Color() with { a = .5f };
         p.owner = owner;
     });
+
+    public void Remove() => lifetime = 5.5f;
 
     private void Start()
     {
@@ -84,9 +86,9 @@ public class Point : MonoBehaviour
 
     private void Update()
     {
-        if ((Lifetime += Time.deltaTime) > 6f) Dest(gameObject);
+        if ((lifetime += Time.deltaTime) > 6f) Dest(gameObject);
 
-        float scale = Lifetime < .5f ? Lifetime * 2f : Lifetime > 5.5f ? (6f - Lifetime) * 2f : 1f;
+        float scale = lifetime < .5f ? lifetime * 2f : lifetime > 5.5f ? (6f - lifetime) * 2f : 1f;
         float time = Time.time * 3f;
 
         circle1.localScale = Vector3.one * (scale * 1.2f + Mathf.Sin(time + 1f) * .2f);
