@@ -29,4 +29,14 @@ public class CommonItem : Item
     };
 
     #endregion
+    #region logic
+
+    public override void Assign(Agent agent)
+    {
+        base.Assign(agent);
+
+        if (Type == EntityType.Soap) { agent.Get(out Rigidbody rb); rb.isKinematic = true; }
+    }
+
+    #endregion
 }
