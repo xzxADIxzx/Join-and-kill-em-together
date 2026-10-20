@@ -97,43 +97,44 @@ public static class SprayDistributor
         if (s.Done) SprayManager.Remote[s.Owner] = s.Image;
     });
 
-    /// <summary> Removes all of the streams of the given member. </summary>
-    public static void Remove(uint? owner = null)
-    {
-        for (int i = 0; i < uploads.Length; i++)
-        {
-            if (owner == null || uploads[i].Owner == owner) uploads[i] = default;
-        }
-        for (int i = 0; i < downloads.Length; i++)
-        {
-            if (owner == null || downloads[i].Owner == owner) downloads[i] = default;
-        }
-    }
-
     /// <summary> Stream that is either uploading or downloading an image. </summary>
-    public struct Stream
+    public struct Stream(uint owner, SprayImage image)
     {
-        /// <summary> Identifier of the player who owns the spray image. </summary>
-        public uint Owner;
-        /// <summary> Image itself that is being streamed over the network. </summary>
-        public SprayImage Image;
-        /// <summary> Table counting proccessed chunks of the spray image. </summary>
-        public ChunkTable Chunks;
-        /// <summary> Endpoint to upload the spray image to, may be null. </summary>
+        /// <summary> Identifier of the image owner. </summary>
+        public uint Owner = owner;
+        /// <summary> Number of bytes transmitted. </summary>
+        public int Transmitted;
+        /// <summary> Image that is being streamed. </summary>
+        public SprayImage Image = image;
+        /// <summary> Endpoint to upload the image to, nullable. </summary>
         public Connection Target;
 
-        /// <summary> Whether the streaming process is completed or interrupted. </summary>
-        public readonly bool Done => Chunks == null || Chunks.Processed == Chunks.ImageSize;
+        /// <summary> Size of the streamed image. </summary>
+        public readonly int Size => Image.Data.Length;
+        /// <summary> Size of the upcoming chunk. </summary>
+        public readonly int Next => Mathf.Min(Pointers.RESERVED - 9, Size - Transmitted);
+        /// <summary> Whether the stream is done. </summary>
+        public readonly bool Done => Image == null || Transmitted == Size;
     }
 
-    /// <summary> Table that controls an uploading or downloading process. </summary>
-    public class ChunkTable(int size)
+    /// <summary> Action that is either uploading or withdrawing an image. </summary>
+    public struct Action(uint owner, SprayImage image, Connection target)
     {
-        /// <summary> Size of the image and the amount of processed bytes. </summary>
-        public int ImageSize = size, Processed;
-        /// <summary> Size of the chunk to be processed on the next subtick. </summary>
-        public int BytesCount => Mathf.Min(CHUNK_SIZE, ImageSize - Processed);
-        /// <summary> Ratio of processed bytes to the image size. </summary>
-        public float Progress => (float)Processed / ImageSize;
+        /// <summary> Processes the action. </summary>
+        public readonly void Process()
+        {
+            if (image == null)
+            {
+                for (int i = 0; i < uploads  .Length; i++)
+                {
+                    if (owner == default || uploads  [i].Owner == owner || uploads  [i].Target.UserData == owner) uploads  [i] = default;
+                }
+                for (int i = 0; i < downloads.Length; i++)
+                {
+                    if (owner == default || downloads[i].Owner == owner || downloads[i].Target.UserData == owner) downloads[i] = default;
+                }
+            }
+            else Upload(owner, image, target);
+        }
     }
 }
