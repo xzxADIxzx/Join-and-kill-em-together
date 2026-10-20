@@ -23,6 +23,11 @@ public class Server : Endpoint, ISocketManager
     {
         var ents = Networking.Entities;
 
+        Listen(PacketType.Image, (con, sender, r, s) =>
+        {
+            if (Redirect(r, s, con, sender)) SprayDistributor.ProcessDownload(r.Id(), r.Int(), s - 9, r);
+        });
+
         Listen(PacketType.Snapshot, (con, sender, r, s) =>
         {
             var id = r.Id();

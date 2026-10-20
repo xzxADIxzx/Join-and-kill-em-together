@@ -25,6 +25,11 @@ public class Client : Endpoint, IConnectionManager
 
         Listen(PacketType.Level, World.ReadData);
 
+        Listen(PacketType.Image, (con, sender, r, s) =>
+        {
+            SprayDistributor.ProcessDownload(r.Id(), r.Int(), s - 9, r);
+        });
+
         Listen(PacketType.Snapshot, r =>
         {
             var id = r.Id();

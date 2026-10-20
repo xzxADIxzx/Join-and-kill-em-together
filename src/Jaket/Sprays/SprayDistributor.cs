@@ -11,21 +11,14 @@ using Jaket.Net.Admin;
 /// <summary> Class responsible for distributing spray images between clients. </summary>
 public static class SprayDistributor
 {
-    /// <summary> Size of the payload of image delivering packets. </summary>
-    public const int CHUNK_SIZE = 1024;
-
-    /// <summary> List of streams that upload images. </summary>
-    private static Stream[] uploads = new Stream[10];
-    /// <summary> List of streams that download images. </summary>
-    private static Stream[] downloads = new Stream[10];
-
-    /// <summary> Whether the distributor is busy uploading or downloading images. </summary>
-    public static bool Busy => uploads.Any(s => !s.Done) || downloads.Any(s => !s.Done);
+    /// <summary> List of streams for uploading images. </summary>
+    private static Stream[] uploads = new Stream[16];
+    /// <summary> List of streams for downloading images. </summary>
+    private static Stream[] downloads = new Stream[7];
 
     /// <summary> Initializes an uploading of an image. </summary>
-    public static void Upload(uint owner, SprayImage image, Connection target)
+    private static void Upload(uint owner, SprayImage image, Connection target)
     {
-        return;
         Networking.Send(PacketType.Image, 8, w =>
         {
             w.Id(owner);
@@ -35,66 +28,98 @@ public static class SprayDistributor
 
         for (int i = 0; i < uploads.Length; i++)
         {
-            if (uploads[i].Owner == owner || uploads[i].Done)
+            if (uploads[i].Done)
             {
-                uploads[i] = default(Stream) with { Owner = owner, Image = image, Target = target, Chunks = new(image.Data.Length) };
+                uploads[i] = new(owner, image) { Target = target };
                 break;
             }
+            if (uploads.Length - 1 == i)
+            {
+                Log.Error($"[SPRY] Couldn't find an available stream for uploading an image owned by {owner}");
+                return;
+            }
         }
-        if (Version.DEBUG) Log.Debug($"[SPRY] Uploading a spray owned by {owner}");
+        if (Version.DEBUG) Log.Debug($"[SPRY] Uploading an image owned by {owner}");
     }
 
     /// <summary> Initializes a downloading of an image. </summary>
-    public static void Download(uint owner, int bytesCount)
+    private static void Download(uint owner, int bytesCount)
     {
-        return;
         if (bytesCount > SprayImage.MAX_IMAGE_SIZE && LobbyController.IsOwner)
         {
             Administration.Ban(owner);
-            Log.Warning($"[ADMIN] {owner} was blocked: enormous spray");
+            Log.Warning($"[ADMIN] {owner} was blocked: enormous image");
         }
         else if (bytesCount > SprayImage.MAX_IMAGE_SIZE) return;
 
         for (int i = 0; i < downloads.Length; i++)
         {
-            if (downloads[i].Owner == owner || downloads[i].Done)
+            if (downloads[i].Done)
             {
-                downloads[i] = default(Stream) with { Owner = owner, Image = new(new byte[bytesCount]), Chunks = new(bytesCount) };
+                downloads[i] = new(owner, new(new byte[bytesCount]));
                 break;
             }
+            if (downloads.Length - 1 == i)
+            {
+                Log.Error($"[SPRY] Couldn't find an available stream for downloading an image owned by {owner}");
+                return;
+            }
         }
-        if (Version.DEBUG) Log.Debug($"[SPRY] Downloading a spray owned by {owner}");
+        if (Version.DEBUG) Log.Debug($"[SPRY] Downloading an image owned by {owner}");
     }
 
     /// <summary> Processes all of the upload streams. </summary>
-    public static void ProcessUploads() => uploads.Each(s => !s.Done, s =>
+    public static void ProcessUploads() => Stats.Measure(ref Stats.Common, () =>
     {
-        int bytesCount = s.Chunks.BytesCount;
+        if (LobbyController.Offline) return;
 
-        Networking.Send(PacketType.Image, bytesCount + 4, w =>
+        while (SprayManager.Bridge.TryDequeue(out var upload)) upload.Process();
+
+        for (int i = 0; i < uploads.Length; i++)
         {
-            w.Id(s.Owner);
-            w.Bytes(s.Image.Data, s.Chunks.Processed, bytesCount);
-        },
-        (data, size) => Networking.Send(s.Target, data, size));
+            var s = uploads[i];
+            if (s.Done) continue;
 
-        s.Chunks.Processed += bytesCount;
+            Networking.Send(PacketType.Image, 8 + s.Next, w =>
+            {
+                w.Id(s.Owner);
+                w.Int(s.Next);
+                w.Bytes(s.Image.Data, s.Transmitted, s.Next);
+            },
+            (data, size) => Networking.Send(s.Target, data, size));
 
-        if (Version.DEBUG) Log.Debug($"[SPRY] Uploaded {s.Chunks.Progress * 100f:0.00}% of a spray owned by {s.Owner}");
+            uploads[i].Transmitted += s.Next;
+            s = uploads[i];
+
+            if (Version.DEBUG) Log.Debug($"[SPRY] Uploaded {100f * s.Transmitted / s.Size:0.00}% of an image owned by {s.Owner}");
+        }
     });
 
-    /// <summary> Processes a download stream of the given member. </summary>
-    public static void ProcessDownload(uint owner, int bytesCount, Reader r) => downloads.Each(s => !s.Done && s.Owner == owner, s =>
+    /// <summary> Processes one of the download streams. </summary>
+    public static void ProcessDownload(uint owner, int bytesCount, int actual, Reader r) => Stats.Measure(ref Stats.Common, () =>
     {
-        if (bytesCount != s.Chunks.BytesCount) return; // something went wrong
+        if (actual == 0)
+        {
+            for (int i = 0; i < downloads.Length; i++) if (downloads[i].Owner == owner) downloads[i] = default;
+            Download(owner, bytesCount);
+        }
+        else for (int i = 0; i < downloads.Length; i++)
+        {
+            var s = downloads[i];
+            if (s.Done || s.Owner != owner) continue;
 
-        r.Bytes(s.Image.Data, s.Chunks.Processed, bytesCount);
+            if (bytesCount != s.Next || bytesCount != actual) return; // invalid data
 
-        s.Chunks.Processed += bytesCount;
+            r.Bytes(s.Image.Data, s.Transmitted, s.Next);
 
-        if (Version.DEBUG) Log.Debug($"[SPRY] Downloaded {s.Chunks.Progress * 100f:0.00}% of a spray owned by {s.Owner}");
+            downloads[i].Transmitted += s.Next;
+            s = downloads[i];
 
-        if (s.Done) SprayManager.Remote[s.Owner] = s.Image;
+            if (Version.DEBUG) Log.Debug($"[SPRY] Downloaded {100f * s.Transmitted / s.Size:0.00}% of an image owned by {s.Owner}");
+
+            if (s.Done) Events.Post(() => SprayManager.Remote[s.Owner] = s.Image);
+            return;
+        }
     });
 
     /// <summary> Stream that is either uploading or downloading an image. </summary>
