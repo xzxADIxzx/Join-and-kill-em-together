@@ -73,7 +73,7 @@ public class SpraySettings : Fragment
         base.Toggle();
         UI.Hide(UI.MidlGroup, this, Rebuild);
 
-        if (!Shown && SprayManager.Uploaded != SprayManager.Selected && SprayManager.Selected != null) SprayManager.UploadLocal();
+        if (!Shown && SprayManager.Uploaded != SprayManager.Selected && SprayManager.Selected != null) SprayManager.Upload();
     }
 
     public override void Rebuild()

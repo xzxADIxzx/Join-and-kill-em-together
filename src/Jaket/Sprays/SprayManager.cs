@@ -1,5 +1,6 @@
 namespace Jaket.Sprays;
 
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,6 +23,9 @@ public static class SprayManager
     /// <summary> Sound played by new spray elements. </summary>
     public static AudioClip Puh;
 
+    /// <summary> Bridge between the manager and distributor. </summary>
+    public static ConcurrentQueue<SprayDistributor.Action> Bridge = new();
+
     /// <summary> Loads spray images of the local player. </summary>
     public static void Load()
     {
@@ -30,7 +34,7 @@ public static class SprayManager
         Files.MakeDir(Files.Sprays);
         Files.IterAll(Files.Sprays, f => Local.Add(new(f)), SprayImage.SUPPORTED.Split('#'));
 
-        Log.Info($"[SPRY] Loaded {Local.Count} sprays: {string.Join(", ", Local.ConvertAll(s => s.Name))}");
+        Log.Info($"[SPRY] Loaded {Local.Count} sprays: {string.Join(", ", Local.Cast(s => s.Name))}");
 
         // this method may be called multiple times to refresh the local images
         if (Puh) return;
@@ -41,7 +45,7 @@ public static class SprayManager
         Events.OnLobbyEnter += () => Uploaded = null;
         Events.OnLoad += () =>
         {
-            if (!LobbyController.IsOwner && Uploaded == null && Selected != null) UploadLocal();
+            if (!LobbyController.IsOwner && Uploaded == null && Selected != null) Upload();
         };
         Events.OnMemberJoin += m =>
         {
@@ -51,12 +55,12 @@ public static class SprayManager
         Events.OnLobbyEnter += () =>
         {
             Remote.Clear();
-            SprayDistributor.Remove();
+            Bridge.Enqueue(default);
         };
         Events.OnMemberLeave += m =>
         {
             Remote.Remove(m.AccId);
-            SprayDistributor.Remove(m.AccId);
+            Bridge.Enqueue(new(m.AccId, default, default));
         };
         Events.EveryTick += SprayDistributor.ProcessUploads;
     }
@@ -75,22 +79,23 @@ public static class SprayManager
     }
 
     /// <summary> Uploads all sprays to the given member. </summary>
-    public static void Upload(uint target) => Events.Post(() => !SprayDistributor.Busy && Networking.Connections.Any(c => c.UserData == target), () =>
-    {
-        var con = Networking.Connections.Find(c => c.UserData == target);
-
-        if (Selected != null) SprayDistributor.Upload(AccId, Selected, con);
-
-        Remote.Each(p => SprayDistributor.Upload(p.Key, p.Value, con));
-    });
-
-    /// <summary> Uploads the selected spray to all members. </summary>
-    public static void UploadLocal() => Events.Post(() => !SprayDistributor.Busy, () =>
+    public static void Upload(uint target = default)
     {
         if (LobbyController.Offline) return;
-        if (LobbyController.IsOwner)
-            Networking.Connections.Each(c => SprayDistributor.Upload(AccId, Uploaded = Selected, c));
-        else
-            SprayDistributor.Upload(AccId, Uploaded = Selected, Networking.Client.Manager.Connection);
-    });
+        if (target == default)
+        {
+            if (LobbyController.IsOwner)
+                Networking.Connections.Each(c => Bridge.Enqueue(new(AccId, Uploaded = Selected, c)));
+            else
+                Bridge.Enqueue(new(AccId, Uploaded = Selected, Networking.Client.Manager.Connection));
+        }
+        else Events.Post(() => Networking.Connections.Any(c => c.UserData == target), () =>
+        {
+            var c = Networking.Connections.Find(c => c.UserData == target);
+
+            if (Selected != null) Bridge.Enqueue(new(AccId, Selected, c));
+
+            Remote.Each(p => Bridge.Enqueue(new(p.Key, p.Value, c)));
+        });
+    }
 }
