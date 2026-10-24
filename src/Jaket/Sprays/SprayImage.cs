@@ -9,8 +9,6 @@ public class SprayImage
 {
     /// <summary> If an image is bigger, it won't be loaded to memory. </summary>
     public const int MAX_IMAGE_SIZE = 4 * 1024 * 1024;
-    /// <summary> List of supported image extensions. </summary>
-    public const string SUPPORTED = "*.png#*.jpg#*.jpeg";
 
     /// <summary> Name of the image and its path. </summary>
     public readonly string Name, Path;

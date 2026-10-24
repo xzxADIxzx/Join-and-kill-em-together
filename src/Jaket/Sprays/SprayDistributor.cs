@@ -91,7 +91,7 @@ public static class SprayDistributor
             uploads[i].Transmitted += s.Next;
             s = uploads[i];
 
-            if (Version.DEBUG) Log.Debug($"[SPRY] Uploaded {100f * s.Transmitted / s.Size:0.00}% of an image owned by {s.Owner}");
+            if (Version.DEBUG) Log.Debug($"[SPRY] Uploaded {100f * s.Transmitted / s.Size:0.00}% of an image owned by {s.Owner} via stream#{i}");
         }
     });
 
@@ -115,7 +115,7 @@ public static class SprayDistributor
             downloads[i].Transmitted += s.Next;
             s = downloads[i];
 
-            if (Version.DEBUG) Log.Debug($"[SPRY] Downloaded {100f * s.Transmitted / s.Size:0.00}% of an image owned by {s.Owner}");
+            if (Version.DEBUG) Log.Debug($"[SPRY] Downloaded {100f * s.Transmitted / s.Size:0.00}% of an image owned by {s.Owner} via stream#{i}");
 
             if (s.Done) Events.Post(() => SprayManager.Remote[s.Owner] = s.Image);
             return;
