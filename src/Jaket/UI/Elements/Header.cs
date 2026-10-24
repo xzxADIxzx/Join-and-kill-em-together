@@ -2,6 +2,7 @@ namespace Jaket.UI.Elements;
 
 using UnityEngine;
 
+using Jaket.Assets;
 using Jaket.Net.Types;
 using Jaket.UI.Lib;
 
@@ -36,6 +37,9 @@ public class Header
         ellipsis.horizontalOverflow = HorizontalWrapMode.Overflow;
         ellipsis.verticalOverflow   = VerticalWrapMode  .Overflow;
 
+        var ellipses = new string[4];
+        for (int i = 0; i < ellipses.Length; i++) ellipses[i] = Bundle.Parse($"[b]{new string('.', i)}[light]{new string('.', 3 - i)}");
+
         c.Add<Bar>(b => b.Update(() =>
         {
             int health = player.Health, dots = (int)(Time.time * 3f) % 4;
@@ -43,7 +47,7 @@ public class Header
             ellipsisBg.gameObject.SetActive(player.Typing);
 
             nickname.color = health > 0 ? white : red;
-            ellipsis.text = $"<b>{new string('.', dots)}<color={Gray}>{new string('.', 3 - dots)}</color></b>";
+            ellipsis.text = ellipses[dots];
 
             normhealth.sizeDelta = new(health <= 000 ? 0f : 16f * Mathf.Clamp(health - 000, 3, 100), 40f);
             overhealth.sizeDelta = new(health <= 100 ? 0f : 16f * Mathf.Clamp(health - 100, 3, 100), 40f);
