@@ -112,7 +112,6 @@ public class Client : Endpoint, IConnectionManager
             if (Networking.Loading) return;
             Networking.Entities.ClientPool(pool, Networking.Send);
         });
-        Manager.Connection.Flush();
     }
 
     public override void Close()

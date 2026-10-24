@@ -126,7 +126,6 @@ public class Server : Endpoint, ISocketManager
             if (Networking.Loading) return;
             Networking.Entities.ServerPool(pool, Networking.Send);
         });
-        Manager.Connected.Each(c => c.Flush());
     }
 
     public override void Close()

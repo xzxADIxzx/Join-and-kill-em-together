@@ -66,6 +66,10 @@ public static class Networking
     /// <summary> Subscribes to several events for proper work. </summary>
     public static void Load()
     {
+        SteamNetworkingUtils.SendBufferSize = 8 * 1024 * 1024;
+        SteamNetworkingUtils.SendRateMax = 8 * 1024 * 1024;
+        SteamNetworkingUtils.NagleTime = 1024;
+
         Server.Create();
         Client.Create();
 
