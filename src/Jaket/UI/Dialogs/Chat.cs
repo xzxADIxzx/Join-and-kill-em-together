@@ -204,7 +204,7 @@ public class Chat : Fragment
         void Msg(string msg) => Receive(msg, "#0096FF", "xzxADIxzx", BOT_TAG);
         void Tip(params string[] tips)
         {
-            var tab = "[14]     []           [gray]|[#EEE] ";
+            var tab = "[14]     []           [heavy]|[#EEE] ";
             //  [coral][14][TAG][]xzxADIxzx:
             Receive(tab + string.Join("\n" + tab, tips));
         }

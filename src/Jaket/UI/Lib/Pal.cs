@@ -57,9 +57,6 @@ public static class Pal
     empty   = Hex2Int(Empty  ),
     discord = Hex2Int(Discord);
 
-    /// <summary> Fixes namespace collisions. </summary>
-    public static string Gray = Light;
-
     #endregion
     #region strings
 
