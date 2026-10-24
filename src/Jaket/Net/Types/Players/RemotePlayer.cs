@@ -142,10 +142,13 @@ public class RemotePlayer : Entity
     public override void Killed(Reader r, int left)
     {
         Hidden = true;
-        Header.Hide();
-        Doll.Killed(default, default);
-        Dest(agent);
-        Events.OnTeamChange.Fire();
+        Events.Post(() =>
+        {
+            Doll.Killed(default, default);
+            Header.Hide();
+            Dest(agent);
+            Events.OnTeamChange.Fire();
+        });
     }
 
     #endregion

@@ -84,9 +84,12 @@ public class LocalPlayer : Entity
     {
         int damage = Mathf.CeilToInt(r.Float() * 3f);
 
-        nm.GetHurt(damage, damage <= 3, ignoreInvincibility: damage >= 3);
+        Events.Post(() =>
+        {
+            nm.GetHurt(damage, damage <= 3, ignoreInvincibility: damage >= 3);
 
-        if (damage >= 4) nm.ForceAddAntiHP(damage * 2, true, true, true);
+            if (damage >= 4) nm.ForceAddAntiHP(damage * 2, true, true, true);
+        });
 
         if (Version.DEBUG) Log.Debug($"[ENTS] Received {damage} damage");
     }
