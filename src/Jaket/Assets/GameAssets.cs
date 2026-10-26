@@ -35,7 +35,7 @@ public static class GameAssets
     /// <summary> List of readable names of all melee damage types. </summary>
     public static readonly string[] Melee =
     {
-        "coin", "punch", "heavypunch", "hook", "ground slam", "drill", "drillpunch", "hammer", "shotgunzone", "chainsawzone",
+        "coin", "punch", "heavypunch", "hook", "ground slam", "drill", "drillpunch", "hammer", "shotgunzone", "chainsawzone", "spearparry",
     };
 
     /// <summary> List of internal paths of all coins. </summary>

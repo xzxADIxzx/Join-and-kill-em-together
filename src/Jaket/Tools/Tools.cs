@@ -82,6 +82,12 @@ public static class Tools
     /// <summary> Whether the item is placed on an altar. </summary>
     public static bool Placed(this ItemIdentifier itemId) => itemId.transform.parent?.gameObject.layer == 22;
 
+    /// <summary> Helper method for enemies. </summary>
+    public static void Attack<T>(this Component comp, byte attack) where T : Enemy
+    {
+        if (comp.HasEntity(out T t)) t.Attack = attack;
+    }
+
     #endregion
     #region reflection
 

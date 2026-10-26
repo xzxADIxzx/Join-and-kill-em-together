@@ -30,6 +30,7 @@ public class Enemies : Vendor
         Fill<Earthmover     >(EntityType.SecuritySystem,  EntityType.Brain          );
         Fill<Malicious      >(EntityType.Malicious,       EntityType.Malicious      );
         Fill<Cerberus       >(EntityType.Cerberus,        EntityType.Cerberus       );
+        Fill<Hideous        >(EntityType.Hideous,         EntityType.Hideous        );
         Fill<Drone          >(EntityType.Virtue,          EntityType.Virtue         );
         Fill<Drone          >(EntityType.Providence,      EntityType.Providence     );
         Fill<Rodent         >(EntityType.Rodent1st,       EntityType.Rodent2nd      );
