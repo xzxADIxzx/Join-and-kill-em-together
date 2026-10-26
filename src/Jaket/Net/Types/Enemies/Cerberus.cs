@@ -5,59 +5,19 @@ using UnityEngine.AI;
 
 using Jaket.Content;
 using Jaket.Harmony;
-using Jaket.IO;
 
 /// <summary> Tangible entity of the cerberus type. </summary>
-public class Cerberus : Enemy
+public class Cerberus : Foe
 {
     Agent agent;
-    Float x, y, z, j;
     NavMeshAgent nma;
     StatueBoss scr;
     Animator animator;
 
     static readonly int running = Animator.StringToHash("Walking");
 
-    public Cerberus(uint id, EntityType type) : base(id, type) { }
+    public Cerberus(uint id, EntityType type) : base(id, type, false) { }
 
-    #region snapshot
-
-    public override int BufferSize => 22;
-
-    public override void Write(Writer w)
-    {
-        WriteOwner(ref w);
-
-        if (IsOwner)
-        {
-            w.Vector(agent.Position);
-            w.Float(agent.Rotation.y);
-
-            w.Byte(Attack);
-            w.Bool(animator.GetBool(running));
-        }
-        else
-        {
-            w.Floats(x, y, z);
-            w.Floats(j);
-
-            w.Byte(Attack);
-            w.Bool(Moving);
-        }
-    }
-
-    public override void Read(Reader r)
-    {
-        if (ReadOwner(ref r)) return;
-
-        r.Floats(ref x, ref y, ref z);
-        r.Floats(ref j);
-
-        Attack = r.Byte();
-        Moving = r.Bool();
-    }
-
-    #endregion
     #region logic
 
     public override void Rage(bool enraged)
@@ -68,8 +28,6 @@ public class Cerberus : Enemy
         else
             scr.UnEnrage();
     }
-
-    public override void Create() => Create(Entities.Enemies, ref x, ref y, ref z);
 
     public override void Assign(Agent agent)
     {
@@ -90,10 +48,10 @@ public class Cerberus : Enemy
 
     public override void Update(float delta)
     {
+        if (IsOwner) Moving = animator.GetBool(running);
         if (Lock(nma, scr)) return;
 
-        agent.Position = new(x.GetAware(delta), y.GetAware(delta), z.GetAware(delta));
-        agent.Rotation = new(agent.Rotation.x,  j.GetAngle(delta), agent.Rotation.z );
+        base.Update(delta);
 
         nma.enabled = false;
 
@@ -111,31 +69,15 @@ public class Cerberus : Enemy
 
     [DynamicPatch(typeof(StatueBoss), nameof(StatueBoss.Stomp))]
     [Prefix]
-    static void Stomp(StatueBoss __instance)
-    {
-        if (__instance.HasEntity(out Cerberus c)) c.Attack = 1;
-    }
+    static void Stomp(StatueBoss __instance) => __instance.Attack<Cerberus>(1);
 
     [DynamicPatch(typeof(StatueBoss), nameof(StatueBoss.Tackle))]
     [Prefix]
-    static void Melee(StatueBoss __instance)
-    {
-        if (__instance.HasEntity(out Cerberus c)) c.Attack = 2;
-    }
+    static void Melee(StatueBoss __instance) => __instance.Attack<Cerberus>(2);
 
     [DynamicPatch(typeof(StatueBoss), nameof(StatueBoss.Throw))]
     [Prefix]
-    static void Throw(StatueBoss __instance)
-    {
-        if (__instance.HasEntity(out Cerberus c)) c.Attack = 3;
-    }
-
-    [DynamicPatch(typeof(StatueBoss), nameof(StatueBoss.StopAction))]
-    [Prefix]
-    static void Zeros(StatueBoss __instance)
-    {
-        if (__instance.HasEntity(out Cerberus c)) c.Attack = 0;
-    }
+    static void Throw(StatueBoss __instance) => __instance.Attack<Cerberus>(3);
 
     [DynamicPatch(typeof(StatueBoss), nameof(StatueBoss.OrbSpawn))]
     [Prefix]

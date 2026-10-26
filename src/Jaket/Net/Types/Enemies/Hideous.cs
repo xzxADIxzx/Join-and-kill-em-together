@@ -4,65 +4,17 @@ using UnityEngine;
 
 using Jaket.Content;
 using Jaket.Harmony;
-using Jaket.IO;
 
 /// <summary> Tangible entity of the hideous type. </summary>
-public class Hideous : Enemy
+public class Hideous : Foe
 {
     Agent agent;
-    Float x, y, z, j;
     Mass scr;
     Animator animator;
 
-    public Hideous(uint id, EntityType type) : base(id, type) { }
+    public Hideous(uint id, EntityType type) : base(id, type, false) { }
 
-    #region snapshot
-
-    public override int BufferSize => 22;
-
-    public override void Write(Writer w)
-    {
-        WriteOwner(ref w);
-
-        if (IsOwner)
-        {
-            w.Vector(agent.Position);
-            w.Float(agent.Rotation.y);
-
-            w.Byte(Attack);
-            w.Bool(scr.walking);
-        }
-        else
-        {
-            w.Floats(x, y, z);
-            w.Floats(j);
-
-            w.Byte(Attack);
-            w.Bool(Moving);
-        }
-
-        if (IsOwner)
-        {
-            if (LastAttack != Attack) LastAttack = Attack;
-            else LastAttack = Attack = 0;
-        }
-    }
-
-    public override void Read(Reader r)
-    {
-        if (ReadOwner(ref r)) return;
-
-        r.Floats(ref x, ref y, ref z);
-        r.Floats(ref j);
-
-        Attack = r.Byte();
-        Moving = r.Bool();
-    }
-
-    #endregion
     #region logic
-
-    public override void Create() => Create(Entities.Enemies, ref x, ref y, ref z);
 
     public override void Assign(Agent agent)
     {
@@ -76,10 +28,10 @@ public class Hideous : Enemy
     {
         scr.crazyModeHealth = PostHealth * .2f;
 
+        if (IsOwner) Moving = scr.walking;
         if (Lock(scr)) return;
 
-        agent.Position = new(x.GetAware(delta), y.GetAware(delta), z.GetAware(delta));
-        agent.Rotation = new(agent.Rotation.x,  j.GetAngle(delta), agent.Rotation.z );
+        base.Update(delta);
 
         if (LastAttack != Attack) switch (LastAttack = Attack)
         {

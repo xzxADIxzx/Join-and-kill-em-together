@@ -4,54 +4,15 @@ using UnityEngine;
 
 using Jaket.Content;
 using Jaket.Harmony;
-using Jaket.IO;
 
 /// <summary> Tangible entity of any drone type. </summary>
-public class Drone : Enemy
+public class Drone : Foe
 {
     Agent agent;
-    Float x, y, z, i, j;
     global::Drone scr;
 
-    public Drone(uint id, EntityType type) : base(id, type) { }
+    public Drone(uint id, EntityType type) : base(id, type, true) { }
 
-    #region snapshot
-
-    public override int BufferSize => 25;
-
-    public override void Write(Writer w)
-    {
-        WriteOwner(ref w);
-
-        if (IsOwner)
-        {
-            w.Vector(agent.Position);
-            w.Point(agent.Rotation);
-
-            w.Byte(Attack);
-        }
-        else
-        {
-            w.Floats(x, y, z);
-            w.Floats(i, j);
-
-            w.Byte(Attack);
-        }
-
-        Attack = 0;
-    }
-
-    public override void Read(Reader r)
-    {
-        if (ReadOwner(ref r)) return;
-
-        r.Floats(ref x, ref y, ref z);
-        r.Floats(ref i, ref j);
-
-        Attack = r.Byte();
-    }
-
-    #endregion
     #region logic
 
     public override void Rage(bool enraged)
@@ -67,8 +28,6 @@ public class Drone : Enemy
 
     public override float Rate(RemotePlayer target) => base.Rate(target) + Networking.Entities.Count(e => e.Type == Type && e.Owner == target.Id) * 16000f;
 
-    public override void Create() => Create(Entities.Enemies, ref x, ref y, ref z);
-
     public override void Assign(Agent agent)
     {
         base.Assign(this.agent = agent);
@@ -79,10 +38,10 @@ public class Drone : Enemy
 
     public override void Update(float delta)
     {
+        if (IsOwner) Moving = false;
         if (Lock(scr)) return;
 
-        agent.Position = new(x.GetAware(delta), y.GetAware(delta), z.GetAware(delta));
-        agent.Rotation = new(i.GetAngle(delta), j.GetAngle(delta), 0f               );
+        base.Update(delta);
 
         if (LastAttack != Attack) switch (LastAttack = Attack)
         {
@@ -115,31 +74,19 @@ public class Drone : Enemy
 
     [DynamicPatch(typeof(global::Drone), nameof(global::Drone.Dodge), typeof(Vector3))]
     [Prefix]
-    static void Dodge(global::Drone __instance)
-    {
-        if (__instance.HasEntity(out Drone d)) d.Attack = 1;
-    }
+    static void Dodge(global::Drone __instance) => __instance.Attack<Drone>(1);
 
     [DynamicPatch(typeof(global::Drone), nameof(global::Drone.PrepShoot))]
     [Prefix]
-    static void Shoot(global::Drone __instance)
-    {
-        if (__instance.HasEntity(out Drone d)) d.Attack = 2;
-    }
+    static void Shoot(global::Drone __instance) => __instance.Attack<Drone>(2);
 
     [DynamicPatch(typeof(global::Drone), nameof(global::Drone.ShootSecondary))]
     [Prefix]
-    static void Pince(global::Drone __instance)
-    {
-        if (__instance.HasEntity(out Drone d)) d.Attack = 3;
-    }
+    static void Pince(global::Drone __instance) => __instance.Attack<Drone>(3);
 
     [DynamicPatch(typeof(global::Drone), nameof(global::Drone.SpawnDroneInsignia))]
     [Prefix]
-    static void Crest(global::Drone __instance)
-    {
-        if (__instance.HasEntity(out Drone d)) d.Attack = 4;
-    }
+    static void Crest(global::Drone __instance) => __instance.Attack<Drone>(4);
 
     [DynamicPatch(typeof(global::Drone), nameof(global::Drone.Shoot))]
     [Prefix]

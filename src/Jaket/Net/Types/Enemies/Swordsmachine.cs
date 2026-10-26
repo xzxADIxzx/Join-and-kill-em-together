@@ -5,59 +5,19 @@ using UnityEngine.AI;
 
 using Jaket.Content;
 using Jaket.Harmony;
-using Jaket.IO;
 
 /// <summary> Tangible entity of the swordsmachine type. </summary>
-public class Swordsmachine : Enemy
+public class Swordsmachine : Foe
 {
     Agent agent;
-    Float x, y, z, j;
     NavMeshAgent nma;
     SwordsMachine scr;
     Animator animator;
 
     static readonly int running = Animator.StringToHash("Running");
 
-    public Swordsmachine(uint id, EntityType type) : base(id, type) { }
+    public Swordsmachine(uint id, EntityType type) : base(id, type, false) { }
 
-    #region snapshot
-
-    public override int BufferSize => 22;
-
-    public override void Write(Writer w)
-    {
-        WriteOwner(ref w);
-
-        if (IsOwner)
-        {
-            w.Vector(agent.Position);
-            w.Float(agent.Rotation.y);
-
-            w.Byte(Attack);
-            w.Bool(animator.GetBool(running));
-        }
-        else
-        {
-            w.Floats(x, y, z);
-            w.Floats(j);
-
-            w.Byte(Attack);
-            w.Bool(Moving);
-        }
-    }
-
-    public override void Read(Reader r)
-    {
-        if (ReadOwner(ref r)) return;
-
-        r.Floats(ref x, ref y, ref z);
-        r.Floats(ref j);
-
-        Attack = r.Byte();
-        Moving = r.Bool();
-    }
-
-    #endregion
     #region logic
 
     public override void Rage(bool enraged)
@@ -73,8 +33,6 @@ public class Swordsmachine : Enemy
         else scr.UnEnrage();
     }
 
-    public override void Create() => Create(Entities.Enemies, ref x, ref y, ref z);
-
     public override void Assign(Agent agent)
     {
         base.Assign(this.agent = agent);
@@ -88,10 +46,10 @@ public class Swordsmachine : Enemy
     {
         scr.phaseChangeHealth = scr.firstPhase ? PostHealth / 2f : 0f;
 
+        if (IsOwner) Moving = animator.GetBool(running);
         if (Lock(nma, scr)) return;
 
-        agent.Position = new(x.GetAware(delta), y.GetAware(delta), z.GetAware(delta));
-        agent.Rotation = new(agent.Rotation.x,  j.GetAngle(delta), agent.Rotation.z );
+        base.Update(delta);
 
         nma.enabled = false;
         scr.targetHandle = null;
@@ -128,39 +86,19 @@ public class Swordsmachine : Enemy
 
     [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.Combo))]
     [Prefix]
-    static void Combo(SwordsMachine __instance)
-    {
-        if (__instance.HasEntity(out Swordsmachine s)) s.Attack = 1;
-    }
+    static void Combo(SwordsMachine __instance) => __instance.Attack<Swordsmachine>(1);
 
     [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.RunningSwing))]
     [Prefix]
-    static void Swing(SwordsMachine __instance)
-    {
-        if (__instance.HasEntity(out Swordsmachine s)) s.Attack = 2;
-    }
+    static void Swing(SwordsMachine __instance) => __instance.Attack<Swordsmachine>(2);
 
     [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.SwordThrow))]
     [Prefix]
-    static void Throw(SwordsMachine __instance)
-    {
-        if (__instance.HasEntity(out Swordsmachine s)) s.Attack = 3;
-    }
+    static void Throw(SwordsMachine __instance) => __instance.Attack<Swordsmachine>(3);
 
     [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.SwordSpiral))]
     [Prefix]
-    static void Twist(SwordsMachine __instance)
-    {
-        if (__instance.HasEntity(out Swordsmachine s)) s.Attack = 4;
-    }
-
-    [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.DamageStop))]
-    [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.SwordCatch))]
-    [Prefix]
-    static void Zeros(SwordsMachine __instance)
-    {
-        if (__instance.HasEntity(out Swordsmachine s)) s.Attack = 0;
-    }
+    static void Twist(SwordsMachine __instance) => __instance.Attack<Swordsmachine>(4);
 
     [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.EndFirstPhase))]
     [Prefix]

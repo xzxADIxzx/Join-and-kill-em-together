@@ -84,6 +84,10 @@ public abstract class Foe : Enemy
     #endregion
     #region logic
 
+    public override void Create() => Create(Entities.Enemies, ref x, ref y, ref z);
+
+    public override void Assign(Agent agent) => base.Assign(this.agent = agent);
+
     public override void Update(float delta)
     {
         agent.Position = new(x.GetAware(delta), y.GetAware(delta), z.GetAware(delta));
