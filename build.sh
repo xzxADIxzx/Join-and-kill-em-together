@@ -65,7 +65,7 @@ then
         cp assets/assets.bundle $2
         cp assets/bundles/*.properties $2
     else
-        zip -qj $2/Jaket.zip bin/$location/netstandard2.1/Jaket.dll manifest.json README.md assets/assets.bundle assets/bundles/*
+        zip -qj $2/Jaket.zip bin/$location/netstandard2.1/Jaket.dll obj/$location/netstandard2.1/manifest.json README.md assets/assets.bundle assets/bundles/*.properties
     fi
 fi
 

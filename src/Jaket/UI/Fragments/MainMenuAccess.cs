@@ -3,53 +3,92 @@ namespace Jaket.UI.Fragments;
 using UnityEngine;
 using UnityEngine.UI;
 
-using ImageType = UnityEngine.UI.Image.Type;
-
+using Jaket.Assets;
+using Jaket.IO;
 using Jaket.Net;
 using Jaket.UI.Lib;
 
 using static Jaket.UI.Lib.Pal;
 
-/// <summary> Fragment that provides access to lobbies through the main menu. </summary>
+/// <summary> Fragment that provides access to lobbies and ranks. </summary>
 public class MainMenuAccess : Fragment
 {
-    /// <summary> Vanilla element containing difficulty selection. </summary>
-    private GameObject original => CanvasController.Instance.transform.Find("Difficulty Select (1)/Interactables")?.gameObject;
-    /// <summary> Additional elements to display in the difficulty selection element. </summary>
-    private GameObject[] addition = new GameObject[5];
-
-    public MainMenuAccess(Transform root) : base(root, "MainMenuAccess", true, hide: () => Events.Post(() => UI.Access.Toggle()))
-    {
-        Content.GetComponent<CanvasScaler>().screenMatchMode = CanvasScaler.ScreenMatchMode.Expand;
-
-        var col = Random.value < .1f ? pink : green;
-        var drk = Darker(col);
-
-        Rect("Content", new(-315f, -341.5f, 570f, 176f, new(1f, .5f))).Component<Bar>(b =>
-        {
-            b.Setup(true, 0f, 6f);
-            b.Update(() =>
-            {
-                if (!original?.activeInHierarchy ?? addition[0].activeSelf) addition.Each(e => e.SetActive(false));
-            });
-
-            addition[0] = b.Image(null, 3f, col, ImageType.Simple).gameObject;
-            b.Subbar(158f, s =>
-            {
-                s.Setup(true, 0f);
-
-                addition[1] = s.MenuButton("#lobby-tab.list", col, UI.LobbyList.Toggle).gameObject;
-                addition[2] = s.MenuButton("#lobby-tab.join", drk, LobbyController.JoinByCode).gameObject;
-            });
-            addition[3] = b.Image(null, 3f, drk, ImageType.Simple).gameObject;
-        });
-        addition[4] = Builder.Text(Rect("Tip", new(-315f, 50f, 620f, 40f, new(1f, 0f))), "#menuaccess", 21, white, TextAnchor.MiddleCenter).gameObject;
-
-        Content.GetComponentsInChildren<Image>().Each(i => i.pixelsPerUnitMultiplier = 4f / 1.5f);
-    }
+    public MainMenuAccess(Transform root) : base(root, "MainMenuAccess", true, cond: () => Scene == "Main Menu", hide: () => UI.Access?.Toggle()) { Toggle(); }
 
     public override void Toggle()
     {
-        if (Scene == "Main Menu" && original.TryGetComponent(out ObjectActivateInSequence seq)) Insert(ref seq.objectsToActivate, -1, addition);
+        #region version
+
+        CanvasController.Instance.DefFind("Main Menu (1)/LeftSide/Text (3)").GetComponentsInChildren<TMPro.TextMeshProUGUI>(true).Each(t =>
+        {
+            t.text += $"\nJAKET V{Version.Readable}";
+        });
+
+        #endregion
+        #region lobbies
+
+        var root = CanvasController.Instance.DefFind("Difficulty Select (1)/Interactables");
+
+        var sep1 = Builder.Image (Builder.Rect("Sep1", root, new(-210f, -170f, 380f, 02f, new(1f, .5f))), null, green       ).gameObject;
+        var sep2 = Builder.Image (Builder.Rect("Sep2", root, new(-210f, -285f, 380f, 02f, new(1f, .5f))), null, green.Darker).gameObject;
+
+        var btn1 = Builder.Button(Builder.Rect("Btn1", root, new(-210f, -200f, 380f, 50f, new(1f, .5f))), Tex.BrdL, green,        UI.LobbyList.Toggle,        "#lobby-tab.list", 24).gameObject;
+        var btn2 = Builder.Button(Builder.Rect("Btn2", root, new(-210f, -255f, 380f, 50f, new(1f, .5f))), Tex.BrdL, green.Darker, LobbyController.JoinByCode, "#lobby-tab.join", 24).gameObject;
+
+        var tips = Builder.Text  (Builder.Rect("Tips", root, new(-210f, +034f, 400f, 30f, new(1f, .0f))), "#menuaccess", 14, white).gameObject;
+
+        if (root.TryGetComponent(out ObjectActivateInSequence seq)) Insert(ref seq.objectsToActivate, -1, [ sep1, btn1, btn2, sep2, tips ]);
+
+        #endregion
+        #region ranks
+
+        CanvasController.Instance.GetComponentsInChildren<ChapterSelectButton>(true).Each(c => c.GetComponent<Button>().onClick.AddListener(() =>
+        {
+            CanvasController.Instance.GetComponentsInChildren<LevelSelectPanel>(true).Each(l =>
+            {
+                byte rank = Progress.Load
+                (
+                    l.levelNumber == 666 ? 44 + l.levelNumberInLayer : l.levelNumber == 100 ? l.levelNumberInLayer + 34 : l.levelNumber - 1,
+                    pm.GetInt("difficulty")
+                );
+
+                var root = l.DefFind("Stats"            ) as RectTransform;
+                var prev = l.DefFind("Stats/Rank"       ) as RectTransform;
+                var next = l.DefFind("Stats/Rank(Clone)") as RectTransform;
+
+                if (next) Dest(next);
+                next = Inst(prev, root);
+
+                if (l.levelNumber == 666 || l.levelNumber == 100)
+                {
+                    prev.anchoredPosition = new(-31.5f, 10f);
+                    next.anchoredPosition = new(+31.5f, 10f);
+
+                    prev.sizeDelta = new(60f, 60f);
+                    next.sizeDelta = new(60f, 60f);
+                }
+                else
+                {
+                    prev.anchoredPosition = new(-32f, 10f);
+                    next.anchoredPosition = new(+10f, 10f);
+
+                    prev.sizeDelta = new(40f, 60f);
+                    next.sizeDelta = new(40f, 60f);
+
+                    root.anchoredPosition = new(-11f, -260f);
+                }
+
+                next.Get<Image>(i =>
+                {
+                    i.sprite = rank == 6 ? l.filledPanel : l.unfilledPanel;
+                    i.color = rank == 6 ? new(255, 175, 0, 255) : white;
+                });
+                next.DefFind("Text").Get<TMPro.TextMeshProUGUI>(t => t.text = Progress.Sign(rank));
+
+                Builder.Image(Builder.Rect("Icon", next, new()), ModAssets.Mask, white with { a = invi.a }).PreserveAspect().transform.SetAsFirstSibling();
+            });
+        }));
+
+        #endregion
     }
 }

@@ -25,7 +25,7 @@ public abstract class Item : OwnableEntity
 
     #region snapshot
 
-    public override int BufferSize => 35;
+    public override int BufferSize => 30;
 
     public override void Write(Writer w)
     {
@@ -61,11 +61,20 @@ public abstract class Item : OwnableEntity
     }
 
     #endregion
-    #region logic
+    #region properties
+
+    public override bool Debuggable => agent;
+
+    public override Vector3 DrawPos => agent.Position;
+
+    public override Vector3 DrawRot => agent.Rotation;
 
     public abstract Vector3 HoldRotation { get; }
 
-    public override void Create() => Assign(Entities.Items.Make(Type, new(posX.Init, posY.Init, posZ.Init)).AddComponent<Agent>());
+    #endregion
+    #region logic
+
+    public override void Create() => Create(Entities.Items, ref posX, ref posY, ref posZ);
 
     public override void Assign(Agent agent)
     {
@@ -80,31 +89,24 @@ public abstract class Item : OwnableEntity
             if (IsOwner) return;
 
             rb?.isKinematic = true;
-            if (Networking.LocalPlayer.Holding == this)
-            {
-                FistControl.Instance.currentPunch.ForceThrow();
-                FistControl.Instance.currentPunch.PlaceHeldObject([], null);
-            }
+
+            if (fc.currentPunch.heldItem == itemId)
+                fc.currentPunch.PlaceHeldObject([], null);
         };
 
         itemId.onPickUp ??= new();
         itemId.onPickUp.onActivate ??= new();
-
-        itemId.onPickUp.onActivate.AddListener(() =>
-        {
-            TakeOwnage();
-            Networking.LocalPlayer.Holding = this;
-        });
+        itemId.onPickUp.onActivate.AddListener(TakeOwnage);
 
         OnTransfer();
     }
 
     public override void Update(float delta)
     {
-        if (IsOwner || player.Value == null || player.Value.Health == 0) return;
+        if (IsOwner || player.Value == null) return;
 
-        agent.Position = holding ? player.Value.Doll.HoldPosition                        : new(posX.GetAware(delta), posY.GetAware(delta), posZ.GetAware(delta));
-        agent.Rotation = holding ? player.Value.Doll.HookRoot.eulerAngles + HoldRotation : new(rotX.GetAngle(delta), rotY.GetAngle(delta), rotZ.GetAngle(delta));
+        agent.Position = holding ? player.Value.Doll.HoldPosition                    : new(posX.GetAware(delta), posY.GetAware(delta), posZ.GetAware(delta));
+        agent.Rotation = holding ? player.Value.Doll.Reel.eulerAngles + HoldRotation : new(rotX.GetAngle(delta), rotY.GetAngle(delta), rotZ.GetAngle(delta));
 
         agent.Scale    = holding == itemId.reverseTransformSettings ? itemId.putDownScale : Vector3.one;
         itemId.pickedUp= holding;
@@ -118,32 +120,25 @@ public abstract class Item : OwnableEntity
 
             itemId.ipz = null;
         }
-        if (placed && !itemId.Placed()) Physics.OverlapSphere(agent.Position, .5f, 1 << 22).Each(
-            c => c.gameObject.layer == 22, // item
-            c =>
+        if (placed && !itemId.Placed()) Physics.OverlapSphere(agent.Position, .4f, 1 << 22).Each(c =>
+        {
+            var zones = c.GetComponents<ItemPlaceZone>();
+            if (zones.Length > 0)
             {
-                var zones = c.GetComponents<ItemPlaceZone>();
-                if (zones.Length > 0)
-                {
-                    agent.Parent = c.transform;
-                    zones.Each(z => z.CheckItem());
-                }
-            });
+                agent.Parent = c.transform;
+                zones.Each(z => z.CheckItem());
+            }
+        });
     }
 
     public override void Damage(Reader r) { }
 
-    public override void Killed(Reader r, int left)
+    public override void Killed(Reader r, int left) => Killed(r, left, agent, bits =>
     {
-        Hidden = true;
-        Dest(agent.gameObject);
+        if (bits[0]) Physics.OverlapSphere(agent.Position, 4f, 1 << 22).Each(c => c.ObjFind("../ThatExplosionGif")?.SetActive(true));
 
-        if (left >= 1 && r.Bool())
-            Physics.OverlapSphere(agent.Position, 5f, 1 << 22).Each(c => c.transform.Find("../ThatExplosionGif")?.gameObject.SetActive(true));
-
-        if (left >= 2 && r.Bool())
-            GameAssets.Prefab("p/Environment/HotSand.prefab", p => Inst(p, new(8.25f, -8.25f, 74.25f), null));
-    }
+        if (bits[1]) GameAssets.Prefab("p/Environment/HotSand.prefab", p => Inst(p, new(8.25f, -8.25f, 74.25f), null));
+    });
 
     #endregion
     #region harmony

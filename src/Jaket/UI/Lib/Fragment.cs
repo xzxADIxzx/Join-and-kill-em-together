@@ -2,8 +2,6 @@ namespace Jaket.UI.Lib;
 
 using UnityEngine;
 
-using ImageType = UnityEngine.UI.Image.Type;
-
 using static Pal;
 
 /// <summary> Interface fragment that contains multiple tables. </summary>
@@ -16,7 +14,7 @@ public class Fragment
 
     /// <summary> Transform containing the content of the fragment. </summary>
     public Transform Content;
-    /// <summary> Vertical bar located on the left side of the fragment. </summary>
+    /// <summary> Vertical bar located on the side of the fragment. </summary>
     public Bar Sidebar;
 
     public Fragment(Transform root, string name, bool dialog, Prov<bool> cond = null, Runnable hide = null)
@@ -40,48 +38,49 @@ public class Fragment
 
     #region building
 
-    /// <summary> Adds a rectangle, it is not preconfigured. </summary>
+    /// <summary> Adds a rectangle. </summary>
     protected RectTransform Rect(string name, Rect rect) => Builder.Rect(name, Content, rect);
 
-    /// <summary> Adds a rectangle, it fills the fragment. </summary>
-    protected RectTransform Fill(string name) => Builder.Rect(name, Content, Lib.Rect.Fill);
+    /// <summary> Adds a rectangle. </summary>
+    protected RectTransform Fill(string name) => Builder.Rect(name, Content, new());
 
     /// <summary> Adds a bar, it is located on the left and has a constant width. </summary>
     protected void Bar(float height, Cons<Bar> cons)
     {
-        Sidebar ??= Rect("Sidebar", new(256f, 0f, 480f, 0f, new(0f, 0f), new(0f, 1f))).Component<Bar>(b => b.Setup(true, 16f, 16f));
+        Sidebar ??= Rect("Sidebar", new(256f, 0f, 480f, 0f, new(0f, 0f), new(0f, 1f))).Add<Bar>(b => b.Setup(true, 16f, 16f));
 
-        var img = Sidebar.Image(Sidebar.Empty ? Tex.Back : Tex.Fill, height, semi, multiplier: Sidebar.Empty ? 2f : 3f);
+        var any = Sidebar.transform.childCount > 0;
+        var img = Sidebar.Image(any ? Tex.Fill : Tex.Back, height, semi, scale: any ? 3f : 2f);
 
-        img.Component(cons);
-        img.Component<HudOpenEffect>(e => e.speed = 38f - height / 24f);
+        img.Add(cons);
+        img.Add<HudOpenEffect>(e => e.speed = 38f - height / 24f);
 
-        if (Content.Find("Deco") == null) Builder.Image(Rect("Deco", new(0f, 0f, 32f, 0f, new(0f, 0f), new(0f, 1f))), Tex.Dash, semi, ImageType.Tiled, 2f);
+        if (!Content.DefFind("Deco")) Builder.Image(Rect("Deco", new(0f, 0f, 32f, 0f, new(0f, 0f), new(0f, 1f))), Tex.Dash, semi);
     }
 
     /// <summary> Adds a bar, it is located in the center and has the given size. </summary>
     protected void Bar(float width, float height, Cons<Bar> cons)
     {
-        var img = Builder.Image(Rect("Centerbar", new(width, height)), Tex.Back, semi, ImageType.Sliced, 2f);
+        var img = Builder.Image(Rect("Centerbar", new(width, height)), Tex.Back, semi, scale: 2f);
 
-        img.Component(cons);
-        img.Component<HudOpenEffect>(e => e.speed = 32f);
+        img.Add(cons);
+        img.Add<HudOpenEffect>(e => e.speed = 32f);
 
-        if (Content.Find("Deco") == null) Builder.Image(Rect("Deco", new(width + 24f, height + 24f)), Tex.Large, semi, ImageType.Sliced, 2f).raycastTarget = false;
+        if (!Content.DefFind("Deco")) Builder.Image(Rect("Deco", new(width + 24f, height + 24f)), Tex.BrdL, semi, scale: 2f).raycastTarget = false;
 
-        Builder.IconButton(Builder.Rect("Close", img.transform, new(-24f, -24f, 32f, 32f, Vector2.one)), Tex.Fill, red, Tex.Mark, 16, Toggle);
+        Builder.Button(Builder.Rect("Button", img, new(-24f, -24f, 32f, 32f, new(1f, 1f))), Tex.Fill, red, Toggle, Tex.Mark, 16);
     }
 
     /// <summary> Adds a bar, it displays the current version of the project. </summary>
     protected void VersionBar()
     {
-        var bar = Builder.Rect("Version", Sidebar.transform, new(0f, 48f, 480f - 32f, 64f, new(.5f, 0f)));
-        var txt = Builder.Rect("Text", bar, Lib.Rect.Fill with { Y =  12f });
-        var sub = Builder.Rect("Hash", bar, Lib.Rect.Fill with { Y = -16f });
+        var bar = Builder.Rect("Version", Sidebar, new(0f, 48f, 480f - 32f, 64f, new(.5f, 0f)));
+        var txt = Builder.Rect("Text", bar, new() { Y =  12f });
+        var sub = Builder.Rect("Hash", bar, new() { Y = -16f });
 
-        Builder.Image(bar, Tex.Fill, semi, ImageType.Sliced, 3f);
-        Builder.Text(txt, $"Jaket version is {Version.Readable}", 24, gray, TextAnchor.MiddleCenter);
-        Builder.Text(sub, $"Built from commit of {Version.Hash}", 16, gray, TextAnchor.MiddleCenter);
+        Builder.Image(bar, Tex.Fill, semi, scale: 3f);
+        Builder.Text(txt, $"Jaket version is {Version.Readable}", 24, heavy);
+        Builder.Text(sub, $"Built from commit of {Version.Hash}", 16, heavy);
     }
 
     #endregion

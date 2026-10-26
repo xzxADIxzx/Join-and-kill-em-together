@@ -8,29 +8,41 @@ public static class GameAssets
 {
     #region loading
 
-    /// <summary> Asynchronously loads an asset by the given path. </summary>
-    public static void LoadAsync<T>(string path, Cons<T> cons) { if (path.Contains('.')) Addressables.LoadAssetAsync<T>(path).Task.ContinueWith(t => cons(t.Result)); }
+    /// <summary> Asynchronously loads an asset. </summary>
+    public static void Load<T>(string path, Cons<T> cons)
+    {
+        if (path.StartsWith("Assets") && path.Contains('.')) Addressables.LoadAssetAsync<T>(path).Completed += h => { cons(h.Result); };
+    }
 
-    /// <summary> Loads a prefab by the given path. </summary>
-    public static void Prefab(string path, Cons<GameObject> cons) => LoadAsync(path.StartsWith("p/") ? $"Assets/Particles/{path[2..]}" : $"Assets/Prefabs/{path}", cons);
+    /// <summary> Loads a prefab. </summary>
+    public static void Prefab (string path, Cons<GameObject> cons) => Load(path.StartsWith("p/") ? $"Assets/Particles/{path[2..]}" : $"Assets/Prefabs/{path}", cons);
 
-    /// <summary> Loads a material by the given path. </summary>
-    public static void Material(string path, Cons<Material> cons) => LoadAsync($"Assets/Models/{path}", cons);
+    /// <summary> Loads a sprite. </summary>
+    public static void Sprite (string path, Cons<Sprite    > cons) => Load(path.StartsWith("s/") ? $"Assets/Textures/Sprites/{path[2..]}" : $"Assets/Textures/UI/{path}", cons);
 
-    /// <summary> Loads a texture by the given path. </summary>
-    public static void Texture(string path, Cons<Texture> cons) => LoadAsync($"Assets/Models/{path}", cons);
+    /// <summary> Loads a shader. </summary>
+    public static void Shader (string path, Cons<Shader    > cons) => Load($"Assets/Shaders/{path}", cons);
 
-    /// <summary> Loads a shader by the given path. </summary>
-    public static void Shader(string path, Cons<Shader> cons) => LoadAsync($"Assets/Shaders/{path}", cons);
+    /// <summary> Loads a texture. </summary>
+    public static void Texture(string path, Cons<Texture   > cons) => Load($"Assets/Models/{path}", cons);
 
-    /// <summary> Loads a sound by the given path. </summary>
-    public static void Sound(string path, Cons<AudioClip> cons) => LoadAsync($"Assets/Sounds/{path}", cons);
-
-    /// <summary> Loads a sprite by the given path. </summary>
-    public static void Sprite(string path, Cons<Sprite> cons) => LoadAsync(path.StartsWith("s/") ? $"Assets/Textures/Sprites/{path[2..]}" : $"Assets/Textures/UI/{path}", cons);
+    /// <summary> Loads a sound. </summary>
+    public static void Sound  (string path, Cons<AudioClip > cons) => Load($"Assets/Sounds/{path}", cons);
 
     #endregion
     #region content
+
+    /// <summary> List of readable names of all melee damage types. </summary>
+    public static readonly string[] Melee =
+    {
+        "coin", "punch", "heavypunch", "hook", "ground slam", "drill", "drillpunch", "hammer", "shotgunzone", "chainsawzone", "spearparry",
+    };
+
+    /// <summary> List of internal paths of all coins. </summary>
+    public static readonly string[] Coins =
+    {
+        "Attacks and Projectiles/Coin.prefab",
+    };
 
     /// <summary> List of internal paths of all enemies. </summary>
     public static readonly string[] Enemies =
@@ -107,8 +119,9 @@ public static class GameAssets
         "Items/SkullRed.prefab",
         "Items/Soap.prefab",
         "Items/Torch.prefab",
-        "Items/Torch.prefab",
+        "", // moon
         "Items/Florp Throwable.prefab",
+
         "Fishing/Apple Bait.prefab",
         "Fishing/Maurice Bait.prefab",
 
@@ -125,6 +138,11 @@ public static class GameAssets
         "Fishing/Fishes/Cooked Fish.prefab",
         "Fishing/Fishes/Shark Fish.prefab",
         "Fishing/Fishes/Burnt Stuff.prefab",
+
+        "", // can
+        "", // chips
+        "", // bar
+        "", // soda
 
         "Items/DevPlushies/DevPlushie (Hakita).prefab",
         "Items/DevPlushies/DevPlushie (PITR).prefab",
@@ -231,14 +249,20 @@ public static class GameAssets
         "Attacks and Projectiles/Cannonball.prefab",
         "Attacks and Projectiles/Projectile.prefab",
         "Attacks and Projectiles/Projectile Beamable.prefab",
+        "Attacks and Projectiles/Projectile Spread.prefab",
         "Attacks and Projectiles/Projectile Explosive.prefab",
+        "Attacks and Projectiles/Projectile Homing Explosive.prefab",
+        "Attacks and Projectiles/Projectile Explosive HH.prefab",
+        "Attacks and Projectiles/Projectile Homing.prefab",
     };
 
     /// <summary> List of internal paths of all explosions. </summary>
     public static readonly string[] Explosions =
     {
+        "p/DustBig.prefab",
         "Attacks and Projectiles/PhysicalShockwavePlayer.prefab",
         "Attacks and Projectiles/Explosions/Explosion Wave.prefab",
+        "Attacks and Projectiles/Explosions/Explosion Harmless.prefab",
         "Attacks and Projectiles/Explosions/Explosion.prefab",
         "Attacks and Projectiles/Explosions/Explosion Hammer Weak.prefab",
         "Attacks and Projectiles/Explosions/Explosion Super.prefab",

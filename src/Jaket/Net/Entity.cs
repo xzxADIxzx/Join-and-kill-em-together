@@ -6,12 +6,14 @@ using UnityEngine;
 using Jaket.Content;
 using Jaket.IO;
 
-/// <summary> Abstract entity of any type whose state is synchronized across the network via snapshots. </summary>
+using static Entities;
+
+/// <summary> Abstract entity of any type. </summary>
 public abstract class Entity
 {
-    /// <summary> Unique identifier of the entity, account ids are used for players. </summary>
+    /// <summary> Unique identifier of the entity, players use their account ids. </summary>
     public readonly uint Id;
-    /// <summary> Type of the entity, such as player or enemy of some kind. </summary>
+    /// <summary> Type of the entity, such as player, enemy or some sort of item. </summary>
     public readonly EntityType Type;
 
     /// <summary> Account identifier of the entity's owner. </summary>
@@ -33,28 +35,27 @@ public abstract class Entity
 
     public Entity(uint id, EntityType type) { Owner = Id = id; Type = type; Hidden = false; }
 
-    /// <summary> Pushes the entity into networking pool. </summary>
-    public void Push() => Networking.Entities[Id] = this;
+    #region snapshot
 
-    /// <summary> Kills the entity remotely and, if necessary, locally. </summary>
-    public void Kill(int bytesCount = 0, Cons<Writer> data = null, bool locally = true)
-    {
-        Networking.Send(PacketType.Death, 4 + bytesCount, w =>
-        {
-            w.Id(Id);
-            data?.Invoke(w);
-
-            // offset is formed from packet type and identifier
-            if (locally) Killed(new(w.Memory + 5), bytesCount);
-        });
-    }
-
-    /// <summary> Number of bytes that the entity takes in a snapshot, plus the size of its header. </summary>
+    /// <summary> Size of the entity's snapshot in bytes. </summary>
     public abstract int BufferSize { get; }
     /// <summary> Writes the entity data into a snapshot. </summary>
     public abstract void Write(Writer w);
     /// <summary> Reads the entity data from a snapshot. </summary>
     public abstract void Read(Reader r);
+
+    #endregion
+    #region properties
+
+    /// <summary> Whether the entity can be debugged. </summary>
+    public virtual bool Debuggable => false;
+    /// <summary> Position to draw debug elements in. </summary>
+    public virtual Vector3 DrawPos => default;
+    /// <summary> Rotation to draw debug elements in. </summary>
+    public virtual Vector3 DrawRot => default;
+
+    #endregion
+    #region logic
 
     /// <summary> Creates an object for manipulation. </summary>
     public abstract void Create();
@@ -67,11 +68,109 @@ public abstract class Entity
     /// <summary> Kills the entity, takes custom data. </summary>
     public abstract void Killed(Reader r, int left);
 
+    #endregion
+    #region other
+
+    /// <summary> Pushes the entity into the networking pool. </summary>
+    public void Push() => Networking.Entities[Id] = this;
+
+    /// <summary> Kills the entity both remotely and locally. </summary>
+    public void Kill(int bytesCount = 0, Cons<Writer> data = null)
+    {
+        Networking.Send(PacketType.Death, 4 + bytesCount, w =>
+        {
+            w.Id(Id);
+            data?.Invoke(w);
+        });
+        Killed(new(Pointers.Allocated + 5), bytesCount); // offset is formed from the packet type and identifier
+    }
+
+    /// <summary> Creates an object and assigns an agent. </summary>
+    protected void Create(Vendor vendor, ref Float x, ref Float y, ref Float z) => vendor.Make(Type, new(x.Init, y.Init, z.Init)).Add<Agent>(Assign);
+
+    /// <summary> Hides the entity and reads a few flags. </summary>
+    protected void Killed(Reader r, int left, Agent agent, Bits bits)
+    {
+        Hidden = true;
+        bool b0, b1, b2, b3, b4, b5, b6, b7;
+
+        if (left >= 1)
+            r.Bools(out b0, out b1, out b2, out b3, out b4, out b5, out b6, out b7);
+        else
+            b0 = b1 = b2 = b3 = b4 = b5 = b6 = b7 = false;
+
+        Events.Post(() =>
+        {
+            agent?.Rem(true);
+            bits(b0, b1, b2, b3, b4, b5, b6, b7);
+        });
+    }
+
+    #endregion
+
+    /// <summary> Simple component that defines the entity type of an object. </summary>
+    public class Identifier : MonoBehaviour
+    {
+        /// <summary> Underlying type of the entity. </summary>
+        public EntityType Type;
+    }
+
     /// <summary> Most of the entities manipulate an object of some kind, agents implement these interactions. </summary>
     public class Agent : MonoBehaviour
     {
         /// <summary> Entity that owns the agent and has to be updated every frame. </summary>
         public Entity Patron;
+
+        private void Update() => Stats.Measure(ref Stats.Entity, () =>
+        {
+            position = transform.position;
+            rotation = transform.eulerAngles;
+            scale    = transform.localScale;
+
+            Patron.Update(Time.time - Patron.LastUpdate);
+        });
+
+        #region properties
+
+        /// <summary> Storage that is accessible from the network thread. </summary>
+        private Vector3 position, rotation, scale;
+
+        /// <summary> Parent of the agent. </summary>
+        public Transform Parent
+        {
+            get => transform.parent;
+            set => transform.parent = value;
+        }
+        /// <summary> Position of the agent. </summary>
+        public Vector3 Position
+        {
+            get => position;
+            set => transform.position = value;
+        }
+        /// <summary> Rotation of the agent. </summary>
+        public Vector3 Rotation
+        {
+            get => rotation;
+            set => transform.eulerAngles = value;
+        }
+        /// <summary> Scale of the agent. </summary>
+        public Vector3 Scale
+        {
+            get => scale;
+            set => transform.localScale = value;
+        }
+
+        #endregion
+        #region tools
+
+        /// <summary> Gets a single child obj of the given path or logs an error. </summary>
+        private bool Find(bool nullable, string path, out GameObject obj)
+        {
+            obj = this == null ? null : path == null ? gameObject : gameObject.ObjFind(path);
+
+            if (!obj && !nullable) Log.Error($"[ENTS] Couldn't find a child object of path {path}");
+            return obj;
+        }
 
         /// <summary> Adds a single component of the given type or logs an error. </summary>
         public void Add<T>(out T t, bool nullable = false, string path = null) where T : Component
@@ -89,7 +188,7 @@ public abstract class Entity
         {
             if (!Find(nullable, path, out var o)) { t = null; return; }
 
-            if (t = o.GetComponentInChildren<T>())
+            if (t = o.GetComponentInChildren<T>(true))
                 return;
             else if (!nullable)
                 Log.Error($"[ENTS] Couldn't get a component of type {typeof(T)}");
@@ -117,14 +216,14 @@ public abstract class Entity
                 Log.Error($"[ENTS] Couldn't rem a component of type {typeof(T)}");
         }
 
-        /// <summary> Removes a child gameobject of the given path or logs an error. </summary>
-        public void Rem   (bool nullable = false, string path = null)
+        /// <summary> Removes a single child obj of the given path or logs an error. </summary>
+        public void Rem(bool nullable = false, string path = null)
         {
             if (Find(nullable, path, out var o)) Dest(o);
         }
 
         /// <summary> Runs the given callback after the specified number of seconds. </summary>
-        public void Run   (Runnable callback, float time, bool repeating = false)
+        public void Run(Runnable callback, float time, bool repeating = false)
         {
             static IEnumerator Run(Runnable callback, float time, bool repeating)
             {
@@ -138,38 +237,7 @@ public abstract class Entity
             StartCoroutine(Run(callback, time, repeating));
         }
 
-        public Transform Parent
-        {
-            get => transform.parent;
-            set => transform.parent = value;
-        }
-        public Vector3 Position
-        {
-            get => transform.position;
-            set => transform.position = value;
-        }
-        public Vector3 Rotation
-        {
-            get => transform.eulerAngles;
-            set => transform.eulerAngles = value;
-        }
-        public Vector3 Scale
-        {
-            get => transform.localScale;
-            set => transform.localScale = value;
-        }
-
-        private void Update() => Stats.MeasureTime(ref Stats.EntityMs, () => Patron.Update(Time.time - Patron.LastUpdate));
-
-        private bool Find(bool nullable, string path, out GameObject obj)
-        {
-            if (obj = path == null ? gameObject : transform.Find(path)?.gameObject) return true;
-            else
-            {
-                if (!nullable) Log.Error($"[ENTS] Couldn't find a child of path {path ?? "null"}");
-                return false;
-            }
-        }
+        #endregion
     }
 
     /// <summary> Widely used structure that interpolates floating point numbers. </summary>
@@ -202,9 +270,9 @@ public abstract class Entity
             }
             else if (Mathf.Abs(Next - Prev) > .01f)
             {
-                next = value + (Next - Prev) * .28f;
+                next = value + (Next - Prev) * .4f;
             }
-            else if (Mathf.Abs(Next - next) > .32f)
+            else if (Mathf.Abs(Next - next) > .24f)
             {
                 prev = next = value;
             }

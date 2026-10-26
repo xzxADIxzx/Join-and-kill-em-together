@@ -14,58 +14,74 @@ using Jaket.World;
 /// <summary> Endpoint of a client connection that processes socket events and server data. </summary>
 public class Client : Endpoint, IConnectionManager
 {
-    static Pools ents => Networking.Entities;
-
     /// <summary> Steam networking sockets backend. </summary>
     public ConnectionManager Manager { get; private set; }
 
+    public override bool Ready => Manager != null;
+
     public override void Create()
     {
+        var ents = Networking.Entities;
+
         Listen(PacketType.Level, World.ReadData);
+
+        Listen(PacketType.Image, (con, sender, r, s) =>
+        {
+            SprayDistributor.ProcessDownload(r.Id(), r.Int(), s - 9, r);
+        });
 
         Listen(PacketType.Snapshot, r =>
         {
             var id = r.Id();
-            var type = r.EntityType();
+            var type = r.Entity();
 
-            if (ents.TryGetValue(id, out var entity)) entity.Read(r);
+            if (ents[id] is Entity entity) entity.Read(r);
             else
             {
                 entity = Entities.Supply(id, type);
 
                 entity.Read(r);
-                entity.Create();
                 entity.Push();
+                Events.Post(entity.Create);
             }
         });
 
-        Listen(PacketType.Hitscan, r => Entities.Hitscans.Make(r.EntityType(), r.Vector(), r.Vector(), r.Bool(), r.Byte()));
+        Listen(PacketType.Hitscan, r =>
+        {
+            var type = r.Entity();
+            var pos1 = r.Vector();
+            var pos2 = r.Vector();
+            var wall = r.Bool();
+            var data = r.Byte();
+
+            Events.Post(() => Entities.Hitscans.Make(type, pos1, pos2, wall, data));
+        });
 
         Listen(PacketType.Damage, r =>
         {
-            if (ents.TryGetValue(r.Id(), out var e)) e.Damage(r);
+            if (ents[r.Id()] is Entity e) e.Damage(r);
         });
 
         Listen(PacketType.Death, (con, sender, r, s) =>
         {
-            if (ents.TryGetValue(r.Id(), out var e)) e.Killed(r, s - 5);
+            if (ents[r.Id()] is Entity e) e.Killed(r, s - 5);
         });
 
         Listen(PacketType.Style, r =>
         {
-            if (ents[r.Id()] is RemotePlayer p) p.Doll.ReadSuit(r);
+            if (ents[r.Id()] is RemotePlayer p) p.Doll.Read(r);
         });
 
-        Listen(PacketType.Punch, r =>
+        Listen(PacketType.Sound, r =>
         {
-            if (ents[r.Id()] is RemotePlayer p) p.Punch(r);
+            if (ents[r.Id()] is RemotePlayer p) Entities.Players.Play(p, r.Byte(), r.Vector(), r.Vector());
         });
 
         Listen(PacketType.Point, r =>
         {
             if (ents[r.Id()] is RemotePlayer p)
             {
-                if (p.Point) p.Point.Lifetime = 5.5f;
+                p.Point?.Remove();
                 p.Point = Point.Spawn(r.Vector(), r.Vector(), p.Team, p);
             }
         });
@@ -74,45 +90,27 @@ public class Client : Endpoint, IConnectionManager
         {
             if (ents[r.Id()] is RemotePlayer p)
             {
-                if (p.Spray) p.Spray.Lifetime = 58f;
+                p.Spray?.Remove();
                 p.Spray = Spray.Spawn(r.Vector(), r.Vector(), p.Team, p);
             }
         });
 
-        Listen(PacketType.ImageHeader, r =>
+        Listen(PacketType.WorldAction, r =>
         {
-            SprayDistributor.Download(r.Id(), r.Int());
+            var id = r.Byte();
+            var p = r.Point();
+
+            Events.Post(() => World.Perform(id, p));
         });
-
-        Listen(PacketType.ImageChunk, (con, sender, r, s) =>
-        {
-            SprayDistributor.ProcessDownload(r.Id(), s - 5, r);
-        });
-
-        Listen(PacketType.WorldAction, r => World.Perform(r.Byte(), new(r.Float(), r.Float())));
-
-        /*
-        Listen(PacketType.Vote, r => Votes.UpdateVote(r.Id(), r.Byte()));
-        */
     }
 
     public override void Update()
     {
-        Stats.MeasureTime(ref Stats.ReadMs, () => Manager.Receive());
-        Stats.MeasureTime(ref Stats.WriteMs, () =>
+        Stats.Measure(ref Stats.Read, () => Manager.Receive());
+        Stats.Measure(ref Stats.Write, () =>
         {
             if (Networking.Loading) return;
-            ents.ClientPool(pool = ++pool % 3, 3, e => Networking.Send(PacketType.Snapshot, e.BufferSize, w =>
-            {
-                w.Id(e.Id);
-                w.Enum(e.Type);
-                e.Write(w);
-            }));
-        });
-        Stats.MeasureTime(ref Stats.FlushMs, () =>
-        {
-            Manager.Connection.Flush();
-            Pointers.Free();
+            Networking.Entities.ClientPool(pool, Networking.Send);
         });
     }
 
@@ -122,19 +120,15 @@ public class Client : Endpoint, IConnectionManager
         Manager = null;
     }
 
-    public void Connect(SteamId id)
-    {
-        Manager = SteamNetworkingSockets.ConnectRelay<ConnectionManager>(id, 4242);
-        Manager.Interface = this;
-    }
+    public void Connect() => Manager = SteamNetworkingSockets.ConnectRelay(LobbyController.Lobby.Value.Owner.Id, 4242, this);
 
     #region manager
 
-    public void OnConnecting(ConnectionInfo info) => Log.Info("[CLIENT] Connecting...");
+    public void OnConnecting(ConnectionInfo info) => Log.Info("[CLIENT] Connecting to someone...");
 
-    public void OnConnected(ConnectionInfo info) => Log.Info("[CLIENT] Connected");
+    public void OnConnected(ConnectionInfo info) => Log.Info($"[CLIENT] Connected to {info.Identity.SteamId.AccountId}");
 
-    public void OnDisconnected(ConnectionInfo info) => Log.Info("[CLIENT] Disconnected");
+    public void OnDisconnected(ConnectionInfo info) => Log.Info($"[CLIENT] Disconnected due to {info.EndReason}");
 
     public void OnMessage(Ptr data, int size, long msg, long time, int channel) => Handle(Manager.Connection, 0u, data, size);
 

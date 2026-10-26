@@ -1,6 +1,5 @@
 namespace Jaket.Net.Types;
 
-using System.Collections;
 using UnityEngine;
 
 using Jaket.Assets;
@@ -9,77 +8,47 @@ using Jaket.Input;
 using Jaket.IO;
 using Jaket.UI;
 
+using static Jaket.UI.Lib.Pal;
+
 /// <summary>
-/// There is a single instance of this entity, representing the player on whose machine the game is running.
-/// The snapshot structure of this entity is identical to the remote player structure.
+/// Singleton entity of the player type.
+/// Responsible for the logical part of the player.
 /// </summary>
 public class LocalPlayer : Entity
 {
-    static NewMovement nm => NewMovement.Instance;
-    static FistControl fc => FistControl.Instance;
-    static GameObject cw => GunControl.Instance.currentWeapon;
-
-    /// <summary> Team required for versus mechanics. </summary>
+    /// <summary> Singleton instance used for populating style packets. </summary>
+    public Doll Doll = new();
+    /// <inheritdoc cref="Doll.Team"/>
     public Team Team;
-    /// <summary> Source playing the voice of the player. </summary>
-    public AudioSource Voice = Create<AudioSource>("Player");
+    /// <inheritdoc cref="RemotePlayer.Audio"/>
+    public AudioSource[] Audio = [ null ];
 
-    /// <summary> Grappling hook position, zero if the hook is not currently in use. </summary>
-    public Vector3 Hook;
-    /// <summary> Entity of the item the player is currently holding in their hands. </summary>
-    public Item Holding;
-
-    /// <summary> Identifier of the displayed weapon. </summary>
-    private byte weapon;
-    /// <summary> Whether the current level is 4-4. </summary>
-    private bool pyramid;
-
-    public LocalPlayer() : base(AccId = Tools.Tools.Id.AccountId, EntityType.Player)
-    {
-        Events.OnLoad += () =>
-        {
-            Plugin.Instance.StartCoroutine(SyncDelayed());
-            Recolor();
-        };
-        Events.OnHandChange += () =>
-        {
-            SyncSuit();
-            Recolor();
-        };
-        Events.OnTeamChange += () =>
-        {
-            var shine = nm.transform.Find("Point Light");
-            if (shine) shine.GetComponent<Light>().color = LobbyController.Offline ? Color.white : Team.Color();
-        };
-    }
+    public LocalPlayer() : base(AccId = Tools.Tools.Id.AccountId, EntityType.Player) { }
 
     #region snapshot
 
-    public override int BufferSize => 42;
+    public override int BufferSize => 40;
 
     public override void Write(Writer w)
     {
-        bool sliding = nm.sliding || (pyramid && nm.transform.position.y > 610f && nm.transform.position.y < 611f);
+        w.Vector(nmtr.position - nmtr.up * (nm.sliding ? .375f : 1.5f));
+        w.Vector(ha.forcingFistControl ? ha.hookPoint : Vector3.zero);
 
-        w.Vector(nm.transform.position - Vector3.up * (sliding ? .3f : 1.5f));
-        w.Vector(Hook);
-
-        w.Float(nm.transform.eulerAngles.y);
-        w.Float(135f - Mathf.Max(CameraController.Instance.rotationX, -45f));
+        w.Float(cc.rotationY);
+        w.Float(cc.rotationX);
 
         w.Byte((byte)nm.hp);
         w.Byte((byte)Mathf.Floor(WeaponCharges.Instance.raicharge * 2f));
 
-        w.Player(Team, weapon, Emotes.Current, Emotes.Rps, UI.Chat.Shown);
+        w.State(Emotes.Current, Emotes.Rps, UI.Chat.Shown, cc.gravityRotation.eulerAngles);
         w.Bools
         (
             nm.walking,
-            sliding,
+            nm.sliding,
             !nm.gc.onGround,
             nm.gc.heavyFall,
-            nm.boost && !sliding,
             nm.ridingRocket,
-            Hook != Vector3.zero,
+            ha.forcingFistControl,
             fc.shopping
         );
     }
@@ -89,9 +58,25 @@ public class LocalPlayer : Entity
     #endregion
     #region logic
 
-    public override void Create() { }
+    public override void Create() => Assign(Create<Agent>("Player"));
 
-    public override void Assign(Agent agent) { }
+    public override void Assign(Agent agent)
+    {
+        agent.Patron = this;
+        agent.Add(out Audio[0]);
+
+        Events.OnLoad += () =>
+        {
+            agent.Run(Restyle, 1f);
+            Recolor();
+        };
+        Events.OnHandChange += () =>
+        {
+            agent.Run(Restyle, 0f);
+            Recolor();
+        };
+        Events.OnTeamChange += () => nm.DefFind("Point Light").Get<Light>(l => l.color = LobbyController.Offline ? white : Team.Color());
+    }
 
     public override void Update(float delta) { }
 
@@ -99,9 +84,12 @@ public class LocalPlayer : Entity
     {
         int damage = Mathf.CeilToInt(r.Float() * 3f);
 
-        nm.GetHurt(damage, damage <= 3, ignoreInvincibility: damage >= 3);
+        Events.Post(() =>
+        {
+            nm.GetHurt(damage, damage <= 3, ignoreInvincibility: damage >= 3);
 
-        if (damage >= 4) nm.ForceAddAntiHP(damage * 2, true, true, true);
+            if (damage >= 4) nm.ForceAddAntiHP(damage * 2, true, true, true);
+        });
 
         if (Version.DEBUG) Log.Debug($"[ENTS] Received {damage} damage");
     }
@@ -111,53 +99,20 @@ public class LocalPlayer : Entity
     #endregion
     #region other
 
-    /// <summary> Synchronizes the suit in half a second after being called. </summary>
-    public IEnumerator SyncDelayed()
-    {
-        yield return new WaitForSeconds(1f);
-        SyncSuit();
-    }
+    /// <summary> Restyles corresponding remote models. </summary>
+    public void Restyle() => Networking.Send(PacketType.Style, 4 + Doll.BufferSize, w => { w.Id(Id); Doll.Write(w); });
 
-    /// <summary> Synchronizes the suit and custom weapon colors. </summary>
-    public void SyncSuit()
-    {
-        if (LobbyController.Offline) return;
-
-        Renderer renderer = null;
-        bool custom = (cw?.GetComponentInChildren<GunColorGetter>()?.TryGetComponent(out renderer) ?? false) && renderer.material.name.Contains("Custom");
-
-        Networking.Send(PacketType.Style, custom ? 25 : 13, w =>
-        {
-            w.Id(Id);
-            w.Int(Shop.SelectedHat);
-            w.Int(Shop.SelectedJacket);
-
-            w.Bool(custom);
-            if (custom) renderer.Properties(b =>
-            {
-                w.Color(b.GetColor("_CustomColor1"));
-                w.Color(b.GetColor("_CustomColor2"));
-                w.Color(b.GetColor("_CustomColor3"));
-            });
-        });
-    }
-
-    /// <summary> Recolors the hands seen in first person and caches some values. </summary>
+    /// <summary> Recolors various first person models. </summary>
     public void Recolor()
     {
-        var main = cw?.transform.GetChild(0).Find("RightArm");
-        if (main) main.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = ModAssets.HandTexture(0);
+        gc.currentWeapon?.DefChild(0)?.DefFind("RightArm")
+            ?.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = ModAssets.HandTexture(0);
 
-        var feed = fc?.transform.Find("Arm Blue(Clone)");
-        if (feed) feed.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = ModAssets.HandTexture(1);
+        fc.DefFind("Arm Blue(Clone)")
+            ?.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = ModAssets.HandTexture(1);
 
-        var knkl = fc?.transform.Find("Arm Red(Clone)");
-        if (knkl) knkl.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = ModAssets.HandTexture(2);
-
-        var type = Entities.Weapons.Type(cw);
-
-        weapon = type == EntityType.None ? (byte)0xFF : type - EntityType.RevolverBlue;
-        pyramid = Scene == "Level 4-4";
+        fc.DefFind("Arm Red(Clone)")
+            ?.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = ModAssets.HandTexture(2);
     }
 
     #endregion

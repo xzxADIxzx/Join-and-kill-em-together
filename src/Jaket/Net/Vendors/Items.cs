@@ -11,50 +11,26 @@ using static Entities;
 /// <summary> Vendor responsible for items. </summary>
 public class Items : Vendor
 {
-    /// <summary> Template used for fishes. </summary>
-    public GameObject FishTemplate;
-
-    public void Load()
+    public override void Load()
     {
-        EntityType counter = EntityType.SkullBlue;
-        GameAssets.Items.Each(w =>
-        {
-            byte index = (byte)counter++;
-            GameAssets.Prefab(w, p => Vendor.Prefabs[index] = p);
-        });
+        Fill(EntityType.SkullBlue, EntityType.V1, GameAssets.Items);
 
-        GameAssets.Prefab("Fishing/Fish Pickup Template.prefab", p => FishTemplate = p);
+        Events.Post(() => ModAssets.Moon,      () => Prefabs[(byte)EntityType.Moon      ] = ModAssets.Moon     );
+        Events.Post(() => ModAssets.Can,       () => Prefabs[(byte)EntityType.SnackCan  ] = ModAssets.Can      );
+        Events.Post(() => ModAssets.Chips,     () => Prefabs[(byte)EntityType.SnackChips] = ModAssets.Chips    );
+        Events.Post(() => ModAssets.Bar,       () => Prefabs[(byte)EntityType.SnackBar  ] = ModAssets.Bar      );
+        Events.Post(() => ModAssets.Soda,      () => Prefabs[(byte)EntityType.SnackSoda ] = ModAssets.Soda     );
+        Events.Post(() => ModAssets.V2,        () => Prefabs[(byte)EntityType.V2        ] = ModAssets.V2       );
+        Events.Post(() => ModAssets.V3,        () => Prefabs[(byte)EntityType.V3        ] = ModAssets.V3       );
+        Events.Post(() => ModAssets.xzxADIxzx, () => Prefabs[(byte)EntityType.xzxADIxzx ] = ModAssets.xzxADIxzx);
+        Events.Post(() => ModAssets.Sowler,    () => Prefabs[(byte)EntityType.Sowler    ] = ModAssets.Sowler   );
 
-        GameAssets.Prefab("Levels/Hakita.prefab", p =>
-        {
-            Events.Post(() => Vendor.Prefabs[(byte)EntityType.Moon] != null, () => Events.Post(() => // damn Unity crashes w/o the second post
-            {
-                ref GameObject prefab = ref Vendor.Prefabs[(byte)EntityType.Moon];
+        Fill<CommonItem     >(EntityType.SkullBlue,       EntityType.BaitFace       );
+        Fill<Fish           >(EntityType.FishFunny,       EntityType.FishBurnt      );
+        Fill<CommonItem     >(EntityType.SnackCan,        EntityType.SnackSoda      );
+        Fill<Plushie        >(EntityType.Hakita,          EntityType.Sowler         );
 
-                Keep(prefab = Make(EntityType.Moon));
-                Dest(prefab.transform.Find("Fire").gameObject);
-                Dest(prefab.transform.Find("Light").gameObject);
-                Dest(prefab.GetComponent<Torch>());
-
-                prefab.name = "Moon";
-                prefab.GetComponent<ItemIdentifier>().itemType = ItemType.CustomKey1;
-                Inst(p, prefab.transform).transform.localScale = Vector3.one * .1f;
-                Dest(prefab.transform.Find("Hakita(Clone)/Trigger").gameObject);
-
-                prefab.transform.position = Vector3.down * 4242f;
-            }));
-        });
-
-        Events.Post(() => ModAssets.V2,        () => Vendor.Prefabs[(byte)EntityType.V2       ] = ModAssets.V2       );
-        Events.Post(() => ModAssets.V3,        () => Vendor.Prefabs[(byte)EntityType.V3       ] = ModAssets.V3       );
-        Events.Post(() => ModAssets.xzxADIxzx, () => Vendor.Prefabs[(byte)EntityType.xzxADIxzx] = ModAssets.xzxADIxzx);
-        Events.Post(() => ModAssets.Sowler,    () => Vendor.Prefabs[(byte)EntityType.Sowler   ] = ModAssets.Sowler   );
-
-        for (EntityType i = EntityType.SkullBlue; i <= EntityType.BaitFace;  i++) Vendor.Suppliers[(byte)i] = (id, type) => new CommonItem(id, type);
-        for (EntityType i = EntityType.FishFunny; i <= EntityType.FishBurnt; i++) Vendor.Suppliers[(byte)i] = (id, type) => new Fish      (id, type);
-        for (EntityType i = EntityType.Hakita;    i <= EntityType.Sowler;    i++) Vendor.Suppliers[(byte)i] = (id, type) => new Plushie   (id, type);
-
-        void SyncAll()
+        Events.OnLoad += () => Events.Post(() => Events.Post(() =>
         {
             if (LobbyController.Offline) return;
 
@@ -64,41 +40,43 @@ public class Items : Vendor
                 z.transform.parent = null;
                 z.CheckItem();
 
-                z.arenaStatuses.Each(s => s.currentStatus = 0);
+                z.arenaStatuses       .Each(s => s.currentStatus = 0);
                 z.reverseArenaStatuses.Each(s => s.currentStatus = 0);
             });
-        }
-        Events.OnLoad += () => Events.Post(SyncAll);
-        Events.OnLobbyEnter += () => Events.Post(SyncAll);
+        }));
     }
 
-    public EntityType Type(GameObject obj)
+    public override EntityType Type(GameObject obj)
     {
-        if (obj?.name.Contains("DevPlushie") ?? false)
-        {
-            if (obj.name == "DevPlushie (1)") return EntityType.Lenval;
-            if (obj.name.Contains("(Clone)")) obj.name = obj.name[..^7];
+        if (obj && obj.HasIdentifier(out var id)) return id.Type.IsItem() ? id.Type : EntityType.None;
 
-            return Vendor.Find
-            (
-                EntityType.Hakita,
-                EntityType.Sowler,
-                p => p.name == obj.name
-            );
-        }
-        if (obj?.TryGetComponent(out FishObjectReference fish) ?? false) return Vendor.Find
+        if (Version.DEBUG) Log.Debug($"[ENTS] Missing an identifier of {(obj ? obj.name : "null")}");
+
+        if (obj && obj.name.Contains("DevPlushie")) return Find
+        (
+            EntityType.Hakita,
+            EntityType.Sowler,
+            p => p.name == obj.name || p.name == obj.name[..^7]
+        );
+        if (obj && obj.name.Contains("VendingMachine")) return Find
+        (
+            EntityType.SnackCan,
+            EntityType.SnackSoda,
+            p => p.ObjChild(0).activeSelf == obj.ObjChild(0).activeSelf && p.ObjChild(1).activeSelf == obj.ObjChild(1).activeSelf && p.ObjChild(2).activeSelf == obj.ObjChild(2).activeSelf
+        );
+        if (obj && obj.TryGetComponent(out FishObjectReference fish)) return Find
         (
             EntityType.FishFunny,
             EntityType.FishBurnt,
             p => p == fish.fishObject.worldObject
         );
-        return (obj?.transform.childCount > 0 ? obj.transform.GetChild(obj.transform.childCount - 1).name : null) switch
+        return (obj && obj.transform.childCount > 0 ? obj.DefChild(obj.transform.childCount - 1).name : null) switch
         {
             "Arch"                 => EntityType.Moon,
             "Florp"                => EntityType.Florp,
             "Apple Bait (1)"       => EntityType.BaitApple,
             "Maurice Prop"         => EntityType.BaitFace,
-            _                      => obj?.GetComponent<ItemIdentifier>().itemType switch
+            _                      => (obj && obj.TryGetComponent(out ItemIdentifier itemId) ? itemId.itemType : ItemType.None) switch
             {
                 ItemType.SkullBlue => EntityType.SkullBlue,
                 ItemType.SkullRed  => EntityType.SkullRed,
@@ -109,28 +87,30 @@ public class Items : Vendor
         };
     }
 
-    public GameObject Make(EntityType type, Vector3 position = default, Transform parent = null)
+    public override GameObject Make(EntityType type, Vector3 position = default, Transform parent = null)
     {
         if (!type.IsItem()) return null;
 
-        var obj = Inst(Vendor.Prefabs[(byte)type], position);
+        var obj = Inst(Prefabs[(byte)type], position);
 
         if (type.IsFish())
         {
-            obj.transform.parent = Component<FishObjectReference>(Inst(FishTemplate, position), f =>
+            obj.transform.parent = Inst(ModAssets.Template, position).Add<FishObjectReference>(f =>
             {
-                f.fishObject = ResFind<FishObject>().Find(o => o.worldObject == Vendor.Prefabs[(byte)type]);
-            }).transform;
-            obj.transform.localRotation = obj.transform.Find("../Dummy Object").localRotation; // it is some kind of template
+                f.fishObject = ResFind<FishObject>().Find(o => o.worldObject == Prefabs[(byte)type]);
+            }
+            ).transform;
+            obj.transform.localRotation = obj.DefFind("../Dummy Object").localRotation; // it is some sort of template
+            obj = obj.transform.parent.gameObject;
         }
 
-        return type.IsFish() ? obj.transform.parent.gameObject : obj;
+        return obj;
     }
 
-    public void Sync(GameObject obj, params bool[] args)
+    public override void Sync(GameObject obj, params bool[] args)
     {
         var type = Type(obj);
-        if (type == EntityType.None || obj.GetComponent<Entity.Agent>()) return;
+        if (type == EntityType.None || obj.HasAgent()) return;
 
         if (obj.activeSelf && obj.TryGetComponent(out ItemIdentifier itemId) && !itemId.infiniteSource)
         {
@@ -142,7 +122,7 @@ public class Items : Vendor
                 var entity = Supply(type);
 
                 entity.Owner = AccId;
-                entity.Assign(obj.AddComponent<Entity.Agent>());
+                entity.Assign(obj.Add<Entity.Agent>(_ => { }));
                 entity.Push();
             }
             else Imdt(obj);

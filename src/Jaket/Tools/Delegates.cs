@@ -9,6 +9,9 @@ public delegate void Cons<T>(T t);
 /// <summary> Performs an action with two arguments. </summary>
 public delegate void Cons<T, K>(T t, K k);
 
+/// <summary> Performs an action with multiple bits. </summary>
+public delegate void Bits(params bool[] bits);
+
 /// <summary> Predicate that expends one value. </summary>
 public delegate bool Pred<T>(T t);
 

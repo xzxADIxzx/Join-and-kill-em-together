@@ -3,8 +3,6 @@ namespace Jaket.UI.Fragments;
 using UnityEngine;
 using UnityEngine.UI;
 
-using ImageType = UnityEngine.UI.Image.Type;
-
 using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Harmony;
@@ -19,9 +17,6 @@ using static Jaket.UI.Lib.Pal;
 /// <summary> Fragment that is displayed when the player is dead. </summary>
 public class Spectator : Fragment
 {
-    static NewMovement nm => NewMovement.Instance;
-    static CameraController cc => CameraController.Instance;
-
     /// <summary> Whether the current scene has a special behavior. </summary>
     public static bool Special => Scene == "Endless" || Scene == "Level 0-S";
 
@@ -39,27 +34,27 @@ public class Spectator : Fragment
 
     public Spectator(Transform root) : base(root, "Spectator", false)
     {
-        Events.EveryHalf += () => Shader.SetGlobalFloat
+        Events.EveryHalf += () => Events.Post(() => Shader.SetGlobalFloat
         (
             "_Deathness",
             Random.value / (3f + Random.value)
-        );
-        Events.EveryHalf += () => Shader.SetGlobalFloat("_RandomNoiseStrength", .1f);
+        ));
+        Events.EveryHalf += () => Events.Post(() => Shader.SetGlobalFloat("_RandomNoiseStrength", .1f));
 
         info = Builder.Text(Fill("Info"), "hi", 24, white, TextAnchor.UpperLeft);
-        dead = Builder.Image(Fill("Eye"), Tex.Dead, white, ImageType.Simple);
+        dead = Builder.Image(Fill("Eye"), Tex.Dead, white);
 
         info.rectTransform.sizeDelta = Vector2.one * -128f;
 
-        dead.Component<HudOpenEffect>(e =>
+        dead.Add<HudOpenEffect>(e =>
         {
             e.reverse = true;
             e.YFirst = true;
         });
         GameAssets.Sound("UI/TV Off.wav", c =>
         {
-            info.Component<AudioSource>(a => a.clip = c);
-            dead.Component<AudioSource>(a => a.clip = c);
+            info.Add<AudioSource>(a => a.clip = c);
+            dead.Add<AudioSource>(a => a.clip = c);
         });
     }
 
@@ -92,9 +87,7 @@ public class Spectator : Fragment
     public void UpdateCamera(bool ends)
     {
         var camera = cc.cam.transform;
-        var player = nm.dead && Networking.Entities.TryGetValue(LobbyController.MemberId(targetPlayer), out var e) && e is RemotePlayer rp
-            ? rp.Position
-            : nm.transform.position + Vector3.up;
+        var player = nm.dead && Networking.Entities[LobbyController.Lobby?.Members.At(targetPlayer).AccId ?? 0u] is RemotePlayer p ? p.DrawCntr : nmtr.position + nmtr.up;
 
         position = Vector3.MoveTowards(position, Vector3.up * (ends ? .1f : 6f), Time.deltaTime * 12f);
 
@@ -113,7 +106,7 @@ public class Spectator : Fragment
         {
             Shown = false;
             Toggle();
-            Events.Post(StatsManager.Instance.Restart);
+            Events.Post(sm.Restart);
         }
 
         rotation += InputManager.Instance.InputSource.Look.ReadValue<Vector2>() * 2f;

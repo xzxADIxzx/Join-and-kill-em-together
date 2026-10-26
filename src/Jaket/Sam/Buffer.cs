@@ -33,7 +33,7 @@ public class Buffer
     }
 
     /// <summary> Writes the given value 5 times. </summary>
-    public void Write(int index, int v) => WriteArray(index, new[] { v, v, v, v, v });
+    public void Write(int index, int v) => WriteArray(index, [ v, v, v, v, v ]);
 
     /// <summary> Returns data from the buffer as an array of floats with values from -1 to 1. </summary>
     public float[] GetFloats()

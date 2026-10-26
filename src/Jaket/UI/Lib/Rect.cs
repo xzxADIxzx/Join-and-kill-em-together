@@ -2,14 +2,9 @@ namespace Jaket.UI.Lib;
 
 using UnityEngine;
 
-/// <summary> Structure that represets the position, size and alignment of an interface element. </summary>
+/// <summary> Structure that represets the position, size, and alignment of an interface element. </summary>
 public struct Rect
 {
-    /// <summary> Rectangle that fills its parent. </summary>
-    public static readonly Rect Fill = new(0f, 0f, 0f, 0f, Vector2.zero, Vector2.one);
-    /// <summary> Rectangle used for high quality text. </summary>
-    public static readonly Rect Huge = new(0f, 0f, 4242f, 4242f);
-
     /// <summary> Position of the element relative to the anchor and its constant size in pixels. </summary>
     public float X, Y, Width, Height;
     /// <summary> Position of the anchor. </summary>
@@ -23,7 +18,9 @@ public struct Rect
 
     public Rect(float width, float height) : this(0f, 0f, width, height) { }
 
-    /// <summary> Applies the position, size and alignment of the rect to the given transform. </summary>
+    public Rect() : this(0f, 0f, 0f, 0f, new(0f, 0f), new(1f, 1f)) { }
+
+    /// <summary> Applies position, size, and alignment. </summary>
     public readonly void Apply(RectTransform rect)
     {
         rect.anchorMin = Min;

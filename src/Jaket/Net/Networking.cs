@@ -16,13 +16,15 @@ using Jaket.UI;
 using Jaket.UI.Dialogs;
 using Jaket.World;
 
+using static Jaket.UI.Lib.Pal;
+
 /// <summary> Class responsible for updating endpoints, transmitting packets and managing entities. </summary>
 public static class Networking
 {
-    /// <summary> Number of snapshots to be sent per second. </summary>
-    public const int TICKS_PER_SECOND = 20;
-    /// <summary> Number of subticks in a tick, i.e. each tick is divided into equal gaps in which snapshots of equal number of entities are sent. </summary>
-    public const int SUBTICKS_PER_TICK = 3;
+    /// <summary> Number of ticks per second. </summary>
+    public const int TICKS_PER_SECOND = 30;
+    /// <summary> Number of subticks per tick. </summary>
+    public const int SUBTICKS_PER_TICK = 4;
 
     /// <summary> Server endpoint, updated by the owner of the lobby. </summary>
     public static Server Server = new();
@@ -36,8 +38,6 @@ public static class Networking
 
     /// <summary> Whether any scene is loading at the moment. </summary>
     public static bool Loading;
-    /// <summary> Whether multiplayer was used in the current level. </summary>
-    public static bool WasMultiplayerUsed;
 
     /// <summary> Returns the list of all entities. </summary>
     public static Entity[] Dump
@@ -56,8 +56,8 @@ public static class Networking
     {
         get
         {
-            if (Server.Manager != null) foreach (var con in Server.Manager.Connected) yield return con;
-            if (Client.Manager != null) yield return Client.Manager.Connection;
+            if (Server.Ready) foreach (var con in Server.Manager.Connected) yield return con;
+            if (Client.Ready) yield return Client.Manager.Connection;
         }
     }
 
@@ -66,23 +66,25 @@ public static class Networking
     /// <summary> Subscribes to several events for proper work. </summary>
     public static void Load()
     {
+        SteamNetworkingUtils.SendBufferSize = 8 * 1024 * 1024;
+        SteamNetworkingUtils.SendRateMax = 8 * 1024 * 1024;
+        SteamNetworkingUtils.NagleTime = 1024;
+
         Server.Create();
         Client.Create();
 
         Events.EveryTick += Update;
         Events.EveryHalf += Optimize;
 
-        Events.OnLoad        += () => WasMultiplayerUsed  = LobbyController.Online;
-        Events.OnLobbyAction += () => WasMultiplayerUsed |= LobbyController.Online;
-
         Events.OnLoadingStart += () =>
         {
             if (LobbyController.Online) SceneHelper.SetLoadingSubtext(Random.value < .042f ? "I love you" : "/// MULTIPLAYER VIA JAKET ///");
             Loading = true;
         };
+
         Events.OnLoad += () =>
         {
-            Clear(true);
+            Entities.Each(e => e != LocalPlayer, e => { if (e is RemotePlayer) e.Update(default); else e.Hidden = true; });
             Loading = false;
         };
 
@@ -93,10 +95,12 @@ public static class Networking
             if (LobbyController.IsOwner)
                 Server.Open();
             else
-                Client.Connect(LobbyController.Lobby.Value.Owner.Id);
+                Client.Connect();
+
+            Entities.Clear();
+            LocalPlayer.Push();
 
             Loading = !LobbyController.IsOwner;
-            Clear();
         };
 
         Events.OnMemberJoin += member =>
@@ -129,8 +133,6 @@ public static class Networking
             {
                 Bundle.Msg("player.died", name);
 
-                StyleHUD.Instance.AddPoints(Mathf.RoundToInt(420f * StyleCalculator.Instance.airTime), Bundle.Parse("[green]FRATRICIDE"));
-
                 Gameflow.OnDeath(member);
 
                 if (LobbyConfig.HealBosses) Entities.Alive<Enemy>(e => e.Boss, e => e.Heal());
@@ -151,92 +153,85 @@ public static class Networking
             else if (msg.StartsWith("#/t"))
             {
                 if (member.IsMe)
-                    SamAPI.TryPlay(msg = msg[3..], LocalPlayer.Voice);
+                    SamAPI.TryPlay(msg = msg[3..], LocalPlayer.Audio[0]);
 
-                else if (Entities.TryGetValue(member.AccId, out var e) && e is RemotePlayer p)
-                    SamAPI.TryPlay(msg = msg[3..], p.Voice);
+                else if (Entities[member.AccId] is RemotePlayer p)
+                    SamAPI.TryPlay(msg = msg[3..], p.Audio[0]);
 
-                UI.Chat.Receive(msg, GetColor(member), name, Chat.TTS_TAG);
+                UI.Chat.Receive(msg, Int2Hex(member.Team.Color()), name, Chat.TTS_TAG);
             }
             else
-                UI.Chat.Receive(msg, GetColor(member), name);
+                UI.Chat.Receive(msg, Int2Hex(member.Team.Color()), name);
         };
     }
 
-    /// <summary> Updates network logic, i.e. receives incoming data and flushes outcoming one. </summary>
-    public static void Update()
+    /// <summary> Updates network statistics and endpoints. </summary>
+    private static void Update()
     {
+        Stats.Reset();
+
         if (LobbyController.Offline) return;
         if (LobbyController.IsOwner)
-            Server.Update();
+        {
+            if (Server.Ready) Server.Update();
+        }
         else
-            Client.Update();
+        {
+            if (Client.Ready) Client.Update();
+        }
     }
 
-    /// <summary> Optimizes the pools by removing hidden entities, making the hashmap lighter. </summary>
-    public static void Optimize()
+    /// <summary> Optimizes the pools by removing entities. </summary>
+    private static void Optimize()
     {
         if (LobbyController.Online) Entities.Each(e => Time.time - e.LastHidden >= 2f, e => Entities.Remove(e.Id));
     }
 
-    /// <summary> Clears the pools, but pushes the local player back, as it must always be in. </summary>
-    public static void Clear(bool leave = false)
-    {
-        if (leave) Entities.Each(e => e != LocalPlayer, e =>
-        {
-            if (e is RemotePlayer)
-                e.LastHidden = 0f;
-            else
-                e.Hidden = true;
-        });
-        else
-        {
-            Entities.Player(p => p.Killed(default, -1));
-            Entities.Clear();
-        }
-        LocalPlayer.Push();
-    }
-
-    /// <summary> Closes all of the connections and clears the pools. </summary>
-    public static void Close()
-    {
-        Clear();
-        Server.Close();
-        Client.Close();
-    }
-
     #endregion
-    #region tools
+    #region packets
 
-    /// <summary> Sends the packet to the given connection and updates statistics. </summary>
+    /// <summary> Sends the given packet. </summary>
     public static void Send(Connection con, Ptr data, int size)
     {
-        con.SendMessage(data, size);
-        Stats.SentBs += size;
+        var result = con.SendMessage(data, size);
+        if (result == Result.OK)
+            Stats.Add(size);
+        else
+            Log.Error($"[NETW] Couldn't send a packet, the result is {result}");
     }
 
-    /// <summary> Reserves memory for a packet, writes the data there, and then redirects it. </summary>
-    public static void Send(PacketType type, int bytesCount = 0, Cons<Writer> data = null, Cons<Ptr, int> packet = null)
+    /// <summary> Makes & sends a packet. </summary>
+    public static void Send(PacketType type, int bytesCount, Cons<Writer> data, Cons<Ptr, int> cons = null)
     {
-        Writer w = new(Pointers.Reserve(bytesCount = data == null ? 1 : bytesCount + 1));
+        if (bytesCount >= Pointers.RESERVED)
+        {
+            Log.Error($"[NETW] Couldn't send a packet, the size is {bytesCount}");
+            return;
+        }
 
-        w.Enum(type);
-        data?.Invoke(w);
+        Writer w = new(Pointers.Allocated);
 
-        packet ??= Redirect;
-        packet(w.Memory, bytesCount);
+        w.Packet(type);
+        data(w);
+
+        (cons ?? Redirect)(w.Memory, 1 + bytesCount);
     }
 
-    /// <summary> Forwards the packet to either all of the clients or host. </summary>
+    /// <summary> Sends the given entity. </summary>
+    public static void Send(Entity entity)
+    {
+        Writer w = new(Pointers.Allocated);
+
+        w.Packet(PacketType.Snapshot);
+        w.Id(entity.Id);
+        w.Entity(entity.Type);
+        entity.Write(w);
+
+        Redirect(w.Memory, 6 + entity.BufferSize);
+    }
+
+    /// <summary> Forwards the given packet to either all of the clients or the server. </summary>
     public static void Redirect(Ptr data, int size) => Connections.Each(c => Send(c, data, size));
-
-    /// <summary> Returns the team of the given member. </summary>
-    public static Team GetTeam(Friend member) => member.IsMe
-        ? LocalPlayer.Team
-        : Entities.TryGetValue(member.AccId, out var entity) && entity != null && entity is RemotePlayer player ? player.Team : Team.Yellow;
-
-    /// <summary> Returns the color of the given member's team. </summary>
-    public static string GetColor(Friend member) => ColorUtility.ToHtmlStringRGBA(GetTeam(member).Color());
 
     #endregion
 }

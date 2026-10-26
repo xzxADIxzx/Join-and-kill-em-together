@@ -4,8 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
 
-using ImageType = UnityEngine.UI.Image.Type;
-
 using Jaket.Assets;
 using Jaket.Input;
 using Jaket.UI.Lib;
@@ -15,9 +13,6 @@ using static Jaket.UI.Lib.Pal;
 /// <summary> Fragment that is displayed when the player is riding a skateboard. </summary>
 public class Skateboard : Fragment
 {
-    static NewMovement nm => NewMovement.Instance;
-    static ColorBlindSettings cb => ColorBlindSettings.Instance;
-
     /// <summary> Bars that display the current stamina level. </summary>
     private UICircle[] bars = new UICircle[3];
     /// <summary> Text with speedometer and info about dashes. </summary>
@@ -43,15 +38,15 @@ public class Skateboard : Fragment
         for (int i = 0; i < 3; i++)
             bars[i] = Builder.Circle(Rect("StaminaBar", new(512f, 512f)), .1f, -56 + 38 * i, 8f, color: clear);
 
-        var backgrd = Builder.Image(Rect("Speedometer", new(-512f, -128f, 290f, 74f)), Tex.Back, semi, ImageType.Sliced);
-        speedometer = Builder.Text(Builder.Rect("Text", backgrd.transform, Lib.Rect.Fill), "", 24, white, TextAnchor.MiddleLeft);
+        var backgrd = Builder.Image(Rect("Speedometer", new(-512f, -128f, 290f, 74f)), Tex.Back, semi);
+        speedometer = Builder.Text(Builder.Rect("Text", backgrd.transform, new()), "", 24, white, TextAnchor.MiddleLeft);
 
-        gradient.SetKeys(new GradientColorKey[]
-        {
+        gradient.SetKeys(
+        [
             new(green,  20f / 80f),
             new(orange, 50f / 80f),
             new(red,    80f / 80f),
-        }, new GradientAlphaKey[0]);
+        ], []);
     }
 
     public override void Toggle()
@@ -70,7 +65,7 @@ public class Skateboard : Fragment
             bars[i].ProgressColor = boost < 100f ? cb.staminaEmptyColor : boost < 100f * (i + 1) ? cb.staminaChargingColor : cb.staminaColor;
             bars[i].SetProgress((boost - 100f * i) / 100f);
         }
-        speedometer.text = Bundle.Format("skateboard", ((int)speed).ToString(), ColorUtility.ToHtmlStringRGB(gradient.Evaluate(speed / 80f)));
+        speedometer.text = Bundle.Format("skateboard", ((int)speed).ToString(), Int2Hex(gradient.Evaluate(speed / 80f)));
 
         speed = Mathf.MoveTowards(speed, 20f, (decelerates ? 28f : 14f) * Time.deltaTime);
         boost = Mathf.MoveTowards(boost, 300f, 70f * Time.deltaTime);
@@ -78,7 +73,7 @@ public class Skateboard : Fragment
         if (speed >= 80f && !decelerates)
         {
             decelerates = true;
-            particles = Inst(nm.fallParticle, nm.transform);
+            particles = Inst(nm.fallParticle, nmtr);
         }
         if (speed <= 40f && decelerates)
         {
@@ -86,16 +81,15 @@ public class Skateboard : Fragment
             Dest(particles);
         }
 
-        var player = nm.transform;
-        nm.rb.velocity = (player.forward * speed) with { y = nm.rb.velocity.y };
+        nm.rb.velocity = (nmtr.forward * speed) with { y = nm.rb.velocity.y };
 
         // prevent the front and rear wheels from falling underground
-        void Check(Vector3 pos)
+        static void Check(Vector3 pos)
         {
-            if (Physics.Raycast(pos, Vector3.down, out var hit, 1.5f, EnvMask) && hit.distance > .8f) player.position = player.position with { y = hit.point.y + 1.5f };
+            if (Physics.Raycast(pos, Vector3.down, out var hit, 1.5f, EnvMask) && hit.distance > .8f) nmtr.position = nmtr.position with { y = hit.point.y + 1.5f };
         }
-        Check(player.position + player.forward * 1.2f);
-        Check(player.position - player.forward * 1.2f);
+        Check(nmtr.position + nmtr.forward * 1.2f);
+        Check(nmtr.position - nmtr.forward * 1.2f);
     }
 
     public void UpdateInput()
@@ -110,12 +104,12 @@ public class Skateboard : Fragment
                 // major assists make it possible to dash endlessly, that's why boost charge must be clamped
                 if (boost < 0f) boost = 0f;
 
-                Inst(nm.dodgeParticle, nm.transform.position, nm.transform.rotation);
-                AudioSource.PlayClipAtPoint(nm.dodgeSound, nm.transform.position);
+                Inst(nm.dodgeParticle, nmtr.position, nmtr.rotation);
+                AudioSource.PlayClipAtPoint(nm.dodgeSound, nmtr.position);
             }
             else Inst(nm.staminaFailSound);
         }
-        nm.transform.Rotate(Vector3.up * InputManager.Instance.InputSource.Move.ReadValue<Vector2>().x * 120f * Time.deltaTime);
+        nmtr.Rotate(Vector3.up * InputManager.Instance.InputSource.Move.ReadValue<Vector2>().x * 120f * Time.deltaTime);
     }
 
     #endregion

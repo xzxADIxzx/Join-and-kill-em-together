@@ -29,7 +29,7 @@ public static class ActionList
         if (i < all.Length)
             (all[i] = action).Identifier = i;
         else
-            Log.Warning($"[WRLD] Out of identifiers for actions");
+            Log.Error($"[WRLD] Out of identifiers for actions");
     }
 
     /// <summary> Iterates each action in the global list that is suitable for the current scene and predicate. </summary>
@@ -49,86 +49,74 @@ public static class ActionList
         #region 0-1
         l = "Level 0-1";
 
-        ActionType.Window(l);
-
-        ActionType.Find(l, "3 - Gun Room/TitleActivator", t => t.Component<ObjectActivator>(o =>
+        ActionType.Fact(l, "3 - Gun Room/TitleActivator@10", true, o =>
         {
             var prev = o.events.toDisActivateObjects;
-            var next = o.events.toDisActivateObjects = [prev[0]];
+            var next = o.events.toDisActivateObjects = [ prev.Find(o => o.name == "Spot Light") ];
 
             o.events.onActivate.AddListener(() =>
             {
-                var blck = prev.Find(o => o.name == "Blockers").transform;
+                var blck = prev.Find(o => o.name == "Blockers");
 
-                blck.GetChild(0).GetComponentsInChildren<Renderer>().Each(Dest);
-                blck.GetChild(1).gameObject.SetActive(false);
-                blck.GetChild(2).gameObject.SetActive(false);
+                blck.ObjChild(0).GetComponentsInChildren<Renderer>().Each(Dest);
+                blck.ObjChild(1).SetActive(false);
+                blck.ObjChild(2).SetActive(false);
             });
             o.events.toActivateObjects.Each(o => o.name == "Cube", o => o.GetComponents<Collider>().Each(Dest));
-        }, true));
+        });
 
-        ActionType.Find(l, "AltStartFiller/AltStart", t => t.Component<ObjectActivator>(o =>
+        ActionType.Fact(l, "AltStartFiller/AltStart@00", true, o =>
         {
             var prev = o.events.toDisActivateObjects;
-            var next = o.events.toDisActivateObjects = [prev[0], prev[^1]];
+            var next = o.events.toDisActivateObjects = [ prev[0], prev[^1] ];
 
             o.events.onActivate.AddListener(() =>
             {
                 prev[4].GetComponentsInChildren<Renderer>().Each(Dest);
-                prev[5].gameObject.SetActive(false);
-                prev[8].gameObject.SetActive(false);
+                prev[5].SetActive(false);
+                prev[8].SetActive(false);
             });
-        }, true));
+        });
 
-        ActionType.Find(l, "13 - Malicious Face Arena/13 Nonstuff", t => Dest(t.GetChild(0))); // unloader
+        ActionType.Dest(l, "13 Nonstuff/Cube (2)@00"); // unloader
 
-        ActionType.Act(l, "13 Content/Trigger"); // boss
+        ActionType.Act(l, "13 Content/Trigger@00"); // boss
 
         #endregion
         #region 0-2
         l = "Level 0-2";
 
-        ActionType.Window(l);
+        ActionType.Dest(l, "3 Nonstuff/Swordsmachine Trigger@09");
+        ActionType.Dest(l, "3B Enemies/Activator@00");
+        ActionType.Dest(l, "4 - Swordsmachine Hallway/Invisible Wall@31");
 
-        ActionType.Dest(l, "3 Nonstuff/Swordsmachine Trigger");
-        ActionType.Dest(l, "4 - Swordsmachine Hallway/Invisible Wall");
+        ActionType.Fact(l, "Enemies/Wave 2 Trigger@02", false, Dest);
+        ActionType.Find(l, "Door (Large) With Controllers (3)/Door (Large)@00", t => t.Get<Door>(d => d.Lock()));
+        ActionType.Dest(l, "7 Nonstuff/Invisible Wall@11");
+        ActionType.Act(l, "7 Contents/PlayerDoorUnlocker@10");
 
-        ActionType.Dest(l, "3B Enemies/Activator");
+        ActionType.Dest(l, "5B Nonstuff/Altar@15"); // duplicate
+        ActionType.Fact(l, "8 Contents/Trigger@00", false, Dest);
+        ActionType.Act(l, "10B Contents/Trigger@00"); // boss
 
-        ActionType.Find(l, "Enemies/Wave 2 Trigger", t => t.GetComponents<ObjectActivator>().Each(Dest));
-        ActionType.Find(l, "Door (Large) With Controllers (3)/Door (Large)", t => t.GetComponent<Door>().Lock());
-        ActionType.Dest(l, "7 Nonstuff/Invisible Wall");
-        ActionType.Act(l, "7 Contents/PlayerDoorUnlocker");
-
-        ActionType.Dest(l, "5B Nonstuff/Altar"); // duplicate
-
-        ActionType.Find(l, "8 Contents/Trigger", t => t.GetComponents<ObjectActivator>().Each(Dest));
-
-        ActionType.Act(l, "10B Contents/Trigger"); // boss
-
-        ActionType.Find(l, "7B - Bonus Platforming/Cube (48)", t => t.localPosition += Vector3.right * 6f);
-        ActionType.Find(l, "7B - Bonus Platforming/Grinders", t => t.localPosition += Vector3.right * .1f);
+        ActionType.Find(l, "7B - Bonus Platforming/Cube (48)@24", t => t.localPosition += Vector3.right * 6f);
+        ActionType.Find(l, "7B - Bonus Platforming/Grinders@03", t => t.localPosition += Vector3.right * .2f);
 
         #endregion
         #region 0-3
         l = "Level 0-3";
 
-        ActionType.Window(l);
+        ActionType.Scr(l, "1 Content/Trigger@02");
+        ActionType.Scr(l, "10 Contents/Trigger@03");
 
-        ActionType.Scr(l, "1 Content/Trigger");
-        ActionType.Scr(l, "10 Contents/Trigger");
+        ActionType.Dest(l, "Boss Arena Contents/NeoBreakable@03");
+        ActionType.Act(l, "Boss Arena Contents/Cube (1)@01"); // boss
 
-        ActionType.Turn(l, "Boss Arena Contents/CeilingDoors");
-        ActionType.Dest(l, "Boss Arena Contents/NeoBreakable");
-        ActionType.Act(l, "Boss Arena Contents/Cube (1)"); // boss
-
-        ActionType.Find(l, "11 Contents/Trigger", t => Dest(t.GetComponent<ObjectActivator>())); // unloader
+        ActionType.Fact(l, "11 Contents/Trigger@01", false, Dest); // unloader
 
         #endregion
         #region 0-4
         l = "Level 0-4";
-
-        ActionType.Window(l);
 
         static void Chamber(Transform t, int i)
         {
@@ -138,78 +126,95 @@ public static class ActionList
                 o => o.delay == 2.5f,
                 o => o.events.onActivate.AddListener(() => Events.Post(() =>
                 {
-                    World.Reset(o.Path());
+                    World.Reset(o.Path);
                     t.GetComponentInChildren<ItemTrigger>().requests = 0;
                 }))
             );
         }
 
-        ActionType.Find(l, "3 Nonstuff/CoolingChamber", t => Chamber(t, 0));
-        ActionType.Find(l, "3 Nonstuff/CoolingChamber (1)", t => Chamber(t, 1));
-        ActionType.Find(l, "6 Nonstuff/CoolingChamber", t => Chamber(t, 2));
+        ActionType.Find(l, "3 Nonstuff/CoolingChamber@03", t => Chamber(t, 0));
+        ActionType.Find(l, "3 Nonstuff/CoolingChamber (1)@04", t => Chamber(t, 1));
+        ActionType.Find(l, "6 Nonstuff/CoolingChamber@17", t => Chamber(t, 2));
 
-        ActionType.Act(l, "CoolingChamber (0)/Sequence");
-        ActionType.Act(l, "CoolingChamber (1)/Sequence");
-        ActionType.Act(l, "CoolingChamber (2)/Sequence");
+        ActionType.Act(l, "CoolingChamber (0)/Sequence@05");
+        ActionType.Act(l, "CoolingChamber (1)/Sequence@05");
+        ActionType.Act(l, "CoolingChamber (2)/Sequence@05");
 
-        ActionType.Act(l, "Enemies/Wave 1 Trigger");
+        ActionType.Act(l, "Enemies/Wave 1 Trigger@00");
 
         #endregion
         #region 0-5
         l = "Level 0-5";
 
-        ActionType.Find(l, "4 Contents/Cube", t => t.Component<ObjectActivator>(o => o.events.toDisActivateObjects[0] = null, true));
-        ActionType.Find(l, "4 Contents/Enemies", t => t.Component<ActivateNextWaveHP>(o =>
+        ActionType.Fact(l, "4 Contents/Cube@00", true, o => o.events.toDisActivateObjects[0] = null);
+        ActionType.Find(l, "4 Contents/Enemies@02", t => t.Get<ActivateNextWaveHP>(o =>
         {
             if (LobbyController.IsOwner)
-                o.health = 74f;
+                o.health = 75f;
             else
                 Dest(o);
-        }, true));
+        }));
 
-        ActionType.Act(l, "4 Contents/Cube"); // boss
-        ActionType.Act(l, "StatueFake (1)/StatueActivator"); // boss
-        ActionType.Act(l, "Hellgate/DelayedDoorActivation");
-
-        ActionType.Turn(l, "/5 - Final Hallway");
+        ActionType.Act(l, "4 Contents/Cube@00"); // boss
+        ActionType.Act(l, "Hellgate/DelayedDoorActivation@03");
+        ActionType.Turn(l, "/5 - Final Hallway@00");
 
         #endregion
         #region 0-S
         l = "Level 0-S";
 
-        ActionType.Run(l, () => NewMovement.Instance.modNoJump = true);
+        ActionType.Run(l, () => nm.modNoJump = true);
 
         #endregion
         #region 1-1
         l = "Level 1-1";
 
-        ActionType.Window(l);
-        ActionType.Switch(l);
-
-        ActionType.Dest(l, "11 Nonstuff/Altar"); // duplicate
+        ActionType.Dest(l, "2 Nonstuff/Cube (2)@27"); // unloader
+        ActionType.Dest(l, "2 Nonstuff/Cube (8)@29"); // unloader
+        ActionType.Dest(l, "3 - Skull Field/Altar@10"); // duplicate
+        ActionType.Dest(l, "4 - Altar Field/Altar@07"); // duplicate
+        ActionType.Dest(l, "11 Nonstuff/Altar@01"); // duplicate
 
         #endregion
         #region 1-2
         l = "Level 1-2";
 
-        ActionType.Statue(l);
-        ActionType.Switch(l);
+        ActionType.Dest(l, "1 Nonstuff/Altar@02"); // duplicate
+        ActionType.Dest(l, "1 Nonstuff/Altar (1)@04"); // duplicate
+        ActionType.Dest(l, "3 Nonstuff/Altar@08"); // duplicate
+
+        ActionType.Act(l, "4-2 Connector/BurningActivator@09", _ =>
+        {
+            if (Teleporter.Inside(-40f, -16f, 300f, 40f, 32f, 380f)) Teleporter.Flash();
+
+            GameAssets.Prefab("p/Breaks/BreakParticleBig.prefab", p => Inst(p, new(-20f, 24f, 400f), null));
+        });
+
+        ActionType.Act(l, "Tesla Coils/Activated@02");
+        ActionType.Act(l, "7 Stuff/Cube@01");
+        ActionType.Act(l, "Enemiues/Cube@00");
+        ActionType.Act(l, "CV11 Stuff/Cube@05");
+        ActionType.Act(l, "CV11 Stuff/Cube (1)@03");
+        ActionType.Act(l, "CV11 Stuff/Cube (2)@06");
 
         #endregion
         #region 1-3
         l = "Level 1-3";
 
-        ActionType.Window(l);
-        ActionType.Statue(l);
-        ActionType.Switch(l);
+        ActionType.Run(l, () => ResFind<ObjectActivator>().Each(IsReal, o =>
+        {
+            for (int i = 0; i < o.events.toDisActivateObjects.Length; i++)
+            {
+                if (o.events.toDisActivateObjects[i].name.Contains('-')) o.events.toDisActivateObjects[i] = null;
+            }
+        }));
 
-        // TODO sync R1 - Courtyard/R1 Stuff(Clone)/Enemies/Wave 3/Trigger 'cause there are two statues
+        ActionType.Act(l, "Wave 3/Trigger@00");
+        ActionType.Act(l, "Enemies/Trigger C@08");
 
         #endregion
         #region 1-4
         l = "Level 1-4";
-
-        ActionType.Switch(l);
 
         #endregion
         #region 1-S
@@ -219,26 +224,17 @@ public static class ActionList
         #region 2-1
         l = "Level 2-1";
 
-        ActionType.Window(l);
-        ActionType.Statue(l);
-
         #endregion
         #region 2-2
         l = "Level 2-2";
-
-        ActionType.Statue(l);
 
         #endregion
         #region 2-3
         l = "Level 2-3";
 
-        ActionType.Window(l);
-
         #endregion
         #region 2-4
         l = "Level 2-4";
-
-        ActionType.Window(l);
 
         #endregion
         #region 2-S
@@ -248,8 +244,6 @@ public static class ActionList
         #region 3-1
         l = "Level 3-1";
 
-        ActionType.Statue(l);
-
         #endregion
         #region 3-2
         l = "Level 3-2";
@@ -258,7 +252,6 @@ public static class ActionList
         #region 4-1
         l = "Level 4-1";
 
-        ActionType.Switch(l);
         ActionType.Flammable(l);
 
         ActionType.Turn(l, "GreedTorch (2)/Flammable"); // for some reason you cannot set it on fire in vanilla game
@@ -267,15 +260,10 @@ public static class ActionList
         #region 4-2
         l = "Level 4-2";
 
-        ActionType.Window(l);
-        ActionType.Statue(l);
-        ActionType.Switch(l);
-
         #endregion
         #region 4-3
         l = "Level 4-3";
 
-        ActionType.Statue(l);
         ActionType.Flammable(l);
 
         ActionType.Torches(l, new(0f, -10f, 310f));
@@ -292,20 +280,13 @@ public static class ActionList
         #region 5-1
         l = "Level 5-1";
 
-        ActionType.Statue(l);
-
         #endregion
         #region 5-2
         l = "Level 5-2";
 
-        ActionType.Statue(l);
-
         #endregion
         #region 5-3
         l = "Level 5-3";
-
-        ActionType.Window(l);
-        ActionType.Statue(l);
 
         #endregion
         #region 5-4
@@ -327,16 +308,9 @@ public static class ActionList
         #region 7-1
         l = "Level 7-1";
 
-        ActionType.Statue(l);
-        ActionType.Switch(l);
-
         #endregion
         #region 7-2
         l = "Level 7-2";
-
-        ActionType.Window(l);
-        ActionType.Statue(l);
-        ActionType.Switch(l);
 
         #endregion
         #region 7-3
@@ -346,13 +320,9 @@ public static class ActionList
         #region 7-4
         l = "Level 7-4";
 
-        ActionType.Window(l);
-
         #endregion
         #region 7-S
         l = "Level 7-S";
-
-        ActionType.Statue(l);
 
         #endregion
         #region endless
@@ -365,10 +335,21 @@ public static class ActionList
         ActionType.Run(l, () => ResFind<MapIntSetter>().Each(IsReal, Dest));
         ActionType.Dest(l, "/__Gianni nightmare world");
 
+        ActionType.Find(l, "Cube (6)/DevPlushie (Heckteck) (1)", t => t.name = "DevPlushie (Heckteck)");
+        ActionType.Find(l, "Cube (4)/DevPlushie (1)", t => t.name = "DevPlushie (Lenval)");
+        ActionType.Find(l, "Theater Plushies/DevPlushie (Vylet) Variant", t => t.name = "DevPlushie (Vylet)");
+        ActionType.Find(l, "Theater Plushies/DevPlushie (Rhiannon) Variant", t => t.name = "DevPlushie (Rhiannon)");
+        ActionType.Dest(l, "Dev_Space_ (11)/Cube (4)");
+        ActionType.Dest(l, "Dev_Space_ (19)/Cube (4)");
+        ActionType.Dest(l, "Dev_Space_ (20)/Cube (4)");
+
         #endregion
         #region all
         l = "All";
 
+        ActionType.Window(l);
+        ActionType.Statue(l);
+        ActionType.Switch(l);
         ActionType.Arena(l);
         ActionType.Final(l);
 
@@ -413,16 +394,16 @@ I know it's been two years since the last update, but I am, unfortunately, a hum
 [63][b][red]WARNING !!! WARNING[][][]
 [31][b][red]!!! WARNING !!! WARNING !!! WARNING !!![][][]";
 
-        ActionType.Find(l, "Main Menu (1)/V1", r =>
+        ActionType.Find(l, "Main Menu (1)/V1", r => Tex.OnLoad(() =>
         {
-            var root = Builder.Rect("Warning", r, UI.Lib.Rect.Fill);
+            var root = Builder.Rect("Warning", r, new());
 
-            Builder.Image(root, Tex.Back, Pal.semi, Image.Type.Sliced);
+            Builder.Image(root, Tex.Back, Pal.semi);
 
             var text = Builder.Rect("Text", root, new(0f, 0f, -32f, -32f, Vector2.zero, Vector2.one));
 
             Builder.Text(text, Bundle.Parse(info), 24, Pal.white, TextAnchor.UpperLeft);
-        });
+        }));
 
         // TODO remove later
         Each(a => a.Scene == "Main Menu", a => a.Perform(default));

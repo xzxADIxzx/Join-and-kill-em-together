@@ -12,43 +12,33 @@ using static Entities;
 /// <summary> Vendor responsible for hitscans. </summary>
 public class Hitscans : Vendor
 {
-    public void Load()
+    public override void Load()
     {
-        EntityType counter = EntityType.Beam;
-        GameAssets.Hitscans.Each(w =>
-        {
-            byte index = (byte)counter++;
-            GameAssets.Prefab(w, p => Vendor.Prefabs[index] = p);
-        });
+        Fill(EntityType.Beam, EntityType.BeamHammer, GameAssets.Hitscans);
     }
 
-    public EntityType Type(GameObject obj) => Vendor.Find
-    (
-        EntityType.Beam,
-        EntityType.BeamHammer,
-        p => p.name.Length == obj?.name.IndexOf('(') && (obj?.name.Contains(p.name) ?? false)
-    );
+    public override EntityType Type(GameObject obj) => obj && obj.HasIdentifier(out var id) && id.Type.IsHitscan() ? id.Type : EntityType.None;
 
-    public GameObject Make(EntityType type, Vector3 position = default, Transform parent = null)
+    public override GameObject Make(EntityType type, Vector3 position = default, Transform parent = null)
     {
         if (!type.IsHitscan()) return null;
 
-        var obj = Inst(Vendor.Prefabs[(byte)type], position);
+        var obj = Inst(Prefabs[(byte)type], position);
 
-        obj.name = "beam"; // this way the vendor won't be able to determine the type of the hitscan and thus oversync it
+        obj.Get<Entity.Identifier>(Imdt); // this way the vendor won't be able to determine the type of the hitscan and thus oversync it
 
         return obj;
     }
 
     public GameObject Make(EntityType type, Vector3 position, Vector3 target, bool wall, byte data)
     {
-        var beam = Make(type, position)?.GetComponent<RevolverBeam>();
+        var beam = Make(type, position)?.Get<RevolverBeam>(_ => { });
         if (beam == null) return null;
 
         if (wall && type != EntityType.BeamReflected) Inst(beam.hitParticle, target, Quaternion.LookRotation(position - target));
 
         beam.fake = true;
-        beam.GetComponents<LineRenderer>().Each(r =>
+        beam.Get<LineRenderer>(r =>
         {
             r.SetPosition(0, position);
             r.SetPosition(1, target);
@@ -57,18 +47,18 @@ public class Hitscans : Vendor
                 r.startColor = r.endColor = ((Team)data).Color();
 
             else if (data == byte.MaxValue)
-                r.transform.GetChild(0).gameObject.SetActive(false);
+                r.ObjChild(0).SetActive(false); // disable muzzleflash
 
             else
             {
                 r.GetComponentsInChildren<SpriteRenderer>().Each(c => c.gameObject.layer = 24); // outdoors
-                r.transform.GetChild(0).LookAt(target);
+                r.DefChild(0).LookAt(target);
             }
         });
         return beam.gameObject;
     }
 
-    public void Sync(GameObject obj, params bool[] args)
+    public override void Sync(GameObject obj, params bool[] args)
     {
         var type = Type(obj);
         if (type == EntityType.None || !obj.TryGetComponent(out RevolverBeam beam)) return;
@@ -78,9 +68,9 @@ public class Hitscans : Vendor
 
         Networking.Send(PacketType.Hitscan, 27, w =>
         {
-            w.Enum(type);
+            w.Entity(type);
             w.Vector(beam.transform.position + correction);
-            w.Vector(beam.alternateStartPoint);
+            w.Vector(beam.lr.GetPosition(1));
             w.Bool(wall);
 
             if (type == EntityType.BeamReflected)
@@ -96,9 +86,8 @@ public class Hitscans : Vendor
 
     [DynamicPatch(typeof(RevolverBeam), nameof(RevolverBeam.Start))]
     [Postfix]
-    static void Start(RevolverBeam __instance, LineRenderer ___lr)
+    static void Start(RevolverBeam __instance)
     {
-        __instance.alternateStartPoint = ___lr.GetPosition(1);
         Entities.Hitscans.Sync(__instance.gameObject, __instance.noMuzzleflash);
         wall = false;
     }
@@ -131,7 +120,7 @@ public class Hitscans : Vendor
 
     [DynamicPatch(typeof(RevolverBeam), nameof(RevolverBeam.ExecuteHits))]
     [Transpiler]
-    static Ins Call(Ins instructions)
+    static Ins Deal(Ins instructions)
     {
         foreach (var ins in instructions)
         {

@@ -40,34 +40,8 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
 
         NetAction.Sync(l, "Cube", new(-56.6f, -21.4f, -5.9f), obj =>
         {
-            if (NewMovement.Instance.dead) Movement.Respawn(new(-60f, -8.5f, 30f), 180f);
+            if (nm.dead) Movement.Respawn(new(-60f, -8.5f, 30f), 180f);
         });
-
-        #endregion
-        #region 1-2
-        l = "Level 1-2";
-
-        // secret statue
-        NetAction.Sync(l, "Cube", new(0f, -19f, 442f));
-        NetAction.Sync(l, "Cube", new(15f, -15f, 417f));
-
-        // Very Cancerous Rodent™
-        NetAction.Sync(l, "Cube", new(-61f, -16.5f, 388.5f));
-        NetAction.Sync(l, "Cube (1)", new(-61f, -21.5f, 400.5f));
-
-        #endregion
-        #region 1-3
-        l = "Level 1-3";
-
-        StaticAction.Find(l, "Trigger", new(0f, 9.5f, 412f), obj => obj.GetComponent<ObjectActivator>().events.toDisActivateObjects[0] = null); // corridor
-
-        #endregion
-        #region 1-4
-        l = "Level 1-4";
-
-        StaticAction.Find(l, "Cube", new(0f, 11f, 612f), obj => Dest(obj.GetComponent<DoorController>()));
-
-        NetAction.Sync(l, "Cube", new(0f, -19f, 612f)); // boss
 
         #endregion
         #region 2-4
@@ -195,7 +169,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
                 sea.Find("SeaAmbiance").gameObject.SetActive(true);
                 sea.Find("SeaAmbiance (Waves)").gameObject.SetActive(true);
 
-                HudMessageReceiver.Instance?.SendHudMessage("<size=48>Haha</size>", silent: true);
+                hm.SendHudMessage("<size=48>Haha</size>", silent: true);
             });
         });
 
@@ -278,7 +252,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
 
         NetAction.Sync(l, "Closer", new(0f, 20f, 579f), obj =>
         {
-            if (NewMovement.Instance.transform.position.z < 470f) Teleporter.Tp(new(0f, 5.5f, 485f));
+            if (nmtr.position.z < 470f) Teleporter.Tp(new(0f, 5.5f, 485f));
         });
         NetAction.SyncLimbo(l, new(96.75f, 26f, 545f));
         NetAction.Sync(l, "RedSkullPickedUp", new(-23.4f, -4.7f, 581.6f));
@@ -315,7 +289,7 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
             door?.onFullyOpened.AddListener(() =>
             {
                 door.onFullyOpened = null;
-                HudMessageReceiver.Instance?.SendHudMessage("<size=48>What?</size>", silent: true);
+                hm.SendHudMessage("<size=48>What?</size>", silent: true);
             });
         });
         StaticAction.Find(l, "9A", new(-23.5f, 37.75f, 806.25f), obj =>
@@ -422,64 +396,6 @@ OPENING ALL DOORS... <color=#32CD32>DONE</color>";
         {
             obj.transform.parent.gameObject.SetActive(true);
             obj.transform.parent.parent.gameObject.SetActive(true);
-        });
-
-        #endregion
-        #region P-1
-        l = "Level P-1";
-
-        #endregion
-        #region P-2
-        l = "Level P-2";
-
-        #endregion
-        #region cyber grind
-        l = "Endless";
-
-        // move the death zone, because entities spawn at the origin
-        StaticAction.Find(l, "Cube", new(-40f, 0.5f, 102.5f), obj => obj.transform.position = new(-40f, -10f, 102.5f));
-
-        #endregion
-        #region unfinished
-
-        // duplicate torches at levels 4-3 and P-1
-        StaticAction.PlaceTorches("Level P-1", new(-0.84f, -10f, 16.4f), 2f);
-
-        // disable door blocker
-        StaticAction.Find("Level P-1", "Trigger", new(360f, -568.5f, 110f), obj =>
-        {
-            obj.GetComponent<ObjectActivator>().events.toActivateObjects[4] = null;
-        });
-        StaticAction.Find("Level P-2", "FightActivator", new(-102f, -61.25f, -450f), obj =>
-        {
-            var act = obj.GetComponent<ObjectActivator>();
-            act.events.onActivate = new(); // gothic door
-            act.events.toActivateObjects[2] = null; // wall collider
-            act.events.toDisActivateObjects[1] = null; // entry collider
-            act.events.toDisActivateObjects[2] = null; // elevator
-        });
-
-        // Minos & Sisyphus have unique cutscenes and non-functional level exits
-        NetAction.Sync("Level P-1", "MinosPrimeIntro", new(405f, -598.5f, 110f));
-        NetAction.Sync("Level P-1", "End", new(405f, -598.5f, 110f), obj =>
-        {
-            obj.transform.parent.Find("Cube (2)").gameObject.SetActive(false);
-
-            ObjFind("Music 3").SetActive(false);
-            obj.transform.parent.Find("Lights").gameObject.SetActive(false);
-
-            StatsManager.Instance.StopTimer();
-        });
-        NetAction.Sync("Level P-2", "PrimeIntro", new(-102f, -61.25f, -450f));
-        NetAction.Sync("Level P-2", "Outro", new(-102f, -61.25f, -450f), obj =>
-        {
-            obj.transform.parent.Find("Backwall").gameObject.SetActive(false);
-
-            ObjFind("BossMusics/Sisyphus").SetActive(false);
-            ObjFind("IntroObjects/Decorations").SetActive(false);
-            ObjFind("Rain").SetActive(false);
-
-            StatsManager.Instance.StopTimer();
         });
 
         #endregion

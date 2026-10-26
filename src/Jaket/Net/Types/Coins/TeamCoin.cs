@@ -14,9 +14,6 @@ using static Jaket.UI.Lib.Pal;
 /// <summary> Tangible entity of the coin type. </summary>
 public class TeamCoin : OwnableEntity
 {
-    static Transform cc => CameraController.Instance.transform;
-    static StyleHUD sh => StyleHUD.Instance;
-
     Agent agent;
     Float x, y, z;
     Cache<RemotePlayer> player;
@@ -51,7 +48,7 @@ public class TeamCoin : OwnableEntity
 
     #region snapshot
 
-    public override int BufferSize => 21;
+    public override int BufferSize => 16;
 
     public override void Write(Writer w)
     {
@@ -98,7 +95,7 @@ public class TeamCoin : OwnableEntity
                     t.startColor = team.Color() with { a = .6f };
                 else
                 {
-                    r.material.mainTexture = ModAssets.CoinTexture;
+                    r.material.mainTexture = ModAssets.CoinTextures[0];
                     r.material.color = team.Color();
                 }
             });
@@ -163,7 +160,7 @@ public class TeamCoin : OwnableEntity
         }
         else
         {
-            eid.hitter = "coin";
+            eid.hitter = punchable ? "coin" : "revolver";
             eid.DeliverDamage(target.gameObject, Vector3.zero, target.position, power, false, 1f);
         }
     }
@@ -200,7 +197,7 @@ public class TeamCoin : OwnableEntity
 
     public void Reflect()
     {
-        if (target && target.TryGetEntity(out TeamCoin c))
+        if (target && target.HasEntity(out TeamCoin c))
         {
             c.chain = chain;
             c.power = power + 1;
@@ -278,13 +275,13 @@ public class TeamCoin : OwnableEntity
         Vector3? pos = target
             ? target.position
             : Entities.Coins.Punchcast(out var hit)
-                ? hit.point - cc.forward
+                ? hit.point - cctr.forward
                 : null;
 
         if (pos == null) Kill();
 
         Bounce();
-        Beam(agent.Position, agent.Position = pos ?? cc.position + cc.forward * 4242f);
+        Beam(agent.Position, agent.Position = pos ?? cctr.position + cctr.forward * 4242f);
 
         rs.Each(r => { if (r is TrailRenderer t) t.Clear(); });
 
@@ -361,8 +358,8 @@ public class TeamCoin : OwnableEntity
         effect.GetComponentsInChildren<SpriteRenderer  >(true).Each(Dest);
         effect.GetComponentsInChildren<SpriteController>(true).Each(Dest);
 
-        effect.transform.Find("MuzzleFlash/muzzleflash/Particle System").localScale = Vector3.one * .42f;
-        effect.transform.Find("MuzzleFlash/muzzleflash"                ).gameObject.SetActive(true);
+        effect.DefFind("MuzzleFlash/muzzleflash/Particle System").localScale = Vector3.one * .42f;
+        effect.ObjFind("MuzzleFlash/muzzleflash"                ).SetActive(true);
         var col = effect.GetComponentInChildren<ParticleSystem        >().colorOverLifetime;
         var mat = effect.GetComponentInChildren<ParticleSystemRenderer>().material;
         col.color = new(clear, black);
@@ -394,7 +391,7 @@ public class TeamCoin : OwnableEntity
     [Prefix]
     static bool Death(Coin __instance, Collision collision)
     {
-        if (__instance.TryGetEntity(out TeamCoin c) && LayerMaskDefaults.IsMatchingLayer(collision.gameObject.layer, LMD.Environment))
+        if (__instance.HasEntity(out TeamCoin c) && LayerMaskDefaults.IsMatchingLayer(collision.gameObject.layer, LMD.Environment))
         {
             if (c.IsOwner) c.Kill();
             return false;
@@ -410,7 +407,7 @@ public class TeamCoin : OwnableEntity
     [Prefix]
     static bool Reflect(Coin __instance, GameObject beam)
     {
-        if (__instance.TryGetEntity(out TeamCoin c)) c.Reflect(beam);
+        if (__instance.HasEntity(out TeamCoin c)) c.Reflect(beam);
         return false;
     }
 
@@ -418,7 +415,7 @@ public class TeamCoin : OwnableEntity
     [Prefix]
     static bool Punch(Coin __instance)
     {
-        if (__instance.TryGetEntity(out TeamCoin c)) c.Punch();
+        if (__instance.HasEntity(out TeamCoin c)) c.Punch();
         return false;
     }
 
@@ -426,7 +423,7 @@ public class TeamCoin : OwnableEntity
     [Prefix]
     static bool Bounce(Coin __instance)
     {
-        if (__instance.TryGetEntity(out TeamCoin c)) c.Bounce();
+        if (__instance.HasEntity(out TeamCoin c)) c.Bounce();
         return false;
     }
 

@@ -5,59 +5,19 @@ using UnityEngine.AI;
 
 using Jaket.Content;
 using Jaket.Harmony;
-using Jaket.IO;
 
 /// <summary> Tangible entity of the swordsmachine type. </summary>
-public class Swordsmachine : Enemy
+public class Swordsmachine : Foe
 {
     Agent agent;
-    Float x, y, z, r;
     NavMeshAgent nma;
     SwordsMachine scr;
     Animator animator;
 
-    int running = Animator.StringToHash("Running");
+    static readonly int running = Animator.StringToHash("Running");
 
-    public Swordsmachine(uint id, EntityType type) : base(id, type) { }
+    public Swordsmachine(uint id, EntityType type) : base(id, type, false) { }
 
-    #region snapshot
-
-    public override int BufferSize => 27;
-
-    public override void Write(Writer w)
-    {
-        WriteOwner(ref w);
-
-        if (IsOwner)
-        {
-            w.Vector(agent.Position);
-            w.Float(agent.Rotation.y);
-
-            w.Byte(Attack);
-            w.Bool(animator.GetBool(running));
-        }
-        else
-        {
-            w.Floats(x, y, z);
-            w.Float(r.Next);
-
-            w.Byte(Attack);
-            w.Bool(Moving);
-        }
-    }
-
-    public override void Read(Reader r)
-    {
-        if (ReadOwner(ref r)) return;
-
-        r.Floats(ref x, ref y, ref z);
-        this.r.Set(r.Float());
-
-        Attack = r.Byte();
-        Moving = r.Bool();
-    }
-
-    #endregion
     #region logic
 
     public override void Rage(bool enraged)
@@ -73,8 +33,6 @@ public class Swordsmachine : Enemy
         else scr.UnEnrage();
     }
 
-    public override void Create() => Assign(Entities.Enemies.Make(Type, new(x.Init, y.Init, z.Init)).AddComponent<Agent>());
-
     public override void Assign(Agent agent)
     {
         base.Assign(this.agent = agent);
@@ -86,15 +44,12 @@ public class Swordsmachine : Enemy
 
     public override void Update(float delta)
     {
-        if (Locked) { nma.enabled = false; scr.enabled = false; return; }
-
-        scr.enabled = IsOwner;
         scr.phaseChangeHealth = scr.firstPhase ? PostHealth / 2f : 0f;
 
-        if (IsOwner) return;
+        if (IsOwner) Moving = animator.GetBool(running);
+        if (Lock(nma, scr)) return;
 
-        agent.Position = new(x.GetAware(delta), y.GetAware(delta), z.GetAware(delta));
-        agent.Rotation = new(agent.Rotation.x,  r.GetAngle(delta), agent.Rotation.z );
+        base.Update(delta);
 
         nma.enabled = false;
         scr.targetHandle = null;
@@ -119,7 +74,6 @@ public class Swordsmachine : Enemy
                 w => scr.shotgunPickUp = w.gameObject
             );
             scr.bossVersion = true;
-
             scr.firstPhase = false;
             scr.EndFirstPhase();
             Hidden = false;
@@ -132,52 +86,32 @@ public class Swordsmachine : Enemy
 
     [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.Combo))]
     [Prefix]
-    static void Combo(SwordsMachine __instance)
-    {
-        if (__instance.TryGetEntity(out Swordsmachine s)) s.Attack = 1;
-    }
+    static void Combo(SwordsMachine __instance) => __instance.Attack<Swordsmachine>(1);
 
     [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.RunningSwing))]
     [Prefix]
-    static void Swing(SwordsMachine __instance)
-    {
-        if (__instance.TryGetEntity(out Swordsmachine s)) s.Attack = 2;
-    }
+    static void Swing(SwordsMachine __instance) => __instance.Attack<Swordsmachine>(2);
 
     [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.SwordThrow))]
     [Prefix]
-    static void Throw(SwordsMachine __instance)
-    {
-        if (__instance.TryGetEntity(out Swordsmachine s)) s.Attack = 3;
-    }
+    static void Throw(SwordsMachine __instance) => __instance.Attack<Swordsmachine>(3);
 
     [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.SwordSpiral))]
     [Prefix]
-    static void Twist(SwordsMachine __instance)
-    {
-        if (__instance.TryGetEntity(out Swordsmachine s)) s.Attack = 4;
-    }
-
-    [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.DamageStop))]
-    [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.SwordCatch))]
-    [Prefix]
-    static void Zeros(SwordsMachine __instance)
-    {
-        if (__instance.TryGetEntity(out Swordsmachine s)) s.Attack = 0;
-    }
+    static void Twist(SwordsMachine __instance) => __instance.Attack<Swordsmachine>(4);
 
     [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.EndFirstPhase))]
     [Prefix]
     static void Phase(SwordsMachine __instance)
     {
-        if (__instance.TryGetEntity(out Swordsmachine s) && !s.Hidden) s.Kill(2, w => { w.Bool(true); w.Bool(true); });
+        if (__instance.HasEntity(out Swordsmachine s) && !s.Hidden) s.Kill(1, w => w.Bools(true, true));
     }
 
     [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.TeleportAway))]
     [Prefix]
     static bool Leave(SwordsMachine __instance)
     {
-        if (__instance.TryGetEntity(out Swordsmachine s) && !s.Hidden) s.Kill();
+        if (__instance.HasEntity(out Swordsmachine s) && !s.Hidden) s.Kill();
         return false;
     }
 
@@ -185,14 +119,14 @@ public class Swordsmachine : Enemy
     [Prefix]
     static void Enrage(SwordsMachine __instance)
     {
-        if (__instance.TryGetEntity(out Swordsmachine s) && !s.Enraged) s.Enrage(true);
+        if (__instance.HasEntity(out Swordsmachine s) && !s.Enraged) s.Enrage(true);
     }
 
     [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.UnEnrage))]
     [Prefix]
     static void Unrage(SwordsMachine __instance)
     {
-        if (__instance.TryGetEntity(out Swordsmachine s) && s.Enraged) s.Enrage(false);
+        if (__instance.HasEntity(out Swordsmachine s) && s.Enraged) s.Enrage(false);
     }
 
     #endregion

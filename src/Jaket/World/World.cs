@@ -12,11 +12,8 @@ using Jaket.Net;
 /// <summary> Class responsible for managing world objects and actions. </summary>
 public class World
 {
-    static NewMovement nm => NewMovement.Instance;
-    static StatsManager sm => StatsManager.Instance;
-
     /// <summary> Size of the pool of actions' arguments. </summary>
-    public const int POOL = 32;
+    public const int POOL = 64;
     /// <summary> Actions that were performed previously. </summary>
     private static bool[] performed = new bool[(byte.MaxValue + 1)];
     /// <summary> Vectors that were arguments of actions. </summary>
@@ -27,14 +24,13 @@ public class World
     {
         Events.OnLoadingStart += () =>
         {
-            if (LobbyController.Offline || LobbyController.IsOwner)
+            if (LobbyController.Online && LobbyController.IsOwner)
+            {
                 Reset();
-
-            if (LobbyController.Online && LobbyController.IsOwner && Pending != "Main Menu")
-                Networking.Send(PacketType.Level, BufferSize, WriteData);
+                if (Pending != "Main Menu") Networking.Send(PacketType.Level, BufferSize, WriteData);
+            }
         };
-
-        static void Restore()
+        Events.OnLoad += () =>
         {
             if (LobbyController.Offline) return;
 
@@ -47,15 +43,13 @@ public class World
                     if (pi != default) a.Perform(pi);
                 }
             });
-        }
-        Events.OnLoad += Restore;
-        Events.OnLobbyEnter += Restore;
+        };
     }
 
-    /// <summary> Resets performed actions and their positions. </summary>
+    /// <summary> Resets all actions. </summary>
     public static void Reset() { performed.Clear(); pos.Clear(); }
 
-    /// <summary> Resets a performed action by its path. </summary>
+    /// <summary> Resets an action. </summary>
     public static void Reset(string path) => ActionList.Each
     (
         a => a.Path == path,
@@ -64,16 +58,16 @@ public class World
 
     #region data
 
-    /// <summary> Number of bytes that the world data takes in a snapshot. </summary>
-    public static int BufferSize => 4 + (Pending ?? Scene).Length + Version.Readable.Length + performed.Count(b => b) * 2 + pos.Count(p => p != default) * 8;
+    /// <summary> Size of the world's snapshot in bytes. </summary>
+    public static int BufferSize => 12 + (Pending ?? Scene).Length + performed.Count(b => b) * 2 + pos.Count(p => p != default) * 8;
 
     /// <summary> Writes the world data into a snapshot. </summary>
     public static void WriteData(Writer w)
     {
+        w.String(Version.Hash);
         w.String(Pending ?? Scene);
-        w.String(Version.Readable);
 
-        w.Byte((byte)PrefsManager.Instance.GetInt("difficulty"));
+        w.Byte((byte)pm.GetInt("difficulty"));
         w.Byte((byte)performed.Count(b => b));
 
         for (int i = 0, j = 0, k = 0; i < performed.Length; i++) if (performed[i])
@@ -83,24 +77,30 @@ public class World
             w.Byte((byte)i);
             w.Byte((byte)k);
 
-            for (j = 0; j < k; j++) { w.Float(pos[POOL * i + j].x); w.Float(pos[POOL * i + j].y); }
+            for (j = 0; j < k; j++) w.Point(pos[POOL * i + j]);
         }
     }
 
     /// <summary> Reads the world data from a snapshot. </summary>
     public static void ReadData(Reader r)
     {
-        LoadScn(r.String());
-        Reset();
-
-        if (r.String() != Version.Readable)
+        if (r.String() != Version.Hash) Events.Post(() =>
         {
             LobbyController.LeaveLobby();
             Log.Info("[LOBY] Left the lobby as the owner is outdated");
-        }
+        });
         else
         {
-            PrefsManager.Instance.SetInt("difficulty", r.Byte());
+            var ps = r.String();
+            var diff = r.Byte();
+
+            Events.Post(() =>
+            {
+                LoadScn(ps);
+                pm.SetInt("difficulty", diff);
+            });
+
+            Reset();
 
             for (int w = r.Byte(); w > 0; w--)
             {
@@ -108,7 +108,7 @@ public class World
                 byte k = r.Byte();
 
                 performed[i] = true;
-                for (int j = 0; j < k; j++) pos[POOL * i + j] = new(r.Float(), r.Float());
+                for (int j = 0; j < k; j++) pos[POOL * i + j] = r.Point();
             }
         }
     }
@@ -140,8 +140,7 @@ public class World
         ActionList.Each(a => a.Dynamic && a.Path == path && !Performed(a, p), a => Networking.Send(PacketType.WorldAction, 9, w =>
         {
             w.Byte((byte)a.Identifier);
-            w.Float(p.x);
-            w.Float(p.y);
+            w.Point(p);
 
             performed[a.Identifier] = true;
             pos[Next(a.Identifier)] = p;
@@ -155,9 +154,10 @@ public class World
     {
         var a = ActionList.At(id);
         if (a == null || Performed(a, p)) return;
+        a.Perform(p);
 
         performed[id] = true;
-        a.Perform(pos[Next(id)] = p);
+        pos[Next(id)] = p;
 
         if (Version.DEBUG) Log.Debug($"[WRLD] Performed an action {a.Path}#{id} in the inner world");
     }
@@ -169,21 +169,21 @@ public class World
     [Postfix]
     static void Activate(ObjectActivator __instance)
     {
-        Perform(__instance.Path(), default);
+        Perform(__instance.Path, default);
     }
 
     [DynamicPatch(typeof(ScriptActivator), nameof(ScriptActivator.OnTriggerEnter))]
     [Postfix]
     static void Activate(ScriptActivator __instance, Collider other)
     {
-        if (other.gameObject.CompareTag("Player")) Perform(__instance.Path(), default);
+        if (other.gameObject.CompareTag("Player")) Perform(__instance.Path, default);
     }
 
     [DynamicPatch(typeof(Button), "Press")]
     [Postfix]
     static void Activate(Button __instance)
     {
-        Perform(__instance.Path(), default);
+        Perform(__instance.Path, default);
     }
 
     [DynamicPatch(typeof(Glass), nameof(Glass.Shatter))]
@@ -243,7 +243,7 @@ public class World
         }
         sm.currentCheckPoint = __instance;
 
-        if (__instance.activateEffect.RuntimeKeyIsValid() && !__instance.invisible) Inst(__instance.activateEffect.ToAsset(), nm.transform.position);
+        if (__instance.activateEffect.RuntimeKeyIsValid() && !__instance.invisible) Inst(__instance.activateEffect.ToAsset(), nmtr.position);
         if (__instance.graphic) __instance.graphic.SetActive(false);
 
         __instance.activated = true;

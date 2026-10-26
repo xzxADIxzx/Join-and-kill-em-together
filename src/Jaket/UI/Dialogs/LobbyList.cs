@@ -27,12 +27,12 @@ public class LobbyList : Fragment
         Bar(920f, 528f, b =>
         {
             b.Setup(true);
-            b.Text("#lobby-list.name", 32f, 32);
+            b.Title("#lobby-list.name");
 
             b.Subbar(40f, s =>
             {
                 s.Setup(false, 0f);
-                refresh = s.TextButton("", spc: 256f, callback: Refresh);
+                refresh = s.TextButton("", Refresh, 256f);
                 s.Field("#lobby-list.search", t =>
                 {
                     search = t.Trim().ToLower();
@@ -43,8 +43,8 @@ public class LobbyList : Fragment
             b.Subbar(424f, s =>
             {
                 s.Setup(false, 0f);
-                content = s.ScrollV(0f, 856f).content.Component<Bar>(b => b.Setup(true, 0f));
-                s.Slider(content.transform);
+                content = s.ScrollV(0f, 856f).content.Add<Bar>(b => b.Setup(true, 0f));
+                s.Slider(content);
             });
         });
     }
@@ -70,22 +70,23 @@ public class LobbyList : Fragment
 
         lobbies.Each(l => empty || l.GetData("name").ToLower().Contains(search), l =>
         {
-            var name = " " + Bundle.CutColors(l.GetData("name"));
+            var name = Bundle.CutColors(l.GetData("name"));
+            var level = Bundle.CutColors(l.GetData("level"));
+            int count = l.MemberCount, max = l.MaxMembers;
+
             if (!empty)
             {
-                int s = name.ToLower().IndexOf(search),
-                    e = search.Length + s;
+                int s = name.ToLower().IndexOf(search);
+                int e = s + search.Length;
 
-                name = Bundle.Parse($"{name[..s]}<color={Orange}>{name[s..e]}</color>{name[e..]}");
+                name = $"{name[..s]}[orange]{name[s..e]}[]{name[e..]}";
             }
+            var info = $"[light]{level}[] [{(count <= 2 ? "green" : count <= 4 ? "yellow" : count <= 6 ? "orange" : "red")}]{count}/{max}";
 
-            var cont = content.TextButton(name, align: TextAnchor.MiddleLeft, callback: () => LobbyController.JoinLobby(l));
-            var rect = Builder.Rect("Info", cont.transform, Lib.Rect.Fill);
+            var cont = Builder.Button(content.Resolve("Button", 40f), Tex.BrdL, white, () => LobbyController.JoinLobby(l));
 
-            var full = l.MemberCount <= 2 ? Green : l.MemberCount <= 4 ? Orange : Red;
-            var info = $"<color={Gray}>{l.GetData("level")}</color> <color={full}>{l.MemberCount}/{l.MaxMembers}</color> ";
-
-            Builder.Text(rect, info, 24, white, TextAnchor.MiddleRight);
+            Builder.Text(Builder.Rect("Name", cont, new() { Width = -24f }), Bundle.Parse(name), 24, white, TextAnchor.MiddleLeft);
+            Builder.Text(Builder.Rect("Info", cont, new() { Width = -24f }), Bundle.Parse(info), 24, white, TextAnchor.MiddleRight);
         });
     }
 

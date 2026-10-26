@@ -41,8 +41,8 @@ public struct BestiaryEntry
 
             entry.backgroundColor = ___objects.enemies[e.InsertIndex].backgroundColor;
             entry.gridIcon    = ModAssets.BestiaryIcon;
-            entry.preview     = ModAssets.DollPreview;
-            entry.menuScale   = Vector3.one * 1.725f;
+            entry.preview     = ModAssets.Preview;
+            entry.menuScale   = Vector3.one * .75f;
 
             entry.objectName  = e.name;
             entry.type        = e.type;

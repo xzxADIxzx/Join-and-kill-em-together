@@ -35,7 +35,7 @@ public static class Bundle
         {
             if (text2Show == null) return;
 
-            HudMessageReceiver.Instance?.SendHudMessage(text2Show);
+            hm.SendHudMessage(text2Show);
             text2Show = null;
         };
 
@@ -102,7 +102,7 @@ public static class Bundle
         {
             // find the index of the next special character
             int old = pointer;
-            pointer = original.IndexOfAny(new[] { '\\', '[' }, pointer);
+            pointer = original.IndexOfAny([ '\\', '[' ], pointer);
 
             // save the piece between the previous pointer and the special character
             builder.Append(original[old..pointer]);
@@ -145,7 +145,7 @@ public static class Bundle
                         types.Push(3);
                         builder.Append("<i>");
                     }
-                    else if (tag.Length >= 3 && tag[0] == '#')
+                    else if (tag.Length >= 3 && tag[0] == '#' | tag[0] == '{')
                     {
                         types.Push(0);
                         builder.Append("<color=").Append(tag).Append(">");
@@ -182,10 +182,10 @@ public static class Bundle
     }
 
     /// <summary> Sends a localized message to the hud. </summary>
-    public static void Hud(string key, bool silent = false) => HudMessageReceiver.Instance?.SendHudMessage(Get(key), silent: silent);
+    public static void Hud(string key, bool silent = false) => hm.SendHudMessage(Get(key), silent: silent);
 
     /// <summary> Sends a localized & formatted message to the hud. </summary>
-    public static void Hud(string key, bool silent, params string[] args) => HudMessageReceiver.Instance?.SendHudMessage(Format(key, args), silent: silent);
+    public static void Hud(string key, bool silent, params string[] args) => hm.SendHudMessage(Format(key, args), silent: silent);
 
     /// <summary> Sends a localized message to the hud after scene loading. </summary>
     public static void Hud2NS(string key) => text2Show = Get(key);

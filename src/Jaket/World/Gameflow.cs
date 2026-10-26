@@ -16,8 +16,6 @@ using static Jaket.UI.Lib.Pal;
 /// <summary> Class responsible for managing the flow of the game. </summary>
 public class Gameflow
 {
-    static NewMovement nm => NewMovement.Instance;
-
     /// <summary> Actual gamemode controling the flow of the game. </summary>
     public static Gamemode Mode { get; private set; }
     /// <summary> Whether the extant round is in the active state. </summary>
@@ -67,7 +65,7 @@ public class Gameflow
             Bleedy = LobbyConfig.Bleedy;
         };
         Events.OnLoad += Countdown;
-        Events.EveryHalf += () =>
+        Events.EveryHalf += () => Events.Post(() =>
         {
             if (LobbyController.Offline || !Active) return;
             if (Mode.HPs()) UpdateHPs();
@@ -75,7 +73,7 @@ public class Gameflow
             if (Mode == Gamemode.Hardcore || Spectator.Special) UpdateRES();
 
             if (Bleedy) nm.GetHurt(1, Mode != Gamemode.Hardcore, 0f);
-        };
+        });
     }
 
     /// <summary> Counts a few seconds down before restarting the round. </summary>
@@ -142,6 +140,8 @@ public class Gameflow
     /// <summary> Handles gamemode specific actions on player death. </summary>
     public static void OnDeath(Friend member)
     {
+        sh.AddPoints(Mathf.RoundToInt(420f * StyleCalculator.Instance.airTime), Bundle.Parse("[green]FRATRICIDE"));
+
         if (Mode.HPs() || Mode.NoRestarts())
         {
             static void Dec(byte id) { if (health[id] > 0 && health[id] != byte.MaxValue) health[id]--; }
@@ -159,11 +159,11 @@ public class Gameflow
         }
         if (Mode.WTO())
         {
-            var team = Networking.GetTeam(member);
+            var team = member.Team;
             var dead = Networking.Entities.Count(e => e is RemotePlayer p && p.Team == team && p.Health > 0) == 0;
             if (dead) Loadouts.Set(Loadouts.Merge
             (
-                GunSetter.Instance.forcedLoadout,
+                gs.forcedLoadout,
                 Loadouts.Make(false, weapon[(byte)team])
             ));
         }
@@ -173,7 +173,7 @@ public class Gameflow
     /// <summary> Handles gamemode specific actions on team victory. </summary>
     public static void OnVictory(byte champ)
     {
-        Bundle.Hud("game.win", false, $"#team.No{champ}", ColorUtility.ToHtmlStringRGBA(((Team)champ).Color()));
+        Bundle.Hud("game.win", false, $"#team.No{champ}", Int2Hex(((Team)champ).Color()));
         Countdown();
     }
 
@@ -218,15 +218,15 @@ public class Gameflow
 
         UI.Chat.DisplayText(string.Join("  ", Teams.All.Cast(t => health[(byte)t] != byte.MaxValue & health[(byte)t] > 0 || alive[(byte)t] > 0, t =>
         {
-            var common = ColorUtility.ToHtmlStringRGBA(       t.Color() );
-            var dimmed = ColorUtility.ToHtmlStringRGBA(Darker(t.Color()));
+            var common = Int2Hex(t.Color());
+            var dimmed = Int2Hex(t.Color().Darker);
             var display = new string[6];
 
             for (int i = 0; i < 6; i++) display[i]
                 = i < health[(byte)t]
-                ? $"[#{common}]:heart:[]"
+                ? $"[{common}]:heart:[]"
                 : i <  alive[(byte)t]
-                ? $"[#{dimmed}]:heart:[]"
+                ? $"[{dimmed}]:heart:[]"
                 : " ";
 
             return string.Join("[8] []", display);
@@ -254,7 +254,7 @@ public class Gameflow
         else if (LobbyController.IsOwner)
         {
             UI.Spectator.Shown = false;
-            StatsManager.Instance.Restart();
+            sm.Restart();
         }
     }
 

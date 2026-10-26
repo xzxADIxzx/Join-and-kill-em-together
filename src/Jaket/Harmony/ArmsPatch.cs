@@ -1,43 +1,35 @@
 namespace Jaket.Harmony;
 
-using UnityEngine;
-
-using Jaket.Content;
 using Jaket.Net;
 using Jaket.Net.Types;
 
 public static class ArmsPatch
 {
-    static EnemyIdentifier caught;
-
     [DynamicPatch(typeof(HookArm), nameof(HookArm.FixedUpdate))]
     [Postfix]
-    static void Hook(bool ___forcingFistControl, Vector3 ___hookPoint, HookState ___state, EnemyIdentifier ___caughtEid, bool ___lightTarget)
+    static void Hook()
     {
-        Networking.LocalPlayer.Hook = ___forcingFistControl ? ___hookPoint : Vector3.zero;
-
-        if (___state == HookState.Pulling && ___caughtEid && ___lightTarget)
-        {
-            if (caught == ___caughtEid) return;
-            if ((caught = ___caughtEid).TryGetEntity(out Enemy e)) e.TakeOwnage();
-        }
-        else caught = null;
+        if (ha.state == HookState.Pulling && ha.caughtEid && ha.lightTarget && ha.caughtEid.name[0] == 'R' && ha.caughtEid.HasEntity(out Enemy e)) e.TakeOwnage();
     }
 
-    static bool parried;
+    static bool parried { get { var value = field; field = false; return value; } set; }
 
     [DynamicPatch(typeof(Punch), nameof(global::Punch.ActiveEnd))]
     [Postfix]
-    static void Punch() => Networking.Send(PacketType.Punch, 6, w =>
-    {
-        w.Id(AccId);
-        w.Byte(0x00);
-
-        w.Bool(parried);
-        parried = false;
-    });
+    static void Punch() => Entities.Players.Play(fc.currentPunch.type == FistType.Heavy ? 10 : parried ? 9 : 8);
 
     [DynamicPatch(typeof(Punch), nameof(global::Punch.GetParryLookTarget))]
     [Postfix]
     static void Parry() => parried = true;
+
+    [DynamicPatch(typeof(Punch), nameof(global::Punch.BlastCheck))]
+    [Postfix]
+    static void Blast(Punch __instance)
+    {
+        if (__instance.heldAction.IsPressed())
+        {
+            Entities.Players.Play(11, 2f);
+            if (Version.DEBUG) Log.Debug("[HARM] Caught blastwave explosion");
+        }
+    }
 }

@@ -18,30 +18,39 @@ public static class ActionType
     /// <summary> Creates an actions that places a bunch of torches. </summary>
     public static void Torches(string scene, Vector3 position) => Run(scene, () =>
     {
-        GameAssets.Prefab("Levels/Interactive/Altar (Torch) Variant.prefab", p => Events.Post(() => // damn Unity crashes w/o this
+        GameAssets.Prefab("Levels/Interactive/Altar (Torch) Variant.prefab", p =>
         {
-            for (float angle = Mathf.PI * 12f / 7f; angle > 0f; angle -= Mathf.PI * 2f / 7f)
-            {
-                Inst(p, position + new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * 2f, Quaternion.Euler(0f, -angle * 180f / Mathf.PI, 0f))
-                    .GetComponentsInChildren<ItemIdentifier>().Each(i =>
-                    {
-                        if (!LobbyController.IsOwner) Tools.Tools.Dest(i.gameObject);
-                    });
-            }
-        }));
+            for (float angle = 360f * 6f / 7f; angle > 0f; angle -= 360f / 7f) Inst
+            (
+                p,
+                Quaternion.Euler(0f, -angle, 0f) * Vector3.right * 2f + position,
+                Quaternion.Euler(0f, -angle, 0f)
+            )
+            .DefFind("Cube/Torch").Get<Transform>(i => { if (!LobbyController.IsOwner) Props.Dest(i); })
+            .DefFind("../../Cube").Get<ItemPlaceZone>(z => z.hideEffects = true);
+        });
     });
 
     /// <summary> Creates an action that finds an object. </summary>
     public static void Find(string scene, string path, Cons<Transform> perform) => ActionList.Add(new(scene, path, false, false, () =>
     {
-        ResFind<Transform>().Each(o => IsReal(o) && o.Path() == path, perform);
+        ResFind<Transform>().Each(o => IsReal(o) && o.Path == path, perform);
     }));
+
+    /// <summary> Creates an action that finds an object. </summary>
+    public static void Fact(string scene, string path, bool single, Cons<ObjectActivator> perform) => Find(scene, path, t =>
+    {
+        if (single)
+            t.Get(perform);
+        else
+            t.GetComponents<ObjectActivator>().Each(perform);
+    });
 
     /// <summary> Creates an action that turns an object on. </summary>
     public static void Turn(string scene, string path) => Find(scene, path, t => Events.Post(() => t.gameObject.SetActive(true)));
 
     /// <summary> Creates an action that destroys an object. </summary>
-    public static void Dest(string scene, string path) => Find(scene, path, t => Tools.Tools.Dest(t.gameObject));
+    public static void Dest(string scene, string path) => Find(scene, path, t => Events.Post(() => Props.Dest(t)));
 
     #endregion
     #region dynamic
@@ -49,7 +58,7 @@ public static class ActionType
     /// <summary> Creates an action that synchronizes an object activator. </summary>
     public static void Act(string scene, string path, Cons<Transform> perform = null) => ActionList.Add(new(scene, path, true, false, () =>
     {
-        ResFind<ObjectActivator>().Each(o => IsReal(o) && o.Path() == path, o =>
+        ResFind<ObjectActivator>().Each(o => IsReal(o) && o.Path == path, o =>
         {
             o.gameObject.SetActive(true);
             o.Activate();
@@ -60,7 +69,7 @@ public static class ActionType
     /// <summary> Creates an action that synchronizes a script activator. </summary>
     public static void Scr(string scene, string path, Cons<Transform> perform = null) => ActionList.Add(new(scene, path, true, false, () =>
     {
-        ResFind<ScriptActivator>().Each(o => IsReal(o) && o.Path() == path, o =>
+        ResFind<ScriptActivator>().Each(o => IsReal(o) && o.Path == path, o =>
         {
             o.pistons.Each(p => p.off = false);
             o.lightpillars.Each(p => p.ActivatePillar());
@@ -71,7 +80,7 @@ public static class ActionType
     /// <summary> Creates an action that synchronizes clicks on a button. </summary>
     public static void Btn(string scene, string path, Cons<Transform> perform = null) => ActionList.Add(new(scene, path, true, false, () =>
     {
-        ResFind<Button>().Each(o => IsReal(o) && o.Path() == path, o =>
+        ResFind<Button>().Each(o => IsReal(o) && o.Path == path, o =>
         {
             o.GetComponent<ControllerPointer>().OnPressed.Invoke();
             o.interactable = false;
@@ -95,7 +104,7 @@ public static class ActionType
             w.transform.Each(Imdt);
             w.enabled = false;
             w.GetComponents<Collider>().Each(Imdt);
-            w.Component<NavMeshObstacle>(o =>
+            w.Get<NavMeshObstacle>(o =>
             {
                 if (w.wall)
                 {
@@ -103,7 +112,7 @@ public static class ActionType
                     o.enabled = false;
                 }
                 else o.enabled = true;
-            }, true);
+            });
         }
     });
 

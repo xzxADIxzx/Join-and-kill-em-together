@@ -26,7 +26,7 @@ public class CommandHandler
     public void Register(string name, string args, string desc, Cons<string[]> handler) =>
         Commands.Add(new(name, args, desc, handler));
 
-    /// <summary> Registers a new command with no arguments. </summary>
+    /// <summary> Registers a new command. </summary>
     public void Register(string name, string desc, Cons<string[]> handler) =>
         Commands.Add(new(name, null, desc, handler));
 }

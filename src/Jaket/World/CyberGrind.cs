@@ -11,7 +11,6 @@ using Jaket.Net;
 public class CyberGrind
 {
     static EndlessGrid grid => EndlessGrid.Instance;
-    static NewMovement nm => NewMovement.Instance;
 
     /// <summary> Current wave number used for display on the Huge Flying Panel™. </summary>
     public static int CurrentWave;
@@ -59,7 +58,7 @@ public class CyberGrind
         if (col.enabled)
         {
             col.enabled = false; // start the timer and the music
-            ObjFind("Everything").transform.Find("Timer").gameObject.SetActive(true);
+            ObjFind("Everything").ObjFind("Timer").SetActive(true);
             return;
         }
 

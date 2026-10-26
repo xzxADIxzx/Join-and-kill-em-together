@@ -12,41 +12,37 @@ using static Entities;
 /// <summary> Vendor responsible for coins. </summary>
 public class Coins : Vendor
 {
-    public void Load()
+    public override void Load()
     {
-        byte type = (byte)EntityType.Coin;
+        Fill(EntityType.Coin, EntityType.Coin, GameAssets.Coins);
 
-        GameAssets.Prefab("Attacks and Projectiles/Coin.prefab", p => Vendor.Prefabs[type] = p);
-
-        Vendor.Suppliers[type] = (id, type) => new TeamCoin(id, type);
+        Fill<TeamCoin>(EntityType.Coin, EntityType.Coin);
     }
 
-    public EntityType Type(GameObject obj) => obj.name == "Coin(Clone)" ? EntityType.Coin : EntityType.None;
+    public override EntityType Type(GameObject obj) => obj && obj.HasIdentifier(out var id) && id.Type.IsCoin() ? id.Type : EntityType.None;
 
-    public GameObject Make(EntityType type, Vector3 position = default, Transform parent = null)
+    public override GameObject Make(EntityType type, Vector3 position = default, Transform parent = null)
     {
-        if (type != EntityType.Coin) return null;
+        if (!type.IsCoin()) return null;
 
-        var obj = Inst(Vendor.Prefabs[(byte)type], position);
+        var obj = Inst(Prefabs[(byte)type], position);
 
         return obj;
     }
 
-    public void Sync(GameObject obj, params bool[] args)
+    public override void Sync(GameObject obj, params bool[] args)
     {
         var type = Type(obj);
-        if (type == EntityType.None || obj.GetComponent<Entity.Agent>()) return;
+        if (type == EntityType.None || obj.HasAgent()) return;
 
         var entity = Supply(type);
 
         entity.Owner = AccId;
-        entity.Assign(obj.AddComponent<Entity.Agent>());
+        entity.Assign(obj.Add<Entity.Agent>(_ => { }));
         entity.Push();
     }
 
     #region targeting
-
-    static Transform cc => CameraController.Instance.transform;
 
     /// <summary> Finds the most suitable target of a ricochet. </summary>
     public Transform FindTarget(TeamCoin coin, bool enemiesOnly, out bool isPlayer, out bool isEnemy, List<GameObject> chain = null)
@@ -104,7 +100,7 @@ public class Coins : Vendor
     }
 
     /// <summary> Finds the target position of a punchflection. </summary>
-    public bool Punchcast(out RaycastHit hit) => Physics.Raycast(cc.position, cc.forward, out hit, float.PositiveInfinity, EnvMask);
+    public bool Punchcast(out RaycastHit hit) => Physics.Raycast(cctr.position, cctr.forward, out hit, float.PositiveInfinity, EnvMask);
 
     #endregion
 }

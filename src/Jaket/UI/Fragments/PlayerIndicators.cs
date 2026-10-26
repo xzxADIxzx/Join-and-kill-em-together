@@ -22,7 +22,7 @@ public class PlayerIndicators : Fragment
         Events.OnLobbyEnter += () => { if (!Shown) Toggle(); };
         Events.OnTeamChange += Rebuild;
 
-        Content.Component<Bar>(b => b.Update(() =>
+        Content.Add<Bar>(b => b.Update(() =>
         {
             // update indicators so that they always point to their respective targets
             for (int i = 0; i < targets.Count; i++) Update(targets[i], indicators[i]);
@@ -56,15 +56,14 @@ public class PlayerIndicators : Fragment
     {
         if (target == null || indicator == null) return;
 
-        var dst = Vector3.Distance(NewMovement.Instance.transform.position, target.Position);
-        var cam = CameraController.Instance.transform;
-        var dir = target.Position - cam.position;
+        var dst = Vector3.Distance(nmtr.position, target.DrawCntr);
+        var dir = target.DrawCntr - cctr.position;
 
         indicator.Arc   = Mathf.Clamp(100f - dst, 5f, 100f) * .006f;
         indicator.color = indicator.color with { a = 1f - indicator.Arc * 1.5f };
 
-        var projection  = Vector3.ProjectOnPlane(dir, cam.forward);
-        var angle       = Vector3.SignedAngle(projection, cam.up, cam.forward);
+        var projection  = Vector3.ProjectOnPlane(dir, cctr.forward);
+        var angle       = Vector3.SignedAngle(projection, cctr.up, cctr.forward);
 
         indicator.rectTransform.localEulerAngles = new(0f, 0f, 270f - angle + indicator.Arc * 180f);
     }
