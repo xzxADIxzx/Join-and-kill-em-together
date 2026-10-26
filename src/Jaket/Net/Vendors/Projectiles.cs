@@ -13,7 +13,7 @@ public class Projectiles : Vendor
 {
     public override void Load()
     {
-        Fill(EntityType.Shell, EntityType.ProjectileRats, GameAssets.Projectiles);
+        Fill(EntityType.Shell, EntityType.ProjectileHome, GameAssets.Projectiles);
 
         Events.Post
         (
@@ -29,7 +29,7 @@ public class Projectiles : Vendor
         Fill<Screwdriver    >(EntityType.Screwdriver,     EntityType.Screwdriver    );
         Fill<Rocket         >(EntityType.Rocket,          EntityType.Rocket         );
         Fill<Cannon         >(EntityType.Cannonball,      EntityType.Cannonball     );
-        Fill<Shell          >(EntityType.ProjectileHell,  EntityType.ProjectileRats );
+        Fill<Shell          >(EntityType.ProjectileHell,  EntityType.ProjectileHome );
 
         Events.OnTeamChange += () => Networking.Entities.Alive<Projectile>(p => p.UpdateIgnore());
     }

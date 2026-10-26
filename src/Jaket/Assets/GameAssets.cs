@@ -252,6 +252,8 @@ public static class GameAssets
         "Attacks and Projectiles/Projectile Spread.prefab",
         "Attacks and Projectiles/Projectile Explosive.prefab",
         "Attacks and Projectiles/Projectile Homing Explosive.prefab",
+        "Attacks and Projectiles/Projectile Explosive HH.prefab",
+        "Attacks and Projectiles/Projectile Homing.prefab",
     };
 
     /// <summary> List of internal paths of all explosions. </summary>
