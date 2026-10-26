@@ -58,6 +58,8 @@ public abstract class Projectile : OwnableEntity
 
     public override Vector3 DrawPos => agent.Position;
 
+    public override Vector3 DrawRot => agent.Rotation;
+
     #endregion
     #region logic
 

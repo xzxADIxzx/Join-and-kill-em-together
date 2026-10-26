@@ -91,6 +91,8 @@ public class RemotePlayer : Entity
 
     public override Vector3 DrawPos => agent.Position;
 
+    public override Vector3 DrawRot => agent.Rotation;
+
     public virtual Vector3 DrawCntr => agent.Position + agent.transform.up * 2.5f;
 
     public virtual EnemyTarget Target => new(enemyId);

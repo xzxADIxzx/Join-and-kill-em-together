@@ -51,6 +51,8 @@ public abstract class Entity
     public virtual bool Debuggable => false;
     /// <summary> Position to draw debug elements in. </summary>
     public virtual Vector3 DrawPos => default;
+    /// <summary> Rotation to draw debug elements in. </summary>
+    public virtual Vector3 DrawRot => default;
 
     #endregion
     #region logic

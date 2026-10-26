@@ -67,6 +67,8 @@ public abstract class Item : OwnableEntity
 
     public override Vector3 DrawPos => agent.Position;
 
+    public override Vector3 DrawRot => agent.Rotation;
+
     public abstract Vector3 HoldRotation { get; }
 
     #endregion
