@@ -36,14 +36,6 @@ public class Cerberus : Foe
         agent.Get(out nma);
         agent.Get(out scr);
         agent.Get(out animator);
-
-        if (Scene == "Level 0-5")
-        {
-            agent.Scale = Vector3.one * 1.2f;
-            agent.Get(out EnemyIdentifier i);
-
-            i.overrideFullName = "CERBERUS, GUARDIAN OF HELL";
-        }
     }
 
     public override void Update(float delta)
@@ -62,6 +54,16 @@ public class Cerberus : Foe
             case 3: scr.Throw (); break;
         }
         if (LastMoving != Moving) animator.SetBool(running, LastMoving = Moving);
+    }
+
+    public override void Bossed(int layers)
+    {
+        if (Scene == "Level 0-5")
+        {
+            scr.eid.overrideFullName = "CERBERUS, GUARDIAN OF HELL";
+            agent.Scale = Vector3.one * 1.2f;
+        }
+        base.Bossed(layers);
     }
 
     #endregion

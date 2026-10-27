@@ -26,8 +26,6 @@ public class Hideous : Foe
 
     public override void Update(float delta)
     {
-        scr.crazyModeHealth = PostHealth * .2f;
-
         if (IsOwner) Moving = scr.walking;
         if (Lock(scr)) return;
 
@@ -58,6 +56,8 @@ public class Hideous : Foe
         }
         else base.Killed(explode);
     }
+
+    public override void Bossed(int layers) { base.Bossed(layers); scr.crazyModeHealth = PostHealth * .2f; }
 
     #endregion
     #region harmony

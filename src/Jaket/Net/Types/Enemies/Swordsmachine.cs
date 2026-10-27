@@ -44,8 +44,6 @@ public class Swordsmachine : Foe
 
     public override void Update(float delta)
     {
-        scr.phaseChangeHealth = scr.firstPhase ? PostHealth / 2f : 0f;
-
         if (IsOwner) Moving = animator.GetBool(running);
         if (Lock(nma, scr)) return;
 
@@ -80,6 +78,8 @@ public class Swordsmachine : Foe
         }
         else base.Killed(explode);
     }
+
+    public override void Bossed(int layers) { base.Bossed(layers); scr.phaseChangeHealth = PostHealth / 2f; }
 
     #endregion
     #region harmony

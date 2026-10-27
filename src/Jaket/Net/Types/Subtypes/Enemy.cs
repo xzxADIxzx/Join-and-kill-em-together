@@ -133,14 +133,7 @@ public abstract class Enemy : OwnableEntity
             PostHealth = enemy.health = r.Float();
 
             int layers = r.Int();
-            if (layers != 0) Events.Post(() =>
-            {
-                bossbar ??= agent.GetOrAddComponent<BossHealthBar>();
-                bossbar.healthLayers = new HealthLayer[layers];
-
-                for (int i = 0; i < layers; i++) bossbar.healthLayers[i] = new() { health = PostHealth / layers };
-                BossBarManager.Instance.bossBarsToRemove.Enqueue(bossbar.bossBarId);
-            });
+            if (layers != 0) Events.Post(() => Bossed(layers));
         }
 
         if (rage) Events.Post(() => Rage(enraged));
@@ -159,6 +152,15 @@ public abstract class Enemy : OwnableEntity
         }
 
         Dest(agent);
+    }
+
+    public virtual void Bossed(int layers)
+    {
+        bossbar ??= agent.GetOrAddComponent<BossHealthBar>();
+        bossbar.healthLayers = new HealthLayer[layers];
+
+        for (int i = 0; i < layers; i++) bossbar.healthLayers[i] = new() { health = PostHealth / layers };
+        BossBarManager.Instance.bossBarsToRemove.Enqueue(bossbar.bossBarId);
     }
 
     #endregion
