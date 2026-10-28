@@ -212,6 +212,20 @@ public static class ActionList
         ActionType.Act(l, "Wave 3/Trigger@00");
         ActionType.Act(l, "Enemies/Trigger C@08");
 
+        ActionType.Find(l, "/LargeDoorSmaller@00", t => t.Get<Door>(d => d.Lock()));
+        ActionType.Find(l, "S Stuff/Enemies@00", t => t.Get<ActivateNextWave>(a => a.toActivate =
+        [
+            Create("Open", a.transform).Add<ObjectActivator>(o =>
+            {
+                o.events = new() { onActivate = new() };
+                o.events.onActivate.AddListener(() => ObjFind("LargeDoorSmaller").Get<Door>(d => { d.Unlock(); d.Open(); }));
+            }
+            ).Get<Transform>(t => t.SetAsFirstSibling()).Disable()
+        ]));
+        ActionType.Act(l, "Enemies/Open@00");
+
+        ActionType.Find(l, "Enemy/Mass@01", t => t.Get<EventOnDestroy>(Dest));
+
         #endregion
         #region 1-4
         l = "Level 1-4";
