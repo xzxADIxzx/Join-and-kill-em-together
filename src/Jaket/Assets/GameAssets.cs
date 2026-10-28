@@ -15,19 +15,25 @@ public static class GameAssets
     }
 
     /// <summary> Loads a prefab. </summary>
-    public static void Prefab (string path, Cons<GameObject> cons) => Load(path.StartsWith("p/") ? $"Assets/Particles/{path[2..]}" : $"Assets/Prefabs/{path}", cons);
+    public static void Prefab  (string path, Cons<GameObject> cons) => Load(path.StartsWith("p/") ? $"Assets/Particles/{path[2..]}" : $"Assets/Prefabs/{path}", cons);
 
     /// <summary> Loads a sprite. </summary>
-    public static void Sprite (string path, Cons<Sprite    > cons) => Load(path.StartsWith("s/") ? $"Assets/Textures/Sprites/{path[2..]}" : $"Assets/Textures/UI/{path}", cons);
+    public static void Sprite  (string path, Cons<Sprite    > cons) => Load(path.StartsWith("s/") ? $"Assets/Textures/Sprites/{path[2..]}" : $"Assets/Textures/UI/{path}", cons);
 
     /// <summary> Loads a shader. </summary>
-    public static void Shader (string path, Cons<Shader    > cons) => Load($"Assets/Shaders/{path}", cons);
+    public static void Shader  (string path, Cons<Shader    > cons) => Load($"Assets/Shaders/{path}", cons);
+
+    /// <summary> Loads a material. </summary>
+    public static void Material(string path, Cons<Material  > cons) => Load($"Assets/Materials/{path}", cons);
 
     /// <summary> Loads a texture. </summary>
-    public static void Texture(string path, Cons<Texture   > cons) => Load($"Assets/Models/{path}", cons);
+    public static void Texture (string path, Cons<Texture   > cons) => Load($"Assets/Models/{path}", cons);
+
+    /// <summary> Loads a model. </summary>
+    public static void Model   (string path, Cons<Material  > cons) => Load($"Assets/Models/{path}", cons);
 
     /// <summary> Loads a sound. </summary>
-    public static void Sound  (string path, Cons<AudioClip > cons) => Load($"Assets/Sounds/{path}", cons);
+    public static void Sound   (string path, Cons<AudioClip > cons) => Load($"Assets/Sounds/{path}", cons);
 
     #endregion
     #region content
