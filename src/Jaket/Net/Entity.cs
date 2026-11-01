@@ -113,6 +113,8 @@ public abstract class Entity
     {
         /// <summary> Underlying type of the entity. </summary>
         public EntityType Type;
+        /// <summary> Visual components of the entity. </summary>
+        public Renderer[] Mesh;
     }
 
     /// <summary> Most of the entities manipulate an object of some kind, agents implement these interactions. </summary>

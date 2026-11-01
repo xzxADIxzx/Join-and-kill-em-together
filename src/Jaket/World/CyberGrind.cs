@@ -3,7 +3,6 @@
 using UnityEngine;
 
 using Jaket.Content;
-using Jaket.Input;
 using Jaket.IO;
 using Jaket.Net;
 
@@ -75,6 +74,6 @@ public class CyberGrind
             nm.GetHealth(999, silent: true);
             nm.FullStamina();
         }
-        else Movement.CyberRespawn();
+        else Checkpoints.Respawn(new(0f, 80f, 62.5f), 0f, true);
     }
 }

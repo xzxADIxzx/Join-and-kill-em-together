@@ -11,7 +11,6 @@ using Jaket.Net.Admin;
 using Jaket.Net.Types;
 using Jaket.UI;
 using Jaket.UI.Elements;
-using Jaket.UI.Fragments;
 using Jaket.World;
 
 /// <summary> Class responsible for additions to control and local display of emotes. </summary>
@@ -167,26 +166,6 @@ public class Movement : MonoSingleton<Movement>
         OptionsManager.Instance.frozen = Emotes.Current != 0xFF;
         Console.Instance.enabled       = Emotes.Current == 0xFF;
     }
-
-    /// <summary> Respawns the player at the given position with the given rotation. </summary>
-    public static void Respawn(Vector3 position, float rotation, bool flash = false)
-    {
-        sh.ComboOver();
-        sh.ResetAllFreshness();
-
-        nm.Respawn();
-        nm.GetHealth(0, true);
-        nm.ActivatePlayer();
-
-        cc.ResetCamera(rotation);
-        cc.StopShake();
-        fc.fistCooldown = 0f;
-
-        Teleporter.Tp(position, flash);
-    }
-
-    /// <summary> Respawns Cyber Grind players and flashes the screen. </summary>
-    public static void CyberRespawn() => Respawn(new(0f, 80f, 62.5f), 0f, true);
 
     /// <summary> Kills the player immediately. </summary>
     public static void Suicide() => nm.GetHurt(nm.hp, true, 0f, instablack: true, ignoreInvincibility: true);

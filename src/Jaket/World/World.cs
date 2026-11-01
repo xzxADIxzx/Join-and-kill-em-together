@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 using Jaket.Content;
 using Jaket.Harmony;
-using Jaket.Input;
 using Jaket.IO;
 using Jaket.Net;
 
@@ -219,8 +218,6 @@ public class World
     static void Activate(ActivateArena __instance)
     {
         Perform("arena", new(__instance.transform.position.x, __instance.transform.position.z));
-
-        __instance.doors = [];
     }
 
     [DynamicPatch(typeof(FinalDoor), nameof(FinalDoor.Open))]
@@ -229,53 +226,6 @@ public class World
     {
         Perform("final", new(__instance.transform.position.x, __instance.transform.position.z));
     }
-
-    [DynamicPatch(typeof(CheckPoint), nameof(CheckPoint.ActivateCheckPoint))]
-    [Prefix]
-    static bool Activate(CheckPoint __instance)
-    {
-        if (sm.currentCheckPoint && sm.currentCheckPoint != __instance)
-        {
-            if (sm.currentCheckPoint.resetOnGetOtherCheckpoint)
-                sm.currentCheckPoint.ReactivateCheckpoint();
-
-            nm.sameCheckpointRestarts = 0;
-        }
-        sm.currentCheckPoint = __instance;
-
-        if (__instance.activateEffect.RuntimeKeyIsValid() && !__instance.invisible) Inst(__instance.activateEffect.ToAsset(), nmtr.position);
-        if (__instance.graphic) __instance.graphic.SetActive(false);
-
-        __instance.activated = true;
-        return false;
-    }
-
-    [DynamicPatch(typeof(CheckPoint), nameof(CheckPoint.OnRespawn))]
-    [Prefix]
-    static bool Respawn(CheckPoint __instance)
-    {
-        __instance.onRestart?.Invoke();
-        __instance.toActivate?.SetActive(true);
-
-        Movement.Respawn(__instance.transform.position + __instance.transform.up * 1.25f, __instance.transform.eulerAngles.y);
-        return false;
-    }
-
-    [DynamicPatch(typeof(CheckPoint), nameof(CheckPoint.Start))]
-    [Prefix]
-    static void Inherit(CheckPoint __instance)
-    {
-        __instance.rooms.Each(r =>
-        {
-            r.GetOrAddComponent<GoreZone>().checkpoint = __instance;
-            r.GetComponentsInChildren<Bonus>(true).Each(b => b.UpdateStatsManagerReference());
-        });
-        __instance.rooms = [];
-    }
-
-    [DynamicPatch(typeof(Door), nameof(Door.Optimize))]
-    [Prefix]
-    static bool Unload() => false;
 
     #endregion
 }

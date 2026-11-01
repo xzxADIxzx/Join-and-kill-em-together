@@ -46,7 +46,7 @@ public class Teleporter : Fragment
     {
         Movement.UpdateState();
         nmtr.position = position;
-        nm.rb.velocity = Vector3.zero;
+        nm.rb.velocity = default;
 
         PlayerActivatorRelay.Instance?.Activate();
         if (GameStateManager.Instance.IsStateActive("pit-falling"))
