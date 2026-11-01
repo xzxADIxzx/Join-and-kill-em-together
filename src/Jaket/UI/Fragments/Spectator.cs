@@ -137,7 +137,7 @@ public class Spectator : Fragment
     [Prefix]
     static void Sequence(DeathSequence __instance) => Events.Post(() =>
     {
-        __instance.gameObject.SetActive(false);
+        __instance.Disable();
 
         UI.Spectator.Shown = true;
         UI.Spectator.Toggle();

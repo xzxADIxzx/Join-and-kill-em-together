@@ -58,9 +58,9 @@ public static class ActionList
             {
                 var blck = prev.Find(o => o.name == "Blockers");
 
-                blck.ObjChild(0).GetComponentsInChildren<Renderer>().Each(Dest);
-                blck.ObjChild(1).SetActive(false);
-                blck.ObjChild(2).SetActive(false);
+                blck.DefChild(0).GetComponentsInChildren<Renderer>().Each(Dest);
+                blck.DefChild(1).Disable();
+                blck.DefChild(2).Disable();
             });
             o.events.toActivateObjects.Each(o => o.name == "Cube", o => o.GetComponents<Collider>().Each(Dest));
         });
@@ -73,8 +73,8 @@ public static class ActionList
             o.events.onActivate.AddListener(() =>
             {
                 prev[4].GetComponentsInChildren<Renderer>().Each(Dest);
-                prev[5].SetActive(false);
-                prev[8].SetActive(false);
+                prev[5].Disable();
+                prev[8].Disable();
             });
         });
 
@@ -220,7 +220,7 @@ public static class ActionList
                 o.events = new() { onActivate = new() };
                 o.events.onActivate.AddListener(() => ObjFind("LargeDoorSmaller").Get<Door>(d => { d.Unlock(); d.Open(); }));
             }
-            ).Get<Transform>(t => t.SetAsFirstSibling()).Disable()
+            ).Disable().Get<Transform>(t => t.SetAsFirstSibling()).gameObject
         ]));
         ActionType.Act(l, "Enemies/Open@00");
 

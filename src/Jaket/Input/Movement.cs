@@ -37,7 +37,7 @@ public class Movement : MonoSingleton<Movement>
         {
             if (ch.cheatsEnabled && LobbyController.Online && !Administration.Privileged)
             {
-                cm.DefFind("Cheats Overlay").Each(c => c.gameObject.SetActive(false));
+                cm.DefFind("Cheats Overlay").Each(c => c.Disable());
                 cm.idToCheat.Values.Each(cm.DisableCheat);
 
                 ch.cheatsEnabled = false;
@@ -239,7 +239,7 @@ public class Movement : MonoSingleton<Movement>
     [Prefix]
     static void Superiority()
     {
-        if (UI.Emote.Shown) WeaponWheel.Instance.gameObject.SetActive(false);
+        if (UI.Emote.Shown) WeaponWheel.Instance.Disable();
     }
 
     [StaticPatch(typeof(CameraFrustumTargeter), nameof(CameraFrustumTargeter.CurrentTarget), HarmonyLib.MethodType.Setter)]

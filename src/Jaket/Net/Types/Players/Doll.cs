@@ -103,10 +103,10 @@ public class Doll : Entity
 
         Events.Post(() =>
         {
-            Suits.Each(s => s.gameObject.SetActive(false));
+            Suits.Each(s => s.Disable());
 
-            if (hat != -1) Suits.ObjChild(hat).SetActive(true);
-            if (jkt != -1) Suits.ObjChild(jkt).SetActive(true);
+            if (hat != -1) Suits.DefChild(hat).Enable();
+            if (jkt != -1) Suits.DefChild(jkt).Enable();
         });
 
         var custom = r.Bool();

@@ -22,9 +22,8 @@ public class Weapons : Vendor
     {
         if (!type.IsWeapon()) return null;
 
-        var obj = Inst(Prefabs[(byte)type], parent);
+        var obj = Inst(Prefabs[(byte)type], parent).Enable();
 
-        obj.SetActive(true);
         obj.GetComponentsInChildren<Renderer   >().Each(c => c.gameObject.layer = 24); // outdoors
         obj.GetComponentsInChildren<Canvas     >().Each(c => c.gameObject.layer = 24); // outdoors
         obj.GetComponentsInChildren<AudioSource>().Each(c => c.spatialBlend     = 1f); // surround audio

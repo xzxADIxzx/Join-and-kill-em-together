@@ -87,6 +87,18 @@ public static class Props
     /// <summary> Iterates the children. </summary>
     public static void Each(this Transform parent, Cons<Transform> cons) { foreach (Transform child in parent) cons(child); }
 
+    /// <summary> Enables the object. </summary>
+    public static GameObject Enable(this GameObject obj) { if (obj) obj.SetActive(true); return obj; }
+
+    /// <summary> Enables the object. </summary>
+    public static Component Enable(this Component comp) { if (comp) comp.gameObject.SetActive(true); return comp; }
+
+    /// <summary> Disables the object. </summary>
+    public static GameObject Disable(this GameObject obj) { if (obj) obj.SetActive(false); return obj; }
+
+    /// <summary> Disables the object. </summary>
+    public static Component Disable(this Component comp) { if (comp) comp.gameObject.SetActive(false); return comp; }
+
     #endregion
     #region entities
 

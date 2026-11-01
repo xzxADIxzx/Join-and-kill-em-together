@@ -58,8 +58,8 @@ public class Header
     });
 
     /// <summary> Shows the header. </summary>
-    public void Show() => Root.ObjFind("Header").SetActive(true);
+    public void Show() => Root.DefFind("Header").Enable();
 
     /// <summary> Hides the header. </summary>
-    public void Hide() => Root.ObjFind("Header").SetActive(false);
+    public void Hide() => Root.DefFind("Header").Disable();
 }

@@ -138,7 +138,7 @@ public static class ModAssets
                 byte chld = j - EntityType.SnackCan;
                 var snack = snacks[chld];
 
-                snack.ObjChild(chld).SetActive(true);
+                snack.Enable().DefChild(chld).Enable();
                 snack.name = j.ToString();
                 snack.Add<Entity.Identifier>(i => i.Type = j);
 
@@ -147,7 +147,6 @@ public static class ModAssets
                 snack.Get<Rigidbody>(r => r.isKinematic = true);
 
                 snack.transform.position = Vector3.down * 4242f;
-                snack.SetActive(true);
             }
         });
 

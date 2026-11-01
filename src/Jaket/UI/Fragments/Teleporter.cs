@@ -55,7 +55,7 @@ public class Teleporter : Fragment
         if (flash) UI.Teleporter.Toggle();
 
         // this annoying sound makes me cry
-        ObjFind("Hellmap")?.SetActive(false);
+        ObjFind("Hellmap").Disable();
 
         // but this one is fine, I like it
         Events.Post(() => AudioSource.PlayClipAtPoint(UI.Teleporter.clip, position));

@@ -142,9 +142,9 @@ public class Plushie : Item
             rnd.pitchVariation = .01f;
             act.delay = 8f;
 
-            black.SetActive(true);
-            white.SetActive(false);
-            music.SetActive(false);
+            black.Enable();
+            white.Disable();
+            music.Disable();
 
             PostProcessV2_Handler.Instance.DeathEffect(true);
             PostProcessV2_Handler.Instance.WickedEffect(true);
@@ -155,9 +155,9 @@ public class Plushie : Item
                 rnd.pitchVariation = .1f;
                 act.delay = 1f;
 
-                black.SetActive(false);
-                white.SetActive(true);
-                music.SetActive(true);
+                black.Disable();
+                white.Enable();
+                music.Enable();
 
                 PostProcessV2_Handler.Instance.DeathEffect(false);
                 PostProcessV2_Handler.Instance.WickedEffect(false);

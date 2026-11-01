@@ -47,7 +47,7 @@ public static class ActionType
     });
 
     /// <summary> Creates an action that turns an object on. </summary>
-    public static void Turn(string scene, string path) => Find(scene, path, t => Events.Post(() => t.gameObject.SetActive(true)));
+    public static void Turn(string scene, string path) => Find(scene, path, t => Events.Post(() => t.Enable()));
 
     /// <summary> Creates an action that destroys an object. </summary>
     public static void Dest(string scene, string path) => Find(scene, path, t => Events.Post(() => Props.Dest(t)));
@@ -60,7 +60,7 @@ public static class ActionType
     {
         ResFind<ObjectActivator>().Each(o => IsReal(o) && o.Path == path, o =>
         {
-            o.gameObject.SetActive(true);
+            o.Enable();
             o.Activate();
             perform?.Invoke(o.transform);
         });
@@ -117,7 +117,7 @@ public static class ActionType
     });
 
     /// <summary> Creates an action that synchronizes all statues. </summary>
-    public static void Statue(string scene) => Find<StatueActivator>(scene, "statue", s => s.gameObject.SetActive(true));
+    public static void Statue(string scene) => Find<StatueActivator>(scene, "statue", s => s.Enable());
 
     /// <summary> Creates an action that synchronizes all switches. </summary>
     public static void Switch(string scene) => Find<LimboSwitch>(scene, "switch", s => s.Pressed());

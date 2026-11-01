@@ -225,7 +225,7 @@ public class TeamCoin : OwnableEntity
         else
         {
             agent.tag = "Untagged"; // prevent reflection from hitting the coin
-            beam.SetActive(true);
+            beam.Enable();
             beam.transform.position = agent.Position;
 
             if (target)
@@ -359,7 +359,7 @@ public class TeamCoin : OwnableEntity
         effect.GetComponentsInChildren<SpriteController>(true).Each(Dest);
 
         effect.DefFind("MuzzleFlash/muzzleflash/Particle System").localScale = Vector3.one * .42f;
-        effect.ObjFind("MuzzleFlash/muzzleflash"                ).SetActive(true);
+        effect.DefFind("MuzzleFlash/muzzleflash"                ).Enable();
         var col = effect.GetComponentInChildren<ParticleSystem        >().colorOverLifetime;
         var mat = effect.GetComponentInChildren<ParticleSystemRenderer>().material;
         col.color = new(clear, black);

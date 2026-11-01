@@ -47,7 +47,7 @@ public class Hitscans : Vendor
                 r.startColor = r.endColor = ((Team)data).Color();
 
             else if (data == byte.MaxValue)
-                r.ObjChild(0).SetActive(false); // disable muzzleflash
+                r.DefChild(0).Disable(); // disable muzzleflash
 
             else
             {

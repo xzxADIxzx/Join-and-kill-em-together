@@ -46,7 +46,7 @@ public class Fish : Item
                 Killed(default, default);
                 Inst(Entities.Vendor.Prefabs[(byte)EntityType.Harmless], fish.transform.position);
             });
-            fish.ObjFind("Bomb Fish/Fire")?.SetActive(true);
+            fish.DefFind("Bomb Fish/Fire").Enable();
         });
     }
 
