@@ -78,8 +78,6 @@ public static class ActionList
             });
         });
 
-        ActionType.Dest(l, "13 Nonstuff/Cube (2)@00"); // unloader
-
         ActionType.Act(l, "13 Content/Trigger@00"); // boss
 
         #endregion
@@ -111,8 +109,6 @@ public static class ActionList
 
         ActionType.Dest(l, "Boss Arena Contents/NeoBreakable@03");
         ActionType.Act(l, "Boss Arena Contents/Cube (1)@01"); // boss
-
-        ActionType.Fact(l, "11 Contents/Trigger@01", false, Dest); // unloader
 
         #endregion
         #region 0-4
@@ -146,7 +142,7 @@ public static class ActionList
         #region 0-5
         l = "Level 0-5";
 
-        ActionType.Fact(l, "4 Contents/Cube@00", true, o => o.events.toDisActivateObjects[0] = null);
+        ActionType.Fact(l, "4 Contents/Cube@00", true, o => o.events.toDisActivateObjects[0] = null); // unloader
         ActionType.Find(l, "4 Contents/Enemies@02", t => t.Get<ActivateNextWaveHP>(o =>
         {
             if (LobbyController.IsOwner)
@@ -169,8 +165,6 @@ public static class ActionList
         #region 1-1
         l = "Level 1-1";
 
-        ActionType.Dest(l, "2 Nonstuff/Cube (2)@27"); // unloader
-        ActionType.Dest(l, "2 Nonstuff/Cube (8)@29"); // unloader
         ActionType.Dest(l, "3 - Skull Field/Altar@10"); // duplicate
         ActionType.Dest(l, "4 - Altar Field/Altar@07"); // duplicate
         ActionType.Dest(l, "11 Nonstuff/Altar@01"); // duplicate
@@ -192,7 +186,7 @@ public static class ActionList
 
         ActionType.Act(l, "Tesla Coils/Activated@02");
         ActionType.Act(l, "7 Stuff/Cube@01");
-        ActionType.Act(l, "Enemiues/Cube@00");
+        ActionType.Act(l, "Enemies/Cube@00");
         ActionType.Act(l, "CV11 Stuff/Cube@05");
         ActionType.Act(l, "CV11 Stuff/Cube (1)@03");
         ActionType.Act(l, "CV11 Stuff/Cube (2)@06");
@@ -200,14 +194,6 @@ public static class ActionList
         #endregion
         #region 1-3
         l = "Level 1-3";
-
-        ActionType.Run(l, () => ResFind<ObjectActivator>().Each(IsReal, o =>
-        {
-            for (int i = 0; i < o.events.toDisActivateObjects.Length; i++)
-            {
-                if (o.events.toDisActivateObjects[i].name.Contains('-')) o.events.toDisActivateObjects[i] = null;
-            }
-        }));
 
         ActionType.Act(l, "Wave 3/Trigger@00");
         ActionType.Act(l, "Enemies/Trigger C@08");
