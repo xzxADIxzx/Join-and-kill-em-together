@@ -18,7 +18,7 @@ function region
 # endregion
 # region help
 
-if echo $1 | grep -q "h" || [ $# -lt 1 ]
+if [[ $1 == *h* || $# == 0 ]]
 then
     echo "Builds the project"
     echo ""
@@ -27,7 +27,7 @@ then
     echo "    -h display this text"
     echo "    -r use release configuration"
     echo "    -d deploy to a directory"
-    echo "    -D deploy to an archive"
+    echo "    -z deploy as an archive (requires -d)"
     echo "    -i ignore the path file"
     exit 0
 fi
@@ -35,10 +35,10 @@ fi
 # endregion
 # region build
 
-if echo $1 | grep -q "r"
+if [[ $1 == *r* ]]
 then
     region "Building release version..."
-    dotnet build Jaket.csproj --configuration Release
+    dotnet build Jaket.csproj --configuration Release --no-incremental
 else
     region "Building debug version..."
     dotnet build Jaket.csproj
@@ -47,11 +47,11 @@ fi
 # endregion
 # region deploy
 
-if echo $1 | grep -qi "d"
+if [[ $1 == *d* ]]
 then
     region "Deploying the built version..."
 
-    if [ $# -lt 2 ]
+    if [[ $# < 2 ]]
     then
         faulty "Target directory was not provided"
         exit 1
@@ -59,26 +59,24 @@ then
 
     location=$(echo $1 | grep -q "r" && echo Release || echo Debug)
 
-    if echo $1 | grep -q "d"
+    if [[ $1 == *z* ]]
     then
+        zip -qj $2/Jaket.zip bin/$location/netstandard2.1/Jaket.dll obj/$location/netstandard2.1/manifest.json README.md assets/assets.bundle assets/bundles/*.properties
+    else
         cp bin/$location/netstandard2.1/Jaket.dll $2
         cp assets/assets.bundle $2
         cp assets/bundles/*.properties $2
-    else
-        zip -qj $2/Jaket.zip bin/$location/netstandard2.1/Jaket.dll obj/$location/netstandard2.1/manifest.json README.md assets/assets.bundle assets/bundles/*.properties
     fi
 fi
 
 # endregion
 # region ignore
 
-if echo $1 | grep -q "i"
+if [[ $1 == *i* ]]
 then
     region "Ignoring the Path.props file..."
 
-    git rev-parse --is-inside-work-tree &> /dev/null
-
-    if [ $? -ne 0 ]
+    if ! git rev-parse --is-inside-work-tree &> /dev/null
     then
         faulty "Couldn't find a repository in the work directory"
         exit 1
