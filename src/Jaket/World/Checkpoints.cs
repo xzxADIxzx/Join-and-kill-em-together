@@ -2,6 +2,7 @@ namespace Jaket.World;
 
 using UnityEngine;
 
+using Jaket.Content;
 using Jaket.Harmony;
 using Jaket.Net;
 using Jaket.UI.Fragments;
@@ -9,6 +10,8 @@ using Jaket.UI.Fragments;
 /// <summary> Class responsible for managing checkpoints and progression. </summary>
 public static class Checkpoints
 {
+    #region mission
+
     /// <summary> Restarts the level. </summary>
     public static void Restart() { }
 
@@ -29,11 +32,41 @@ public static class Checkpoints
         Teleporter.Tp(position, flash);
     }
 
+    #endregion
+    #region loaders
+
+    /// <summary> Marks the room and its mesh. </summary>
+    public static void Mark(GameObject room)
+    {
+        if (room && room.HasIdentifier(out var id))
+        {
+            id.Type = EntityType.Room;
+
+            id.Mesh = room.GetComponentsInChildren<Renderer>(true);
+
+            id.Mesh.Each(m => m && !m.enabled, m => m.forceRenderingOff = true);
+        }
+    }
+
+    /// <summary> Loads the room and its mesh. </summary>
+    public static void Load(GameObject room, bool visible, string reason)
+    {
+        if (room && room.HasIdentifier(out var id) && id.Type.IsRoom())
+        {
+            id.Mesh.Each(m => m && !m.forceRenderingOff, m => m.enabled = visible);
+
+            if (visible) room.Enable();
+
+            if (Version.DEBUG) Log.Debug($"[WRLD] {(visible ? "Loaded" : "Unloaded")} room {room.name} due to {reason}");
+        }
+    }
+
+    #endregion
     #region harmony
 
     [DynamicPatch(typeof(CheckPoint), nameof(CheckPoint.ActivateCheckPoint))]
     [Prefix]
-    static bool Activate(CheckPoint __instance)
+    static bool Reached(CheckPoint __instance)
     {
         if (sm.currentCheckPoint && sm.currentCheckPoint != __instance)
         {
@@ -82,29 +115,62 @@ public static class Checkpoints
         __instance.doors = [];
     }
 
+    [DynamicPatch(typeof(Door), nameof(Door.Awake))]
+    [Prefix]
+    static void Inherit(Door __instance)
+    {
+        __instance.activatedRooms.Each(r => !r.HasIdentifier(), r => r.Add<Entity.Identifier>(i => Mark(i.gameObject)));
+    }
+
     [DynamicPatch(typeof(Door), nameof(Door.Open))]
     [Prefix]
-    static void Load(Door __instance)
+    static bool Load(Door __instance)
     {
-        foreach (var room in __instance.activatedRooms)
-        {
-            if (room.HasIdentifier(out var id)) id.Mesh.Each(m => m && !m.forceRenderingOff, m => m.enabled = true);
-            else room.Add<Entity.Identifier>(id =>
-            {
-                id.Mesh = room.GetComponentsInChildren<Renderer>(true);
-                id.Mesh.Each(m => m && !m.enabled, m => m.forceRenderingOff = true);
-            });
-        }
+        __instance.activatedRooms.Each(r => Load(r, true, "a door"));
+        return true;
     }
 
     [DynamicPatch(typeof(Door), nameof(Door.Optimize))]
     [Prefix]
     static bool Unload(Door __instance)
     {
-        foreach (var room in __instance.deactivatedRooms)
+        __instance.deactivatedRooms.Each(r => Load(r, false, "a door"));
+        return false;
+    }
+
+    [DynamicPatch(typeof(UltrakillEvent), nameof(UltrakillEvent.Invoke))]
+    [Prefix]
+    static bool Load(UltrakillEvent __instance)
+    {
+        __instance.toDisActivateObjects.Each(r =>
         {
-            if (room.HasIdentifier(out var id)) id.Mesh.Each(m => m && !m.forceRenderingOff, m => m.enabled = false);
-        }
+            if (r && r.name.Contains('-')) Load(r, false, "an event");
+            else r.Disable();
+        });
+        __instance.toActivateObjects.Each(r =>
+        {
+            if (r && r.name.Contains('-')) Load(r, true, "an event");
+            else r.Enable();
+        });
+        __instance.onActivate?.Invoke();
+        return false;
+    }
+
+    [DynamicPatch(typeof(UltrakillEvent), nameof(UltrakillEvent.Revert))]
+    [Prefix]
+    static bool Unload(UltrakillEvent __instance)
+    {
+        __instance.toDisActivateObjects.Each(r =>
+        {
+            if (r && r.name.Contains('-')) Load(r, true, "an event");
+            else r.Enable();
+        });
+        __instance.toActivateObjects.Each(r =>
+        {
+            if (r && r.name.Contains('-')) Load(r, false, "an event");
+            else r.Disable();
+        });
+        __instance.onDisActivate?.Invoke();
         return false;
     }
 

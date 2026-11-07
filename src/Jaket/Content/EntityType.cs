@@ -6,6 +6,7 @@ public enum EntityType : byte
     None   = 0xFF,
     Player = 0x00,
     Coin   = 0x01,
+    Room   = 0x02,
 
     #region enemeis
 
@@ -245,6 +246,9 @@ public static class EntityTypes
 
     /// <summary> Whether the type is a coin.       </summary>
     public static bool IsCoin      (this EntityType type) => type >= EntityType.Coin                 && type <= EntityType.Coin                ;
+
+    /// <summary> Whether the type is a room.       </summary>
+    public static bool IsRoom      (this EntityType type) => type >= EntityType.Room                 && type <= EntityType.Room                ;
 
     /// <summary> Whether the type is an enemy.     </summary>
     public static bool IsEnemy     (this EntityType type) => type >= EntityType.Filth                && type <= EntityType.Sisyphus            ;
