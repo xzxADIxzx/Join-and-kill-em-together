@@ -4,6 +4,7 @@ global using static Jaket.Tools.Props;
 global using static Jaket.Tools.Tools;
 global using Ptr = System.IntPtr;
 global using Ins = System.Collections.Generic.IEnumerable<HarmonyLib.CodeInstruction>;
+global using Scr = System.ReadOnlySpan<UnityEngine.Behaviour>;
 
 namespace Jaket.Tools;
 

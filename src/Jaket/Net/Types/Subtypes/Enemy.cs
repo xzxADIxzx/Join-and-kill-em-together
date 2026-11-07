@@ -170,7 +170,7 @@ public abstract class Enemy : OwnableEntity
     protected void Enrage(bool enraged = true) => Kill(1, w => w.Bools(false, false, false, true, enraged));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected bool Lock(params System.ReadOnlySpan<Behaviour> scripts)
+    protected bool Lock(params Scr scripts)
     {
         if (Locked)
         {

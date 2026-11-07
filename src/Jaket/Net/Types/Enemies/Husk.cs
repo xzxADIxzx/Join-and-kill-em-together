@@ -34,12 +34,7 @@ public class Husk : Foe
 
     public override void Update(float delta)
     {
-        if (IsOwner) Moving = animator.GetBool(running);
-        if (Lock(nma, scr1, scr2)) return;
-
-        base.Update(delta);
-
-        nma.enabled = false;
+        if (Update(delta, animator.GetBool(running), nma, scr1, scr2)) return;
 
         if (LastAttack != Attack) switch (LastAttack = Attack)
         {

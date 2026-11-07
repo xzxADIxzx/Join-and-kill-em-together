@@ -38,10 +38,7 @@ public class Drone : Foe
 
     public override void Update(float delta)
     {
-        if (IsOwner) Moving = false;
-        if (Lock(scr)) return;
-
-        base.Update(delta);
+        if (Update(delta, false, scr)) return;
 
         if (LastAttack != Attack) switch (LastAttack = Attack)
         {

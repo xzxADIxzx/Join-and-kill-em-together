@@ -21,13 +21,7 @@ public class Rodent : Foe
         agent.transform.SetAsLastSibling(); // don't ask
     }
 
-    public override void Update(float delta)
-    {
-        if (IsOwner) Moving = false;
-        if (Lock(scr)) return;
-
-        base.Update(delta);
-    }
+    public override void Update(float delta) => Update(delta, false, scr);
 
     #endregion
 }

@@ -26,10 +26,7 @@ public class Hideous : Foe
 
     public override void Update(float delta)
     {
-        if (IsOwner) Moving = scr.walking;
-        if (Lock(scr)) return;
-
-        base.Update(delta);
+        if (Update(delta, scr.walking, scr)) return;
 
         if (LastAttack != Attack) switch (LastAttack = Attack)
         {

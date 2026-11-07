@@ -32,12 +32,8 @@ public class Streetcleaner : Foe
 
     public override void Update(float delta)
     {
-        if (IsOwner) Moving = animator.GetBool(walking);
-        if (Lock(nma, scr)) return;
+        if (Update(delta, animator.GetBool(walking), nma, scr)) return;
 
-        base.Update(delta);
-
-        nma.enabled = false;
         scr.dodgeCooldown = 0f;
 
         if (LastAttack != Attack) switch (LastAttack = Attack)

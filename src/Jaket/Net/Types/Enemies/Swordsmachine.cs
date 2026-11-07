@@ -45,12 +45,8 @@ public class Swordsmachine : Foe
 
     public override void Update(float delta)
     {
-        if (IsOwner) Moving = animator.GetBool(running);
-        if (Lock(nma, scr)) return;
+        if (Update(delta, animator.GetBool(running), nma, scr)) return;
 
-        base.Update(delta);
-
-        nma.enabled = false;
         scr.targetHandle = null;
 
         if (LastAttack != Attack) switch (LastAttack = Attack)

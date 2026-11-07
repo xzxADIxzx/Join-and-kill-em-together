@@ -86,7 +86,7 @@ public class Malicious : Enemy
         agent.Position = new(x.GetAware(delta), y.GetAware(delta), z.GetAware(delta));
         pr.eulerAngles = new(i.GetAngle(delta), j.GetAngle(delta), 0f               );
 
-        nma.enabled = false;
+        if (nma) nma.enabled = false;
 
         if (LastAttack != Attack) switch (LastAttack = Attack)
         {

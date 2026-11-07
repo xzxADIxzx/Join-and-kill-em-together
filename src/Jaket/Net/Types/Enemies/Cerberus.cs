@@ -40,12 +40,7 @@ public class Cerberus : Foe
 
     public override void Update(float delta)
     {
-        if (IsOwner) Moving = animator.GetBool(running);
-        if (Lock(nma, scr)) return;
-
-        base.Update(delta);
-
-        nma.enabled = false;
+        if (Update(delta, animator.GetBool(running), nma, scr)) return;
 
         if (LastAttack != Attack) switch (LastAttack = Attack)
         {

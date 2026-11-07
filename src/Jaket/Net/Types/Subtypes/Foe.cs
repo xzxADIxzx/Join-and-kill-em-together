@@ -1,5 +1,8 @@
 namespace Jaket.Net.Types;
 
+using System.Runtime.CompilerServices;
+using UnityEngine.AI;
+
 using Jaket.Content;
 using Jaket.IO;
 
@@ -92,6 +95,22 @@ public abstract class Foe : Enemy
     {
         agent.Position = new(x.GetAware(delta), y.GetAware(delta), z.GetAware(delta));
         agent.Rotation = new(i.GetAngle(delta), j.GetAngle(delta), k.GetAngle(delta));
+    }
+
+    #endregion
+    #region other
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected bool Update(float delta, bool moving, params Scr scripts)
+    {
+        if (IsOwner) Moving = moving;
+        if (Lock(scripts)) return true;
+
+        agent.Position = new(x.GetAware(delta), y.GetAware(delta), z.GetAware(delta));
+        agent.Rotation = new(i.GetAngle(delta), j.GetAngle(delta), k.GetAngle(delta));
+
+        foreach (var script in scripts) if (script && script is NavMeshAgent) script.enabled = false;
+        return false;
     }
 
     #endregion
