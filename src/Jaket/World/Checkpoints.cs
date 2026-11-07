@@ -35,6 +35,18 @@ public static class Checkpoints
     #endregion
     #region loaders
 
+    /// <summary> Returns the mesh of the room. </summary>
+    public static Renderer[] Mesh(Transform room)
+    {
+        room.Each(c => { if (c.name.Contains("Nonstuff")) room = c; });
+
+        var mesh = room.GetComponentsInChildren<Renderer>(true);
+
+        for (int i = 0; i < mesh.Length; i++) if (mesh[i].GetComponentInParent<ItemIdentifier>(true)) mesh[i] = null;
+
+        return mesh;
+    }
+
     /// <summary> Marks the room and its mesh. </summary>
     public static void Mark(GameObject room)
     {
@@ -42,7 +54,7 @@ public static class Checkpoints
         {
             id.Type = EntityType.Room;
 
-            id.Mesh = room.GetComponentsInChildren<Renderer>(true);
+            id.Mesh = Mesh(room.transform);
 
             id.Mesh.Each(m => m && !m.enabled, m => m.forceRenderingOff = true);
         }
