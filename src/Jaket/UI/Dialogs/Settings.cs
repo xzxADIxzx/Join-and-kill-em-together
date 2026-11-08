@@ -142,10 +142,10 @@ public class Settings : Fragment
             _ => "lobby-tab.default"
         });
 
-        lang.GetComponentInChildren<Text>().text = Bundle.Locales[Bundle.Codes.IndexOf(Locale)];
+        lang.GetComponentInChildren<Text>().text = Bundle.Names[Bundle.Codes.IndexOf(Locale)];
         feed.GetComponentInChildren<Text>().text = Mode(FeedColor);
         knkl.GetComponentInChildren<Text>().text = Mode(KnklColor);
-        chat.GetComponentInChildren<Text>().text = Bundle.Parse($"[i]{ChatLocation switch { 0 => "▪▫▫▫▫", 1 => "▫▫▪▫▫", _ => "▫▫▫▫▪" }}");
+        chat.GetComponentInChildren<Text>().text = Bundle.ParseTags($"[i]{ChatLocation switch { 0 => "▪▫▫▫▫", 1 => "▫▫▪▫▫", _ => "▫▫▫▫▪" }}");
 
         // update the alignment of the chat option
         chat.DefChild(0).localPosition = Vector2.down;

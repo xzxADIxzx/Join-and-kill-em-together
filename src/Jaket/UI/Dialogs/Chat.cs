@@ -61,8 +61,8 @@ public class Chat : Fragment
         chatBg = Builder.Image(Rect("Chat", new(640f, 30f)), Tex.Fill, invi).rectTransform;
         infoBg = Builder.Image(Rect("Info", new(640f, 30f)), Tex.Fill, invi).rectTransform;
 
-        chat = Builder.Text(Builder.Rect("Text", chatBg, new() { Width = -16f, Height = -14f }), "", 16, white, TextAnchor.MiddleLeft);
-        info = Builder.Text(Builder.Rect("Text", infoBg, new() { Width = -16f, Height = -14f }), "", 16, white, TextAnchor.MiddleLeft);
+        chat = Builder.Text(Builder.Rect("Text", chatBg, new() { Width = -16f }), "", 16, white, TextAnchor.MiddleLeft);
+        info = Builder.Text(Builder.Rect("Text", infoBg, new() { Width = -16f }), "", 16, white, TextAnchor.MiddleLeft);
 
         field = Builder.Field(Rect("Input", new(0f, 36f, -32, 40f, new(0f, 0f), new(1f, 0f))), Tex.Fill, invi, "#chat.tip", 24, OnFocusLost);
         field.characterLimit = MAX_LENGTH;
@@ -118,7 +118,7 @@ public class Chat : Fragment
         chatBg.anchorMin = chatBg.anchorMax =
         infoBg.anchorMin = infoBg.anchorMax = new(Settings.ChatLocation * .5f, 0f);
 
-        chatBg.sizeDelta = new(640f, 17f + chat.preferredHeight);
+        chatBg.sizeDelta = new(640f, 16f + chat.preferredHeight);
         infoBg.sizeDelta = new(16f + info.preferredWidth, 30f);
 
         chatBg.anchoredPosition = new(336f - 336f * Settings.ChatLocation, 126.5f + chat.preferredHeight / 2f);
@@ -130,7 +130,7 @@ public class Chat : Fragment
         // focus was lost because the player sent a message
         if (Input.GetKeyDown(KeyCode.Return) | Input.GetKeyDown(KeyCode.KeypadEnter) && msg != "")
         {
-            if (string.IsNullOrWhiteSpace(Bundle.CutColors(msg)) || Bundle.CutDanger(msg) != msg)
+            if (string.IsNullOrWhiteSpace(msg.StripTags()) || msg.StripLags() != msg)
             {
                 field.StartCoroutine(Flash(red));
                 field.ActivateInputField();
@@ -153,7 +153,7 @@ public class Chat : Fragment
 
     public void DisplayText(string msg, bool format = true)
     {
-        toDisplay = format ? Bundle.Parse(msg) : msg;
+        toDisplay = format ? msg.ParseTags() : msg;
         Rebuild();
     }
 
@@ -189,14 +189,14 @@ public class Chat : Fragment
     public void Receive(string msg, bool format = true)
     {
         received.Move();
-        received[0] = format ? Bundle.Parse(msg) : msg;
+        received[0] = format ? msg.ParseTags() : msg;
 
         lastUpdate = Time.time;
         Rebuild();
     }
 
     /// <summary> Writes the given message to the chat, formatting it beforehand. </summary>
-    public void Receive(string msg, string col, string author, string tag = null) => Receive(Bundle.CutDanger($"[b][{col}]{tag}{author}[coral]:[][][] {msg}"));
+    public void Receive(string msg, string col, string author, string tag = null) => Receive($"[b][{col}]{tag}{author}[coral]:[][][] {msg}".StripLags());
 
     /// <summary> Writes the hello message to the chat. </summary>
     public void SayHello()

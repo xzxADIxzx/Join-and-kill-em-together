@@ -38,7 +38,7 @@ public class Header
         ellipsis.verticalOverflow   = VerticalWrapMode  .Overflow;
 
         var ellipses = new string[4];
-        for (int i = 0; i < ellipses.Length; i++) ellipses[i] = Bundle.Parse($"[b]{new string('.', i)}[light]{new string('.', 3 - i)}");
+        for (int i = 0; i < ellipses.Length; i++) ellipses[i] = $"[b]{new string('.', i)}[light]{new string('.', 3 - i)}".ParseTags();
 
         c.Add<Bar>(b => b.Update(() =>
         {

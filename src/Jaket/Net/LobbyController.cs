@@ -34,7 +34,7 @@ public static class LobbyController
             if (Online && !IsOwner && LobbyConfig.Banned.Has(AccId.ToString()))
             {
                 // notify the player to avoid confusion
-                Bundle.Hud2NS("lobby.banned");
+                Bundle.Pop("lobby.banned");
 
                 LeaveLobby();
                 Log.Info("[LOBY] Left the lobby due to being banned");
@@ -43,7 +43,7 @@ public static class LobbyController
             if (Online && !IsOwner && Version.HasIncompatibility && !LobbyConfig.ModsAllowed)
             {
                 // notify the player to avoid confusion
-                Bundle.Hud2NS("lobby.modded");
+                Bundle.Pop("lobby.modded");
 
                 LeaveLobby();
                 Log.Info("[LOBY] Left the lobby due to incompatible mods");

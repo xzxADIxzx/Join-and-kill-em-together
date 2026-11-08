@@ -85,7 +85,7 @@ public static class Log
     public static void Error(string msg) => LogLevel(Level.Error, msg);
 
     /// <summary> Any kind of unacceptable exception. </summary>
-    public static void Error(string msg, Exception ex) => LogLevel(Level.Error, $"{msg}\n{ex}");
+    public static void Error(string msg, Exception e) => LogLevel(Level.Error, $"{msg}\n{e}");
 
     /// <summary> Log importance levels. </summary>
     public enum Level

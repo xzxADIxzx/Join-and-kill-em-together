@@ -137,8 +137,8 @@ public class Debug : Fragment
         for (int i = 0; i < 2; i++) data[i].Project(8192f);
         for (int i = 2; i < 8; i++) data[i].Project(8.33f);
 
-        entities.text  = Bundle.Parse($"{Networking.Entities.Count(e => !e.Hidden)}[light]/{Networking.Entities.Count()}");
-        players.text   = Bundle.Parse($"{Networking.Connections.Count()}[light]/{LobbyController.Lobby?.MemberCount ?? 0}");
+        entities.text  = Bundle.ParseTags($"{Networking.Entities.Count(e => !e.Hidden)}[light]/{Networking.Entities.Count()}");
+        players.text   = Bundle.ParseTags($"{Networking.Connections.Count()}[light]/{LobbyController.Lobby?.MemberCount ?? 0}");
         isowner.text   = LobbyController.IsOwner.ToString().ToUpper();
         isowner.color  = LobbyController.IsOwner ? green : red;
         loading.text   = Networking.Loading.ToString().ToUpper();

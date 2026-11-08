@@ -402,7 +402,7 @@ I know it's been two years since the last update, but I am, unfortunately, a hum
 
             var text = Builder.Rect("Text", root, new(0f, 0f, -32f, -32f, Vector2.zero, Vector2.one));
 
-            Builder.Text(text, Bundle.Parse(info), 24, Pal.white, TextAnchor.UpperLeft);
+            Builder.Text(text, info.ParseTags(), 24, Pal.white, TextAnchor.UpperLeft);
         }));
 
         // TODO remove later

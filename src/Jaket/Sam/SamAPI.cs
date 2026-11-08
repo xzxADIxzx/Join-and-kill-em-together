@@ -1,6 +1,5 @@
 namespace Jaket.Sam;
 
-using System;
 using UnityEngine;
 
 using Jaket.Assets;
@@ -38,9 +37,9 @@ public class SamAPI
     {
         try
         {
-            source.clip = Clip(Bundle.CutColors(text));
+            source.clip = Clip(text.StripTags());
             source.Play();
         }
-        catch (Exception) { } // in fact, anything can happen, that's why try catch is needed
+        catch { } // in fact, anything can happen, that's why try catch is needed
     }
 }

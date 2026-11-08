@@ -70,8 +70,8 @@ public class LobbyList : Fragment
 
         lobbies.Each(l => empty || l.GetData("name").ToLower().Contains(search), l =>
         {
-            var name = Bundle.CutColors(l.GetData("name"));
-            var level = Bundle.CutColors(l.GetData("level"));
+            var name = l.GetData("name").StripTags();
+            var level = l.GetData("level").StripTags();
             int count = l.MemberCount, max = l.MaxMembers;
 
             if (!empty)
@@ -85,8 +85,8 @@ public class LobbyList : Fragment
 
             var cont = Builder.Button(content.Resolve("Button", 40f), Tex.BrdL, white, () => LobbyController.JoinLobby(l));
 
-            Builder.Text(Builder.Rect("Name", cont, new() { Width = -24f }), Bundle.Parse(name), 24, white, TextAnchor.MiddleLeft);
-            Builder.Text(Builder.Rect("Info", cont, new() { Width = -24f }), Bundle.Parse(info), 24, white, TextAnchor.MiddleRight);
+            Builder.Text(Builder.Rect("Name", cont, new() { Width = -24f }), name.ParseTags(), 24, white, TextAnchor.MiddleLeft);
+            Builder.Text(Builder.Rect("Info", cont, new() { Width = -24f }), info.ParseTags(), 24, white, TextAnchor.MiddleRight);
         });
     }
 

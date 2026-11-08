@@ -140,7 +140,7 @@ public class Gameflow
     /// <summary> Handles gamemode specific actions on player death. </summary>
     public static void OnDeath(Friend member)
     {
-        sh.AddPoints(Mathf.RoundToInt(420f * StyleCalculator.Instance.airTime), Bundle.Parse("[green]FRATRICIDE"));
+        sh.AddPoints(Mathf.RoundToInt(420f * StyleCalculator.Instance.airTime), "[green]FRATRICIDE".ParseTags());
 
         if (Mode.HPs() || Mode.NoRestarts())
         {
