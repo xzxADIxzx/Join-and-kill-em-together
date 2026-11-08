@@ -125,7 +125,7 @@ public static class Networking
         SteamMatchmaking.OnChatMessage += (lobby, member, msg) =>
         {
             if (Administration.Banned.Contains(member.AccId)) return;
-            if (msg.Length > Chat.MAX_LENGTH + 4) msg = msg[..Chat.MAX_LENGTH];
+            if (msg.Length > Chat.MAX_LENGTH) msg = msg[..Chat.MAX_LENGTH];
 
             string name = member.Name.Replace("[", "\\[");
 
