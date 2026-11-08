@@ -51,7 +51,7 @@ public class Skateboard : Fragment
 
     public override void Toggle()
     {
-        Content.gameObject.SetActive(Shown = Emotes.Current == 0x0B);
+        Content.Toggle(Shown = Emotes.Current == 0x0B);
         speed = 0f;
         Dest(particles);
     }

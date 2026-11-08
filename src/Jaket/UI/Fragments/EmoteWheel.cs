@@ -99,7 +99,7 @@ public class EmoteWheel : Fragment
     /// <summary> Shows the wheel and resets the selected segment. </summary>
     public void Show()
     {
-        Content.gameObject.SetActive(Shown = true);
+        Content.Toggle(Shown = true);
         UI.Hide(UI.MidlGroup, this);
 
         second = false;
@@ -112,7 +112,7 @@ public class EmoteWheel : Fragment
     /// <summary> Hides the wheel and plays the selected emote. </summary>
     public void Hide()
     {
-        Content.gameObject.SetActive(Shown = false);
+        Content.Toggle(Shown = false);
         UI.Hide(UI.MidlGroup, this);
 
         // randomize RPS index if the corresponding emote is selected

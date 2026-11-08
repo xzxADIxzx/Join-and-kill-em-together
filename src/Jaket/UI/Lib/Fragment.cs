@@ -22,7 +22,7 @@ public class Fragment
         Content = Builder.Canvas(Create(name, root).transform, Dialog = dialog).transform;
 
         cond ??= () => true;
-        hide ??= () => Content.gameObject.SetActive(Shown = false);
+        hide ??= () => Content.Toggle(Shown = false);
 
         void Check() { if (cond()) hide(); }
 
@@ -31,7 +31,7 @@ public class Fragment
     }
 
     /// <summary> Toggles visibility of the fragment. </summary>
-    public virtual void Toggle() => Content.gameObject.SetActive(Shown = !Shown);
+    public virtual void Toggle() => Content.Toggle(Shown = !Shown);
 
     /// <summary> Rebuilds the fragment if possible. </summary>
     public virtual void Rebuild() { }

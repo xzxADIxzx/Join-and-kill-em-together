@@ -28,7 +28,7 @@ public class Teleporter : Fragment
             flash.color = (Color) white with { a = Mathf.MoveTowards(flash.color.a, 0f, Time.deltaTime) };
             decor.transform.localPosition = new(Mathf.MoveTowards(decor.transform.localPosition.x, 2048f, 8192f * Time.deltaTime), 0f);
 
-            if (flash.color.a == 0f) Content.gameObject.SetActive(Shown = false);
+            if (flash.color.a == 0f) Content.Toggle(Shown = false);
         }));
 
         GameAssets.Sound("UI/dark-ui power on off dark 02.wav", c => clip = c);
@@ -36,7 +36,7 @@ public class Teleporter : Fragment
 
     public override void Toggle()
     {
-        Content.gameObject.SetActive(Shown = true);
+        Content.Toggle(Shown = true);
         flash.color = white;
         decor.transform.localPosition = new(-2048f, 0f);
     }

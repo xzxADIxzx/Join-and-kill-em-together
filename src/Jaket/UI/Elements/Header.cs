@@ -44,7 +44,7 @@ public class Header
         {
             int health = player.Health, dots = (int)(Time.time * 3f) % 4;
 
-            ellipsisBg.gameObject.SetActive(player.Typing);
+            ellipsisBg.Toggle(player.Typing);
 
             nickname.color = health > 0 ? white : red;
             ellipsis.text = ellipses[dots];

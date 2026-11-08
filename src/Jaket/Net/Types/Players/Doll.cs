@@ -185,10 +185,10 @@ public class Doll : Entity
             animator.SetInteger("emote", LastEmote = Emote);
             animator.SetInteger("rps", Rps);
 
-            Hand .gameObject.SetActive(Emote == 0xFF);
-            Chair.gameObject.SetActive(Emote == 0x06);
-            Coin .gameObject.SetActive(Emote == 0x07);
-            Skate.gameObject.SetActive(Emote == 0x0B);
+            Hand .Toggle(Emote == 0xFF);
+            Chair.Toggle(Emote == 0x06);
+            Coin .Toggle(Emote == 0x07);
+            Skate.Toggle(Emote == 0x0B);
         }
 
         if (Sliding && SlidParticle == null)
@@ -211,7 +211,7 @@ public class Doll : Entity
 
         if (!hookWinch) return;
 
-        Hook.gameObject.SetActive(Hooking);
+        Hook.Toggle(Hooking);
         Hook.LookAt(Reel);
         Hook.Rotate(Vector3.up * 180f, Space.Self);
         hookWinch.SetPosition(0, Reel.position);

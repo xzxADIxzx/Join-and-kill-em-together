@@ -60,7 +60,7 @@ public class Spectator : Fragment
 
     public override void Toggle()
     {
-        Content.gameObject.SetActive(Shown);
+        Content.Toggle(Shown);
         PostProcessV2_Handler.Instance.DeathEffect(Shown);
         PostProcessV2_Handler.Instance.WickedEffect(Shown);
     }

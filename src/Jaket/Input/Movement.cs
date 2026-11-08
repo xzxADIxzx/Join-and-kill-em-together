@@ -146,8 +146,8 @@ public class Movement : MonoSingleton<Movement>
         }
         static void ToggleHud(bool enable)
         {
-            nm.screenHud.SetActive(enable);
-            gc.gameObject.SetActive(enable);
+            nm.screenHud.Toggle(enable);
+            gc.gameObject.Toggle(enable);
         }
         bool
             dialog = UI.AnyDialog,

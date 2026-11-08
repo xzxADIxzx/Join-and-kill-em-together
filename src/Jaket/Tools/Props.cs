@@ -87,6 +87,12 @@ public static class Props
     /// <summary> Iterates the children. </summary>
     public static void Each(this Transform parent, Cons<Transform> cons) { foreach (Transform child in parent) cons(child); }
 
+    /// <summary> Toggles the object. </summary>
+    public static GameObject Toggle(this GameObject obj, bool active) { if (obj) obj.SetActive(active); return obj; }
+
+    /// <summary> Toggles the object. </summary>
+    public static Component Toggle(this Component comp, bool active) { if (comp) comp.gameObject.SetActive(active); return comp; }
+
     /// <summary> Enables the object. </summary>
     public static GameObject Enable(this GameObject obj) { if (obj) obj.SetActive(true); return obj; }
 
