@@ -53,7 +53,7 @@ public static class Commands
         Handler.Register("code", "Copy the lobby code to clipboard", args =>
         {
             if (LobbyController.Offline)
-                chat.Receive("[red]You aren't in a lobby yet.");
+                UI.Chat.Receive("[red]You aren't in a lobby yet.");
             else
                 LobbyController.CopyCode();
         });
