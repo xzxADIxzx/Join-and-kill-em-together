@@ -119,10 +119,4 @@ public static partial class Tools
     });
 
     #endregion
-    #region singletons
-
-    public static Transform nmtr => NewMovement     .Instance.transform;
-    public static Transform cctr => CameraController.Instance.transform;
-
-    #endregion
 }

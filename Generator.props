@@ -26,6 +26,9 @@ namespace Jaket.Tools %3B
 public static partial class Tools
 {
 @(Singletons -> '    public static %(Type) %(Name) => %(Type).Instance %3B', '%0A')
+
+    public static Transform nmtr => NewMovement     .Instance.transform %3B
+    public static Transform cctr => CameraController.Instance.transform %3B
 }
 
       </GeneratedTools>
