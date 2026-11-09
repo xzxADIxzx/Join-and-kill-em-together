@@ -16,10 +16,6 @@ using Jaket.World;
 /// <summary> Class responsible for additions to control and local display of emotes. </summary>
 public class Movement : MonoSingleton<Movement>
 {
-    static AssistController ac => AssistController.Instance;
-    static CheatsController ch => CheatsController.Instance;
-    static CheatsManager cm => CheatsManager.Instance;
-
     /// <summary> Last point created by the player. </summary>
     private Point point;
     /// <summary> Last spray created by the player. </summary>

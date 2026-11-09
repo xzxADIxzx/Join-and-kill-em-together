@@ -146,8 +146,8 @@ public class Plushie : Item
             white.Disable();
             music.Disable();
 
-            PostProcessV2_Handler.Instance.DeathEffect(true);
-            PostProcessV2_Handler.Instance.WickedEffect(true);
+            pp.DeathEffect(true);
+            pp.WickedEffect(true);
 
             act.events.onActivate.AddListener(() =>
             {
@@ -159,8 +159,8 @@ public class Plushie : Item
                 white.Enable();
                 music.Enable();
 
-                PostProcessV2_Handler.Instance.DeathEffect(false);
-                PostProcessV2_Handler.Instance.WickedEffect(false);
+                pp.DeathEffect(false);
+                pp.WickedEffect(false);
             });
         }
     }

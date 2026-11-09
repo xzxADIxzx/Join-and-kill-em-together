@@ -21,7 +21,7 @@ using Jaket.Net;
 using Jaket.Net.Types;
 
 /// <summary> Set of different tools for simplifying life and systematization of code. </summary>
-public static class Tools
+public static partial class Tools
 {
     #region steam
 
@@ -121,20 +121,8 @@ public static class Tools
     #endregion
     #region singletons
 
-    public static NewMovement        nm => NewMovement       .Instance;
-    public static Transform        nmtr => NewMovement       .Instance.transform;
-    public static CameraController   cc => CameraController  .Instance;
-    public static Transform        cctr => CameraController  .Instance.transform;
-    public static FistControl        fc => FistControl       .Instance;
-    public static HookArm            ha => HookArm           .Instance;
-    public static GunControl         gc => GunControl        .Instance;
-    public static GunSetter          gs => GunSetter         .Instance;
-    public static StyleHUD           sh => StyleHUD          .Instance;
-    public static StatsManager       sm => StatsManager      .Instance;
-    public static PrefsManager       pm => PrefsManager      .Instance;
-    public static SceneHelper        eh => SceneHelper       .Instance;
-    public static HudMessageReceiver hm => HudMessageReceiver.Instance;
-    public static ColorBlindSettings cb => ColorBlindSettings.Instance;
+    public static Transform nmtr => NewMovement     .Instance.transform;
+    public static Transform cctr => CameraController.Instance.transform;
 
     #endregion
 }

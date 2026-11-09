@@ -1,11 +1,34 @@
 <Project>
 
+  <PropertyGroup>
+    <List>
+      AssistController@ac; CameraController@cc; CheatsController@ch; CheatsManager@cm; ColorBlindSettings@cb; FistControl@fc; GunControl@gc; GunSetter@gs; HookArm@ha; HudMessageReceiver@hm; NewMovement@nm; PostProcessV2_Handler@pp; PrefsManager@pm; SceneHelper@eh; StatsManager@sm; StyleHUD@sh;
+    </List>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Singletons Include="$(List)">
+      <Type>$([System.String]::Copy('%(Identity)').Split('@')[0])</Type>
+      <Name>$([System.String]::Copy('%(Identity)').Split('@')[1])</Name>
+    </Singletons>
+  </ItemGroup>
+
   <Target Name="Generate" BeforeTargets="BeforeCompile">
 
     <PropertyGroup>
       <Debug Condition="$(Configuration) == Debug">true</Debug>
       <Debug Condition="$(Configuration) != Debug">false</Debug>
 
+      <GeneratedTools>
+
+namespace Jaket.Tools %3B
+
+public static partial class Tools
+{
+@(Singletons -> '    public static %(Type) %(Name) => %(Type).Instance %3B', '%0A')
+}
+
+      </GeneratedTools>
       <GeneratedVersion>
 
 namespace Jaket %3B
@@ -30,10 +53,12 @@ public static partial class Version
       </GeneratedManifest>
     </PropertyGroup>
 
+    <WriteLinesToFile File="$(IntermediateOutputPath)/Tools.g.cs" Lines="$(GeneratedTools)" Overwrite="true" WriteOnlyWhenDifferent="true" />
     <WriteLinesToFile File="$(IntermediateOutputPath)/Version.g.cs" Lines="$(GeneratedVersion)" Overwrite="true" WriteOnlyWhenDifferent="true" />
     <WriteLinesToFile File="$(IntermediateOutputPath)/manifest.json" Lines="$(GeneratedManifest)" Overwrite="true" WriteOnlyWhenDifferent="true" />
 
     <ItemGroup>
+      <Compile Include="$(IntermediateOutputPath)/Tools.g.cs" />
       <Compile Include="$(IntermediateOutputPath)/Version.g.cs" />
     </ItemGroup>
 

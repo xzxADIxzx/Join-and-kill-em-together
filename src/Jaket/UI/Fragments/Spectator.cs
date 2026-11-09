@@ -61,8 +61,8 @@ public class Spectator : Fragment
     public override void Toggle()
     {
         Content.Toggle(Shown);
-        PostProcessV2_Handler.Instance.DeathEffect(Shown);
-        PostProcessV2_Handler.Instance.WickedEffect(Shown);
+        pp.DeathEffect(Shown);
+        pp.WickedEffect(Shown);
     }
 
     public override void Rebuild() => info.text = Bundle.Format

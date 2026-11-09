@@ -96,7 +96,7 @@ public class Skateboard : Fragment
     {
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            if (boost >= 100f || (AssistController.Instance.majorEnabled && AssistController.Instance.infiniteStamina))
+            if (boost >= 100f || (ac.majorEnabled && ac.infiniteStamina))
             {
                 speed += 20f;
                 boost -= 100f;
