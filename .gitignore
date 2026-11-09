@@ -1,8 +1,7 @@
+.vs/*
 .vscode/*
 .idea/*
 
 bin/*
 obj/*
-
 *.sln
-*.bat
