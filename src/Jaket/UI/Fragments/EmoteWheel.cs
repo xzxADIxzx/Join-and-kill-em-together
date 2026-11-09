@@ -3,8 +3,6 @@ namespace Jaket.UI.Fragments;
 using UnityEngine;
 using UnityEngine.UI.Extensions;
 
-using ImageType = UnityEngine.UI.Image.Type;
-
 using Jaket.Assets;
 using Jaket.Input;
 using Jaket.UI.Lib;
@@ -46,15 +44,15 @@ public class EmoteWheel : Fragment
                 segment = Builder.Circle(Rect("Segment", new(150f, 150f)), 1f /   6f, i * 60,       8f),
                 divider = Builder.Circle(Rect("Divider", new(640f, 640f)), 2f / 360f, i * 60 - 1, 255f),
 
-                iconGlow = Builder.Image(Rect("Glow", new(pos.x, pos.y, 284f, 150f)), null, white, ImageType.Sliced),
-                icon     = Builder.Image(Rect("Icon", new(pos.x, pos.y, 284f, 150f)), null, white, ImageType.Sliced),
+                iconGlow = Builder.Image(Rect("Glow", new(pos.x, pos.y, 284f, 150f)), null, white),
+                icon     = Builder.Image(Rect("Icon", new(pos.x, pos.y, 284f, 150f)), null, white),
             };
 
             segment.icon.transform.localEulerAngles = segment.iconGlow.transform.localEulerAngles = new(0f, 0f, 30f * (i % 3) - 30f);
             segment.SetActive(false);
         }
 
-        Content.Component<Bar>(b => b.Update(() =>
+        Content.Add<Bar>(b => b.Update(() =>
         {
             // some code from the weapon wheel that I don't understand
             direction = Vector2.ClampMagnitude(direction + InputManager.Instance.InputSource.WheelLook.ReadValue<Vector2>() / 12f, 1f);
@@ -101,8 +99,8 @@ public class EmoteWheel : Fragment
     /// <summary> Shows the wheel and resets the selected segment. </summary>
     public void Show()
     {
-        Content.gameObject.SetActive(Shown = true);
-        UI.Hide(UI.MidlGroup, this, null);
+        Content.Toggle(Shown = true);
+        UI.Hide(UI.MidlGroup, this);
 
         second = false;
         Rebuild();
@@ -114,8 +112,8 @@ public class EmoteWheel : Fragment
     /// <summary> Hides the wheel and plays the selected emote. </summary>
     public void Hide()
     {
-        Content.gameObject.SetActive(Shown = false);
-        UI.Hide(UI.MidlGroup, this, null);
+        Content.Toggle(Shown = false);
+        UI.Hide(UI.MidlGroup, this);
 
         // randomize RPS index if the corresponding emote is selected
         if (selected == 3) Emotes.Rps = (byte)Random.Range(0, 3);

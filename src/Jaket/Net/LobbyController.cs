@@ -34,7 +34,7 @@ public static class LobbyController
             if (Online && !IsOwner && LobbyConfig.Banned.Has(AccId.ToString()))
             {
                 // notify the player to avoid confusion
-                Bundle.Hud2NS("lobby.banned");
+                Bundle.Pop("lobby.banned");
 
                 LeaveLobby();
                 Log.Info("[LOBY] Left the lobby due to being banned");
@@ -43,7 +43,7 @@ public static class LobbyController
             if (Online && !IsOwner && Version.HasIncompatibility && !LobbyConfig.ModsAllowed)
             {
                 // notify the player to avoid confusion
-                Bundle.Hud2NS("lobby.modded");
+                Bundle.Pop("lobby.modded");
 
                 LeaveLobby();
                 Log.Info("[LOBY] Left the lobby due to incompatible mods");
@@ -65,13 +65,6 @@ public static class LobbyController
 
     /// <summary> Whether there is a player with the given id among the members of the lobby. </summary>
     public static bool Contains(uint id) => Lobby?.Members.Any(m => m.AccId == id) ?? false;
-
-    /// <summary> Returns identifier of the member with the given index. </summary>
-    public static uint MemberId(int index)
-    {
-        foreach (var member in Lobby?.Members) if (index-- <= 0) return member.AccId;
-        return 0u;
-    }
 
     #region control
 
@@ -107,7 +100,9 @@ public static class LobbyController
         Lobby?.Leave();
         Lobby = null;
 
-        Networking.Close();
+        Networking.Server.Close();
+        Networking.Client.Close();
+
         if (load) LoadScn("Main Menu");
 
         Events.OnLobbyAction.Fire();

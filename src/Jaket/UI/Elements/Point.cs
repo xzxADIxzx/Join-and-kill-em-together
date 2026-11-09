@@ -3,8 +3,6 @@ namespace Jaket.UI.Elements;
 using UnityEngine;
 using UnityEngine.UI;
 
-using ImageType = UnityEngine.UI.Image.Type;
-
 using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Net.Types;
@@ -28,29 +26,30 @@ public class Point : MonoBehaviour
     /// <summary> Components that the point is made of. </summary>
     private RectTransform circle1, circle2, diamond;
     /// <summary> How many seconds has the point existed. </summary>
-    public float Lifetime;
+    private float lifetime;
 
     /// <summary> Spawns a point at the given position. </summary>
-    public static Point Spawn(Vector3 position, Vector3 direction, Team team, RemotePlayer owner = null) =>
-        Component<Point>(Create("Point"), p =>
-        {
-            p.position = position;
-            p.direction = -direction;
+    public static Point Spawn(Vector3 position, Vector3 direction, Team team, RemotePlayer owner = null) => Create("Point").Add<Point>(p =>
+    {
+        p.position = position;
+        p.direction = -direction;
 
-            p.color = team.Color() with { a = .5f };
-            p.owner = owner;
-        });
+        p.color = team.Color() with { a = .5f };
+        p.owner = owner;
+    });
+
+    public void Remove() => lifetime = 5.5f;
 
     private void Start()
     {
-        if (owner != null) line = Component<LineRenderer>(gameObject, l =>
+        if (owner != null) line = gameObject.Add<LineRenderer>(l =>
         {
             l.startColor = l.endColor = color;
             l.widthMultiplier = 0f;
-            l.material.shader = ModAssets.Additv;
+            l.material.shader = ModAssets.Additive;
         });
 
-        glow = Component<Light>(Create("Light", transform), l =>
+        glow = Create("Light", transform).Add<Light>(l =>
         {
             l.color = color;
             l.intensity = 0f;
@@ -59,37 +58,37 @@ public class Point : MonoBehaviour
 
         glow.transform.localPosition = Vector3.back * 1.6f;
 
-        Builder.WorldCanvas(Create("Cirlce", transform).transform, Vector3.back * .2f, c =>
+        Builder.Canvas(Create("Cirlce", transform).transform, Vector3.back * .2f, c =>
         {
-            circle1 = Builder.Image(Builder.Rect("Image", c, new(1280f, 1280f)), Tex.Circle, color, ImageType.Simple).rectTransform;
+            circle1 = Builder.Image(Builder.Rect("Image", c, new(1280f, 1280f)), Tex.Circle, color).rectTransform;
             circle1.localScale = Vector3.zero;
         });
 
-        Builder.WorldCanvas(Create("Cirlce", transform).transform, Vector3.back * .4f, c =>
+        Builder.Canvas(Create("Cirlce", transform).transform, Vector3.back * .4f, c =>
         {
-            circle2 = Builder.Image(Builder.Rect("Image", c, new(960f, 960f)), Tex.Circle, color, ImageType.Simple).rectTransform;
+            circle2 = Builder.Image(Builder.Rect("Image", c, new(960f, 960f)), Tex.Circle, color).rectTransform;
             circle2.localScale = Vector3.zero;
         });
 
-        Builder.WorldCanvas(Create("Diamond", transform).transform, Vector3.back * 1.6f, c =>
+        Builder.Canvas(Create("Diamond", transform).transform, Vector3.back * 1.6f, c =>
         {
-            diamond = Builder.Diamond(Builder.Rect("Image", c, new(1000f, 1000f)), color, .4f, .4f, 1f, .4f, true).rectTransform;
+            diamond = Builder.Diamond(Builder.Rect("Image", c, new(1000f, 1000f)), color, .4f, .4f, 1f, .4f).rectTransform;
             diamond.localScale = Vector3.zero;
         });
 
-        GetComponentsInChildren<Graphic>().Each(g => (g.material = Instantiate(g.material)).shader = ModAssets.Additv);
+        GetComponentsInChildren<Graphic>().Each(g => (g.material = Instantiate(g.material)).shader = ModAssets.Additive);
 
         transform.position = position;
         transform.rotation = Quaternion.LookRotation(direction);
 
-        AudioSource.PlayClipAtPoint(HudMessageReceiver.Instance.GetComponent<AudioSource>()?.clip, position);
+        hm.Get<AudioSource>(s => AudioSource.PlayClipAtPoint(s.clip, position));
     }
 
     private void Update()
     {
-        if ((Lifetime += Time.deltaTime) > 6f) Dest(gameObject);
+        if ((lifetime += Time.deltaTime) > 6f) Dest(gameObject);
 
-        float scale = Lifetime < .5f ? Lifetime * 2f : Lifetime > 5.5f ? (6f - Lifetime) * 2f : 1f;
+        float scale = lifetime < .5f ? lifetime * 2f : lifetime > 5.5f ? (6f - lifetime) * 2f : 1f;
         float time = Time.time * 3f;
 
         circle1.localScale = Vector3.one * (scale * 1.2f + Mathf.Sin(time + 1f) * .2f);
@@ -108,7 +107,7 @@ public class Point : MonoBehaviour
         if (line)
         {
             line.SetPosition(0, transform.position);
-            line.SetPosition(1, owner.Position - Vector3.up * 2.5f);
+            line.SetPosition(1, owner.DrawPos);
         }
     }
 }

@@ -21,19 +21,14 @@ public class Cannon : Projectile
         base.Assign(this.agent = agent);
 
         agent.Get(out ball);
-        agent.Rem<FloatingPointErrorPreventer>();
     }
 
-    public override void Killed(Reader r, int left)
+    public override void Killed(Reader r, int left) => Killed(r, left, agent, bits =>
     {
-        base.Killed(r, left); r.Skip(12);
+        if (bits[0]) Inst(ball.breakEffect, agent.Position);
 
-        if (left >= 13 && r.Bool())
-            Inst(ball.breakEffect, agent.Position);
-
-        if (left >= 14 && r.Bool())
-            Inst(ball.interruptionExplosion, agent.Position);
-    }
+        if (bits[1]) Inst(ball.interruptionExplosion, agent.Position);
+    });
 
     #endregion
     #region harmony
@@ -47,31 +42,19 @@ public class Cannon : Projectile
 
     [DynamicPatch(typeof(Cannonball), nameof(Cannonball.Break))]
     [Prefix]
-    static bool Break(Cannonball __instance) => Kill<Cannon>(__instance, e =>
-    {
-        if (e.IsOwner) e.Kill(13, w => { w.Vector(e.agent.Position); w.Bool(true); });
-    });
+    static bool Break(Cannonball __instance) => Kill<Cannon>(__instance, e => { if (e.IsOwner) e.Kill(1, w => w.Bools(true)); });
 
     [DynamicPatch(typeof(Cannonball), nameof(Cannonball.Explode))]
     [Prefix]
-    static bool Death(Cannonball __instance) => Kill<Cannon>(__instance, e =>
-    {
-        e.Kill(14, w => { w.Vector(e.agent.Position); w.Bool(true); w.Bool(true); });
-    });
+    static bool Death(Cannonball __instance) => Kill<Cannon>(__instance, e => e.Kill(1, w => w.Bools(true, true)));
 
     [DynamicPatch(typeof(Cannonball), nameof(Cannonball.Launch))]
     [Prefix]
-    static void Parry(Cannonball __instance) => Kill<Cannon>(__instance, e =>
-    {
-        e.TakeOwnage();
-    });
+    static void Parry(Cannonball __instance) => Kill<Cannon>(__instance, e => e.TakeOwnage());
 
     [DynamicPatch(typeof(Cannonball), nameof(Cannonball.Unlaunch))]
     [Prefix]
-    static void Throw(Cannonball __instance) => Kill<Cannon>(__instance, e =>
-    {
-        e.TakeOwnage();
-    });
+    static void Throw(Cannonball __instance) => Kill<Cannon>(__instance, e => e.TakeOwnage());
 
     [DynamicPatch(typeof(Cannonball), nameof(Cannonball.Collide))]
     [Prefix]

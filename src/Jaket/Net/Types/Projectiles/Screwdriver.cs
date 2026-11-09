@@ -8,50 +8,13 @@ using Jaket.IO;
 using Jaket.UI.Lib;
 
 /// <summary> Tangible entity of the screwdriver type. </summary>
-public class Screwdriver : Projectile
+public class Screwdriver : Rotatable
 {
     Agent agent;
-    Float posX, posY, posZ, rotX, rotY, rotZ;
-    Cache<Entity> target;
     Harpoon harp;
 
-    public Screwdriver(uint id, EntityType type) : base(id, type, true, true, false) { }
+    public Screwdriver(uint id, EntityType type) : base(id, type, true, true, false, false) { }
 
-    #region snapshot
-
-    public override int BufferSize => 37;
-
-    public override void Write(Writer w)
-    {
-        WriteOwner(ref w);
-
-        if (IsOwner)
-        {
-            w.Vector(agent.Position);
-            w.Vector(agent.Rotation);
-
-            w.Id(target);
-        }
-        else
-        {
-            w.Floats(posX, posY, posZ);
-            w.Floats(rotX, rotY, rotZ);
-
-            w.Id(target);
-        }
-    }
-
-    public override void Read(Reader r)
-    {
-        if (ReadOwner(ref r)) return;
-
-        r.Floats(ref posX, ref posY, ref posZ);
-        r.Floats(ref rotX, ref rotY, ref rotZ);
-
-        target = r.Id();
-    }
-
-    #endregion
     #region logic
 
     public override void Paint(Renderer renderer)
@@ -60,8 +23,6 @@ public class Screwdriver : Projectile
         if (renderer is MeshRenderer m) m.material.mainTexture = null;
         if (renderer is SpriteRenderer s) s.sprite = Tex.Flash;
     }
-
-    public override void Create() => Assign(Entities.Projectiles.Make(Type, new(posX.Init, posY.Init, posZ.Init)).AddComponent<Agent>());
 
     public override void Assign(Agent agent)
     {
@@ -76,8 +37,7 @@ public class Screwdriver : Projectile
     {
         if (IsOwner) return;
 
-        agent.Position = new(posX.GetAware(delta), posY.GetAware(delta), posZ.GetAware(delta));
-        agent.Rotation = new(rotX.GetAngle(delta), rotY.GetAngle(delta), rotZ.GetAngle(delta));
+        base.Update(delta);
 
         harp.stopped     = false;
         harp.drilling    = false;
@@ -88,13 +48,10 @@ public class Screwdriver : Projectile
         if (harp.currentDrillSound) Dest(harp.currentDrillSound);
     }
 
-    public override void Killed(Reader r, int left)
+    public override void Killed(Reader r, int left) => Killed(r, left, agent, bits =>
     {
-        base.Killed(r, left);
-
-        if (left >= 1 && r.Bool())
-            Inst(harp.breakEffect, agent.Position);
-    }
+        if (bits[0]) Inst(harp.breakEffect, agent.Position);
+    });
 
     #endregion
     #region harmony
@@ -114,10 +71,7 @@ public class Screwdriver : Projectile
 
     [DynamicPatch(typeof(Harpoon), nameof(Harpoon.OnDestroy))]
     [Prefix]
-    static bool Death(Harpoon __instance) => Kill<Screwdriver>(__instance, e =>
-    {
-        if (!e.Hidden) e.Kill(1, w => w.Bool(true));
-    });
+    static bool Death(Harpoon __instance) => Kill<Screwdriver>(__instance, e => e.Kill(1, w => w.Bools(true)));
 
     [DynamicPatch(typeof(Harpoon), nameof(Harpoon.Punched))]
     [Prefix]
@@ -131,16 +85,16 @@ public class Screwdriver : Projectile
     [Prefix]
     static void Punch()
     {
-        if (FistControl.Instance.currentPunch.type != FistType.Standard) return;
+        if (fc.currentPunch.type != FistType.Standard) return;
 
         Networking.Entities.Alive<Screwdriver>(s => s.target == AccId, s =>
         {
-            s.harp.transform.forward  = CameraController.Instance.transform.forward;
-            s.harp.transform.position = CameraController.Instance.transform.position;
+            s.harp.transform.forward  = cctr.forward;
+            s.harp.transform.position = cctr.position;
             s.harp.Punched();
 
             TimeController.Instance.ParryFlash();
-            FistControl.Instance.currentPunch.anim.Play("Hook", 0, .065f);
+            fc.currentPunch.anim.Play("Hook", 0, .065f);
             global::Punch.GetParryLookTarget();
         });
     }

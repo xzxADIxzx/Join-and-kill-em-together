@@ -19,7 +19,7 @@ public class Earthmover : Enemy
 
     #region snapshot
 
-    public override int BufferSize => Type == EntityType.Brain ? 11 : 9;
+    public override int BufferSize => Type == EntityType.Brain ? 6 : 4;
 
     public override void Write(Writer w)
     {
@@ -63,7 +63,7 @@ public class Earthmover : Enemy
     public override void Create()
     {
         // TODO other cases - earthmover's brain and security system
-        if (Type == EntityType.RocketLauncher || Type == EntityType.Mortar || Type == EntityType.Tower) Assign(Entities.Enemies.Make(Type, new(x.Init, y.Init, z.Init)).AddComponent<Agent>());
+        if (Type == EntityType.RocketLauncher || Type == EntityType.Mortar || Type == EntityType.Tower) Create(Entities.Enemies, ref x, ref y, ref z);
     }
 
     public override void Assign(Agent agent)

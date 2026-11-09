@@ -1,0 +1,181 @@
+namespace Jaket.Net.Vendors;
+
+using UnityEngine;
+
+using Jaket.Assets;
+using Jaket.Content;
+using Jaket.Net.Types;
+
+using static Entities;
+
+/// <summary> Vendor responsible for players. </summary>
+public class Players : Vendor
+{
+    public override void Load()
+    {
+        Events.Post(() => ModAssets.Doll, () => Prefabs[(byte)EntityType.Player] = ModAssets.Doll);
+
+        Fill<RemotePlayer>(EntityType.Player, EntityType.Player);
+    }
+
+    public override EntityType Type(GameObject obj) => EntityType.None;
+
+    public override GameObject Make(EntityType type, Vector3 position = default, Transform parent = null)
+    {
+        if (!type.IsPlayer()) return null;
+
+        var obj = Inst(Prefabs[(byte)type], parent);
+
+        obj.Add<EnemyIdentifier>(e =>
+        {
+            e.enemyClass = EnemyClass.Machine;
+            e.enemyType  = EnemyType.V2;
+            e.dontUnlockBestiary = true;
+            e.dontCountAsKills   = true;
+
+            e.tag = "Enemy";
+            e.weakPoint = e.ObjFind("Doll/Metarig/Hips/Spine 0/Spine 1/Spine 2");
+
+            e.weaknesses      = [];
+            e.burners         = [];
+            e.flammables      = [];
+            e.activateOnDeath = [];
+        });
+        obj.Add<global::Enemy>(e => e.musicRequested = true);
+
+        obj.DefChild(0).GetComponentsInChildren<Rigidbody>().Each(rb =>
+        {
+            rb.Add<EnemyIdentifierIdentifier>(_ => { });
+            rb.tag = rb.tag switch
+            {
+                "RoomManager" => "Body",
+                "Body"        => "Limb",
+                "Forward"     => "Head",
+                _             => rb.tag,
+            };
+        });
+        obj.GetComponentsInChildren<Collider>().Each(c => c.Add<IgnoreDeathZones>(_ => { }));
+
+        return obj;
+    }
+
+    public override void Sync(GameObject obj, params bool[] args) { }
+
+    #region sounds
+
+    /// <summary> Distributes the sound to the network members. </summary>
+    public void Play(int type, Vector3 position, Vector3 rotation) => Networking.Send(PacketType.Sound, 29, w =>
+    {
+        w.Id(AccId);
+        w.Byte((byte)type);
+        w.Vector(position);
+        w.Vector(rotation);
+    });
+
+    /// <summary> Distributes the sound to the network members. </summary>
+    public void Play(int type, float dst) => Play(type, cctr.position + cctr.forward * dst, cctr.localEulerAngles);
+
+    /// <summary> Distributes the sound to the network members. </summary>
+    public void Play(int type) => Play(type, default, default);
+
+    /// <summary> Preloaded audio clips that improve immensity. </summary>
+    private AudioClip punch, parry, heavy;
+
+    /// <summary> Plays a specific sound, animation and effect. </summary>
+    public void Play(RemotePlayer player, byte type, Vector3 position, Vector3 rotation) => Events.Post(() =>
+    {
+        void Play(int channel, AudioClip clip, float pitch = 1f)
+        {
+            player.Audio[channel].clip = clip;
+            player.Audio[channel].SetPitch(pitch);
+            player.Audio[channel].Play(true);
+        }
+
+        if (!punch) GameAssets.Sound("Weapons/PunchSwoosh.wav",       c => punch = c);
+        if (!parry) GameAssets.Sound("Weapons/Revolver/Ricochet.wav", c => parry = c);
+        if (!heavy) GameAssets.Sound("Weapons/PunchSwooshHeavy.wav",  c => heavy = c);
+
+        switch (type)
+        {
+            case 0x00: // jump
+                Play(1, nm.jumpSound, 1.00f);
+                break;
+            case 0x01: // wall
+                Play(1, nm.jumpSound, 1.25f);
+                break;
+            case 0x02: // wall
+                Play(1, nm.jumpSound, 1.50f);
+                break;
+            case 0x03: // wall
+                Play(1, nm.jumpSound, 1.75f);
+                Play(2, nm.finalWallJump);
+                break;
+            case 0x04: // land - light
+                Play(2, nm.landingSound);
+                break;
+            case 0x05: // land - heavy
+                eh.CreateEnviroGibs(position, rotation, 5f, 05);
+                Inst(Prefabs[(byte)EntityType.Heavywave], position).transform.forward = -rotation;
+                break;
+            case 0x06: // land - shock
+                eh.CreateEnviroGibs(position, rotation, 5f, 10);
+                Inst(Prefabs[(byte)EntityType.Shockwave], position).Get<PhysicalShockwave>(s =>
+                {
+                    s.force = 5000f * 2.25f * rotation.magnitude;
+                    s.hasHurtPlayer = false;
+                }
+                ).transform.up = -rotation;
+                break;
+            case 0x07: // dash
+                player.Doll.Trigger(1);
+                Play(1, nm.dodgeSound);
+                break;
+            case 0x08: // punch - feedbacker
+                player.Doll.Trigger(2);
+                Play(2, punch);
+                break;
+            case 0x09: // parry - feedbacker
+                player.Doll.Trigger(3);
+                Play(2, parry);
+                break;
+            case 0x0A: // punch - knuckleblaster
+                player.Doll.Trigger(2);
+                Play(2, heavy);
+                break;
+            case 0x0B: // blast - knuckleblaster
+                Inst(Prefabs[(byte)EntityType.Blastwave], position, rotation).GetComponentsInChildren<Explosion>().Each(e =>
+                {
+                    e.canHit = AffectedSubjects.All;
+                    e.playerDamageOverride = player.Team.Ally() ? 0 : 12;
+                });
+                break;
+            case 0x0C: // shotgun
+                Inst(Prefabs[(byte)EntityType.ShotgunExplosion], position, rotation).GetComponentsInChildren<Explosion>().Each(e =>
+                {
+                    e.enemyDamageMultiplier = 1f;
+                    e.damage = 50;
+                    e.maxSize *= 1.5f;
+                });
+                break;
+            default:   // hammer
+                var tier = type >> 0 & 0x03;
+                var chrg = type >> 2 & 0x03;
+                var temp = chrg == 3 ? 0x01 : 0x00;
+
+                Inst(Prefabs[(byte)EntityType.HammerParticleLight + tier], position, rotation);
+                if (chrg == 0) break;
+                Inst(Prefabs[(byte)EntityType.HammerExplosionCool + temp], position, rotation).GetComponentsInChildren<Explosion>().Each(e =>
+                {
+                    if (chrg <= 2)
+                    {
+                        e.canHit = AffectedSubjects.All;
+                        e.playerDamageOverride = 0;
+                    }
+                    if (chrg == 2) e.maxSize *= 2f;
+                });
+                break;
+        }
+    });
+
+    #endregion
+}

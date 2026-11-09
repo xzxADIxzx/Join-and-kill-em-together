@@ -3,10 +3,10 @@ namespace Jaket.Net.Admin;
 using Jaket.Content;
 
 /// <summary> Keeps track of various actions of a specific member. </summary>
-public class Subject
+public class Subject(uint id)
 {
     /// <summary> Identifier of the member. </summary>
-    public readonly uint Id;
+    public readonly uint Id = id;
     /// <summary> Privileges of the member. </summary>
     public Privilege Privilege;
 
@@ -15,8 +15,8 @@ public class Subject
 
     warns   = new(3f, .02f),
     packets = new(Networking.TICKS_PER_SECOND * 128f, Networking.TICKS_PER_SECOND * 96f),
-    hitscns = new(64f, 24f),
-    commons = new(12f,  8f);
+    hitscns = new(48f, 24f),
+    commons = new(16f,  8f);
 
     /// <summary> These prevent flood of entities. </summary>
     private Pool
@@ -25,8 +25,6 @@ public class Subject
     project = new(24),
     flashes = new(48),
     harpoon = new(4);
-
-    public Subject(uint id) => Id = id;
 
     /// <summary> Gives the member a warning if the given limit is exceeded. </summary>
     public void Warn(string reason, ref Ratekeeper limit)
@@ -74,7 +72,7 @@ public class Subject
         }
         else if (type.IsItem())
         {
-            if (Privilege.Has || type.IsFish() || type.IsPlushie() || type == EntityType.BaitApple || type == EntityType.BaitFace)
+            if (Privilege.Has || type.IsBait() || type.IsFish() || type.IsSnack() || type.IsPlushie())
             {
                 defpool.Add(entity);
                 Warn("flood of entities", ref commons);

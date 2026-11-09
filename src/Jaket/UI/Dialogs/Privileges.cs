@@ -20,7 +20,7 @@ public class Privileges : Fragment
         Bar(888f, 512f, b =>
         {
             b.Setup(true);
-            b.Text("#privileges.name", 32f, 32);
+            b.Title("#privileges.name");
 
             b.Subbar(416f, s =>
             {
@@ -28,7 +28,7 @@ public class Privileges : Fragment
                 s.Subbar(432f, b => (lower = b).Setup(true, 0f));
                 s.Subbar(432f, b => (upper = b).Setup(true, 0f));
             });
-            b.Text("#privileges.warn", 32f, 16, light, TextAnchor.MiddleLeft);
+            b.Info("#privileges.warn", 32f);
         });
     }
 
@@ -51,7 +51,7 @@ public class Privileges : Fragment
 
             var color = upper ? green : red;
 
-            level.Text(upper ? "#privileges.upper" : "#privileges.lower", 24f, 24, color, TextAnchor.MiddleLeft);
+            level.Text(upper ? "#privileges.upper" : "#privileges.lower", color: color);
 
             LobbyController.Lobby?.Members.Each(m => LobbyConfig.Privileged.Has(m.AccId.ToString()) == upper, m => level.TextButton(m.Name, color, () =>
             {

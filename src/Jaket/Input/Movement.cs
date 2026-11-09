@@ -11,16 +11,11 @@ using Jaket.Net.Admin;
 using Jaket.Net.Types;
 using Jaket.UI;
 using Jaket.UI.Elements;
-using Jaket.UI.Fragments;
 using Jaket.World;
 
 /// <summary> Class responsible for additions to control and local display of emotes. </summary>
 public class Movement : MonoSingleton<Movement>
 {
-    static NewMovement nm => NewMovement.Instance;
-    static FistControl fc => FistControl.Instance;
-    static GunControl gc => GunControl.Instance;
-    static CameraController cc => CameraController.Instance;
     static AssistController ac => AssistController.Instance;
     static CheatsController ch => CheatsController.Instance;
     static CheatsManager cm => CheatsManager.Instance;
@@ -37,11 +32,11 @@ public class Movement : MonoSingleton<Movement>
     private void Start()
     {
         Events.OnLoad += () => UpdateState(true);
-        Events.EveryHalf += () =>
+        Events.EveryHalf += () => Events.Post(() =>
         {
             if (ch.cheatsEnabled && LobbyController.Online && !Administration.Privileged)
             {
-                cm.transform.Find("Cheats Overlay").Each(c => c.gameObject.SetActive(false));
+                cm.DefFind("Cheats Overlay").Each(c => c.Disable());
                 cm.idToCheat.Values.Each(cm.DisableCheat);
 
                 ch.cheatsEnabled = false;
@@ -52,7 +47,7 @@ public class Movement : MonoSingleton<Movement>
                 ac.majorEnabled = false;
                 Bundle.Hud("major-assist");
             }
-        };
+        });
     }
 
     private void Update()
@@ -70,19 +65,19 @@ public class Movement : MonoSingleton<Movement>
         if (Keybind.PlayerInds.Tap()) UI.PlayerInds.Toggle();
         if (Keybind.PlayerInfo.Tap()) UI.PlayerInfo.Toggle();
 
-        if ((Keybind.Point.Tap() || Keybind.Spray.Tap()) && Physics.Raycast(cc.transform.position, cc.transform.forward, out var hit, float.MaxValue, EnvMask))
+        if ((Keybind.Point.Tap() || Keybind.Spray.Tap()) && Physics.Raycast(cctr.position, cctr.forward, out var hit, float.MaxValue, EnvMask))
         {
             // rotate the normal towards the local player a little so that when placed on the ground it is rotated correctly
-            var normal = Vector3.RotateTowards(hit.normal, nm.transform.position - hit.point, .001f, 0f);
+            var normal = Vector3.RotateTowards(hit.normal, nmtr.position - hit.point, .001f, 0f);
 
             if (Keybind.Point.Tap())
             {
-                if (point) point.Lifetime = 5.5f;
+                point?.Remove();
                 point = Point.Spawn(hit.point, normal, Networking.LocalPlayer.Team);
             }
             if (Keybind.Spray.Tap())
             {
-                if (spray) spray.Lifetime = 58f;
+                spray?.Remove();
                 spray = Spray.Spawn(hit.point, normal, Networking.LocalPlayer.Team);
             }
             if (LobbyController.Online) Networking.Send(Keybind.Point.Tap() ? PacketType.Point : PacketType.Spray, 28, w =>
@@ -108,8 +103,6 @@ public class Movement : MonoSingleton<Movement>
         if (Keybind.Spectate.Tap()) Suicide();
 
         if (Input.GetKeyDown(KeyCode.F4)) UI.Debug.Toggle();
-        if (Input.GetKeyDown(KeyCode.F5)) UI.Debug.Clear();
-        if (Input.GetKeyDown(KeyCode.F6)) UI.Debug.Raycast();
     }
 
     private void LateUpdate()
@@ -153,8 +146,8 @@ public class Movement : MonoSingleton<Movement>
         }
         static void ToggleHud(bool enable)
         {
-            nm.screenHud.SetActive(enable);
-            gc.gameObject.SetActive(enable);
+            nm.screenHud.Toggle(enable);
+            gc.gameObject.Toggle(enable);
         }
         bool
             dialog = UI.AnyDialog,
@@ -174,29 +167,6 @@ public class Movement : MonoSingleton<Movement>
         Console.Instance.enabled       = Emotes.Current == 0xFF;
     }
 
-    /// <summary> Respawns the player at the given position with the given rotation. </summary>
-    public static void Respawn(Vector3 position, float rotation, bool flash = false)
-    {
-        StyleHUD.Instance.ComboOver();
-        StyleHUD.Instance.ResetAllFreshness();
-
-        nm.Respawn();
-        nm.GetHealth(0, true);
-        nm.ActivatePlayer();
-
-        cc.ResetCamera(rotation);
-        cc.StopShake();
-        fc.fistCooldown = 0f;
-
-        Teleporter.Tp(position, flash);
-    }
-
-    /// <summary> Respawns Cyber Grind players and flashes the screen. </summary>
-    public static void CyberRespawn() => Respawn(new(0f, 80f, 62.5f), 0f, true);
-
-    /// <summary> Respawns the player at the level's start (recorded by the game's start trigger, correct even on levels like 0-1) instead of reloading the whole world. </summary>
-    public static void RespawnAtStart() => Respawn(PlayerActivator.lastActivatedPosition, nm.transform.eulerAngles.y);
-
     /// <summary> Kills the player immediately. </summary>
     public static void Suicide() => nm.GetHurt(nm.hp, true, 0f, instablack: true, ignoreInvincibility: true);
 
@@ -205,7 +175,7 @@ public class Movement : MonoSingleton<Movement>
 
     [StaticPatch(typeof(OptionsManager), nameof(OptionsManager.Pause))]
     [Prefix]
-    static void Fixes(ref GunControl ___gc) => ___gc = GunControl.Instance; // idk why, but it keeps happening randomly
+    static void Fixes(ref GunControl ___gc) => ___gc = gc; // idk why, but it keeps happening randomly
 
     [StaticPatch(typeof(OptionsManager), nameof(OptionsManager.UnPause))]
     [Postfix]
@@ -248,14 +218,14 @@ public class Movement : MonoSingleton<Movement>
     [Prefix]
     static void Superiority()
     {
-        if (UI.Emote.Shown) WeaponWheel.Instance.gameObject.SetActive(false);
+        if (UI.Emote.Shown) WeaponWheel.Instance.Disable();
     }
 
     [StaticPatch(typeof(CameraFrustumTargeter), nameof(CameraFrustumTargeter.CurrentTarget), HarmonyLib.MethodType.Setter)]
     [Prefix]
     static void LoosersLove(ref Collider value)
     {
-        if (value && value.TryGetEntity(out RemotePlayer p) && p.Team.Ally()) value = null;
+        if (value && value.HasEntity(out RemotePlayer p) && p.Team.Ally()) value = null;
     }
 
     #endregion

@@ -24,9 +24,6 @@ public unsafe struct Reader
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void* Inc(nint bytesCount) => (void*)((position += bytesCount) - bytesCount);
 
-    /// <summary> Skips the given number of bytes. </summary>
-    public void Skip(nint bytesCount) => position += bytesCount;
-
     #region basic
 
     public bool  Bool () => *(byte *)Inc(1) == byte.MaxValue;
@@ -42,24 +39,52 @@ public unsafe struct Reader
     #endregion
     #region enums
 
-    public PacketType PacketType() => *(PacketType*)Inc(1);
+    public PacketType Packet() => *(PacketType*)Inc(1);
 
-    public EntityType EntityType() => *(EntityType*)Inc(1);
+    public EntityType Entity() => *(EntityType*)Inc(1);
 
-    public Team       Team      () => *(Team      *)Inc(1);
+    public Team       Team  () => *(Team      *)Inc(1);
+
+    #endregion
+    #region structs
+
+    public void Floats(ref Entity.Float x, ref Entity.Float y, ref Entity.Float z)
+    {
+        x.Set(*(float*)Inc(4));
+        y.Set(*(float*)Inc(4));
+        z.Set(*(float*)Inc(4));
+    }
+
+    public void Floats(ref Entity.Float x, ref Entity.Float y)
+    {
+        x.Set(*(float*)Inc(4));
+        y.Set(*(float*)Inc(4));
+    }
+
+    public void Floats(ref Entity.Float x)
+    {
+        x.Set(*(float*)Inc(4));
+    }
+
+    public Vector3 Vector() => *(Vector3*)Inc(12);
+
+    public Vector2 Point () => *(Vector2*)Inc( 8);
+
+    public Color32 Color () => *(Color32*)Inc( 4);
 
     #endregion
     #region complex
 
-    public void Bools(out bool v0, out bool v1, out bool v2, out bool v3, out bool v4, out bool v5, out bool v6, out bool v7) { var value = Byte();
-        v0 = (value & 1 << 0) != 0;
-        v1 = (value & 1 << 1) != 0;
-        v2 = (value & 1 << 2) != 0;
-        v3 = (value & 1 << 3) != 0;
-        v4 = (value & 1 << 4) != 0;
-        v5 = (value & 1 << 5) != 0;
-        v6 = (value & 1 << 6) != 0;
-        v7 = (value & 1 << 7) != 0;
+    public void Bools(out bool b0, out bool b1, out bool b2, out bool b3, out bool b4, out bool b5, out bool b6, out bool b7)
+    {   var value = Byte();
+        b0 = (value & 1 << 0) != 0;
+        b1 = (value & 1 << 1) != 0;
+        b2 = (value & 1 << 2) != 0;
+        b3 = (value & 1 << 3) != 0;
+        b4 = (value & 1 << 4) != 0;
+        b5 = (value & 1 << 5) != 0;
+        b6 = (value & 1 << 6) != 0;
+        b7 = (value & 1 << 7) != 0;
     }
 
     public void Bytes(byte[] value, int start, int count)
@@ -69,13 +94,6 @@ public unsafe struct Reader
 
     public void Bytes(byte[] value) => Bytes(value, 0, value.Length);
 
-    public void Floats(ref Entity.Float x, ref Entity.Float y, ref Entity.Float z)
-    {
-        x.Set(*(float*)Inc(4));
-        y.Set(*(float*)Inc(4));
-        z.Set(*(float*)Inc(4));
-    }
-
     public string String()
     {
         var bytes = new byte[Byte()];
@@ -83,22 +101,18 @@ public unsafe struct Reader
         return Encoding.ASCII.GetString(bytes);
     }
 
-    public Vector3 Vector() => *(Vector3*)Inc(12);
-
-    public Color32 Color() => new(Byte(), Byte(), Byte(), Byte());
-
-    public void Player(out Team team, out byte weapon, out byte emote, out byte rps, out bool typing)
+    public void State(out byte emote, out byte rps, out bool typing, out Vector3 gravity)
     {
-        short value = *(short*)Inc(2);
+        byte gen = *(byte*)Inc(1);
+        uint grv = *(uint*)Inc(4);
 
-        weapon = (byte)(value >> 10 & 0b111111);
-        team   = (Team)(value >>  7 & 0b111   );
-        emote  = (byte)(value >>  3 & 0b1111  );
-        rps    = (byte)(value >>  1 & 0b11    );
-        typing =       (value >>  0 & 0b1     ) != 0;
+        emote  = (byte)(gen >> 3 & 0b1111);
+        rps    = (byte)(gen >> 1 & 0b0011);
+        typing = 1 ==  (gen >> 0 & 0b0001);
 
-        if (weapon == 0b111111) weapon = 0xFF;
-        if (emote  == 0b1111)   emote  = 0xFF;
+        if (emote == 0b1111) emote = 0xFF;
+
+        gravity = new((grv >> 20 & 0x3FF) * 360f / 1023, (grv >> 10 & 0x3FF) * 360f / 1023, (grv >> 00 & 0x3FF) * 360f / 1023);
     }
 
     #endregion

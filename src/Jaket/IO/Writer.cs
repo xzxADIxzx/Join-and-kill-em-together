@@ -24,9 +24,6 @@ public unsafe struct Writer
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void* Inc(nint bytesCount) => (void*)((position += bytesCount) - bytesCount);
 
-    /// <summary> Skips the given number of bytes. </summary>
-    public void Skip(nint bytesCount) => position += bytesCount;
-
     #region basic
 
     public void Bool (bool  value) => *(byte *)Inc(1) = value ? byte.MaxValue : byte.MinValue;
@@ -42,24 +39,52 @@ public unsafe struct Writer
     #endregion
     #region enums
 
-    public void Enum(PacketType value) => *(PacketType*)Inc(1) = value;
+    public void Packet(PacketType value) => *(PacketType*)Inc(1) = value;
 
-    public void Enum(EntityType value) => *(EntityType*)Inc(1) = value;
+    public void Entity(EntityType value) => *(EntityType*)Inc(1) = value;
 
-    public void Enum(Team       value) => *(Team      *)Inc(1) = value;
+    public void Team  (Team       value) => *(Team      *)Inc(1) = value;
+
+    #endregion
+    #region structs
+
+    public void Floats(Entity.Float x, Entity.Float y, Entity.Float z)
+    {
+        *(float*)Inc(4) = x.Next;
+        *(float*)Inc(4) = y.Next;
+        *(float*)Inc(4) = z.Next;
+    }
+
+    public void Floats(Entity.Float x, Entity.Float y)
+    {
+        *(float*)Inc(4) = x.Next;
+        *(float*)Inc(4) = y.Next;
+    }
+
+    public void Floats(Entity.Float x)
+    {
+        *(float*)Inc(4) = x.Next;
+    }
+
+    public void Vector(Vector3 value) => *(Vector3*)Inc(12) = value;
+
+    public void Point (Vector2 value) => *(Vector2*)Inc( 8) = value;
+
+    public void Color (Color32 value) => *(Color32*)Inc( 4) = value;
 
     #endregion
     #region complex
 
-    public void Bools(bool v0 = false, bool v1 = false, bool v2 = false, bool v3 = false, bool v4 = false, bool v5 = false, bool v6 = false, bool v7 = false) => Byte((byte)(
-        (v0 ? 1 << 0 : 0) |
-        (v1 ? 1 << 1 : 0) |
-        (v2 ? 1 << 2 : 0) |
-        (v3 ? 1 << 3 : 0) |
-        (v4 ? 1 << 4 : 0) |
-        (v5 ? 1 << 5 : 0) |
-        (v6 ? 1 << 6 : 0) |
-        (v7 ? 1 << 7 : 0)
+    public void Bools(bool b0 = false, bool b1 = false, bool b2 = false, bool b3 = false, bool b4 = false, bool b5 = false, bool b6 = false, bool b7 = false) => Byte((byte)
+    (
+        (b0 ? 1 << 0 : 0) |
+        (b1 ? 1 << 1 : 0) |
+        (b2 ? 1 << 2 : 0) |
+        (b3 ? 1 << 3 : 0) |
+        (b4 ? 1 << 4 : 0) |
+        (b5 ? 1 << 5 : 0) |
+        (b6 ? 1 << 6 : 0) |
+        (b7 ? 1 << 7 : 0)
     ));
 
     public void Bytes(byte[] value, int start, int count)
@@ -69,13 +94,6 @@ public unsafe struct Writer
 
     public void Bytes(byte[] value) => Bytes(value, 0, value.Length);
 
-    public void Floats(Entity.Float x, Entity.Float y, Entity.Float z)
-    {
-        *(float*)Inc(4) = x.Next;
-        *(float*)Inc(4) = y.Next;
-        *(float*)Inc(4) = z.Next;
-    }
-
     public void String(string value)
     {
         var bytes = Encoding.ASCII.GetBytes(value ?? "");
@@ -83,16 +101,13 @@ public unsafe struct Writer
         Bytes(bytes);
     }
 
-    public void Vector(Vector3 value) => *(Vector3*)Inc(12) = value;
-
-    public void Color(Color32 value) => Int(value.rgba);
-
-    public void Player(Team team, byte weapon, byte emote, byte rps, bool typing)
+    public void State(byte emote, byte rps, bool typing, Vector3 gravity)
     {
-        if (weapon == 0xFF) weapon = 0b111111;
-        if (emote  == 0xFF) emote  = 0b1111;
+        if (emote == 0xFF) emote = 0b1111;
 
-        *(short*)Inc(2) = (short)((weapon << 10) | (((byte)team) << 7) | (emote << 3) | (rps << 1) | (typing ? 1 : 0));
+        *(byte*)Inc(1) = (byte)( (emote << 3) | (rps << 1) | (typing ? 1 : 0) );
+
+        *(uint*)Inc(4) = (uint)(gravity.x / 360f * 1023) << 20 | (uint)(gravity.y / 360f * 1023) << 10 | (uint)(gravity.z / 360f * 1023);
     }
 
     #endregion

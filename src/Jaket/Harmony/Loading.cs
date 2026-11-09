@@ -1,12 +1,12 @@
 namespace Jaket.Harmony;
 
 using Jaket.Assets;
+using Jaket.IO;
 using Jaket.Net;
 
 public static class Loading
 {
     [StaticPatch(typeof(SceneHelper), nameof(SceneHelper.LoadSceneAsync))]
-    [StaticPatch(typeof(SceneHelper), nameof(SceneHelper.RestartSceneAsync))]
     [Postfix]
     static void Load() => Events.OnLoadingStart.Fire();
 
@@ -27,4 +27,16 @@ public static class Loading
     [DynamicPatch(typeof(AbruptLevelChanger), nameof(AbruptLevelChanger.GoToSavedLevel))]
     [Prefix]
     static bool Saved() => After();
+
+    [DynamicPatch(typeof(LeaderboardController), nameof(LeaderboardController.LeaderboardsBlocked), HarmonyLib.MethodType.Getter)]
+    [Postfix]
+    static void Score(ref bool __result) => __result = true;
+
+    [DynamicPatch(typeof(GameProgressSaver), nameof(GameProgressSaver.SaveRank))]
+    [Prefix]
+    static bool Save() { Progress.Save(); return false; }
+
+    [StaticPatch(typeof(GameProgressSaver), nameof(GameProgressSaver.WipeSlot))]
+    [Prefix]
+    static void Wipe(int slot) => Files.IterAll(Files.Join(GameProgressSaver.BaseSavePath, $"Slot{slot + 1}"), Files.Delete, "*.jaket");
 }

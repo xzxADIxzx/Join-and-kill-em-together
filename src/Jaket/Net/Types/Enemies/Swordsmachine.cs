@@ -3,61 +3,22 @@ namespace Jaket.Net.Types;
 using UnityEngine;
 using UnityEngine.AI;
 
+using Jaket.Assets;
 using Jaket.Content;
 using Jaket.Harmony;
-using Jaket.IO;
 
 /// <summary> Tangible entity of the swordsmachine type. </summary>
-public class Swordsmachine : Enemy
+public class Swordsmachine : Foe
 {
     Agent agent;
-    Float x, y, z, r;
     NavMeshAgent nma;
     SwordsMachine scr;
     Animator animator;
 
-    int running = Animator.StringToHash("Running");
+    static readonly int running = Animator.StringToHash("Running");
 
-    public Swordsmachine(uint id, EntityType type) : base(id, type) { }
+    public Swordsmachine(uint id, EntityType type) : base(id, type, false) { }
 
-    #region snapshot
-
-    public override int BufferSize => 27;
-
-    public override void Write(Writer w)
-    {
-        WriteOwner(ref w);
-
-        if (IsOwner)
-        {
-            w.Vector(agent.Position);
-            w.Float(agent.Rotation.y);
-
-            w.Byte(Attack);
-            w.Bool(animator.GetBool(running));
-        }
-        else
-        {
-            w.Floats(x, y, z);
-            w.Float(r.Next);
-
-            w.Byte(Attack);
-            w.Bool(Moving);
-        }
-    }
-
-    public override void Read(Reader r)
-    {
-        if (ReadOwner(ref r)) return;
-
-        r.Floats(ref x, ref y, ref z);
-        this.r.Set(r.Float());
-
-        Attack = r.Byte();
-        Moving = r.Bool();
-    }
-
-    #endregion
     #region logic
 
     public override void Rage(bool enraged)
@@ -73,8 +34,6 @@ public class Swordsmachine : Enemy
         else scr.UnEnrage();
     }
 
-    public override void Create() => Assign(Entities.Enemies.Make(Type, new(x.Init, y.Init, z.Init)).AddComponent<Agent>());
-
     public override void Assign(Agent agent)
     {
         base.Assign(this.agent = agent);
@@ -86,17 +45,8 @@ public class Swordsmachine : Enemy
 
     public override void Update(float delta)
     {
-        if (Locked) { nma.enabled = false; scr.enabled = false; return; }
+        if (Update(delta, animator.GetBool(running), nma, scr)) return;
 
-        scr.enabled = IsOwner;
-        scr.phaseChangeHealth = scr.firstPhase ? PostHealth / 2f : 0f;
-
-        if (IsOwner) return;
-
-        agent.Position = new(x.GetAware(delta), y.GetAware(delta), z.GetAware(delta));
-        agent.Rotation = new(agent.Rotation.x,  r.GetAngle(delta), agent.Rotation.z );
-
-        nma.enabled = false;
         scr.targetHandle = null;
 
         if (LastAttack != Attack) switch (LastAttack = Attack)
@@ -113,13 +63,20 @@ public class Swordsmachine : Enemy
     {
         if (explode)
         {
+            if (Boss && scr.mach.symbiotic)
+            {
+                scr.mach.health = 0f;
+                scr.mach.HandleSymbioteDeath(default);
+
+                Hidden = false;
+                return;
+            }
             if (Boss) ResFind<WeaponPickUp>().Each
             (
                 w => IsReal(w) && (w.transform.position - agent.Position).magnitude < 70f,
                 w => scr.shotgunPickUp = w.gameObject
             );
             scr.bossVersion = true;
-
             scr.firstPhase = false;
             scr.EndFirstPhase();
             Hidden = false;
@@ -127,72 +84,107 @@ public class Swordsmachine : Enemy
         else base.Killed(explode);
     }
 
+    public override void Bossed(int layers)
+    {
+        if (Scene == "Level 1-3") Networking.Entities.Alive<Swordsmachine>(s => s.Boss && !s.scr.mach.symbiotic, s =>
+        {
+            scr.eid.overrideFullName = "SWORDSMACHINE \"TUNDRA\"";
+            s.scr.eid.overrideFullName = "SWORDSMACHINE \"AGONY\"";
+
+            scr.mach.symbiotic = true;
+            s.scr.mach.symbiotic = true;
+
+            scr.mach.symbiote = s.scr.mach;
+            s.scr.mach.symbiote = scr.mach;
+
+            scr.firstPhase = false;
+            s.scr.firstPhase = false;
+
+            scr.bothPhases = true;
+            s.scr.bothPhases = false;
+
+            GameAssets.Model("Enemies/SwordsMachine/SwordsMachineTundra.mat", m =>
+            {
+                scr.ensim.ChangeMaterialNew(EnemySimplifier.MaterialState.normal, m);
+                scr.ensim.ChangeMaterialNew(EnemySimplifier.MaterialState.enraged, m);
+            });
+            GameAssets.Model("Enemies/SwordsMachine/SwordsMachineAgony.mat", m =>
+            {
+                s.scr.ensim.ChangeMaterialNew(EnemySimplifier.MaterialState.normal, m);
+                s.scr.ensim.ChangeMaterialNew(EnemySimplifier.MaterialState.enraged, m);
+            });
+
+            GameAssets.Model("Enemies/SwordsMachine/SwordsMachineTundraSword.mat", m =>
+            {
+                scr.origMat = m;
+                scr.CoolSword();
+            });
+            GameAssets.Model("Enemies/SwordsMachine/SwordsMachineAgonySword.mat", m =>
+            {
+                s.scr.origMat = m;
+                s.scr.CoolSword();
+            });
+
+            GameAssets.Material("Explosion 2.mat", m => scr.swordTrail.material = m);
+            GameAssets.Material("Explosion 1.mat", m => s.scr.swordTrail.material = m);
+        });
+        base.Bossed(layers);
+        scr.phaseChangeHealth = PostHealth / 2f;
+    }
+
     #endregion
     #region harmony
 
     [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.Combo))]
     [Prefix]
-    static void Combo(SwordsMachine __instance)
-    {
-        if (__instance.TryGetEntity(out Swordsmachine s)) s.Attack = 1;
-    }
+    static void Combo(SwordsMachine __instance) => __instance.Attack<Swordsmachine>(1);
 
     [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.RunningSwing))]
     [Prefix]
-    static void Swing(SwordsMachine __instance)
-    {
-        if (__instance.TryGetEntity(out Swordsmachine s)) s.Attack = 2;
-    }
+    static void Swing(SwordsMachine __instance) => __instance.Attack<Swordsmachine>(2);
 
     [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.SwordThrow))]
     [Prefix]
-    static void Throw(SwordsMachine __instance)
-    {
-        if (__instance.TryGetEntity(out Swordsmachine s)) s.Attack = 3;
-    }
+    static void Throw(SwordsMachine __instance) => __instance.Attack<Swordsmachine>(3);
 
     [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.SwordSpiral))]
     [Prefix]
-    static void Twist(SwordsMachine __instance)
-    {
-        if (__instance.TryGetEntity(out Swordsmachine s)) s.Attack = 4;
-    }
-
-    [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.DamageStop))]
-    [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.SwordCatch))]
-    [Prefix]
-    static void Zeros(SwordsMachine __instance)
-    {
-        if (__instance.TryGetEntity(out Swordsmachine s)) s.Attack = 0;
-    }
+    static void Twist(SwordsMachine __instance) => __instance.Attack<Swordsmachine>(4);
 
     [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.EndFirstPhase))]
     [Prefix]
     static void Phase(SwordsMachine __instance)
     {
-        if (__instance.TryGetEntity(out Swordsmachine s) && !s.Hidden) s.Kill(2, w => { w.Bool(true); w.Bool(true); });
+        if (__instance.HasEntity(out Swordsmachine s) && !s.Hidden) s.Kill(1, w => w.Bools(true, true));
     }
 
     [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.TeleportAway))]
     [Prefix]
     static bool Leave(SwordsMachine __instance)
     {
-        if (__instance.TryGetEntity(out Swordsmachine s) && !s.Hidden) s.Kill();
+        if (__instance.HasEntity(out Swordsmachine s) && !s.Hidden) s.Kill();
         return false;
+    }
+
+    [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.Down))]
+    [Prefix]
+    static void Symbs(SwordsMachine __instance)
+    {
+        if (__instance.HasEntity(out Swordsmachine s) && s.scr.mach.health < 0f) s.Kill(1, w => w.Bools(true, true));
     }
 
     [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.Enrage))]
     [Prefix]
     static void Enrage(SwordsMachine __instance)
     {
-        if (__instance.TryGetEntity(out Swordsmachine s) && !s.Enraged) s.Enrage(true);
+        if (__instance.HasEntity(out Swordsmachine s) && !s.Enraged) s.Enrage(true);
     }
 
     [DynamicPatch(typeof(SwordsMachine), nameof(SwordsMachine.UnEnrage))]
     [Prefix]
     static void Unrage(SwordsMachine __instance)
     {
-        if (__instance.TryGetEntity(out Swordsmachine s) && s.Enraged) s.Enrage(false);
+        if (__instance.HasEntity(out Swordsmachine s) && s.Enraged) s.Enrage(false);
     }
 
     #endregion

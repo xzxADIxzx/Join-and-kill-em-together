@@ -5,8 +5,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-using ImageType = UnityEngine.UI.Image.Type;
-
 using Jaket.Assets;
 using Jaket.Commands;
 using Jaket.Input;
@@ -24,7 +22,7 @@ public class Chat : Fragment
     public const string TTS_TAG = "[coral][14]\\[TTS][][]";
 
     /// <summary> Maximum length of a chat message. </summary>
-    public const int MAX_LENGTH = 128;
+    public const int MAX_LENGTH = 256;
     /// <summary> Secret message hidden in the chat. </summary>
     public const string LOVEYOU = "I♡<size=4> </size>U";
 
@@ -52,36 +50,39 @@ public class Chat : Fragment
     /// <summary> Index of the currently viewed message in the history. </summary>
     private int index;
 
-    public Chat(Transform root) : base(root, "Chat", true, hide: () => Events.Post(() => UI.Chat.field.gameObject.SetActive(UI.Chat.Shown = false)))
+    #region fragment
+
+    public Chat(Transform root) : base(root, "Chat", true, hide: () => UI.Chat?.field.Toggle(UI.Chat.Shown = false))
     {
         Events.OnLoad += () =>
         {
             if (string.IsNullOrWhiteSpace(chat.text) && !Settings.SkipHelloMessage) SayHello();
         };
-        Events.EveryHalf += Rebuild;
+        Events.EveryHalf += () => Events.Post(Rebuild);
 
-        chatBg = Builder.Image(Rect("Chat", new(640f, 30f)), Tex.Fill, invi, ImageType.Sliced).rectTransform;
-        infoBg = Builder.Image(Rect("Info", new(640f, 30f)), Tex.Fill, invi, ImageType.Sliced).rectTransform;
+        chatBg = Builder.Image(Rect("Chat", new(640f, 32f)), Tex.Fill, invi).rectTransform;
+        infoBg = Builder.Image(Rect("Info", new(640f, 32f)), Tex.Fill, invi).rectTransform;
 
-        chat = Builder.Text(Builder.Rect("Text", chatBg, Lib.Rect.Fill with { Width = -16f, Height = -14f }), "", 16, white, TextAnchor.MiddleLeft);
-        info = Builder.Text(Builder.Rect("Text", infoBg, Lib.Rect.Fill with { Width = -16f, Height = -14f }), "", 16, white, TextAnchor.MiddleLeft);
+        chat = Builder.Text(Builder.Rect("Text", chatBg, new() { Width = -16f }), "", 16, white, TextAnchor.MiddleLeft);
+        info = Builder.Text(Builder.Rect("Text", infoBg, new() { Width = -16f }), "", 16, white, TextAnchor.MiddleLeft);
 
-        field = Builder.Field(Rect("Input", new(0f, 36f, -32, 40f, new(0f, 0f), new(1f, 0f))), Tex.Fill, invi, "#chat.tip", 24, OnFocusLost);
+        field = Builder.Field(Rect("Input", new(0f, 36f, -32f, 40f, new(0f, 0f), new(1f, 0f))), Tex.Fill, invi, "#chat.tip", 24, OnFocusLost);
         field.characterLimit = MAX_LENGTH;
 
-        static void Lerp(RectTransform rect, Prov<bool> target) => rect.Component<CanvasGroup>(g =>
+        static void Lerp(RectTransform rect, Prov<bool> target) => rect.Add<CanvasGroup>(g =>
         {
-            g.Component<Bar>(b => b.Update(() => g.alpha = Mathf.Lerp(g.alpha, target() ? 1f : 0f, Time.deltaTime * 12f)));
+            g.Add<Bar>(b => b.Update(() => g.alpha = Mathf.Lerp(g.alpha, target() ? 1f : 0f, Time.deltaTime * 12f)));
             g.blocksRaycasts = false;
         });
         Lerp(chatBg, () => chat.text.Length > 0 && Shown | Time.time - lastUpdate < 8f);
-        Lerp(infoBg, () => info.text != LOVEYOU);
+        Lerp(infoBg, () => info.text.Length > 0 && info.text != LOVEYOU);
         Rebuild();
+        field.Toggle(false);
     }
 
     public override void Toggle()
     {
-        field.gameObject.SetActive(Shown = !Shown);
+        field.Toggle(Shown = !Shown);
         Rebuild();
         UI.Hide(UI.LeftGroup, this, () =>
         {
@@ -100,7 +101,7 @@ public class Chat : Fragment
 
             if (Shown) typing[0] = Bundle.Get("chat.you");
 
-            Networking.Entities.Player(p => p.Typing && p.Id != AccId, p => typing[number++] = p.Header.Name);
+            Networking.Entities.Player(p => p.Typing, p => typing[number++] = p.Name);
 
             if (number == 0) return null;
             if (number == 1 && Shown) return Bundle.Get("chat.you-only");
@@ -119,11 +120,11 @@ public class Chat : Fragment
         chatBg.anchorMin = chatBg.anchorMax =
         infoBg.anchorMin = infoBg.anchorMax = new(Settings.ChatLocation * .5f, 0f);
 
-        chatBg.sizeDelta = new(640f, 17f + chat.preferredHeight);
-        infoBg.sizeDelta = new(16f + info.preferredWidth, 30f);
+        chatBg.sizeDelta = new(640f, 16f + chat.preferredHeight);
+        infoBg.sizeDelta = new(16f + info.preferredWidth, 32f);
 
-        chatBg.anchoredPosition = new(336f - 336f * Settings.ChatLocation, 126.5f + chat.preferredHeight / 2f);
-        infoBg.anchoredPosition = new(336f - 336f * Settings.ChatLocation - 320f + infoBg.sizeDelta.x / 2f, 87f);
+        chatBg.anchoredPosition = new(336f - 336f * Settings.ChatLocation, 128f + chat.preferredHeight / 2f);
+        infoBg.anchoredPosition = new(336f - 336f * Settings.ChatLocation - 320f + infoBg.sizeDelta.x / 2f, 88f);
     }
 
     public void OnFocusLost(string msg)
@@ -131,7 +132,7 @@ public class Chat : Fragment
         // focus was lost because the player sent a message
         if (Input.GetKeyDown(KeyCode.Return) | Input.GetKeyDown(KeyCode.KeypadEnter) && msg != "")
         {
-            if (string.IsNullOrWhiteSpace(Bundle.CutColors(msg)) || Bundle.CutDanger(msg) != msg)
+            if (string.IsNullOrWhiteSpace(msg.StripTags()) || msg.StripLags() != msg)
             {
                 field.StartCoroutine(Flash(red));
                 field.ActivateInputField();
@@ -154,10 +155,11 @@ public class Chat : Fragment
 
     public void DisplayText(string msg, bool format = true)
     {
-        toDisplay = format ? Bundle.Parse(msg) : msg;
+        toDisplay = format ? msg.ParseTags() : msg;
         Rebuild();
     }
 
+    #endregion
     #region scroll
 
     /// <summary> Scrolls messages through the list of messages sent by the player. </summary>
@@ -190,22 +192,22 @@ public class Chat : Fragment
     public void Receive(string msg, bool format = true)
     {
         received.Move();
-        received[0] = format ? Bundle.Parse(msg) : msg;
+        received[0] = format ? msg.ParseTags() : msg;
 
         lastUpdate = Time.time;
         Rebuild();
     }
 
     /// <summary> Writes the given message to the chat, formatting it beforehand. </summary>
-    public void Receive(string msg, string col, string author, string tag = null) => Receive(Bundle.CutDanger($"[b][#{col}]{tag}{author}[coral]:[][][] {msg}"));
+    public void Receive(string msg, string col, string author, string tag = null) => Receive($"[b][{col}]{tag}{author}[coral]:[][][] {msg}".StripLags());
 
     /// <summary> Writes the hello message to the chat. </summary>
     public void SayHello()
     {
-        void Msg(string msg) => Receive(msg, "0096FF", "xzxADIxzx", BOT_TAG);
+        void Msg(string msg) => Receive(msg, "#0096FF", "xzxADIxzx", BOT_TAG);
         void Tip(params string[] tips)
         {
-            var tab = "[14]     []           [gray]|[#EEE] ";
+            var tab = "[14]     []            [#EEE] ";
             //  [coral][14][TAG][]xzxADIxzx:
             Receive(tab + string.Join("\n" + tab, tips));
         }
@@ -218,6 +220,7 @@ public class Chat : Fragment
             $"Looking through the options [orange]\\[{Keybind.Settings.FormatValue()}][] is worth it",
             "Try typing [green]/help[] in the chat",
             "Take a look at the bestiary, there's a [pink]surprise[]",
+            "Enhance your messages with \\[i]\\[red][i][red]tags[][]",
             "If you have an issue, tell us in our [discord]Discord[] server"
         );
         Msg("Cheers~ [red]:heart:");
@@ -229,23 +232,21 @@ public class Chat : Fragment
     #endregion
 
     /// <summary> Constant-size sequence of messages that stores chat history. </summary>
-    public class Messages
+    public class Messages(int size)
     {
         /// <summary> Array containing data to be stored. </summary>
-        private string[] messages;
+        private string[] messages = new string[size];
         /// <summary> Index of the start of the sequence. </summary>
         private int start;
 
-        public Messages(int size) => messages = new string[size];
-
         public string this[int index]
         {
-            set => messages[(start + index) % messages.Length] = value;
-            get => messages[(start + index) % messages.Length];
+            set => messages[(start + index) % size] = value;
+            get => messages[(start + index) % size];
         }
 
         /// <summary> Moves the start of the sequence back. </summary>
-        public void Move() => start = (messages.Length + start - 1) % messages.Length;
+        public void Move() => start = (size + start - 1) % size;
 
         /// <summary> Returns all values that are not null. </summary>
         public IEnumerable<string> NonNulls(int amount)

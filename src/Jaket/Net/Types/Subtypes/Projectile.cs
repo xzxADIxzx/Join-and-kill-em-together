@@ -11,6 +11,7 @@ using static Jaket.UI.Lib.Pal;
 public abstract class Projectile : OwnableEntity
 {
     Agent agent;
+    Float x, y, z;
     Cache<RemotePlayer> player;
     Team team => player.Value?.Team ?? Networking.LocalPlayer.Team;
     Rigidbody rb;
@@ -21,8 +22,6 @@ public abstract class Projectile : OwnableEntity
     private bool disableKm, enableKm;
     /// <summary> Whether the collision mode should be toggled on transfer. </summary>
     private bool ignoreCl;
-    /// <summary> Position of the projectile shared among tangible classes. </summary>
-    protected Float x, y, z;
 
     public Projectile(uint id, EntityType type, bool enableKm, bool disableKm, bool ignoreCl) : base(id, type)
     {
@@ -33,7 +32,7 @@ public abstract class Projectile : OwnableEntity
 
     #region snapshot
 
-    public override int BufferSize => 21;
+    public override int BufferSize => 16;
 
     public override void Write(Writer w)
     {
@@ -53,20 +52,23 @@ public abstract class Projectile : OwnableEntity
     }
 
     #endregion
-    #region logic
+    #region properties
 
-    public virtual void MasterKill()
-    {
-        if (IsOwner) Kill();
-        if (Version.DEBUG) Log.Debug($"[ENTS] Killed an entity {Id} due to lifetime expiration");
-    }
+    public override bool Debuggable => agent;
+
+    public override Vector3 DrawPos => agent.Position;
+
+    public override Vector3 DrawRot => agent.Rotation;
+
+    #endregion
+    #region logic
 
     public virtual void Paint(Renderer renderer)
     {
         if (renderer is TrailRenderer trailingTail)
         {
             trailingTail.startColor = team.Color() with { a = .6f };
-            trailingTail.endColor   = white        with { a = .0f };
+            trailingTail.endColor   = white        with { a = 0x0 };
         }
 
         else if (renderer is SpriteRenderer sprite)
@@ -81,7 +83,7 @@ public abstract class Projectile : OwnableEntity
         }
     }
 
-    public override void Create() => Assign(Entities.Projectiles.Make(Type, new(x.Init, y.Init, z.Init)).AddComponent<Agent>());
+    public override void Create() => Create(Entities.Projectiles, ref x, ref y, ref z);
 
     public override void Assign(Agent agent)
     {
@@ -90,6 +92,9 @@ public abstract class Projectile : OwnableEntity
         agent.Get(out rb);
         agent.Get(out rs);
         agent.Get(out cs);
+        agent.Rem<DestroyOnCheckpointRestart >(true);
+        agent.Rem<FloatingPointErrorPreventer>(true);
+        agent.Rem<RemoveOnTime               >(true);
         agent.Run(MasterKill, 90f);
 
         OnTransfer = () =>
@@ -114,31 +119,37 @@ public abstract class Projectile : OwnableEntity
 
     public virtual void UpdateIgnore()
     {
-        if (ignoreCl) Networking.Entities.Player(p => cs.Each(c => p.Toggle(c)));
+        if (ignoreCl) Networking.Entities.Player(p => cs.Each(c => c, c => p.Toggle(c)));
     }
 
     public virtual void UpdateRocket(bool riding)
     {
-        if (riding) player.Value?.Acquire(agent);
+        if (riding && player.Value != null)
+        {
+            if (agent.Parent != player.Value.Doll.Root) agent.Parent = player.Value.Doll.Root;
+
+            agent.transform.localPosition = Vector3.back;
+            agent.transform.localRotation = Quaternion.identity;
+        }
         cs.Each(c => c.enabled = !riding);
     }
 
     public override void Damage(Reader r) { }
 
-    public override void Killed(Reader r, int left)
+    #endregion
+    #region other
+
+    /// <inheritdoc cref="Entity.Kill"/>
+    protected void MasterKill()
     {
-        Hidden = true;
-        if (agent) Dest(agent.gameObject);
-        if (left >= 12) agent.Position = r.Vector();
+        if (IsOwner) Kill();
+        if (Version.DEBUG) Log.Debug($"[ENTS] Killed an entity {Id} due to lifetime expiration");
     }
 
-    #endregion
-    #region patch
-
     /// <summary> Invokes the patch logic if the provided object is an entity. </summary>
-    public static bool Kill<T>(Component instance, Cons<T> patch, bool onlyAlive = false) where T : Entity
+    public static bool Kill<T>(Component instance, Cons<T> patch, bool onlyAlive = true) where T : Entity
     {
-        if (instance.TryGetEntity(out T t) && !(onlyAlive && t.Hidden))
+        if (instance.HasEntity(out T t) && !(onlyAlive && t.Hidden))
         {
             patch(t);
             return false;
@@ -149,7 +160,7 @@ public abstract class Projectile : OwnableEntity
     /// <summary> Invokes the patch logic if the hitten collider is an entity. </summary>
     public static bool Deal<T>(Component instance, Patch<T> patch, Agent agent = null, Collider other = null, EnemyIdentifier eid = null) where T : Entity
     {
-        if (instance.TryGetEntity(out T t))
+        if (instance.HasEntity(out T t))
         {
             if (!eid && !other.TryGetComponent(out eid)) eid = other.GetComponent<EnemyIdentifierIdentifier>()?.eid;
             if (!eid || !eid.TryGetComponent(out agent)) return t.IsOwner;

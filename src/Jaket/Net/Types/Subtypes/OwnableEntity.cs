@@ -18,7 +18,7 @@ public abstract class OwnableEntity : Entity
     /// <summary> Whether the entity is locked, such entities' ownership cannot be transferred. </summary>
     public bool Locked
     {
-        get => Time.time - LastTransfer < .4f;
+        get => Time.time - LastTransfer < Stats.Ping / 500f;
         set => LastTransfer = value ? Time.time : float.NegativeInfinity;
     }
     /// <summary> Whether the entity is to be transferred to a new owner on the next snapshot. </summary>
@@ -26,9 +26,13 @@ public abstract class OwnableEntity : Entity
 
     public OwnableEntity(uint id, EntityType type) : base(id, type) { Locked = false; }
 
-    #region logic
+    #region properties
 
+    /// <summary> Name assigned to the agent of the entity. </summary>
     public virtual string Name => $"{(IsOwner ? 'L' : 'R')}#{GetType().Name}";
+
+    #endregion
+    #region logic
 
     public override void Assign(Agent agent)
     {
@@ -37,7 +41,7 @@ public abstract class OwnableEntity : Entity
     }
 
     #endregion
-    #region ownership
+    #region other
 
     /// <summary> Transfers the ownership to the local player. </summary>
     public void TakeOwnage()
@@ -48,8 +52,11 @@ public abstract class OwnableEntity : Entity
         Owner = AccId;
         Locked = true;
 
-        agent?.name = Name;
-        OnTransfer?.Invoke();
+        Events.Post(() =>
+        {
+            agent?.name = Name;
+            OnTransfer?.Invoke();
+        });
     }
 
     /// <summary> Transfers the ownership to the given player. </summary>
@@ -61,8 +68,11 @@ public abstract class OwnableEntity : Entity
         Owner = id;
         Locked = true;
 
-        agent?.name = Name;
-        OnTransfer?.Invoke();
+        Events.Post(() =>
+        {
+            agent?.name = Name;
+            OnTransfer?.Invoke();
+        });
     }
 
     /// <summary> Writes the entity's owner into a snapshot. </summary>

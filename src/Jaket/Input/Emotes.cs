@@ -4,7 +4,6 @@ using System.Collections;
 using UnityEngine;
 
 using Jaket.Assets;
-using Jaket.IO;
 using Jaket.Net;
 using Jaket.Net.Types;
 using Jaket.UI;
@@ -12,8 +11,6 @@ using Jaket.UI;
 /// <summary> Class responsible for playing emotes. </summary>
 public class Emotes : MonoSingleton<Emotes>
 {
-    static NewMovement nm => NewMovement.Instance;
-
     /// <summary> Array containing the length of all emotes in seconds. </summary>
     public static readonly float[] Length = { 2.458f, 4.708f, 1.833f, 2.875f, 0f, 9.083f, -1f, 10.104f, -1f, 3.292f, 0f, -1f };
     /// <summary> Identifier of the currently playing emote. </summary>
@@ -42,7 +39,7 @@ public class Emotes : MonoSingleton<Emotes>
         Current = emote;
         StartTime = Time.time;
 
-        Dest(nm.transform.Find("Doll Preview(Clone)")?.gameObject);
+        Dest(nm.DefFind("Doll Preview(Clone)"));
         Movement.UpdateState();
 
         UI.Spectator.Reset();
@@ -50,7 +47,7 @@ public class Emotes : MonoSingleton<Emotes>
 
         if (emote == 0xFF) return;
 
-        Doll.Preview(emote, Rps, Shop.SelectedHat, Shop.SelectedJacket, Networking.LocalPlayer.Team);
+        Doll.Preview();
         Bundle.Hud("emote.info", true);
 
         // stop sliding to prevent preview from falling underground

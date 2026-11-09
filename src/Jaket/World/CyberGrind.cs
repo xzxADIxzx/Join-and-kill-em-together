@@ -3,7 +3,6 @@
 using UnityEngine;
 
 using Jaket.Content;
-using Jaket.Input;
 using Jaket.IO;
 using Jaket.Net;
 
@@ -11,7 +10,6 @@ using Jaket.Net;
 public class CyberGrind
 {
     static EndlessGrid grid => EndlessGrid.Instance;
-    static NewMovement nm => NewMovement.Instance;
 
     /// <summary> Current wave number used for display on the Huge Flying Panel™. </summary>
     public static int CurrentWave;
@@ -59,7 +57,7 @@ public class CyberGrind
         if (col.enabled)
         {
             col.enabled = false; // start the timer and the music
-            ObjFind("Everything").transform.Find("Timer").gameObject.SetActive(true);
+            ObjFind("Everything").ObjFind("Timer").SetActive(true);
             return;
         }
 
@@ -76,6 +74,6 @@ public class CyberGrind
             nm.GetHealth(999, silent: true);
             nm.FullStamina();
         }
-        else Movement.CyberRespawn();
+        else Checkpoints.Respawn(new(0f, 80f, 62.5f), 0f, true);
     }
 }
