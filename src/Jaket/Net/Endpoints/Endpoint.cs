@@ -10,7 +10,7 @@ using Jaket.Net.Admin;
 public abstract class Endpoint
 {
     /// <summary> Handlers of incoming data packets. </summary>
-    protected PacketHandler[] handlers = new PacketHandler[32];
+    protected PacketHandler[] handlers = new PacketHandler[byte.MaxValue + 1];
     /// <summary> Counter showing the upcoming pool. </summary>
     protected int pool => field = ++field % Networking.SUBTICKS_PER_TICK;
 
@@ -38,7 +38,7 @@ public abstract class Endpoint
 
         if (Networking.Loading && type != PacketType.Level && type != PacketType.Image) return;
 
-        handlers[(int)type](con, sender, r, size);
+        handlers[(byte)type](con, sender, r, size);
         Stats.Received += size;
     }
 
