@@ -5,6 +5,7 @@ using UnityEngine;
 using Jaket.Content;
 using Jaket.Harmony;
 using Jaket.Net;
+using Jaket.UI;
 using Jaket.UI.Fragments;
 
 /// <summary> Class responsible for managing checkpoints and progression. </summary>
@@ -13,7 +14,15 @@ public static class Checkpoints
     #region mission
 
     /// <summary> Restarts the level. </summary>
-    public static void Restart() { }
+    public static void Restart()
+    {
+        if (sm.currentCheckPoint)
+            sm.currentCheckPoint.OnRespawn();
+        else
+            Respawn(PlayerActivator.lastActivatedPosition, 0f);
+
+        sm.restarts++;
+    }
 
     /// <summary> Respawns the player. </summary>
     public static void Respawn(Vector3 position, float rotation, bool flash = false)
@@ -30,6 +39,7 @@ public static class Checkpoints
         fc.fistCooldown = 0f;
 
         Teleporter.Tp(position, flash);
+        Networking.LocalPlayer.Refresh(.1f);
     }
 
     #endregion
@@ -105,6 +115,14 @@ public static class Checkpoints
         __instance.toActivate.Enable();
 
         Respawn(__instance.transform.position + __instance.transform.up * 1.25f, __instance.transform.eulerAngles.y);
+        return false;
+    }
+
+    [DynamicPatch(typeof(StatsManager), nameof(StatsManager.Restart))]
+    [Prefix]
+    static bool Restart(StatsManager __instance)
+    {
+        if (!nm.deathSequence.gameObject.activeSelf && !UI.Spectator.Shown) Restart();
         return false;
     }
 

@@ -27,9 +27,9 @@ public class Doll : Entity
     public byte Emote, Rps, LastEmote = 0xFF;
 
     /// <summary> Team required for versus mechanics. </summary>
-    public Team Team = Team.None;
+    public Team Team;
     /// <summary> Identifier of the displayed weapon. </summary>
-    public EntityType Weapon = EntityType.None;
+    public EntityType Weapon;
 
     /// <summary> Various parts of the doll. </summary>
     public Transform Root, Head, Hand, Reel, Hook, Chair, Coin, Skate, Suits;
@@ -163,6 +163,9 @@ public class Doll : Entity
 
         agent.Add<PortalAwareRenderer>(out _);
         agent.Add<PortalAwareLight>(out _, true, "Doll/Metarig/Hips/Spine 0/Trail");
+
+        Team = Team.None;
+        Weapon = EntityType.None;
 
         Hand = Tools.Tools.Create("Weapons Root", Hand).transform;
         hookWinch?.material = ha.GetComponent<LineRenderer>().material;

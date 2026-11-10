@@ -16,6 +16,8 @@ using static Jaket.UI.Lib.Pal;
 /// </summary>
 public class LocalPlayer : Entity
 {
+    Agent agent;
+
     /// <summary> Singleton instance used for populating style packets. </summary>
     public Doll Doll = new();
     /// <inheritdoc cref="Doll.Team"/>
@@ -62,19 +64,13 @@ public class LocalPlayer : Entity
 
     public override void Assign(Agent agent)
     {
-        agent.Patron = this;
+        (this.agent = agent).Patron = this;
+
         agent.Add(out Audio[0]);
 
-        Events.OnLoad += () =>
-        {
-            agent.Run(Restyle, 1f);
-            Recolor();
-        };
-        Events.OnHandChange += () =>
-        {
-            agent.Run(Restyle, 0f);
-            Recolor();
-        };
+        Events.OnLoad       += () => Refresh(1f);
+        Events.OnMemberJoin += __ => Refresh(1f);
+        Events.OnHandChange += () => Refresh(0f);
         Events.OnTeamChange += () => nm.DefFind("Point Light").Get<Light>(l => l.color = LobbyController.Offline ? white : Team.Color());
     }
 
@@ -113,6 +109,13 @@ public class LocalPlayer : Entity
 
         fc.DefFind("Arm Red(Clone)")
             ?.GetComponentInChildren<SkinnedMeshRenderer>().material.mainTexture = ModAssets.HandTexture(2);
+    }
+
+    /// <summary> Performs both of the functions above. </summary>
+    public void Refresh(float time)
+    {
+        agent.Run(Restyle, time);
+        Recolor();
     }
 
     #endregion
