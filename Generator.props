@@ -1,34 +1,32 @@
 <Project>
 
   <PropertyGroup>
-    <List>
-      AssistController@ac; CameraController@cc; CheatsController@ch; CheatsManager@cm; ColorBlindSettings@cb; FistControl@fc; GunControl@gc; GunSetter@gs; HookArm@ha; HudMessageReceiver@hm; NewMovement@nm; PostProcessV2_Handler@pp; PrefsManager@pm; SceneHelper@eh; StatsManager@sm; StyleHUD@sh;
-    </List>
+    <Singletons>
+      AssistController@ac; CameraController@cc; CheatsController@ch; CheatsManager@cm; ColorBlindSettings@cb; CrowdReactions@cr; EndlessGrid@eg; FistControl@fc; GunControl@gc; GunSetter@gs; HookArm@ha; HudController@hc; HudMessageReceiver@hm; NewMovement@nm; PostProcessV2_Handler@pp; PrefsManager@pm; SceneHelper@eh; StatsManager@sm; StyleHUD@sh; WeaponCharges@wc; WeaponWheel@ww;
+    </Singletons>
   </PropertyGroup>
 
   <ItemGroup>
-    <Singletons Include="$(List)">
+    <Properties Include="$(Singletons)">
       <Type>$([System.String]::Copy('%(Identity)').Split('@')[0])</Type>
       <Name>$([System.String]::Copy('%(Identity)').Split('@')[1])</Name>
-    </Singletons>
+    </Properties>
   </ItemGroup>
 
   <Target Name="Generate" BeforeTargets="BeforeCompile">
 
     <PropertyGroup>
-      <Debug Condition="$(Configuration) == Debug">true</Debug>
-      <Debug Condition="$(Configuration) != Debug">false</Debug>
-
       <GeneratedTools>
 
 namespace Jaket.Tools %3B
 
 public static partial class Tools
 {
-@(Singletons -> '    public static %(Type) %(Name) => %(Type).Instance %3B', '%0A')
+@(Properties -> '    public static %(Type) %(Name) => %(Type).Instance %3B', '%0A')
 
-    public static Transform nmtr => NewMovement     .Instance.transform %3B
-    public static Transform cctr => CameraController.Instance.transform %3B
+    public static UnityEngine.Transform nmtr => NewMovement     .Instance.transform %3B
+    public static UnityEngine.Transform cctr => CameraController.Instance.transform %3B
+    public static PlayerInput           imis => InputManager    .Instance.InputSource %3B
 }
 
       </GeneratedTools>
@@ -39,7 +37,7 @@ namespace Jaket %3B
 public static partial class Version
 {
     public const string CURRENT = "$(Version)" %3B
-    public const bool DEBUG = $(Debug) %3B
+    public const bool DEBUG = $(Configuration.Equals('Debug').ToString().ToLower()) %3B
 }
 
       </GeneratedVersion>

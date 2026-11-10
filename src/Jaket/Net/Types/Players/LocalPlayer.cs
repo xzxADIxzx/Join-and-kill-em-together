@@ -38,7 +38,7 @@ public class LocalPlayer : Entity
         w.Float(cc.rotationX);
 
         w.Byte((byte)nm.hp);
-        w.Byte((byte)Mathf.Floor(WeaponCharges.Instance.raicharge * 2f));
+        w.Byte((byte)Mathf.Floor(wc.raicharge * 2f));
 
         w.State(Emotes.Current, Emotes.Rps, UI.Chat.Shown, cc.gravityRotation.eulerAngles);
         w.Bools

@@ -13,8 +13,6 @@ using static Jaket.UI.Lib.Pal;
 /// <summary> Fragment that displays the state of all teammates. </summary>
 public class PlayerInformation : Fragment
 {
-    static HudController hc => HudController.Instance;
-
     public PlayerInformation(Transform root) : base(root, "PlayerInformation", false, cond: () => Scene == "Main Menu")
     {
         Events.OnLobbyEnter += () => { if (!Shown) Toggle(); };

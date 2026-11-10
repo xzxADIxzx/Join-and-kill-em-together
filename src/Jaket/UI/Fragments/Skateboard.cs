@@ -109,7 +109,7 @@ public class Skateboard : Fragment
             }
             else Inst(nm.staminaFailSound);
         }
-        nmtr.Rotate(Vector3.up * InputManager.Instance.InputSource.Move.ReadValue<Vector2>().x * 120f * Time.deltaTime);
+        nmtr.Rotate(Vector3.up * imis.Move.ReadValue<Vector2>().x * 120f * Time.deltaTime);
     }
 
     #endregion

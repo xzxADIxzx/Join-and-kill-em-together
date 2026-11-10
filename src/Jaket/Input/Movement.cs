@@ -84,7 +84,7 @@ public class Movement : MonoSingleton<Movement>
             });
         }
 
-        if (Keybind.EmoteWheel.Down() && !WeaponWheel.Instance.gameObject.activeSelf)
+        if (Keybind.EmoteWheel.Down() && !ww.gameObject.activeSelf)
         {
             holdTime += Time.deltaTime;
             if (!UI.Emote.Shown && holdTime > .25f) UI.Emote.Show();
@@ -214,7 +214,7 @@ public class Movement : MonoSingleton<Movement>
     [Prefix]
     static void Superiority()
     {
-        if (UI.Emote.Shown) WeaponWheel.Instance.Disable();
+        if (UI.Emote.Shown) ww.Disable();
     }
 
     [StaticPatch(typeof(CameraFrustumTargeter), nameof(CameraFrustumTargeter.CurrentTarget), HarmonyLib.MethodType.Setter)]

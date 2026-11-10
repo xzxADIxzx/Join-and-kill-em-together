@@ -55,7 +55,7 @@ public class EmoteWheel : Fragment
         Content.Add<Bar>(b => b.Update(() =>
         {
             // some code from the weapon wheel that I don't understand
-            direction = Vector2.ClampMagnitude(direction + InputManager.Instance.InputSource.WheelLook.ReadValue<Vector2>() / 12f, 1f);
+            direction = Vector2.ClampMagnitude(direction + imis.WheelLook.ReadValue<Vector2>() / 12f, 1f);
             float num = Mathf.Repeat(Mathf.Atan2(direction.x, direction.y) * Mathf.Rad2Deg + 90f, 360f);
 
             if (direction.sqrMagnitude > .9f) selected = (int)(num / 60f);
@@ -75,7 +75,7 @@ public class EmoteWheel : Fragment
                 lastSelected = selected;
 
                 holdTime = 0f;
-                Inst(WeaponWheel.Instance.clickSound);
+                Inst(ww.clickSound);
             }
             if (holdTime >= .4f && selected == 4)
             {

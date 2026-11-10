@@ -9,8 +9,6 @@ using Jaket.Net;
 /// <summary> Class responsible for Cyber Grind synchronization. </summary>
 public class CyberGrind
 {
-    static EndlessGrid grid => EndlessGrid.Instance;
-
     /// <summary> Current wave number used for display on the Huge Flying Panel™. </summary>
     public static int CurrentWave;
     /// <summary> Current pattern containing heights and prefabs. </summary>
@@ -28,7 +26,7 @@ public class CyberGrind
     public static void SyncPattern(ArenaPattern pattern) => Networking.Send(PacketType.CyberAction, 6 + (pattern.heights.Length + pattern.prefabs.Length) * 2, w =>
     {
         // TODO parse pattern to optimize the size of the packet
-        w.Int(grid.currentWave);
+        w.Int(eg.currentWave);
         w.String(pattern.heights);
         w.String(pattern.prefabs);
     });
@@ -38,7 +36,7 @@ public class CyberGrind
     {
         // read the wave and activate the Huge Flying Panel™
         CurrentWave = r.Int();
-        grid.waveNumberText.transform.parent.parent.gameObject.SetActive(true);
+        eg.waveNumberText.transform.parent.parent.gameObject.SetActive(true);
 
         // read the pattern and launch the wave
         CurrentPattern = new ArenaPattern { heights = r.String(), prefabs = r.String() };
@@ -50,10 +48,10 @@ public class CyberGrind
     {
         // TODO replace with a patch
         // start a new wave with the synced pattern
-        grid.NextWave();
+        eg.NextWave();
 
         // do not reset any value if it is the first load
-        var col = grid.GetComponent<Collider>();
+        var col = eg.GetComponent<Collider>();
         if (col.enabled)
         {
             col.enabled = false; // start the timer and the music
@@ -62,13 +60,11 @@ public class CyberGrind
         }
 
         // play cheering sound effect
-        var cr = CrowdReactions.Instance;
         cr.React(cr.cheerLong);
 
         if (nm.hp > 0)
         {
-            WeaponCharges.Instance.MaxCharges();
-
+            wc.MaxCharges();
             nm.ResetHardDamage();
             nm.exploded = false;
             nm.GetHealth(999, silent: true);
