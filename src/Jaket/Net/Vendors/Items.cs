@@ -34,14 +34,15 @@ public class Items : Vendor
         {
             if (LobbyController.Offline) return;
 
-            ResFind<ItemIdentifier>().Each(IsReal, i => Sync(i.gameObject, false));
-            ResFind<ItemPlaceZone>().Each(IsReal, z =>
+            ResFind<ItemPlaceZone>().Each(Real, z =>
             {
                 z.name = "Zone";
                 z.transform.parent = null;
 
-                if (z.acceptedItemPlaced && !LobbyController.IsOwner) z.CheckItem();
+                z.CheckItem(true);
+                if (z.acceptedItemPlaced && !LobbyController.IsOwner) Events.Post(() => z.CheckItem());
             });
+            ResFind<ItemIdentifier>().Each(Real, i => Sync(i.gameObject, false));
         }));
     }
 
