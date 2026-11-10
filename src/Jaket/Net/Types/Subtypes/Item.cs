@@ -148,7 +148,7 @@ public abstract class Item : OwnableEntity
     [Prefix]
     static void Start(ItemIdentifier __instance) => Events.Post(() =>
     {
-        if (__instance && IsReal(__instance)) Entities.Items.Sync(__instance.gameObject, true);
+        if (Real(__instance)) Entities.Items.Sync(__instance.gameObject, true);
     });
 
     #endregion

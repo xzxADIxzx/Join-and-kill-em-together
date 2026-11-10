@@ -87,6 +87,12 @@ public static class Props
     /// <summary> Iterates the children. </summary>
     public static void Each(this Transform parent, Cons<Transform> cons) { foreach (Transform child in parent) cons(child); }
 
+    /// <summary> Whether the object is not an asset. </summary>
+    public static bool Real(GameObject obj) => obj && obj.scene.name != null && obj.scene.name != "DontDestroyOnLoad";
+
+    /// <summary> Whether the object is not an asset. </summary>
+    public static bool Real(Component comp) => comp && comp.gameObject && Real(comp.gameObject);
+
     /// <summary> Toggles the object. </summary>
     public static GameObject Toggle(this GameObject obj, bool active) { if (obj) obj.SetActive(active); return obj; }
 

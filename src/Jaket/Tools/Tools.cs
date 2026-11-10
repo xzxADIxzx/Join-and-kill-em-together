@@ -54,14 +54,8 @@ public static partial class Tools
     public static string Scene   => SceneHelper.CurrentScene;
     /// <summary> Name of the loading scene. </summary>
     public static string Pending => SceneHelper.PendingScene;
-
     /// <summary> Loads a scene by its name. </summary>
     public static void LoadScn(string scene) => SceneHelper.LoadScene(scene);
-
-    /// <summary> Whether the gameobject is in the current scene. </summary>
-    public static bool IsReal(GameObject obj) => obj.scene.name != null && obj.scene.name != "DontDestroyOnLoad";
-    /// <summary> Whether the component is in the current scene. </summary>
-    public static bool IsReal(Component comp) => IsReal(comp.gameObject);
 
     #endregion
     #region world

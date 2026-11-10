@@ -39,10 +39,10 @@ public class Enemies : Vendor
         {
             if (LobbyController.Offline) return;
 
-            ResFind<SpiderLegsController  >().Each(IsReal, Imdt);
-            ResFind<SpiderLegLines        >().Each(IsReal, Imdt);
-            ResFind<EnemySpawnableInstance>().Each(IsReal, Imdt);
-            ResFind<EnemyIdentifier       >().Each(IsReal, e =>
+            ResFind<SpiderLegsController  >().Each(Real, Imdt);
+            ResFind<SpiderLegLines        >().Each(Real, Imdt);
+            ResFind<EnemySpawnableInstance>().Each(Real, Imdt);
+            ResFind<EnemyIdentifier       >().Each(Real, e =>
             {
                 var type = Type(e.gameObject);
                 e.Add<Entity.Identifier>(i => i.Type = type);

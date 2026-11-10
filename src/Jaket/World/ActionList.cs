@@ -332,7 +332,7 @@ public static class ActionList
         #region museum
         l = "CreditsMuseum2";
 
-        ActionType.Run(l, () => ResFind<MapIntSetter>().Each(IsReal, Dest));
+        ActionType.Run(l, () => ResFind<MapIntSetter>().Each(Real, Dest));
         ActionType.Dest(l, "/__Gianni nightmare world");
 
         ActionType.Find(l, "Cube (6)/DevPlushie (Heckteck) (1)", t => t.name = "DevPlushie (Heckteck)");

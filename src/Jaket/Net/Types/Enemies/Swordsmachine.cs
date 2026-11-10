@@ -73,7 +73,7 @@ public class Swordsmachine : Foe
             }
             if (Boss) ResFind<WeaponPickUp>().Each
             (
-                w => IsReal(w) && (w.transform.position - agent.Position).magnitude < 70f,
+                w => Real(w) && (w.transform.position - agent.Position).magnitude < 70f,
                 w => scr.shotgunPickUp = w.gameObject
             );
             scr.bossVersion = true;
