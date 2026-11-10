@@ -7,7 +7,7 @@ using Jaket.IO;
 public abstract class Rotatable : Projectile
 {
     Agent agent;
-    Float posX, posY, posZ, rotX, rotY, rotZ;
+    Float x, y, z, i, j, k;
 
     protected bool b0, b1;
     protected uint target;
@@ -35,8 +35,8 @@ public abstract class Rotatable : Projectile
         }
         else
         {
-            w.Floats(posX, posY, posZ);
-            w.Floats(rotX, rotY, rotZ);
+            w.Floats(x, y, z);
+            w.Floats(i, j, k);
         }
 
         if (booleansOrId)
@@ -51,8 +51,8 @@ public abstract class Rotatable : Projectile
     {
         if (ReadOwner(ref r)) return;
 
-        r.Floats(ref posX, ref posY, ref posZ);
-        r.Floats(ref rotX, ref rotY, ref rotZ);
+        r.Floats(ref x, ref y, ref z);
+        r.Floats(ref i, ref j, ref k);
 
         if (booleansOrId)
         {
@@ -64,7 +64,7 @@ public abstract class Rotatable : Projectile
     #endregion
     #region logic
 
-    public override void Create() => Create(Entities.Projectiles, ref posX, ref posY, ref posZ);
+    public override void Create() => Create(Entities.Projectiles, ref x, ref y, ref z);
 
     public override void Assign(Agent agent) => base.Assign(this.agent = agent);
 
@@ -72,8 +72,8 @@ public abstract class Rotatable : Projectile
     {
         if (!IsOwner)
         {
-            agent.Position = new(posX.GetAware(delta), posY.GetAware(delta), posZ.GetAware(delta));
-            agent.Rotation = new(rotX.GetAngle(delta), rotY.GetAngle(delta), rotZ.GetAngle(delta));
+            agent.Position = new(x.GetAware(delta), y.GetAware(delta), z.GetAware(delta));
+            agent.Rotation = new(i.GetAngle(delta), j.GetAngle(delta), k.GetAngle(delta));
         }
     }
 

@@ -29,7 +29,7 @@ public abstract class OwnableEntity : Entity
     #region properties
 
     /// <summary> Name assigned to the agent of the entity. </summary>
-    public virtual string Name => $"{(IsOwner ? 'L' : 'R')}#{GetType().Name}";
+    public virtual string Name => $"{(IsOwner ? 'L' : 'R')}#{Type}";
 
     #endregion
     #region logic
@@ -54,7 +54,7 @@ public abstract class OwnableEntity : Entity
 
         Events.Post(() =>
         {
-            agent?.name = Name;
+            if (agent) agent.name = Name;
             OnTransfer?.Invoke();
         });
     }
@@ -70,7 +70,7 @@ public abstract class OwnableEntity : Entity
 
         Events.Post(() =>
         {
-            agent?.name = Name;
+            if (agent) agent.name = Name;
             OnTransfer?.Invoke();
         });
     }

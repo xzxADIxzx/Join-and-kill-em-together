@@ -22,7 +22,7 @@ public class Rocket : Rotatable
 
     #region properties
 
-    public override string Name => $"{(IsOwner ? 'L' : frozen ? 'F' : 'R')}#Rocket";
+    public override string Name => $"{(IsOwner ? 'L' : frozen ? 'F' : 'R')}#{Type}";
 
     #endregion
     #region logic

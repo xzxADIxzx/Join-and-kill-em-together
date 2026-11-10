@@ -107,9 +107,9 @@ public abstract class Projectile : OwnableEntity
             rs.Each(Paint);
             UpdateIgnore();
         };
+        OnTransfer();
 
         Locked = false;
-        OnTransfer();
     }
 
     public override void Update(float delta)
@@ -119,7 +119,7 @@ public abstract class Projectile : OwnableEntity
 
     public virtual void UpdateIgnore()
     {
-        if (ignoreCl) Networking.Entities.Player(p => cs.Each(c => c, c => p.Toggle(c)));
+        if (ignoreCl) Networking.Entities.Player(p => cs.Each(c => c, p.Toggle));
     }
 
     public virtual void UpdateRocket(bool riding)

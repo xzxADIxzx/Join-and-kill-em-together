@@ -27,7 +27,7 @@ public static class ActionType
                 Quaternion.Euler(0f, -angle, 0f)
             )
             .DefFind("Cube/Torch").Get<Transform>(i => { if (!LobbyController.IsOwner) Props.Dest(i); })
-            .DefFind("../../Cube").Get<ItemPlaceZone>(z => z.hideEffects = true);
+            .DefFind("../../Cube").Get<ItemPlaceZone>(z => z.hideEffects = true).name = "Zone";
         });
     });
 

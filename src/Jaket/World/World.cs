@@ -18,6 +18,8 @@ public class World
     /// <summary> Vectors that were arguments of actions. </summary>
     private static Vector2[] pos = new Vector2[(byte.MaxValue + 1) * POOL];
 
+    #region general
+
     /// <summary> Subscribes to several events for proper work. </summary>
     public static void Load()
     {
@@ -55,6 +57,7 @@ public class World
         a => performed[a.Identifier] = false
     );
 
+    #endregion
     #region data
 
     /// <summary> Size of the world's snapshot in bytes. </summary>

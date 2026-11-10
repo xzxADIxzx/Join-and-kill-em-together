@@ -11,15 +11,15 @@ using Jaket.IO;
 public abstract class Item : OwnableEntity
 {
     Agent agent;
-    Float posX, posY, posZ, rotX, rotY, rotZ;
+    Float x, y, z, i, j, k;
     Cache<RemotePlayer> player;
     Rigidbody rb;
     ItemIdentifier itemId;
 
     /// <summary> Whether the player is holding the item. </summary>
-    private bool holding;
+    private bool held;
     /// <summary> Whether the item is placed on an altar. </summary>
-    private bool placed;
+    private bool down;
 
     public Item(uint id, EntityType type) : base(id, type) { }
 
@@ -35,29 +35,26 @@ public abstract class Item : OwnableEntity
         {
             w.Vector(agent.Position);
             w.Vector(agent.Rotation);
-
-            w.Bool(itemId.pickedUp);
-            w.Bool(itemId.Placed());
         }
         else
         {
-            w.Floats(posX, posY, posZ);
-            w.Floats(rotX, rotY, rotZ);
-
-            w.Bool(holding);
-            w.Bool(placed);
+            w.Floats(x, y, z);
+            w.Floats(i, j, k);
         }
+
+        w.Bool(held);
+        w.Bool(down);
     }
 
     public override void Read(Reader r)
     {
         if (ReadOwner(ref r)) return;
 
-        r.Floats(ref posX, ref posY, ref posZ);
-        r.Floats(ref rotX, ref rotY, ref rotZ);
+        r.Floats(ref x, ref y, ref z);
+        r.Floats(ref i, ref j, ref k);
 
-        holding = r.Bool();
-        placed = r.Bool();
+        held = r.Bool();
+        down = r.Bool();
     }
 
     #endregion
@@ -74,7 +71,7 @@ public abstract class Item : OwnableEntity
     #endregion
     #region logic
 
-    public override void Create() => Create(Entities.Items, ref posX, ref posY, ref posZ);
+    public override void Create() => Create(Entities.Items, ref x, ref y, ref z);
 
     public override void Assign(Agent agent)
     {
@@ -86,32 +83,36 @@ public abstract class Item : OwnableEntity
         OnTransfer = () =>
         {
             player = Owner;
-            if (IsOwner) return;
 
-            rb?.isKinematic = true;
+            if (IsOwner) return;
+            if (rb) rb.isKinematic = true;
 
             if (fc.currentPunch.heldItem == itemId)
                 fc.currentPunch.PlaceHeldObject([], null);
         };
+        OnTransfer();
 
         itemId.onPickUp ??= new();
         itemId.onPickUp.onActivate ??= new();
         itemId.onPickUp.onActivate.AddListener(TakeOwnage);
-
-        OnTransfer();
     }
 
     public override void Update(float delta)
     {
+        if (IsOwner)
+        {
+            held = itemId.pickedUp;
+            down = itemId.Placed();
+        }
+        else itemId.pickedUp = held;
+
         if (IsOwner || player.Value == null) return;
 
-        agent.Position = holding ? player.Value.Doll.HoldPosition                    : new(posX.GetAware(delta), posY.GetAware(delta), posZ.GetAware(delta));
-        agent.Rotation = holding ? player.Value.Doll.Reel.eulerAngles + HoldRotation : new(rotX.GetAngle(delta), rotY.GetAngle(delta), rotZ.GetAngle(delta));
+        agent.Position = held ? player.Value.Doll.HoldPosition                    : new(x.GetAware(delta), y.GetAware(delta), z.GetAware(delta));
+        agent.Rotation = held ? player.Value.Doll.Reel.eulerAngles + HoldRotation : new(i.GetAngle(delta), j.GetAngle(delta), k.GetAngle(delta));
+        agent.Scale    = held == itemId.reverseTransformSettings ? itemId.putDownScale : Vector3.one;
 
-        agent.Scale    = holding == itemId.reverseTransformSettings ? itemId.putDownScale : Vector3.one;
-        itemId.pickedUp= holding;
-
-        if (!placed && itemId.Placed())
+        if (!down && itemId.Placed())
         {
             var zones = agent.GetComponentsInParent<ItemPlaceZone>();
 
@@ -120,9 +121,9 @@ public abstract class Item : OwnableEntity
 
             itemId.ipz = null;
         }
-        if (placed && !itemId.Placed()) Physics.OverlapSphere(agent.Position, .4f, 1 << 22).Each(c =>
+        if (down && !itemId.Placed()) Physics.OverlapSphere(agent.Position, .4f, 1 << 22).Each(c => c.name == "Zone", c =>
         {
-            var zones = c.GetComponents<ItemPlaceZone>();
+            var zones = c.GetComponentsInParent<ItemPlaceZone>();
             if (zones.Length > 0)
             {
                 agent.Parent = c.transform;
@@ -147,7 +148,7 @@ public abstract class Item : OwnableEntity
     [Prefix]
     static void Start(ItemIdentifier __instance) => Events.Post(() =>
     {
-        if (__instance) Entities.Items.Sync(__instance.gameObject, true);
+        if (__instance && IsReal(__instance)) Entities.Items.Sync(__instance.gameObject, true);
     });
 
     #endregion

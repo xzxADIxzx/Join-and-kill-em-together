@@ -51,13 +51,13 @@ public abstract class Enemy : OwnableEntity
     #endregion
     #region logic
 
-    public virtual void Heal() => enemy.health = Mathf.Min(PostHealth, enemy.health + PostHealth / (LobbyController.Lobby?.MemberCount ?? 1f));
+    public virtual void Heal() { if (enemy) enemy.health = Mathf.Min(PostHealth, enemy.health + PostHealth / (LobbyController.Lobby?.MemberCount ?? 1f)); }
 
     public virtual void Rage(bool enraged) => Enraged = enraged;
 
     public virtual float Rate(LocalPlayer target) => nm.dead ? float.MaxValue : (nmtr.position - agent.Position).sqrMagnitude;
 
-    public virtual float Rate(RemotePlayer target) => (target.DrawPos - agent.Position).sqrMagnitude;
+    public virtual float Rate(RemotePlayer target) => target.Health == 0 ? float.MaxValue : (target.DrawPos - agent.Position).sqrMagnitude;
 
     public override void Assign(Agent agent)
     {
@@ -80,7 +80,7 @@ public abstract class Enemy : OwnableEntity
                 var rate = Rate(Networking.LocalPlayer);
                 var best = Networking.LocalPlayer.Id;
 
-                Networking.Entities.Player(p => p.Health > 0, p =>
+                Networking.Entities.Player(p =>
                 {
                     var test = Rate(p);
                     if (test < rate)
@@ -90,16 +90,15 @@ public abstract class Enemy : OwnableEntity
                     }
                 });
                 TransferTo = best;
-            }, 4f, true);
+            }, 3f, true);
         };
+        OnTransfer();
 
         Boss = bossbar; // non-owners will read this value to create a bossbar
         Locked = false;
 
         InitHealth = enemy?.health ?? 0f;
         PostHealth = InitHealth * (1f + LobbyConfig.PPP / 10f * (LobbyController.Lobby?.MemberCount - 1 ?? 0));
-
-        OnTransfer();
 
         if (Boss) agent.Run(() => Kill(9, w =>
         {

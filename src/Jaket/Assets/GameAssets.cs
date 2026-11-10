@@ -11,7 +11,7 @@ public static class GameAssets
     /// <summary> Asynchronously loads an asset. </summary>
     public static void Load<T>(string path, Cons<T> cons)
     {
-        if (path.StartsWith("Assets") && path.Contains('.')) Addressables.LoadAssetAsync<T>(path).Completed += h => { cons(h.Result); };
+        if (path.StartsWith("Assets") && path.Contains('.')) Addressables.LoadAssetAsync<T>(path).Completed += h => cons(h.Result);
     }
 
     /// <summary> Loads a prefab. </summary>

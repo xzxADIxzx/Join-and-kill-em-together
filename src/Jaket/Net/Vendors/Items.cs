@@ -37,11 +37,10 @@ public class Items : Vendor
             ResFind<ItemIdentifier>().Each(IsReal, i => Sync(i.gameObject, false));
             ResFind<ItemPlaceZone>().Each(IsReal, z =>
             {
+                z.name = "Zone";
                 z.transform.parent = null;
-                z.CheckItem();
 
-                z.arenaStatuses       .Each(s => s.currentStatus = 0);
-                z.reverseArenaStatuses.Each(s => s.currentStatus = 0);
+                if (z.acceptedItemPlaced && !LobbyController.IsOwner) z.CheckItem();
             });
         }));
     }
