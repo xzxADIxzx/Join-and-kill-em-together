@@ -1,18 +1,19 @@
 #!/bin/bash
-# region constants
-
-r="\033[1;31m"
-g="\033[1;32m"
-n="\033[0;39m"
-
-function faulty
-{
-    echo -e "$r!> $1$n"
-}
+# region logs
 
 function region
 {
-    echo -e "$g=> $1$n"
+    [[ -z $quiet ]] && echo -e "\e[1;32m => $1 \e[0;39m"
+}
+
+function common
+{
+    [[ -z $quiet ]] && echo -e "\e[1;34m << $1 \e[0;39m"
+}
+
+function faulty
+{
+    [[ -z $quiet ]] && echo -e "\e[1;31m !! $1 \e[0;39m"
 }
 
 # endregion
