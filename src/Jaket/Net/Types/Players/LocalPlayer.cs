@@ -34,7 +34,7 @@ public class LocalPlayer : Entity
     public override void Write(Writer w)
     {
         w.Vector(nmtr.position - nmtr.up * (nm.sliding ? .375f : 1.5f));
-        w.Vector(ha.forcingFistControl ? ha.hookPoint : Vector3.zero);
+        w.Vector(ha.forcingFistControl ? ha.hookPoint : default);
 
         w.Float(cc.rotationY);
         w.Float(cc.rotationX);

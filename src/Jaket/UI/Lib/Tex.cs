@@ -20,7 +20,7 @@ public static class Tex
     /// <summary> Checkmark. </summary>
     public static Sprite Mark;
     /// <summary> Common. </summary>
-    public static Sprite Circle, Shadow, Dead, Flash;
+    public static Sprite Shadow, Dead, Flash;
 
     /// <summary> Loads the textures. </summary>
     public static void Load()
@@ -34,14 +34,13 @@ public static class Tex
         GameAssets.Sprite("Controls/StripesMaskSM.png",             s => Dash   = s);
         GameAssets.Sprite("Controls/Round_SliderFill.png",          s => Mask   = s);
         GameAssets.Sprite("Controls/Check.png",                     s => Mark   = s);
-        GameAssets.Sprite("circle.png",                             s => Circle = s);
         GameAssets.Sprite("weaponwheelbackground.png",              s => Shadow = s);
         GameAssets.Sprite("ISeeYou.png",                            s => Dead   = s);
         GameAssets.Sprite("s/muzzleflashshotgun 1.png",             s => Flash  = s);
     }
 
     /// <summary> Executes the task after loading sprites. </summary>
-    public static void OnLoad(Runnable task) => Events.Post(() => ModAssets.DefFont & ModAssets.TmpFont & Fill & Back & BrdS & BrdL & Hort & Vert & Dash & Mask & Mark & Circle & Shadow & Dead & Flash, task);
+    public static void OnLoad(Runnable task) => Events.Post(() => ModAssets.DefFont & ModAssets.TmpFont & Fill & Back & BrdS & BrdL & Hort & Vert & Dash & Mask & Mark & Shadow & Dead & Flash, task);
 
     /// <summary> Returns the default scale of the sprite. </summary>
     public static float Scale(Sprite sprite) => sprite switch

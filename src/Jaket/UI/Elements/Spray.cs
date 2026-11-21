@@ -10,17 +10,16 @@ using Jaket.UI.Lib;
 
 using static Jaket.UI.Lib.Pal;
 
-/// <summary> Element that draws a spray in the world, disappears after a few seconds. </summary>
+/// <summary> Element that draws a spray in the world space, disappears after a few seconds. </summary>
 public class Spray : MonoBehaviour
 {
     /// <summary> Position of the spray in the world space. </summary>
     private Vector3 position, direction;
     /// <summary> Matches the color of the respective team. </summary>
     private Color color;
-
-    /// <summary> Player who created the spray. </summary>
+    /// <summary> Player who requested to create the spray. </summary>
     private RemotePlayer owner;
-    /// <summary> How many seconds has the spray existed. </summary>
+    /// <summary> How many seconds has the element existed. </summary>
     private float lifetime;
 
     /// <summary> Spawns a spray at the given position. </summary>
@@ -28,8 +27,7 @@ public class Spray : MonoBehaviour
     {
         s.position = position;
         s.direction = -direction;
-
-        s.color = team.Color() with { a = .5f };
+        s.color = team.Color() with { a = .6f };
         s.owner = owner;
     });
 

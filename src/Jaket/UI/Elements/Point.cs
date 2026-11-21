@@ -8,37 +8,35 @@ using Jaket.Content;
 using Jaket.Net.Types;
 using Jaket.UI.Lib;
 
-/// <summary> Element that draws a point in the world, disappears after a few seconds. </summary>
+/// <summary> Element that draws a point in the world space, disappears after a few seconds. </summary>
 public class Point : MonoBehaviour
 {
     /// <summary> Position of the point in the world space. </summary>
     private Vector3 position, direction;
     /// <summary> Matches the color of the respective team. </summary>
     private Color color;
-
-    /// <summary> Player who created the point. </summary>
+    /// <summary> Player who requested to create the point. </summary>
     private RemotePlayer owner;
+    /// <summary> How many seconds has the element existed. </summary>
+    private float lifetime;
+
     /// <summary> Line going from the point to the player. </summary>
     private LineRenderer line;
     /// <summary> Point emitting a barely noticeable glow. </summary>
     private Light glow;
-
     /// <summary> Components that the point is made of. </summary>
     private RectTransform circle1, circle2, diamond;
-    /// <summary> How many seconds has the point existed. </summary>
-    private float lifetime;
 
     /// <summary> Spawns a point at the given position. </summary>
     public static Point Spawn(Vector3 position, Vector3 direction, Team team, RemotePlayer owner = null) => Create("Point").Add<Point>(p =>
     {
         p.position = position;
         p.direction = -direction;
-
-        p.color = team.Color() with { a = .5f };
+        p.color = team.Color() with { a = .6f };
         p.owner = owner;
     });
 
-    public void Remove() => lifetime = 5.5f;
+    public void Remove() => lifetime = 7.5f;
 
     private void Start()
     {
@@ -60,23 +58,23 @@ public class Point : MonoBehaviour
 
         Builder.Canvas(Create("Cirlce", transform).transform, Vector3.back * .2f, c =>
         {
-            circle1 = Builder.Image(Builder.Rect("Image", c, new(1280f, 1280f)), Tex.Circle, color).rectTransform;
-            circle1.localScale = Vector3.zero;
+            circle1 = Builder.Circle(Builder.Rect("Image", c, new(1280f, 1280f)), .95f, 0, 80f, color: color).rectTransform;
+            circle1.localScale = default;
         });
 
         Builder.Canvas(Create("Cirlce", transform).transform, Vector3.back * .4f, c =>
         {
-            circle2 = Builder.Image(Builder.Rect("Image", c, new(960f, 960f)), Tex.Circle, color).rectTransform;
-            circle2.localScale = Vector3.zero;
+            circle2 = Builder.Circle(Builder.Rect("Image", c, new(960f, 960f)), .95f, 0, 80f, color: color).rectTransform;
+            circle2.localScale = default;
         });
 
         Builder.Canvas(Create("Diamond", transform).transform, Vector3.back * 1.6f, c =>
         {
             diamond = Builder.Diamond(Builder.Rect("Image", c, new(1000f, 1000f)), color, .4f, .4f, 1f, .4f).rectTransform;
-            diamond.localScale = Vector3.zero;
+            diamond.localScale = default;
         });
 
-        GetComponentsInChildren<Graphic>().Each(g => (g.material = Instantiate(g.material)).shader = ModAssets.Additive);
+        GetComponentsInChildren<Graphic>().Each(g => (g.material = Inst(g.material)).shader = ModAssets.Additive);
 
         transform.position = position;
         transform.rotation = Quaternion.LookRotation(direction);
@@ -86,14 +84,17 @@ public class Point : MonoBehaviour
 
     private void Update()
     {
-        if ((lifetime += Time.deltaTime) > 6f) Dest(gameObject);
+        if ((lifetime += Time.deltaTime) > 8f) Dest(gameObject);
 
-        float scale = lifetime < .5f ? lifetime * 2f : lifetime > 5.5f ? (6f - lifetime) * 2f : 1f;
+        float scale = lifetime < .5f ? lifetime * 2f : lifetime > 7.5f ? (8f - lifetime) * 2f : 1f;
         float time = Time.time * 3f;
 
         circle1.localScale = Vector3.one * (scale * 1.2f + Mathf.Sin(time + 1f) * .2f);
         circle2.localScale = Vector3.one * (scale * 1.2f + Mathf.Sin(time + 2f) * .2f);
         diamond.localScale = Vector3.one * (scale);
+
+        circle1.localEulerAngles = new(0f, 0f, lifetime * 100f);
+        circle2.localEulerAngles = new(0f, 0f, lifetime * -60f);
 
         diamond.localPosition = new(0f, 0f, Mathf.Sin(time + 2.5f) * 128f);
         diamond.localEulerAngles = new(time * 20f, 270f, 0f);
