@@ -6,7 +6,6 @@ using Jaket.Content;
 using Jaket.Harmony;
 using Jaket.Net;
 using Jaket.UI;
-using Jaket.UI.Fragments;
 
 /// <summary> Class responsible for managing checkpoints and progression. </summary>
 public static class Checkpoints

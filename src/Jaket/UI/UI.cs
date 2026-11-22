@@ -38,7 +38,6 @@ public static class UI
     public static PlayerInformation PlayerInfo;
     public static Skateboard Skateboard;
     public static Spectator Spectator;
-    public static Teleporter Teleporter;
 
     #endregion
     #region groups
@@ -87,10 +86,9 @@ public static class UI
         PlayerInfo = new(root);
         Skateboard = new(root);
         Spectator = new(root);
-        Teleporter = new(root);
 
         Dialogs   = [ Chat, LobbyTab, LobbyList, GameConfig, Privileges, PlayerList, Settings, Sprays ];
-        Fragments = [ Debug, Emote, Access, PlayerInds, PlayerInfo, Skateboard, Spectator, Teleporter ];
+        Fragments = [ Debug, Emote, Access, PlayerInds, PlayerInfo, Skateboard, Spectator ];
         LeftGroup = [ Chat, LobbyTab, PlayerList, Settings, Debug ];
         MidlGroup = [ LobbyList, GameConfig, Privileges, Sprays ];
 
