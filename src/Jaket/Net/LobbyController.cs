@@ -137,7 +137,7 @@ public static class LobbyController
     }
 
     #endregion
-    #region codes & browser
+    #region browser
 
     /// <summary> Copies the lobby code to the clipboard. </summary>
     public static void CopyCode()

@@ -9,7 +9,7 @@ using Jaket.IO;
 using Jaket.Net;
 
 /// <summary> Class responsible for managing world objects and actions. </summary>
-public class World
+public static class World
 {
     /// <summary> Size of the pool of actions' arguments. </summary>
     public const int POOL = 64;
@@ -192,42 +192,42 @@ public class World
     [Postfix]
     static void Activate(Glass __instance)
     {
-        Perform("window", new(__instance.transform.position.x, __instance.transform.position.z));
+        Perform("window", __instance.HTP);
     }
 
     [DynamicPatch(typeof(StatueActivator), nameof(StatueActivator.Start))]
     [Postfix]
     static void Activate(StatueActivator __instance)
     {
-        Perform("statue", new(__instance.transform.position.x, __instance.transform.position.z));
+        Perform("statue", __instance.HTP);
     }
 
     [DynamicPatch(typeof(LimboSwitch), nameof(LimboSwitch.Pressed))]
     [Postfix]
     static void Activate(LimboSwitch __instance)
     {
-        Perform("switch", new(__instance.transform.position.x, __instance.transform.position.z));
+        Perform("switch", __instance.HTP);
     }
 
     [DynamicPatch(typeof(Flammable), nameof(Flammable.Burn))]
     [Postfix]
     static void Activate(Flammable __instance)
     {
-        if (__instance.name == "Flammable") Perform("flammable", new(__instance.transform.position.x, __instance.transform.position.z));
+        if (__instance.name == "Flammable") Perform("flammable", __instance.HTP);
     }
 
     [DynamicPatch(typeof(ActivateArena), nameof(ActivateArena.Activate))]
-    [Prefix]
+    [Postfix]
     static void Activate(ActivateArena __instance)
     {
-        Perform("arena", new(__instance.transform.position.x, __instance.transform.position.z));
+        Perform("arena", __instance.HTP);
     }
 
     [DynamicPatch(typeof(FinalDoor), nameof(FinalDoor.Open))]
-    [Prefix]
+    [Postfix]
     static void Activate(FinalDoor __instance)
     {
-        Perform("final", new(__instance.transform.position.x, __instance.transform.position.z));
+        Perform("final", __instance.HTP);
     }
 
     #endregion

@@ -252,8 +252,6 @@ public static class ActionList
         #region 4-1
         l = "Level 4-1";
 
-        ActionType.Flammable(l);
-
         ActionType.Turn(l, "GreedTorch (2)/Flammable"); // for some reason you cannot set it on fire in vanilla game
 
         #endregion
@@ -263,8 +261,6 @@ public static class ActionList
         #endregion
         #region 4-3
         l = "Level 4-3";
-
-        ActionType.Flammable(l);
 
         ActionType.Torches(l, new(0f, -10f, 310f));
 
@@ -350,6 +346,7 @@ public static class ActionList
         ActionType.Window(l);
         ActionType.Statue(l);
         ActionType.Switch(l);
+        ActionType.Flammable(l);
         ActionType.Arena(l);
         ActionType.Final(l);
 

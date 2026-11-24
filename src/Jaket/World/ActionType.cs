@@ -91,7 +91,7 @@ public static class ActionType
     /// <summary> Creates an action that finds an object of the given type. </summary>
     public static void Find<T>(string scene, string path, Cons<T> perform) where T : Component => ActionList.Add(new(scene, path, true, true, pos =>
     {
-        ResFind<T>().Each(t => Real(t) && t.transform.position.x == pos.x && t.transform.position.z == pos.y, perform);
+        ResFind<T>().Each(t => Real(t) && t.HTP == pos, perform);
     }));
 
     /// <summary> Creates an action that synchronizes all windows. </summary>

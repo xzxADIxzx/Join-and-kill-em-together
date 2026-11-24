@@ -157,12 +157,16 @@ public static class Props
     {
         /// <summary> Path of the object in hierarchy. </summary>
         public string Path => $"{obj.transform.parent?.name}/{obj.name}@{obj.transform.GetSiblingIndex():00}";
+        /// <summary> Horizontal transform projection. </summary>
+        public Vector2 HTP => new(obj.transform.position.x, obj.transform.position.z);
     }
 
     extension(Component comp)
     {
         /// <summary> Path of the object in hierarchy. </summary>
         public string Path => $"{comp.transform.parent?.name}/{comp.name}@{comp.transform.GetSiblingIndex():00}";
+        /// <summary> Horizontal transform projection. </summary>
+        public Vector2 HTP => new(comp.transform.position.x, comp.transform.position.z);
     }
 
     /// <summary> Finds all objects of the given type. </summary>
