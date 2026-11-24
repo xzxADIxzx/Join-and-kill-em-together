@@ -216,6 +216,21 @@ public static class ActionList
         #region 1-4
         l = "Level 1-4";
 
+        ActionType.Dest(l, "3C Nonstuff/Altar 1@03"); // duplicate
+        ActionType.Dest(l, "3C Nonstuff/Altar 2@04"); // duplicate
+        ActionType.Dest(l, "3C Nonstuff/Altar 3@05"); // duplicate
+
+        ActionType.Find(l, "/3DLS - Revolver Altar@00", t => t.Add<Entity.Identifier>(i => Checkpoints.Mark(i.gameObject)));
+        ActionType.Dest(l, "V2 Event/Trigger@02");
+        ActionType.Find(l, "/Checkpoint (1)@00", t => t.localPosition += Vector3.forward * .5f);
+
+        ActionType.Act(l, "Door/Cube@00", t => // boss
+        {
+            if (!Teleporter.Inside(-35f, -18f, 577f, 35f, 22f, 647f)) Teleporter.Tp(new(0f, -19f, 578f));
+
+            t.Get<DoorController>(d => d.dc.Close());
+        });
+
         #endregion
         #region 1-S
         l = "Level 1-S";
