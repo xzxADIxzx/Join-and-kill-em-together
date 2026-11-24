@@ -40,7 +40,7 @@ public class Items : Vendor
                 z.transform.parent = null;
 
                 z.CheckItem(true);
-                if (z.acceptedItemPlaced && !LobbyController.IsOwner) Events.Post(() => z.CheckItem());
+                if (z.acceptedItemPlaced && !LobbyController.IsOwner) Events.Post(() => { z.CheckItem(); z.reverseDoors.Each(d => d.Close()); });
             });
             ResFind<ItemIdentifier>().Each(Real, i => Sync(i.gameObject, false));
         }));
