@@ -86,7 +86,7 @@ public class Swordsmachine : Foe
 
     public override void Bossed(int layers)
     {
-        if (Scene == "Level 1-3") Networking.Entities.Alive<Swordsmachine>(s => s.Boss && !s.scr.mach.symbiotic, s =>
+        if (Scene == "Level 1-3") Networking.Entities.Alive<Swordsmachine>(s => s != this && s.Boss && !s.scr.mach.symbiotic, s =>
         {
             scr.eid.overrideFullName = "SWORDSMACHINE \"TUNDRA\"";
             s.scr.eid.overrideFullName = "SWORDSMACHINE \"AGONY\"";

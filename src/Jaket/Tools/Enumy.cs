@@ -85,13 +85,13 @@ public static class Enumy
     /// <summary> Iterates each object in the given enumerable. </summary>
     public static void Each<T>(this IEnumerable<T> seq, Cons<T> cons)
     {
-        foreach (var item in seq) cons(item);
+        foreach (var item in seq ?? []) cons(item);
     }
 
     /// <summary> Iterates each object in the given enumerable that is suitable for the given predicate. </summary>
     public static void Each<T>(this IEnumerable<T> seq, Pred<T> pred, Cons<T> cons)
     {
-        foreach (var item in seq) if (pred(item)) cons(item);
+        foreach (var item in seq ?? []) if (pred(item)) cons(item);
     }
 
     #endregion
