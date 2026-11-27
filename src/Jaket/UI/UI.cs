@@ -16,6 +16,8 @@ public static class UI
     public static bool Focused => EventSystem.current && EventSystem.current.currentSelectedGameObject && EventSystem.current.currentSelectedGameObject.TryGetComponent(out InputField f) && f.isActiveAndEnabled;
     /// <summary> Whether any dialog is visible. </summary>
     public static bool AnyDialog => (Dialogs?.Any(d => d.Shown) ?? false) || (OptionsManager.Instance?.paused ?? false);
+    /// <summary> Whether a dialog that should fully freeze the player is visible. </summary>
+    public static bool AnyBlockingDialog => (OptionsManager.Instance?.paused ?? false) || (Dialogs?.Any(d => d.Shown && d != Chat) ?? false);
 
     #region dialogs
 

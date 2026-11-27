@@ -22,6 +22,9 @@ public class Movement : MonoSingleton<Movement>
     private Spray spray;
     /// <summary> Hold time of the emote wheel key. </summary>
     private float holdTime;
+    /// <summary> Time it takes chat to stop horizontal movement. </summary>
+    private const float CHAT_BRAKE_TIME = .25f;
+    private static float chatBrake;
 
     #region general
 
@@ -117,7 +120,7 @@ public class Movement : MonoSingleton<Movement>
             UI.Spectator.UpdateCamera(!nm.dead && Emotes.Ends);
         }
 
-        if (!nm.dead) nm.rb.constraints = UI.AnyDialog
+        if (!nm.dead) nm.rb.constraints = UI.AnyBlockingDialog
             ? RigidbodyConstraints.FreezeAll
             : Emotes.Current == 0xFF || Emotes.Current == 0x0B
                 ? RigidbodyConstraints.FreezeRotation
@@ -180,6 +183,30 @@ public class Movement : MonoSingleton<Movement>
     [DynamicPatch(typeof(OptionsManager), nameof(OptionsManager.LateUpdate))]
     [Postfix]
     static void Scale() => Time.timeScale = Gameflow.Slowmo ? .5f : 1f;
+
+    [StaticPatch(typeof(NewMovement), nameof(NewMovement.FixedUpdate))]
+    [Postfix]
+    static void ChatBrake(NewMovement __instance)
+    {
+        if (__instance.dead || !UI.Chat.Shown)
+        {
+            chatBrake = 0f;
+            return;
+        }
+
+        if (__instance.sliding) __instance.StopSlide();
+        __instance.boost = false;
+        __instance.inputDir = Vector3.zero;
+        __instance.preSlideSpeed = 0f;
+
+        var vel = __instance.rb.velocity;
+        var hor = new Vector2(vel.x, vel.z);
+
+        if (chatBrake == 0f) chatBrake = hor.magnitude / CHAT_BRAKE_TIME;
+        hor = Vector2.MoveTowards(hor, Vector2.zero, chatBrake * Time.fixedDeltaTime);
+
+        __instance.rb.velocity = new(hor.x, vel.y, hor.y);
+    }
 
     [StaticPatch(typeof(NewMovement), nameof(NewMovement.GetHurt))]
     [Prefix]
